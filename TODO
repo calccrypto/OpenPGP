@@ -2,3 +2,4 @@ Change exits to throws
 Add compression/decompression algorithms
 Write Twofish
 Find PGP keys with packets I have never seen before
+Finish Key Generation
