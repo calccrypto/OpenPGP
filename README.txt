@@ -1,6 +1,8 @@
 OpenPGP in C++
 by Jason Lee @ calccrypto at gmail.com
 
+Please see LICENSE file for license.
+
 With much help from:
     Alex Stapleton (OpenPGP-SDK)
     Auston Sterling - Massive amounts of debugging and programming help
@@ -48,9 +50,10 @@ output was based on/inspired by pgpdump.net and GPG.
 
 The main data types PGP, Packet, Subpacket, and S2K have the
 four standard functions: read, show, raw, and write.
-    read  - reads data without the respective headers
-            (packet::read(std::string) takes in packet
-            data without its header or length).
+    read  - reads data without the respective header
+            information (packet::read(std::string)
+            takes in packet data without its header
+            or length).
 
     show  - displays the data in human readable form
             like the way pgpdump.net does it.
@@ -66,13 +69,13 @@ To build:
 
     make
 
-	or
+    or
 
-	g++ -std=c++11 *.cpp */*.cpp
+    g++ -std=c++11 *.cpp */*.cpp
 
-	or some equivalent.
+    or some equivalent.
 
-	C++11 is necessary.
+    The latest C++ compiler should be used because C++11 is necessary.
 
 To run:
     ./OpenPGP
