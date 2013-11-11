@@ -2,7 +2,7 @@
 
 std::string pka_decrypt(uint8_t pka, std::vector <integer> data, std::vector <integer> key, integer pri){
     if (pka < 3){   // RSA
-        return RSA_decrypt(data[0], key[1], key[0]);
+        return RSA_decrypt(data[0], key);
     }
     if (pka == 16){ // ElGamal
         return ElGamal_decrypt(data, key, pri);
@@ -156,7 +156,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
         }
     }
     if (!data.size()){
-        std::cerr << "Error: No encrypted data packete found" << std::endl;
+        std::cerr << "Error: No encrypted data packets found" << std::endl;
         exit(1);
     }
 

@@ -1,5 +1,5 @@
 OpenPGP in C++
-by Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 

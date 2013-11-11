@@ -4,7 +4,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     std::vector <Packet *> packets = pub.get_packets_pointers();
     Tag6 * public_key = new Tag6;
 
-    // find first key pakcet with encrypting values
+    // find first key packet with encrypting values
     bool found = false;
     for(Packet *& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
@@ -59,11 +59,10 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     integer m(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), (mpi[0]).bytes()), 256);
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA
-        tag1 -> set_mpi({POW(m, mpi[1], mpi[0])});
+        tag1 -> set_mpi({RSA_encrypt(m, mpi)});
     }
     else if (public_key -> get_pka() == 16){// ElGamal
-        integer k = integer(BBS((unsigned int) public_key -> get_mpi()[0].bits()).rand(), 2);
-        tag1 -> set_mpi({POW(mpi[1], k, mpi[0]), (m * POW(mpi[2], k, mpi[0])) % mpi[0]});
+        tag1 -> set_mpi(ElGamal_encrypt(m, mpi));
     }
     else{
         std::cerr << "Error: Unknown or Reserved Public Key Algorithm " << (int) public_key -> get_pka() << std::endl;

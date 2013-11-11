@@ -29,7 +29,13 @@ std::vector <integer> ElGamal_keygen(unsigned int bits){
     return {p, g, POW(g, x, p), x};
 }
 
-std::vector <integer> ElGamal_encrypt(std::string data, std::vector <integer> & pub){
+std::vector <integer> ElGamal_encrypt(integer & data, const std::vector <integer> & pub){
+    integer y(BBS(pub[0].bits()).rand(), 2);
+    y %= pub[0];
+    return {POW(pub[1], y, pub[0]), (data * POW(pub[2], y, pub[0])) % pub[0]};
+}
+
+std::vector <integer> ElGamal_encrypt(std::string data, const std::vector <integer> & pub){
     integer y(BBS(pub[0].bits()).rand(), 2);
     y %= pub[0];
     return {POW(pub[1], y, pub[0]), (integer(data, 256) * POW(pub[2], y, pub[0])) % pub[0]};
