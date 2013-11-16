@@ -1,11 +1,11 @@
 #include "decrypt.h"
 
-std::string pka_decrypt(uint8_t pka, std::vector <integer> data, std::vector <integer> key, integer pri){
+std::string pka_decrypt(uint8_t pka, std::vector <integer> data, const std::vector <integer> & pri, const std::vector <integer> & pub){
     if (pka < 3){   // RSA
-        return RSA_decrypt(data[0], key);
+        return RSA_decrypt(data[0], pri).str(256);
     }
     if (pka == 16){ // ElGamal
-        return ElGamal_decrypt(data, key, pri);
+        return ElGamal_decrypt(data, pri, pub);
     }
     return "";
 }
@@ -103,12 +103,12 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
             std::cerr << "Error: Correct Private Key not found" << std::endl;
             exit(1);
         }
-        integer key = decrypt_secret_key(sec, pass)[0];
+        std::vector <integer> pri = decrypt_secret_key(sec, pass);
 
         std::vector <integer> pub = sec -> get_mpi();
 
         // get session key
-        session_key = std::string(1, 0) + pka_decrypt(pka, session_key_mpi, pub, key);      // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
+        session_key = std::string(1, 0) + pka_decrypt(pka, session_key_mpi, pri, pub);      // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
         session_key = EME_PKCS1_DECODE(session_key);                                        // remove EME_PKCS1 encoding
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum

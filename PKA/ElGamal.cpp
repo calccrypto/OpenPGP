@@ -35,12 +35,12 @@ std::vector <integer> ElGamal_encrypt(integer & data, const std::vector <integer
     return {POW(pub[1], y, pub[0]), (data * POW(pub[2], y, pub[0])) % pub[0]};
 }
 
-std::vector <integer> ElGamal_encrypt(std::string data, const std::vector <integer> & pub){
+std::vector <integer> ElGamal_encrypt(std::string & data, const std::vector <integer> & pub){
     integer y(BBS(pub[0].bits()).rand(), 2);
     y %= pub[0];
     return {POW(pub[1], y, pub[0]), (integer(data, 256) * POW(pub[2], y, pub[0])) % pub[0]};
 }
 
-std::string ElGamal_decrypt(std::vector <integer> & c, std::vector <integer> & pub, integer pri){
-    return ((c[1] * POW(c[0], pub[0] - 1 - pri, pub[0])) % pub[0]).str(256);
+std::string ElGamal_decrypt(std::vector <integer> & c, const std::vector <integer> & pri, const std::vector <integer> & pub){
+    return ((c[1] * POW(c[0], pub[0] - 1 - pri[0], pub[0])) % pub[0]).str(256);
 }

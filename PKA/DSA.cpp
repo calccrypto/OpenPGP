@@ -31,15 +31,15 @@ integer DSA_keygen(std::vector <integer> & pub){
     while (true){
         x = integer(BBS(pub[2].bits() - 1).rand(), 2);
         pub.push_back(POW(pub[3], x, pub[1]));
-        std::vector <integer> rs = DSA_sign(test, pub, x);
+        std::vector <integer> rs = DSA_sign(test, pub, {x});
         if (DSA_verify(test, rs, pub)){
             break;
         }
     }
     return x;
 }
+std::vector <integer> DSA_sign(std::string & data, const std::vector <integer> & pub, const std::vector <integer> & pri){
 
-std::vector <integer> DSA_sign(std::string & data, std::vector <integer> & pub, integer & pri){
     integer k, r, s;
     while (!r || !s){
         k = (integer(BBS(pub[1].bits()).rand(), 2) % (pub[1] - 1)) + 1;
@@ -47,12 +47,12 @@ std::vector <integer> DSA_sign(std::string & data, std::vector <integer> & pub, 
         if (!r){
             continue;
         }
-        s = (invmod(pub[1], k) * (integer(data, 256) + pri * r)) % pub[1];
+        s = (invmod(pub[1], k) * (integer(data, 256) + pri[0] * r)) % pub[1];
     }
     return {r, s};
 }
 
-bool DSA_verify(std::string & data, std::vector <integer> & sig, std::vector <integer> & pub){
+bool DSA_verify(std::string & data, const std::vector <integer> & sig, const std::vector <integer> & pub){
     /*
         0 < r < q or 0 < s < q
         w = s^-1 mod q

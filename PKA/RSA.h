@@ -15,15 +15,16 @@
 std::vector <integer> RSA_keygen(const uint32_t & bits = 1024);
 
 // Encrypt some data
-integer RSA_encrypt(integer & data, const std::vector <integer> & key);
-integer RSA_encrypt(std::string & data, const std::vector <integer> & key);
+integer RSA_encrypt(integer & data, const std::vector <integer> & pub);
+integer RSA_encrypt(std::string & data, const std::vector <integer> & pub);
 
 // Decrypt some data
-std::string RSA_decrypt(integer & data, const std::vector <integer> & key);
+integer RSA_decrypt(integer & data, const std::vector <integer> & pri);
 
 // Sign some data
-integer RSA_sign(std::string & hashed_data, const integer & d, const integer & n);
+integer RSA_sign(std::string & data, const std::vector <integer> & pri);
+integer RSA_sign(integer & data, const std::vector <integer> & pri);
 
 // Verify signature
-bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & key, const uint8_t & hash);
+bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & pub, const uint8_t & hash);
 #endif

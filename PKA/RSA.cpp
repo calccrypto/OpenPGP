@@ -24,30 +24,34 @@ std::vector <integer> RSA_keygen(const unsigned int & bits){
 }
 
 
-integer RSA_encrypt(integer & data, const std::vector <integer> & key){
-    return POW(data, key[1], key[0]);
+integer RSA_encrypt(integer & data, const std::vector <integer> & pub){
+    return POW(data, pub[1], pub[0]);
 }
 
-integer RSA_encrypt(std::string & data, const std::vector <integer> & key){
-    return POW(integer(data, 256), key[1], key[0]);
+integer RSA_encrypt(std::string & data, const std::vector <integer> & pub){
+    return POW(integer(data, 256), pub[1], pub[0]);
 }
 
-std::string RSA_decrypt(integer & data, const std::vector <integer> & key){
-    // key = {d, p, q, u=p^-1 mod q}
+integer RSA_decrypt(integer & data, const std::vector <integer> & pri){
+    // pri = {d, p, q, u=p^-1 mod q}
     // done backwards since u=p^-1 mod q rather than q^-1 mod p
-    integer dp = key[0] % (key[2] - 1);
-    integer dq = key[0] % (key[1] - 1);
-    integer m1 = POW(data, dp, key[2]);
-    integer m2 = POW(data, dq, key[1]);
-    integer h = (key[3] * (m1 - m2)) % key[2];
-    return (m2 + h * key[1]).str(256);
+    integer dp = pri[0] % (pri[2] - 1);
+    integer dq = pri[0] % (pri[1] - 1);
+    integer m1 = POW(data, dp, pri[2]);
+    integer m2 = POW(data, dq, pri[1]);
+    integer h = (pri[3] * (m1 - m2)) % pri[2];
+    return (m2 + h * pri[1]);
 }
 
-integer RSA_sign(std::string & data, const integer & d, const integer & n){
-    return POW(integer(data, 256), d, n);
+integer RSA_sign(std::string & data, const std::vector <integer> & pri){
+    integer d(data, 256);
+    return RSA_decrypt(d, pri);
 }
 
-bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & key, const uint8_t & hash){
-    integer mod; mod.fill(Hash_Length.at(Hash_Algorithms.at(hash)));// sort of skips RFC 4880 sec 13.1.3
-    return ((POW(signature[0], key[1], key[0]) & mod) == integer(data, 256));
+integer RSA_sign(integer & data, const std::vector <integer> & pri){
+    return RSA_decrypt(data, pri);
+}
+
+bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & pub, const uint8_t & hash){
+    return (RSA_encrypt(data, pub) == integer(data, 256));
 }

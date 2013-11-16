@@ -32,9 +32,9 @@ Tag13 * find_signer_id(PGP & k){
 
 std::vector <integer> pka_sign(std::string hashed_data, Tag5 * tag5, std::string pass){
     std::vector <integer> pub = tag5 -> get_mpi();
-    integer pri = decrypt_secret_key(tag5, pass)[0];
+    std::vector <integer> pri = decrypt_secret_key(tag5, pass);
     if ((tag5 -> get_pka() == 1) || (tag5 -> get_pka() == 3)){
-        return {RSA_sign(hashed_data, pri, pub[0])};
+        return {RSA_sign(hashed_data, pri)};
     }
     else if (tag5 -> get_pka() == 17){
         return DSA_sign(hashed_data, pub, pri);
