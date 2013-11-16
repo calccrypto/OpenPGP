@@ -10,10 +10,7 @@ debug: all
 
 all: $(TARGET)
 
-.PHONY: .git common Encryptions Hashes Packets PKA RNG Subpackets
-
-.git:
-	$(MAKE) -C .git
+.PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
 common:
 	$(MAKE) -C common
@@ -36,8 +33,8 @@ RNG:
 Subpackets:
 	$(MAKE) -C Subpackets
 
-$(TARGET): main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o .git common Encryptions Hashes Packets PKA RNG Subpackets
-	$(CC) $(BFLAGS) main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o .git/*.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o -o $(TARGET)
+$(TARGET): main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+	$(CC) $(BFLAGS) main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o -o $(TARGET)
 
 main.o: main.cpp  OpenPGP.h encrypt.h decrypt.h generatekey.h sign.h verify.h
 	$(CC) $(CFLAGS) main.cpp
@@ -88,4 +85,4 @@ verify.o: verify.h verify.cpp PKA/DSA.h PKA/RSA.h OpenPGP.h signverify.h
 	$(CC) $(CFLAGS) verify.cpp
 
 clean:
-	rm -f *.o .git/*.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o $(TARGET)
+	rm -f *.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o $(TARGET)
