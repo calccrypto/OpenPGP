@@ -330,23 +330,37 @@ bool parse_command(std::string & input){
 }
 
 int main(int argc, char * argv[]){
-    std::string input = "";
-    // no commandline arguments
-    if (argc == 1){
-        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
-                  << "Type help or ? for command syntax\n\n"
-                  << std::endl;
-        while (parse_command(input)){
-            std::cout << "> ";
-            getline(std::cin, input);
-        }
-    }
-    // has commandline arguments
-    else{
-        for(int x = 1; x < argc; x++){
-            input += std::string(argv[x]) + " ";
-        }
-        parse_command(input);
-    }
+//    std::string input = "";
+//    // no commandline arguments
+//    if (argc == 1){
+//        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
+//                  << "Type help or ? for command syntax\n\n"
+//                  << std::endl;
+//        while (parse_command(input)){
+//            std::cout << "> ";
+//            getline(std::cin, input);
+//        }
+//    }
+//    // has commandline arguments
+//    else{
+//        for(int x = 1; x < argc; x++){
+//            input += std::string(argv[x]) + " ";
+//        }
+//        parse_command(input);
+//    }
+    std::ifstream f("../atm_pri.txt");
+    PGP p(f);
+
+    std::string data = p.get_packets_pointers()[5] -> raw();
+    Tag5 * tag5 = new Tag5;
+    tag5 -> read(data);
+    std::cout << tag5 -> show() << std::endl;
+
+    data = tag5 -> get_secret();
+    std::vector <integer> pri = decrypt_secret_key(tag5, "atm");
+
+    for(integer & i : pri)
+        std::cout << i << std::endl;
+
     return 0;
 }
