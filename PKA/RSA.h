@@ -19,11 +19,11 @@ integer RSA_encrypt(integer & data, const std::vector <integer> & pub);
 integer RSA_encrypt(std::string & data, const std::vector <integer> & pub);
 
 // Decrypt some data
-integer RSA_decrypt(integer & data, const std::vector <integer> & pri);
+integer RSA_decrypt(integer & data, const std::vector <integer> & pri, const std::vector <integer> & pub);
 
 // Sign some data
-integer RSA_sign(std::string & data, const std::vector <integer> & pri);
-integer RSA_sign(integer & data, const std::vector <integer> & pri);
+integer RSA_sign(std::string & data, const std::vector <integer> & pri, const std::vector <integer> & pub);
+integer RSA_sign(integer & data, const std::vector <integer> & pri, const std::vector <integer> & pub);
 
 // Verify signature
 bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & pub, const uint8_t & hash);

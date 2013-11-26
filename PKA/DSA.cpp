@@ -31,14 +31,14 @@ integer DSA_keygen(std::vector <integer> & pub){
     while (true){
         x = integer(BBS(pub[2].bits() - 1).rand(), 2);
         pub.push_back(POW(pub[3], x, pub[1]));
-        std::vector <integer> rs = DSA_sign(test, pub, {x});
+        std::vector <integer> rs = DSA_sign(test, {x}, pub);
         if (DSA_verify(test, rs, pub)){
             break;
         }
     }
     return x;
 }
-std::vector <integer> DSA_sign(std::string & data, const std::vector <integer> & pub, const std::vector <integer> & pri){
+std::vector <integer> DSA_sign(std::string & data, const std::vector <integer> & pri, const std::vector <integer> & pub){
 
     integer k, r, s;
     while (!r || !s){

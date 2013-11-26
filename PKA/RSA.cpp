@@ -32,7 +32,7 @@ integer RSA_encrypt(std::string & data, const std::vector <integer> & pub){
     return POW(integer(data, 256), pub[1], pub[0]);
 }
 
-integer RSA_decrypt(integer & data, const std::vector <integer> & pri){
+integer RSA_decrypt(integer & data, const std::vector <integer> & pri, const std::vector <integer> & pub){
     // pri = {d, p, q, u=p^-1 mod q}
     // done backwards since u=p^-1 mod q rather than q^-1 mod p
     integer dp = pri[0] % (pri[2] - 1);
@@ -41,15 +41,16 @@ integer RSA_decrypt(integer & data, const std::vector <integer> & pri){
     integer m2 = POW(data, dq, pri[1]);
     integer h = (pri[3] * (m1 - m2)) % pri[2];
     return (m2 + h * pri[1]);
+//    return POW(data, pri[0], pub[0]);
 }
 
-integer RSA_sign(std::string & data, const std::vector <integer> & pri){
+integer RSA_sign(std::string & data, const std::vector <integer> & pri, const std::vector <integer> & pub){
     integer d(data, 256);
-    return RSA_decrypt(d, pri);
+    return RSA_decrypt(d, pri, pub);
 }
 
-integer RSA_sign(integer & data, const std::vector <integer> & pri){
-    return RSA_decrypt(data, pri);
+integer RSA_sign(integer & data, const std::vector <integer> & pri, const std::vector <integer> & pub){
+    return RSA_decrypt(data, pri, pub);
 }
 
 bool RSA_verify(std::string & data, std::vector <integer> & signature, std::vector <integer> & pub, const uint8_t & hash){

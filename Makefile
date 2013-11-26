@@ -8,7 +8,7 @@ TARGET=OpenPGP
 debug: BFLAGS += -g
 debug: all
 
-all: $(TARGET)
+all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
 
 .PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
@@ -32,12 +32,6 @@ RNG:
 
 Subpackets:
 	$(MAKE) -C Subpackets
-
-$(TARGET): main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
-	$(CC) $(BFLAGS) main.o cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o packets.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o -o $(TARGET)
-
-main.o: main.cpp  OpenPGP.h encrypt.h decrypt.h generatekey.h sign.h verify.h
-	$(CC) $(CFLAGS) main.cpp
 
 cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 	$(CC) $(CFLAGS) cfb.cpp
