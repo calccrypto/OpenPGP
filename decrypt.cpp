@@ -2,7 +2,7 @@
 
 std::string pka_decrypt(uint8_t pka, std::vector <integer> data, const std::vector <integer> & pri, const std::vector <integer> & pub){
     if (pka < 3){   // RSA
-        return RSA_decrypt(data[0], pri).str(256);
+        return RSA_decrypt(data[0], pri, pub).str(256);
     }
     if (pka == 16){ // ElGamal
         return ElGamal_decrypt(data, pri, pub);
