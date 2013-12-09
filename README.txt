@@ -44,7 +44,7 @@ Simply #include "OpenPGP.h" for the data types, and whatever
 functions needed, such as encrypt (#include "encrypt.h") and
 decrypt (#include "decrypt.h").
 
-The main.cpp provides a simple text-based user interface, which
+The /exec/main.cpp provides a simple text-based user interface, which
 can be used as examples on how to use the functions. A lot of the
 output was based on/inspired by pgpdump.net and GPG.
 
@@ -64,21 +64,6 @@ four standard functions: read, show, raw, and write.
     write - returns a string of the entire data,
             including extra data, such as header
             and size.
-
-To build:
-
-    make
-
-    or
-
-    g++ -std=c++11 *.cpp */*.cpp
-
-    or some equivalent.
-
-    The latest C++ compiler should be used because C++11 is necessary.
-
-To run:
-    ./OpenPGP
 
 Notes:
     Key generation does not really work. Even if the code were

@@ -5,13 +5,13 @@ OpenPGP main file
 #include <fstream>
 #include <iostream>
 
-#include "OpenPGP.h"
+#include "../OpenPGP.h"
 
-#include "encrypt.h"
-#include "decrypt.h"
-#include "generatekey.h"
-#include "sign.h"
-#include "verify.h"
+#include "../encrypt.h"
+#include "../decrypt.h"
+#include "../generatekey.h"
+#include "../sign.h"
+#include "../verify.h"
 
 std::vector <std::string> commands = {
     "exit|quit\n",                                                                              // end program
