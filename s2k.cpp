@@ -137,7 +137,7 @@ std::string S2K3::raw(){
 std::string S2K3::run(std::string pass, unsigned int sym_len){
     // get string to hash
     std::string to_hash = "";
-    while (to_hash.size() < coded_count(count)){// coded count is count of bytes, not interations
+    while (to_hash.size() < coded_count(count)){// coded count is count of bytes, not iterations
         to_hash += salt + pass;
     }
     to_hash = to_hash.substr(0, coded_count(count));

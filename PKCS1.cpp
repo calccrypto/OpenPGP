@@ -35,8 +35,8 @@ std::string EME_PKCS1_DECODE(const std::string & m){
 
 std::string EMSA_PKCS1(uint8_t & h, const unsigned int & mL){
     std::string T = Hash_ASN_DER.at(Hash_Algorithms.at(h));
-    if (mL < (T.size() + 11)){
         std::cerr << "Error: Intended encoded message length too short" << std::endl;
+    if (mL < (T.size() + 11)){
         exit(1);
     }
     std::string PS(mL - T.size() - 3, 0xff);

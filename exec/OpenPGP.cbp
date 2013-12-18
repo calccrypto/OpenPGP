@@ -11,6 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="show -k rsa_private.txt" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -207,8 +208,6 @@
 		<Unit filename="../common/cryptomath.h" />
 		<Unit filename="../common/includes.cpp" />
 		<Unit filename="../common/includes.h" />
-		<Unit filename="../common/integer.cpp" />
-		<Unit filename="../common/integer.h" />
 		<Unit filename="../consts.h" />
 		<Unit filename="../decrypt.cpp" />
 		<Unit filename="../decrypt.h" />

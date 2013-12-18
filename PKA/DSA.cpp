@@ -1,58 +1,58 @@
 #include "DSA.h"
-std::vector <integer> new_DSA_public(uint32_t L, uint32_t N){
+std::vector <mpz_class> new_DSA_public(uint32_t L, uint32_t N){
 //    L = 1024, N = 160
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    integer q(BBS(N).rand(), 2);
-    q += !(q & 1);
+    mpz_class q(BBS(N).rand(), 2);
+    q += !((q & 1) == 1);
     while (!MillerRabin(q)){
         q += 2;
     }
-    integer p(BBS(L).rand(), 2);
-    p += !(p & 1);
+    mpz_class p(BBS(L).rand(), 2);
+    p += !((p & 1) == 1);
     p--;
     p = ((p - 1) / q) * q + 1;
     while (!MillerRabin(p)){
         p += q;
     }
-    integer g = 1;
-    integer h = 2;
-    integer exp = (p - 1) / q;
+    mpz_class g = 1;
+    mpz_class h = 2;
+    mpz_class exp = (p - 1) / q;
     while (g == 1){
         g = POW(h++, exp, p);
     }
     return {p, q, g};
 }
 
-integer DSA_keygen(std::vector <integer> & pub){
-    integer x;
+mpz_class DSA_keygen(std::vector <mpz_class> & pub){
+    mpz_class x;
     std::string test = "0123456789abcdef";
     while (true){
-        x = integer(BBS(pub[2].bits() - 1).rand(), 2);
+        x = mpz_class(BBS((unsigned int) (makebin(pub[2]).size() - 1)).rand(), 2);
         pub.push_back(POW(pub[3], x, pub[1]));
-        std::vector <integer> rs = DSA_sign(test, {x}, pub);
+        std::vector <mpz_class> rs = DSA_sign(test, {x}, pub);
         if (DSA_verify(test, rs, pub)){
             break;
         }
     }
     return x;
 }
-std::vector <integer> DSA_sign(std::string & data, const std::vector <integer> & pri, const std::vector <integer> & pub){
+std::vector <mpz_class> DSA_sign(std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
 
-    integer k, r, s;
-    while (!r || !s){
-        k = (integer(BBS(pub[1].bits()).rand(), 2) % (pub[1] - 1)) + 1;
+    mpz_class k, r, s;
+    while ((r == 0) || (s == 0)){
+        k = (mpz_class(BBS((unsigned int) makebin(pub[1]).size()).rand(), 2) % (pub[1] - 1)) + 1;
         r = POW(pub[2], k, pub[0]) % pub[1];
-        if (!r){
+        if (r == 0){
             continue;
         }
-        s = (invmod(pub[1], k) * (integer(data, 256) + pri[0] * r)) % pub[1];
+        s = (invmod(pub[1], k) * (mpz_class(data, 256) + pri[0] * r)) % pub[1];
     }
     return {r, s};
 }
 
-bool DSA_verify(std::string & data, const std::vector <integer> & sig, const std::vector <integer> & pub){
+bool DSA_verify(std::string & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub){
     /*
         0 < r < q or 0 < s < q
         w = s^-1 mod q
@@ -64,8 +64,8 @@ bool DSA_verify(std::string & data, const std::vector <integer> & sig, const std
     if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))){
         return false;
     }
-    integer w = invmod(pub[1], sig[1]);
-    integer u1 = (integer(data, 256) * w) % pub[1];
-    integer u2 = (sig[0] * w) % pub[1];
+    mpz_class w = invmod(pub[1], sig[1]);
+    mpz_class u1 = (mpz_class(data, 256) * w) % pub[1];
+    mpz_class u2 = (sig[0] * w) % pub[1];
     return ((((POW(pub[2], u1, pub[0]) * POW(pub[3], u2, pub[0])) % pub[0]) % pub[1]) == sig[0]);
 }

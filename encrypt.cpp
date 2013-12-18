@@ -39,7 +39,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
         exit(1);
     }
 
-    std::vector <integer> mpi = public_key -> get_mpi();
+    std::vector <mpz_class> mpi = public_key -> get_mpi();
 
     Tag1 * tag1 = new Tag1;
     tag1 -> set_keyid(public_key -> get_keyid());
@@ -49,14 +49,21 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     // generate session key
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
-    std::string session_key = integer(BBS((unsigned int) key_len).rand(), 2).str(256, key_len >> 3);
+    std::string session_key = mpz_class(BBS((unsigned int) key_len).rand(), 2).get_str(16);
+    session_key += std::string(session_key.size() & 1, 0) + session_key;
+    while (session_key.size() < (size_t) (key_len >> 3)){
+        session_key = zero + session_key;
+    }
+
     // get checksum of session key
     uint16_t sum = 0;
     for(char & x : session_key){
         sum += (unsigned char) x;
     }
 
-    integer m(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), (mpi[0]).bytes()), 256);
+    std::string bytes = mpi[0].get_str(16);
+    bytes += std::string(bytes.size() & 1, 0);
+    mpz_class m(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1), 256);
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA
         tag1 -> set_mpi({RSA_encrypt(m, mpi)});
@@ -78,7 +85,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     // generate prefix
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
-    std::string prefix = unhexlify(makehex(integer(BBS((unsigned int) BS << 3).rand(), 2), BS << 1));
+    std::string prefix = unhexlify(makehex(mpz_class(BBS((unsigned int) BS << 3).rand(), 2), BS << 1));
 
     Packet * encrypted = NULL;
 

@@ -1,5 +1,5 @@
 #include "BBS.h"
-void BBS::init(int64_t SEED, int SIZE, std::string PAR, int64_t p, int64_t q){
+void BBS::init(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
     /*
     parity: even, odd, or least
 
@@ -12,18 +12,16 @@ void BBS::init(int64_t SEED, int SIZE, std::string PAR, int64_t p, int64_t q){
     seed = SEED;
     par = PAR;
     size = SIZE;
-
-    srand(time(NULL));
-    if (!p){
+    if (p == 0){
         p = std::rand();
-        p -= not(p & 1);
+        p -= ((p & 1) == 0);
         while ((!MillerRabin(p)) && ((p & 3) != 3)){
             p -= 4;
         }
     }
-    if (!q){
+    if (q == 0){
         q = std::rand();
-        q -= not(q & 1);
+        q -= ((q & 1) == 0);
         while ((!MillerRabin(q)) && ((q & 3) != 3)){ /*&& (gcd(p - 1, q - 1) > 10)*/
             q -= 4;
         }
@@ -36,14 +34,14 @@ void BBS::r_number(){
 }
 
 bool BBS::parity(){
-    uint64_t value = seed;
+    mpz_class value = seed;
     if (par == "least"){
-        return seed & 1;
+        return ((seed & 1) == 1);
     }
     else{
         bool t = 0;
-        while (value){
-            t ^= value & 1;
+        while (value != 0){
+            t ^= ((value & 1) == 1);
             value >>= 1;
         }
         t ^= (par == "odd");
@@ -51,19 +49,18 @@ bool BBS::parity(){
     }
 }
 
-BBS::BBS(unsigned int SIZE, std::string PAR, int64_t p, int64_t q){
+BBS::BBS(unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
     time_t now;
     time(&now);
-    init(std::rand() * now, SIZE, PAR, p, q);
+    init(mpz_class(std::rand() * (unsigned int) now), SIZE, PAR, p, q);
 }
 
-BBS::BBS(int64_t SEED, int SIZE, std::string PAR, int64_t p, int64_t q){
+BBS::BBS(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
     init(SEED, SIZE, PAR, p, q);
 }
 
 std::string BBS::rand(){
     // returns string because SIZE might be larger than 64 bits
-    // use 'toint(BBS().rand(), 2)' to get integer value
     std::string out = "";
     for(int64_t x = 0; x < size; x++){
         r_number();

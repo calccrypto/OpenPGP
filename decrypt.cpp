@@ -1,8 +1,10 @@
 #include "decrypt.h"
 
-std::string pka_decrypt(uint8_t pka, std::vector <integer> data, const std::vector <integer> & pri, const std::vector <integer> & pub){
+std::string pka_decrypt(uint8_t pka, std::vector <mpz_class> data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     if (pka < 3){   // RSA
-        return RSA_decrypt(data[0], pri, pub).str(256);
+        std::string out = RSA_decrypt(data[0], pri, pub).get_str(16);
+        out = std::string(out.size() & 1, '0') + out;
+        return unhexlify(out);
     }
     if (pka == 16){ // ElGamal
         return ElGamal_decrypt(data, pri, pub);
@@ -10,8 +12,8 @@ std::string pka_decrypt(uint8_t pka, std::vector <integer> data, const std::vect
     return "";
 }
 
-std::vector <integer> decrypt_secret_key(Tag5 * pri, std::string pass){
-    std::vector <integer> out;
+std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, std::string pass){
+    std::vector <mpz_class> out;
     S2K * s2k = pri -> get_s2k_pointer();
     unsigned int sym_key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3;
 
@@ -82,7 +84,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
-        std::vector <integer> session_key_mpi = tag1.get_mpi();
+        std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
         std::vector <Packet *> packets = pri.get_packets_pointers();
@@ -103,12 +105,12 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
             std::cerr << "Error: Correct Private Key not found" << std::endl;
             exit(1);
         }
-        std::vector <integer> pri = decrypt_secret_key(sec, pass);
+        std::vector <mpz_class> pri = decrypt_secret_key(sec, pass);
 
-        std::vector <integer> pub = sec -> get_mpi();
+        std::vector <mpz_class> pub = sec -> get_mpi();
 
         // get session key
-        session_key = std::string(1, 0) + pka_decrypt(pka, session_key_mpi, pri, pub);      // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
+        session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
         session_key = EME_PKCS1_DECODE(session_key);                                        // remove EME_PKCS1 encoding
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum

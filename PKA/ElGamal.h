@@ -1,12 +1,13 @@
 #include <vector>
 
-#include "../common/integer.h"
+#include <gmpxx.h>
+
 #include "../RNG/RNG.h"
 
 #ifndef __ELGAMAL__
 #define __ELGAMAL__
-std::vector <integer> ElGamal_keygen(unsigned int bits = 1024);
-std::vector <integer> ElGamal_encrypt(integer & data, const std::vector <integer> & pub);
-std::vector <integer> ElGamal_encrypt(std::string & data, const std::vector <integer> & pub);
-std::string ElGamal_decrypt(std::vector <integer> & c, const std::vector <integer> & pri, const std::vector <integer> & pub);
+std::vector <mpz_class> ElGamal_keygen(unsigned int bits = 1024);
+std::vector <mpz_class> ElGamal_encrypt(mpz_class & data, const std::vector <mpz_class> & pub);
+std::vector <mpz_class> ElGamal_encrypt(std::string & data, const std::vector <mpz_class> & pub);
+std::string ElGamal_decrypt(std::vector <mpz_class> & c, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
 #endif

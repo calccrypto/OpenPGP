@@ -40,6 +40,22 @@ std::string little_end(const std::string & str, const unsigned int & base){
 	return t;
 }
 
+std::string makebin(mpz_class value, unsigned int size){
+    std::string out = value.get_str(2);
+    while (out.size() < size){
+        out = std::string(size - out.size(), 0) + out;
+    }
+    return out;
+}
+
+std::string makehex(mpz_class value, unsigned int size){
+    std::string out = value.get_str(16);
+    while (out.size() < size){
+        out = std::string(size - out.size(), 0) + out;
+    }
+    return out;
+}
+
 std::string bintohex(const std::string & in){
     // Changes a binary string to its hexadecimal equivalent
     if (in.size() % 4){

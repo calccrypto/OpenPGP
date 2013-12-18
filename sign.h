@@ -14,7 +14,7 @@
 Tag5 * find_signing_packet(PGP & k);
 Tag13 * find_signer_id(PGP & k);
 
-std::vector <integer> pka_sign(std::string hashed_message, uint8_t pka, std::vector <integer> & pub, std::vector <integer> & pri);
+std::vector <mpz_class> pka_sign(std::string hashed_message, uint8_t pka, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri);
 
 // Will generate new default Signature packet if none is given.
 // Only signs data. Output is essentially a detached signature.

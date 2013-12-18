@@ -1,7 +1,7 @@
 #include "PKA/ElGamal.h"
 #include "PKA/RSA.h"
-#include "OpenPGP.h"
 #include "cfb.h"
+#include "OpenPGP.h"
 #include "PKCS1.h"
 #include "usehash.h"
 

@@ -56,7 +56,6 @@ bool parse_command(std::string & input){
         }
 
         PGP k(f);
-
         std::cout << k.list_keys() << std::endl;
     }
     else if (cmd == "show"){

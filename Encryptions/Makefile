@@ -2,7 +2,7 @@
 CC=g++
 LFLAGS=
 CFLAGS=-std=c++11 -Wall -c
-debug: BFLAGS += -g -O0
+debug: BFLAGS += -g
 debug: all
 
 all: AES.o Blowfish.o CAST128.o DES.o error.o IDEA.o TDES.o

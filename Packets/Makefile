@@ -2,7 +2,7 @@
 CC=g++
 LFLAGS=
 CFLAGS=-std=c++11 -Wall -c
-debug: BFLAGS += -g -O0
+debug: BFLAGS += -g
 debug: all
 
 all: packet.o Tag0.o Tag1.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o
@@ -15,6 +15,30 @@ Tag0.o: Tag0.h Tag0.cpp packet.h
 
 Tag1.o: Tag1.h Tag1.cpp packet.h
 	$(CC) $(CFLAGS) Tag1.cpp
+
+Tag2.o: Tag2.h Tag2.cpp ../subpackets.h packet.h Tag6.h
+	$(CC) $(CFLAGS) Tag2.cpp
+
+Tag3.o: Tag3.h Tag3.cpp ../cfb.h packet.h
+	$(CC) $(CFLAGS) Tag3.cpp
+
+Tag4.o: Tag4.h Tag4.cpp packet.h
+	$(CC) $(CFLAGS) Tag4.cpp
+
+Tag5.o: Tag5.h Tag5.cpp Tag6.h
+	$(CC) $(CFLAGS) Tag5.cpp
+
+Tag6.o: Tag6.h Tag6.cpp packet.h
+	$(CC) $(CFLAGS) -lgmp -lgmpxx Tag6.cpp
+
+Tag7.o: Tag7.h Tag7.cpp Tag5.h
+	$(CC) $(CFLAGS) Tag7.cpp
+
+Tag8.o: Tag8.h Tag8.cpp packet.h
+	$(CC) $(CFLAGS) Tag8.cpp
+
+Tag9.o: Tag9.h Tag9.cpp packet.h
+	$(CC) $(CFLAGS) Tag9.cpp
 
 Tag10.o: Tag10.h Tag10.cpp packet.h
 	$(CC) $(CFLAGS) Tag10.cpp
@@ -39,30 +63,6 @@ Tag18.o: Tag18.h Tag18.cpp packet.h
 
 Tag19.o: Tag19.h Tag19.cpp packet.h
 	$(CC) $(CFLAGS) Tag19.cpp
-
-Tag2.o: Tag2.h Tag2.cpp ../subpackets.h packet.h Tag6.h
-	$(CC) $(CFLAGS) Tag2.cpp
-
-Tag3.o: Tag3.h Tag3.cpp ../cfb.h packet.h
-	$(CC) $(CFLAGS) Tag3.cpp
-
-Tag4.o: Tag4.h Tag4.cpp packet.h
-	$(CC) $(CFLAGS) Tag4.cpp
-
-Tag5.o: Tag5.h Tag5.cpp Tag6.h
-	$(CC) $(CFLAGS) Tag5.cpp
-
-Tag6.o: Tag6.h Tag6.cpp packet.h
-	$(CC) $(CFLAGS) Tag6.cpp
-
-Tag7.o: Tag7.h Tag7.cpp Tag5.h
-	$(CC) $(CFLAGS) Tag7.cpp
-
-Tag8.o: Tag8.h Tag8.cpp packet.h
-	$(CC) $(CFLAGS) Tag8.cpp
-
-Tag9.o: Tag9.h Tag9.cpp packet.h
-	$(CC) $(CFLAGS) Tag9.cpp
 
 clean:
 	rm -f *.o

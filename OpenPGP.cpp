@@ -160,7 +160,6 @@ void PGP::read(std::string & data){
     else
         data = radix642ascii(data);
     // //////////////////////////////////////////////////////////////////////////////////////////
-
     read_raw(data);
     armored = true;
 }
@@ -301,7 +300,7 @@ std::string PGP::list_keys(){
                     {
                         Tag6 tag6(data);
                         std::stringstream size;
-                        size << tag6.get_mpi()[0].bits();
+                        size << makebin(tag6.get_mpi()[0]).size();
                         out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(size.str(), 4, " ")
                                << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
                                << hexlify(tag6.get_keyid().substr(4, 4)) << " "

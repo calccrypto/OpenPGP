@@ -10,7 +10,7 @@ I have found useful.
 // Greatest Common Divisor
 template <typename T> T gcd(T a, T b){
 	T c = 1;
-	while (c){
+	while (c != 0){
 		c = a % b;
 		a = b;
 		b = c;
@@ -22,7 +22,7 @@ template <typename T> T gcd(T a, T b){
 template <typename T> T invmod(T a, T b){
 	T A = a;
 	T x = 0, lastx = 1, y = 1, lasty = 0;
-	while (b){
+	while (b != 0){
 		T quotient = a / b;
 		T temp = b;
 		b = a % b;
@@ -41,14 +41,14 @@ template <typename T> T invmod(T a, T b){
 }
 
 // Faster Exponentiation by Squaring
-// adapted from http://stackoverflow.com/questions/101439/the-most-efficient-way-to-implement-an-integer-based-power-function-powint-int
+// adapted from http://stackoverflow.com/questions/101439/the-most-efficient-way-to-implement-an-mpz_class-based-power-function-powint-int
 template <typename S, typename T>
 S POW(S base, T exp)
 {
     S result = 1;
-    while (exp)
+    while (exp != 0)
     {
-        if (exp & 1){
+        if ((exp & 1) == 1){
             result *= base;
         }
         exp >>= 1;
@@ -61,8 +61,8 @@ S POW(S base, T exp)
 template <typename R, typename S, typename T>
 T POW(R base, S exponent, const T mod){
 	T result = 1;
-	while (exponent){
-		if (exponent & 1){
+	while (exponent != 0){
+		if ((exponent & 1) == 1){
 			result = (result * base) % mod;
         }
 		exponent >>= 1;

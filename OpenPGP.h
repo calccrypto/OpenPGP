@@ -4,12 +4,14 @@
 #include <sstream>
 #include <vector>
 
+#include <gmpxx.h>
+
 #include "common/includes.h"
 #include "consts.h"
 #include "packets.h"
 #include "pgptime.h"
-#include "subpackets.h"
 #include "radix64.h"
+#include "subpackets.h"
 
 #ifndef __PGP_STRUCTURES__
 #define __PGP_STRUCTURES__

@@ -5,9 +5,10 @@ by Jason Lee @ calccrypto@yahoo.com
 
 #include <ctime>
 
+#include <gmpxx.h>
+
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
-#include "../common/integer.h"
 
 #ifndef __RNG__
 #define __RNG__

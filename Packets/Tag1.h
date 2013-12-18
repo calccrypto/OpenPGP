@@ -7,7 +7,7 @@ class Tag1 : public Packet{
     private:
         std::string keyid;              // 8 octets
         uint8_t pka;
-        std::vector <integer> mpi;      // algorithm specific fields
+        std::vector <mpz_class> mpi;      // algorithm specific fields
 
     public:
         Tag1();
@@ -20,10 +20,10 @@ class Tag1 : public Packet{
 
         std::string get_keyid();
         uint8_t get_pka();
-        std::vector <integer> get_mpi();
+        std::vector <mpz_class> get_mpi();
 
         void set_keyid(std::string k);
         void set_pka(uint8_t p);
-        void set_mpi(std::vector <integer> m);
+        void set_mpi(std::vector <mpz_class> m);
 };
 #endif

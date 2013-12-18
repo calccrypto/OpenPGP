@@ -30,9 +30,9 @@ Tag13 * find_signer_id(PGP & k){
     return NULL;
 }
 
-std::vector <integer> pka_sign(std::string hashed_data, Tag5 * tag5, std::string pass){
-    std::vector <integer> pub = tag5 -> get_mpi();
-    std::vector <integer> pri = decrypt_secret_key(tag5, pass);
+std::vector <mpz_class> pka_sign(std::string hashed_data, Tag5 * tag5, std::string pass){
+    std::vector <mpz_class> pub = tag5 -> get_mpi();
+    std::vector <mpz_class> pri = decrypt_secret_key(tag5, pass);
     if ((tag5 -> get_pka() == 1) || (tag5 -> get_pka() == 3)){
         return {RSA_sign(hashed_data, pri, pub)};
     }

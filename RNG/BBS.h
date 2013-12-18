@@ -4,6 +4,8 @@
 #include <ctime>
 #include <iostream>
 
+#include <gmpxx.h>
+
 #ifndef __BBS__
 #define __BBS__
 
@@ -12,16 +14,17 @@
 
 class BBS{
     private:
-        int64_t seed, size, m;
+        int64_t size;
+        mpz_class seed, m;
         std::string par;
 
-        void init(int64_t SEED, int SIZE, std::string PAR, int64_t p = 0, int64_t q = 0);
+        void init(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p = 0, mpz_class q = 0);
         void r_number();
         bool parity();
 
     public:
-        BBS(unsigned int SIZE = 32, std::string PAR = "even", int64_t p = 0, int64_t q = 0);
-        BBS(int64_t SEED, int SIZE = 32, std::string PAR = "even", int64_t p = 0, int64_t q = 0);
+        BBS(unsigned int SIZE = 32, std::string PAR = "even", mpz_class p = 0, mpz_class q = 0);
+        BBS(mpz_class SEED, unsigned int SIZE = 32, std::string PAR = "even", mpz_class p = 0, mpz_class q = 0);
         std::string rand();
 };
 #endif

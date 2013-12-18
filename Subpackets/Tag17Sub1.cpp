@@ -35,7 +35,7 @@ std::string Tag17Sub1::show(){
 }
 
 std::string Tag17Sub1::raw(){
-    return "\x01" + std::string(1, 0) + "\x01\x01" + std::string(12, 0) + image;
+    return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
 Tag17Sub1 * Tag17Sub1::clone(){

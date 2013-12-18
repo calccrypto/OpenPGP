@@ -27,8 +27,8 @@ std::string find_keyid(Tag2 * tag2){
     return out;
 }
 
-std::vector <integer> find_matching_pub_key(std::string keyid, PGP & key){
-    std::vector <integer> keys;
+std::vector <mpz_class> find_matching_pub_key(std::string keyid, PGP & key){
+    std::vector <mpz_class> keys;
     std::vector <Packet *> packets = key.get_packets_pointers();
     for(Packet *& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
@@ -46,8 +46,8 @@ std::vector <integer> find_matching_pub_key(std::string keyid, PGP & key){
     return keys;
 }
 
-bool pka_verify(std::string & hashed_message, Tag2 * tag2, std::vector <integer> & key){
-    std::vector <integer> signature = tag2 -> get_mpi();
+bool pka_verify(std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key){
+    std::vector <mpz_class> signature = tag2 -> get_mpi();
     if ((tag2 -> get_pka() == 1) || (tag2 -> get_pka() == 3)){
         return RSA_verify(hashed_message, signature, key, tag2 -> get_hash());
     }
@@ -81,7 +81,7 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <integer> keys = find_matching_pub_key(keyid, key);
+    std::vector <mpz_class> keys = find_matching_pub_key(keyid, key);
     if (!keys.size()){
         return false;
     }
@@ -109,7 +109,7 @@ bool verify_message(PGPMessage & message, PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <integer> keys = find_matching_pub_key(keyid, key);
+    std::vector <mpz_class> keys = find_matching_pub_key(keyid, key);
     if (!keys.size()){
         return false;
     }
@@ -123,7 +123,7 @@ bool verify_signature(PGP & key, PGP & signer){
     std::vector <Packet *> packets = signer.get_packets_pointers();
 
     // find signing key
-    std::vector <integer> signing_key;
+    std::vector <mpz_class> signing_key;
     for(Packet *& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
             std::string data = p -> raw();
@@ -237,7 +237,7 @@ bool verify_revoke(PGP & key, PGP & rev){
             Tag6 * tag6 = new Tag6;
             std::string key_str = p -> raw();
             tag6 -> read(key_str);
-            std::vector <integer> mpi = tag6 -> get_mpi();
+            std::vector <mpz_class> mpi = tag6 -> get_mpi();
             std::string to_hash = addtrailer(overkey(tag6), revoke);
             if (pka_verify(to_hash, revoke, mpi)){
                 return true;

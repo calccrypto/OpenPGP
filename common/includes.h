@@ -7,6 +7,8 @@ Some functions were heavily influenced by python 2.7.2
 #include <iostream>
 #include <sstream>
 
+#include <gmpxx.h>
+
 #ifndef __INCLUDES__
 #define __INCLUDES__
 
@@ -22,6 +24,8 @@ const uint64_t mod64 = 0xffffffffffffffffULL;
 
 uint64_t toint(const std::string & s, const int & base = 10);
 std::string little_end(const std::string & str, const unsigned int & base = 16);
+std::string makebin(mpz_class value, unsigned int size = 0);
+
 template <typename T> std::string makebin(T value, unsigned int size = 8 * sizeof(T)){
     // Changes a value into its binary string
     std::string out(size, '0');
@@ -39,6 +43,8 @@ template <typename T> std::string makebin(T value, unsigned int size = 8 * sizeo
     }
     return out;
 }
+
+std::string makehex(mpz_class value, unsigned int size = 0);
 
 // Thanks to Ben Voigt @ stackoverflow for the makehex function
 // which I then adapted to makebin

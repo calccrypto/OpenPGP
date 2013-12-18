@@ -5,17 +5,18 @@
 #include <iostream>
 #include <vector>
 
+#include <gmpxx.h>
+
 #include "../common/cryptomath.h"
-#include "../common/integer.h"
 #include "BBS.h"
 #include "mt19937.h"
 
 #ifndef __MILLER_RABIN__
 #define __MILLER_RABIN__
 
-bool test(integer a, integer & n);
-bool MillerRabin(integer n, uint8_t s = 50);
-bool MillerRabin_FIPS186(integer w, uint8_t iterations = 50);
+bool test(mpz_class a, mpz_class & n);
+bool MillerRabin(mpz_class n, uint8_t s = 50);
+bool MillerRabin_FIPS186(mpz_class w, uint8_t iterations = 50);
 
 // ////////////////////////////////////////////////////////////////////
 // Thanks to whoever from http://snippets.dzone.com/posts/show/4200 wrote this!
@@ -45,11 +46,11 @@ template <typename T> bool test(T & a, T & n){
   return 0;//False # Prime
 }
 
-// standard ints: max 32 bits
 template <typename T> bool MillerRabin(T n, uint8_t s){
-  srand(time(NULL));
   for(uint8_t i = 0; i < s; i++){
-    T a = ((uint64_t) mt19937().randInt() << 32) + mt19937().randInt();
+    T a(mt19937().randInt());
+    a <<= 32;
+    a += mt19937().randInt();
     a %= n - 3;
     a += 2;
     if (test(a, n))
