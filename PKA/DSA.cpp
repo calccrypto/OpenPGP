@@ -4,12 +4,12 @@ std::vector <mpz_class> new_DSA_public(uint32_t L, uint32_t N){
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    mpz_class q(BBS(N).rand(), 2);
+    mpz_class q(BBS().rand(N), 2);
     q += !((q & 1) == 1);
     while (!MillerRabin(q)){
         q += 2;
     }
-    mpz_class p(BBS(L).rand(), 2);
+    mpz_class p(BBS().rand(L), 2);
     p += !((p & 1) == 1);
     p--;
     p = ((p - 1) / q) * q + 1;
@@ -29,7 +29,7 @@ mpz_class DSA_keygen(std::vector <mpz_class> & pub){
     mpz_class x;
     std::string test = "0123456789abcdef";
     while (true){
-        x = mpz_class(BBS((unsigned int) (makebin(pub[2]).size() - 1)).rand(), 2);
+        x = mpz_class(BBS().rand((makebin(pub[2]).size() - 1)), 2);
         pub.push_back(POW(pub[3], x, pub[1]));
         std::vector <mpz_class> rs = DSA_sign(test, {x}, pub);
         if (DSA_verify(test, rs, pub)){
@@ -42,7 +42,7 @@ std::vector <mpz_class> DSA_sign(std::string & data, const std::vector <mpz_clas
 
     mpz_class k, r, s;
     while ((r == 0) || (s == 0)){
-        k = (mpz_class(BBS((unsigned int) makebin(pub[1]).size()).rand(), 2) % (pub[1] - 1)) + 1;
+        k = (mpz_class(BBS().rand(makebin(pub[1]).size()), 2) % (pub[1] - 1)) + 1;
         r = POW(pub[2], k, pub[0]) % pub[1];
         if (r == 0){
             continue;

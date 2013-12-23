@@ -40,7 +40,7 @@ bool MillerRabin_FIPS186(mpz_class w, uint8_t iterations){
     }
     unsigned int wlen = makebin(w).size();
     for(uint8_t i = 0; i < iterations; i++){
-        mpz_class b = (mpz_class(BBS(wlen).rand(), 2) % (W - 2)) + 2;// probably better but really slow
+        mpz_class b = (mpz_class(BBS().rand(wlen), 2) % (W - 2)) + 2;// probably better but really slow
 //        mpz_class b = (mpz_class(rand()) % (W - 2)) + 2;
         mpz_class z = POW(b, m, w);
         bool cont = false;

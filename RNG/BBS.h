@@ -1,4 +1,9 @@
-// Blum Blum Shub by Lenore Blum, Manuel Blum and Michael Shub
+/*
+Blum Blum Shub by Lenore Blum, Manuel Blum and Michael Shub
+
+Only one "real" instance of BBS exists at a time, since
+seeding once will seed for the entire program.
+*/
 
 #include <algorithm>
 #include <ctime>
@@ -10,21 +15,23 @@
 #define __BBS__
 
 #include "../common/cryptomath.h"
+#include "../pgptime.h"
 #include "primalitytest.h"
 
 class BBS{
     private:
-        int64_t size;
-        mpz_class seed, m;
-        std::string par;
+        static bool seeded;                                   // whether or not BBS is seeded
+        static mpz_class state;                               // current state
+        static mpz_class m;                                   // large integer
+        std::string par;                                      // even, odd, or least
 
-        void init(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p = 0, mpz_class q = 0);
+        void init(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q);
         void r_number();
-        bool parity();
+        bool parity(const std::string & par);
 
     public:
-        BBS(unsigned int SIZE = 32, std::string PAR = "even", mpz_class p = 0, mpz_class q = 0);
-        BBS(mpz_class SEED, unsigned int SIZE = 32, std::string PAR = "even", mpz_class p = 0, mpz_class q = 0);
-        std::string rand();
+        BBS(...);
+        BBS(const mpz_class & SEED, const unsigned int & bits = 1024, mpz_class p = 0, mpz_class q = 0);
+        std::string rand(const mpz_class & bits = 1, const std::string & par = "even");
 };
 #endif

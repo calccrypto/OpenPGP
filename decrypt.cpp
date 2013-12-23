@@ -62,6 +62,8 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
         exit(1);
     }
 
+    BBS(now());
+
     // reused variables
     uint8_t packet;
     std::string data;

@@ -2,8 +2,8 @@
 std::vector <mpz_class> RSA_keygen(const unsigned int & bits){
 	mpz_class p = 3, q = 3;
 	while (p == q){
-	    p = mpz_class("1" +  BBS(rand(), bits).rand(), 2);
-	    q = mpz_class("1" +  BBS(rand(), bits).rand(), 2);
+	    p = mpz_class("1" +  BBS().rand(bits), 2);
+	    q = mpz_class("1" +  BBS().rand(bits), 2);
 		p += ((p & 1) == 0);
 		q += ((q & 1) == 0);
 		while (!MillerRabin(p)){
@@ -15,7 +15,7 @@ std::vector <mpz_class> RSA_keygen(const unsigned int & bits){
 	}
 	mpz_class n = p * q;
 	mpz_class tot = (p - 1) * (q - 1);
-	mpz_class e(BBS(rand(), bits).rand(), 2);
+	mpz_class e(BBS().rand(bits), 2);
 	e += ((e & 1) == 0);
 	while (gcd(tot, e) != 1){
         e += 2;

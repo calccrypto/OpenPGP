@@ -1,42 +1,52 @@
 #include "BBS.h"
-void BBS::init(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
-    /*
-    parity: even, odd, or least
+bool BBS::seeded = false;
 
-    getpq: auto or manual;
-        manual assumes the p and q values are:
+mpz_class BBS::state = 0;
+
+mpz_class BBS::m = 0;
+
+void BBS::init(const mpz_class & seed, const unsigned int & bits, mpz_class p, mpz_class q){
+    if (!seeded){
+        /*
+        p and q should be:
             prime
             congruent to 3 mod 4
             gcd(p - 1, q - 1) is small
-    */
-    seed = SEED;
-    par = PAR;
-    size = SIZE;
-    if (p == 0){
-        p = std::rand();
-        p -= ((p & 1) == 0);
-        while ((!MillerRabin(p)) && ((p & 3) != 3)){
-            p -= 4;
+        */
+        gmp_randclass rng(gmp_randinit_default);                 // set up rng for initializing BBS
+        rng.seed(rng.get_z_bits(bits));                          // seed itself with random garbage
+        if (p == 0){
+            p = rng.get_z_bits(bits);
+            mpz_nextprime(p.get_mpz_t(), p.get_mpz_t());         // find closest prime
+            while ((p & 3) != 3){                                // search for primes that are 3 = p mod 4
+                p += 1;
+                mpz_nextprime(p.get_mpz_t(), p.get_mpz_t());     // find next prime
+            }
         }
-    }
-    if (q == 0){
-        q = std::rand();
-        q -= ((q & 1) == 0);
-        while ((!MillerRabin(q)) && ((q & 3) != 3)){ /*&& (gcd(p - 1, q - 1) > 10)*/
-            q -= 4;
+        if (q == 0){
+            q = rng.get_z_bits(bits);
+            mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());         // find closest prime
+            mpz_class pq_gcd = 1025;
+            while (((q & 3) != 3) && (pq_gcd < 1024)){           // search for primes that are 3 = q mod 4 and gcd(p - 1, q - 1) is small
+                q += 1;
+                mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());     // find next prime
+                mpz_gcd(pq_gcd.get_mpz_t() , mpz_class(p - 1).get_mpz_t(), mpz_class(q - 1).get_mpz_t());
+            }
         }
+        m = p * q;
+        state = seed;
+        seeded = true;
     }
-    m = p * q;
 }
 
 void BBS::r_number(){
-    seed = POW(seed, 2, m);
+    state = POW(state, 2, m);
 }
 
-bool BBS::parity(){
-    mpz_class value = seed;
+bool BBS::parity(const std::string & par){
+    mpz_class value = state;
     if (par == "least"){
-        return ((seed & 1) == 1);
+        return ((state & 1) == 1);
     }
     else{
         bool t = 0;
@@ -49,22 +59,23 @@ bool BBS::parity(){
     }
 }
 
-BBS::BBS(unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
-    time_t now;
-    time(&now);
-    init(mpz_class(std::rand() * (unsigned int) now), SIZE, PAR, p, q);
+BBS::BBS(...){
+    if (!seeded){
+        std::cerr << "Error: BBS must be seeded first" << std::endl;
+        exit(1);
+    }
 }
 
-BBS::BBS(mpz_class SEED, unsigned int SIZE, std::string PAR, mpz_class p, mpz_class q){
-    init(SEED, SIZE, PAR, p, q);
+BBS::BBS(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q){
+    init(SEED, bits, p, q);
 }
 
-std::string BBS::rand(){
+std::string BBS::rand(const mpz_class & bits, const std::string & par){
     // returns string because SIZE might be larger than 64 bits
     std::string out = "";
-    for(int64_t x = 0; x < size; x++){
+    for(mpz_class x = 0; x < bits; x++){
         r_number();
-        out += "01"[parity()];
+        out += "01"[parity(par)];
     }
     return out;
 }

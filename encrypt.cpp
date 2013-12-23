@@ -1,6 +1,8 @@
 #include "encrypt.h"
 
 std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
+    BBS(now());
+
     std::vector <Packet *> packets = pub.get_packets_pointers();
     Tag6 * public_key = new Tag6;
 
@@ -49,7 +51,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     // generate session key
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
-    std::string session_key = mpz_class(BBS((unsigned int) key_len).rand(), 2).get_str(16);
+    std::string session_key = mpz_class(BBS().rand(key_len), 2).get_str(16);
     session_key += std::string(session_key.size() & 1, 0) + session_key;
     while (session_key.size() < (size_t) (key_len >> 3)){
         session_key = zero + session_key;
@@ -85,7 +87,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     // generate prefix
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
-    std::string prefix = unhexlify(makehex(mpz_class(BBS((unsigned int) BS << 3).rand(), 2), BS << 1));
+    std::string prefix = unhexlify(makehex(mpz_class(BBS().rand(BS << 3), 2), BS << 1));
 
     Packet * encrypted = NULL;
 
