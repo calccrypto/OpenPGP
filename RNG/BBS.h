@@ -16,7 +16,6 @@ seeding once will seed for the entire program.
 
 #include "../common/cryptomath.h"
 #include "../pgptime.h"
-#include "primalitytest.h"
 
 class BBS{
     private:

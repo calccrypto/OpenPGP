@@ -1,6 +1,11 @@
 /*
 A bunch of math algorithms that
 I have found useful.
+
+gcd, invmod, and pow are deprecated since
+they are now done through GMP. However,
+they are still useful for integer types
+that do not have these functions defined.
 */
 
 #include <iostream>

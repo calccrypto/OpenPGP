@@ -13,7 +13,7 @@ All data manipulation is done on bytes
 #ifndef __PGPMPI__
 #define __PGPMPI__
 
-std::string write_MPI(mpz_class data);        // given some value, return the formatted mpi
+std::string write_MPI(const mpz_class & data);        // given some value, return the formatted mpi
 mpz_class read_MPI(std::string & data);       // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
 
 #endif

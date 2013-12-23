@@ -1,6 +1,7 @@
 #include "encrypt.h"
 
 std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
+    // seed BBS
     BBS(now());
 
     std::vector <Packet *> packets = pub.get_packets_pointers();

@@ -8,8 +8,10 @@ Input data should already be formatted and ready for hashing
 #include <gmpxx.h>
 
 #include "../common/cryptomath.h"
+#include "../common/includes.h"
 #include "../Hashes/Hashes.h"
 #include "../RNG/RNG.h"
+#include "../pgptime.h"
 #include "../usehash.h"
 
 #ifndef __DSA__

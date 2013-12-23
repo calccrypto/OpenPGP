@@ -34,3 +34,4 @@ $RECYCLE.BIN/
 
 *.depend
 *.layout
+*.cbTemp

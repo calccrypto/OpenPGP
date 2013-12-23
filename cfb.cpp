@@ -91,7 +91,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, uint8_t packet, std::string data
     }
     std::string P = "";
     unsigned int x = (packet == 9)?2:0; // 7
-    while ((x + BS)< data.size()){
+    while ((x + BS) < data.size()){
         P += xor_strings(FRE, data.substr(x, BS));
         FRE = crypt -> encrypt(data.substr(x, BS));
         x += BS;

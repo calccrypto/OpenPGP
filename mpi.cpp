@@ -1,10 +1,10 @@
 #include "mpi.h"
 
 // given some value, return the formatted mpi
-std::string write_MPI(mpz_class data){
+std::string write_MPI(const mpz_class & data){
     std::string out = data.get_str(16);
-    out = std::string(out.size() & 1, '0') + out;
-    out = makehex(makebin(data).size(), 4) + out;
+    out = ((out.size() & 1)?"0":"") + out;
+    out = makehex(data.get_str(2).size(), 4) + out;
     return unhexlify(out);
 }
 

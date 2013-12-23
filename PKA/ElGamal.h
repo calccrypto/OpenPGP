@@ -3,6 +3,7 @@
 #include <gmpxx.h>
 
 #include "../RNG/RNG.h"
+#include "../pgptime.h"
 
 #ifndef __ELGAMAL__
 #define __ELGAMAL__

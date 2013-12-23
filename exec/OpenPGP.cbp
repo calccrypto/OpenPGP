@@ -127,12 +127,7 @@
 		<Unit filename="../Packets/packet.h" />
 		<Unit filename="../RNG/BBS.cpp" />
 		<Unit filename="../RNG/BBS.h" />
-		<Unit filename="../RNG/MillerRabin.cpp" />
-		<Unit filename="../RNG/MillerRabin.h" />
 		<Unit filename="../RNG/RNG.h" />
-		<Unit filename="../RNG/mt19937.cpp" />
-		<Unit filename="../RNG/mt19937.h" />
-		<Unit filename="../RNG/primalitytest.h" />
 		<Unit filename="../Subpackets/Tag17Sub1.cpp" />
 		<Unit filename="../Subpackets/Tag17Sub1.h" />
 		<Unit filename="../Subpackets/Tag2Sub0.cpp" />

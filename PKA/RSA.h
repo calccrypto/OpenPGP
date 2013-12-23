@@ -7,6 +7,7 @@
 #include "../consts.h"
 #include "../common/includes.h"
 #include "../RNG/RNG.h"
+#include "../pgptime.h"
 #include "../usehash.h"
 
 #ifndef __RSA__
