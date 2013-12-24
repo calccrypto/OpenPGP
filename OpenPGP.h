@@ -7,11 +7,11 @@
 #include <gmpxx.h>
 
 #include "common/includes.h"
+#include "Packets/packets.h"
+#include "Subpackets/subpackets.h"
 #include "consts.h"
-#include "packets.h"
 #include "pgptime.h"
 #include "radix64.h"
-#include "subpackets.h"
 
 #ifndef __PGP_STRUCTURES__
 #define __PGP_STRUCTURES__

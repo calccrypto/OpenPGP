@@ -29,7 +29,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg * crypt, uint8_t packet, std::string data
     // 6
     C += xor_strings(FRE.substr(0, 2), prefix.substr(BS - 2, 2));
     // 7
-    if (packet == 9){
+    if (packet == 9){ // resynchronization
         FR = C.substr(2, BS);
         // 8
         FRE = crypt -> encrypt(FR);
@@ -46,7 +46,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg * crypt, uint8_t packet, std::string data
             x += BS;
         }
     }
-    else{
+    else{ // no resynchronization
         // 8
         FRE = crypt -> encrypt(FR);
         // 9

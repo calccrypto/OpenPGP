@@ -1,17 +1,20 @@
 #include "generatekey.h"
 
 void generate_keys(std::string & public_key, std::string & private_key, const std::string & passphrase, const std::string & username, const std::string & comment, const std::string & email){
-//    time_t time = now();
-//
+    BBS((mpz_class) (int) now()); // seed just in case not seeded
+
+    time_t time = now(); // need to move - will be same as seed
+
 //    std::vector <mpz_class> mpi;
 //    std::vector <Subpacket *> subpackets;
-//
-//    // generate some pka values here
-////    std::vector <mpz_class> dsa_pub = new_DSA_public(1024, 160);
-////    mpz_class dsa_pri = DSA_keygen(dsa_pub);
-////    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(1024);
-////    mpz_class elgamal_pri = elgamal_pub[3];
-////    elgamal_pub.pop_back();
+
+    // generate some pka values here
+    std::vector <mpz_class> dsa_pub = new_DSA_public();
+    std::vector <mpz_class> dsa_pri = DSA_keygen(dsa_pub);
+
+//    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(1024);
+//    mpz_class elgamal_pri = elgamal_pub[3];
+//    elgamal_pub.pop_back();
 //
 //    std::vector <mpz_class> DSA_pub = {   mpz_class("175466718616740411615640156350265486163809613514213656685227237159351776260193236923030228927905671867677337184318134702903960237546408302010360724274436019639502405323187799029742776686067449287558904042137172927936686590837020160292525250748155580652384740664931255981772117478967314777932252547256795892071", 10),
 //                                        mpz_class("809260232002608708872165272150356204306578772713", 10),

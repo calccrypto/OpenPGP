@@ -8,8 +8,8 @@ Calculates signature data without signing anything
 #include <iostream>
 #include <sstream>
 
+#include "Packets/packets.h"
 #include "OpenPGP.h"
-#include "packets.h"
 #include "usehash.h"
 
 #ifndef __SIGNATURE__

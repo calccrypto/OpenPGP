@@ -1,5 +1,9 @@
 #include "pgptime.h"
 
+std::chrono::high_resolution_clock::time_point hrc(){
+    return std::chrono::high_resolution_clock::now();
+}
+
 // get current time since epoch
 time_t now(){
     time_t rawtime;

@@ -5,9 +5,9 @@ CFLAGS=-std=c++11 -Wall -c
 debug: BFLAGS += -g
 debug: all
 
-all: BBS.o MillerRabin.o mt19937.o
+all: BBS.o
 
-BBS.o: BBS.h BBS.cpp ../common/cryptomath.h primalitytest.h
+BBS.o: BBS.h BBS.cpp ../common/cryptomath.h ../pgptime.h
 	$(CC) $(CFLAGS) BBS.cpp $(LFLAGS)
 
 clean:

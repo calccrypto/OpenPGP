@@ -2,10 +2,10 @@
 #include <vector>
 
 #include "common/includes.h"
+#include "Packets/packets.h"
 #include "PKA/DSA.h"
 #include "PKA/RSA.h"
 #include "decrypt.h"
-#include "packets.h"
 #include "pgptime.h"
 
 #ifndef __SIGN__

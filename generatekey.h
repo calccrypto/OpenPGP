@@ -5,6 +5,7 @@
 #include "PKA/RSA.h"
 #include "OpenPGP.h"
 #include "cfb.h"
+#include "pgptime.h"
 #include "PKCS1.h"
 #include "signverify.h"
 #include "usehash.h"

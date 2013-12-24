@@ -2,6 +2,7 @@
 
 #include <gmpxx.h>
 
+#include "../common/includes.h"
 #include "../RNG/RNG.h"
 #include "../pgptime.h"
 

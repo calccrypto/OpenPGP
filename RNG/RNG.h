@@ -1,13 +1,6 @@
 /*
-Random Number Generator Libary
-by Jason Lee @ calccrypto@yahoo.com
+Random Number Generator List
 */
-
-#include <gmpxx.h>
-
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
-#include "../pgptime.h"
 
 #ifndef __RNG__
 #define __RNG__

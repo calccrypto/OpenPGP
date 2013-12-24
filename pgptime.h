@@ -1,3 +1,4 @@
+#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <sstream>
@@ -6,6 +7,9 @@
 
 #ifndef __PGPTIME__
 #define __PGPTIME__
+
+// get current time since epoch with C++11 high resolution clock
+std::chrono::high_resolution_clock::time_point hrc();
 
 // get current time since epoch
 time_t now();

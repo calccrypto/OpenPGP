@@ -27,14 +27,14 @@ std::vector <mpz_class> ElGamal_keygen(unsigned int bits){
     mpz_class g(BBS().rand(bits), 2);
     mpz_class pow = 1;
     while (((g % p) == 1) || (pow == 1) ||/* (POW(g, k, p) == 1) ||*/ (((p - 1) % g) == 0)){
-        mpz_powm_sec(pow.get_mpz_t(), g.get_mpz_t(), mpz_class(2).get_mpz_t(), p.get_mpz_t());
+        mpz_powm(pow.get_mpz_t(), g.get_mpz_t(), mpz_class(2).get_mpz_t(), p.get_mpz_t());
     }
     mpz_class x(BBS().rand(bits), 2);
     x %= p - 1;
     ++x;
 
     mpz_class y;
-    mpz_powm_sec(y.get_mpz_t(), g.get_mpz_t(), x.get_mpz_t(), p.get_mpz_t());
+    mpz_powm(y.get_mpz_t(), g.get_mpz_t(), x.get_mpz_t(), p.get_mpz_t());
     return {p, g, y, x};
 }
 
@@ -42,8 +42,8 @@ std::vector <mpz_class> ElGamal_encrypt(mpz_class & data, const std::vector <mpz
     mpz_class k(BBS().rand(pub[0].get_str(2).size()), 2);
     k %= pub[0];
     mpz_class r, s;
-    mpz_powm_sec(r.get_mpz_t(), pub[1].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
-    mpz_powm_sec(s.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm(r.get_mpz_t(), pub[1].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm(s.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
     return {r, (data * s) % pub[0]};
 }
 
@@ -51,14 +51,14 @@ std::vector <mpz_class> ElGamal_encrypt(std::string & data, const std::vector <m
     mpz_class k(BBS().rand(pub[0].get_str(2).size()), 2);
     k %= pub[0];
     mpz_class r, s;
-    mpz_powm_sec(r.get_mpz_t(), pub[1].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
-    mpz_powm_sec(s.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm(r.get_mpz_t(), pub[1].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm(s.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
     return {r, (mpz_class(hexlify(data), 16) * s) % pub[0]};
 }
 
 std::string ElGamal_decrypt(std::vector <mpz_class> & c, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     mpz_class s, m;
-    mpz_powm_sec(s.get_mpz_t(), c[0].get_mpz_t(), pri[0].get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm(s.get_mpz_t(), c[0].get_mpz_t(), pri[0].get_mpz_t(), pub[0].get_mpz_t());
     mpz_invert(m.get_mpz_t(), s.get_mpz_t(), pub[0].get_mpz_t());
     m *= c[1];
     m %= pub[0];

@@ -83,6 +83,7 @@
 		<Unit filename="../PKA/DSA.h" />
 		<Unit filename="../PKA/ElGamal.cpp" />
 		<Unit filename="../PKA/ElGamal.h" />
+		<Unit filename="../PKA/PKA.h" />
 		<Unit filename="../PKA/RSA.cpp" />
 		<Unit filename="../PKA/RSA.h" />
 		<Unit filename="../PKCS1.cpp" />
@@ -125,6 +126,8 @@
 		<Unit filename="../Packets/Tag9.h" />
 		<Unit filename="../Packets/packet.cpp" />
 		<Unit filename="../Packets/packet.h" />
+		<Unit filename="../Packets/packets.cpp" />
+		<Unit filename="../Packets/packets.h" />
 		<Unit filename="../RNG/BBS.cpp" />
 		<Unit filename="../RNG/BBS.h" />
 		<Unit filename="../RNG/RNG.h" />
@@ -198,6 +201,7 @@
 		<Unit filename="../Subpackets/Tag2Sub9.h" />
 		<Unit filename="../Subpackets/subpacket.cpp" />
 		<Unit filename="../Subpackets/subpacket.h" />
+		<Unit filename="../Subpackets/subpackets.h" />
 		<Unit filename="../cfb.cpp" />
 		<Unit filename="../cfb.h" />
 		<Unit filename="../common/cryptomath.h" />
@@ -212,8 +216,6 @@
 		<Unit filename="../generatekey.h" />
 		<Unit filename="../mpi.cpp" />
 		<Unit filename="../mpi.h" />
-		<Unit filename="../packets.cpp" />
-		<Unit filename="../packets.h" />
 		<Unit filename="../pgptime.cpp" />
 		<Unit filename="../pgptime.h" />
 		<Unit filename="../radix64.cpp" />
@@ -224,7 +226,6 @@
 		<Unit filename="../sign.h" />
 		<Unit filename="../signverify.cpp" />
 		<Unit filename="../signverify.h" />
-		<Unit filename="../subpackets.h" />
 		<Unit filename="../usehash.cpp" />
 		<Unit filename="../usehash.h" />
 		<Unit filename="../verify.cpp" />
