@@ -6,20 +6,22 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
 //    L = 3072, N = 256
     BBS(now()); // seed just in case not seeded
 
+    // random prime q
     mpz_class q(BBS().rand(N), 2);
     mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
-
     while (q.get_str(2).size() >= N){
         q.set_str(BBS().rand(N), 2);
         mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
     }
 
+    // random prime p = kq + 1
     mpz_class p(BBS().rand(L), 2);      // pick random starting point
-    p = ((p - 1) / q) * q + 1;                      // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
+    p = ((p - 1) / q) * q + 1;          // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!mpz_probab_prime_p(p.get_mpz_t(), 25)){
         p += q;
     }
 
+    // generator g with order q
     mpz_class g = 1;
     mpz_class h = 1;
     mpz_class exp = (p - 1) / q;
@@ -36,7 +38,7 @@ std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
     unsigned int bits = pub[1].get_str(2).size() - 1;
     while (true){
         // 0 < x < q
-        while ((pub[1] <= x) || (x == 0)){
+        while ((x == 0) || (pub[1] <= x)){
             x.set_str(BBS().rand(bits), 2);
         }
 
@@ -60,11 +62,12 @@ std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
     return {x};
 }
 
-std::vector <mpz_class> DSA_sign(std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     mpz_class k, r = 0, s = 0;
     while ((r == 0) || (s == 0)){
         // 0 < k < q
-        k.set_str(BBS().rand(pub[1].get_str(2).size()), 2) % pub[1];
+        k.set_str(BBS().rand(pub[1].get_str(2).size()), 2);
+        k %= pub[1];
 
         // r = (g^k mod p) mod q
         mpz_powm(r.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
@@ -77,13 +80,18 @@ std::vector <mpz_class> DSA_sign(std::string & data, const std::vector <mpz_clas
 
         // s = k^-1 (m + x * r) mod q
         mpz_invert(s.get_mpz_t(), k.get_mpz_t(), pub[1].get_mpz_t());
-        s *= mpz_class(hexlify(data), 16) + pri[0] * r;
+        s *= mpz_class(data) + pri[0] * r;
         s %= pub[1];
     }
     return {r, s};
 }
 
-bool DSA_verify(std::string & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub){
+std::vector <mpz_class> DSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+    mpz_class m(hexlify(data), 16);
+    return DSA_sign(m, pri, pub);
+}
+
+bool DSA_verify(const mpz_class & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub){
     // 0 < r < q or 0 < s < q
     if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))){
         return false;
@@ -93,7 +101,7 @@ bool DSA_verify(std::string & data, const std::vector <mpz_class> & sig, const s
     mpz_invert(w.get_mpz_t(), sig[1].get_mpz_t(), pub[1].get_mpz_t());
 
     // u1 = H(m) * w mod q
-    mpz_class u1 = (mpz_class(hexlify(data), 16) * w) % pub[1];
+    mpz_class u1 = (mpz_class(data) * w) % pub[1];
 
     // u2 = r * w mod q
     mpz_class u2 = (sig[0] * w) % pub[1];
@@ -105,4 +113,8 @@ bool DSA_verify(std::string & data, const std::vector <mpz_class> & sig, const s
 
     // check v == r
     return ((((g * y) % pub[0]) % pub[1]) == sig[0]);
+}
+
+bool DSA_verify(const std::string & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub){
+    return DSA_verify(mpz_class(hexlify(data), 16), sig, pub);
 }

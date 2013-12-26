@@ -10,6 +10,7 @@ Calculates signature data without signing anything
 
 #include "Packets/packets.h"
 #include "OpenPGP.h"
+#include "pgptime.h"
 #include "usehash.h"
 
 #ifndef __SIGNATURE__
@@ -64,8 +65,7 @@ std::string certification(uint8_t version, ID * id);
 //
 // For binary document signatures (type 0x00), the document data is
 // hashed directly.
-std::string to_sign_00(std::string filename, Tag2 * tag2);
-std::string to_sign_00(std::ifstream & f, Tag2 * tag2);
+std::string to_sign_00(std::string & data, Tag2 * tag2);
 
 // 0x01: Signature of a canonical text document.
 // This means the signer owns it, created it, or certifies that it

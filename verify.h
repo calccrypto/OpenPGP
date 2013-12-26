@@ -1,3 +1,7 @@
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
 #include "PKA/DSA.h"
 #include "PKA/RSA.h"
 #include "OpenPGP.h"

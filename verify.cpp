@@ -63,11 +63,19 @@ bool verify_file(std::string filename, PGP & sig, PGP & key){
 }
 
 bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
+    if (!f){
+        std::cerr << "Error: Bad file" << std::endl;
+        exit(1);
+    }
+    std::stringstream s;
+    s << f.rdbuf();
+    std::string data = s.str();
+
     std::string temp = sig.get_packets_pointers()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
 
     // Check left 16 bits
-    std::string hash = to_sign_00(f, signature);
+    std::string hash = to_sign_00(data, signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
         std::cerr << "Error: Hash and given left 16 bits of hash do not match" << std::endl;
         exit(1);

@@ -64,7 +64,7 @@ s2k.o: s2k.h s2k.cpp common/includes.h consts.h usehash.h
 sign.o: sign.h sign.cpp common/includes.h PKA/DSA.h PKA/RSA.h decrypt.h Packets/packets.h pgptime.h
 	$(CC) $(CFLAGS) sign.cpp $(LFLAGS)
 
-signverify.o: signverify.h signverify.cpp OpenPGP.h Packets/packets.h usehash.h
+signverify.o: signverify.h signverify.cpp OpenPGP.h pgptime.h Packets/packets.h usehash.h
 	$(CC) $(CFLAGS) signverify.cpp $(LFLAGS)
 
 usehash.o: usehash.h usehash.cpp Hashes/Hashes.h

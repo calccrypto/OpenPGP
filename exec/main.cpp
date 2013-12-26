@@ -329,27 +329,37 @@ bool parse_command(std::string & input){
 }
 
 int main(int argc, char * argv[]){
-//    std::string input = "";
-//    // no commandline arguments
-//    if (argc == 1){
-//        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
-//                  << "Type help or ? for command syntax\n\n"
-//                  << std::endl;
-//        while (parse_command(input)){
-//            std::cout << "> ";
-//            getline(std::cin, input);
-//        }
-//    }
-//    // has commandline arguments
-//    else{
-//        for(int x = 1; x < argc; x++){
-//            input += std::string(argv[x]) + " ";
-//        }
-//        parse_command(input);
-//    }
+    std::string input = "";
+    // no commandline arguments
+    if (argc == 1){
+        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
+                  << "Type help or ? for command syntax\n\n"
+                  << std::endl;
+        while (parse_command(input)){
+            std::cout << "> ";
+            getline(std::cin, input);
+        }
+    }
+    // has commandline arguments
+    else{
+        for(int x = 1; x < argc; x++){
+            input += std::string(argv[x]) + " ";
+        }
+        parse_command(input);
+    }
 
-    std::string pub, pri;
-    generate_keys(pub, pri);
-
+//    std::string pub, pri;
+//    generate_keys(pub, pri, "", "abc", "", "aa@aaa.com");
+//    std::ifstream f("private.txt");
+//    PGP k(f);
+//    std::string data;
+//    std::vector <Packet *> p = k.get_packets_pointers();
+//    Tag5 * tag5 = new Tag5; data = p[0] -> raw(); tag5 -> read(data);
+//    Tag13 * tag13 = new Tag13; data = p[1] -> raw(); tag13 -> read(data);
+//    Tag2 * tag2 = new Tag2; data = p[2] -> raw(); tag2 -> read(data);
+//
+//    std::cout << hexlify(to_sign_13(tag5, tag13, tag2)) << std::endl;
+//
+//    delete tag5, tag13, tag2;
     return 0;
 }

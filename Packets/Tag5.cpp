@@ -80,10 +80,7 @@ void Tag5::read(std::string & data){
 }
 
 std::string Tag5::show(){
-    std::stringstream out;
-    out << show_tag6()
-        << "    S2K Usage: " << (unsigned int) s2k_con << "\n";
-    return out.str() + show_common();
+    return show_tag6() + show_common();
 }
 
 std::string Tag5::raw(){

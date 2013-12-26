@@ -2,7 +2,7 @@
 std::string addtrailer(std::string data, Tag2 * sig){
     std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
-        return data + trailer.substr(1, trailer.size() - 1);; // remove version from trailer
+        return data + trailer.substr(1, trailer.size() - 1) + unhexlify(makehex(sig -> get_time(), 8)); // remove version from trailer
     }
     else if (sig -> get_version() == 4){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
@@ -12,6 +12,7 @@ std::string addtrailer(std::string data, Tag2 * sig){
 
 std::string overkey(Key * key){
     std::string key_str = key -> raw();
+    // remove private data by copying over to Tag 6
     Tag6 tag6(key_str);
     key_str = tag6.raw();
     return "\x99" + unhexlify(makehex(key_str.size(), 4)) + key_str;
@@ -23,43 +24,30 @@ std::string certification(uint8_t version, ID * id){
     }
     else if (version == 4){
         std::string data = id -> raw();
-        if (id -> get_tag() == 13){
+        if (id -> get_tag() == 13){     // User ID packet
             return "\xb4" + unhexlify(makehex(data.size(), 8)) + data;
         }
-        else if (id -> get_tag() == 17){
+        else if (id -> get_tag() == 17){// User Attribute packet
             return "\xd1" + unhexlify(makehex(data.size(), 8)) + data;
         }
     }
     return ""; // error
 }
 
-std::string to_sign_00(std::string filename, Tag2 * tag2){
-    std::ifstream f(filename, std::ios::binary);
-    if (!f){
-        std::cerr << "Error: File " << filename << " could not be opened";
-        exit(1);
-    }
-    return to_sign_00(f, tag2);
+// binary document
+std::string to_sign_00(std::string & data, Tag2 * tag2){
+    return use_hash(tag2 -> get_hash(), addtrailer(data, tag2));
 }
 
-std::string to_sign_00(std::ifstream & f, Tag2 * tag2){
-    if (!f){
-        std::cerr << "Error: Bad filestream" << std::endl;
-        exit(1);
-    }
-
-    std::stringstream s;
-    s << f.rdbuf();
-    return use_hash(tag2 -> get_hash(), addtrailer(s.str(), tag2));
-}
-
+// text document
 std::string to_sign_01(std::string data, Tag2 * tag2){
-    std::string out = "";
+    std::string out;
+    // convert line endings ot <CR><LF>
     if (data[0] == '\n'){
         out = "\r\n";
     }
     else{
-        out += std::string(1, data[0]);
+        out = std::string(1, data[0]);
     }
     for(unsigned int x = 1; x < data.size(); x++){
         if ((data[x] == '\n') && (data[x - 1] != '\r')){  // check to make sure lines aren't already <CR><LF>
@@ -71,6 +59,9 @@ std::string to_sign_01(std::string data, Tag2 * tag2){
 }
 
 std::string to_sign_02(Tag2 * tag2){
+    if (tag2 -> get_version() == 3){
+        return "";
+    }
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
