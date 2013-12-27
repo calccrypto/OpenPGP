@@ -51,18 +51,18 @@ std::string Tag11::get_literal(){
     return literal;
 }
 
-void Tag11::set_format(uint8_t f){
+void Tag11::set_format(const uint8_t f){
     format = f;
 }
 
-void Tag11::set_filename(std::string f){
+void Tag11::set_filename(const std::string & f){
     filename = f;
 }
 
-void Tag11::set_time(uint32_t t){
+void Tag11::set_time(const uint32_t t){
     time = t;
 }
 
-void Tag11::set_literal(std::string l){
+void Tag11::set_literal(const std::string & l){
     literal = l;
 }

@@ -29,6 +29,6 @@ std::string Tag2Sub6::get_regex(){
     return regex;
 }
 
-void Tag2Sub6::set_regex(std::string r){
+void Tag2Sub6::set_regex(const std::string & r){
     regex = r;
 }

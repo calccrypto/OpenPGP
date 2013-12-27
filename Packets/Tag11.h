@@ -24,9 +24,9 @@ class Tag11 : public Packet{
         uint32_t get_time();
         std::string get_literal();
 
-        void set_format(uint8_t f);
-        void set_filename(std::string f);
-        void set_time(uint32_t t);
-        void set_literal(std::string l);
+        void set_format(const uint8_t f);
+        void set_filename(const std::string & f);
+        void set_time(const uint32_t t);
+        void set_literal(const std::string & l);
 };
 #endif

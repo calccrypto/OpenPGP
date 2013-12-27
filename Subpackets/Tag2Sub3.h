@@ -18,6 +18,6 @@ class Tag2Sub3 : public Subpacket{
 
         time_t get_time();
 
-        void set_time(time_t t);
+        void set_time(const time_t t);
 };
 #endif

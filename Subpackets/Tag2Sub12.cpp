@@ -43,14 +43,14 @@ std::string Tag2Sub12::get_fingerprint(){
     return fingerprint;
 }
 
-void Tag2Sub12::set_class(uint8_t c){
+void Tag2Sub12::set_class(const uint8_t c){
     _class = c;
 }
 
-void Tag2Sub12::set_pka(uint8_t p){
+void Tag2Sub12::set_pka(const uint8_t p){
     pka = p;
 }
 
-void Tag2Sub12::set_fingerprint(std::string f){
+void Tag2Sub12::set_fingerprint(const std::string & f){
     fingerprint = f;
 }

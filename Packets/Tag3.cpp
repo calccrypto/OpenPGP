@@ -83,7 +83,7 @@ std::string Tag3::get_key(std::string pass){
     return out; // first byte is symmetric key algorithm. rest is session key
 }
 
-void Tag3::set_sym(uint8_t s){
+void Tag3::set_sym(const uint8_t s){
     sym = s;
 }
 
@@ -107,5 +107,3 @@ void Tag3::set_key(std::string pass, std::string sk){
         esk = new std::string(use_normal_CFB_encrypt(sym, sk, pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0)));
     }
 }
-
-

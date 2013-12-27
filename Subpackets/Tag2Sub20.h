@@ -24,8 +24,8 @@ class Tag2Sub20 : public Subpacket{
         std::string get_m();
         std::string get_n();
 
-        void set_flags(std::string f);
-        void set_m(std::string s);
-        void set_n(std::string s);
+        void set_flags(const std::string & f);
+        void set_m(const std::string & s);
+        void set_n(const std::string & s);
 };
 #endif

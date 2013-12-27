@@ -76,18 +76,18 @@ std::string Tag8::get_compressed_data(){
     return compressed_data;
 }
 
-void Tag8::set_comp(uint8_t c){
-    comp = c;
-}
-
-void Tag8::set_compressed_data(std::string data){
-    compressed_data = data;
-}
-
 std::string Tag8::get_data(){
     return decompress(compressed_data);
 }
 
-void Tag8::set_data(std::string data){
+void Tag8::set_comp(const uint8_t c){
+    comp = c;
+}
+
+void Tag8::set_data(const std::string & data){
     compressed_data = compress(data);
+}
+
+void Tag8::set_compressed_data(const std::string & data){
+    compressed_data = data;
 }

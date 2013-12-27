@@ -33,5 +33,5 @@ Tag2 * Tag2Sub32::get_embedded(){
 }
 
 void Tag2Sub32::set_embedded(Tag2 * e){
-    embedded = e;
+    embedded = e -> clone();
 }

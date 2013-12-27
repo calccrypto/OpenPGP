@@ -33,6 +33,6 @@ std::string Tag2Sub22::get_pca(){
     return pca;
 }
 
-void Tag2Sub22::set_pca(std::string c){
+void Tag2Sub22::set_pca(const std::string & c){
     pca = c;
 }

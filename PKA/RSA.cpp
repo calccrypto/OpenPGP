@@ -25,18 +25,18 @@ std::vector <mpz_class> RSA_keygen(const unsigned int & bits){
 }
 
 mpz_class RSA_encrypt(mpz_class & data, const std::vector <mpz_class> & pub){
-    mpz_powm(data.get_mpz_t(), data.get_mpz_t(), pub[1].get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm_sec(data.get_mpz_t(), data.get_mpz_t(), pub[1].get_mpz_t(), pub[0].get_mpz_t());
     return data;
 }
 
 mpz_class RSA_encrypt(std::string & data, const std::vector <mpz_class> & pub){
     mpz_class out;
-    mpz_powm(out.get_mpz_t(), mpz_class(hexlify(data), 16).get_mpz_t(), pub[1].get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm_sec(out.get_mpz_t(), mpz_class(hexlify(data), 16).get_mpz_t(), pub[1].get_mpz_t(), pub[0].get_mpz_t());
     return out;
 }
 
 mpz_class RSA_decrypt(mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
-    mpz_powm(data.get_mpz_t(), data.get_mpz_t(), pri[0].get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm_sec(data.get_mpz_t(), data.get_mpz_t(), pri[0].get_mpz_t(), pub[0].get_mpz_t());
     return data;
 }
 

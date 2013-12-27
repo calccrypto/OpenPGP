@@ -31,10 +31,10 @@ class Tag5 : public Tag6{
         std::string get_IV();
         std::string get_secret();
 
-        void set_s2k_con(uint8_t c);
-        void set_sym(uint8_t s);
+        void set_s2k_con(const uint8_t c);
+        void set_sym(const uint8_t s);
         void set_s2k(S2K * s);
-        void set_IV(std::string iv);
-        void set_secret(std::string s);
+        void set_IV(const std::string & iv);
+        void set_secret(const std::string & s);
 };
 #endif

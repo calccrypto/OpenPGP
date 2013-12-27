@@ -33,6 +33,6 @@ std::string Tag2Sub21::get_pha(){
     return pha;
 }
 
-void Tag2Sub21::set_pha(std::string p){
+void Tag2Sub21::set_pha(const std::string & p){
     pha = p;
 }

@@ -18,6 +18,6 @@ class Tag2Sub11 : public Subpacket{
 
         std::string get_psa();  // string containing Symmetric Key Algorithm values (ex: "\x07\x08\x09")
 
-        void set_psa(std::string s);
+        void set_psa(const std::string & s);
 };
 #endif

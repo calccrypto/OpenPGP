@@ -18,6 +18,6 @@ class Tag18 : public Packet{
 
         std::string get_protected_data();
 
-        void set_protected_data(std::string p);
+        void set_protected_data(const std::string & p);
 };
 #endif

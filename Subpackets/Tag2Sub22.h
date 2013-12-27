@@ -18,6 +18,6 @@ class Tag2Sub22 : public Subpacket{
 
         std::string get_pca();
 
-        void set_pca(std::string c);
+        void set_pca(const std::string & c);
 };
 #endif

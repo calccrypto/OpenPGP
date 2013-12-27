@@ -18,6 +18,6 @@ class Tag2Sub24 : public Subpacket{
 
         std::string get_pks();
 
-        void set_pks(std::string p);
+        void set_pks(const std::string & p);
 };
 #endif

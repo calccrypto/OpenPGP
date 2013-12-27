@@ -18,6 +18,6 @@ class Tag9 : public Packet{
 
         std::string get_encrypted_data();
 
-        void set_encrypted_data(std::string e);
+        void set_encrypted_data(const std::string & e);
 };
 #endif

@@ -20,7 +20,7 @@ class Tag2Sub29 : public Subpacket{
         uint8_t get_code();
         std::string get_reason();
 
-        void set_code(uint8_t c);
-        void set_reason(std::string r);
+        void set_code(const uint8_t c);
+        void set_reason(const std::string & r);
 };
 #endif

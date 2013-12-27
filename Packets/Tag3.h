@@ -20,14 +20,14 @@ class Tag3 : public Packet{
 
         Tag3 * clone();
 
-        void set_sym(uint8_t s);
-        void set_s2k(S2K * s);
-        void set_esk(std::string * s);
-        void set_key(std::string pass, std::string sk = "");
-
         uint8_t get_sym();
         S2K * get_s2k();
         std::string * get_esk();
         std::string get_key(std::string pass);
+
+        void set_sym(const uint8_t s);
+        void set_s2k(S2K * s);
+        void set_esk(std::string * s);
+        void set_key(std::string pass, std::string sk = "");
 };
 #endif

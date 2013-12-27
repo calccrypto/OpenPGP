@@ -18,6 +18,6 @@ class Tag10 : public Packet{
 
         std::string get_pgp();
 
-        void set_pgp(std::string s);
+        void set_pgp(const std::string & s = "PGP");
 };
 #endif

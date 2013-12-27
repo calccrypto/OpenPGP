@@ -18,6 +18,6 @@ class Tag2Sub6 : public Subpacket{
 
         std::string get_regex();
 
-        void set_regex(std::string r);
+        void set_regex(const std::string & r);
 };
 #endif

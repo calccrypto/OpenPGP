@@ -29,6 +29,6 @@ time_t Tag2Sub2::get_time(){
     return time;
 }
 
-void Tag2Sub2::set_time(time_t t){
+void Tag2Sub2::set_time(const time_t t){
     time = t;
 }

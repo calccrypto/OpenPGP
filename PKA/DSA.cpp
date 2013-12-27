@@ -27,7 +27,7 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
     mpz_class exp = (p - 1) / q;
     while (g == 1){
         h++;
-        mpz_powm(g.get_mpz_t(), h.get_mpz_t(), exp.get_mpz_t(), p.get_mpz_t());
+        mpz_powm_sec(g.get_mpz_t(), h.get_mpz_t(), exp.get_mpz_t(), p.get_mpz_t());
     }
     return {p, q, g};
 }
@@ -44,7 +44,7 @@ std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
 
         // y = g^x mod p
         mpz_class y;
-        mpz_powm(y.get_mpz_t(), pub[2].get_mpz_t(), x.get_mpz_t(), pub[0].get_mpz_t());
+        mpz_powm_sec(y.get_mpz_t(), pub[2].get_mpz_t(), x.get_mpz_t(), pub[0].get_mpz_t());
 
         // public key = p, q, g, y
         // private key = x
@@ -70,7 +70,7 @@ std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_
         k %= pub[1];
 
         // r = (g^k mod p) mod q
-        mpz_powm(r.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
+        mpz_powm_sec(r.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
         r %= pub[1];
 
         // if r == 0, dont bother calculating s
@@ -108,8 +108,8 @@ bool DSA_verify(const mpz_class & data, const std::vector <mpz_class> & sig, con
 
     // v = ((g ^ u1 * y ^ u2) mod p) mod q
     mpz_class g, y;
-    mpz_powm(g.get_mpz_t(), pub[2].get_mpz_t(), u1.get_mpz_t(), pub[0].get_mpz_t());
-    mpz_powm(y.get_mpz_t(), pub[3].get_mpz_t(), u2.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm_sec(g.get_mpz_t(), pub[2].get_mpz_t(), u1.get_mpz_t(), pub[0].get_mpz_t());
+    mpz_powm_sec(y.get_mpz_t(), pub[3].get_mpz_t(), u2.get_mpz_t(), pub[0].get_mpz_t());
 
     // check v == r
     return ((((g * y) % pub[0]) % pub[1]) == sig[0]);

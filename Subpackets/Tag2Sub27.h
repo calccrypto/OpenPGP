@@ -18,6 +18,6 @@ class Tag2Sub27 : public Subpacket{
 
         char get_flags();
 
-        void set_flags(char f);
+        void set_flags(const char f);
 };
 #endif

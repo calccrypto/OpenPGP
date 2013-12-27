@@ -1,5 +1,26 @@
 /*
-OpenPGP main file
+main.cpp
+OpenPGP commandline source
+
+Copyright (c) 2013 Jason Lee
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 */
 
 #include <fstream>
@@ -84,17 +105,22 @@ bool parse_command(std::string & input){
         }
     }
     else if (cmd == "generatekeypair"){
-        std::cout << "Function not completed. Nothing done" << std::endl;
-        return 1;
-        std::cout <<  "Warning: Generating keys takes extremely long. Do no use unless absolutely necessary" << std::endl;
         std::string file_name; tokens >> file_name;
         if (file_name == ""){
             std::cout << "Syntax: " << commands[3] << std::endl;
             return 1;
         }
-        std::string passphrase = "", user = "", comment = "", email = "";
-        while (tokens.str().size()){
-            std::string temp; tokens >> temp;
+        std::ofstream PUB((file_name + ".public").c_str());
+        if (!PUB){
+            std::cerr << "Error: File " << file_name << ".public could not be opened." << std::endl;
+        }
+        std::ofstream PRI((file_name + ".private").c_str());
+        if (!PRI){
+            std::cerr << "Error: File " << file_name << ".private could not be opened." << std::endl;
+        }
+
+        std::string temp, passphrase = "", user = "", comment = "", email = "";
+        while (tokens >> temp){
             if (temp == "-pw")
                 tokens >> passphrase;
             if (temp == "-u")
@@ -104,12 +130,11 @@ bool parse_command(std::string & input){
             if (temp == "-e")
                 tokens >> email;
         }
-        std::string pub, pri;
+
+        PGP pub, pri;
         generate_keys(pub, pri, passphrase, user, comment, email);
-        std::ofstream PUB((file_name + " public").c_str());
-        std::ofstream PRI((file_name + " private").c_str());
-        PUB << pub;
-        PRI << pri;
+        PUB << pub.write();
+        PRI << pri.write();
         PUB.close();
         PRI.close();
     }
@@ -347,19 +372,5 @@ int main(int argc, char * argv[]){
         }
         parse_command(input);
     }
-
-//    std::string pub, pri;
-//    generate_keys(pub, pri, "", "abc", "", "aa@aaa.com");
-//    std::ifstream f("private.txt");
-//    PGP k(f);
-//    std::string data;
-//    std::vector <Packet *> p = k.get_packets_pointers();
-//    Tag5 * tag5 = new Tag5; data = p[0] -> raw(); tag5 -> read(data);
-//    Tag13 * tag13 = new Tag13; data = p[1] -> raw(); tag13 -> read(data);
-//    Tag2 * tag2 = new Tag2; data = p[2] -> raw(); tag2 -> read(data);
-//
-//    std::cout << hexlify(to_sign_13(tag5, tag13, tag2)) << std::endl;
-//
-//    delete tag5, tag13, tag2;
     return 0;
 }

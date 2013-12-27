@@ -22,8 +22,8 @@ class Tag13 : public ID{
         std::string get_comment();
         std::string get_email();
 
-        void set_name(std::string n);
-        void set_comment(std::string c);
-        void set_email(std::string e);
+        void set_name(const std::string & n);
+        void set_comment(const std::string & c);
+        void set_email(const std::string & e);
 };
 #endif

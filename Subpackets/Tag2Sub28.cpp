@@ -31,7 +31,7 @@ std::string Tag2Sub28::get_signer(){
     return signer;
 }
 
-void Tag2Sub28::set_signer(std::string s){
+void Tag2Sub28::set_signer(const std::string & s){
     size = s.size();
     signer = s;
 }

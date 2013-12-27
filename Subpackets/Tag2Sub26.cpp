@@ -29,6 +29,6 @@ std::string Tag2Sub26::get_uri(){
     return uri;
 }
 
-void Tag2Sub26::set_uri(std::string u){
+void Tag2Sub26::set_uri(const std::string & u){
     uri = u;
 }

@@ -33,6 +33,6 @@ std::string Tag2Sub11::get_psa(){
     return psa;
 }
 
-void Tag2Sub11::set_psa(std::string s){
+void Tag2Sub11::set_psa(const std::string & s){
     psa = s;
 }

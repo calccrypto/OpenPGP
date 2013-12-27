@@ -21,13 +21,11 @@ class Tag8 : public Packet{
         Tag8 * clone();
 
         uint8_t get_comp();
+        std::string get_data();
         std::string get_compressed_data();
 
-        void set_comp(uint8_t c);
-        void set_compressed_data(std::string data);
-
-        // get and set decompressed data
-        std::string get_data();
-        void set_data(std::string data);
+        void set_comp(const uint8_t c);
+        void set_data(const std::string & data);
+        void set_compressed_data(const std::string & data);
 };
 #endif

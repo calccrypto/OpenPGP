@@ -104,12 +104,12 @@ std::vector <Subpacket *> Tag17::get_attributes_copy(){
     return out;
 }
 
-void Tag17::set_attibutes(std::vector <Subpacket *> a){
+void Tag17::set_attibutes(const std::vector <Subpacket *> & a){
     for(Subpacket *& s : attributes){
         delete s;
     }
     attributes.clear();
-    for(Subpacket *& s : a){
+    for(Subpacket * const & s : a){
         attributes.push_back(s);
     }
 }

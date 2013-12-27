@@ -9,5 +9,7 @@ Tag7::Tag7(std::string & data){
 }
 
 Tag7 * Tag7::clone(){
-    return new Tag7(*this);
+    Tag7 * out = new Tag7(*this);
+    out -> s2k = s2k -> clone();
+    return out;
 }

@@ -32,6 +32,6 @@ std::string Tag12::get_trust(){
     return trust;
 }
 
-void Tag12::set_trust(std::string t){
+void Tag12::set_trust(const std::string & t){
     trust = t;
 }

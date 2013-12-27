@@ -35,6 +35,6 @@ std::string Tag18::get_protected_data(){
     return protected_data;
 }
 
-void Tag18::set_protected_data(std::string p){
+void Tag18::set_protected_data(const std::string & p){
     protected_data = p;
 }

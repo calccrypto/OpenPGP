@@ -19,6 +19,6 @@ class Tag12 : public Packet{
 
         std::string get_trust();
 
-        void set_trust(std::string t);
+        void set_trust(const std::string & t);
 };
 #endif

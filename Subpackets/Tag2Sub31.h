@@ -22,8 +22,8 @@ class Tag2Sub31 : public Subpacket{
         uint8_t get_ha();
         std::string get_hash();
 
-        void set_pka(uint8_t p);
-        void set_ha(uint8_t h);
-        void set_hash(std::string h);
+        void set_pka(const uint8_t p);
+        void set_ha(const uint8_t h);
+        void set_hash(const std::string & h);
 };
 #endif

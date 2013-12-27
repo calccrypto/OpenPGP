@@ -18,6 +18,6 @@ class Tag2Sub26 : public Subpacket{
 
         std::string get_uri();
 
-        void set_uri(std::string u);
+        void set_uri(const std::string & u);
 };
 #endif

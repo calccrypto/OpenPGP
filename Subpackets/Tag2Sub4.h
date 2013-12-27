@@ -18,6 +18,6 @@ class Tag2Sub4 : public Subpacket{
 
         bool get_exportable();
 
-        void set_exportable(bool e);
+        void set_exportable(const bool e);
 };
 #endif

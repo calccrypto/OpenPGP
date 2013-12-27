@@ -22,8 +22,8 @@ class Tag2Sub12 : public Subpacket{
         uint8_t get_pka();
         std::string get_fingerprint();
 
-        void set_class(uint8_t c);
-        void set_pka(uint8_t p);
-        void set_fingerprint(std::string f);
+        void set_class(const uint8_t c);
+        void set_pka(const uint8_t p);
+        void set_fingerprint(const std::string & f);
 };
 #endif

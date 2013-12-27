@@ -63,19 +63,19 @@ uint8_t Tag4::get_nested(){
     return nested;
 }
 
-void Tag4::set_type(uint8_t t){
+void Tag4::set_type(const uint8_t t){
     type = t;
 }
 
-void Tag4::set_hash(uint8_t h){
+void Tag4::set_hash(const uint8_t h){
     hash = h;
 }
 
-void Tag4::set_pka(uint8_t p){
+void Tag4::set_pka(const uint8_t p){
     pka = p;
 }
 
-void Tag4::set_keyid(std::string k){
+void Tag4::set_keyid(const std::string & k){
     if (k.size() != 8){
         std::cerr << "Error: Key ID must be 8 octest" << std::endl;
         exit(1);
@@ -83,7 +83,7 @@ void Tag4::set_keyid(std::string k){
     keyid = k;
 }
 
-void Tag4::set_nested(uint8_t n){
+void Tag4::set_nested(const uint8_t n){
     nested = n;
 }
 

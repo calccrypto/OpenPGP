@@ -18,6 +18,6 @@ class Tag19 : public Packet{
 
         std::string get_hash();
 
-        void set_hash(std::string h);
+        void set_hash(const std::string & h);
 };
 #endif

@@ -48,7 +48,7 @@ std::string Tag2Sub20::get_n(){
     return n;
 }
 
-void Tag2Sub20::set_flags(std::string f){
+void Tag2Sub20::set_flags(const std::string & f){
     if (f.size() != 4){
         std::cerr << "Error: 4 flag octets required" << std::endl;
         exit(1);
@@ -56,12 +56,12 @@ void Tag2Sub20::set_flags(std::string f){
     flags = f;
 }
 
-void Tag2Sub20::set_m(std::string s){
+void Tag2Sub20::set_m(const std::string & s){
     mlen = s.size();
     m = s;
 }
 
-void Tag2Sub20::set_n(std::string s){
+void Tag2Sub20::set_n(const std::string & s){
     nlen = s.size();
     n = s;
 }

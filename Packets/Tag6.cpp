@@ -122,7 +122,7 @@ void Tag6::set_pka(uint8_t p){
     pka = p;
 }
 
-void Tag6::set_mpi(std::vector <mpz_class> m){
+void Tag6::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
 }
 

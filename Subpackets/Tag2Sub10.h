@@ -18,6 +18,6 @@ class Tag2Sub10 : public Subpacket{
 
         std::string get_stuff();
 
-        void set_stuff(std::string s);
+        void set_stuff(const std::string & s);
 };
 #endif

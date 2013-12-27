@@ -18,6 +18,6 @@ class Tag2Sub21 : public Subpacket{
 
         std::string get_pha();  // returns string of preferred hash algorithms (ex: "\x01\x02\x03")
 
-        void set_pha(std::string p);
+        void set_pha(const std::string & p);
 };
 #endif

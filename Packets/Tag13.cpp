@@ -98,14 +98,14 @@ std::string Tag13::get_email(){
     return email;
 }
 
-void Tag13::set_name(std::string n){
+void Tag13::set_name(const std::string & n){
     name = n;
 }
 
-void Tag13::set_comment(std::string c){
+void Tag13::set_comment(const std::string & c){
     comment = c;
 }
 
-void Tag13::set_email(std::string e){
+void Tag13::set_email(const std::string & e){
     email = e;
 }

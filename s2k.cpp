@@ -1,7 +1,8 @@
 #include "s2k.h"
 
+// RFC 4880 sec 3.7.1.3
 uint32_t coded_count(unsigned int c){
-    return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);										// RFC4880 sec 3.7.1.3
+    return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);
 }
 
 S2K::~S2K(){}
@@ -18,17 +19,19 @@ uint8_t S2K::get_hash(){
     return hash;
 }
 
-void S2K::set_type(uint8_t t){
+void S2K::set_type(const uint8_t t){
     type = t;
 }
 
-void S2K::set_hash(uint8_t h){
+void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
 S2K0::S2K0(){
     type = 0;
 }
+
+S2K0::~S2K0(){}
 
 void S2K0::read(std::string & data){
     type = data[0];
@@ -66,6 +69,8 @@ S2K0 * S2K0::clone(){
 S2K1::S2K1(){
     type = 1;
 }
+
+S2K1::~S2K1(){}
 
 void S2K1::read(std::string & data){
     type = data[0];
@@ -106,13 +111,15 @@ std::string S2K1::get_salt(){
     return salt;
 }
 
-void S2K1::set_salt(std::string s){
+void S2K1::set_salt(const std::string & s){
     salt = s;
 }
 
 S2K3::S2K3(){
     type = 3;
 }
+
+S2K3::~S2K3(){}
 
 void S2K3::read(std::string & data){
     type = data[0];
@@ -162,6 +169,6 @@ uint8_t S2K3::get_count(){
     return count;
 }
 
-void S2K3::set_count(uint8_t c){
+void S2K3::set_count(const uint8_t c){
     count = c;
 }

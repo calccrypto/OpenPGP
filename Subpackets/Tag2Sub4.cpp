@@ -30,6 +30,6 @@ bool Tag2Sub4::get_exportable(){
     return exportable;
 }
 
-void Tag2Sub4::set_exportable(bool e){
+void Tag2Sub4::set_exportable(const bool e){
     exportable = e;
 }

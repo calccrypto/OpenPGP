@@ -29,6 +29,6 @@ std::string Tag2Sub24::get_pks(){
     return pks;
 }
 
-void Tag2Sub24::set_pks(std::string p){
+void Tag2Sub24::set_pks(const std::string & p){
     pks = p;
 }

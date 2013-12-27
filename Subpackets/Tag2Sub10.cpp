@@ -29,6 +29,6 @@ std::string Tag2Sub10::get_stuff(){
     return stuff;
 }
 
-void Tag2Sub10::set_stuff(std::string s){
+void Tag2Sub10::set_stuff(const std::string & s){
     stuff = s;
 }

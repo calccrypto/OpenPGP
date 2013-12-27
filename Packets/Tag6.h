@@ -29,9 +29,9 @@ class Tag6 : public Key{
         uint8_t get_pka();
         std::vector <mpz_class> get_mpi();
 
-        void set_time(time_t t);
-        void set_pka(uint8_t p);
-        void set_mpi(std::vector <mpz_class> m);
+        void set_time(const time_t t);
+        void set_pka(const uint8_t p);
+        void set_mpi(const std::vector <mpz_class> & m);
 
         std::string get_fingerprint();
         std::string get_keyid();

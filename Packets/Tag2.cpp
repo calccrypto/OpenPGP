@@ -413,27 +413,27 @@ std::string Tag2::get_without_unhashed(){
     return out;
 }
 
-void Tag2::set_pka(uint8_t p){
+void Tag2::set_pka(const uint8_t p){
     pka = p;
 }
 
-void Tag2::set_type(uint8_t t){
+void Tag2::set_type(const uint8_t t){
     type = t;
 }
 
-void Tag2::set_hash(uint8_t h){
+void Tag2::set_hash(const uint8_t h){
     hash = h;
 }
 
-void Tag2::set_left16(std::string l){
+void Tag2::set_left16(const std::string & l){
     left16 = l;
 }
 
-void Tag2::set_mpi(std::vector <mpz_class> m){
+void Tag2::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
 }
 
-void Tag2::set_time(uint32_t t){
+void Tag2::set_time(const uint32_t t){
     if (version == 3){
         time = t;
     }
@@ -456,7 +456,7 @@ void Tag2::set_time(uint32_t t){
     }
 }
 
-void Tag2::set_keyid(std::string k){
+void Tag2::set_keyid(const std::string & k){
     if (k.size() != 8){
         std::cerr << "Error: Key ID must be 8 octest" << std::endl;
         exit(1);
@@ -484,22 +484,22 @@ void Tag2::set_keyid(std::string k){
     }
 }
 
-void Tag2::set_hashed_subpackets(std::vector <Subpacket *> h){
+void Tag2::set_hashed_subpackets(const std::vector <Subpacket *> & h){
     for(Subpacket *& s : hashed_subpackets){
         delete s;
     }
     hashed_subpackets.clear();
-    for(Subpacket *& s : h){
+    for(Subpacket *const & s : h){
         hashed_subpackets.push_back(s -> clone());
     }
 }
 
-void Tag2::set_unhashed_subpackets(std::vector <Subpacket *> u){
+void Tag2::set_unhashed_subpackets(const std::vector <Subpacket *> & u){
     for(Subpacket *& s : unhashed_subpackets){
         delete s;
     }
     unhashed_subpackets.clear();
-    for(Subpacket *& s : u){
+    for(Subpacket * const & s : u){
         unhashed_subpackets.push_back(s -> clone());
     }
 }

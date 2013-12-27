@@ -38,10 +38,10 @@ uint8_t Tag2Sub5::get_amount(){
     return amount;
 }
 
-void Tag2Sub5::set_level(uint8_t l){
+void Tag2Sub5::set_level(const uint8_t l){
     level = l;
 }
 
-void Tag2Sub5::set_amount(uint8_t a){
+void Tag2Sub5::set_amount(const uint8_t a){
     amount = a;
 }

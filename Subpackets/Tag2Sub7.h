@@ -18,6 +18,6 @@ class Tag2Sub7 : public Subpacket{
 
         bool get_revocable();
 
-        void set_revocable(bool r);
+        void set_revocable(const bool r);
 };
 #endif

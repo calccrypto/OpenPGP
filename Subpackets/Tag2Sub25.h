@@ -18,6 +18,6 @@ class Tag2Sub25 : public Subpacket{
 
         bool get_primary();
 
-        void set_primary(bool p);
+        void set_primary(const bool p);
 };
 #endif

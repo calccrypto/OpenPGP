@@ -39,10 +39,10 @@ std::string Tag2Sub29::get_reason(){
     return reason;
 }
 
-void Tag2Sub29::set_code(uint8_t c){
+void Tag2Sub29::set_code(const uint8_t c){
     code = c;
 }
 
-void Tag2Sub29::set_reason(std::string r){
+void Tag2Sub29::set_reason(const std::string & r){
     reason = r;
 }

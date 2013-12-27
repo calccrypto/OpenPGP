@@ -43,14 +43,14 @@ std::string Tag2Sub31::get_hash(){
     return hash;
 }
 
-void Tag2Sub31::set_pka(uint8_t p){
+void Tag2Sub31::set_pka(const uint8_t p){
     pka = p;
 }
 
-void Tag2Sub31::set_ha(uint8_t h){
+void Tag2Sub31::set_ha(const uint8_t h){
     ha = h;
 }
 
-void Tag2Sub31::set_hash(std::string h){
+void Tag2Sub31::set_hash(const std::string & h){
     hash = h;
 }

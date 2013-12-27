@@ -18,6 +18,6 @@ class Tag2Sub16 : public Subpacket{
 
         std::string get_keyid();
 
-        void set_keyid(std::string k);
+        void set_keyid(const std::string & k);
 };
 #endif

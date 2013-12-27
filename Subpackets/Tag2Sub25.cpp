@@ -29,6 +29,6 @@ bool Tag2Sub25::get_primary(){
     return primary;
 }
 
-void Tag2Sub25::set_primary(bool p){
+void Tag2Sub25::set_primary(const bool p){
     primary = p;
 }

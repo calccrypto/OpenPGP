@@ -35,6 +35,6 @@ char Tag2Sub30::get_flags(){
     return flags;
 }
 
-void Tag2Sub30::set_flags(char f){
+void Tag2Sub30::set_flags(const char f){
     flags = f;
 }

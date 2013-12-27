@@ -17,6 +17,7 @@ class Tag2Sub28 : public Subpacket{
         Tag2Sub28 * clone();
 
         std::string get_signer();
-        void set_signer(std::string s);
+
+        void set_signer(const std::string & s);
 };
 #endif

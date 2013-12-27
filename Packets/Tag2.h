@@ -52,17 +52,17 @@ class Tag2 : public Packet{
         std::string get_up_to_hashed();             // used for signature trailer
         std::string get_without_unhashed();         // used for signature type 0x50
 
-        void set_pka(uint8_t p);
-        void set_type(uint8_t t);
-        void set_hash(uint8_t h);
-        void set_left16(std::string l);
-        void set_mpi(std::vector <mpz_class> m);
+        void set_pka(const uint8_t p);
+        void set_type(const uint8_t t);
+        void set_hash(const uint8_t h);
+        void set_left16(const std::string & l);
+        void set_mpi(const std::vector <mpz_class> & m);
 
         // special functions: works differently depending on version
-        void set_time(uint32_t t);
-        void set_keyid(std::string k);
+        void set_time(const uint32_t t);
+        void set_keyid(const std::string & k);
 
-        void set_hashed_subpackets(std::vector <Subpacket *> h);
-        void set_unhashed_subpackets(std::vector <Subpacket *> u);
+        void set_hashed_subpackets(const std::vector <Subpacket *> & h);
+        void set_unhashed_subpackets(const std::vector <Subpacket *> & u);
 };
 #endif

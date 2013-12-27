@@ -250,16 +250,16 @@ void PGP::set_ASCII_Armor(uint8_t armor){
     armored = true;
 }
 
-void PGP::set_Armor_Header(const std::vector <std::pair <std::string, std::string> > header){
+void PGP::set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header){
     Armor_Header = header;
 }
 
-void PGP::set_packets(std::vector <Packet *> p){
+void PGP::set_packets(const std::vector <Packet *> & p){
     for(Packet *& t : packets){
         delete t;
     }
     packets.clear();
-    for(Packet *& t : p){
+    for(Packet * const & t : p){
         packets.push_back(t -> clone());
     }
 }

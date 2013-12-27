@@ -30,6 +30,6 @@ bool Tag2Sub7::get_revocable(){
     return revocable;
 }
 
-void Tag2Sub7::set_revocable(bool r){
+void Tag2Sub7::set_revocable(const bool r){
     revocable = r;
 }

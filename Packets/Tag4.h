@@ -26,10 +26,10 @@ class Tag4 : public Packet{
         std::string get_keyid();
         uint8_t get_nested();
 
-        void set_type(uint8_t t);
-        void set_hash(uint8_t h);
-        void set_pka(uint8_t p);
-        void set_keyid(std::string k);
-        void set_nested(uint8_t n);
+        void set_type(const uint8_t t);
+        void set_hash(const uint8_t h);
+        void set_pka(const uint8_t p);
+        void set_keyid(const std::string & k);
+        void set_nested(const uint8_t n);
 };
 #endif

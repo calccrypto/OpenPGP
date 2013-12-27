@@ -31,6 +31,6 @@ std::string Tag9::get_encrypted_data(){
     return encrypted_data;
 }
 
-void Tag9::set_encrypted_data(std::string e){
+void Tag9::set_encrypted_data(const std::string & e){
     encrypted_data = e;
 }

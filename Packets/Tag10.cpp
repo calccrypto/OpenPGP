@@ -34,7 +34,7 @@ std::string Tag10::get_pgp(){
     return pgp;
 }
 
-void Tag10::set_pgp(std::string s){
+void Tag10::set_pgp(const std::string & s){
     if (s != "PGP"){
         std::cerr << "Error: Tag 10 input data not string \"PGP\"" << std::endl;
     }

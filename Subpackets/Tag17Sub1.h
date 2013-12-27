@@ -22,6 +22,6 @@ class Tag17Sub1 : public Subpacket{
 
         std::string get_image();
 
-        void set_image(std::string i);
+        void set_image(const std::string & i);
 };
 #endif

@@ -6,6 +6,7 @@ Tag5::Tag5(){
 
 Tag5::Tag5(std::string & data){
     tag = 5;
+    s2k = NULL;
     read(data);
 }
 
@@ -44,6 +45,7 @@ std::string Tag5::show_common(){
             out << "    IV: " << hexlify(IV) << "\n";
         }
     }
+
     out << "    Encrypted Data (" << secret.size() << " bytes):\n";
     if (pka < 4)
         out << "        RSA d, p, q, u";
@@ -59,6 +61,7 @@ std::string Tag5::show_common(){
     else{
         out << "        2 Octet Checksum\n";
     }
+
     return out.str();
 }
 
@@ -80,6 +83,7 @@ void Tag5::read(std::string & data){
 }
 
 std::string Tag5::show(){
+    std::cout << "show" << std::endl;
     return show_tag6() + show_common();
 }
 
@@ -95,7 +99,9 @@ std::string Tag5::raw(){
 }
 
 Tag5 * Tag5::clone(){
-    return new Tag5(*this);
+    Tag5 * out = new Tag5(*this);
+    out -> s2k = s2k -> clone();
+    return out;
 }
 
 uint8_t Tag5::get_s2k_con(){
@@ -122,22 +128,32 @@ std::string Tag5::get_secret(){
     return secret;
 }
 
-void Tag5::set_s2k_con(uint8_t c){
+void Tag5::set_s2k_con(const uint8_t c){
     s2k_con = c;
 }
 
-void Tag5::set_sym(uint8_t s){
+void Tag5::set_sym(const uint8_t s){
     sym = s;
 }
 
 void Tag5::set_s2k(S2K * s){
-    s2k = s;
+    delete s2k;
+    if (s -> get_type() == 0){
+        s2k = new S2K0;
+    }
+    else if (s -> get_type() == 1){
+        s2k = new S2K1;
+    }
+    else if (s -> get_type() == 3){
+        s2k = new S2K3;
+    }
+    s2k = s -> clone();
 }
 
-void Tag5::set_IV(std::string iv){
+void Tag5::set_IV(const std::string & iv){
     IV = iv;
 }
 
-void Tag5::set_secret(std::string s){
+void Tag5::set_secret(const std::string & s){
     secret = s;
 }

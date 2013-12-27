@@ -40,7 +40,7 @@ void BBS::init(const mpz_class & seed, const unsigned int & bits, mpz_class p, m
 }
 
 void BBS::r_number(){
-    mpz_powm(state.get_mpz_t(), state.get_mpz_t(), mpz_class(2).get_mpz_t(), m.get_mpz_t());
+    mpz_powm_sec(state.get_mpz_t(), state.get_mpz_t(), mpz_class(2).get_mpz_t(), m.get_mpz_t());
 }
 
 bool BBS::parity(const std::string & par){

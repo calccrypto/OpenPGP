@@ -46,7 +46,7 @@ std::string Tag17Sub1::get_image(){
     return image;
 }
 
-void Tag17Sub1::set_image(std::string i){
+void Tag17Sub1::set_image(const std::string & i){
     image = i;
 }
 
