@@ -1,4 +1,4 @@
 Add compression/decompression algorithms
 Write Twofish
 Find PGP keys with packets I have never seen before
-Clean up interface (remove fstreams)
+Clean up interface (remove fstreams, make clone/copy more uniform)

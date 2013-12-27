@@ -7,7 +7,7 @@ With much help from:
     Alex Stapleton (OpenPGP-SDK)
     Auston Sterling - Massive amounts of debugging and programming help
     Jon Callas (RFC 4880)
-    Herbert Hanewinkel
+    Herbert Hanewinkel - http://www.hanewin.net/
     Many people on the StackExchange network
     pgpdump.net
     PortablePGP
@@ -43,12 +43,12 @@ Simply #include "OpenPGP.h" for the data types, and whatever
 functions needed, such as encrypt (#include "encrypt.h") and
 decrypt (#include "decrypt.h").
 
-The /exec/main.cpp file provides a simple text-based user interface,
+The exec/main.cpp file provides a simple text-based user interface,
 which can be used as examples on how to use the functions. A lot of
 the output was based on/inspired by pgpdump.net and GPG.
 
-The main data types PGP, Packet, Subpacket, and S2K have the
-four standard functions: read, show, raw, and write.
+The main data types PGP, Packet, Subpacket, and S2K have
+the six standard functions: read, show, raw, and write.
     read  - reads data without the respective header
             information
 
@@ -62,9 +62,15 @@ four standard functions: read, show, raw, and write.
             including extra data, such as header
             and size.
 
-Notes:
-    Key generation is not properly implemented yet
+    copy  - returns a copy of the contents of the
+            data structure: "return *this;".
+            (pointers point to the source object, etc.)
 
+    clone - returns a completely new copy of the
+            data structure (All pointers point
+            to a new memory location).
+
+Notes:
     Keyrings were not implemented.
 
     There are some things that are not implemented, such as
@@ -75,12 +81,11 @@ Notes:
     There are also serveral untested functions, having never
     encountered real versions of those packets/subpackets.
 
-    Data is encrypted and decrypted without compression, since
-    compression/decompression algorithms were not implemented.
-    This program most likely cannot return "correctly" using
-    data from programs that compress their encrypted data, such
-    as Bouncy Castle and GPG. Although the data will be correctly
-    decrypted, it will not be decompressed.
+    Although data is properly encrypted and decrypted, data
+    from other PGP sources such as Bouncy Castle and GPG will
+    most likely not be able to decrypt "properly" since most
+    PGP implementations compress the data before encrypting, but
+    not this one (yet).
 
-    If, for some reason, the program cannot operate on some data
+    If for some reason the program cannot operate on some data
     properly, the entire program will crash through the exit function.
