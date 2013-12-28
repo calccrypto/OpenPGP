@@ -18,8 +18,6 @@ class Tag4 : public Packet{
         std::string show();
         std::string raw();
 
-        Tag4 * clone();
-
         uint8_t get_type();
         uint8_t get_hash();
         uint8_t get_pka();
@@ -31,5 +29,7 @@ class Tag4 : public Packet{
         void set_pka(const uint8_t p);
         void set_keyid(const std::string & k);
         void set_nested(const uint8_t n);
+
+        Tag4 * clone();
 };
 #endif

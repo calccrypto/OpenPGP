@@ -26,10 +26,6 @@ std::string Tag10::raw(){
     return "PGP";
 }
 
-Tag10 * Tag10::clone(){
-    return new Tag10(*this);
-}
-
 std::string Tag10::get_pgp(){
     return pgp;
 }
@@ -39,4 +35,8 @@ void Tag10::set_pgp(const std::string & s){
         std::cerr << "Error: Tag 10 input data not string \x5cPGP\x5c." << std::endl;
     }
     pgp = s;
+}
+
+Tag10 * Tag10::clone(){
+    return new Tag10(*this);
 }

@@ -129,286 +129,276 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
     std::vector <Packet *> packets = pri.get_packets();
     for(Packet *& p : packets){
         std::string data = p -> raw();
-        switch (p -> get_tag()){
-            case 5:     // Secret Key Packet
-                {
-                    prikey = new Tag5(data);
+        if (p -> get_tag() == 5){     // Secret Key Packet
+            prikey = new Tag5(data);
 
-                    // Generate keypair
-                    std::vector <unsigned int> param;
-                    switch (prikey -> get_pka()){
-                        case 1: case 2:/*case 3:*/  // RSA
-                            param = {pri_key_size};
-                            break;
-                        case 16:                    // ElGamal
-                            if (prikey -> get_version() == 3){
-                                std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                                exit(1);
-                            }
-                            param = {pri_key_size};
-                            break;
-                        case 17:                    // DSA
-                            if (prikey -> get_version() == 3){
-                                std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                                exit(1);
-                            }
-                            param = {pri_key_size};
-                            if (pri_key_size == 1024){
-                                param.push_back(160);
-                            }
-                            else if (pri_key_size == 2048){
-                                param.push_back(256);
-                            }
-                            else if (pri_key_size == 3072){
-                                param.push_back(256);
-                            }
-                            else{
-                                std::cerr << "Error: Undefined bit size for DSA: " << pri_key_size << std::endl;
-                            }
-                            break;
-                        default:
-                            std::cerr << "Error: Undefined or reserved PKA number: " << prikey -> get_pka() << std::endl;
-                            exit(1);
-                            break;
-                    }
-                    generate_key_pair(prikey -> get_pka(), param, pub_key, pri_key);
-
-                    // put public key into packet
-                    prikey -> set_mpi(pub_key);
-
-                    // put private key into packet
-                    std::string secret = "";
-                    for(mpz_class & i : pri_key){
-                        secret += write_MPI(i);
-                    }
-
-                    std::string check;
-                    if (prikey -> get_s2k_con() == 254){
-                        check = use_hash(2, secret);
-                    }
-                    else{
-                        uint16_t sum = 0;
-                        for(char & c : secret){
-                            sum += (uint8_t) c;
-                        }
-                        check = unhexlify(makehex(sum, 4));
-                    }
-                    std::string k = prikey -> get_s2k() -> run(passphrase, 16);
-                    prikey -> set_secret(use_normal_CFB_encrypt(prikey -> get_sym(), secret + check, k, prikey -> get_IV()));
-                    delete p;
-                    p = prikey;
-
-                    key = false;
+            // Generate keypair
+            std::vector <unsigned int> param;
+            // RSA
+            if ((prikey -> get_pka() == 1) || (prikey -> get_pka() == 2)/* || (prikey -> get_pka() == 3)*/){
+                param = {pri_key_size};
+            }
+            // ElGamal
+            else if (prikey -> get_pka() == 16){
+                if (prikey -> get_version() == 3){
+                    std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
+                    exit(1);
                 }
-                break;
-            case 13:    // User ID packet
-                uid -> read(data);
-                id = false;
-                break;
-            case 17:    // User Attribute Packet
-                attr -> read(data);
-                id = true;
-                break;
-            case 2:     // Signature Packet
-                {
-                    Tag2 * sig = new Tag2(data);
-
-                    // check that there is a key to be signed
-                    if (!prikey){
-                        std::cerr << "Error: No primary key to be signed." << std::endl;
-                        exit(1);
-                    }
-
-                    // the correct key id
-                    std::string keyid = prikey -> get_keyid();
-
-                    // if fill in the new key id
-                    if (new_keyid){
-                        // find Key ID subpacket in the hashed subpackets
-                        std::vector <Subpacket *> subpackets = sig -> get_hashed_subpackets();
-                        for(Subpacket *& s : subpackets){
-                            if (s -> get_type() == 16){
-                                delete s;
-                                Tag2Sub16 * t = new Tag2Sub16;
-                                t -> set_keyid(keyid);
-                                s = t;
-                                break;
-                            }
-                        }
-
-                        // find Key ID subpacket in the unhashed subpackets
-                        bool found = false;
-                        subpackets = sig -> get_unhashed_subpackets();
-                        for(Subpacket *& s : subpackets){
-                            if (s -> get_type() == 16){
-                                delete s;
-                                Tag2Sub16 * t = new Tag2Sub16;
-                                t -> set_keyid(keyid);
-                                s = t;
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        // add a new unhashed subpacket
-                        if (!found){
-                            Tag2Sub16 * t = new Tag2Sub16;
-                            t -> set_keyid(keyid);
-                            subpackets.push_back(t);
-                        }
-
-                        // put new subpackets back, since they are clone of the original
-                        sig -> set_unhashed_subpackets(subpackets);
-                    }
-
-                    std::string sig_hash;
-                    if (!key){  // if the key is a primary key
-                        // get the user id/attribute packet
-                        ID * i = uid;
-                        if (id){
-                            i = attr;
-                        }
-                        if (!i){
-                            std::cerr << "Error: No User ID or Attribute packet to be signed." << std::endl;
-                            exit(1);
-                        }
-                        if (sig -> get_type() == 0x10){
-                            sig_hash = to_sign_10(prikey, i, sig);
-                        }
-                        else if (sig -> get_type() == 0x11){
-                            sig_hash = to_sign_11(prikey, i, sig);
-                        }
-                        else if (sig -> get_type() == 0x12){
-                            sig_hash = to_sign_12(prikey, i, sig);
-                        }
-                        else if (sig -> get_type() == 0x13){
-                            sig_hash = to_sign_13(prikey, i, sig);
-                        }
-                    }
-                    else{       // if the key is a subkey
-                        if (!prisubkey){
-                            std::cerr << "Error: No primary key to be signed." << std::endl;
-                            exit(1);
-                        }
-                        if (sig -> get_type() == 0x18){
-                            sig_hash = to_sign_18(prikey, prisubkey, sig);
-                        }
-                        else if (sig -> get_type() == 0x19){
-                            sig_hash = to_sign_19(prikey, prisubkey, sig);
-                        }
-                    }
-
-                    // fill in signature fields
-                    sig -> set_left16(sig_hash.substr(0, 2));
-                    sig -> set_mpi(pka_sign(sig_hash, sig -> get_pka(), (key?pub_subkey:pub_key), (key?pri_subkey:pri_key)));
-                    delete p;
-                    p = sig;
+                param = {pri_key_size};
+            }
+            // DSA
+            else if (prikey -> get_pka() == 17){
+                if (prikey -> get_version() == 3){
+                    std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
+                    exit(1);
                 }
-                break;
-            case 7:     // Secret Subkey Packet
-                {
-                    prisubkey = new Tag7(data);
-
-                    // Generate keypair
-                    std::vector <unsigned int> param;
-                    switch (prisubkey -> get_pka()){
-                        case 1: case 2:/*case 3:*/  // RSA
-                            param = {sub_key_size};
-                            break;
-                        case 16:                    // ElGamal
-                            if (prisubkey -> get_version() == 3){
-                                std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                                exit(1);
-                            }
-                            param = {sub_key_size};
-                            break;
-                        case 17:                    // DSA
-                            if (prisubkey -> get_version() == 3){
-                                std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                                exit(1);
-                            }
-                            param = {sub_key_size};
-                            if (sub_key_size == 1024){
-                                param.push_back(160);
-                            }
-                            else if (sub_key_size == 2048){
-                                param.push_back(256);
-                            }
-                            else if (sub_key_size == 3072){
-                                param.push_back(256);
-                            }
-                            else{
-                                std::cerr << "Error: Undefined bit size for DSA: " << sub_key_size << std::endl;
-                            }
-                            break;
-                        default:
-                            std::cerr << "Error: Undefined or reserved PKA number: " << prisubkey -> get_pka() << std::endl;
-                            exit(1);
-                            break;
-                    }
-                    generate_key_pair(prisubkey -> get_pka(), param, pub_subkey, pri_subkey);
-
-                    // put publc key into packet
-                    prisubkey -> set_mpi(pub_subkey);
-
-                    // put private key into packet
-                    std::string secret = "";
-                    for(mpz_class & i : pri_subkey){
-                        secret += write_MPI(i);
-                    }
-
-                    std::string check;
-                    if (prisubkey -> get_s2k_con() == 254){
-                        check = use_hash(2, secret);
-                    }
-                    else{
-                        uint16_t sum = 0;
-                        for(char & c : secret){
-                            sum += (uint8_t) c;
-                        }
-                        check = unhexlify(makehex(sum, 4));
-                    }
-                    std::string k = prisubkey -> get_s2k() -> run(passphrase, 16);
-                    prisubkey -> set_secret(use_normal_CFB_encrypt(prisubkey -> get_sym(), secret + check, k, prisubkey -> get_IV()));
-                    delete p;
-                    p = prisubkey;
-
-                    key = true;
+                param = {pri_key_size};
+                if (pri_key_size == 1024){
+                    param.push_back(160);
                 }
-                break;
-            default:
-                std::cerr << "Error: Packet Tag " << p -> get_tag() << " does not belong in a private key." << std::endl;
+                else if (pri_key_size == 2048){
+                    param.push_back(256);
+                }
+                else if (pri_key_size == 3072){
+                    param.push_back(256);
+                }
+                else{
+                    std::cerr << "Error: Undefined bit size for DSA: " << pri_key_size << std::endl;
+                }
+            }
+            else{
+                std::cerr << "Error: Undefined or reserved PKA number: " << prikey -> get_pka() << std::endl;
                 exit(1);
-                break;
+            }
+
+            generate_key_pair(prikey -> get_pka(), param, pub_key, pri_key);
+
+            // put public key into packet
+            prikey -> set_mpi(pub_key);
+
+            // put private key into packet
+            std::string secret = "";
+            for(mpz_class & i : pri_key){
+                secret += write_MPI(i);
+            }
+
+            std::string check;
+            if (prikey -> get_s2k_con() == 254){
+                check = use_hash(2, secret);
+            }
+            else{
+                uint16_t sum = 0;
+                for(char & c : secret){
+                    sum += (uint8_t) c;
+                }
+                check = unhexlify(makehex(sum, 4));
+            }
+            std::string k = prikey -> get_s2k() -> run(passphrase, 16);
+            prikey -> set_secret(use_normal_CFB_encrypt(prikey -> get_sym(), secret + check, k, prikey -> get_IV()));
+            delete p;
+            p = prikey;
+
+            key = false;
+        }
+        else if (p -> get_tag() == 13){    // User ID packet
+            uid -> read(data);
+            id = false;
+        }
+        else if (p -> get_tag() == 17){    // User Attribute Packet
+            attr -> read(data);
+            id = true;
+        }
+        else if (p -> get_tag() == 2){     // Signature Packet
+            Tag2 * sig = new Tag2(data);
+
+            // check that there is a key to be signed
+            if (!prikey){
+                std::cerr << "Error: No primary key to be signed." << std::endl;
+                exit(1);
+            }
+
+            // the correct key id
+            std::string keyid = prikey -> get_keyid();
+
+            // if fill in the new key id
+            if (new_keyid){
+                // find Key ID subpacket in the hashed subpackets
+                std::vector <Subpacket *> subpackets = sig -> get_hashed_subpackets();
+                for(Subpacket *& s : subpackets){
+                    if (s -> get_type() == 16){
+                        delete s;
+                        Tag2Sub16 * t = new Tag2Sub16;
+                        t -> set_keyid(keyid);
+                        s = t;
+                        break;
+                    }
+                }
+
+                // find Key ID subpacket in the unhashed subpackets
+                bool found = false;
+                subpackets = sig -> get_unhashed_subpackets();
+                for(Subpacket *& s : subpackets){
+                    if (s -> get_type() == 16){
+                        delete s;
+                        Tag2Sub16 * t = new Tag2Sub16;
+                        t -> set_keyid(keyid);
+                        s = t;
+                        found = true;
+                        break;
+                    }
+                }
+
+                // add a new unhashed subpacket
+                if (!found){
+                    Tag2Sub16 * t = new Tag2Sub16;
+                    t -> set_keyid(keyid);
+                    subpackets.push_back(t);
+                }
+
+                // put new subpackets back, since they are clone of the original
+                sig -> set_unhashed_subpackets(subpackets);
+            }
+
+            std::string sig_hash;
+            if (!key){  // if the key is a primary key
+                // get the user id/attribute packet
+                ID * i = uid;
+                if (id){
+                    i = attr;
+                }
+                if (!i){
+                    std::cerr << "Error: No User ID or Attribute packet to be signed." << std::endl;
+                    exit(1);
+                }
+                if (sig -> get_type() == 0x10){
+                    sig_hash = to_sign_10(prikey, i, sig);
+                }
+                else if (sig -> get_type() == 0x11){
+                    sig_hash = to_sign_11(prikey, i, sig);
+                }
+                else if (sig -> get_type() == 0x12){
+                    sig_hash = to_sign_12(prikey, i, sig);
+                }
+                else if (sig -> get_type() == 0x13){
+                    sig_hash = to_sign_13(prikey, i, sig);
+                }
+            }
+            else{       // if the key is a subkey
+                if (!prisubkey){
+                    std::cerr << "Error: No primary key to be signed." << std::endl;
+                    exit(1);
+                }
+                if (sig -> get_type() == 0x18){
+                    sig_hash = to_sign_18(prikey, prisubkey, sig);
+                }
+                else if (sig -> get_type() == 0x19){
+                    sig_hash = to_sign_19(prikey, prisubkey, sig);
+                }
+            }
+
+            // fill in signature fields
+            sig -> set_left16(sig_hash.substr(0, 2));
+            sig -> set_mpi(pka_sign(sig_hash, sig -> get_pka(), (key?pub_subkey:pub_key), (key?pri_subkey:pri_key)));
+            delete p;
+            p = sig;
+        }
+        else if (p -> get_tag() == 7){     // Secret Subkey Packet
+            prisubkey = new Tag7(data);
+
+            // Generate keypair
+            std::vector <unsigned int> param;
+            // RSA
+            if ((prisubkey -> get_pka() == 1) || (prisubkey -> get_pka() == 2) /*|| (prisubkey -> get_pka() == 3)*/){
+                param = {sub_key_size};
+            }
+            // ElGamal
+            else if (prisubkey -> get_pka() == 16){
+                if (prisubkey -> get_version() == 3){
+                    std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
+                    exit(1);
+                }
+                param = {sub_key_size};
+            }
+            // DSA
+            else if (prisubkey -> get_pka() == 17){
+                if (prisubkey -> get_version() == 3){
+                    std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
+                    exit(1);
+                }
+                param = {sub_key_size};
+                if (sub_key_size == 1024){
+                    param.push_back(160);
+                }
+                else if (sub_key_size == 2048){
+                    param.push_back(256);
+                }
+                else if (sub_key_size == 3072){
+                    param.push_back(256);
+                }
+                else{
+                    std::cerr << "Error: Undefined bit size for DSA: " << sub_key_size << std::endl;
+                }
+            }
+            else{
+                std::cerr << "Error: Undefined or reserved PKA number: " << prisubkey -> get_pka() << std::endl;
+                exit(1);
+            }
+
+            generate_key_pair(prisubkey -> get_pka(), param, pub_subkey, pri_subkey);
+
+            // put publc key into packet
+            prisubkey -> set_mpi(pub_subkey);
+
+            // put private key into packet
+            std::string secret = "";
+            for(mpz_class & i : pri_subkey){
+                secret += write_MPI(i);
+            }
+
+            std::string check;
+            if (prisubkey -> get_s2k_con() == 254){
+                check = use_hash(2, secret);
+            }
+            else{
+                uint16_t sum = 0;
+                for(char & c : secret){
+                    sum += (uint8_t) c;
+                }
+                check = unhexlify(makehex(sum, 4));
+            }
+            std::string k = prisubkey -> get_s2k() -> run(passphrase, 16);
+            prisubkey -> set_secret(use_normal_CFB_encrypt(prisubkey -> get_sym(), secret + check, k, prisubkey -> get_IV()));
+            delete p;
+            p = prisubkey;
+
+            key = true;
+        }
+        else{
+            std::cerr << "Error: Packet Tag " << p -> get_tag() << " does not belong in a private key." << std::endl;
+            exit(1);
+            break;
         }
     }
-
-//    pri.set_packets(packets);
 
     // write changes to public key
     std::vector <Packet *> pub_packets;
     for(Packet * p : packets){
         std::string data = p -> raw();
-        switch (p -> get_tag()){
-            case 5: // Secret Key packet
-                {
-                    Tag6 * tag6 = new Tag6(data);
-                    pub_packets.push_back(tag6);
-                }
-                break;
-            case 7: // Secret Subkey packet
-                {
-                    Tag14 * tag14 = new Tag14(data);
-                    pub_packets.push_back(tag14);
-                }
-                break;
-            case 2: case 13: case 17:
-                pub_packets.push_back(p -> clone());
-                break;
-            default:
-                std::cerr << "Error: Packet Tag " << (int) p -> get_tag() << " doesnt belong here." << std::endl;
-                exit(1);
-                break;
+        if (p -> get_tag() == 5){ // Secret Key packet
+            Tag6 * tag6 = new Tag6(data);
+            pub_packets.push_back(tag6);
+        }
+        else if (p -> get_tag() == 7){ // Secret Subkey packet
+            Tag14 * tag14 = new Tag14(data);
+            pub_packets.push_back(tag14);
+        }
+        else if ((p -> get_tag() == 2) || (p -> get_tag() == 13) || (p -> get_tag() == 17)){
+            pub_packets.push_back(p -> clone());
+        }
+        else{
+            std::cerr << "Error: Packet Tag " << (int) p -> get_tag() << " doesnt belong here." << std::endl;
+            exit(1);
+            break;
         }
     }
     pub.set_packets(pub_packets);

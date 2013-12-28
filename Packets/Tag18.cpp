@@ -27,14 +27,14 @@ std::string Tag18::raw(){
     return std::string(1, version) + protected_data;
 }
 
-Tag18 * Tag18::clone(){
-    return new Tag18(*this);
-}
-
 std::string Tag18::get_protected_data(){
     return protected_data;
 }
 
 void Tag18::set_protected_data(const std::string & p){
     protected_data = p;
+}
+
+Tag18 * Tag18::clone(){
+    return new Tag18(*this);
 }

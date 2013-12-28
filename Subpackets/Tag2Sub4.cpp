@@ -22,14 +22,14 @@ std::string Tag2Sub4::raw(){
     return (exportable?"\x01":zero);
 }
 
-Tag2Sub4 * Tag2Sub4::clone(){
-    return new Tag2Sub4(*this);
-}
-
 bool Tag2Sub4::get_exportable(){
     return exportable;
 }
 
 void Tag2Sub4::set_exportable(const bool e){
     exportable = e;
+}
+
+Tag2Sub4 * Tag2Sub4::clone(){
+    return new Tag2Sub4(*this);
 }

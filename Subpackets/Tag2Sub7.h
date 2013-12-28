@@ -14,10 +14,10 @@ class Tag2Sub7 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub7 * clone();
-
         bool get_revocable();
 
         void set_revocable(const bool r);
+
+        Tag2Sub7 * clone();
 };
 #endif

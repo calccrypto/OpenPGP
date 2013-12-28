@@ -14,10 +14,10 @@ class Tag2Sub4 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub4 * clone();
-
         bool get_exportable();
 
         void set_exportable(const bool e);
+
+        Tag2Sub4 * clone();
 };
 #endif

@@ -21,14 +21,14 @@ std::string Tag2Sub25::raw(){
     return (primary?"\x01":zero);
 }
 
-Tag2Sub25 * Tag2Sub25::clone(){
-    return new Tag2Sub25(*this);
-}
-
 bool Tag2Sub25::get_primary(){
     return primary;
 }
 
 void Tag2Sub25::set_primary(const bool p){
     primary = p;
+}
+
+Tag2Sub25 * Tag2Sub25::clone(){
+    return new Tag2Sub25(*this);
 }

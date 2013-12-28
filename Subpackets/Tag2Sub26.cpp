@@ -21,14 +21,14 @@ std::string Tag2Sub26::raw(){
     return uri;
 }
 
-Tag2Sub26 * Tag2Sub26::clone(){
-    return new Tag2Sub26(*this);
-}
-
 std::string Tag2Sub26::get_uri(){
     return uri;
 }
 
 void Tag2Sub26::set_uri(const std::string & u){
     uri = u;
+}
+
+Tag2Sub26 * Tag2Sub26::clone(){
+    return new Tag2Sub26(*this);
 }

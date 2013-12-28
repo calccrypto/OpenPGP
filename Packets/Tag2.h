@@ -26,13 +26,12 @@ class Tag2 : public Packet{
 
     public:
         Tag2();
+        Tag2(const Tag2 & tag2);
         Tag2(std::string & data);
         ~Tag2();
         void read(std::string & data);
         std::string show();
         std::string raw();
-
-        Tag2 * clone();
 
         uint8_t get_type();
         uint8_t get_pka();
@@ -64,5 +63,8 @@ class Tag2 : public Packet{
         // Do not use pointers from get_*_pointers(). Use pointers from get_*_clone()
         void set_hashed_subpackets(const std::vector <Subpacket *> & h);
         void set_unhashed_subpackets(const std::vector <Subpacket *> & u);
+
+        Tag2 * clone();
+        Tag2 operator=(const Tag2 & tag2);
 };
 #endif

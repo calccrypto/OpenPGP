@@ -25,14 +25,14 @@ std::string Tag2Sub21::raw(){
     return pha;
 }
 
-Tag2Sub21 * Tag2Sub21::clone(){
-    return new Tag2Sub21(*this);
-}
-
 std::string Tag2Sub21::get_pha(){
     return pha;
 }
 
 void Tag2Sub21::set_pha(const std::string & p){
     pha = p;
+}
+
+Tag2Sub21 * Tag2Sub21::clone(){
+    return new Tag2Sub21(*this);
 }

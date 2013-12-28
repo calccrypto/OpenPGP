@@ -31,10 +31,6 @@ std::string Tag11::raw(){
     return std::string(1, format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
 }
 
-Tag11 * Tag11::clone(){
-    return new Tag11(*this);
-}
-
 uint8_t Tag11::get_format(){
     return format;
 }
@@ -65,4 +61,8 @@ void Tag11::set_time(const uint32_t t){
 
 void Tag11::set_literal(const std::string & l){
     literal = l;
+}
+
+Tag11 * Tag11::clone(){
+    return new Tag11(*this);
 }

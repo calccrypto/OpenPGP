@@ -21,14 +21,14 @@ std::string Tag2Sub24::raw(){
     return pks;
 }
 
-Tag2Sub24 * Tag2Sub24::clone(){
-    return new Tag2Sub24(*this);
-}
-
 std::string Tag2Sub24::get_pks(){
     return pks;
 }
 
 void Tag2Sub24::set_pks(const std::string & p){
     pks = p;
+}
+
+Tag2Sub24 * Tag2Sub24::clone(){
+    return new Tag2Sub24(*this);
 }

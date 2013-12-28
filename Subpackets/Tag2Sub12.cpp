@@ -27,10 +27,6 @@ std::string Tag2Sub12::raw(){
     return std::string(1, _class) + std::string(1, pka) + unhexlify(fingerprint);
 }
 
-Tag2Sub12 * Tag2Sub12::clone(){
-    return new Tag2Sub12(*this);
-}
-
 uint8_t Tag2Sub12::get_class(){
     return _class;
 }
@@ -53,4 +49,8 @@ void Tag2Sub12::set_pka(const uint8_t p){
 
 void Tag2Sub12::set_fingerprint(const std::string & f){
     fingerprint = f;
+}
+
+Tag2Sub12 * Tag2Sub12::clone(){
+    return new Tag2Sub12(*this);
 }

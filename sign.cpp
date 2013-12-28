@@ -53,6 +53,8 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, Tag5 * tag5, std::stri
 }
 
 Tag2 * sign(uint8_t type, std::string hashed_data, Tag5 * tag5, std::string pass, Tag2 * tag2){
+    BBS((mpz_class) (int) now());
+
     if (!tag2){
         // Setup signature packet
         tag2 = new Tag2;

@@ -16,8 +16,6 @@ class Tag2Sub31 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub31 * clone();
-
         uint8_t get_pka();
         uint8_t get_ha();
         std::string get_hash();
@@ -25,5 +23,7 @@ class Tag2Sub31 : public Subpacket{
         void set_pka(const uint8_t p);
         void set_ha(const uint8_t h);
         void set_hash(const std::string & h);
+
+        Tag2Sub31 * clone();
 };
 #endif

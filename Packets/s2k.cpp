@@ -58,10 +58,6 @@ std::string S2K0::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-S2K0 S2K0::copy(){
-    return *this;
-}
-
 S2K0 * S2K0::clone(){
     return new S2K0(*this);
 }
@@ -99,13 +95,6 @@ std::string S2K1::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-S2K1 S2K1::copy(){
-    return *this;
-}
-
-S2K1 * S2K1::clone(){
-    return new S2K1(*this);
-}
 
 std::string S2K1::get_salt(){
     return salt;
@@ -113,6 +102,10 @@ std::string S2K1::get_salt(){
 
 void S2K1::set_salt(const std::string & s){
     salt = s;
+}
+
+S2K1 * S2K1::clone(){
+    return new S2K1(*this);
 }
 
 S2K3::S2K3(){
@@ -157,18 +150,14 @@ std::string S2K3::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-S2K3 S2K3::copy(){
-    return *this;
-}
-
-S2K3 * S2K3::clone(){
-    return new S2K3(*this);
-}
-
 uint8_t S2K3::get_count(){
     return count;
 }
 
 void S2K3::set_count(const uint8_t c){
     count = c;
+}
+
+S2K3 * S2K3::clone(){
+    return new S2K3(*this);
 }

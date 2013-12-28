@@ -14,10 +14,10 @@ class Tag19 : public Packet{
         void read(std::string & data);
         std::string raw();
 
-        Tag19 * clone();
-
         std::string get_hash();
 
         void set_hash(const std::string & h);
+
+        Tag19 * clone();
 };
 #endif

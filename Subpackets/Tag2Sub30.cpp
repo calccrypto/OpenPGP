@@ -27,14 +27,14 @@ std::string Tag2Sub30::raw(){
     return std::string(1, flags);
 }
 
-Tag2Sub30 * Tag2Sub30::clone(){
-    return new Tag2Sub30(*this);
-}
-
 char Tag2Sub30::get_flags(){
     return flags;
 }
 
 void Tag2Sub30::set_flags(const char f){
     flags = f;
+}
+
+Tag2Sub30 * Tag2Sub30::clone(){
+    return new Tag2Sub30(*this);
 }

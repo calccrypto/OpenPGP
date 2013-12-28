@@ -27,10 +27,6 @@ std::string Tag2Sub31::raw(){
     return std::string(1, pka) + std::string(1, ha) + hash;
 }
 
-Tag2Sub31 * Tag2Sub31::clone(){
-    return new Tag2Sub31(*this);
-}
-
 uint8_t Tag2Sub31::get_pka(){
     return pka;
 }
@@ -53,4 +49,8 @@ void Tag2Sub31::set_ha(const uint8_t h){
 
 void Tag2Sub31::set_hash(const std::string & h){
     hash = h;
+}
+
+Tag2Sub31 * Tag2Sub31::clone(){
+    return new Tag2Sub31(*this);
 }

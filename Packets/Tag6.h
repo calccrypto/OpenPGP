@@ -24,8 +24,6 @@ class Tag6 : public Key{
         virtual std::string show();
         virtual std::string raw();
 
-        Tag6 * clone();
-
         time_t get_time();
         uint8_t get_pka();
         std::vector <mpz_class> get_mpi();
@@ -36,5 +34,7 @@ class Tag6 : public Key{
 
         std::string get_fingerprint();
         std::string get_keyid();
+
+        Tag6 * clone();
 };
 #endif

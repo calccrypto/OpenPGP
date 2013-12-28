@@ -23,15 +23,14 @@ std::string Tag12::raw(){
     return trust;
 }
 
-Tag12 * Tag12::clone(){
-    return new Tag12(*this);
-}
-
-
 std::string Tag12::get_trust(){
     return trust;
 }
 
 void Tag12::set_trust(const std::string & t){
     trust = t;
+}
+
+Tag12 * Tag12::clone(){
+    return new Tag12(*this);
 }

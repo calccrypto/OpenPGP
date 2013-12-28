@@ -15,10 +15,10 @@ class Tag12 : public Packet{
         std::string show();
         std::string raw();
 
-        Tag12 * clone();
-
         std::string get_trust();
 
         void set_trust(const std::string & t);
+
+        Tag12 * clone();
 };
 #endif

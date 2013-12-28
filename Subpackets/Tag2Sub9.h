@@ -14,10 +14,10 @@ class Tag2Sub9 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub9 * clone();
-
         time_t get_time();
 
         void set_time(const time_t t);
+
+        Tag2Sub9 * clone();
 };
 #endif

@@ -57,20 +57,7 @@ bool pka_verify(std::string & hashed_message, Tag2 * tag2, std::vector <mpz_clas
     return false;
 }
 
-bool verify_file(std::string filename, PGP & sig, PGP & key){
-    std::ifstream f(filename, std::ios::binary);
-    return verify_file(f, sig, key);
-}
-
-bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
-    if (!f){
-        std::cerr << "Error: Bad file." << std::endl;
-        exit(1);
-    }
-    std::stringstream s;
-    s << f.rdbuf();
-    std::string data = s.str();
-
+bool verify_file(const std::string & data, PGP & sig, PGP & key){
     std::string temp = sig.get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
 
@@ -94,6 +81,18 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
         return false;
     }
     return pka_verify(hash, signature, keys);
+}
+
+bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
+    if (!f){
+        std::cerr << "Error: Bad file." << std::endl;
+        exit(1);
+    }
+    std::stringstream s;
+    s << f.rdbuf();
+    std::string data = s.str();
+
+    return verify_file(data, sig, key);
 }
 
 // Signature type 0x00 and 0x01

@@ -18,6 +18,7 @@ void Tag2Sub20::read(std::string & data){
     n = data.substr(0, nlen);
     size = mlen + nlen + 4;
 }
+
 std::string Tag2Sub20::show(){
     std::stringstream out;
     for(unsigned int x = 0; x < 4; x++){
@@ -30,10 +31,6 @@ std::string Tag2Sub20::show(){
 }
 std::string Tag2Sub20::raw(){
     return flags + unhexlify(makehex(m.size(), 4)) + unhexlify(makehex(n.size(), 4)) + m + n;
-}
-
-Tag2Sub20 * Tag2Sub20::clone(){
-    return new Tag2Sub20(*this);
 }
 
 std::string Tag2Sub20::get_flags(){
@@ -66,3 +63,6 @@ void Tag2Sub20::set_n(const std::string & s){
     n = s;
 }
 
+Tag2Sub20 * Tag2Sub20::clone(){
+    return new Tag2Sub20(*this);
+}

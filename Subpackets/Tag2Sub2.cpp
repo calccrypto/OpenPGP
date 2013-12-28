@@ -21,14 +21,14 @@ std::string Tag2Sub2::raw(){
     return unhexlify(makehex((uint32_t) time, 8));
 }
 
-Tag2Sub2 * Tag2Sub2::clone(){
-    return new Tag2Sub2(*this);
-}
-
 time_t Tag2Sub2::get_time(){
     return time;
 }
 
 void Tag2Sub2::set_time(const time_t t){
     time = t;
+}
+
+Tag2Sub2 * Tag2Sub2::clone(){
+    return new Tag2Sub2(*this);
 }

@@ -22,10 +22,6 @@ std::string Tag2Sub16::raw(){
     return keyid;
 }
 
-Tag2Sub16 * Tag2Sub16::clone(){
-    return new Tag2Sub16(*this);
-}
-
 std::string Tag2Sub16::get_keyid(){
     return keyid;
 }
@@ -36,4 +32,8 @@ void Tag2Sub16::set_keyid(const std::string & k){
         exit(1);
     }
     keyid = k;
+}
+
+Tag2Sub16 * Tag2Sub16::clone(){
+    return new Tag2Sub16(*this);
 }

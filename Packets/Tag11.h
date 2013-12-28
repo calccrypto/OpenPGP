@@ -17,8 +17,6 @@ class Tag11 : public Packet{
         void read(std::string & data);
         std::string raw();
 
-        Tag11 * clone();
-
         uint8_t get_format();
         std::string get_filename();
         uint32_t get_time();
@@ -28,5 +26,7 @@ class Tag11 : public Packet{
         void set_filename(const std::string & f);
         void set_time(const uint32_t t);
         void set_literal(const std::string & l);
+
+        Tag11 * clone();
 };
 #endif

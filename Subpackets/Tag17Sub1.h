@@ -18,10 +18,10 @@ class Tag17Sub1 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag17Sub1 * clone();
-
         std::string get_image();
 
         void set_image(const std::string & i);
+
+        Tag17Sub1 * clone();
 };
 #endif

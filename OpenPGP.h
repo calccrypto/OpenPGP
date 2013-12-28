@@ -37,9 +37,6 @@ THE SOFTWARE.
 
 #ifndef __PGP_STRUCTURES__
 #define __PGP_STRUCTURES__
-
-const unsigned int MAX_LINE_LENGTH = 64;                // max is 76 for OpenPGP
-
 class PGP{
     private:
         bool armored;
@@ -52,9 +49,9 @@ class PGP{
 
     public:
         PGP();
+        PGP(const PGP & pgp);
         PGP(std::string & data);
         PGP(std::ifstream & f);
-        PGP(const PGP & pgp);
         ~PGP();
 
         void read(std::string & data);
@@ -63,8 +60,6 @@ class PGP{
         std::string show();                             // display key information
         std::string raw();                              // write packets only
         std::string write();                            // output with ASCII Armor and converted to Radix64
-
-        PGP * clone();                                  // get new version of *this
 
         uint8_t get_ASCII_Armor();
         std::vector <std::pair <std::string, std::string> > get_Armor_Header();
@@ -77,6 +72,9 @@ class PGP{
 
         std::string keyid();                            // keyid that is searched for on keyservers
         std::string list_keys();                        // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
+
+        PGP operator=(const PGP & pgp);                 // needed deep copy
+        PGP * clone();                                  // get deep copy pointer
 };
 
 // Display key id of primary key
@@ -91,6 +89,7 @@ class PGPMessage{
 
     public:
         PGPMessage();
+        PGPMessage(const PGPMessage & pgpmessage);
         PGPMessage(std::string & data);
         PGPMessage(std::ifstream & f);
         ~PGPMessage();
@@ -106,8 +105,11 @@ class PGPMessage{
         PGP get_key();
 
         void set_ASCII_Armor(uint8_t a);
-        void set_Armor_Heder(std::vector <std::pair <std::string, std::string> > & a);
+        void set_Armor_Header(std::vector <std::pair <std::string, std::string> > & a);
         void set_message(std::string & data);
         void set_key(PGP & k);
+
+        PGPMessage * clone();
+        PGPMessage operator=(const PGPMessage & pgpmessage);
 };
 #endif

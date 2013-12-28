@@ -16,8 +16,6 @@ class Tag13 : public ID{
         std::string show();
         std::string raw();
 
-        Tag13 * clone();
-
         std::string get_name();
         std::string get_comment();
         std::string get_email();
@@ -25,5 +23,7 @@ class Tag13 : public ID{
         void set_name(const std::string & n);
         void set_comment(const std::string & c);
         void set_email(const std::string & e);
+
+        Tag13 * clone();
 };
 #endif

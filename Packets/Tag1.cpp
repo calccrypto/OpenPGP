@@ -43,10 +43,6 @@ std::string Tag1::raw(){
     return out;
 }
 
-Tag1 * Tag1::clone(){
-    return new Tag1(*this);
-}
-
 std::string Tag1::get_keyid(){
     return keyid;
 }
@@ -73,4 +69,8 @@ void Tag1::set_pka(const uint8_t p){
 
 void Tag1::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
+}
+
+Tag1 * Tag1::clone(){
+    return new Tag1(*this);
 }

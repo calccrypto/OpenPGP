@@ -21,14 +21,14 @@ std::string Tag2Sub10::raw(){
     return stuff;
 }
 
-Tag2Sub10 * Tag2Sub10::clone(){
-    return new Tag2Sub10(*this);
-}
-
 std::string Tag2Sub10::get_stuff(){
     return stuff;
 }
 
 void Tag2Sub10::set_stuff(const std::string & s){
     stuff = s;
+}
+
+Tag2Sub10 * Tag2Sub10::clone(){
+    return new Tag2Sub10(*this);
 }

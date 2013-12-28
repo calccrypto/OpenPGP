@@ -30,6 +30,9 @@ THE SOFTWARE.
 
 #ifndef __RADIX64__
 #define __RADIX64__
+// RFC 4880 sec 6.2 - max is 76 for OpenPGP
+const unsigned int MAX_LINE_LENGTH = 64;
+
 // RFC 4880 sec 6.3
 std::string ascii2radix64(std::string str, char char62 = '\x2b', char char63 = '\x2f');
 

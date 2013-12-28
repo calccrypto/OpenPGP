@@ -14,10 +14,10 @@ class Tag2Sub6 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub6 * clone();
-
         std::string get_regex();
 
         void set_regex(const std::string & r);
+
+        Tag2Sub6 * clone();
 };
 #endif

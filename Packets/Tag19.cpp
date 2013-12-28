@@ -25,14 +25,14 @@ std::string Tag19::raw(){
     return hash;
 }
 
-Tag19 * Tag19::clone(){
-    return new Tag19(*this);
-}
-
 std::string Tag19::get_hash(){
     return hash;
 }
 
 void Tag19::set_hash(const std::string & h){
     hash = h;
+}
+
+Tag19 * Tag19::clone(){
+    return new Tag19(*this);
 }

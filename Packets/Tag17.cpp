@@ -51,10 +51,6 @@ std::string Tag17::raw(){
     return out;
 }
 
-Tag17 * Tag17::clone(){
-    return new Tag17(*this);
-}
-
 // Extracts Subpacket data for figuring which subpacket type to create
 // Some data is destroyed in the process
 std::string Tag17::read_subpacket(std::string & data){
@@ -82,13 +78,13 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data){
     if (data.size() < 192){
         return std::string(1, data.size()) + std::string(1, s_type) + data;
     }
-    else if ((192 <= data.size()) && (data.size() < 255)){
+    else if ((192 <= data.size()) && (data.size() < 8383)){
         return unhexlify(makehex(((((data.size() >> 8) + 192) << 8) + (data.size() & 0xff) - 192), 4)) + std::string(1, s_type) + data;
     }
-    else if (data.size() == 255){
+    else{
         return "\xff" + unhexlify(makehex(data.size(), 8)) + std::string(1, s_type) + data;
     }
-    return ""; // error
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::vector <Subpacket *> Tag17::get_attributes(){
@@ -112,4 +108,8 @@ void Tag17::set_attibutes(const std::vector <Subpacket *> & a){
     for(Subpacket * const & s : a){
         attributes.push_back(s);
     }
+}
+
+Tag17 * Tag17::clone(){
+    return new Tag17(*this);
 }

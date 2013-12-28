@@ -62,10 +62,6 @@ std::string Tag8::raw(){
     return std::string(1, comp) + compressed_data;
 }
 
-Tag8 * Tag8::clone(){
-    return new Tag8(*this);
-}
-
 uint8_t Tag8::get_comp(){
     return comp;
 }
@@ -88,4 +84,8 @@ void Tag8::set_data(const std::string & data){
 
 void Tag8::set_compressed_data(const std::string & data){
     compressed_data = data;
+}
+
+Tag8 * Tag8::clone(){
+    return new Tag8(*this);
 }

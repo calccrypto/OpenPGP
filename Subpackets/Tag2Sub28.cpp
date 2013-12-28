@@ -23,10 +23,6 @@ std::string Tag2Sub28::raw(){
     return signer;
 }
 
-Tag2Sub28 * Tag2Sub28::clone(){
-    return new Tag2Sub28(*this);
-}
-
 std::string Tag2Sub28::get_signer(){
     return signer;
 }
@@ -34,4 +30,8 @@ std::string Tag2Sub28::get_signer(){
 void Tag2Sub28::set_signer(const std::string & s){
     size = s.size();
     signer = s;
+}
+
+Tag2Sub28 * Tag2Sub28::clone(){
+    return new Tag2Sub28(*this);
 }

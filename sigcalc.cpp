@@ -1,6 +1,6 @@
 #include "sigcalc.h"
 
-std::string addtrailer(std::string data, Tag2 * sig){
+std::string addtrailer(const std::string & data, Tag2 * sig){
     std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
         return data + trailer.substr(1, trailer.size() - 1) + unhexlify(makehex(sig -> get_time(), 8)); // remove version from trailer
@@ -8,7 +8,11 @@ std::string addtrailer(std::string data, Tag2 * sig){
     else if (sig -> get_version() == 4){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
     }
-    return ""; // error
+    else{
+        std::cerr << "Error: addtrailer for version " << sig -> get_version() << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::string overkey(Key * key){
@@ -32,16 +36,18 @@ std::string certification(uint8_t version, ID * id){
             return "\xd1" + unhexlify(makehex(data.size(), 8)) + data;
         }
     }
-    return ""; // error
+    else{
+        std::cerr << "Error: Certification for version " << version << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-// binary document
-std::string to_sign_00(std::string & data, Tag2 * tag2){
+std::string to_sign_00(const std::string & data, Tag2 * tag2){
     return use_hash(tag2 -> get_hash(), addtrailer(data, tag2));
 }
 
-// text document
-std::string to_sign_01(std::string data, Tag2 * tag2){
+std::string to_sign_01(const std::string & data, Tag2 * tag2){
     std::string out;
     // convert line endings ot <CR><LF>
     if (data[0] == '\n'){
@@ -61,7 +67,8 @@ std::string to_sign_01(std::string data, Tag2 * tag2){
 
 std::string to_sign_02(Tag2 * tag2){
     if (tag2 -> get_version() == 3){
-        return "";
+        std::cerr << "Error: It does not make sense to have a V3 standalone signature." << std::endl;
+        exit(1);
     }
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }

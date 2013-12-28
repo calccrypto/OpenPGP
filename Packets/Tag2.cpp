@@ -3,6 +3,22 @@ Tag2::Tag2(){
     tag = 2;
 }
 
+Tag2::Tag2(const Tag2 & tag2){
+    tag = tag2.tag;
+    version = tag2.version;
+    format = tag2.format;
+    size = tag2.size;
+    type = tag2.type;
+    pka = tag2.pka;
+    hash = tag2.hash;
+    mpi = tag2.mpi;
+    left16 = tag2.left16;
+    time = tag2.time;
+    keyid = tag2.keyid;
+    hashed_subpackets = get_hashed_subpackets_clone();
+    unhashed_subpackets = get_unhashed_subpackets_clone();
+}
+
 Tag2::Tag2(std::string & data){
     tag = 2;
     read(data);
@@ -296,15 +312,6 @@ std::string Tag2::raw(){
     return out;
 }
 
-Tag2 * Tag2::clone(){
-    Tag2 * out = new Tag2(*this);
-    out -> hashed_subpackets.clear();
-    out -> unhashed_subpackets.clear();
-    out -> hashed_subpackets = get_hashed_subpackets_clone();
-    out -> unhashed_subpackets = get_unhashed_subpackets_clone();
-    return out;
-}
-
 uint8_t Tag2::get_type(){
     return type;
 }
@@ -354,7 +361,11 @@ std::string Tag2::get_keyid(){
             }
         }
     }
-    return "";
+    else{
+        std::cerr << "Error: Signature Packet version " << version << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::vector <Subpacket *> Tag2::get_hashed_subpackets(){
@@ -392,7 +403,11 @@ std::string Tag2::get_up_to_hashed(){
         }
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
-    return "";
+    else{
+        std::cerr << "Error: Signature packet version " << version << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::string Tag2::get_without_unhashed(){
@@ -524,4 +539,28 @@ std::string Tag2::read_subpacket(std::string & data){
     std::string out = data.substr(0, length);                   // includes subpacket type
     data = data.substr(length, data.size() - length);           // remove subpacket from main data
     return out;
+}
+
+Tag2 * Tag2::clone(){
+    Tag2 * out = new Tag2(*this);
+    out -> hashed_subpackets = get_hashed_subpackets_clone();
+    out -> unhashed_subpackets = get_unhashed_subpackets_clone();
+    return out;
+}
+
+Tag2 Tag2::operator=(const Tag2 & tag2){
+    tag = tag2.tag;
+    version = tag2.version;
+    format = tag2.format;
+    size = tag2.size;
+    type = tag2.type;
+    pka = tag2.pka;
+    hash = tag2.hash;
+    mpi = tag2.mpi;
+    left16 = tag2.left16;
+    time = tag2.time;
+    keyid = tag2.keyid;
+    hashed_subpackets = get_hashed_subpackets_clone();
+    unhashed_subpackets = get_unhashed_subpackets_clone();
+    return *this;
 }

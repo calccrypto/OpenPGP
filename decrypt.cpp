@@ -9,7 +9,11 @@ std::string pka_decrypt(uint8_t pka, std::vector <mpz_class> data, const std::ve
     if (pka == 16){ // ElGamal
         return ElGamal_decrypt(data, pri, pub);
     }
-    return "";
+    else{
+        std::cerr << "Error: PKA number " << pka << " not allowed or unknown." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, std::string pass){
@@ -62,7 +66,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
         exit(1);
     }
 
-    BBS(now());
+    BBS((mpz_class) (int) now());
 
     // reused variables
     uint8_t packet;
@@ -193,8 +197,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
             std::cerr << "Error: Given Checksum and calculated checksum do not match." << std::endl;
             exit(1);
         }
-
-        data = data.substr(0, data.size() - BS - 2);        // get rid of \xd3\x14
+        data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
         bool format;                                        // junk variable
         data = read_packet_header(data, packet, format);    // get rid of header and figure out what type of packet data it is
@@ -202,8 +205,8 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
 
     // extract data for output
     if (packet == 8){ // Compressed Data Packet (Tag 8)
-//        Tag8 tag8(data);
-//        // can't use unless/until compression algorithms are implemented
+        Tag8 tag8(data);
+        // can't use unless/until compression algorithms are implemented
 //        data = tag8.get_data();
         data = "Data in hex, so its easier to copy to a " + Compression_Algorithms.at(data[0]) + " decompressor:\n\n" + hexlify(data.substr(1, data.size() - 1));
     }

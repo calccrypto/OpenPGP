@@ -13,13 +13,12 @@ class Tag3 : public Packet{
 
     public:
         Tag3();
+        Tag3(const Tag3 & tag3);
         Tag3(std::string & data);
         ~Tag3();
         void read(std::string & data);
         std::string show();
         std::string raw();
-
-        Tag3 * clone();
 
         uint8_t get_sym();
         S2K * get_s2k();
@@ -32,5 +31,8 @@ class Tag3 : public Packet{
         void set_s2k(S2K * s);
         void set_esk(std::string * s);
         void set_key(std::string pass, std::string sk = "");
+
+        Tag3 * clone();
+        Tag3 operator=(const Tag3 & tag3);
 };
 #endif

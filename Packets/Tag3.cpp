@@ -6,6 +6,16 @@ Tag3::Tag3(){
     esk = NULL;
 }
 
+Tag3::Tag3(const Tag3 & tag3){
+    tag = tag3.tag;
+    version = tag3.version;
+    format = tag3.format;
+    size = tag3.size;
+    sym = tag3.sym;
+    s2k = tag3.s2k -> clone();
+    esk = new std::string(*esk);
+}
+
 Tag3::Tag3(std::string & data){
     tag = 2;
     read(data);
@@ -50,13 +60,6 @@ std::string Tag3::show(){
 
 std::string Tag3::raw(){
     return std::string(1, version) + std::string(1, sym) + s2k -> write() + *esk;
-}
-
-Tag3 * Tag3::clone(){
-    Tag3 * out = new Tag3(*this);
-    out -> s2k = s2k -> clone();
-    out -> esk = new std::string(*esk);
-    return out;
 }
 
 uint8_t Tag3::get_sym(){
@@ -114,4 +117,22 @@ void Tag3::set_key(std::string pass, std::string sk){
     else{
         esk = new std::string(use_normal_CFB_encrypt(sym, sk, pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0)));
     }
+}
+
+Tag3 * Tag3::clone(){
+    Tag3 * out = new Tag3(*this);
+    out -> s2k = s2k -> clone();
+    out -> esk = new std::string(*esk);
+    return out;
+}
+
+Tag3 Tag3::operator=(const Tag3 & tag3){
+    tag = tag3.tag;
+    version = tag3.version;
+    format = tag3.format;
+    size = tag3.size;
+    sym = tag3.sym;
+    s2k = tag3.s2k -> clone();
+    esk = new std::string(*esk);
+    return *this;
 }

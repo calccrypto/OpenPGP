@@ -51,13 +51,13 @@ class S2K{
         std::string write();
         virtual std::string run(std::string pass, unsigned int sym_len) = 0;
 
-        virtual S2K * clone() = 0;
-
         uint8_t get_type();
         uint8_t get_hash();
 
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);
+
+        virtual S2K * clone() = 0;
 };
 
 class S2K0: public S2K{
@@ -68,7 +68,7 @@ class S2K0: public S2K{
         virtual std::string show();
         virtual std::string raw();
         virtual std::string run(std::string pass, unsigned int sym_len);
-        S2K0 copy();
+
         S2K0 * clone();
 };
 
@@ -84,12 +84,11 @@ class S2K1 : public S2K0{
         virtual std::string raw();
         virtual std::string run(std::string pass, unsigned int sym_len);
 
-        S2K1 copy();
-        S2K1 * clone();
-
         std::string get_salt();
 
         void set_salt(const std::string & s);
+
+        S2K1 * clone();
 };
 
 class S2K3 : public S2K1{
@@ -104,11 +103,10 @@ class S2K3 : public S2K1{
         std::string raw();
         std::string run(std::string pass, unsigned int sym_len);
 
-        S2K3 copy();
-        S2K3 * clone();
-
         uint8_t get_count();
 
         void set_count(const uint8_t c);
+
+        S2K3 * clone();
 };
 #endif

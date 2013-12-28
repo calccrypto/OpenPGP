@@ -82,10 +82,6 @@ std::string Tag13::raw(){
     return out;
 }
 
-Tag13 * Tag13::clone(){
-    return new Tag13(*this);
-}
-
 std::string Tag13::get_name(){
     return name;
 }
@@ -108,4 +104,8 @@ void Tag13::set_comment(const std::string & c){
 
 void Tag13::set_email(const std::string & e){
     email = e;
+}
+
+Tag13 * Tag13::clone(){
+    return new Tag13(*this);
 }

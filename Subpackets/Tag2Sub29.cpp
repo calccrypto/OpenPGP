@@ -27,10 +27,6 @@ std::string Tag2Sub29::raw(){
     return std::string(1, code) + reason;
 }
 
-Tag2Sub29 * Tag2Sub29::clone(){
-    return new Tag2Sub29(*this);
-}
-
 uint8_t Tag2Sub29::get_code(){
     return code;
 }
@@ -45,4 +41,8 @@ void Tag2Sub29::set_code(const uint8_t c){
 
 void Tag2Sub29::set_reason(const std::string & r){
     reason = r;
+}
+
+Tag2Sub29 * Tag2Sub29::clone(){
+    return new Tag2Sub29(*this);
 }

@@ -6,6 +6,18 @@ Tag5::Tag5(){
     s2k = NULL;
 }
 
+Tag5::Tag5(const Tag5 & tag5){
+    tag = tag5.tag;
+    version = tag5.version;
+    format = tag5.format;
+    size = tag5.size;
+    s2k_con = tag5.s2k_con;
+    sym = tag5.sym;
+    s2k = tag5.s2k -> clone();
+    IV = tag5.IV;
+    secret = tag5.secret;
+}
+
 Tag5::Tag5(std::string & data){
     tag = 5;
     s2k_con = 0;
@@ -101,12 +113,6 @@ std::string Tag5::raw(){
     return out + secret;
 }
 
-Tag5 * Tag5::clone(){
-    Tag5 * out = new Tag5(*this);
-    out -> s2k = s2k -> clone();
-    return out;
-}
-
 uint8_t Tag5::get_s2k_con(){
     return s2k_con;
 }
@@ -159,4 +165,23 @@ void Tag5::set_IV(const std::string & iv){
 
 void Tag5::set_secret(const std::string & s){
     secret = s;
+}
+
+Tag5 * Tag5::clone(){
+    Tag5 * out = new Tag5(*this);
+    out -> s2k = s2k -> clone();
+    return out;
+}
+
+Tag5 Tag5::operator=(const Tag5 & tag5){
+    tag = tag5.tag;
+    version = tag5.version;
+    format = tag5.format;
+    size = tag5.size;
+    s2k_con = tag5.s2k_con;
+    sym = tag5.sym;
+    s2k = tag5.s2k -> clone();
+    IV = tag5.IV;
+    secret = tag5.secret;
+    return *this;
 }

@@ -25,14 +25,14 @@ std::string Tag2Sub11::raw(){
     return psa;
 }
 
-Tag2Sub11 * Tag2Sub11::clone(){
-    return new Tag2Sub11(*this);
-}
-
 std::string Tag2Sub11::get_psa(){
     return psa;
 }
 
 void Tag2Sub11::set_psa(const std::string & s){
     psa = s;
+}
+
+Tag2Sub11 * Tag2Sub11::clone(){
+    return new Tag2Sub11(*this);
 }

@@ -39,10 +39,6 @@ std::string Tag4::raw(){
     return out;
 }
 
-Tag4 * Tag4::clone(){
-    return new Tag4(*this);
-}
-
 uint8_t Tag4::get_type(){
     return type;
 }
@@ -87,3 +83,6 @@ void Tag4::set_nested(const uint8_t n){
     nested = n;
 }
 
+Tag4 * Tag4::clone(){
+    return new Tag4(*this);
+}

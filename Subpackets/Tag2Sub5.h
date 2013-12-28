@@ -15,12 +15,12 @@ class Tag2Sub5 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub5 * clone();
-
         uint8_t get_level();
         uint8_t get_amount();
 
         void set_level(const uint8_t l);
         void set_amount(const uint8_t a);
+
+        Tag2Sub5 * clone();
 };
 #endif

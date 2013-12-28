@@ -7,10 +7,10 @@ std::string Subpacket::write_subpacket(const std::string & data){
     else if ((192 <= data.size()) && (data.size() < 8383)){
         return unhexlify(makehex(((((data.size() >> 8) + 192) << 8) + (data.size() & 0xff) - 192), 4)) + data;
     }
-    else if (data.size() == 8383){
+    else{
         return "\xff" + unhexlify(makehex(data.size(), 8)) + data;
     }
-    return ""; // error
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 Subpacket::~Subpacket(){}
@@ -34,18 +34,3 @@ void Subpacket::set_type(uint8_t t){
 void Subpacket::set_size(unsigned int s){
     size = s;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

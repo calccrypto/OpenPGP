@@ -14,10 +14,10 @@ class Tag18 : public Packet{
         std::string show();
         std::string raw();
 
-        Tag18 * clone();
-
         std::string get_protected_data();
 
         void set_protected_data(const std::string & p);
+
+        Tag18 * clone();
 };
 #endif

@@ -23,14 +23,14 @@ std::string Tag9::raw(){
     return encrypted_data;
 }
 
-Tag9 * Tag9::clone(){
-    return new Tag9(*this);
-}
-
 std::string Tag9::get_encrypted_data(){
     return encrypted_data;
 }
 
 void Tag9::set_encrypted_data(const std::string & e){
     encrypted_data = e;
+}
+
+Tag9 * Tag9::clone(){
+    return new Tag9(*this);
 }

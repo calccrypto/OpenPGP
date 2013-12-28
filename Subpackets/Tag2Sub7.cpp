@@ -22,14 +22,14 @@ std::string Tag2Sub7::raw(){
     return (revocable?"\x01":zero);
 }
 
-Tag2Sub7 * Tag2Sub7::clone(){
-    return new Tag2Sub7(*this);
-}
-
 bool Tag2Sub7::get_revocable(){
     return revocable;
 }
 
 void Tag2Sub7::set_revocable(const bool r){
     revocable = r;
+}
+
+Tag2Sub7 * Tag2Sub7::clone(){
+    return new Tag2Sub7(*this);
 }

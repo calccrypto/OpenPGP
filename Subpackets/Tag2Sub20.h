@@ -18,8 +18,6 @@ class Tag2Sub20 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2Sub20 * clone();
-
         std::string get_flags();
         std::string get_m();
         std::string get_n();
@@ -27,5 +25,7 @@ class Tag2Sub20 : public Subpacket{
         void set_flags(const std::string & f);
         void set_m(const std::string & s);
         void set_n(const std::string & s);
+
+        Tag2Sub20 * clone();
 };
 #endif

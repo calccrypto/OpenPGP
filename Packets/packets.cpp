@@ -6,7 +6,7 @@ unsigned int partialBodyLen(uint8_t first_octet){
 
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format){
     uint8_t ctb = data[0];													    // Name "ctb" came from Version 2 [RFC 1991]
-    if (!(ctb >> 7)){
+    if (!(ctb & 0x80)){
         std::cerr << "Error: First bit of tag header MUST be 1." << std::endl;
         exit(1);
     }
@@ -15,7 +15,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
     data = data.substr(1, data.size() - 1);                                     // get rid of ctb / first byte of header
     std::string packet;
 
-    if (!((ctb >> 6) & 1)){                                                     // Old length type RFC4880 sec 4.2.1
+    if (!(ctb & 0x40)){                                                         // Old length type RFC4880 sec 4.2.1
         format = false;
         tag = (ctb >> 2) & 15;                                                  // get tag value
 		if (!(ctb & 3)){
@@ -34,7 +34,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 			length = data.size();
 		}
     }
-	else if ((ctb >> 6) & 1){   												// New length type RFC4880 sec 4.2.2
+	else /*if (ctb & 0x40)*/{   												// New length type RFC4880 sec 4.2.2
 		format = true;
 		tag = ctb & 63;                                                         // get tag value
 		uint8_t first_octet = (unsigned char) data[0];
@@ -56,7 +56,6 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 			data = data.substr(1, data.size() - 1);
 		}
 	}
-
 	packet = data.substr(0, length);											// Get packet
 	data = data.substr(length, data.size() - length);							// Remove packet from key
     return packet;

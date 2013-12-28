@@ -38,10 +38,6 @@ std::string Tag17Sub1::raw(){
     return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
-Tag17Sub1 * Tag17Sub1::clone(){
-    return new Tag17Sub1(*this);
-}
-
 std::string Tag17Sub1::get_image(){
     return image;
 }
@@ -50,3 +46,6 @@ void Tag17Sub1::set_image(const std::string & i){
     image = i;
 }
 
+Tag17Sub1 * Tag17Sub1::clone(){
+    return new Tag17Sub1(*this);
+}

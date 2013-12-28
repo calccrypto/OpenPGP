@@ -98,10 +98,6 @@ std::string Tag6::raw(){
     return raw_tag6();
 }
 
-Tag6 * Tag6::clone(){
-    return new Tag6(*this);
-}
-
 time_t Tag6::get_time(){
     return time;
 }
@@ -139,7 +135,11 @@ std::string Tag6::get_fingerprint(){
         std::string packet = raw_tag6();
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
-    return "";
+    else{
+        std::cerr << "Error: Public Key packet version " << version << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::string Tag6::get_keyid(){
@@ -150,6 +150,13 @@ std::string Tag6::get_keyid(){
     if (version == 4){
         return get_fingerprint().substr(12, 8);
     }
-    return "";
+    else{
+        std::cerr << "Error: Public Key packet version " << version << " not defined." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
+Tag6 * Tag6::clone(){
+    return new Tag6(*this);
+}

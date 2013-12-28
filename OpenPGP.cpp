@@ -12,6 +12,14 @@ PGP::PGP(){
     armored = false;
 }
 
+PGP::PGP(const PGP & pgp){
+    ASCII_Armor = pgp.ASCII_Armor;
+    Armor_Header = pgp.Armor_Header;
+    for(Packet * const & p : pgp.packets){
+        packets.push_back(p -> clone());
+    }
+}
+
 PGP::PGP(std::string & data){
     armored = true;
     read(data);
@@ -20,14 +28,6 @@ PGP::PGP(std::string & data){
 PGP::PGP(std::ifstream & f){
     armored = true;
     read(f);
-}
-
-PGP::PGP(const PGP & pgp){
-    ASCII_Armor = pgp.ASCII_Armor;
-    Armor_Header = pgp.Armor_Header;
-    for(Packet * p : pgp.packets){
-        packets.push_back(p -> clone());
-    }
 }
 
 PGP::~PGP(){
@@ -41,6 +41,7 @@ void PGP::read(std::string & data){
 
     // remove extra data and parse unsecured data
     unsigned int x = 0;
+
     // find and remove header
     while ((x < data.size()) && (data.substr(x, 15) != "-----BEGIN PGP ")){
         x++;
@@ -88,8 +89,8 @@ void PGP::read(std::string & data){
         exit(1);
     }
 
-
     data = data.substr(x + 1, data.size() - x - 1);
+
     // find header keys
     x = 0;
     while ((x < data.size()) && (data.substr(x, 2) != "\n\n")){
@@ -97,6 +98,7 @@ void PGP::read(std::string & data){
     }
 
     std::string header_keys = data.substr(0, (++x)++);
+
     // remove header keys + empty line
     data = data.substr(x, data.size() - x);
 
@@ -123,7 +125,7 @@ void PGP::read(std::string & data){
         }
 
         if (!found){
-            std::cerr << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
+            std::cerr << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22." << std::endl;
         }
 
         x++;
@@ -154,11 +156,13 @@ void PGP::read(std::string & data){
         data = radix642ascii(data.substr(0, data.size() - 5));
         // check if the checksum is correct
         if (crc24(data) != checksum){
-            std::cerr << "Warning: Given checksum does not match calculated value" << std::endl;
+            std::cerr << "Warning: Given checksum does not match calculated value." << std::endl;
         }
     }
-    else
+    else{
         data = radix642ascii(data);
+        std::cerr << "Warning: No checksum found." << std::endl;
+    }
     // //////////////////////////////////////////////////////////////////////////////////////////
     read_raw(data);
     armored = true;
@@ -209,14 +213,6 @@ std::string PGP::write(){
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
 }
 
-PGP * PGP::clone(){
-    PGP * out = new PGP;
-    out -> ASCII_Armor = ASCII_Armor;
-    out -> Armor_Header = Armor_Header;
-    out -> packets = get_packets_clone();
-    return out;
-}
-
 uint8_t PGP::get_ASCII_Armor(){
     return ASCII_Armor;
 }
@@ -257,8 +253,7 @@ void PGP::set_packets(const std::vector <Packet *> & p){
 }
 
 std::string PGP::keyid(){
-    if ((ASCII_Armor == 1) ||
-        (ASCII_Armor == 2)){
+    if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
         for(Packet *& p : packets){
             // find primary key
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
@@ -277,13 +272,16 @@ std::string PGP::keyid(){
             }
         }
     }
-    return "";
+    else{
+        std::cerr << "Error: PGP block type is incorrect." << std::endl;
+        exit(1);
+    }
+    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 // output is copied from gpg --list-keys
 std::string PGP::list_keys(){
-    if ((ASCII_Armor == 1) ||
-        (ASCII_Armor == 2)){
+    if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
         std::stringstream out;
         for(Packet *& p : packets){
             std::string data = p -> raw();
@@ -329,7 +327,31 @@ std::string PGP::list_keys(){
     }
 }
 
+PGP * PGP::clone(){
+    PGP * out = new PGP;
+    out -> ASCII_Armor = ASCII_Armor;
+    out -> Armor_Header = Armor_Header;
+    out -> packets = get_packets_clone();
+    return out;
+}
+
+PGP PGP::operator=(const PGP & pgp){
+    ASCII_Armor = pgp.ASCII_Armor;
+    Armor_Header = pgp.Armor_Header;
+    for(Packet * const & p : pgp.packets){
+        packets.push_back(p -> clone());
+    }
+    return *this;
+}
+
 PGPMessage::PGPMessage(){}
+
+PGPMessage::PGPMessage(const PGPMessage & pgpmessage){
+    ASCII_Armor = pgpmessage.ASCII_Armor;
+    Armor_Header = pgpmessage.Armor_Header;
+    message = pgpmessage.message;
+    key = pgpmessage.key;
+}
 
 PGPMessage::PGPMessage(std::string & data){
     read(data);
@@ -445,7 +467,7 @@ std::string PGPMessage::write(){
     for(std::pair <std::string, std::string> & k : Armor_Header){
         out += k.first + ":" + k.second + "\n";
     }
-    return out + "\n" + message + key.write();
+    return out + "\n" + message + "\n" + key.write();
 }
 
 uint8_t PGPMessage::get_ASCII_Armor(){
@@ -468,7 +490,7 @@ void PGPMessage::set_ASCII_Armor(uint8_t a){
     ASCII_Armor = a;
 }
 
-void PGPMessage::set_Armor_Heder(std::vector <std::pair <std::string, std::string> > & a){
+void PGPMessage::set_Armor_Header(std::vector <std::pair <std::string, std::string> > & a){
     Armor_Header = a;
 }
 
@@ -478,6 +500,23 @@ void PGPMessage::set_message(std::string & data){
 
 void PGPMessage::set_key(PGP & k){
     key = k;
+}
+
+PGPMessage * PGPMessage::clone(){
+    PGPMessage * out = new PGPMessage;
+    out -> ASCII_Armor = ASCII_Armor;
+    out -> Armor_Header = Armor_Header;
+    out -> message = message;
+    out -> key = key;
+    return out;
+}
+
+PGPMessage PGPMessage::operator=(const PGPMessage & pgpmessage){
+    ASCII_Armor = pgpmessage.ASCII_Armor;
+    Armor_Header = pgpmessage.Armor_Header;
+    message = pgpmessage.message;
+    key = pgpmessage.key;
+    return *this;
 }
 
 std::ostream & operator<<(std::ostream & stream, PGP & pgp){

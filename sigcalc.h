@@ -23,9 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <fstream>
 #include <iostream>
-#include <sstream>
 
 #include "Packets/packets.h"
 #include "OpenPGP.h"
@@ -54,7 +52,7 @@ THE SOFTWARE.
 // After all this has been hashed in a single hash context, the
 // resulting hash field is used in the signature algorithm and placed
 // at the end of the Signature packet.
-std::string addtrailer(std::string data, Tag2 * sig);
+std::string addtrailer(const std::string & data, Tag2 * sig);
 
 // Signature over a key
 //
@@ -85,7 +83,7 @@ std::string certification(uint8_t version, ID * id);
 //
 // For binary document signatures (type 0x00), the document data is
 // hashed directly.
-std::string to_sign_00(std::string & data, Tag2 * tag2);
+std::string to_sign_00(const std::string & data, Tag2 * tag2);
 
 // 0x01: Signature of a canonical text document.
 // This means the signer owns it, created it, or certifies that it
@@ -95,7 +93,7 @@ std::string to_sign_00(std::string & data, Tag2 * tag2);
 // For text document signatures (type 0x01), the
 // document is canonicalized by converting line endings to <CR><LF>,
 // and the resulting data is hashed.
-std::string to_sign_01(std::string data, Tag2 * tag2);
+std::string to_sign_01(const std::string & data, Tag2 * tag2);
 
 // 0x02: Standalone signature.
 // This signature is a signature of only its own subpacket contents.

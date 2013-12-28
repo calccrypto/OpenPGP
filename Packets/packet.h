@@ -30,8 +30,6 @@ class Packet{
         virtual std::string raw() = 0;
         std::string write(bool header = true);
 
-        virtual Packet * clone() = 0;
-
         // Accessors
         uint8_t get_tag();
         bool get_format();
@@ -43,6 +41,8 @@ class Packet{
         void set_format(bool f);
         void set_version(unsigned int v);
         void set_size(unsigned int s);
+
+        virtual Packet * clone() = 0;
 };
 
 // For Tags 5, 6, 7, and 14

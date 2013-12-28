@@ -22,12 +22,12 @@ class Subpacket{
         virtual std::string raw() = 0; // returns raw subpacket data, with no header
         std::string write();
 
-        virtual Subpacket * clone() = 0;
-
         uint8_t get_type();
         unsigned int get_size();
 
         void set_type(uint8_t t);
         void set_size(unsigned int s);
+
+        virtual Subpacket * clone() = 0;
 };
 #endif

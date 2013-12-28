@@ -21,14 +21,14 @@ std::string Tag2Sub6::raw(){
     return regex + zero; // might not need '+ zero'
 }
 
-Tag2Sub6 * Tag2Sub6::clone(){
-    return new Tag2Sub6(*this);
-}
-
 std::string Tag2Sub6::get_regex(){
     return regex;
 }
 
 void Tag2Sub6::set_regex(const std::string & r){
     regex = r;
+}
+
+Tag2Sub6 * Tag2Sub6::clone(){
+    return new Tag2Sub6(*this);
 }

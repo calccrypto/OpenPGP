@@ -2,7 +2,7 @@
 
 std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     // seed BBS
-    BBS(now());
+    BBS((mpz_class) (int) now());
 
     std::vector <Packet *> packets = pub.get_packets();
     Tag6 * public_key = new Tag6;
@@ -43,7 +43,6 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     }
 
     std::vector <mpz_class> mpi = public_key -> get_mpi();
-
     Tag1 * tag1 = new Tag1;
     tag1 -> set_keyid(public_key -> get_keyid());
     tag1 -> set_pka(public_key -> get_pka());
@@ -53,10 +52,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     // generate session key
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
     std::string session_key = mpz_class(BBS().rand(key_len), 2).get_str(16);
-    session_key += std::string(session_key.size() & 1, 0) + session_key;
-    while (session_key.size() < (size_t) (key_len >> 3)){
-        session_key = zero + session_key;
-    }
+    session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
 
     // get checksum of session key
     uint16_t sum = 0;
@@ -66,7 +62,8 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     std::string bytes = mpi[0].get_str(16);
     bytes += std::string(bytes.size() & 1, 0);
-    mpz_class m(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1), 256);
+    mpz_class m(hexlify(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1)), 16);
+
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA
         tag1 -> set_mpi({RSA_encrypt(m, mpi)});
@@ -111,7 +108,6 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
         // encrypt((literal_data_packet(plain text) + MDC SHA1(20 bytes)))
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, tag18.get_protected_data() + tag19.write(), session_key, prefix));
-
         std::string raw = tag18.raw();
         encrypted = new Tag18;
         encrypted -> read(raw);
