@@ -13,7 +13,7 @@ Tag10::Tag10(std::string & data){
 void Tag10::read(std::string & data){
     size = data.size();
     if (data != "PGP"){
-        std::cerr << "Error: Tag 10 packet did not contain data \x5cPGP\x5c" << std::endl;
+        std::cerr << "Error: Tag 10 packet did not contain data \x5cPGP\x5c." << std::endl;
         exit(1);
     }
 }
@@ -36,7 +36,7 @@ std::string Tag10::get_pgp(){
 
 void Tag10::set_pgp(const std::string & s){
     if (s != "PGP"){
-        std::cerr << "Error: Tag 10 input data not string \"PGP\"" << std::endl;
+        std::cerr << "Error: Tag 10 input data not string \x5cPGP\x5c." << std::endl;
     }
     pgp = s;
 }

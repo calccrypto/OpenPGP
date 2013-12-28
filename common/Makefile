@@ -1,7 +1,7 @@
 # common Makefile
 CC=g++
 LFLAGS=
-CFLAGS=-std=c++11 -Wall -c -lgmp -lgmpxx
+CFLAGS=-std=c++11 -Wall -c
 debug: BFLAGS += -g
 debug: all
 

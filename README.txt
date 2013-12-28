@@ -48,7 +48,7 @@ which can be used as examples on how to use the functions. A lot of
 the output was based on/inspired by pgpdump.net and GPG.
 
 The main data types PGP, Packet, Subpacket, and S2K have
-the six standard functions: read, show, raw, and write.
+the five standard functions: read, show, raw, and write.
     read  - reads data without the respective header
             information
 
@@ -62,13 +62,31 @@ the six standard functions: read, show, raw, and write.
             including extra data, such as header
             and size.
 
-    copy  - returns a copy of the contents of the
-            data structure: "return *this;".
-            (pointers point to the source object, etc.)
+    clone - returns a pointer to a completely new copy 
+            of the data structure (All pointers point
+            to new memory locations).
 
-    clone - returns a completely new copy of the
-            data structure (All pointers point
-            to a new memory location).
+Some data structures contain pointers within them. Using their
+respective 'get' functions will return the pointer or container
+of pointers. Using the respective 'get_*_clone' functions will 
+return a pointer to a new object containing the same data.
+
+To build the command line program:
+    Use the Code::Blocks project file
+
+    or
+
+    make
+
+    or 
+    
+    (from OpenPGP directory)
+    g++ -std=c++11 -Wall */*.cpp *.cpp -lgmpxx -lgmp
+
+    or some equivalent.
+
+When building for another project, remember to link GMP to
+the main program.
 
 Notes:
     Keyrings were not implemented.

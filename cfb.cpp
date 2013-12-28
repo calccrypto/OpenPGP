@@ -86,7 +86,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, uint8_t packet, std::string data
 
     // 6
     if (prefix.substr(BS - 2, 2) != check){
-        std::cerr << "Error: Bad OpenPGP_CFB check value" << std::endl;
+        std::cerr << "Error: Bad OpenPGP_CFB check value." << std::endl;
         exit(1);
     }
     std::string P = "";
@@ -103,6 +103,9 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, uint8_t packet, std::string data
 std::string use_OpenPGP_CFB_encrypt(uint8_t sym_alg, uint8_t packet, std::string data, std::string key, std::string prefix, std::string key2, std::string key3){
     SymAlg * alg = NULL;
     switch(sym_alg){
+        case 0: // unencrypted
+            return data;
+            break;
         case 1:
             alg = new IDEA(key);
             break;
@@ -132,6 +135,9 @@ std::string use_OpenPGP_CFB_encrypt(uint8_t sym_alg, uint8_t packet, std::string
 std::string use_OpenPGP_CFB_decrypt(uint8_t sym_alg, uint8_t packet, std::string data, std::string key, std::string key2, std::string key3){
     SymAlg * alg = NULL;
     switch(sym_alg){
+        case 0: // unencrypted
+            return data;
+            break;
         case 1:
             alg = new IDEA(key);
             break;
@@ -185,6 +191,9 @@ std::string normal_CFB_decrypt(SymAlg * crypt, std::string data, std::string IV)
 std::string use_normal_CFB_encrypt(uint8_t sym_alg, std::string data, std::string key, std::string IV, std::string key2, std::string key3){
     SymAlg * alg = NULL;
     switch(sym_alg){
+        case 0: // unencrypted
+            return data;
+            break;
         case 1:
             alg = new IDEA(key);
             break;
@@ -214,6 +223,9 @@ std::string use_normal_CFB_encrypt(uint8_t sym_alg, std::string data, std::strin
 std::string use_normal_CFB_decrypt(uint8_t sym_alg, std::string data, std::string key, std::string IV, std::string key2, std::string key3){
     SymAlg * alg = NULL;
     switch(sym_alg){
+        case 0: // unencrypted
+            return data;
+            break;
         case 1:
             alg = new IDEA(key);
             break;

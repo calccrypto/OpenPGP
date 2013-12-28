@@ -1,5 +1,5 @@
 /*
-signverify.h
+sigcalc.h
 Calculates signature data as described in RFC 4880 sec 5.2.1 and 5.2.4
 
 Copyright (c) 2013 Jason Lee
@@ -34,6 +34,7 @@ THE SOFTWARE.
 
 #ifndef __SIGNATURE__
 #define __SIGNATURE__
+
 // Modify data for signature version 3 or 4
 //
 // Once the data body is hashed, then a trailer is hashed. A V3

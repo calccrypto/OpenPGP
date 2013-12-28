@@ -27,10 +27,11 @@ THE SOFTWARE.
 #include <iostream>
 #include <sstream>
 
-#include "PKA/DSA.h"
-#include "PKA/RSA.h"
+#include <gmpxx.h>
+
+#include "PKA/PKA.h"
 #include "OpenPGP.h"
-#include "signverify.h"
+#include "sigcalc.h"
 
 #ifndef __VERIFY__
 #define __VERIFY__

@@ -1,4 +1,5 @@
-#include "signverify.h"
+#include "sigcalc.h"
+
 std::string addtrailer(std::string data, Tag2 * sig){
     std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
@@ -90,7 +91,7 @@ std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2){
 }
 
 std::string to_sign_1f(Tag6 tag6, Tag2 * tag2){
-    std::cerr << "Error: Signature Directly on Key (Type 0x1f) not implemented" << std::endl;
+    std::cerr << "Error: Signature Directly on Key (Type 0x1f) not implemented." << std::endl;
     exit(1);
 }
 
@@ -107,7 +108,7 @@ std::string to_sign_30(Key * key, ID * id, Tag2 * tag2){
 }
 
 std::string to_sign_40(Tag2 * tag2){
-    std::cerr << "Error: Timestamp Signature (Type 0x40) not implemented" << std::endl;
+    std::cerr << "Error: Timestamp Signature (Type 0x40) not implemented." << std::endl;
     exit(1);
 }
 

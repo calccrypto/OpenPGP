@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include <iostream>
 #include <sstream>
 
-#include "common/includes.h"
-#include "consts.h"
-#include "usehash.h"
+#include "../common/includes.h"
+#include "../consts.h"
+#include "../usehash.h"
 
 #ifndef __S2K__
 #define __S2K__

@@ -1,6 +1,6 @@
 #include "sign.h"
 Tag5 * find_signing_packet(PGP & k){
-    std::vector <Packet *> packets = k.get_packets_pointers();
+    std::vector <Packet *> packets = k.get_packets();
     for(Packet *& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
             std::string data = p -> raw();
@@ -18,7 +18,7 @@ Tag5 * find_signing_packet(PGP & k){
 }
 
 Tag13 * find_signer_id(PGP & k){
-    std::vector <Packet *> packets = k.get_packets_pointers();
+    std::vector <Packet *> packets = k.get_packets();
     for(Packet *& p : packets){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
@@ -28,6 +28,16 @@ Tag13 * find_signer_id(PGP & k){
         }
     }
     return NULL;
+}
+
+std::vector <mpz_class> pka_sign(std::string hashed_data, uint8_t pka, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri){
+    if ((pka == 1) || (pka == 3)){ // RSA
+        return {RSA_sign(hashed_data, pri, pub)};
+    }
+    else if (pka == 17){ // DSA
+        return DSA_sign(hashed_data, pri, pub);
+    }
+    return {};
 }
 
 std::vector <mpz_class> pka_sign(std::string hashed_data, Tag5 * tag5, std::string pass){
@@ -54,14 +64,14 @@ Tag2 * sign(uint8_t type, std::string hashed_data, Tag5 * tag5, std::string pass
         std::vector <Subpacket *> subpackets;
 
         // Set Time
-        subpackets = tag2 -> get_hashed_subpackets_pointers();
+        subpackets = tag2 -> get_hashed_subpackets();
         Tag2Sub2 * tag2sub2 = new Tag2Sub2;
         tag2sub2 -> set_time(now());
         subpackets.push_back(tag2sub2);
         tag2 -> set_hashed_subpackets(subpackets);
 
         // Set Key ID
-        subpackets = tag2 -> get_unhashed_subpackets_pointers();
+        subpackets = tag2 -> get_unhashed_subpackets();
         Tag2Sub16 * tag2sub16 = new Tag2Sub16;
         tag2sub16 -> set_keyid(tag5 -> get_keyid());
         subpackets.push_back(tag2sub16);

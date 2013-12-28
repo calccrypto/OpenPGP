@@ -23,7 +23,7 @@ uint64_t toint(const std::string & s, const int & base){
                 value = (value << 8) + (uint8_t) s[x];
             break;
         default:
-            std::cout << "InputError: toint() undefined for base" << std::dec << base << std::endl;
+            std::cerr << "InputError: toint() undefined for base: " << std::dec << base << std::endl;
             exit(1);
             break;
     };
@@ -40,26 +40,10 @@ std::string little_end(const std::string & str, const unsigned int & base){
 	return t;
 }
 
-std::string makebin(mpz_class value, unsigned int size){
-    std::string out = value.get_str(2);
-    while (out.size() < size){
-        out = std::string(size - out.size(), 0) + out;
-    }
-    return out;
-}
-
-std::string makehex(mpz_class value, unsigned int size){
-    std::string out = value.get_str(16);
-    while (out.size() < size){
-        out = std::string(size - out.size(), 0) + out;
-    }
-    return out;
-}
-
 std::string bintohex(const std::string & in){
     // Changes a binary string to its hexadecimal equivalent
     if (in.size() % 4){
-        std::cout << "Error: input string length not a multiple of 4" << std::endl;
+        std::cerr << "Error: input string length not a multiple of 4." << std::endl;
         exit(1);
     }
     std::string out = "";
@@ -86,7 +70,7 @@ std::string hexlify(const char in){
 std::string unhexlify(const std::string & in){
 	// Reverse hexlify
 	if (in.size() & 1){
-		std::cout << "Error: input string of odd length" << std::endl;
+		std::cerr << "Error: input string of odd length." << std::endl;
         exit(1);
     }
     std::string out = "";

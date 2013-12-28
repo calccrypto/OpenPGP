@@ -6,7 +6,7 @@ CFLAGS=-std=c++11 -Wall -c
 debug: CFLAGS += -g
 debug: all
 
-all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o pgptime.o PKCS1.o radix64.o s2k.o sign.o signverify.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o pgptime.o PKCS1.o radix64.o sign.o sigcalc.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
 
 .PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
@@ -32,46 +32,43 @@ Subpackets:
 	$(MAKE) -C Subpackets
 
 cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
-	$(CC) $(CFLAGS) cfb.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) cfb.cpp
 
-decrypt.o: decrypt.h decrypt.cpp PKA/ElGamal.h PKA/RSA.h cfb.h consts.h OpenPGP.h Packets/packets.h PKCS1.h s2k.h usehash.h
-	$(CC) $(CFLAGS) decrypt.cpp $(LFLAGS)
+decrypt.o: decrypt.h decrypt.cpp PKA/PKA.h cfb.h consts.h OpenPGP.h Packets/packets.h PKCS1.h usehash.h
+	$(CC) $(CFLAGS) $(LFLAGS) decrypt.cpp
 
-encrypt.o: encrypt.h encrypt.cpp PKA/ElGamal.h PKA/RSA.h OpenPGP.h cfb.h PKCS1.h usehash.h
-	$(CC) $(CFLAGS) encrypt.cpp $(LFLAGS)
+encrypt.o: encrypt.h encrypt.cpp PKA/PKA.h OpenPGP.h cfb.h PKCS1.h usehash.h
+	$(CC) $(CFLAGS) $(LFLAGS) encrypt.cpp
 
-generatekey.o: generatekey.h generatekey.cpp PKA/DSA.h PKA/ElGamal.h PKA/RSA.h OpenPGP.h cfb.h PKCS1.h signverify.h usehash.h
-	$(CC) $(CFLAGS) generatekey.cpp $(LFLAGS)
+generatekey.o: generatekey.h generatekey.cpp PKA/PKA.h OpenPGP.h cfb.h PKCS1.h sigcalc.h usehash.h
+	$(CC) $(CFLAGS) $(LFLAGS) generatekey.cpp
 
 mpi.o: mpi.h mpi.cpp common/includes.h
-	$(CC) $(CFLAGS) mpi.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) $(LFLAGS) mpi.cpp
 
 OpenPGP.o: OpenPGP.h OpenPGP.cpp common/includes.h consts.h Packets/packets.h pgptime.h Subpackets/subpackets.h radix64.h
-	$(CC) $(CFLAGS) OpenPGP.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) OpenPGP.cpp
 
 pgptime.o: pgptime.h pgptime.cpp consts.h
-	$(CC) $(CFLAGS) pgptime.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) pgptime.cpp
 
 PKCS1.o: PKCS1.h PKCS1.cpp consts.h common/includes.h RNG/RNG.h usehash.h
-	$(CC) $(CFLAGS) PKCS1.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) PKCS1.cpp
 
 radix64.o: radix64.h radix64.cpp common/includes.h
-	$(CC) $(CFLAGS) radix64.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) radix64.cpp
 
-s2k.o: s2k.h s2k.cpp common/includes.h consts.h usehash.h
-	$(CC) $(CFLAGS) s2k.cpp $(LFLAGS)
+sign.o: sign.h sign.cpp common/includes.h PKA/PKA.h decrypt.h Packets/packets.h pgptime.h
+	$(CC) $(CFLAGS) $(LFLAGS) sign.cpp
 
-sign.o: sign.h sign.cpp common/includes.h PKA/DSA.h PKA/RSA.h decrypt.h Packets/packets.h pgptime.h
-	$(CC) $(CFLAGS) sign.cpp $(LFLAGS)
-
-signverify.o: signverify.h signverify.cpp OpenPGP.h pgptime.h Packets/packets.h usehash.h
-	$(CC) $(CFLAGS) signverify.cpp $(LFLAGS)
+sigcalc.o: sigcalc.h sigcalc.cpp OpenPGP.h pgptime.h Packets/packets.h usehash.h
+	$(CC) $(CFLAGS) sigcalc.cpp
 
 usehash.o: usehash.h usehash.cpp Hashes/Hashes.h
-	$(CC) $(CFLAGS) usehash.cpp $(LFLAGS)
+	$(CC) $(CFLAGS) usehash.cpp
 
-verify.o: verify.h verify.cpp PKA/DSA.h PKA/RSA.h OpenPGP.h signverify.h
-	$(CC) $(CFLAGS) verify.cpp $(LFLAGS)
+verify.o: verify.h verify.cpp PKA/PKA.h OpenPGP.h sigcalc.h
+	$(CC) $(CFLAGS) $(LFLAGS) verify.cpp
 
 clean:
 	rm -f *.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o

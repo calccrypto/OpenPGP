@@ -4,7 +4,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     // seed BBS
     BBS(now());
 
-    std::vector <Packet *> packets = pub.get_packets_pointers();
+    std::vector <Packet *> packets = pub.get_packets();
     Tag6 * public_key = new Tag6;
 
     // find first key packet with encrypting values
@@ -38,7 +38,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     }
 
     if (!found){
-        std::cerr << "Error: No public key found";
+        std::cerr << "Error: No public key found." << std::endl;
         exit(1);
     }
 
@@ -75,7 +75,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
         tag1 -> set_mpi(ElGamal_encrypt(m, mpi));
     }
     else{
-        std::cerr << "Error: Unknown or Reserved Public Key Algorithm " << (int) public_key -> get_pka() << std::endl;
+        std::cerr << "Error: Unknown or Reserved Public Key Algorithm: " << (int) public_key -> get_pka() << std::endl;
         exit(1);
     }
 
@@ -88,7 +88,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     // generate prefix
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
-    std::string prefix = unhexlify(makehex(mpz_class(BBS().rand(BS << 3), 2), BS << 1));
+    std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1));
 
     Packet * encrypted = NULL;
 

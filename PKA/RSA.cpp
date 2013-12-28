@@ -21,7 +21,7 @@ std::vector <mpz_class> RSA_keygen(const unsigned int & bits){
     }
     mpz_class d;
     mpz_invert(d.get_mpz_t(), e.get_mpz_t(), tot.get_mpz_t());
-	return {e, d, n}; // split this into {e, n} and {d}
+	return {e, n, d}; // split this into {e, n} and {d}
 }
 
 mpz_class RSA_encrypt(mpz_class & data, const std::vector <mpz_class> & pub){

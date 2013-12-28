@@ -6,7 +6,6 @@
 #include "../consts.h"
 #include "../mpi.h"
 #include "../pgptime.h"
-#include "../s2k.h"
 
 #ifndef __PACKET__
 #define __PACKET__
@@ -15,11 +14,12 @@ class Packet{
     protected:
         uint8_t tag = 0;
         uint8_t version = 0;
-        bool format = true; // OLD or NEW; only used when "show"ing. "write" will always write new version
-        unsigned int size = 0;
+        bool format = true;     // OLD or NEW; only used when "show"ing. "write" will always write new version
+        unsigned int size = 0;  // This value is only correct when the packet was generated with the read() function
 
         // returns packet data with old format packet length
         std::string write_old_length(std::string data);
+
         // returns packet data with new format packet length
         std::string write_new_length(std::string data);
 

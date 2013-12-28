@@ -10,7 +10,7 @@ std::string Tag8::compress(std::string data){
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
         default:
-            std::cerr << "Error: Compression functions not implemented" << std::endl;
+            std::cerr << "Error: Compression functions not implemented." << std::endl;
             exit(1);
             break;
     }
@@ -27,13 +27,12 @@ std::string Tag8::decompress(std::string data){
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
         default:
-            std::cerr << "Error: Decompression functions not implemented" << std::endl;
+            std::cerr << "Error: Decompression functions not implemented." << std::endl;
             exit(1);
             break;
     }
     return out;
 }
-
 
 Tag8::Tag8(){
     tag = 8;
@@ -62,7 +61,6 @@ std::string Tag8::show(){
 std::string Tag8::raw(){
     return std::string(1, comp) + compressed_data;
 }
-
 
 Tag8 * Tag8::clone(){
     return new Tag8(*this);

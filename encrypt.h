@@ -22,8 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-#include "PKA/ElGamal.h"
-#include "PKA/RSA.h"
+#include <gmpxx.h>
+
+#include "PKA/PKA.h"
 #include "cfb.h"
 #include "OpenPGP.h"
 #include "PKCS1.h"

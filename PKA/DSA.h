@@ -17,7 +17,7 @@ Input data should already be formatted and ready for hashing
 #ifndef __DSA__
 #define __DSA__
 // Generate new set of parameters
-std::vector <mpz_class> new_DSA_public(const uint32_t & L = 1024, const uint32_t & N = 160);
+std::vector <mpz_class> new_DSA_public(const uint32_t & L = 2048, const uint32_t & N = 256);
 
 // Generate new keypair with parameters
 std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub);

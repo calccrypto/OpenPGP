@@ -1,6 +1,6 @@
 # OpenPGP executable Makefile
 CC=g++
-LFLAGS=-lgmp -lgmpxx
+LFLAGS=-lgmpxx -lgmp
 CFLAGS=-std=c++11 -Wall
 TARGET=OpenPGP
 

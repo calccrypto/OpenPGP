@@ -26,10 +26,10 @@ std::string Tag17Sub1::show(){
     if (f.is_open()){
         f << image;
         f.close();
-        out << "    Check working directory for " << filename.str() << " (" << image.size() << " bytes)\n";
+        out << "    Check working directory for " << filename.str() << " (" << image.size() << " bytes).\n";
     }
     else{
-        out << "    Error Writing to " << filename.str() << " (" << image.size() << " bytes)\n";
+        out << "    Error Writing to " << filename.str() << " (" << image.size() << " bytes).\n";
     }
     return out.str();
 }

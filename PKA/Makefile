@@ -5,7 +5,10 @@ CFLAGS=-std=c++11 -Wall -c
 debug: BFLAGS += -g
 debug: all
 
-all: DSA.o ElGamal.o RSA.o
+all: PKA.o DSA.o ElGamal.o RSA.o
+
+PKA.o: PKA.h PKA.cpp DSA.h ElGamal.h RSA.h
+	$(CC) $(CFLAGS) PKA.cpp
 
 DSA.o: DSA.h DSA.cpp ../common/cryptomath.h ../Hashes/Hashes.h ../RNG/RNG.h ../usehash.h
 	$(CC) $(CFLAGS) $(LFLAGS) DSA.cpp

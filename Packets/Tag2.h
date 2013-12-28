@@ -1,7 +1,6 @@
 // Signature Packet
 #include "../Subpackets/subpackets.h"
 #include "packet.h"
-#include "Tag6.h"
 
 #ifndef __TAG2__
 #define __TAG2__
@@ -45,10 +44,10 @@ class Tag2 : public Packet{
         uint32_t get_time();
         std::string get_keyid();
 
-        std::vector <Subpacket *> get_hashed_subpackets_pointers();
-        std::vector <Subpacket *> get_hashed_subpackets_copy();
-        std::vector <Subpacket *> get_unhashed_subpackets_pointers();
-        std::vector <Subpacket *> get_unhashed_subpackets_copy();
+        std::vector <Subpacket *> get_hashed_subpackets();
+        std::vector <Subpacket *> get_hashed_subpackets_clone();
+        std::vector <Subpacket *> get_unhashed_subpackets();
+        std::vector <Subpacket *> get_unhashed_subpackets_clone();
         std::string get_up_to_hashed();             // used for signature trailer
         std::string get_without_unhashed();         // used for signature type 0x50
 
@@ -62,6 +61,7 @@ class Tag2 : public Packet{
         void set_time(const uint32_t t);
         void set_keyid(const std::string & k);
 
+        // Do not use pointers from get_*_pointers(). Use pointers from get_*_clone()
         void set_hashed_subpackets(const std::vector <Subpacket *> & h);
         void set_unhashed_subpackets(const std::vector <Subpacket *> & u);
 };

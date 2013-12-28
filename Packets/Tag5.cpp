@@ -1,11 +1,15 @@
 #include "Tag5.h"
 Tag5::Tag5(){
     tag = 5;
+    s2k_con = 0;
+    sym = 0;
     s2k = NULL;
 }
 
 Tag5::Tag5(std::string & data){
     tag = 5;
+    s2k_con = 0;
+    sym = 0;
     s2k = NULL;
     read(data);
 }
@@ -83,7 +87,6 @@ void Tag5::read(std::string & data){
 }
 
 std::string Tag5::show(){
-    std::cout << "show" << std::endl;
     return show_tag6() + show_common();
 }
 
@@ -112,11 +115,11 @@ uint8_t Tag5::get_sym(){
     return sym;
 }
 
-S2K * Tag5::get_s2k_pointer(){
+S2K * Tag5::get_s2k(){
     return s2k;
 }
 
-S2K * Tag5::get_s2k_copy(){
+S2K * Tag5::get_s2k_clone(){
     return s2k -> clone();
 }
 

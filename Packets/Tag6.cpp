@@ -40,26 +40,26 @@ std::string Tag6::show_tag6(){
         }
         out << "\n"
             << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
-            << "    RSA n: " << mpi[0].get_str(16) << "(" << makebin(mpi[0]).size() << " bits)\n"
+            << "    RSA n: " << mpi[0].get_str(16) << "(" << mpi[0].get_str(2).size() << " bits)\n"
             << "    RSA e: " << mpi[1].get_str(16) << "\n";
     }
     else if (version == 4){
         out << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n";
 
         if (pka < 4){
-            out << "    RSA n (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    RSA e (" << makebin(mpi[1]).size() << " bits): " << mpi[1].get_str(16) << "\n";
+            out << "    RSA n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
+                << "    RSA e (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
         }
         else if (pka == 17){
-            out << "    DSA p (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    DSA q (" << makebin(mpi[1]).size() << " bits): " << mpi[1].get_str(16) << "\n"
-                << "    DSA g (" << makebin(mpi[2]).size() << " bits): " << mpi[2].get_str(16) << "\n"
-                << "    DSA y (" << makebin(mpi[3]).size() << " bits): " << mpi[3].get_str(16) << "\n";
+            out << "    DSA p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
+                << "    DSA q (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n"
+                << "    DSA g (" << mpi[2].get_str(2).size() << " bits): " << mpi[2].get_str(16) << "\n"
+                << "    DSA y (" << mpi[3].get_str(2).size() << " bits): " << mpi[3].get_str(16) << "\n";
         }
         else if (pka == 16){
-            out << "    Elgamal p (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    Elgamal g (" << makebin(mpi[1]).size() << " bits): " << mpi[1].get_str(16) << "\n"
-                << "    Elgamal y (" << makebin(mpi[2]).size() << " bits): " << mpi[2].get_str(16) << "\n";
+            out << "    Elgamal p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
+                << "    Elgamal g (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n"
+                << "    Elgamal y (" << mpi[2].get_str(2).size() << " bits): " << mpi[2].get_str(16) << "\n";
         }
     }
     return out.str();

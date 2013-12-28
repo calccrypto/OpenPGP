@@ -67,8 +67,16 @@ S2K * Tag3::get_s2k(){
     return s2k;
 }
 
+S2K * Tag3::get_s2k_clone(){
+    return s2k -> clone();
+}
+
 std::string * Tag3::get_esk(){
     return esk;
+}
+
+std::string * Tag3::get_esk_clone(){
+    return new std::string(*esk);
 }
 
 std::string Tag3::get_key(std::string pass){

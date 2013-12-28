@@ -23,12 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <ctime>
 #include <iostream>
 
-#include "consts.h"
 #include "common/includes.h"
 #include "RNG/RNG.h"
+#include "consts.h"
 #include "usehash.h"
 
 #ifndef __PKCS1__

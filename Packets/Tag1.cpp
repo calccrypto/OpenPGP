@@ -26,11 +26,11 @@ std::string Tag1::show(){
         << "    KeyID: " << hexlify(keyid) << "\n"
         << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n";
     if (pka < 4){           // RSA
-        out << "    RSA m**e mod n (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n";
+        out << "    RSA m**e mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
     }
     else if (pka == 16){
-        out << "    Elgamal g**k mod p (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n"
-            << "    Elgamal m * y**k mod p (" << makebin(mpi[1]).size() << " bits): " << mpi[1].get_str(16) << "\n";
+        out << "    Elgamal g**k mod p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
+            << "    Elgamal m * y**k mod p (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
     }
     return out.str();
 }
@@ -61,7 +61,7 @@ std::vector <mpz_class> Tag1::get_mpi(){
 
 void Tag1::set_keyid(const std::string & k){
     if (k.size() != 8){
-        std::cerr << "Error: Key ID must be 8 octets" << std::endl;
+        std::cerr << "Error: Key ID must be 8 octets." << std::endl;
         exit(1);
     }
     keyid = k;

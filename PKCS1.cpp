@@ -2,7 +2,7 @@
 
 std::string EME_PKCS1_ENCODE(const std::string & m, const unsigned int & k){
     if (m.size() > (k - 11)){
-        std::cerr << "Error: EME-PKCS1 Message too long" << std::endl;
+        std::cerr << "Error: EME-PKCS1 Message too long." << std::endl;
         exit(1);
     }
     std::string EM = zero + "\x02";
@@ -29,13 +29,13 @@ std::string EME_PKCS1_DECODE(const std::string & m){
             }
         }
     }
-    std::cerr << "Error: EME-PKCS1 Decryption Error" << std::endl;
+    std::cerr << "Error: EME-PKCS1 Decryption Error." << std::endl;
     exit(1);
 }
 
 std::string EMSA_PKCS1(uint8_t & h, const unsigned int & mL){
     std::string T = Hash_ASN_DER.at(Hash_Algorithms.at(h));
-        std::cerr << "Error: Intended encoded message length too short" << std::endl;
+        std::cerr << "Error: Intended encoded message length too short." << std::endl;
     if (mL < (T.size() + 11)){
         exit(1);
     }

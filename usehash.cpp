@@ -24,7 +24,7 @@ std::string use_hash(uint8_t flag, std::string data){
             return SHA224(data).digest();
             break;
         default:
-            std::cerr << "Error: Hash value not defined or reserved" << std::endl;
+            std::cerr << "Error: Hash value not defined or reserved." << std::endl;
             exit(1);
             break;
     }

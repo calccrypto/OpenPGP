@@ -25,8 +25,8 @@ class Tag17 : public ID{
 
         Tag17 * clone();
 
-        std::vector <Subpacket *> get_attributes_pointers();
-        std::vector <Subpacket *> get_attributes_copy();
+        std::vector <Subpacket *> get_attributes();
+        std::vector <Subpacket *> get_attributes_clone();
         void set_attibutes(const std::vector <Subpacket *> & a);
 };
 #endif

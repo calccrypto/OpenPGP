@@ -3,7 +3,7 @@ std::string find_keyid(Tag2 * tag2){
     std::string out = "";
     // Search Subpackets
     // Most likely in unhashed subpackets
-    std::vector <Subpacket *> subpackets = tag2 -> get_unhashed_subpackets_pointers();
+    std::vector <Subpacket *> subpackets = tag2 -> get_unhashed_subpackets();
     for(Subpacket *& s : subpackets){
         if (s -> get_type() == 16){
             std::string temp = s -> raw();
@@ -14,7 +14,7 @@ std::string find_keyid(Tag2 * tag2){
     }
     // if not found in unhashed subpackets, search hashed subpackets
     if (!out.size()){
-        subpackets = tag2 -> get_hashed_subpackets_pointers();
+        subpackets = tag2 -> get_hashed_subpackets();
         for(Subpacket *& s : subpackets){
             if (s -> get_type() == 16){
                 std::string temp = s -> raw();
@@ -29,7 +29,7 @@ std::string find_keyid(Tag2 * tag2){
 
 std::vector <mpz_class> find_matching_pub_key(std::string keyid, PGP & key){
     std::vector <mpz_class> keys;
-    std::vector <Packet *> packets = key.get_packets_pointers();
+    std::vector <Packet *> packets = key.get_packets();
     for(Packet *& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
             std::string temp = p -> raw();
@@ -64,27 +64,27 @@ bool verify_file(std::string filename, PGP & sig, PGP & key){
 
 bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
     if (!f){
-        std::cerr << "Error: Bad file" << std::endl;
+        std::cerr << "Error: Bad file." << std::endl;
         exit(1);
     }
     std::stringstream s;
     s << f.rdbuf();
     std::string data = s.str();
 
-    std::string temp = sig.get_packets_pointers()[0] -> raw();
+    std::string temp = sig.get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
 
     // Check left 16 bits
     std::string hash = to_sign_00(data, signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
-        std::cerr << "Error: Hash and given left 16 bits of hash do not match" << std::endl;
+        std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
         exit(1);
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
-        std::cerr << "Error: No Key ID subpacket found" << std::endl;
+        std::cerr << "Error: No Key ID subpacket found." << std::endl;
         exit(1);
     }
 
@@ -99,20 +99,20 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
 // Signature type 0x00 and 0x01
 bool verify_message(PGPMessage & message, PGP & key){
     // Find key id from signature to match with public key
-    std::string temp = message.get_key().get_packets_pointers()[0] -> raw();
+    std::string temp = message.get_key().get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
 
     // check left 16 bits
     std::string hash = to_sign_01(message.get_message(), signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
-        std::cerr << "Error: Hash and given left 16 bits of hash do not match" << std::endl;
+        std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
         exit(1);
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
-        std::cerr << "Error: No Key ID subpacket found" << std::endl;
+        std::cerr << "Error: No Key ID subpacket found." << std::endl;
         exit(1);
     }
 
@@ -128,7 +128,7 @@ bool verify_message(PGPMessage & message, PGP & key){
 
 // Signature Type 0x10 - 0x13
 bool verify_signature(PGP & key, PGP & signer){
-    std::vector <Packet *> packets = signer.get_packets_pointers();
+    std::vector <Packet *> packets = signer.get_packets();
 
     // find signing key
     std::vector <mpz_class> signing_key;
@@ -157,7 +157,7 @@ bool verify_signature(PGP & key, PGP & signer){
     }
 
     if (!signing_key.size()){
-        std::cerr << "Error: No key found" << std::endl;
+        std::cerr << "Error: No key found." << std::endl;
         exit(1);
     }
 
@@ -166,7 +166,7 @@ bool verify_signature(PGP & key, PGP & signer){
     std::string u = "";
 
     // set packets to signatures to verify
-    packets = key.get_packets_pointers();
+    packets = key.get_packets();
 
     bool out = true;
 
@@ -223,10 +223,10 @@ bool verify_signature(PGP & key, PGP & signer){
 }
 
 bool verify_revoke(PGP & key, PGP & rev){
-    std::vector <Packet *> keys = key.get_packets_pointers();
+    std::vector <Packet *> keys = key.get_packets();
 
     // copy revocation signature into tag2
-    std::vector <Packet *> rev_pointers = rev.get_packets_pointers();
+    std::vector <Packet *> rev_pointers = rev.get_packets();
 
     // get revocation key; assume only 1 packet
     std::string rev_str = rev_pointers[0] -> raw();

@@ -23,21 +23,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <ctime>
+#include <gmpxx.h>
 
-#include "PKA/DSA.h"
-#include "PKA/ElGamal.h"
-#include "PKA/RSA.h"
+#include "PKA/PKA.h"
 #include "OpenPGP.h"
 #include "cfb.h"
 #include "pgptime.h"
 #include "PKCS1.h"
-#include "signverify.h"
+#include "sign.h"
+#include "sigcalc.h"
 #include "usehash.h"
 
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__
 
-void generate_keys(PGP & pub, PGP & pri, const std::string & passphrase = "", const std::string & username = "", const std::string & comment = "", const std::string & email = "");
+// Fills in provided empty keys
+void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);
+
+// Given a private key with its packets filled with non PKA data, will
+// fill in the following fields of both the public key and private key:
+//  public PKA values
+//  private PKA values
+//  key id (optional)
+//
+// All other fields should be filled by the user
+void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 2048, const unsigned int sub_key_size = 2048);
 
 #endif

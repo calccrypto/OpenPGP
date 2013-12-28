@@ -32,7 +32,7 @@ std::string Tag2Sub16::get_keyid(){
 
 void Tag2Sub16::set_keyid(const std::string & k){
     if (k.size() != 8){
-        std::cerr << "Error: Key ID must be 8 octest" << std::endl;
+        std::cerr << "Error: Key ID must be 8 octets." << std::endl;
         exit(1);
     }
     keyid = k;

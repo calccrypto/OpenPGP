@@ -82,6 +82,7 @@
 		<Unit filename="../PKA/DSA.h" />
 		<Unit filename="../PKA/ElGamal.cpp" />
 		<Unit filename="../PKA/ElGamal.h" />
+		<Unit filename="../PKA/PKA.cpp" />
 		<Unit filename="../PKA/PKA.h" />
 		<Unit filename="../PKA/RSA.cpp" />
 		<Unit filename="../PKA/RSA.h" />
@@ -127,6 +128,8 @@
 		<Unit filename="../Packets/packet.h" />
 		<Unit filename="../Packets/packets.cpp" />
 		<Unit filename="../Packets/packets.h" />
+		<Unit filename="../Packets/s2k.cpp" />
+		<Unit filename="../Packets/s2k.h" />
 		<Unit filename="../RNG/BBS.cpp" />
 		<Unit filename="../RNG/BBS.h" />
 		<Unit filename="../RNG/RNG.h" />
@@ -219,12 +222,10 @@
 		<Unit filename="../pgptime.h" />
 		<Unit filename="../radix64.cpp" />
 		<Unit filename="../radix64.h" />
-		<Unit filename="../s2k.cpp" />
-		<Unit filename="../s2k.h" />
+		<Unit filename="../sigcalc.cpp" />
+		<Unit filename="../sigcalc.h" />
 		<Unit filename="../sign.cpp" />
 		<Unit filename="../sign.h" />
-		<Unit filename="../signverify.cpp" />
-		<Unit filename="../signverify.h" />
 		<Unit filename="../usehash.cpp" />
 		<Unit filename="../usehash.h" />
 		<Unit filename="../verify.cpp" />

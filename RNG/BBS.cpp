@@ -61,7 +61,7 @@ bool BBS::parity(const std::string & par){
 
 BBS::BBS(...){
     if (!seeded){
-        std::cerr << "Error: BBS must be seeded first" << std::endl;
+        std::cerr << "Error: BBS must be seeded first." << std::endl;
         exit(1);
     }
 }

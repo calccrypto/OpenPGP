@@ -37,7 +37,7 @@ PGP::~PGP(){
 }
 
 void PGP::read(std::string & data){
-    std::string copy = data;
+    std::string ori = data;
 
     // remove extra data and parse unsecured data
     unsigned int x = 0;
@@ -66,13 +66,13 @@ void PGP::read(std::string & data){
     }
 
     if (x == 7){
-        std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw data" << std::endl;
-        read_raw(copy);
+        std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw data." << std::endl;
+        read_raw(ori);
         return;
     }
 
     if (x == 6){
-        std::cerr << "Error: Data contains message section. Use PGPMessage to parse this data" << std::endl;
+        std::cerr << "Error: Data contains message section. Use PGPMessage to parse this data." << std::endl;
         exit(1);
     }
 
@@ -84,7 +84,7 @@ void PGP::read(std::string & data){
         x++;
     }
     if (x == data.size()){
-        std::cerr << "Error: End to Armor Header Line not found" << std::endl;
+        std::cerr << "Error: End to Armor Header Line not found." << std::endl;
         exit(1);
     }
 
@@ -123,7 +123,7 @@ void PGP::read(std::string & data){
         }
 
         if (!found){
-            std::cout << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
+            std::cerr << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
         }
 
         x++;
@@ -154,7 +154,7 @@ void PGP::read(std::string & data){
         data = radix642ascii(data.substr(0, data.size() - 5));
         // check if the checksum is correct
         if (crc24(data) != checksum){
-            std::cout << "Warning: Given checksum does not match calculated value" << std::endl;
+            std::cerr << "Warning: Given checksum does not match calculated value" << std::endl;
         }
     }
     else
@@ -209,19 +209,11 @@ std::string PGP::write(){
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
 }
 
-PGP PGP::copy(){
-    PGP out;
-    out.ASCII_Armor = ASCII_Armor;
-    out.Armor_Header = Armor_Header;
-    out.packets = get_packets_copy();
-    return out;
-}
-
 PGP * PGP::clone(){
     PGP * out = new PGP;
     out -> ASCII_Armor = ASCII_Armor;
     out -> Armor_Header = Armor_Header;
-    out -> packets = get_packets_copy();
+    out -> packets = get_packets_clone();
     return out;
 }
 
@@ -233,11 +225,11 @@ std::vector <std::pair <std::string, std::string> > PGP::get_Armor_Header(){
     return Armor_Header;
 }
 
-std::vector <Packet *> PGP::get_packets_pointers(){
+std::vector <Packet *> PGP::get_packets(){
     return packets;
 }
 
-std::vector <Packet *> PGP::get_packets_copy(){
+std::vector <Packet *> PGP::get_packets_clone(){
     std::vector <Packet *> out;
     for(Packet *& p : packets){
         out.push_back(p -> clone());
@@ -299,9 +291,9 @@ std::string PGP::list_keys(){
                 case 5: case 6: case 7: case 14:
                     {
                         Tag6 tag6(data);
-                        std::stringstream size;
-                        size << makebin(tag6.get_mpi()[0]).size();
-                        out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(size.str(), 4, " ")
+                        std::stringstream s;
+                        s << tag6.get_mpi()[0].get_str(2).size();
+                        out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, " ")
                                << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
                                << hexlify(tag6.get_keyid().substr(4, 4)) << " "
                                << show_date(tag6.get_time()) << "\n";
@@ -316,7 +308,7 @@ std::string PGP::list_keys(){
                 case 17:
                     {
                         Tag17 tag17(data);
-                        std::vector <Subpacket *> subpackets = tag17.get_attributes_pointers();
+                        std::vector <Subpacket *> subpackets = tag17.get_attributes();
                         for(Subpacket * s : subpackets){
                             // since only subpacket type 1 is defined
                             data = s -> raw();
@@ -332,7 +324,7 @@ std::string PGP::list_keys(){
         return out.str();
     }
     else{
-        std::cerr << "Error: Not a PGP Key. Cannot Display" << std::endl;
+        std::cerr << "Error: Not a PGP Key. Cannot Display." << std::endl;
         exit(1);
     }
 }
@@ -370,7 +362,7 @@ void PGPMessage::read(std::string & data){
     }
 
     if (data.substr(0, 34) != "-----BEGIN PGP SIGNED MESSAGE-----"){
-        std::cerr << "Error: Data does not contain message section. Use PGP to parse this data" << std::endl;
+        std::cerr << "Error: Data does not contain message section. Use PGP to parse this data." << std::endl;
         exit(1);
     }
 
@@ -382,7 +374,7 @@ void PGPMessage::read(std::string & data){
         x++;
     }
     if (x == data.size()){
-        std::cerr << "Error: End to Armor Header Line not found" << std::endl;
+        std::cerr << "Error: End to Armor Header Line not found." << std::endl;
         exit(1);
     }
     data = data.substr(x + 1, data.size() - x - 1);
@@ -419,7 +411,7 @@ void PGPMessage::read(std::string & data){
         }
 
         if (!found){
-            std::cout << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
+            std::cerr << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
         }
 
         x++;
@@ -469,7 +461,7 @@ std::string PGPMessage::get_message(){
 }
 
 PGP PGPMessage::get_key(){
-    return key.copy();
+    return key;
 }
 
 void PGPMessage::set_ASCII_Armor(uint8_t a){

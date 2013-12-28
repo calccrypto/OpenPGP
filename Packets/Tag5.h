@@ -1,5 +1,6 @@
 // Secret-Key Packet
 #include "Tag6.h"
+#include "s2k.h"
 
 #ifndef __TAG5__
 #define __TAG5__
@@ -26,8 +27,8 @@ class Tag5 : public Tag6{
 
         uint8_t get_s2k_con();
         uint8_t get_sym();
-        S2K * get_s2k_pointer();
-        S2K * get_s2k_copy();
+        S2K * get_s2k();
+        S2K * get_s2k_clone();
         std::string get_IV();
         std::string get_secret();
 

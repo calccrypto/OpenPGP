@@ -7,7 +7,7 @@ unsigned int partialBodyLen(uint8_t first_octet){
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format){
     uint8_t ctb = data[0];													    // Name "ctb" came from Version 2 [RFC 1991]
     if (!(ctb >> 7)){
-        std::cerr << "Error: First bit of tag header MUST be 1" << std::endl;
+        std::cerr << "Error: First bit of tag header MUST be 1." << std::endl;
         exit(1);
     }
 
@@ -66,7 +66,7 @@ Packet * read_packet(uint8_t & tag, std::string & packet_data){
     Packet * out;
     switch (tag){
         case 0:
-            std::cerr << "Error: Tag number MUST NOT be 0" << std::endl;
+            std::cerr << "Error: Tag number MUST NOT be 0." << std::endl;
             exit(1);
             break;
         case 1:
@@ -121,7 +121,7 @@ Packet * read_packet(uint8_t & tag, std::string & packet_data){
             out = new Tag19;
             break;
         default:
-            std::cerr << "Error: Tag not defined or reserved" << std::endl;
+            std::cerr << "Error: Tag not defined or reserved." << std::endl;
             exit(1);
             break;
     }

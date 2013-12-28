@@ -50,7 +50,7 @@ std::string Tag2Sub20::get_n(){
 
 void Tag2Sub20::set_flags(const std::string & f){
     if (f.size() != 4){
-        std::cerr << "Error: 4 flag octets required" << std::endl;
+        std::cerr << "Error: 4 flag octets required." << std::endl;
         exit(1);
     }
     flags = f;

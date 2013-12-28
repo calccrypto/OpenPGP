@@ -1,4 +1,5 @@
 // Public-Key Packet
+#include "../Hashes/Hashes.h"
 #include "packet.h"
 
 #ifndef __TAG6__

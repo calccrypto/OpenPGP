@@ -23,7 +23,7 @@ void Tag2::read(std::string & data){
     version = data[0];
     if (version < 4){
         if (data[1] != 5){
-            std::cerr << "Error: Length of hashed material must be 5" << std::endl;
+            std::cerr << "Error: Length of hashed material must be 5." << std::endl;
             exit(1);
         }
         type = data[2];
@@ -128,7 +128,7 @@ void Tag2::read(std::string & data){
                     temp = new Tag2Sub32;
                     break;
                 default:
-                    std::cerr << "Error: Subpacket tag not defined or reserved" << std::endl;
+                    std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
                     exit(1);
                     break;
             }
@@ -217,7 +217,7 @@ void Tag2::read(std::string & data){
                     temp = new Tag2Sub32;
                     break;
                 default:
-                    std::cerr << "Error: Subpacket tag not defined or reserved" << std::endl;
+                    std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
                     exit(1);
                     break;
             }
@@ -266,10 +266,10 @@ std::string Tag2::show(){
     }
     out << "    Hash Left 2 Bytes: " << hexlify(left16) << "\n";
     if (pka < 4)
-        out << "    RSA m**d mod n (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n";
+        out << "    RSA m**d mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
     else if (pka == 17){
-        out << "    DSA r (" << makebin(mpi[0]).size() << " bits): " << mpi[0].get_str(16) << "\n"
-            << "    DSA s (" << makebin(mpi[1]).size() << " bits): " << mpi[1].get_str(16) << "\n";
+        out << "    DSA r (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
+            << "    DSA s (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
     }
     return out.str();
 }
@@ -300,8 +300,8 @@ Tag2 * Tag2::clone(){
     Tag2 * out = new Tag2(*this);
     out -> hashed_subpackets.clear();
     out -> unhashed_subpackets.clear();
-    out -> hashed_subpackets = get_hashed_subpackets_copy();
-    out -> unhashed_subpackets = get_unhashed_subpackets_copy();
+    out -> hashed_subpackets = get_hashed_subpackets_clone();
+    out -> unhashed_subpackets = get_unhashed_subpackets_clone();
     return out;
 }
 
@@ -357,11 +357,11 @@ std::string Tag2::get_keyid(){
     return "";
 }
 
-std::vector <Subpacket *> Tag2::get_hashed_subpackets_pointers(){
+std::vector <Subpacket *> Tag2::get_hashed_subpackets(){
     return hashed_subpackets;
 }
 
-std::vector <Subpacket *> Tag2::get_hashed_subpackets_copy(){
+std::vector <Subpacket *> Tag2::get_hashed_subpackets_clone(){
     std::vector <Subpacket *> out;
     for(Subpacket *& s : hashed_subpackets){
         out.push_back(s -> clone());
@@ -369,11 +369,11 @@ std::vector <Subpacket *> Tag2::get_hashed_subpackets_copy(){
     return out;
 }
 
-std::vector <Subpacket *> Tag2::get_unhashed_subpackets_pointers(){
+std::vector <Subpacket *> Tag2::get_unhashed_subpackets(){
     return unhashed_subpackets;
 }
 
-std::vector <Subpacket *> Tag2::get_unhashed_subpackets_copy(){
+std::vector <Subpacket *> Tag2::get_unhashed_subpackets_clone(){
     std::vector <Subpacket *> out;
     for(Subpacket *& s : unhashed_subpackets){
         out.push_back(s -> clone());
@@ -458,7 +458,7 @@ void Tag2::set_time(const uint32_t t){
 
 void Tag2::set_keyid(const std::string & k){
     if (k.size() != 8){
-        std::cerr << "Error: Key ID must be 8 octest" << std::endl;
+        std::cerr << "Error: Key ID must be 8 octets." << std::endl;
         exit(1);
     }
 

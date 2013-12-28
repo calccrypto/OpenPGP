@@ -14,7 +14,7 @@
 #define __RSA__
 
 // Generate RSA key values
-std::vector <mpz_class> RSA_keygen(const uint32_t & bits = 1024);
+std::vector <mpz_class> RSA_keygen(const uint32_t & bits = 2048);
 
 // Encrypt some data
 mpz_class RSA_encrypt(mpz_class & data, const std::vector <mpz_class> & pub);

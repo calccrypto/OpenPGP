@@ -25,7 +25,7 @@ void Tag17::read(std::string & data){
                 temp = new Tag17Sub1;
                 break;
             default:
-                std::cerr << "Error: Subpacket tag not defined or reserved" << std::endl;
+                std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
                 exit(1);
                 break;
         }
@@ -91,11 +91,11 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data){
     return ""; // error
 }
 
-std::vector <Subpacket *> Tag17::get_attributes_pointers(){
+std::vector <Subpacket *> Tag17::get_attributes(){
     return attributes;
 }
 
-std::vector <Subpacket *> Tag17::get_attributes_copy(){
+std::vector <Subpacket *> Tag17::get_attributes_clone(){
     std::vector <Subpacket *> out;
     for(Subpacket *& s : attributes){
         Subpacket * temp = s -> clone();
@@ -113,4 +113,3 @@ void Tag17::set_attibutes(const std::vector <Subpacket *> & a){
         attributes.push_back(s);
     }
 }
-

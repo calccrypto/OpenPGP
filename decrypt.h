@@ -23,14 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#include <gmpxx.h>
+
 #include "Packets/packets.h"
-#include "PKA/ElGamal.h"
-#include "PKA/RSA.h"
+#include "PKA/PKA.h"
 #include "cfb.h"
 #include "consts.h"
 #include "OpenPGP.h"
 #include "PKCS1.h"
-#include "s2k.h"
 #include "usehash.h"
 
 #ifndef __DECRYPT__

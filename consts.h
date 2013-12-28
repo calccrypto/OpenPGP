@@ -243,7 +243,7 @@ const std::map <uint8_t, std::string> Revoke = {
 const std::map <uint8_t, std::string> Signature_Types = {
                 std::make_pair(0, "Signature of a binary document."),
                 std::make_pair(1, "Signature of a canonical text document"),
-                std::make_pair(2, "Standalone signature."),
+                std::make_pair(2, "Standalone signature"),
                 std::make_pair(0x10, "Generic certification of a User ID and Public-Key packet"),
                 std::make_pair(0x11, "Persona certification of a User ID and Public-Key packet"),
                 std::make_pair(0x12, "Casual certification of a User ID and Public-Key packet"),
@@ -254,8 +254,8 @@ const std::map <uint8_t, std::string> Signature_Types = {
                 std::make_pair(0x20, "Key revocation signature"),
                 std::make_pair(0x28, "Subkey revocation signature"),
                 std::make_pair(0x30, "Certification revocation signature"),
-                std::make_pair(0x40, "Timestamp signature."),
-                std::make_pair(0x50, "Third-Party Confirmation signature."),
+                std::make_pair(0x40, "Timestamp signature"),
+                std::make_pair(0x50, "Third-Party Confirmation signature"),
 };
 
 // Subpacket Tags
