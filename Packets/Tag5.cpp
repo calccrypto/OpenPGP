@@ -11,6 +11,10 @@ Tag5::Tag5(const Tag5 & tag5){
     version = tag5.version;
     format = tag5.format;
     size = tag5.size;
+    time = tag5.time;
+    pka = tag5.pka;
+    mpi = tag5.mpi;
+    expire = tag5.expire;
     s2k_con = tag5.s2k_con;
     sym = tag5.sym;
     s2k = tag5.s2k -> clone();
@@ -30,25 +34,24 @@ Tag5::~Tag5(){
     delete s2k;
 }
 
-S2K * Tag5::read_s2k(std::string & data){
-    S2K * out = NULL;
+void Tag5::read_s2k(std::string & data){
+    delete s2k;
     uint8_t length = 0;
     if (data[0] == 0){
-        out = new S2K0;
+        s2k = new S2K0;
         length = 2;
     }
     else if (data[0] == 1){
-        out = new S2K1;
+        s2k = new S2K1;
         length = 10;
     }
     else if (data[0] == 3){
-        out = new S2K3;
+        s2k = new S2K3;
         length = 11;
     }
     std::string s2k_str = data.substr(0, length);
     data = data.substr(length, data.size() - length);
-    out -> read(s2k_str);
-    return out;
+    s2k -> read(s2k_str);
 }
 
 std::string Tag5::show_common(){
@@ -63,12 +66,15 @@ std::string Tag5::show_common(){
     }
 
     out << "    Encrypted Data (" << secret.size() << " bytes):\n";
-    if (pka < 4)
+    if (pka < 4){
         out << "        RSA d, p, q, u";
-    else if (pka == 16)
+    }
+    else if (pka == 16){
         out << "        Elgamal x";
-    else if (pka == 17)
+    }
+    else if (pka == 17){
         out << "        DSA x";
+    }
     out << "\n";
 
     if (s2k_con == 254){
@@ -77,7 +83,6 @@ std::string Tag5::show_common(){
     else{
         out << "        2 Octet Checksum\n";
     }
-
     return out.str();
 }
 
@@ -89,7 +94,7 @@ void Tag5::read(std::string & data){
     if (s2k_con > 253){
         sym = data[0];
         data = data.substr(1, data.size() - 1);
-        s2k = read_s2k(data);
+        read_s2k(data);
     }
     if (s2k_con){
         IV = data.substr(0, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
@@ -178,6 +183,10 @@ Tag5 Tag5::operator=(const Tag5 & tag5){
     version = tag5.version;
     format = tag5.format;
     size = tag5.size;
+    time = tag5.time;
+    pka = tag5.pka;
+    mpi = tag5.mpi;
+    expire = tag5.expire;
     s2k_con = tag5.s2k_con;
     sym = tag5.sym;
     s2k = tag5.s2k -> clone();

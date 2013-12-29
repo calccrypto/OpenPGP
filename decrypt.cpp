@@ -1,6 +1,6 @@
 #include "decrypt.h"
 
-std::string pka_decrypt(uint8_t pka, std::vector <mpz_class> data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     if (pka < 3){   // RSA
         std::string out = RSA_decrypt(data[0], pri, pub).get_str(16);
         out = std::string(out.size() & 1, '0') + out;
@@ -16,13 +16,13 @@ std::string pka_decrypt(uint8_t pka, std::vector <mpz_class> data, const std::ve
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, std::string pass){
+std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passphrase){
     std::vector <mpz_class> out;
     S2K * s2k = pri -> get_s2k();
     unsigned int sym_key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3;
 
     // calculate key used in encryption algorithm
-    std::string key = s2k -> run(pass, sym_key_len);
+    std::string key = s2k -> run(passphrase, sym_key_len);
 
     // get encrypted mpi values
     std::string secret = pri -> get_secret();
@@ -60,7 +60,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, std::string pass){
     return out;
 }
 
-std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
+std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
     if (pri.get_ASCII_Armor() != 2){
         std::cerr << "Error: No Private Key given." << std::endl;
         exit(1);
@@ -111,7 +111,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
             std::cerr << "Error: Correct Private Key not found." << std::endl;
             exit(1);
         }
-        std::vector <mpz_class> pri = decrypt_secret_key(sec, pass);
+        std::vector <mpz_class> pri = decrypt_secret_key(sec, passphrase);
 
         std::vector <mpz_class> pub = sec -> get_mpi();
 
@@ -134,7 +134,7 @@ std::string decrypt_message(PGP & m, PGP & pri, std::string pass){
     else if (packet == 3){ //Symmetric-Key Encrypted Session Key Packet (Tag 3)
         /* untested */
         Tag3 tag3(data);
-        data = tag3.get_key(pass);
+        data = tag3.get_key(passphrase);
         sym = data[0];
         session_key = data.substr(1, data.size() - 1);
     }

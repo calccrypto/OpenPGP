@@ -156,6 +156,7 @@ bool parse_command(std::string & input){
 
         PGP pub, pri;
         generate_keys(pub, pri, passphrase, username, comment, email, pks, sks);
+
         PUB << pub.write();
         PRI << pri.write();
         PUB.close();
@@ -315,7 +316,7 @@ bool parse_command(std::string & input){
         PGP key(k);
         PGP sig(s);
 
-        std::cout << "File '" << filename << "' was" << (verify_file(f, sig, key)?"":" not") << " signed by key " << key << "." << std::endl;
+        std::cout << "File " << filename << " was" << (verify_file(f, sig, key)?"":" not") << " signed by key " << key << "." << std::endl;
     }
     else if (cmd == "verify-message"){
         std::string data; tokens >> data;
@@ -389,5 +390,7 @@ int main(int argc, char * argv[]){
         }
         parse_command(input);
     }
+    input = "generatekeypair keys -pw abc -u aaaaaaa -e qwewe@raaw.com";
+    parse_command(input);
     return 0;
 }

@@ -12,7 +12,7 @@ class Tag5 : public Tag6{
         std::string IV;
         std::string secret;
 
-        S2K * read_s2k(std::string & data);
+        void read_s2k(std::string & data);
         std::string show_common();
 
     public:

@@ -97,9 +97,11 @@ std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2){
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
 }
 
-std::string to_sign_1f(Tag6 tag6, Tag2 * tag2){
-    std::cerr << "Error: Signature Directly on Key (Type 0x1f) not implemented." << std::endl;
+std::string to_sign_1f(Tag2 * tag2){
+    std::cerr << "Error: Signature directly on a key has not implemented." << std::endl;
     exit(1);
+//    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    return "";
 }
 
 std::string to_sign_20(Key * key, Tag2 * tag2){
@@ -115,8 +117,10 @@ std::string to_sign_30(Key * key, ID * id, Tag2 * tag2){
 }
 
 std::string to_sign_40(Tag2 * tag2){
-    std::cerr << "Error: Timestamp Signature (Type 0x40) not implemented." << std::endl;
+    std::cerr << "Error: Signature directly on a key has not implemented." << std::endl;
     exit(1);
+//    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    return "";
 }
 
 std::string to_sign_50(Tag2 & sig, Tag2 * tag2){

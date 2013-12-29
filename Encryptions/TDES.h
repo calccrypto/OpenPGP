@@ -12,8 +12,8 @@ class TDES : public SymAlg{
 
     public:
         TDES();
-        TDES(std::string & key1, const std::string & mode1, std::string & key2, const std::string & mode2, std::string & key3, const std::string & mode3);
-        void setkey(std::string & key1, const std::string & mode1, std::string & key2, const std::string & mode2, std::string & key3, const std::string & mode3);
+        TDES(const std::string & key1, const std::string & mode1, const std::string & key2, const std::string & mode2, const std::string & key3, const std::string & mode3);
+        void setkey(const std::string & key1, const std::string & mode1, const std::string & key2, const std::string & mode2, const std::string & key3, const std::string & mode3);
         std::string encrypt(std::string DATA);
         std::string decrypt(std::string DATA);
         unsigned int blocksize();

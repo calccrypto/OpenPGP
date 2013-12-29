@@ -42,14 +42,27 @@ THE SOFTWARE.
 Tag5 * find_signing_packet(PGP & k);
 Tag13 * find_signer_id(PGP & k);
 
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, uint8_t pka, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri);
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, std::string pass);
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri);
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, const std::string & pass);
 
 // Generates new default signature packet
+Tag2 * create_sig_packet(const uint8_t type, Tag5 * tag5, ID * id = NULL);
 Tag2 * create_sig_packet(const uint8_t type, PGP & key);
 
-// Creates detatched signatures
+// Creates signatures
+// 0x00
 PGP sign_file(const std::string & data, PGP & key, const std::string & passphrase);
 PGP sign_file(std::ifstream & f, PGP & key, const std::string &  passphrase);
-PGPMessage sign_message(const std::string & text, PGP & key, const std::string passphrase);
+
+// 0x01
+PGPMessage sign_message(const std::string & text, PGP & key, const std::string & passphrase);
+
+// 0x02
+Tag2 * sign_signature(Tag2 * tag2, const std::string & passphrase);
+
+// 0x10 - 13
+Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::string & passphrase);
+
+// 0x18 - 0x19
+Tag2 * sign_sub_key(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase);
 #endif

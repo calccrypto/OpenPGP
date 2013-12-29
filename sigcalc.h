@@ -151,7 +151,7 @@ std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2);
 // appropriate for statements that non-self certifiers want to make
 // about the key itself, rather than the binding between a key and a
 // name.
-std::string to_sign_1f(Tag6 tag6, Tag2 * tag2);
+std::string to_sign_1f(Tag2 * tag2);
 
 // 0x20: Key revocation signature
 // The signature is calculated directly on the key being revoked. A

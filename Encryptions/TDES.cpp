@@ -14,12 +14,12 @@ TDES::TDES(){
     keyset = false;
 }
 
-TDES::TDES(std::string & key1, const std::string & mode1, std::string & key2, const std::string & mode2, std::string & key3, const std::string & mode3){
+TDES::TDES(const std::string & key1, const std::string & mode1, const std::string & key2, const std::string & mode2, const std::string & key3, const std::string & mode3){
     keyset = false;
     setkey(key1, mode1, key2, mode2, key3, mode3);
 }
 
-void TDES::setkey(std::string & key1, const std::string & mode1, std::string & key2, const std::string & mode2, std::string & key3, const std::string & mode3){
+void TDES::setkey(const std::string & key1, const std::string & mode1, const std::string & key2, const std::string & mode2, const std::string & key3, const std::string & mode3){
     if (keyset){
         error(2);
     }
