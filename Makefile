@@ -58,7 +58,7 @@ PKCS1.o: PKCS1.h PKCS1.cpp consts.h common/includes.h RNG/RNG.h usehash.h
 radix64.o: radix64.h radix64.cpp common/includes.h
 	$(CC) $(CFLAGS) radix64.cpp
 
-sign.o: sign.h sign.cpp common/includes.h PKA/PKA.h decrypt.h Packets/packets.h pgptime.h
+sign.o: sign.h sign.cpp common/includes.h Packets/packets.h PKA/PKA.h decrypt.h OpenPGP.h pgptime.h sigcalc.h
 	$(CC) $(CFLAGS) $(LFLAGS) sign.cpp
 
 sigcalc.o: sigcalc.h sigcalc.cpp OpenPGP.h pgptime.h Packets/packets.h usehash.h

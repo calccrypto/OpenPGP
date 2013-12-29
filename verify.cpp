@@ -27,7 +27,7 @@ std::string find_keyid(Tag2 * tag2){
     return out;
 }
 
-std::vector <mpz_class> find_matching_pub_key(std::string keyid, PGP & key){
+std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key){
     std::vector <mpz_class> keys;
     std::vector <Packet *> packets = key.get_packets();
     for(Packet *& p : packets){
@@ -46,10 +46,10 @@ std::vector <mpz_class> find_matching_pub_key(std::string keyid, PGP & key){
     return keys;
 }
 
-bool pka_verify(std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key){
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key){
     std::vector <mpz_class> signature = tag2 -> get_mpi();
     if ((tag2 -> get_pka() == 1) || (tag2 -> get_pka() == 3)){
-        return RSA_verify(hashed_message, signature, key, tag2 -> get_hash());
+        return RSA_verify(hashed_message, signature, key);
     }
     if (tag2 -> get_pka() == 17){
         return DSA_verify(hashed_message, signature, key);

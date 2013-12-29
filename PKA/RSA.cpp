@@ -29,7 +29,7 @@ mpz_class RSA_encrypt(mpz_class & data, const std::vector <mpz_class> & pub){
     return data;
 }
 
-mpz_class RSA_encrypt(std::string & data, const std::vector <mpz_class> & pub){
+mpz_class RSA_encrypt(const std::string & data, const std::vector <mpz_class> & pub){
     mpz_class out;
     mpz_powm_sec(out.get_mpz_t(), mpz_class(hexlify(data), 16).get_mpz_t(), pub[1].get_mpz_t(), pub[0].get_mpz_t());
     return out;
@@ -40,15 +40,19 @@ mpz_class RSA_decrypt(mpz_class & data, const std::vector <mpz_class> & pri, con
     return data;
 }
 
-mpz_class RSA_sign(std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
-    mpz_class d(data, 256);
-    return RSA_decrypt(d, pri, pub);
-}
-
 mpz_class RSA_sign(mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     return RSA_decrypt(data, pri, pub);
 }
 
-bool RSA_verify(std::string & data, std::vector <mpz_class> & signature, std::vector <mpz_class> & pub, const uint8_t & hash){
+mpz_class RSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+    mpz_class d(data, 256);
+    return RSA_decrypt(d, pri, pub);
+}
+
+bool RSA_verify(mpz_class & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub){
+    return (RSA_encrypt(data, pub) == mpz_class(data));
+}
+
+bool RSA_verify(const std::string & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub){
     return (RSA_encrypt(data, pub) == mpz_class(hexlify(data), 16));
 }

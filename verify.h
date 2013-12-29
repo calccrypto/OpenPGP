@@ -37,9 +37,9 @@ THE SOFTWARE.
 #define __VERIFY__
 
 std::string find_keyid(Tag2 * tag2);
-std::vector <mpz_class> find_matching_pub_key(std::string keyid, PGP & key);
+std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
 
-bool pka_verify(std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key);
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key);
 
 // Use string.size() to check if input was verified.
 bool verify_file(const std::string & data, PGP & sig, PGP & key);

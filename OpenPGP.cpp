@@ -67,7 +67,7 @@ void PGP::read(std::string & data){
     }
 
     if (x == 7){
-        std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw data." << std::endl;
+        std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw file data." << std::endl;
         read_raw(ori);
         return;
     }
@@ -486,19 +486,19 @@ PGP PGPMessage::get_key(){
     return key;
 }
 
-void PGPMessage::set_ASCII_Armor(uint8_t a){
+void PGPMessage::set_ASCII_Armor(const uint8_t a){
     ASCII_Armor = a;
 }
 
-void PGPMessage::set_Armor_Header(std::vector <std::pair <std::string, std::string> > & a){
+void PGPMessage::set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a){
     Armor_Header = a;
 }
 
-void PGPMessage::set_message(std::string & data){
+void PGPMessage::set_message(const std::string & data){
     message = data;
 }
 
-void PGPMessage::set_key(PGP & k){
+void PGPMessage::set_key(const PGP & k){
     key = k;
 }
 

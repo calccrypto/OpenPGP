@@ -104,10 +104,10 @@ class PGPMessage{
         std::string get_message();
         PGP get_key();
 
-        void set_ASCII_Armor(uint8_t a);
-        void set_Armor_Header(std::vector <std::pair <std::string, std::string> > & a);
-        void set_message(std::string & data);
-        void set_key(PGP & k);
+        void set_ASCII_Armor(const uint8_t a);
+        void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);
+        void set_message(const std::string & data);
+        void set_key(const PGP & k);
 
         PGPMessage * clone();
         PGPMessage operator=(const PGPMessage & pgpmessage);

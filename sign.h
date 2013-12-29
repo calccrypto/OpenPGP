@@ -1,6 +1,6 @@
 /*
 sign.h
-Function to sign some data with a PGP key
+Functions to sign some data with a PGP key
 
 Copyright (c) 2013 Jason Lee
 
@@ -31,8 +31,10 @@ THE SOFTWARE.
 #include "common/includes.h"
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
+#include "OpenPGP.h"
 #include "decrypt.h"
 #include "pgptime.h"
+#include "sigcalc.h"
 
 #ifndef __SIGN__
 #define __SIGN__
@@ -40,10 +42,14 @@ THE SOFTWARE.
 Tag5 * find_signing_packet(PGP & k);
 Tag13 * find_signer_id(PGP & k);
 
-std::vector <mpz_class> pka_sign(std::string hashed_data, uint8_t pka, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri);
-std::vector <mpz_class> pka_sign(std::string hashed_data, Tag5 * tag5, std::string pass);
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, uint8_t pka, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri);
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, std::string pass);
 
-// Will generate new default Signature packet if none is given.
-// Only signs data. Output is essentially a detached signature.
-Tag2 * sign(uint8_t type, std::string hashed_data, Tag5 * tag5, std::string pass, Tag2 * tag2 = NULL);
+// Generates new default signature packet
+Tag2 * create_sig_packet(const uint8_t type, PGP & key);
+
+// Creates detatched signatures
+PGP sign_file(const std::string & data, PGP & key, const std::string & passphrase);
+PGP sign_file(std::ifstream & f, PGP & key, const std::string &  passphrase);
+PGPMessage sign_message(const std::string & text, PGP & key, const std::string passphrase);
 #endif

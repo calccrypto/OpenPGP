@@ -62,7 +62,8 @@ The data types have some standard functions:
             and size.
 
     clone - returns a pointer to a deep copy of
-            the object.
+            the object (mainly used for moving
+            PGP data around).
 
 Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
