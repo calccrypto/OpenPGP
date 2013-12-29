@@ -175,10 +175,9 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key); // decrypt encrypted data
     }
 
-    // clean up decrypted data for outut
+    // clean up decrypted data for output
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
-        // hopefull this is correct
         if (data[0] < 4){
             packet = 8;
         }

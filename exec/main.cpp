@@ -390,7 +390,5 @@ int main(int argc, char * argv[]){
         }
         parse_command(input);
     }
-    input = "generatekeypair keys -pw abc -u aaaaaaa -e qwewe@raaw.com";
-    parse_command(input);
     return 0;
 }

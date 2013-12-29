@@ -65,4 +65,14 @@ Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::stri
 
 // 0x18 - 0x19
 Tag2 * sign_sub_key(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase);
+
+// 0x20
+
+// 0x28
+
+// 0x30
+
+// 0x40
+
+// 0x50
 #endif
