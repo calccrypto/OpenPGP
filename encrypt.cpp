@@ -59,9 +59,10 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
         sum += (unsigned char) x;
     }
 
-    std::string bytes = mpi[0].get_str(16);
-    bytes += std::string(bytes.size() & 1, 0);
-    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1)), 16);
+    std::string octets = mpi[0].get_str(16);     // get hex representation of modulus
+    octets += std::string(octets.size() & 1, 0); // get even number of nibbles
+    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), octets.size() >> 1)), 16);
+    std::cout << hexlify(session_key) << std::endl;
 
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA
@@ -105,7 +106,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
         Tag19 tag19;
         tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + tag18.get_protected_data() + "\xd3\x14"));
 
-        // encrypt((literal_data_packet(plain text) + MDC SHA1(20 bytes)))
+        // encrypt((literal_data_packet(plain text) + MDC SHA1(20 octets)))
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, tag18.get_protected_data() + tag19.write(), session_key, prefix));
         std::string raw = tag18.raw();
         encrypted = new Tag18;

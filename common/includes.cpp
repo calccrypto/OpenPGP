@@ -5,8 +5,8 @@ uint64_t toint(const std::string & s, const int & base){
     uint64_t value = 0;
     switch (base){
         case 2:
-            for(unsigned int x = 0; x < s.size(); x++){
-                value = (value << 1) + (s[x] == '\x31');
+            for(const unsigned char & c : s){
+                value = (value << 1) + ((uint8_t) c - '\x30');
             }
             break;
         case 8:
@@ -19,8 +19,9 @@ uint64_t toint(const std::string & s, const int & base){
             std::stringstream(s) >> std::hex >> value;    // Thanks to Oli Charlesworth @ stackoverflow
             break;
         case 256:
-            for(uint8_t x = 0; x < s.size(); x++)
-                value = (value << 8) + (uint8_t) s[x];
+            for(const unsigned char & c : s){
+                value = (value << 8) + (uint8_t) c;
+            }
             break;
         default:
             std::cerr << "InputError: toint() undefined for base: " << std::dec << base << std::endl;
@@ -73,13 +74,33 @@ std::string unhexlify(const std::string & in){
 		std::cerr << "Error: input string of odd length." << std::endl;
         exit(1);
     }
-    std::string out = "";
+    std::string out(in.size() >> 1, 0);
 	for(unsigned int x = 0; x < in.size(); x += 2){
-		if (in.substr(x, 2) == "00"){
-			out += zero;
+        if (('0' <= in[x]) && (in[x] <= '9')){
+            out[x >> 1] = (uint8_t) ((in[x] - '0') << 4);
         }
-		else{
-			out += (unsigned char) ((h_lower.find(tolower(in[x])) << 4) + h_lower.find(tolower(in[x + 1])));
+        else if(('a' <= in[x]) && (in[x] <= 'f')){
+            out[x >> 1] = (uint8_t) ((in[x] - 'a' + 10) << 4);
+        }
+        else if(('A' <= in[x]) && (in[x] <= 'F')){
+            out[x >> 1] = (uint8_t) ((in[x] - 'A' + 10) << 4);
+        }
+        else{
+            std::cerr << "Error: Invalid character found: " << (char) in[x] << std::endl;
+            exit(1);
+        }
+        if (('0' <= in[x + 1]) && (in[x + 1] <= '9')){
+            out[x >> 1] |= (uint8_t) (in[x + 1] - '0');
+        }
+        else if(('a' <= in[x + 1]) && (in[x + 1] <= 'f')){
+            out[x >> 1] |= (uint8_t) (in[x + 1] - 'a' + 10);
+        }
+        else if(('A' <= in[x + 1]) && (in[x + 1] <= 'F')){
+            out[x >> 1] |= (uint8_t) (in[x + 1] - 'A' + 10);
+        }
+        else{
+            std::cerr << "Error: Invalid character found: " << (char) in[x + 1] << std::endl;
+            exit(1);
         }
     }
 	return out;

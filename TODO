@@ -5,3 +5,4 @@ Figure out how to read a gpg .sig file
 (Maybe) Make new files for data types and move to new folder
 Key packets version bug (add update functions for certain packets)
 need to check if key is valid before actions
+fix tag7 and tag14 inheritance

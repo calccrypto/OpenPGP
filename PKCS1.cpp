@@ -7,12 +7,14 @@ std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){
         exit(1);
     }
     std::string EM = zero + "\x02";
-    for(unsigned int x = 0; x < k - m.size() - 3; x++){
+    while (EM.size() < k - m.size() - 1){
         unsigned char c = 0;
-        for(uint8_t y = 0; y < 8; y++){
+        for(uint8_t x = 0; x < 8; x++){
             c = (c + (BBS().rand(1) == "1")) << 1;
         }
-        EM += std::string(1, c);
+        if (c){ // non-zero octets only
+            EM += std::string(1, c);
+        }
     }
     return EM + zero + m;
 }

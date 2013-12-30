@@ -111,16 +111,16 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
             std::cerr << "Error: Correct Private Key not found." << std::endl;
             exit(1);
         }
-        std::vector <mpz_class> pri = decrypt_secret_key(sec, passphrase);
-
         std::vector <mpz_class> pub = sec -> get_mpi();
+        std::vector <mpz_class> pri = decrypt_secret_key(sec, passphrase);
 
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
-        session_key = EME_PKCS1v1_5_DECODE(session_key);                                        // remove EME_PKCS1 encoding
+        session_key = EME_PKCS1v1_5_DECODE(session_key);                                    // remove EME_PKCS1 encoding
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key
+        std::cout << hexlify(session_key) << std::endl;
 
         uint16_t sum = 0;
         for(char & c : session_key){                                                        // calculate session key checksum
