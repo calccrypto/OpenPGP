@@ -96,7 +96,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     ssb.set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, ssb.get_IV()));
 
     // Subkey Binding Signature
-    Tag2 subsig = *sign_sub_key(0x18, &sec, &ssb, passphrase);
+    Tag2 subsig = *sign_subkey(0x18, &sec, &ssb, passphrase);
 //    // This is slightly faster, but I wanted to use the sign_ functions
 //    Tag2 subsig;
 //    subsig.set_version(4);
@@ -126,7 +126,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     public_key.set_packets({&pub, &uid, &sig, &sub, &subsig});
 }
 
-void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int sub_key_size){
+void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
     BBS((mpz_class) (uint32_t) now()); // seed just in case not seeded
 
     // at most only 1 of each pair is expected
@@ -325,7 +325,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             std::vector <unsigned int> param;
             // RSA
             if ((prisubkey -> get_pka() == 1) || (prisubkey -> get_pka() == 2) /*|| (prisubkey -> get_pka() == 3)*/){
-                param = {sub_key_size};
+                param = {subkey_size};
             }
             // ElGamal
             else if (prisubkey -> get_pka() == 16){
@@ -333,7 +333,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
                     exit(1);
                 }
-                param = {sub_key_size};
+                param = {subkey_size};
             }
             // DSA
             else if (prisubkey -> get_pka() == 17){
@@ -341,18 +341,18 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
                     exit(1);
                 }
-                param = {sub_key_size};
-                if (sub_key_size == 1024){
+                param = {subkey_size};
+                if (subkey_size == 1024){
                     param.push_back(160);
                 }
-                else if (sub_key_size == 2048){
+                else if (subkey_size == 2048){
                     param.push_back(256);
                 }
-                else if (sub_key_size == 3072){
+                else if (subkey_size == 3072){
                     param.push_back(256);
                 }
                 else{
-                    std::cerr << "Error: Undefined bit size for DSA: " << sub_key_size << std::endl;
+                    std::cerr << "Error: Undefined bit size for DSA: " << subkey_size << std::endl;
                 }
             }
             else{

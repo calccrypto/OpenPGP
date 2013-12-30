@@ -31,6 +31,20 @@ Tag7::~Tag7(){
     s2k = NULL;
 }
 
+Tag14 Tag7::get_public_obj(){
+    std::string data = raw();
+    Tag14 out(data);
+    out.set_tag(14);
+    return out;
+}
+
+Tag14 * Tag7::get_public_ptr(){
+    std::string data = raw();
+    Tag14 * out = new Tag14(data);
+    out -> set_tag(14);
+    return out;
+}
+
 Tag7 * Tag7::clone(){
     Tag7 * out = new Tag7(*this);
     out -> s2k = s2k -> clone();

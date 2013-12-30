@@ -31,6 +31,9 @@ class Tag5 : public Tag6{
         std::string get_IV();
         std::string get_secret();
 
+        Tag6 get_public_obj();      // extract public key from private key
+        Tag6 * get_public_ptr();    // extract public key from private key into a pointer
+
         void set_s2k_con(const uint8_t c);
         void set_sym(const uint8_t s);
         void set_s2k(S2K * s);

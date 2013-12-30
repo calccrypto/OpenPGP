@@ -28,9 +28,11 @@ Tag2::~Tag2(){
     for(Subpacket *& s : hashed_subpackets){
         delete s;
     }
+    hashed_subpackets.clear();
     for(Subpacket *& s : unhashed_subpackets){
         delete s;
     }
+    unhashed_subpackets.clear();
 }
 
 void Tag2::read(std::string & data){

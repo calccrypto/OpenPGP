@@ -40,7 +40,7 @@ std::string little_end(const std::string & str, const unsigned int & base){
 	return t;
 }
 
-std::string bintohex(const std::string & in){
+std::string bintohex(const std::string & in, bool caps){
     // Changes a binary string to its hexadecimal equivalent
     if (in.size() % 4){
         std::cerr << "Error: input string length not a multiple of 4." << std::endl;
@@ -48,23 +48,23 @@ std::string bintohex(const std::string & in){
     }
     std::string out = "";
     for(unsigned int x = 0; x < (in.size() >> 2); x++){
-        out += makehex(toint(in.substr(x << 2, 4), 2), 1);
+        out += makehex(toint(in.substr(x << 2, 4), 2), 1, caps);
     }
     return out;
 }
 
-std::string hexlify(const std::string & in){
+std::string hexlify(const std::string & in, bool caps){
     // Changes an ASCII string to an ASCII string containing the
     // hexadecimal representation of the orignal chars
     std::string out = "";
     for(unsigned int x = 0; x < in.size(); x++){
-        out += makehex((unsigned char) in[x], 2);
+        out += makehex((unsigned char) in[x], 2, caps);
     }
     return out;
 }
 
-std::string hexlify(const char in){
-    return makehex((uint8_t) in, 2);
+std::string hexlify(const char in, bool caps){
+    return makehex((uint8_t) in, 2, caps);
 }
 
 std::string unhexlify(const std::string & in){
@@ -79,7 +79,7 @@ std::string unhexlify(const std::string & in){
 			out += zero;
         }
 		else{
-			out += (unsigned char) ((h.find(tolower(in[x])) << 4) + h.find(tolower(in[x + 1])));
+			out += (unsigned char) ((h_lower.find(tolower(in[x])) << 4) + h_lower.find(tolower(in[x + 1])));
         }
     }
 	return out;

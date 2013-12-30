@@ -31,32 +31,31 @@ THE SOFTWARE.
 #define __PGP_CONSTS__
 // ASCII data at beginning and end of OpenPGP packet
 const std::string ASCII_Armor_Header[7] = {
-               "MESSAGE",                                                      // Used for signed, encrypted, or compressed files.
-               "PUBLIC KEY BLOCK",                                             // Used for armoring public keys.
-               "PRIVATE KEY BLOCK",                                            // Used for armoring private keys.
-               "MESSAGE, PART X/Y",                                            // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-               "MESSAGE, PART X",                                              // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
-               "SIGNATURE",                                                    // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-               "SIGNED MESSAGE",                                               // Used for signed messages; not part of RFC 4880
+               "MESSAGE",                               // Used for signed, encrypted, or compressed files.
+               "PUBLIC KEY BLOCK",                      // Used for armoring public keys.
+               "PRIVATE KEY BLOCK",                     // Used for armoring private keys.
+               "MESSAGE, PART X/Y",                     // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+               "MESSAGE, PART X",                       // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+               "SIGNATURE",                             // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+               "SIGNED MESSAGE",                        // Used for signed messages; not part of RFC 4880
 };
 
 // ASCII descriptor of OpenPGP packet
 const std::string ASCII_Armor_Key[5] = {
-                "Version",                                                     // which states the OpenPGP implementation and version used to encode the message.
+                "Version",                              // which states the OpenPGP implementation and version used to encode the message.
 
-                "Comment",                                                     // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.
-                                                                               // Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
+                "Comment",                              // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.
+                                                        // Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
 
-                "MessageID",                                                   // a 32-character string of printable characters. The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header. MessageID strings should be
-                                                                               // unique enough that the recipient of the mail can associate all the parts of a message with each other. A good checksum or cryptographic hash function is sufficient.
-                                                                               // The MessageID SHOULD NOT appear unless it is in a multi-part message. If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic
-                                                                               // fashion, rather than contain a purely random value. This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key
-                                                                               // information.
+                "MessageID",                            // a 32-character string of printable characters. The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header. MessageID strings should be
+                                                        // unique enough that the recipient of the mail can associate all the parts of a message with each other. A good checksum or cryptographic hash function is sufficient.
+                                                        // The MessageID SHOULD NOT appear unless it is in a multi-part message. If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic
+                                                        // fashion, rather than contain a purely random value. This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key
+                                                        // information.
 
-                "Hash",                                                        // a comma-separated list of hash algorithms used in this message. This is used only in cleartext signed messages.
+                "Hash",                                 // a comma-separated list of hash algorithms used in this message. This is used only in cleartext signed messages.
 
-                "Charset",                                                     // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
-
+                "Charset",                              // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
 };
 
 // Binary, Text or UTF-8
@@ -89,7 +88,7 @@ const std::string dayofweek[7] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "S
 
 // Features Flags
 const std::map <uint8_t, std::string> Features = {
-                std::make_pair(1, "Modification Detection (packets 18 and 19)"),                         // Only defined value; Others can be added if desired. Others will eventually be added
+                std::make_pair(1, "Modification Detection (packets 18 and 19)"),        // Only defined value; Others can be added if desired. Others will eventually be added
 };
 
 // Key Flags
@@ -130,14 +129,14 @@ const std::map <uint8_t, std::string> Hash_Algorithms = {
 };
 
 // ASN.1 OIDs in hex form
-const std::map <std::string, std::string> Hash_ASN_DER = {
-                std::make_pair("MD5", "\x30\x20\x30\x0C\x06\x08\x2A\x86\x48\x86\xF7\x0D\x02\x05\x05\x00\x04\x10"),                   // 1.2.840.113549.2.5
-                std::make_pair("RIPEMD160", "\x30\x21\x30\x09\x06\x05\x2B\x24\x03\x02\x01\x05\x00\x04\x14"),                         // 1.3.36.3.2.1
-                std::make_pair("SHA1", "\x30\x21\x30\x09\x06\x05\x2b\x0E\x03\x02\x1A\x05\x00\x04\x14"),                              // 1.3.14.3.2.26
-                std::make_pair("SHA224", "\x30\x31\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x04\x05\x00\x04\x1C"),            // 2.16.840.1.101.3.4.2.4
-                std::make_pair("SHA256", "\x30\x31\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01\x05\x00\x04\x20"),            // 2.16.840.1.101.3.4.2.1
-                std::make_pair("SHA384", "\x30\x41\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x02\x05\x00\x04\x30"),            // 2.16.840.1.101.3.4.2.2
-                std::make_pair("SHA512", "\x30\x51\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03\x05\x00\x04\x40"),            // 2.16.840.1.101.3.4.2.3
+const std::map <std::string, std::string> Hash_ASN1_DER = {
+                std::make_pair("MD5",       "3020300C06082A864886F70D020505000410"),         // 1.2.840.113549.2.5
+                std::make_pair("RIPEMD160", "3021300906052B2403020105000414"),               // 1.3.36.3.2.1
+                std::make_pair("SHA1",      "3021300906052B0E03021A05000414"),               // 1.3.14.3.2.26
+                std::make_pair("SHA224",    "3031300d06096086480165030402040500041C"),       // 2.16.840.1.101.3.4.2.4
+                std::make_pair("SHA256",    "3031300d060960864801650304020105000420"),       // 2.16.840.1.101.3.4.2.1
+                std::make_pair("SHA384",    "3041300d060960864801650304020205000430"),       // 2.16.840.1.101.3.4.2.2
+                std::make_pair("SHA512",    "3051300d060960864801650304020305000440"),       // 2.16.840.1.101.3.4.2.3
 };
 
 // Length of defined hash outputs in bits
@@ -379,7 +378,7 @@ const std::map <std::string, uint16_t> Symmetric_Algorithm_Key_Length = {
 
 // User Attribute Tags
 const std::map <uint8_t, std::string> User_Attributes = {
-                std::make_pair(1, "JPEG"),                                                    // Only defined tag
+                std::make_pair(1, "JPEG"),                                      // Only defined tag
                 std::make_pair(100, "Reserved for private/experimental use"),
                 std::make_pair(101, "Reserved for private/experimental use"),
                 std::make_pair(102, "Reserved for private/experimental use"),

@@ -2,6 +2,8 @@
 
 std::string use_hash(uint8_t flag, std::string data){
     switch (flag){
+        case 0: // not defined in standard
+            return data;
         case 1:
             return MD5(data).digest();
             break;

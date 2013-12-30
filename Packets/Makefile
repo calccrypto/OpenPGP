@@ -37,7 +37,7 @@ Tag5.o: Tag5.h Tag5.cpp s2k.h Tag6.h
 Tag6.o: Tag6.h Tag6.cpp ../Hashes/Hashes.h packet.h
 	$(CC) $(CFLAGS) $(LFLAGS) Tag6.cpp
 
-Tag7.o: Tag7.h Tag7.cpp Tag5.h
+Tag7.o: Tag7.h Tag7.cpp Tag5.h Tag14.h
 	$(CC) $(CFLAGS) Tag7.cpp
 
 Tag8.o: Tag8.h Tag8.cpp packet.h

@@ -142,6 +142,18 @@ std::string Tag5::get_secret(){
     return secret;
 }
 
+Tag6 Tag5::get_public_obj(){
+    std::string data = raw();
+    Tag6 out(data);
+    return out;
+}
+
+Tag6 * Tag5::get_public_ptr(){
+    std::string data = raw();
+    Tag6 * out = new Tag6(data);
+    return out;
+}
+
 void Tag5::set_s2k_con(const uint8_t c){
     s2k_con = c;
 }

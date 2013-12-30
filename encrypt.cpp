@@ -1,8 +1,7 @@
 #include "encrypt.h"
 
 std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
-    // seed BBS
-    BBS((mpz_class) (int) now());
+    BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     std::vector <Packet *> packets = pub.get_packets();
     Tag6 * public_key = new Tag6;
@@ -62,7 +61,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     std::string bytes = mpi[0].get_str(16);
     bytes += std::string(bytes.size() & 1, 0);
-    mpz_class m(hexlify(EME_PKCS1_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1)), 16);
+    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), bytes.size() >> 1)), 16);
 
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA

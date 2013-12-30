@@ -25,19 +25,22 @@ THE SOFTWARE.
 
 #include <iostream>
 
+#include <gmpxx.h>
+
 #include "common/includes.h"
 #include "RNG/RNG.h"
 #include "consts.h"
+#include "pgptime.h"
 #include "usehash.h"
 
 #ifndef __PKCS1__
 #define __PKCS1__
 // RFC 4880 13.1.1
-std::string EME_PKCS1_ENCODE(const std::string & m, const unsigned int & k);
+std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k);
 
 // RFC 4880 13.1.2
-std::string EME_PKCS1_DECODE(const std::string & m);
+std::string EME_PKCS1v1_5_DECODE(const std::string & m);
 
 // RFC 4880 13.1.3
-std::string EMSA_PKCS1(uint8_t & h, const unsigned int & mL);
+std::string EMSA_PKCS1_v1_5(const uint8_t & h, std::string & hashed_data, const unsigned int & keylength);
 #endif

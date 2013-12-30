@@ -73,7 +73,7 @@ class PGP{
         std::string keyid();                            // keyid that is searched for on keyservers
         std::string list_keys();                        // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
 
-        PGP operator=(const PGP & pgp);                 // needed deep copy
+        PGP operator=(const PGP & pgp);                 // get deep copy object
         PGP * clone();                                  // get deep copy pointer
 };
 

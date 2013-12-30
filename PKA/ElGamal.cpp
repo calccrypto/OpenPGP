@@ -1,6 +1,6 @@
 #include "ElGamal.h"
 std::vector <mpz_class> ElGamal_keygen(unsigned int bits){
-    BBS(now()); // seed just in case not seeded
+    BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     bits /= 5;
     // random prime q - only used for key generation
@@ -42,6 +42,7 @@ std::vector <mpz_class> ElGamal_keygen(unsigned int bits){
 }
 
 std::vector <mpz_class> ElGamal_encrypt(const mpz_class & data, const std::vector <mpz_class> & pub){
+    BBS((mpz_class) (int) now()); // seed just in case not seeded
     mpz_class k(BBS().rand(pub[0].get_str(2).size()), 2);
     k %= pub[0];
     mpz_class r, s;

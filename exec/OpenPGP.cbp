@@ -222,6 +222,8 @@
 		<Unit filename="../pgptime.h" />
 		<Unit filename="../radix64.cpp" />
 		<Unit filename="../radix64.h" />
+		<Unit filename="../revoke.cpp" />
+		<Unit filename="../revoke.h" />
 		<Unit filename="../sigcalc.cpp" />
 		<Unit filename="../sigcalc.h" />
 		<Unit filename="../sign.cpp" />

@@ -6,7 +6,7 @@ CFLAGS=-std=c++11 -Wall -c
 debug: CFLAGS += -g
 debug: all
 
-all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o pgptime.o PKCS1.o radix64.o sign.o sigcalc.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o OpenPGP.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
 
 .PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
@@ -52,11 +52,14 @@ OpenPGP.o: OpenPGP.h OpenPGP.cpp common/includes.h consts.h Packets/packets.h pg
 pgptime.o: pgptime.h pgptime.cpp consts.h
 	$(CC) $(CFLAGS) pgptime.cpp
 
-PKCS1.o: PKCS1.h PKCS1.cpp consts.h common/includes.h RNG/RNG.h usehash.h
-	$(CC) $(CFLAGS) PKCS1.cpp
+PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNG.h consts.h pgptime.h usehash.h
+	$(CC) $(CFLAGS) $(LFLAGS) PKCS1.cpp
 
 radix64.o: radix64.h radix64.cpp common/includes.h
 	$(CC) $(CFLAGS) radix64.cpp
+
+revoke.o: revoke.h revoke.cpp PKCS1.h sign.h
+	$(CC) $(CFLAGS) $(LFLAGS) revoke.cpp
 
 sign.o: sign.h sign.cpp common/includes.h Packets/packets.h PKA/PKA.h decrypt.h OpenPGP.h pgptime.h sigcalc.h
 	$(CC) $(CFLAGS) $(LFLAGS) sign.cpp

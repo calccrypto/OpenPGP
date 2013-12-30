@@ -34,6 +34,7 @@ PGP::~PGP(){
     for(Packet *& p : packets){
         delete p;
     }
+    packets.clear();
 }
 
 void PGP::read(std::string & data){

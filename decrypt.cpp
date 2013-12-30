@@ -66,7 +66,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         exit(1);
     }
 
-    BBS((mpz_class) (int) now());
+    BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     // reused variables
     uint8_t packet;
@@ -117,7 +117,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
 
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
-        session_key = EME_PKCS1_DECODE(session_key);                                        // remove EME_PKCS1 encoding
+        session_key = EME_PKCS1v1_5_DECODE(session_key);                                        // remove EME_PKCS1 encoding
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key

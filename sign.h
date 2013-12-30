@@ -39,11 +39,11 @@ THE SOFTWARE.
 #ifndef __SIGN__
 #define __SIGN__
 // Extract private key data
-Tag5 * find_signing_packet(PGP & k);
+Tag5 * find_signing_key(PGP & k);
 Tag13 * find_signer_id(PGP & k);
 
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri);
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, const std::string & pass);
+std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri, const uint8_t h = 0);
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, const std::string & passphrase, const uint8_t h = 0);
 
 // Generates new default signature packet
 Tag2 * create_sig_packet(const uint8_t type, Tag5 * tag5, ID * id = NULL);
@@ -64,13 +64,7 @@ Tag2 * sign_signature(Tag2 * tag2, const std::string & passphrase);
 Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::string & passphrase);
 
 // 0x18 - 0x19
-Tag2 * sign_sub_key(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase);
-
-// 0x20
-
-// 0x28
-
-// 0x30
+Tag2 * sign_subkey(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase);
 
 // 0x40
 
