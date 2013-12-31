@@ -137,7 +137,7 @@ std::string Tag6::get_fingerprint(){
     }
     else{
         std::cerr << "Error: Public Key packet version " << (int) version << " not defined." << std::endl;
-        throw(1);
+        throw 1;
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -152,7 +152,7 @@ std::string Tag6::get_keyid(){
     }
     else{
         std::cerr << "Error: Public Key packet version " << (int) version << " not defined." << std::endl;
-        throw(1);
+        throw 1;
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }

@@ -27,7 +27,7 @@ std::string use_hash(uint8_t flag, std::string data){
             break;
         default:
             std::cerr << "Error: Hash value not defined or reserved." << std::endl;
-            throw(1);
+            throw 1;
             break;
     }
 }

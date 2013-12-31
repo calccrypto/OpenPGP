@@ -58,7 +58,7 @@ std::vector <mpz_class> Tag1::get_mpi(){
 void Tag1::set_keyid(const std::string & k){
     if (k.size() != 8){
         std::cerr << "Error: Key ID must be 8 octets." << std::endl;
-        throw(1);
+        throw 1;
     }
     keyid = k;
 }

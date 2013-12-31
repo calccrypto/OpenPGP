@@ -11,7 +11,7 @@ std::string Tag8::compress(std::string data){
         case 3: // BZip2 [BZ2]
         default:
             std::cerr << "Error: Compression functions not implemented." << std::endl;
-            throw(1);
+            throw 1;
             break;
     }
     return out;
@@ -28,7 +28,7 @@ std::string Tag8::decompress(std::string data){
         case 3: // BZip2 [BZ2]
         default:
             std::cerr << "Error: Decompression functions not implemented." << std::endl;
-            throw(1);
+            throw 1;
             break;
     }
     return out;

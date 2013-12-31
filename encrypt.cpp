@@ -1,6 +1,6 @@
 #include "encrypt.h"
 
-std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
+PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     std::vector <Packet *> packets = pub.get_packets();
@@ -38,7 +38,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     if (!found){
         std::cerr << "Error: No public key found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     std::vector <mpz_class> mpi = public_key -> get_mpi();
@@ -71,7 +71,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     }
     else{
         std::cerr << "Error: Unknown or Reserved Public Key Algorithm: " << (int) public_key -> get_pka() << std::endl;
-        throw(1);
+        throw 1;
     }
 
     // Literal Data Packet
@@ -127,5 +127,5 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     delete tag1;
     delete public_key;
     delete encrypted;
-    return out.write();
+    return out;
 }

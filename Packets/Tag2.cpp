@@ -136,7 +136,7 @@ std::vector <Subpacket *> Tag2::read_subpackets(std::string & data){
                 break;
             default:
                 std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
-                throw(1);
+                throw 1;
                 break;
         }
         temp -> read(subpacket_data);
@@ -152,7 +152,7 @@ void Tag2::read(std::string & data){
     if (version < 4){
         if (data[1] != 5){
             std::cerr << "Error: Length of hashed material must be 5." << std::endl;
-            throw(1);
+            throw 1;
         }
         type = data[2];
         time = toint(data.substr(3, 4), 256);
@@ -310,7 +310,7 @@ std::string Tag2::get_keyid(){
     }
     else{
         std::cerr << "Error: Signature Packet version " << version << " not defined." << std::endl;
-        throw(1);
+        throw 1;
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -352,7 +352,7 @@ std::string Tag2::get_up_to_hashed(){
     }
     else{
         std::cerr << "Error: Signature packet version " << (int) version << " not defined." << std::endl;
-        throw(1);
+        throw 1;
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -421,7 +421,7 @@ void Tag2::set_time(const uint32_t t){
 void Tag2::set_keyid(const std::string & k){
     if (k.size() != 8){
         std::cerr << "Error: Key ID must be 8 octets." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     if (version == 3){

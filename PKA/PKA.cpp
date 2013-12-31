@@ -20,7 +20,7 @@ void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & par
             break;
         default:
             std::cerr << "Error: Undefined or reserved PKA number: " << (int) pka<< std::endl;
-            throw(1);
+            throw 1;
             break;
     }
 }

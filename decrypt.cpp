@@ -1,5 +1,25 @@
 #include "decrypt.h"
 
+Tag5 * find_encrypting_key(PGP & k){
+    if (k.get_ASCII_Armor() == 2){
+        std::vector <Packet *> packets = k.get_packets();
+        for(Packet *& p : packets){
+            if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
+                std::string data = p -> raw();
+                Tag5 * signer = new Tag5(data);
+                // make sure key has signing material
+                if ((signer -> get_pka() == 1) || // RSA
+                    (signer -> get_pka() == 2) || // RSA
+                    (signer -> get_pka() == 16)){ // ElGamal
+                        return signer;
+                }
+                delete signer;
+            }
+        }
+    }
+    return NULL;
+}
+
 std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
     if (pka < 3){   // RSA
         std::string out = RSA_decrypt(data[0], pri, pub).get_str(16);
@@ -11,34 +31,34 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
     }
     else{
         std::cerr << "Error: PKA number " << pka << " not allowed or unknown." << std::endl;
-        throw(1);
+        throw 1;
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passphrase){
-    std::cout << "iv: " << hexlify(pri -> get_IV()) << std::endl;
     std::vector <mpz_class> out;
     S2K * s2k = pri -> get_s2k();
 
     // calculate key used in encryption algorithm
-    std::string key = s2k -> run(passphrase, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3);
+    std::string key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3);
 
     // get encrypted mpi values
     std::string secret = pri -> get_secret();
 
     // decrypt secret key
-    std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key , pri -> get_IV());
+    std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key, pri -> get_IV());
 
     // get checksum and remove it from the string
-    std::string checksum = secret_key.substr(secret_key.size() - ((pri -> get_s2k_con() == 254)?20:2), ((pri -> get_s2k_con() == 254)?20:2));
-    secret_key = secret_key.substr(0, secret_key.size() - ((pri -> get_s2k_con() == 254)?20:2));
+    const unsigned int hash_size = (pri -> get_s2k_con() == 254)?20:2;
+    std::string checksum = secret_key.substr(secret_key.size() - hash_size, hash_size);
+    secret_key = secret_key.substr(0, secret_key.size() - hash_size);
 
     // calculate and check checksum
     if(pri -> get_s2k_con() == 254){
         if (use_hash(s2k -> get_hash(), secret_key) != checksum){
             std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
-            throw(1);
+            throw 1;
         }
     }
     else{ // all other values; **UNTESTED**
@@ -49,7 +69,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
         if (unhexlify(makehex(sum, 4)) != checksum){
             if (use_hash(s2k -> get_hash(), secret_key) != checksum){
                 std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
-                throw(1);
+                throw 1;
             }
         }
     }
@@ -64,10 +84,8 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
 std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
     if (pri.get_ASCII_Armor() != 2){
         std::cerr << "Error: No Private Key given." << std::endl;
-        throw(1);
+        throw 1;
     }
-
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     // reused variables
     uint8_t packet;
@@ -88,30 +106,18 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         }
     }
 
+
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
         std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
-        std::vector <Packet *> packets = pri.get_packets();
-        Tag5 * sec = NULL;
-        for(Packet *& p : packets){
-            if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
-                std::string data = p -> raw();
-                sec = new Tag5;
-                sec -> read(data);
-                if (sec -> get_keyid() == tag1.get_keyid()){
-                    break;
-                }
-                delete sec;
-                sec = NULL;
-            }
-        }
+        Tag5 * sec = find_encrypting_key(pri);
+
         if (!sec){
             std::cerr << "Error: Correct Private Key not found." << std::endl;
-            delete sec;
-            throw(1);
+            throw 1;
         }
 
         std::vector <mpz_class> pub = sec -> get_mpi();
@@ -130,7 +136,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             std::cerr << "Error: Calculated session key checksum does not match given checksum." << std::endl;
             delete sec;
-            throw(1);
+            throw 1;
         }
         delete sec;
     }
@@ -143,7 +149,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
     }
     else{
         std::cerr << "Error: No session key packet found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;        // get blocksize
@@ -168,7 +174,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
     }
     if (!data.size()){
         std::cerr << "Error: No encrypted data packets found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     if (sym == 2){ // Triple DES
@@ -189,7 +195,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         }
         else{
             std::cerr << "Error: Unknown output format." << std::endl;
-            throw(1);
+            throw 1;
         }
     }
     else if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
@@ -197,7 +203,7 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         data = data.substr(0, data.size() - 20);            // remove SHA1 checksum
         if (use_hash(2, data) != checksum){                 // check SHA1 checksum
             std::cerr << "Error: Given Checksum and calculated checksum do not match." << std::endl;
-            throw(1);
+            throw 1;
         }
         data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
@@ -207,19 +213,21 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
 
     // extract data for output
     if (packet == 8){ // Compressed Data Packet (Tag 8)
-        Tag8 tag8(data);
+        std::cout << hexlify(data) << std::endl;
         // can't use unless/until compression algorithms are implemented
+//        Tag8 tag8(data);
 //        data = tag8.get_data();
         data = "Data in hex, so its easier to copy to a " + Compression_Algorithms.at(data[0]) + " decompressor:\n\n" + hexlify(data.substr(1, data.size() - 1));
     }
     else if (packet == 11){ // Literal Data Packet (Tag 11)
         Tag11 tag11(data);
         data = tag11.get_literal();
-        if (tag11.get_format() == 'b'){
-            std::ofstream f(tag11.get_filename(), std::ios::binary);
-            f << data;
-            data = "Data written to file '" + tag11.get_filename() + "'";
-        }
+        // take out for now
+//        if (tag11.get_format() == 'b'){
+//            std::ofstream f(tag11.get_filename(), std::ios::binary);
+//            f << data;
+//            data = "Data written to file '" + tag11.get_filename() + "'";
+//        }
     }
     return data;
 }

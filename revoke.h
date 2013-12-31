@@ -46,8 +46,12 @@ PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint
 
 // 0x30
 
-// main functions to call to revoke something
+// Directly Revoke Something
 PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+
+// Revoke with certificate
+//PGP revoke_key(PGP & pub, PGP & revoke);
+//PGP revoke_subkey(PGP & pub, PGP & revoke);
 
 #endif

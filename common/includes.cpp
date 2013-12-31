@@ -25,7 +25,7 @@ uint64_t toint(const std::string & s, const int & base){
             break;
         default:
             std::cerr << "InputError: toint() undefined for base: " << std::dec << base << std::endl;
-            throw(1);
+            throw 1;
             break;
     };
     return value;
@@ -45,7 +45,7 @@ std::string bintohex(const std::string & in, bool caps){
     // Changes a binary string to its hexadecimal equivalent
     if (in.size() % 4){
         std::cerr << "Error: input string length not a multiple of 4." << std::endl;
-        throw(1);
+        throw 1;
     }
     std::string out = "";
     for(unsigned int x = 0; x < (in.size() >> 2); x++){
@@ -72,7 +72,7 @@ std::string unhexlify(const std::string & in){
 	// Reverse hexlify
 	if (in.size() & 1){
 		std::cerr << "Error: input string of odd length." << std::endl;
-        throw(1);
+        throw 1;
     }
     std::string out(in.size() >> 1, 0);
 	for(unsigned int x = 0; x < in.size(); x += 2){
@@ -87,7 +87,7 @@ std::string unhexlify(const std::string & in){
         }
         else{
             std::cerr << "Error: Invalid character found: " << (char) in[x] << std::endl;
-            throw(1);
+            throw 1;
         }
         if (('0' <= in[x + 1]) && (in[x + 1] <= '9')){
             out[x >> 1] |= (uint8_t) (in[x + 1] - '0');
@@ -100,7 +100,7 @@ std::string unhexlify(const std::string & in){
         }
         else{
             std::cerr << "Error: Invalid character found: " << (char) in[x + 1] << std::endl;
-            throw(1);
+            throw 1;
         }
     }
 	return out;

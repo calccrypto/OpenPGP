@@ -65,14 +65,14 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
     std::string hash = to_sign_00(data, signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
         std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
         std::cerr << "Error: No Key ID subpacket found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     // find matching public key packet and get the mpi
@@ -88,7 +88,7 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
 bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
     if (!f){
         std::cerr << "Error: Bad file." << std::endl;
-        throw(1);
+        throw 1;
     }
     std::stringstream s;
     s << f.rdbuf();
@@ -107,14 +107,14 @@ bool verify_message(PGPSignedMessage & message, PGP & key){
     std::string hash = to_sign_01(message.get_message(), signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
         std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
         std::cerr << "Error: No Key ID subpacket found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     // find matching public key packet and get the mpi
@@ -159,7 +159,7 @@ bool verify_signature(PGP & key, PGP & signer){
 
     if (!signing_key.size()){
         std::cerr << "Error: No key found." << std::endl;
-        throw(1);
+        throw 1;
     }
 
     uint8_t version = 0;
@@ -218,7 +218,7 @@ bool verify_signature(PGP & key, PGP & signer){
                 break;
             default:
                 std::cerr << "Error: Incorrect packet type found: " << (int) p -> get_tag() << std::endl;
-                throw(1);
+                throw 1;
                 break;
         }
     }

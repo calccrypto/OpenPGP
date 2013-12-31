@@ -33,5 +33,5 @@ THE SOFTWARE.
 #ifndef __PGPENCRYPT__
 #define __PGPENCRYPT__
 // Encrypt data
-std::string encrypt(const std::string & data, PGP & pub, bool hash = true, uint8_t sym_alg = 9);
+PGP encrypt(const std::string & data, PGP & pub, bool hash = true, uint8_t sym_alg = 9);
 #endif
