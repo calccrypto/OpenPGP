@@ -3,7 +3,7 @@
 Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     Tag5 * signer = find_signing_key(pri);
@@ -20,7 +20,7 @@ Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const 
 
     if (!key){
         std::cerr << "Error: No Secret Key packet found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     Tag2 * sig = create_sig_packet(0x20, signer);
@@ -60,7 +60,7 @@ PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const
 Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     Tag5 * signer = find_signing_key(pri);
@@ -77,7 +77,7 @@ Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8
 
     if (!key){
         std::cerr << "Error: No Secret Subkey packet found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     Tag2 * sig = create_sig_packet(0x28, signer);

@@ -34,6 +34,116 @@ Tag2::~Tag2(){
     }
     unhashed_subpackets.clear();
 }
+// Extracts Subpacket data for figuring which subpacket type to create
+// Some data is destroyed in the process
+std::string Tag2::read_subpacket(std::string & data){
+    uint32_t length = 0;
+    uint8_t first_octet = (unsigned char) data[0];
+    if (first_octet < 192){
+        length = first_octet;
+        data = data.substr(1, data.size() - 1);
+    }
+    else if ((192 <= first_octet) && (first_octet < 255)){
+        length = toint(data.substr(0, 2), 256) - (192 << 8) + 192;
+        data = data.substr(2, data.size() - 2);
+    }
+    else if (first_octet == 255){
+        length = toint(data.substr(1, 4), 256);
+        data = data.substr(5, data.size() - 5);
+    }
+    std::string out = data.substr(0, length);                   // includes subpacket type
+    data = data.substr(length, data.size() - length);           // remove subpacket from main data
+    return out;
+}
+
+std::vector <Subpacket *> Tag2::read_subpackets(std::string & data){
+    std::vector <Subpacket *> out;
+    while (data.size()){
+        Subpacket * temp;
+        std::string subpacket_data = read_subpacket(data);
+        uint8_t sub = subpacket_data[0];
+        subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
+        switch (sub){
+            // reserved sub values will crash the program
+            case 2:
+                temp = new Tag2Sub2;
+                break;
+            case 3:
+                temp = new Tag2Sub3;
+                break;
+            case 4:
+                temp = new Tag2Sub4;
+                break;
+            case 5:
+                temp = new Tag2Sub5;
+                break;
+            case 6:
+                temp = new Tag2Sub6;
+                break;
+            case 9:
+                temp = new Tag2Sub9;
+                break;
+            case 10:
+                temp = new Tag2Sub10;
+                break;
+            case 11:
+                temp = new Tag2Sub11;
+                break;
+            case 12:
+                temp = new Tag2Sub12;
+                break;
+            case 16:
+                temp = new Tag2Sub16;
+                break;
+            case 20:
+                temp = new Tag2Sub20;
+                break;
+            case 21:
+                temp = new Tag2Sub21;
+                break;
+            case 22:
+                temp = new Tag2Sub22;
+                break;
+            case 23:
+                temp = new Tag2Sub23;
+                break;
+            case 24:
+                temp = new Tag2Sub24;
+                break;
+            case 25:
+                temp = new Tag2Sub25;
+                break;
+            case 26:
+                temp = new Tag2Sub26;
+                break;
+            case 27:
+                temp = new Tag2Sub27;
+                break;
+            case 28:
+                temp = new Tag2Sub28;
+                break;
+            case 29:
+                temp = new Tag2Sub29;
+                break;
+            case 30:
+                temp = new Tag2Sub30;
+                break;
+            case 31:
+                temp = new Tag2Sub31;
+                break;
+            case 32:
+                temp = new Tag2Sub32;
+                break;
+            default:
+                std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
+                throw(1);
+                break;
+        }
+        temp -> read(subpacket_data);
+        out.push_back(temp);
+    }
+    return out;
+}
 
 void Tag2::read(std::string & data){
     size = data.size();
@@ -42,7 +152,7 @@ void Tag2::read(std::string & data){
     if (version < 4){
         if (data[1] != 5){
             std::cerr << "Error: Length of hashed material must be 5." << std::endl;
-            exit(1);
+            throw(1);
         }
         type = data[2];
         time = toint(data.substr(3, 4), 256);
@@ -68,180 +178,15 @@ void Tag2::read(std::string & data){
         data = data.substr(6, data.size() - 6);
         std::string hashed = data.substr(0, hashed_size);
         data = data.substr(hashed_size, data.size() - hashed_size);
-        // hashed subpackets
-        while (hashed.size()){
-            Subpacket * temp;
-            std::string subpacket_data = read_subpacket(hashed);
-            uint8_t sub = subpacket_data[0];
-            subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
-            switch (sub){
-                // reserved sub values will crash the program
-                case 2:
-                    temp = new Tag2Sub2;
-                    break;
-                case 3:
-                    temp = new Tag2Sub3;
-                    break;
-                case 4:
-                    temp = new Tag2Sub4;
-                    break;
-                case 5:
-                    temp = new Tag2Sub5;
-                    break;
-                case 6:
-                    temp = new Tag2Sub6;
-                    break;
-                case 9:
-                    temp = new Tag2Sub9;
-                    break;
-                case 10:
-                    temp = new Tag2Sub10;
-                    break;
-                case 11:
-                    temp = new Tag2Sub11;
-                    break;
-                case 12:
-                    temp = new Tag2Sub12;
-                    break;
-                case 16:
-                    temp = new Tag2Sub16;
-                    break;
-                case 20:
-                    temp = new Tag2Sub20;
-                    break;
-                case 21:
-                    temp = new Tag2Sub21;
-                    break;
-                case 22:
-                    temp = new Tag2Sub22;
-                    break;
-                case 23:
-                    temp = new Tag2Sub23;
-                    break;
-                case 24:
-                    temp = new Tag2Sub24;
-                    break;
-                case 25:
-                    temp = new Tag2Sub25;
-                    break;
-                case 26:
-                    temp = new Tag2Sub26;
-                    break;
-                case 27:
-                    temp = new Tag2Sub27;
-                    break;
-                case 28:
-                    temp = new Tag2Sub28;
-                    break;
-                case 29:
-                    temp = new Tag2Sub29;
-                    break;
-                case 30:
-                    temp = new Tag2Sub30;
-                    break;
-                case 31:
-                    temp = new Tag2Sub31;
-                    break;
-                case 32:
-                    temp = new Tag2Sub32;
-                    break;
-                default:
-                    std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
-                    exit(1);
-                    break;
-            }
-            temp -> read(subpacket_data);
-            hashed_subpackets.push_back(temp);
-        }
+        hashed_subpackets = read_subpackets(hashed);
+
         // unhashed subpacketss
         uint16_t unhashed_size = toint(data.substr(0, 2), 256);
         data = data.substr(2, data.size() - 2);
         std::string unhashed = data.substr(0, unhashed_size);
         data = data.substr(unhashed_size, data.size() - unhashed_size);
-        while (unhashed.size()){
-            Subpacket * temp;
-            std::string subpacket_data = read_subpacket(unhashed);
-            uint8_t sub = subpacket_data[0];
-            subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
-            switch (sub){
-                // reserved sub values will crash the program
-                case 2:
-                    temp = new Tag2Sub2;
-                    break;
-                case 3:
-                    temp = new Tag2Sub3;
-                    break;
-                case 4:
-                    temp = new Tag2Sub4;
-                    break;
-                case 5:
-                    temp = new Tag2Sub5;
-                    break;
-                case 6:
-                    temp = new Tag2Sub6;
-                    break;
-                case 9:
-                    temp = new Tag2Sub9;
-                    break;
-                case 10:
-                    temp = new Tag2Sub10;
-                    break;
-                case 11:
-                    temp = new Tag2Sub11;
-                    break;
-                case 12:
-                    temp = new Tag2Sub12;
-                    break;
-                case 16:
-                    temp = new Tag2Sub16;
-                    break;
-                case 20:
-                    temp = new Tag2Sub20;
-                    break;
-                case 21:
-                    temp = new Tag2Sub21;
-                    break;
-                case 22:
-                    temp = new Tag2Sub22;
-                    break;
-                case 23:
-                    temp = new Tag2Sub23;
-                    break;
-                case 24:
-                    temp = new Tag2Sub24;
-                    break;
-                case 25:
-                    temp = new Tag2Sub25;
-                    break;
-                case 26:
-                    temp = new Tag2Sub26;
-                    break;
-                case 27:
-                    temp = new Tag2Sub27;
-                    break;
-                case 28:
-                    temp = new Tag2Sub28;
-                    break;
-                case 29:
-                    temp = new Tag2Sub29;
-                    break;
-                case 30:
-                    temp = new Tag2Sub30;
-                    break;
-                case 31:
-                    temp = new Tag2Sub31;
-                    break;
-                case 32:
-                    temp = new Tag2Sub32;
-                    break;
-                default:
-                    std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
-                    exit(1);
-                    break;
-            }
-            temp -> read(subpacket_data);
-            unhashed_subpackets.push_back(temp);
-        }
+        unhashed_subpackets = read_subpackets(unhashed);
+
         left16 = data.substr(0, 2);
         data = data.substr(2, data.size() - 2);
 
@@ -266,7 +211,7 @@ std::string Tag2::show(){
             << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n";
     }
     if (version == 4){
-        out << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" <<  makehex(type, 2) << ")\n"
+        out << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
             << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
             << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n";
 
@@ -365,7 +310,7 @@ std::string Tag2::get_keyid(){
     }
     else{
         std::cerr << "Error: Signature Packet version " << version << " not defined." << std::endl;
-        exit(1);
+        throw(1);
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -406,8 +351,8 @@ std::string Tag2::get_up_to_hashed(){
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
     else{
-        std::cerr << "Error: Signature packet version " << version << " not defined." << std::endl;
-        exit(1);
+        std::cerr << "Error: Signature packet version " << (int) version << " not defined." << std::endl;
+        throw(1);
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -476,7 +421,7 @@ void Tag2::set_time(const uint32_t t){
 void Tag2::set_keyid(const std::string & k){
     if (k.size() != 8){
         std::cerr << "Error: Key ID must be 8 octets." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     if (version == 3){
@@ -521,27 +466,6 @@ void Tag2::set_unhashed_subpackets(const std::vector <Subpacket *> & u){
     }
 }
 
-// Extracts Subpacket data for figuring which subpacket type to create
-// Some data is destroyed in the process
-std::string Tag2::read_subpacket(std::string & data){
-    uint32_t length = 0;
-    uint8_t first_octet = (unsigned char) data[0];
-    if (first_octet < 192){
-        length = first_octet;
-        data = data.substr(1, data.size() - 1);
-    }
-    else if ((192 <= first_octet) && (first_octet < 255)){
-        length = toint(data.substr(0, 2), 256) - (192 << 8) + 192;
-        data = data.substr(2, data.size() - 2);
-    }
-    else if (first_octet == 255){
-        length = toint(data.substr(1, 4), 256);
-        data = data.substr(5, data.size() - 5);
-    }
-    std::string out = data.substr(0, length);                   // includes subpacket type
-    data = data.substr(length, data.size() - length);           // remove subpacket from main data
-    return out;
-}
 
 Tag2 * Tag2::clone(){
     Tag2 * out = new Tag2(*this);

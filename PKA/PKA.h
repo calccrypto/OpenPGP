@@ -2,6 +2,8 @@
 Public Key Algorithm list
 */
 
+#include <sstream>
+
 #include <gmpxx.h>
 
 #include "DSA.h"

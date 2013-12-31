@@ -19,8 +19,8 @@ void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & par
             pri = DSA_keygen(pub);
             break;
         default:
-            std::cerr << "Error: Undefined or reserved PKA number: " << (int) pka << std::endl;
-            exit(1);
+            std::cerr << "Error: Undefined or reserved PKA number: " << (int) pka<< std::endl;
+            throw(1);
             break;
     }
 }

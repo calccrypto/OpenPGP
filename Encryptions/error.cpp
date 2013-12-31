@@ -24,5 +24,5 @@ void error(uint8_t e, std::ostream & stream){
             break;
     }
     stream << std::endl;
-    exit(e);
+    throw(e);
 }

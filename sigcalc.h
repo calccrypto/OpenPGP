@@ -25,8 +25,8 @@ THE SOFTWARE.
 
 #include <iostream>
 
+#include "Keys/PGPTypes.h"
 #include "Packets/packets.h"
-#include "OpenPGP.h"
 #include "pgptime.h"
 #include "usehash.h"
 

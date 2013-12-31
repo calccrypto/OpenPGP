@@ -65,24 +65,25 @@ std::string Tag5::show_common(){
         }
     }
 
-    out << "    Encrypted Data (" << secret.size() << " bytes):\n";
+    out << "    Encrypted Data (" << secret.size() << " bytes):\n        ";
     if (pka < 4){
-        out << "        RSA d, p, q, u";
+        out << "RSA d, p, q, u";
     }
     else if (pka == 16){
-        out << "        Elgamal x";
+        out << "Elgamal x";
     }
     else if (pka == 17){
-        out << "        DSA x";
+        out << "DSA x";
     }
-    out << "\n";
+    out << " + ";
 
     if (s2k_con == 254){
-        out << "        SHA1 hash\n";
+        out << "SHA1 hash\n";
     }
     else{
-        out << "        2 Octet Checksum\n";
+        out << "2 Octet Checksum\n";
     }
+    out << "        " << hexlify(secret) << std::endl;
     return out.str();
 }
 

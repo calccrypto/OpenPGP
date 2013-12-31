@@ -8,6 +8,36 @@ std::string xor_strings(const std::string & str1, const std::string & str2){
     return out;
 }
 
+SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::string & key2, const std::string & key3){
+    SymAlg * alg = NULL;
+    switch(sym_alg){
+        case 1:
+            alg = new IDEA(key);
+            break;
+        case 2:
+            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
+            break;
+        case 3:
+            alg = new CAST128(key);
+            break;
+        case 4:
+            alg = new Blowfish(key);
+            break;
+        case 7: case 8: case 9:
+            alg = new AES(key);
+            break;
+        case 10:
+            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
+            throw(1);
+            break;
+        default:
+            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
+            throw(1);
+            break;
+    }
+    return alg;
+}
+
 std::string OpenPGP_CFB_encrypt(SymAlg * crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
@@ -88,7 +118,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, const uint8_t packet, const std:
     // 6
     if (prefix.substr(BS - 2, 2) != check){
         std::cerr << "Error: Bad OpenPGP_CFB check value." << std::endl;
-        exit(1);
+        throw(1);
     }
     std::string P = "";
     unsigned int x = (packet == 9)?2:0; // 7
@@ -102,67 +132,23 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, const uint8_t packet, const std:
 }
 
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix, const std::string & key2, const std::string & key3){
-    SymAlg * alg = NULL;
-    switch(sym_alg){
-        case 0: // unencrypted
-            return data;
-            break;
-        case 1:
-            alg = new IDEA(key);
-            break;
-        case 2:
-            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
-            break;
-        case 3:
-            alg = new CAST128(key);
-            break;
-        case 4:
-            alg = new Blowfish(key);
-            break;
-        case 7: case 8: case 9:
-            alg = new AES(key);
-            break;
-        case 10:
-            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
-            exit(1);
-            break;
-        default:
-            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
-            exit(1);
+    if (!sym_alg){
+        return data;
     }
-    return OpenPGP_CFB_encrypt(alg, packet, data, prefix);
+    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    std::string out = OpenPGP_CFB_encrypt(alg, packet, data, prefix);
+    delete alg;
+    return out;
 }
 
 std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & key2, const std::string & key3){
-    SymAlg * alg = NULL;
-    switch(sym_alg){
-        case 0: // unencrypted
-            return data;
-            break;
-        case 1:
-            alg = new IDEA(key);
-            break;
-        case 2:
-            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
-            break;
-        case 3:
-            alg = new CAST128(key);
-            break;
-        case 4:
-            alg = new Blowfish(key);
-            break;
-        case 7: case 8: case 9:
-            alg = new AES(key);
-            break;
-        case 10:
-            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
-            exit(1);
-            break;
-        default:
-            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
-            exit(1);
+    if (!sym_alg){
+        return data;
     }
-    return OpenPGP_CFB_decrypt(alg, packet, data);
+    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    std::string out = OpenPGP_CFB_decrypt(alg, packet, data);
+    delete alg;
+    return out;
 }
 
 std::string normal_CFB_encrypt(SymAlg * crypt, std::string & data, std::string & IV){
@@ -190,65 +176,21 @@ std::string normal_CFB_decrypt(SymAlg * crypt, std::string & data, std::string &
 }
 
 std::string use_normal_CFB_encrypt(const uint8_t sym_alg, std::string data, std::string key, std::string IV, std::string key2, std::string key3){
-    SymAlg * alg = NULL;
-    switch(sym_alg){
-        case 0: // unencrypted
-            return data;
-            break;
-        case 1:
-            alg = new IDEA(key);
-            break;
-        case 2:
-            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
-            break;
-        case 3:
-            alg = new CAST128(key);
-            break;
-        case 4:
-            alg = new Blowfish(key);
-            break;
-        case 7: case 8: case 9:
-            alg = new AES(key);
-            break;
-        case 10:
-            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
-            exit(1);
-            break;
-        default:
-            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
-            exit(1);
+    if (!sym_alg){
+        return data;
     }
-    return normal_CFB_encrypt(alg, data, IV);
+    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    std::string out = normal_CFB_encrypt(alg, data, IV);
+    delete alg;
+    return out;
 }
 
 std::string use_normal_CFB_decrypt(const uint8_t sym_alg, std::string data, std::string key, std::string IV, std::string key2, std::string key3){
-    SymAlg * alg = NULL;
-    switch(sym_alg){
-        case 0: // unencrypted
-            return data;
-            break;
-        case 1:
-            alg = new IDEA(key);
-            break;
-        case 2:
-            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
-            break;
-        case 3:
-            alg = new CAST128(key);
-            break;
-        case 4:
-            alg = new Blowfish(key);
-            break;
-        case 7: case 8: case 9:
-            alg = new AES(key);
-            break;
-        case 10:
-            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
-            exit(1);
-            break;
-        default:
-            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
-            exit(1);
+    if (!sym_alg){
+        return data;
     }
-    return normal_CFB_decrypt(alg, data, IV);
+    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    std::string out = normal_CFB_decrypt(alg, data, IV);
+    delete alg;
+    return out;
 }

@@ -1,6 +1,6 @@
 /*
-verify.c
-Functions to verify data signed by a PGP key
+PGPTypes.h
+List of PGP Data Structures
 
 Copyright (c) 2013 Jason Lee
 
@@ -23,30 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#ifndef __PGP_TYPES__
+#define __PGP_TYPES__
 
-#include <gmpxx.h>
+#include "PGP.h"                    // Base class
 
-#include "Keys/PGPTypes.h"
-#include "Packets/Packets.h"
-#include "PKA/PKA.h"
-#include "sigcalc.h"
+#include "PGPMessage.h"             // Used for signed, encrypted, or compressed files.
 
-#ifndef __VERIFY__
-#define __VERIFY__
+#include "PGPKey.h"                 // Child of PGP, Parent of PGPPublicKey and PGPPrivateKey
+#include "PGPPublicKey.h"           // Public Key class
+#include "PGPPrivateKey.h"          // Private Key class
 
-std::string find_keyid(Tag2 * tag2);
-std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
+#include "PGPMessageXY.h"           // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+#include "PGPMessageX.h"            // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key);
+#include "PGPSignature.h"           // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
 
-// Use string.size() to check if input was verified.
-bool verify_file(const std::string & data, PGP & sig, PGP & key);
-bool verify_file(std::ifstream & f, PGP & sig, PGP & key);
+#include "PGPSignedMessage.h"       // Used for signed messages; not part of RFC 4880
 
-bool verify_message(PGPSignedMessage & message, PGP & key);
-bool verify_signature(PGP & sig, PGP & key);
-bool verify_revoke(PGP & key, PGP & rev);
 #endif

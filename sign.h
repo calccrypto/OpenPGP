@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include <gmpxx.h>
 
 #include "common/includes.h"
+#include "Keys/PGPTypes.h"
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
-#include "OpenPGP.h"
 #include "decrypt.h"
 #include "pgptime.h"
 #include "sigcalc.h"
@@ -55,7 +55,7 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
 PGP sign_file(std::ifstream & f, PGP & key, const std::string &  passphrase);
 
 // 0x01
-PGPMessage sign_message(const std::string & text, PGP & key, const std::string & passphrase);
+PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::string & passphrase);
 
 // 0x02
 Tag2 * sign_signature(Tag2 * tag2, const std::string & passphrase);

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "error.h"
 #include "SymAlg.h"
 

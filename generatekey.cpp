@@ -9,17 +9,30 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     // generate some pka values here
     if ((DSA_bits < 512) || (DSA_bits & 511)){
         std::cerr << "Error: DSA keysize should be at least 512 bits, and a multiple of 512, preferrably 1024, 2048, or 3072." << std::endl;
-        exit(1);
+        throw(1);
     }
     if (ElGamal_bits < 512){
         std::cerr << "Error: ElGamal keysize is too small." << std::endl;
-        exit(1);
+        throw(1);
     }
 
-    std::vector <mpz_class> dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
-    std::vector <mpz_class> dsa_pri = DSA_keygen(dsa_pub);
+//    std::vector <mpz_class> dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
+//    std::vector <mpz_class> dsa_pri = DSA_keygen(dsa_pub);
+//
+//    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(ElGamal_bits);
 
-    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(ElGamal_bits);
+    std::vector <mpz_class> dsa_pub = { mpz_class("175466718616740411615640156350265486163809613514213656685227237159351776260193236923030228927905671867677337184318134702903960237546408302010360724274436019639502405323187799029742776686067449287558904042137172927936686590837020160292525250748155580652384740664931255981772117478967314777932252547256795892071", 10),
+                                        mpz_class("809260232002608708872165272150356204306578772713", 10),
+                                        mpz_class("127751900783328740354741342100721884490035793278553520238434722215554870393020469115393573782393994875216405838455564598493958342322790638050051759023658096740912555025710033120777570527002197424160086000659457154926758682221072408093235236853997248304424303705425567765059722098677806247252106481642577996274", 10),
+                                        mpz_class("172935968966072909036304664996424500241381878537444332146572958203083745609400290814117451480512268901233962890933482206538294509037615827035398352528065134903071886710296983781453184598843331365336270501467458073523376152406987560592548479865116940266729198119357206749848310472131186772143408998928864559411", 10)};
+
+    std::vector <mpz_class> dsa_pri = {mpz_class("574961860853886082679320766680196608099720972133", 10)};
+
+    std::vector <mpz_class> elgamal_pub = { mpz_class("9494fec095f3b85ee286542b3836fc81a5dd0a0349b4c239dd38744d488cf8e31db8bcb7d33b41abb9e5a33cca9144b1cef332c94bf0573bf047a3aca98cdf3b", 16),
+                                            mpz_class("153d5d6172adb43045b68ae8e1de1070b6137005686d29d3d73a7749199681ee5b212c9b96bfdcfa5b20cd5e3fd2044895d609cf9b410b7a0f12ca1cb9a428cc", 16),
+                                            mpz_class("501de84fd9e085a9f1304c09da3a503a094fab60728f65a23d354c0203ba83d9df77fe5d3cffe66d16f7a3656d515ab27ca9f2c346d94f811ce282817f0976d1", 16),
+                                            mpz_class("674396915767399126847577835082101185163744384861202856634666173662323559993170265329273708896869586870964508182895809168214525424504917634225790325485298", 16)};
+
     mpz_class elgamal_pri = elgamal_pub[3];
     elgamal_pub.pop_back();
 
@@ -158,7 +171,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else if (prikey -> get_pka() == 16){
                 if (prikey -> get_version() == 3){
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 param = {pri_key_size};
             }
@@ -166,7 +179,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else if (prikey -> get_pka() == 17){
                 if (prikey -> get_version() == 3){
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 param = {pri_key_size};
                 if (pri_key_size == 1024){
@@ -179,12 +192,13 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                     param.push_back(256);
                 }
                 else{
-                    std::cerr << "Error: Undefined bit size for DSA: " << pri_key_size << std::endl;
+                    std::cerr << "Error: Undefined bit size for DSA: " << pri_key_size<< std::endl;
+                    throw(1);
                 }
             }
             else{
-                std::cerr << "Error: Undefined or reserved PKA number: " << prikey -> get_pka() << std::endl;
-                exit(1);
+                std::cerr << "Error: Undefined or reserved PKA number: " << (int) prikey -> get_pka() << std::endl;
+                throw(1);
             }
 
             generate_key_pair(prikey -> get_pka(), param, pub_key, pri_key);
@@ -230,7 +244,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             // check that there is a key to be signed
             if (!prikey){
                 std::cerr << "Error: No primary key to be signed." << std::endl;
-                exit(1);
+                throw(1);
             }
 
             // the correct key id
@@ -284,7 +298,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                 }
                 if (!i){
                     std::cerr << "Error: No User ID or Attribute packet to be signed." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 if (sig -> get_type() == 0x10){
                     sig_hash = to_sign_10(prikey, i, sig);
@@ -302,7 +316,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else{       // if the key is a subkey
                 if (!prisubkey){
                     std::cerr << "Error: No primary key to be signed." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 if (sig -> get_type() == 0x18){
                     sig_hash = to_sign_18(prikey, prisubkey, sig);
@@ -331,7 +345,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else if (prisubkey -> get_pka() == 16){
                 if (prisubkey -> get_version() == 3){
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 param = {subkey_size};
             }
@@ -339,7 +353,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else if (prisubkey -> get_pka() == 17){
                 if (prisubkey -> get_version() == 3){
                     std::cerr << "Error: Only RSA is defined for version 3 key packets." << std::endl;
-                    exit(1);
+                    throw(1);
                 }
                 param = {subkey_size};
                 if (subkey_size == 1024){
@@ -353,11 +367,12 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                 }
                 else{
                     std::cerr << "Error: Undefined bit size for DSA: " << subkey_size << std::endl;
+                    throw(1);
                 }
             }
             else{
-                std::cerr << "Error: Undefined or reserved PKA number: " << prisubkey -> get_pka() << std::endl;
-                exit(1);
+                std::cerr << "Error: Undefined or reserved PKA number: " << (int) prisubkey -> get_pka() << std::endl;
+                throw(1);
             }
 
             generate_key_pair(prisubkey -> get_pka(), param, pub_subkey, pri_subkey);
@@ -390,8 +405,8 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             key = true;
         }
         else{
-            std::cerr << "Error: Packet Tag " << p -> get_tag() << " does not belong in a private key." << std::endl;
-            exit(1);
+            std::cerr << "Error: Packet Tag " << (int) p -> get_tag() << " does not belong in a private key."<< std::endl;
+            throw(1);
             break;
         }
     }
@@ -413,7 +428,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
         }
         else{
             std::cerr << "Error: Packet Tag " << (int) p -> get_tag() << " doesnt belong here." << std::endl;
-            exit(1);
+            throw(1);
             break;
         }
     }

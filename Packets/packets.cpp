@@ -8,7 +8,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
     uint8_t ctb = data[0];													    // Name "ctb" came from Version 2 [RFC 1991]
     if (!(ctb & 0x80)){
         std::cerr << "Error: First bit of tag header MUST be 1." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     unsigned int length = 0;
@@ -67,7 +67,7 @@ Packet * read_packet(uint8_t & tag, std::string & packet_data){
     switch (tag){
         case 0:
             std::cerr << "Error: Tag number MUST NOT be 0." << std::endl;
-            exit(1);
+            throw(1);
             break;
         case 1:
             out = new Tag1;
@@ -122,7 +122,7 @@ Packet * read_packet(uint8_t & tag, std::string & packet_data){
             break;
         default:
             std::cerr << "Error: Tag not defined or reserved." << std::endl;
-            exit(1);
+            throw(1);
             break;
     }
     out -> set_size(packet_data.size());

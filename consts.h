@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <cstdint>
 #include <iostream>
 #include <map>
+#include <utility>
 
 #ifndef __PGP_CONSTS__
 #define __PGP_CONSTS__
@@ -37,7 +38,7 @@ const std::string ASCII_Armor_Header[7] = {
                "MESSAGE, PART X/Y",                     // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
                "MESSAGE, PART X",                       // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
                "SIGNATURE",                             // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-               "SIGNED MESSAGE",                        // Used for signed messages; not part of RFC 4880
+               "SIGNED MESSAGE",                        // Used for signed messages; not part of RFC 4880.
 };
 
 // ASCII descriptor of OpenPGP packet

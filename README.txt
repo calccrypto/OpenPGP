@@ -39,13 +39,17 @@ known working values. What others do with this capability
 is none of my concern or responsibility.
 
 This library should be relatively straightforward to use:
-Simply #include "OpenPGP.h" for the data types, and whatever
-functions needed, such as encrypt (#include "encrypt.h") and
-decrypt (#include "decrypt.h").
+Simply #include whatever functions needed:
+    key generation - generatekey.h
+    key revokation - revoke.h
+    encrypt        - encrypt.h
+    decrypt        - decrypt.h
+    sign           - sign.h
+    verify         - verify.h
 
-The exec/main.cpp file provides a simple text-based user interface,
-which can be used as examples on how to use the functions. A lot of
-the output was based on/inspired by pgpdump.net and GPG.
+The exec/main.cpp file provides a simple command line interface,
+which can be used as examples on how to use the functions. A lot 
+of the output was based on/inspired by pgpdump.net and GPG.
 
 The data types have some standard functions:
     read  - reads data without the respective

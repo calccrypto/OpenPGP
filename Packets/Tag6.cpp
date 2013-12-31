@@ -136,8 +136,8 @@ std::string Tag6::get_fingerprint(){
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
-        std::cerr << "Error: Public Key packet version " << version << " not defined." << std::endl;
-        exit(1);
+        std::cerr << "Error: Public Key packet version " << (int) version << " not defined." << std::endl;
+        throw(1);
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -151,8 +151,8 @@ std::string Tag6::get_keyid(){
         return get_fingerprint().substr(12, 8);
     }
     else{
-        std::cerr << "Error: Public Key packet version " << version << " not defined." << std::endl;
-        exit(1);
+        std::cerr << "Error: Public Key packet version " << (int) version << " not defined." << std::endl;
+        throw(1);
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }

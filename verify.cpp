@@ -65,14 +65,14 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
     std::string hash = to_sign_00(data, signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
         std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
         std::cerr << "Error: No Key ID subpacket found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     // find matching public key packet and get the mpi
@@ -80,13 +80,15 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
     if (!keys.size()){
         return false;
     }
-    return pka_verify(hash, signature, keys);
+    bool out = pka_verify(hash, signature, keys);
+    delete signature;
+    return out;
 }
 
 bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
     if (!f){
         std::cerr << "Error: Bad file." << std::endl;
-        exit(1);
+        throw(1);
     }
     std::stringstream s;
     s << f.rdbuf();
@@ -96,7 +98,7 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
 }
 
 // Signature type 0x00 and 0x01
-bool verify_message(PGPMessage & message, PGP & key){
+bool verify_message(PGPSignedMessage & message, PGP & key){
     // Find key id from signature to match with public key
     std::string temp = message.get_key().get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
@@ -105,14 +107,14 @@ bool verify_message(PGPMessage & message, PGP & key){
     std::string hash = to_sign_01(message.get_message(), signature);
     if (hash.substr(0, 2) != signature -> get_left16()){
         std::cerr << "Error: Hash and given left 16 bits of hash do not match." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     // find key id in signature
     std::string keyid = find_keyid(signature);
     if (!keyid.size()){
         std::cerr << "Error: No Key ID subpacket found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     // find matching public key packet and get the mpi
@@ -157,7 +159,7 @@ bool verify_signature(PGP & key, PGP & signer){
 
     if (!signing_key.size()){
         std::cerr << "Error: No key found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     uint8_t version = 0;
@@ -177,8 +179,10 @@ bool verify_signature(PGP & key, PGP & signer){
             case 5: case 6: case 7: case 14:            // key packet
                 tag6 = new Tag6;
                 tag6 -> read(data);
-                k += overkey(tag6);                        // add current key packet to previous ones
+                k += overkey(tag6);                     // add current key packet to previous ones
                 version = tag6 -> get_version();
+                delete tag6;
+                tag6 = NULL;
                 break;
             case 13: case 17:                           // User packet
                 {
@@ -190,7 +194,7 @@ bool verify_signature(PGP & key, PGP & signer){
                         id = new Tag17;
                     }
                     id -> read(data);
-                    u = certification(version, id);          // write over old user information
+                    u = certification(version, id);     // write over old user information
                 }
                 break;
             case 2:                                     // signature packet
@@ -214,10 +218,11 @@ bool verify_signature(PGP & key, PGP & signer){
                 break;
             default:
                 std::cerr << "Error: Incorrect packet type found: " << (int) p -> get_tag() << std::endl;
-                exit(1);
+                throw(1);
                 break;
         }
     }
+    delete tag6;
     return out;
 }
 
@@ -246,6 +251,7 @@ bool verify_revoke(PGP & key, PGP & rev){
             tag6 -> read(key_str);
             std::vector <mpz_class> mpi = tag6 -> get_mpi();
             std::string to_hash = addtrailer(overkey(tag6), revoke);
+            delete tag6;
             if (pka_verify(to_hash, revoke, mpi)){
                 return true;
             }

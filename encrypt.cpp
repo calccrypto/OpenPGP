@@ -38,7 +38,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
 
     if (!found){
         std::cerr << "Error: No public key found." << std::endl;
-        exit(1);
+        throw(1);
     }
 
     std::vector <mpz_class> mpi = public_key -> get_mpi();
@@ -52,7 +52,6 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
     std::string session_key = mpz_class(BBS().rand(key_len), 2).get_str(16);
     session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
-
     // get checksum of session key
     uint16_t sum = 0;
     for(char & x : session_key){
@@ -62,7 +61,6 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     std::string octets = mpi[0].get_str(16);     // get hex representation of modulus
     octets += std::string(octets.size() & 1, 0); // get even number of nibbles
     mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), octets.size() >> 1)), 16);
-    std::cout << hexlify(session_key) << std::endl;
 
     // encrypt m
     if (public_key -> get_pka() < 3){ // RSA
@@ -73,7 +71,7 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     }
     else{
         std::cerr << "Error: Unknown or Reserved Public Key Algorithm: " << (int) public_key -> get_pka() << std::endl;
-        exit(1);
+        throw(1);
     }
 
     // Literal Data Packet
@@ -126,7 +124,8 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     m = 0;
     session_key = "";
     prefix = "";
+//    delete tag1;
     delete public_key;
-    delete encrypted;
+//    delete encrypted;
     return out.write();
 }

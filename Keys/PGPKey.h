@@ -1,6 +1,6 @@
 /*
-verify.c
-Functions to verify data signed by a PGP key
+PGPKey.h
+Parent class for PGPPublicKey and PGPPrivateKey
 
 Copyright (c) 2013 Jason Lee
 
@@ -23,30 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include "PGP.h"
 
-#include <gmpxx.h>
-
-#include "Keys/PGPTypes.h"
-#include "Packets/Packets.h"
-#include "PKA/PKA.h"
-#include "sigcalc.h"
-
-#ifndef __VERIFY__
-#define __VERIFY__
-
-std::string find_keyid(Tag2 * tag2);
-std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
-
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key);
-
-// Use string.size() to check if input was verified.
-bool verify_file(const std::string & data, PGP & sig, PGP & key);
-bool verify_file(std::ifstream & f, PGP & sig, PGP & key);
-
-bool verify_message(PGPSignedMessage & message, PGP & key);
-bool verify_signature(PGP & sig, PGP & key);
-bool verify_revoke(PGP & key, PGP & rev);
+#ifndef __PGP_KEY__
+#define __PGP_KEY__
+class PGPKey : PGP {};
 #endif

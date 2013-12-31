@@ -2,7 +2,7 @@
 
 std::string use_hash(uint8_t flag, std::string data){
     switch (flag){
-        case 0: // not defined in standard
+        case 0: // don't hash; not defined in standard
             return data;
         case 1:
             return MD5(data).digest();
@@ -27,7 +27,7 @@ std::string use_hash(uint8_t flag, std::string data){
             break;
         default:
             std::cerr << "Error: Hash value not defined or reserved." << std::endl;
-            exit(1);
+            throw(1);
             break;
     }
 }

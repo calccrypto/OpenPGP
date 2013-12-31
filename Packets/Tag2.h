@@ -21,8 +21,11 @@ class Tag2 : public Packet{
         std::vector <Subpacket *> hashed_subpackets;
         std::vector <Subpacket *> unhashed_subpackets;
 
-        // Function to read subpackets
+        // Function to read subpacket headers
         std::string read_subpacket(std::string & data);
+
+        // Function to parse all subpackets
+        std::vector <Subpacket *> read_subpackets(std::string & data);
 
     public:
         Tag2();
