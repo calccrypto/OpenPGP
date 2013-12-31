@@ -123,7 +123,7 @@ std::string remove_padding(std::string data){
 }
 
 std::string zfill(std::string str, const unsigned int & n, const std::string & fill){
-    // adds (default "0") bytes to the front of the string so it doesnt change the value if the string is meant to be changed to an int
+    // adds (default "0") octets to the front of the string so it doesnt change the value if the string is meant to be changed to an int
 	while (str.size() < n){
 		str = fill + str;
     }

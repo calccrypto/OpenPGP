@@ -191,7 +191,7 @@ void PGP::read_raw(std::string & data){
 std::string PGP::show(){
     std::stringstream out;
     for(Packet *& p : packets){
-        out << (p -> get_format()?"New":"Old")  << ": " << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ") (" << p -> get_size() << " bytes)\n" + p -> show() << "\n";
+        out << (p -> get_format()?"New":"Old")  << ": " << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ") (" << p -> get_size() << " octets)\n" + p -> show() << "\n";
     }
     return out.str();
 }

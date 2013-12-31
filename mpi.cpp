@@ -14,7 +14,7 @@ mpz_class read_MPI(std::string & data){
     while (size & 7){
         size++;                                                                     // pad to nearest byte
     }
-    size >>= 3;                                                                     // get number of bytes
+    size >>= 3;                                                                     // get number of octets
     mpz_class out(hexlify(data.substr(2, size)), 16);                               // turn to mpz_class
     data = data.substr(2 + size, data.size() - 2 - size);                           // remove mpi from data
     return out;

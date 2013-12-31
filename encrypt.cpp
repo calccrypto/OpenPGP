@@ -124,8 +124,8 @@ std::string encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_
     m = 0;
     session_key = "";
     prefix = "";
-//    delete tag1;
+    delete tag1;
     delete public_key;
-//    delete encrypted;
+    delete encrypted;
     return out.write();
 }

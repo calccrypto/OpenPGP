@@ -54,7 +54,7 @@ void Tag8::read(std::string & data){
 std::string Tag8::show(){
     std::stringstream out;
     out << "    Compression Algorithm: " << Compression_Algorithms.at(comp) << "(compress " << (unsigned int) comp << ")\n"
-        << "    Data (" << compressed_data.size() << " bytes): " << compressed_data << "\n";
+        << "    Data (" << compressed_data.size() << " octets): " << compressed_data << "\n";
     return out.str();
 }
 

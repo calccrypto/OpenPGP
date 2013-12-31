@@ -65,7 +65,7 @@ std::string Tag5::show_common(){
         }
     }
 
-    out << "    Encrypted Data (" << secret.size() << " bytes):\n        ";
+    out << "    Encrypted Data (" << secret.size() << " octets):\n        ";
     if (pka < 4){
         out << "RSA d, p, q, u";
     }

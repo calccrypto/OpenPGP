@@ -19,7 +19,7 @@ void Tag18::read(std::string & data){
 std::string Tag18::show(){
     std::stringstream out;
     out << "    Version: " << (unsigned int) version << "\n"
-        << "    Encrypted Data (" << protected_data.size() << " bytes): " << hexlify(protected_data) << "\n";
+        << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
     return out.str();
 }
 

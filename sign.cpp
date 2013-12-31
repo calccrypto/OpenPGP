@@ -24,8 +24,7 @@ Tag13 * find_signer_id(PGP & k){
     for(Packet *& p : packets){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
-            Tag13 * tag13 = new Tag13;
-            tag13 -> read(data);
+            Tag13 * tag13 = new Tag13(data);
             return tag13;
         }
     }
@@ -51,7 +50,9 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, con
 
 std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, const std::string & passphrase, const uint8_t h){
     std::vector <mpz_class> pub = tag5 -> get_mpi();
+    std::cout << "AAAAAAAAAAAA" << std::endl;
     std::vector <mpz_class> pri = decrypt_secret_key(tag5, passphrase);
+    std::cout << "BBBBBBBBBBBB" << std::endl;
     return pka_sign(hashed_data, tag5 -> get_pka(), pub, pri, h);
 }
 

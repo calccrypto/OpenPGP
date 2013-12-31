@@ -20,7 +20,7 @@ void Tag11::read(std::string & data){
 std::string Tag11::show(){
     std::stringstream out;
     out << "    Format: " << BTU.at(format) << "\n"
-        << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " bytes): \n"
+        << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets): \n"
         << "        Filename: " << filename << "\n"
         << "        Creation Date: " << show_time(time) << "\n"
         << "        Data: " << literal << "\n";

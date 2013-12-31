@@ -15,7 +15,7 @@ void Tag12::read(std::string & data){
 
 std::string Tag12::show(){
     std::stringstream out;
-    out << "    Data (" << trust.size() << " bytes): " << trust << "\n";
+    out << "    Data (" << trust.size() << " octets): " << trust << "\n";
     return out.str();
 }
 

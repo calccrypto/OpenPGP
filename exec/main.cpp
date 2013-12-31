@@ -554,6 +554,39 @@ bool parse_command(std::string & input){
     return 1;
 }
 
+bool test(){
+    try{
+        std::string input;
+
+        std::cout << "Keygen" << std::endl;
+        input = "generatekeypair -o test -u test -e test@email.com -pw test";
+        parse_command(input);
+
+//        input = "show -k test.private";
+//        parse_command(input);
+//
+//        std::cout << "Encrypt" << std::endl;
+//        input = "encrypt file.txt test.public -o en";
+//        parse_command(input);
+//
+//        std::cout << "Decrypt" << std::endl;
+//        input = "decrypt en test.private test";
+//        parse_command(input);
+
+        std::cout << "Sign" << std::endl;
+        input = "sign-message file.txt test.private test -o sig";
+        parse_command(input);
+
+        std::cout << "Verify" << std::endl;
+        input = "verify-message sig test.public";
+        parse_command(input);
+    }
+    catch(int & i){
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char * argv[]){
     std::string input = "";
 //    // no commandline arguments
@@ -573,29 +606,6 @@ int main(int argc, char * argv[]){
 //        }
 //        parse_command(input);
 //    }
-    std::cout << "Keygen" << std::endl;
-    input = "generatekeypair -o test -u test -e test@ing.com -pw test";
-    parse_command(input);
-
-//    std::ifstream f("test.private");
-//    PGP k(f);
-//    std::cout << k.show() << std::endl;
-
-    std::cout << "Encrypt" << std::endl;
-    input = "encrypt file.txt test.public -o en";
-    parse_command(input);
-
-    std::cout << "Decrypt" << std::endl;
-    input = "decrypt en test.private test";
-    parse_command(input);
-//
-//    std::cout << "Sign" << std::endl;
-//    input = "sign-message file.txt test.private test -o sig";
-//    parse_command(input);
-//
-//    std::cout << "Verify" << std::endl;
-//    input = "verify-message sig test.public";
-//    parse_command(input);
-
+    test();
     return 0;
 }

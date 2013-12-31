@@ -84,7 +84,7 @@ std::string * Tag3::get_esk_clone(){
 
 std::string Tag3::get_key(std::string pass){
     std::cerr << "Warning: This function is untested. Potentially incorrect" << std::endl;
-    std::string out = s2k -> run(pass, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym)));
+    std::string out = s2k -> run(pass, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)));
     if (esk){
         out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0));
     }

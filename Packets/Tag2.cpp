@@ -217,17 +217,17 @@ std::string Tag2::show(){
 
         if (hashed_subpackets.size()){
             for(Subpacket *& s : hashed_subpackets){
-                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " bytes)\n" << s -> show();
+                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
         if (unhashed_subpackets.size()){
             out << "    Unhashed Sub: \n";
             for(Subpacket *& s : unhashed_subpackets){
-                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " bytes)\n" << s -> show();
+                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
     }
-    out << "    Hash Left 2 Bytes: " << hexlify(left16) << "\n";
+    out << "    Hash Left 16 Bits: " << hexlify(left16) << "\n";
     if (pka < 4)
         out << "    RSA m**d mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
     else if (pka == 17){

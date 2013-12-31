@@ -15,7 +15,7 @@ void Tag9::read(std::string & data){
 
 std::string Tag9::show(){
     std::stringstream out;
-    out << "    Encrypted Data (" << encrypted_data.size() << " bytes): " << hexlify(encrypted_data) << "\n";
+    out << "    Encrypted Data (" << encrypted_data.size() << " octets): " << hexlify(encrypted_data) << "\n";
     return out.str();
 }
 

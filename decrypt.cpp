@@ -17,47 +17,46 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
 }
 
 std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passphrase){
+    std::cout << "iv: " << hexlify(pri -> get_IV()) << std::endl;
     std::vector <mpz_class> out;
     S2K * s2k = pri -> get_s2k();
-    unsigned int sym_key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3;
 
     // calculate key used in encryption algorithm
-    std::string key = s2k -> run(passphrase, sym_key_len);
+    std::string key = s2k -> run(passphrase, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3);
 
     // get encrypted mpi values
     std::string secret = pri -> get_secret();
-    std::cout << hexlify(secret) << std::endl;
 
-    // decrypt session key
-    std::string session_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key , pri -> get_IV());
+    // decrypt secret key
+    std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key , pri -> get_IV());
 
     // get checksum and remove it from the string
-    std::string checksum = session_key.substr(session_key.size() - ((pri -> get_s2k_con() == 254)?20:2), ((pri -> get_s2k_con() == 254)?20:2));
-    session_key = session_key.substr(0, session_key.size() - ((pri -> get_s2k_con() == 254)?20:2));
+    std::string checksum = secret_key.substr(secret_key.size() - ((pri -> get_s2k_con() == 254)?20:2), ((pri -> get_s2k_con() == 254)?20:2));
+    secret_key = secret_key.substr(0, secret_key.size() - ((pri -> get_s2k_con() == 254)?20:2));
 
     // calculate and check checksum
     if(pri -> get_s2k_con() == 254){
-        if (use_hash(s2k -> get_hash(), session_key) != checksum){
-            std::cerr << "Error: Session key checksum and calculated checksum do not match." << std::endl;
+        if (use_hash(s2k -> get_hash(), secret_key) != checksum){
+            std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
             throw(1);
         }
     }
     else{ // all other values; **UNTESTED**
         uint16_t sum = 0;
-        for(char & c : session_key){
+        for(char & c : secret_key){
             sum += (unsigned char) c;
         }
         if (unhexlify(makehex(sum, 4)) != checksum){
-            if (use_hash(s2k -> get_hash(), session_key) != checksum){
-                std::cerr << "Error: Session key checksum and calculated checksum do not match." << std::endl;
+            if (use_hash(s2k -> get_hash(), secret_key) != checksum){
+                std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
                 throw(1);
             }
         }
     }
 
     // extract MPI values
-    while (session_key.size()){
-        out.push_back(read_MPI(session_key));
+    while (secret_key.size()){
+        out.push_back(read_MPI(secret_key));
     }
     return out;
 }
@@ -105,13 +104,13 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
                 if (sec -> get_keyid() == tag1.get_keyid()){
                     break;
                 }
-//                delete sec;
+                delete sec;
                 sec = NULL;
             }
         }
         if (!sec){
             std::cerr << "Error: Correct Private Key not found." << std::endl;
-//            delete sec;
+            delete sec;
             throw(1);
         }
 
@@ -130,10 +129,10 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         }
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             std::cerr << "Error: Calculated session key checksum does not match given checksum." << std::endl;
-//            delete sec;
+            delete sec;
             throw(1);
         }
-//        delete sec;
+        delete sec;
     }
     else if (packet == 3){ //Symmetric-Key Encrypted Session Key Packet (Tag 3)
         /* untested */
