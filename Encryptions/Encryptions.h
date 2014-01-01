@@ -4,7 +4,6 @@
 // common includes
 #include "../common/includes.h"
 #include "../common/cryptomath.h"
-#include "error.h"
 #include "SymAlg.h"
 
 // Algorithms
