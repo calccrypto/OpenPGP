@@ -47,6 +47,7 @@
 		<Unit filename="../Encryptions/Encryptions.h" />
 		<Unit filename="../Encryptions/IDEA.cpp" />
 		<Unit filename="../Encryptions/IDEA.h" />
+		<Unit filename="../Encryptions/SymAlg.cpp" />
 		<Unit filename="../Encryptions/SymAlg.h" />
 		<Unit filename="../Encryptions/TDES.cpp" />
 		<Unit filename="../Encryptions/TDES.h" />

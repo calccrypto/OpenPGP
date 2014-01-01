@@ -10,7 +10,7 @@ std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){
     while (EM.size() < k - m.size() - 1){
         unsigned char c = 0;
         for(uint8_t x = 0; x < 8; x++){
-            c = (c + (BBS().rand(1) == "1")) << 1;
+            c = (c << 1) | (BBS().rand(1) == "1");
         }
         if (c){ // non-zero octets only
             EM += std::string(1, c);
@@ -31,7 +31,7 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m){
             }
         }
     }
-    std::cerr << "Error: EME-PKCS1 Decryption Error." << std::endl;
+    std::cerr << "Error: EME-PKCS1 Decoding Error." << std::endl;
     throw 1;
 }
 

@@ -48,6 +48,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
 
     // decrypt secret key
     std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key, pri -> get_IV());
+    std::cout << "secret key: " << hexlify(secret_key) << std::endl;
 
     // get checksum and remove it from the string
     const unsigned int hash_size = (pri -> get_s2k_con() == 254)?20:2;
@@ -125,7 +126,9 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
 
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
+        std::cout << "session key: " << hexlify(session_key) << std::endl;
         session_key = EME_PKCS1v1_5_DECODE(session_key);                                    // remove EME_PKCS1 encoding
+
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key

@@ -599,22 +599,31 @@ bool parse_command(std::string & input){
 
 int main(int argc, char * argv[]){
     std::string input = "";
-    // no commandline arguments
-    if (argc == 1){
-        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
-                  << "Type help or ? for command syntax\n\n"
-                  << std::endl;
-        while (parse_command(input)){
-            std::cout << "> ";
-            getline(std::cin, input);
-        }
-    // has commandline arguments
-    }
-    else{
-        for(int x = 1; x < argc; x++){
-            input += std::string(argv[x]) + " ";
-        }
-        parse_command(input);
-    }
+//    // no commandline arguments
+//    if (argc == 1){
+//        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
+//                  << "Type help or ? for command syntax\n\n"
+//                  << std::endl;
+//        while (parse_command(input)){
+//            std::cout << "> ";
+//            getline(std::cin, input);
+//        }
+//    // has commandline arguments
+//    }
+//    else{
+//        for(int x = 1; x < argc; x++){
+//            input += std::string(argv[x]) + " ";
+//        }
+//        parse_command(input);
+//    }
+//    input = "generatekeypair -o test -u test -e test@test.test -pw abc";
+//    parse_command(input);
+
+//    input = "show -k test.private";
+//    parse_command(input);
+
+    input = "test";
+    parse_command(input);
+
     return 0;
 }

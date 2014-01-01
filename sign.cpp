@@ -195,7 +195,6 @@ Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::stri
     }
 
     Tag2 * sig = create_sig_packet(cert, key);
-
     std::string hashed_data;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
@@ -210,6 +209,7 @@ Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::stri
     else if (cert == 0x13){
         hashed_data = to_sign_13(key, id, sig);
     }
+
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, key, passphrase, sig -> get_hash()));
 
@@ -231,6 +231,7 @@ Tag2 * sign_subkey(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std:
     else if (binding == 0x19){
         hashed_data = to_sign_19(primary, sub, sig);
     }
+
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, primary, passphrase, sig -> get_hash()));
 
