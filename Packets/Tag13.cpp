@@ -96,14 +96,17 @@ std::string Tag13::get_email(){
 
 void Tag13::set_name(const std::string & n){
     name = n;
+    size = raw().size();
 }
 
 void Tag13::set_comment(const std::string & c){
     comment = c;
+    size = raw().size();
 }
 
 void Tag13::set_email(const std::string & e){
     email = e;
+    size = raw().size();
 }
 
 Tag13 * Tag13::clone(){

@@ -167,7 +167,7 @@ std::string normal_CFB_decrypt(SymAlg * crypt, std::string & data, std::string &
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
-    while (out.size() < data.size()){
+    while (x < data.size()){
         out += xor_strings(crypt -> encrypt(IV), data.substr(x, BS));
         IV = data.substr(x, BS);
         x += BS;

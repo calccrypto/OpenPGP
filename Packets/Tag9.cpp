@@ -29,6 +29,7 @@ std::string Tag9::get_encrypted_data(){
 
 void Tag9::set_encrypted_data(const std::string & e){
     encrypted_data = e;
+    size = raw().size();
 }
 
 Tag9 * Tag9::clone(){

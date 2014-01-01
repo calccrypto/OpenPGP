@@ -61,14 +61,17 @@ void Tag1::set_keyid(const std::string & k){
         throw 1;
     }
     keyid = k;
+    size = raw().size();
 }
 
 void Tag1::set_pka(const uint8_t p){
     pka = p;
+    size = raw().size();
 }
 
 void Tag1::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
+    size = raw().size();
 }
 
 Tag1 * Tag1::clone(){

@@ -213,7 +213,8 @@ std::string Tag2::show(){
     if (version == 4){
         out << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
             << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
-            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n";
+            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n"
+            << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
             for(Subpacket *& s : hashed_subpackets){
@@ -221,7 +222,7 @@ std::string Tag2::show(){
             }
         }
         if (unhashed_subpackets.size()){
-            out << "    Unhashed Sub: \n";
+            out << "    Unhashed Sub:\n";
             for(Subpacket *& s : unhashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
@@ -377,22 +378,27 @@ std::string Tag2::get_without_unhashed(){
 
 void Tag2::set_pka(const uint8_t p){
     pka = p;
+    size = raw().size();
 }
 
 void Tag2::set_type(const uint8_t t){
     type = t;
+    size = raw().size();
 }
 
 void Tag2::set_hash(const uint8_t h){
     hash = h;
+    size = raw().size();
 }
 
 void Tag2::set_left16(const std::string & l){
     left16 = l;
+    size = raw().size();
 }
 
 void Tag2::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
+    size = raw().size();
 }
 
 void Tag2::set_time(const uint32_t t){
@@ -416,6 +422,7 @@ void Tag2::set_time(const uint32_t t){
             hashed_subpackets[i] = sub2;
         }
     }
+    size = raw().size();
 }
 
 void Tag2::set_keyid(const std::string & k){
@@ -444,6 +451,7 @@ void Tag2::set_keyid(const std::string & k){
             unhashed_subpackets[i] = sub16;
         }
     }
+    size = raw().size();
 }
 
 void Tag2::set_hashed_subpackets(const std::vector <Subpacket *> & h){
@@ -454,6 +462,7 @@ void Tag2::set_hashed_subpackets(const std::vector <Subpacket *> & h){
     for(Subpacket *const & s : h){
         hashed_subpackets.push_back(s -> clone());
     }
+    size = raw().size();
 }
 
 void Tag2::set_unhashed_subpackets(const std::vector <Subpacket *> & u){
@@ -464,8 +473,8 @@ void Tag2::set_unhashed_subpackets(const std::vector <Subpacket *> & u){
     for(Subpacket * const & s : u){
         unhashed_subpackets.push_back(s -> clone());
     }
+    size = raw().size();
 }
-
 
 Tag2 * Tag2::clone(){
     Tag2 * out = new Tag2(*this);

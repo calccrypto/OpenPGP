@@ -29,6 +29,7 @@ std::string Tag12::get_trust(){
 
 void Tag12::set_trust(const std::string & t){
     trust = t;
+    size = raw().size();
 }
 
 Tag12 * Tag12::clone(){

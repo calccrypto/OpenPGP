@@ -112,14 +112,17 @@ std::vector <mpz_class> Tag6::get_mpi(){
 
 void Tag6::set_time(time_t t){
     time = t;
+    size = raw().size();
 }
 
 void Tag6::set_pka(uint8_t p){
     pka = p;
+    size = raw().size();
 }
 
 void Tag6::set_mpi(const std::vector <mpz_class> & m){
     mpi = m;
+    size = raw().size();
 }
 
 std::string Tag6::get_fingerprint(){

@@ -76,14 +76,17 @@ std::string Tag8::get_data(){
 
 void Tag8::set_comp(const uint8_t c){
     comp = c;
+    size = raw().size();
 }
 
 void Tag8::set_data(const std::string & data){
     compressed_data = compress(data);
+    size = raw().size();
 }
 
 void Tag8::set_compressed_data(const std::string & data){
     compressed_data = data;
+    size = raw().size();
 }
 
 Tag8 * Tag8::clone(){

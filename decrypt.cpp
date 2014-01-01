@@ -1,19 +1,19 @@
 #include "decrypt.h"
 
-Tag5 * find_encrypting_key(PGP & k){
+Tag5 * find_decrypting_key(PGP & k){
     if (k.get_ASCII_Armor() == 2){
         std::vector <Packet *> packets = k.get_packets();
         for(Packet *& p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
                 std::string data = p -> raw();
-                Tag5 * signer = new Tag5(data);
+                Tag5 * key = new Tag5(data);
                 // make sure key has signing material
-                if ((signer -> get_pka() == 1) || // RSA
-                    (signer -> get_pka() == 2) || // RSA
-                    (signer -> get_pka() == 16)){ // ElGamal
-                        return signer;
+                if ((key -> get_pka() == 1) || // RSA
+                    (key -> get_pka() == 2) || // RSA
+                    (key -> get_pka() == 16)){ // ElGamal
+                        return key;
                 }
-                delete signer;
+                delete key;
             }
         }
     }
@@ -43,13 +43,8 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
     // calculate key used in encryption algorithm
     std::string key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3);
 
-    // get encrypted mpi values
-    std::string secret = pri -> get_secret();
-
     // decrypt secret key
-    std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), secret, key, pri -> get_IV());
-    std::cout << "secret key: " << hexlify(secret_key) << std::endl;
-
+    std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), pri -> get_secret(), key, pri -> get_IV());
     // get checksum and remove it from the string
     const unsigned int hash_size = (pri -> get_s2k_con() == 254)?20:2;
     std::string checksum = secret_key.substr(secret_key.size() - hash_size, hash_size);
@@ -107,14 +102,13 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
         }
     }
 
-
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
         std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
-        Tag5 * sec = find_encrypting_key(pri);
+        Tag5 * sec = find_decrypting_key(pri);
 
         if (!sec){
             std::cerr << "Error: Correct Private Key not found." << std::endl;
@@ -126,7 +120,6 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
 
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
-        std::cout << "session key: " << hexlify(session_key) << std::endl;
         session_key = EME_PKCS1v1_5_DECODE(session_key);                                    // remove EME_PKCS1 encoding
 
         sym = session_key[0];                                                               // get symmetric algorithm
@@ -216,7 +209,6 @@ std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
 
     // extract data for output
     if (packet == 8){ // Compressed Data Packet (Tag 8)
-        std::cout << hexlify(data) << std::endl;
         // can't use unless/until compression algorithms are implemented
 //        Tag8 tag8(data);
 //        data = tag8.get_data();

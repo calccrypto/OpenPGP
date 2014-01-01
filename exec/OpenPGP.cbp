@@ -51,8 +51,6 @@
 		<Unit filename="../Encryptions/SymAlg.h" />
 		<Unit filename="../Encryptions/TDES.cpp" />
 		<Unit filename="../Encryptions/TDES.h" />
-		<Unit filename="../Encryptions/error.cpp" />
-		<Unit filename="../Encryptions/error.h" />
 		<Unit filename="../Hashes/Hash.cpp" />
 		<Unit filename="../Hashes/Hash.h" />
 		<Unit filename="../Hashes/Hashes.h" />

@@ -2,42 +2,39 @@
 
 void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
     BBS((mpz_class) (uint32_t) now()); // seed just in case not seeded
-
-    std::vector <mpz_class> mpi;
-    std::vector <Subpacket *> subpackets;
-
-    // generate some pka values here
-    if ((DSA_bits < 512) || (DSA_bits & 511)){
-        std::cerr << "Error: DSA keysize should be at least 512 bits, and a multiple of 512, preferrably 1024, 2048, or 3072." << std::endl;
-        throw 1;
-    }
-    if (ElGamal_bits < 512){
-        std::cerr << "Error: ElGamal keysize is too small." << std::endl;
-        throw 1;
-    }
-
-    // generate key values
+//    if ((DSA_bits < 512) || (DSA_bits & 511)){
+//        std::cerr << "Error: DSA keysize should be at least 512 bits, and a multiple of 512, preferrably 1024, 2048, or 3072." << std::endl;
+//        throw 1;
+//    }
+//    if (ElGamal_bits < 512){
+//        std::cerr << "Error: ElGamal keysize is too small." << std::endl;
+//        throw 1;
+//    }
+//
+//    // generate pka values
 //    std::vector <mpz_class> dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
 //    std::vector <mpz_class> dsa_pri = DSA_keygen(dsa_pub);
 //
 //    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(ElGamal_bits);
+//
+//    mpz_class elgamal_pri = elgamal_pub[3];
+//    elgamal_pub.pop_back();
 
-    std::vector <mpz_class> dsa_pub = { mpz_class("175466718616740411615640156350265486163809613514213656685227237159351776260193236923030228927905671867677337184318134702903960237546408302010360724274436019639502405323187799029742776686067449287558904042137172927936686590837020160292525250748155580652384740664931255981772117478967314777932252547256795892071", 10),
-                                        mpz_class("809260232002608708872165272150356204306578772713", 10),
-                                        mpz_class("127751900783328740354741342100721884490035793278553520238434722215554870393020469115393573782393994875216405838455564598493958342322790638050051759023658096740912555025710033120777570527002197424160086000659457154926758682221072408093235236853997248304424303705425567765059722098677806247252106481642577996274", 10),
-                                        mpz_class("172935968966072909036304664996424500241381878537444332146572958203083745609400290814117451480512268901233962890933482206538294509037615827035398352528065134903071886710296983781453184598843331365336270501467458073523376152406987560592548479865116940266729198119357206749848310472131186772143408998928864559411", 10)};
+    std::vector <mpz_class> dsa_pub = { mpz_class("f9df76796cad48a41c74d90c902f4428244e2e15120c1838b05eec26673565f91ed596eadd1912ec0826c4eaf38e87b5d05591b32c4072f5637367d9be11b09f4950189234ba1612f0b3a846ea2aeb9d2f9bdc905f80527cbcd185f59edb871fbbcbb34193420cc969069d491c9dabfbdede454142367da10137873fc8018967", 16),
+                                        mpz_class("8dc07bdda91693d5d55af4c2b22317c69caf92e9", 16),
+                                        mpz_class("b5ecbc1e9c3a8144b50abd7101e33faddf065bc3f7876184c88cd1c1fa856f49a2dc5d2be7311461bd6485a0a0dd8f59b30991afc7e16e442fab52f9888d011ec8d4ece4b7a5f5e868e7414cd93254a995e2be2a22953766a745a3c4a0e2229c7ac4dd95dde90949ff8f8e267e0855699211a26915fe10360bc4bb8ae1c629f2", 16),
+                                        mpz_class("f644dcd110e03ec299c5678943b7d3595e65ddc50304fe5d09f5772f5a1a46b3103f3004d02889b2ecde3dec64ff337f05f93ae90686da8353b76ee13df5f38bcb0b384db73eb1931d1f1a221990c02113504b6aefe3be44ea4b63eef779098bce900ebef2c5f5fa13dc365907b4707538590946c629ea4d339320bd69d8c133", 16)};
 
-    std::vector <mpz_class> dsa_pri = {mpz_class("574961860853886082679320766680196608099720972133", 10)};
+    std::vector <mpz_class> dsa_pri = { mpz_class("64b62e786e16a56dc0963058643a8fd444354765", 16)};
 
     std::vector <mpz_class> elgamal_pub = { mpz_class("9494fec095f3b85ee286542b3836fc81a5dd0a0349b4c239dd38744d488cf8e31db8bcb7d33b41abb9e5a33cca9144b1cef332c94bf0573bf047a3aca98cdf3b", 16),
                                             mpz_class("153d5d6172adb43045b68ae8e1de1070b6137005686d29d3d73a7749199681ee5b212c9b96bfdcfa5b20cd5e3fd2044895d609cf9b410b7a0f12ca1cb9a428cc", 16),
-                                            mpz_class("501de84fd9e085a9f1304c09da3a503a094fab60728f65a23d354c0203ba83d9df77fe5d3cffe66d16f7a3656d515ab27ca9f2c346d94f811ce282817f0976d1", 16),
-                                            mpz_class("674396915767399126847577835082101185163744384861202856634666173662323559993170265329273708896869586870964508182895809168214525424504917634225790325485298", 16)};
+                                            mpz_class("501de84fd9e085a9f1304c09da3a503a094fab60728f65a23d354c0203ba83d9df77fe5d3cffe66d16f7a3656d515ab27ca9f2c346d94f811ce282817f0976d1", 16)};
 
-    mpz_class elgamal_pri = elgamal_pub[3];
-    elgamal_pub.pop_back();
+    mpz_class elgamal_pri("ce0622a51fb940e1f4aac77679f37d800826ce4f9c2d93a26d037084ee7268be4be495dcd194c652dde160ecf6b7721693ea63838436751e41b79ffcff1eef2", 16);
 
-    time_t time = now();
+//    time_t time = now();
+    time_t time = 1312936479;
 
     // Secret Key Packet
     Tag5 * sec = new Tag5;
@@ -51,7 +48,8 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     // Secret Key Packet S2K
     S2K3 * sec_s2k3 = new S2K3;
     sec_s2k3 -> set_hash(2);
-    sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
+//    sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
+    sec_s2k3 -> set_salt(unhexlify("5ade86c4806379c4"));
     sec_s2k3 -> set_count(96);
 
     // calculate the key from the passphrase
@@ -59,33 +57,32 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 
     // encrypt private key value
     sec -> set_s2k(sec_s2k3);
-    sec -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sec -> get_sym()))))));
+//    sec -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sec -> get_sym()))))));
+    sec -> set_IV(unhexlify("e06510c369dd65609123833fc69f4ffc"));
     std::string secret = write_MPI(dsa_pri[0]);
     sec -> set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, sec -> get_IV()));
 
     std::string keyid = sec -> get_keyid();
 
-    // User ID packet
     Tag13 * uid = new Tag13;
-    uid -> set_name(user);
-    uid -> set_comment(comment);
-    uid -> set_email(email);
+    uid -> set_name("abc");
+    uid -> set_comment("");
+    uid -> set_email("makcm@aaa.com");
 
-    // Signature packet
-    Tag2 * sig = sign_primary_key(0x13, sec, uid, passphrase);
-//    // This is slightly faster, but I wanted to use the sign_ functions
-//    Tag2 * sig;
-//    sig -> set_version(4);
-//    sig -> set_type(0x13);
-//    sig -> set_pka(17);
-//    sig -> set_hash(2);
-//    Tag2Sub2 tag2sub2; tag2sub2 -> set_time(time);
-//    sig -> set_hashed_subpackets({&tag2sub2});
-//    Tag2Sub16 tag2sub16; tag2sub16 -> set_keyid(keyid);
-//    sig -> set_unhashed_subpackets({&tag2sub16});
-//    std::string sig_hash = to_sign_13(&sec, &uid, &sig);
-//    sig -> set_left16(sig_hash -> substr(0, 2));
+    Tag2 * sig = new Tag2;
+    sig -> set_version(4);
+    sig -> set_type(0x13);
+    sig -> set_pka(17);
+    sig -> set_hash(2);
+    Tag2Sub2 * tag2sub2 = new Tag2Sub2; tag2sub2 -> set_time(time);
+    sig -> set_hashed_subpackets({tag2sub2});
+    Tag2Sub16 * tag2sub16 = new Tag2Sub16; tag2sub16 -> set_keyid(keyid);
+    sig -> set_unhashed_subpackets({tag2sub16});
+    std::string sig_hash = to_sign_13(sec, uid, sig);
+    sig -> set_left16(sig_hash.substr(0, 2));
 //    sig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
+    sig -> set_mpi({mpz_class("8b5bb5b4e83a0edafe1720dac03f681110370bb1", 16),
+                    mpz_class("8647af6f992a025a804fe7068f93452c8ccdc149", 16)});
 
     // Secret Subkey Packet
     Tag7 * ssb = new Tag7;
@@ -99,56 +96,50 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     // Secret Subkey S2K
     S2K3 * ssb_s2k3 = new S2K3;
     ssb_s2k3 -> set_hash(2);
-    ssb_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
+//    ssb_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
+    ssb_s2k3 -> set_salt(unhexlify("46c1a155eff520ab")); // new salt value
     ssb_s2k3 -> set_count(96);
-
     key = ssb_s2k3 -> run(passphrase, Symmetric_Algorithm_Key_Length .at(Symmetric_Algorithms.at(ssb -> get_sym())) >> 3);
 
     ssb -> set_s2k(ssb_s2k3);
-    ssb -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(ssb -> get_sym()))))));
+//    ssb -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(ssb -> get_sym()))))));
+    ssb -> set_IV(unhexlify("c0fb2ecf7a3e9b4a76d848ed05719d75"));
     secret = write_MPI(elgamal_pri);
     ssb -> set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, ssb -> get_IV()));
-    std::cout << "secret:    " << hexlify(secret) << std::endl;
-    std::cout << "decrypted: " << hexlify(use_normal_CFB_decrypt(9, ssb -> get_secret(), key, ssb -> get_IV())) << std::endl;
-
 
     // Subkey Binding Signature
-    Tag2 * subsig = sign_subkey(0x18, sec, ssb, passphrase);
-//    // This is slightly faster, but I wanted to use the sign_ functions
-//    Tag2 * subsig = new Tag2;
-//    subsig -> set_version(4);
-//    subsig -> set_type(0x18);
-//    subsig -> set_pka(17);
-//    subsig -> set_hash(2);
-//    subsig -> set_hashed_subpackets({&tag2sub2});
-//    subsig -> set_unhashed_subpackets({&tag2sub16});
-//    sig_hash = to_sign_18(&sec, &ssb, &sig);
-//    subsig -> set_left16(sig_hash -> substr(0, 2));
+    Tag2 * subsig = new Tag2;
+    subsig -> set_version(4);
+    subsig -> set_type(0x18);
+    subsig -> set_pka(17);
+    subsig -> set_hash(2);
+    subsig -> set_hashed_subpackets({tag2sub2});
+    subsig -> set_unhashed_subpackets({tag2sub16});
+    sig_hash = to_sign_18(sec, ssb, subsig);
+    subsig -> set_left16(sig_hash.substr(0, 2));
 //    subsig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
+    subsig -> set_mpi({mpz_class("5275938c71cdf90b0412826bc11bc59afce36d1e", 16),
+                       mpz_class("6e294e979e37e23a479f4efec76662c0218d42d7", 16)});
 
-    // Convert private key data to public key data
-//    std::string data = sec -> raw();
-    Tag6 * pub = sec -> get_public_ptr();
+    public_key.set_ASCII_Armor(1);
+    public_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
+    public_key.set_packets({sec -> get_public_ptr(), uid, sig, ssb -> get_public_ptr(), subsig});
 
-//    data = ssb -> raw();
-    Tag14 * sub = ssb -> get_public_ptr();
-
-    // Put key materials into keys
     private_key.set_ASCII_Armor(2);
     private_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
     private_key.set_packets({sec, uid, sig, ssb, subsig});
 
-    public_key.set_ASCII_Armor(1);
-    public_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
-    public_key.set_packets({pub, uid, sig, sub, subsig});
+    std::cout << private_key.show() << std::endl;
+    std::ofstream f1("test.pub");
+    f1 << public_key.write();
+    std::ofstream f2("test.pri");
+    f2 << private_key.write();
 
     delete sec;
     delete uid;
     delete sig;
     delete ssb;
     delete subsig;
-    delete pub;
-    delete sub;
 }
 
 void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){

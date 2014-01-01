@@ -96,16 +96,19 @@ std::string Tag3::get_key(std::string pass){
 
 void Tag3::set_sym(const uint8_t s){
     sym = s;
+    size = raw().size();
 }
 
 void Tag3::set_s2k(S2K * s){
     delete s2k;
     s2k = s -> clone();
+    size = raw().size();
 }
 
 void Tag3::set_esk(std::string * s){
     delete esk;
     esk = new std::string(*s);
+    size = raw().size();
 }
 
 void Tag3::set_key(std::string pass, std::string sk){
@@ -117,6 +120,7 @@ void Tag3::set_key(std::string pass, std::string sk){
     else{
         esk = new std::string(use_normal_CFB_encrypt(sym, sk, pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0)));
     }
+    size = raw().size();
 }
 
 Tag3 * Tag3::clone(){

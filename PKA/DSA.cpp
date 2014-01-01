@@ -7,15 +7,15 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     // random prime q
-    mpz_class q(BBS().rand(N), 2);
+    mpz_class q("1" + BBS().rand(N - 1), 2);
     mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
-    while (q.get_str(2).size() >= N){
-        q.set_str(BBS().rand(N), 2);
+    while (q.get_str(2).size() > N){
+        q.set_str("1" + BBS().rand(N - 1), 2);
         mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
     }
 
     // random prime p = kq + 1
-    mpz_class p(BBS().rand(L), 2);      // pick random starting point
+    mpz_class p("1" + BBS().rand(L - 1), 2);      // pick random starting point
     p = ((p - 1) / q) * q + 1;          // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!mpz_probab_prime_p(p.get_mpz_t(), 25)){
         p += q;

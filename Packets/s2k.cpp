@@ -95,7 +95,6 @@ std::string S2K1::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-
 std::string S2K1::get_salt(){
     return salt;
 }

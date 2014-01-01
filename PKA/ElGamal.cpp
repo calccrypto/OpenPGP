@@ -6,14 +6,14 @@ std::vector <mpz_class> ElGamal_keygen(unsigned int bits){
     // random prime q - only used for key generation
     mpz_class q(BBS().rand(bits), 2);
     mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
-    while (q.get_str(2).size() >= bits){
+    while (q.get_str(2).size() > bits){
         q.set_str(BBS().rand(bits), 2);
         mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());
     }
     bits *= 5;
 
     // random prime p = kq + 1
-    mpz_class p(BBS().rand(bits), 2);      // pick random starting point
+    mpz_class p("1" + BBS().rand(bits - 1), 2);      // pick random starting point
     p = ((p - 1) / q) * q + 1;             // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!mpz_probab_prime_p(p.get_mpz_t(), 25)){
         p += q;

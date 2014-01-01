@@ -37,7 +37,7 @@ Subpackets:
 cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 	$(CC) $(CFLAGS) cfb.cpp
 
-decrypt.o: decrypt.h decrypt.cpp Keys/PGPTypes.h PKA/PKA.h cfb.h consts.h Packets/packets.h PKCS1.h usehash.h
+decrypt.o: decrypt.h decrypt.cpp Keys/PGPTypes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PKCS1.h usehash.h
 	$(CC) $(CFLAGS) $(LFLAGS) decrypt.cpp
 
 encrypt.o: encrypt.h encrypt.cpp Keys/PGPTypes.h PKA/PKA.h cfb.h PKCS1.h usehash.h

@@ -20,7 +20,7 @@ void Tag11::read(std::string & data){
 std::string Tag11::show(){
     std::stringstream out;
     out << "    Format: " << BTU.at(format) << "\n"
-        << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets): \n"
+        << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
         << "        Filename: " << filename << "\n"
         << "        Creation Date: " << show_time(time) << "\n"
         << "        Data: " << literal << "\n";
@@ -49,18 +49,22 @@ std::string Tag11::get_literal(){
 
 void Tag11::set_format(const uint8_t f){
     format = f;
+    size = raw().size();
 }
 
 void Tag11::set_filename(const std::string & f){
     filename = f;
+    size = raw().size();
 }
 
 void Tag11::set_time(const uint32_t t){
     time = t;
+    size = raw().size();
 }
 
 void Tag11::set_literal(const std::string & l){
     literal = l;
+    size = raw().size();
 }
 
 Tag11 * Tag11::clone(){

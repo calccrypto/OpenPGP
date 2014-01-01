@@ -31,6 +31,7 @@ std::string Tag19::get_hash(){
 
 void Tag19::set_hash(const std::string & h){
     hash = h;
+    size = raw().size();
 }
 
 Tag19 * Tag19::clone(){

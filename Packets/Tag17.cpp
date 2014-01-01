@@ -108,6 +108,7 @@ void Tag17::set_attibutes(const std::vector <Subpacket *> & a){
     for(Subpacket * const & s : a){
         attributes.push_back(s);
     }
+    size = raw().size();
 }
 
 Tag17 * Tag17::clone(){

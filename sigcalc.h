@@ -74,7 +74,6 @@ std::string overkey(Key * key);
 // then the User ID or User Attribute data.
 std::string certification(uint8_t version, ID * id);
 
-
 // Hash of data to sign
 
 // 0x00: Signature of a binary document.

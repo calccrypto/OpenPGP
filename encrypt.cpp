@@ -1,43 +1,50 @@
 #include "encrypt.h"
+Tag6 * find_encrypting_key(PGP & k){
+    if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
+        std::vector <Packet *> packets = k.get_packets();
+        for(Packet *& p : packets){
+            if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
+                std::string data = p -> raw();
+                Tag6 * key = new Tag6(data);
+                // make sure key has signing material
+                if ((key -> get_pka() == 1) || // RSA
+                    (key -> get_pka() == 2) || // RSA
+                    (key -> get_pka() == 16)){ // ElGamal
+                        return key;
+                }
+                delete key;
+            }
+        }
+    }
+    return NULL;
+}
+
+std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub){
+    if (pka < 3){   // RSA
+        return {RSA_encrypt(data, pub)};
+    }
+    if (pka == 16){ // ElGamal
+        return ElGamal_encrypt(data, pub);
+    }
+    else{
+        std::cerr << "Error: PKA number " << pka << " not allowed or unknown." << std::endl;
+        throw 1;
+    }
+    return {}; // should never reach here; mainly just to remove compiler warnings
+}
+
+std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <mpz_class> & pub){
+    return pka_encrypt(pka, mpz_class(hexlify(data), 16), pub);
+}
 
 PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     std::vector <Packet *> packets = pub.get_packets();
-    Tag6 * public_key = new Tag6;
+    Tag6 * public_key = find_encrypting_key(pub);
 
-    // find first key packet with encrypting values
-    bool found = false;
-    for(Packet *& p : packets){
-        if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
-            std::string raw = p -> raw();
-            public_key -> read(raw);
-            if ((public_key -> get_pka() == 1) || (public_key -> get_pka() == 2) || (public_key -> get_pka() == 16)){
-                found = true;
-                break;
-            }
-            delete public_key;
-            public_key = new Tag6;
-        }
-    }
-    // if no primary key, use subkey
-    if (!found){
-        for(Packet *& p : packets){
-            if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
-                std::string raw = p -> raw();
-                public_key -> read(raw);
-                if ((public_key -> get_pka() == 1) || (public_key -> get_pka() == 2) || (public_key -> get_pka() == 16)){
-                    found = true;
-                    break;
-                }
-                delete public_key;
-                public_key = new Tag6;
-            }
-        }
-    }
-
-    if (!found){
-        std::cerr << "Error: No public key found." << std::endl;
+    if (!public_key){
+        std::cerr << "Error: No encrypting key found." << std::endl;
         throw 1;
     }
 
@@ -52,27 +59,19 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
     std::string session_key = mpz_class(BBS().rand(key_len), 2).get_str(16);
     session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
+
     // get checksum of session key
     uint16_t sum = 0;
     for(char & x : session_key){
         sum += (unsigned char) x;
     }
 
-    std::string octets = mpi[0].get_str(16);     // get hex representation of modulus
-    octets += std::string(octets.size() & 1, 0); // get even number of nibbles
-    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), octets.size() >> 1)), 16);
+    std::string nibbles = mpi[0].get_str(16);      // get hex representation of modulus
+    nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
+    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)), 16);
 
     // encrypt m
-    if (public_key -> get_pka() < 3){ // RSA
-        tag1 -> set_mpi({RSA_encrypt(m, mpi)});
-    }
-    else if (public_key -> get_pka() == 16){// ElGamal
-        tag1 -> set_mpi(ElGamal_encrypt(m, mpi));
-    }
-    else{
-        std::cerr << "Error: Unknown or Reserved Public Key Algorithm: " << (int) public_key -> get_pka() << std::endl;
-        throw 1;
-    }
+    tag1 -> set_mpi(pka_encrypt(public_key -> get_pka(), m, mpi));
 
     // Literal Data Packet
     Tag11 tag11;

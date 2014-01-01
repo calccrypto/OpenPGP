@@ -111,6 +111,10 @@ std::string Tag5::show(){
 std::string Tag5::raw(){
     std::string out = raw_tag6() + std::string(1, s2k_con);
     if (s2k_con > 253){
+        if (!s2k){
+            std::cerr << "Error: S2K has not been set." << std::endl;
+            throw 1;
+        }
         out += std::string(1, sym) + s2k -> write();
     }
     if (s2k_con){
@@ -157,10 +161,26 @@ Tag6 * Tag5::get_public_ptr(){
 
 void Tag5::set_s2k_con(const uint8_t c){
     s2k_con = c;
+    size = raw_tag6().size() + 1;
+    if (s2k){
+        size += s2k -> write().size();
+    }
+    if (s2k_con){
+        size += IV.size();
+    }
+    size += secret.size();
 }
 
 void Tag5::set_sym(const uint8_t s){
     sym = s;
+    size = raw_tag6().size() + 1;
+    if (s2k){
+        size += s2k -> write().size();
+    }
+    if (s2k_con){
+        size += IV.size();
+    }
+    size += secret.size();
 }
 
 void Tag5::set_s2k(S2K * s){
@@ -175,14 +195,38 @@ void Tag5::set_s2k(S2K * s){
         s2k = new S2K3;
     }
     s2k = s -> clone();
+    size = raw_tag6().size() + 1;
+    if (s2k){
+        size += s2k -> write().size();
+    }
+    if (s2k_con){
+        size += IV.size();
+    }
+    size += secret.size();
 }
 
 void Tag5::set_IV(const std::string & iv){
     IV = iv;
+    size = raw_tag6().size() + 1;
+    if (s2k){
+        size += s2k -> write().size();
+    }
+    if (s2k_con){
+        size += IV.size();
+    }
+    size += secret.size();
 }
 
 void Tag5::set_secret(const std::string & s){
     secret = s;
+    size = raw_tag6().size() + 1;
+    if (s2k){
+        size += s2k -> write().size();
+    }
+    if (s2k_con){
+        size += IV.size();
+    }
+    size += secret.size();
 }
 
 Tag5 * Tag5::clone(){

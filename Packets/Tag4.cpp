@@ -61,14 +61,17 @@ uint8_t Tag4::get_nested(){
 
 void Tag4::set_type(const uint8_t t){
     type = t;
+    size = raw().size();
 }
 
 void Tag4::set_hash(const uint8_t h){
     hash = h;
+    size = raw().size();
 }
 
 void Tag4::set_pka(const uint8_t p){
     pka = p;
+    size = raw().size();
 }
 
 void Tag4::set_keyid(const std::string & k){
@@ -77,10 +80,12 @@ void Tag4::set_keyid(const std::string & k){
         throw 1;
     }
     keyid = k;
+    size = raw().size();
 }
 
 void Tag4::set_nested(const uint8_t n){
     nested = n;
+    size = raw().size();
 }
 
 Tag4 * Tag4::clone(){

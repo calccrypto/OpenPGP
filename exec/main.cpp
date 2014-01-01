@@ -154,12 +154,19 @@ bool parse_command(std::string & input){
         std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
         try{
-            const std::string passphrase = "testingtesting123";
+            const std::string passphrase = "abc";
             const std::string message = "testing testing 123";
 
             std::cout << "Generate Keys" << std::endl;
-            PGP pub,pri;
+            PGP pub, pri;
             generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing");
+
+            std::ofstream f1("test.public");
+            f1 << pub.write();
+            std::ofstream f2("test.private");
+            f2 << pri.write();
+
+            std::cout << "Show Keysn\n" << pub.show() << "\n" << pri.show() << std::endl;
 
             std::cout << "Encrypt" << std::endl;
             PGP en = encrypt(message, pub);
@@ -619,11 +626,24 @@ int main(int argc, char * argv[]){
 //    input = "generatekeypair -o test -u test -e test@test.test -pw abc";
 //    parse_command(input);
 
-//    input = "show -k test.private";
+//    input = "show -k private.txt";
 //    parse_command(input);
+//    PGP pub, pri;
+//    generate_keys(pub, pri);
 
-    input = "test";
-    parse_command(input);
+    S2K3 s2k;
+    s2k.set_hash(2);
+    s2k.set_salt(unhexlify("5ade86c4806379c4"));
+    s2k.set_count(96);
+    std::string IV = unhexlify("e06510c369dd65609123833fc69f4ffc");
+    std::string secret = unhexlify("4ac85830997e36e54a710213835a39ab63a8673216d17503ff1b611fc41dedcd40b1db791d0eb21535e3");
+    std::string passphrase = "abc";
+
+    std::string key = s2k.run(passphrase, 32);
+
+    std::string data = use_normal_CFB_decrypt(9, secret, key, IV);
+    std::cout << read_MPI(data).get_str(16) << std::endl;
+//    std::cout << (use_hash(2, data.substr(0, data.size() - 20)) == data.substr(data.size() - 20, 20)) << std::endl;
 
     return 0;
 }

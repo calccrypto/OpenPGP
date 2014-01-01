@@ -33,6 +33,7 @@ std::string Tag18::get_protected_data(){
 
 void Tag18::set_protected_data(const std::string & p){
     protected_data = p;
+    size = raw().size();
 }
 
 Tag18 * Tag18::clone(){

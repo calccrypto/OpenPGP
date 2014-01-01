@@ -56,7 +56,6 @@ void SHA1::run(){
     }
 }
 
-
 SHA1::SHA1(const std::string & str){
     update(str);
 }
