@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <gmpxx.h>
 
 #include "Keys/PGPTypes.h"
-#include "Packets/Packets.h"
+#include "Packets/packets.h"
 #include "PKA/PKA.h"
 #include "sigcalc.h"
 

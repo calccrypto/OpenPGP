@@ -33,8 +33,8 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 
     mpz_class elgamal_pri("ce0622a51fb940e1f4aac77679f37d800826ce4f9c2d93a26d037084ee7268be4be495dcd194c652dde160ecf6b7721693ea63838436751e41b79ffcff1eef2", 16);
 
-//    time_t time = now();
-    time_t time = 1312936479;
+    time_t time = now();
+//    time_t time = 1312936479;
 
     // Secret Key Packet
     Tag5 * sec = new Tag5;
@@ -48,8 +48,8 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     // Secret Key Packet S2K
     S2K3 * sec_s2k3 = new S2K3;
     sec_s2k3 -> set_hash(2);
-//    sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
-    sec_s2k3 -> set_salt(unhexlify("5ade86c4806379c4"));
+    sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
+//    sec_s2k3 -> set_salt(unhexlify("5ade86c4806379c4"));
     sec_s2k3 -> set_count(96);
 
     // calculate the key from the passphrase
@@ -57,8 +57,8 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 
     // encrypt private key value
     sec -> set_s2k(sec_s2k3);
-//    sec -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sec -> get_sym()))))));
-    sec -> set_IV(unhexlify("e06510c369dd65609123833fc69f4ffc"));
+    sec -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sec -> get_sym()))))));
+//    sec -> set_IV(unhexlify("e06510c369dd65609123833fc69f4ffc"));
     std::string secret = write_MPI(dsa_pri[0]);
     sec -> set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, sec -> get_IV()));
 
@@ -80,9 +80,9 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     sig -> set_unhashed_subpackets({tag2sub16});
     std::string sig_hash = to_sign_13(sec, uid, sig);
     sig -> set_left16(sig_hash.substr(0, 2));
-//    sig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
-    sig -> set_mpi({mpz_class("8b5bb5b4e83a0edafe1720dac03f681110370bb1", 16),
-                    mpz_class("8647af6f992a025a804fe7068f93452c8ccdc149", 16)});
+    sig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
+//    sig -> set_mpi({mpz_class("8b5bb5b4e83a0edafe1720dac03f681110370bb1", 16),
+//                    mpz_class("8647af6f992a025a804fe7068f93452c8ccdc149", 16)});
 
     // Secret Subkey Packet
     Tag7 * ssb = new Tag7;
@@ -99,13 +99,17 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 //    ssb_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
     ssb_s2k3 -> set_salt(unhexlify("46c1a155eff520ab")); // new salt value
     ssb_s2k3 -> set_count(96);
-    key = ssb_s2k3 -> run(passphrase, Symmetric_Algorithm_Key_Length .at(Symmetric_Algorithms.at(ssb -> get_sym())) >> 3);
+    key = ssb_s2k3 -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(ssb -> get_sym())) >> 3);
 
     ssb -> set_s2k(ssb_s2k3);
 //    ssb -> set_IV(unhexlify(bintohex(BBS().rand(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(ssb -> get_sym()))))));
     ssb -> set_IV(unhexlify("c0fb2ecf7a3e9b4a76d848ed05719d75"));
     secret = write_MPI(elgamal_pri);
     ssb -> set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, ssb -> get_IV()));
+
+//    std::cout << hexlify(secret) << "\n\n\n" << std::endl;
+//    std::cout << hexlify(use_normal_CFB_decrypt(9, ssb -> get_secret(), key, ssb -> get_IV())) << std::endl;
+//    std::cout << hexlify(ssb -> get_secret()) << std::endl;
 
     // Subkey Binding Signature
     Tag2 * subsig = new Tag2;
@@ -121,9 +125,12 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     subsig -> set_mpi({mpz_class("5275938c71cdf90b0412826bc11bc59afce36d1e", 16),
                        mpz_class("6e294e979e37e23a479f4efec76662c0218d42d7", 16)});
 
+    Tag6 * pub = sec -> get_public_ptr();
+    Tag14 * sub = ssb -> get_public_ptr();
+
     public_key.set_ASCII_Armor(1);
     public_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
-    public_key.set_packets({sec -> get_public_ptr(), uid, sig, ssb -> get_public_ptr(), subsig});
+    public_key.set_packets({pub, uid, sig, sub, subsig});
 
     private_key.set_ASCII_Armor(2);
     private_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
@@ -140,6 +147,8 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     delete sig;
     delete ssb;
     delete subsig;
+    delete pub;
+    delete sub;
 }
 
 void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){

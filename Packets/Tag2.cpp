@@ -59,7 +59,7 @@ std::string Tag2::read_subpacket(std::string & data){
 std::vector <Subpacket *> Tag2::read_subpackets(std::string & data){
     std::vector <Subpacket *> out;
     while (data.size()){
-        Subpacket * temp;
+        Subpacket * temp = NULL;
         std::string subpacket_data = read_subpacket(data);
         uint8_t sub = subpacket_data[0];
         subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
