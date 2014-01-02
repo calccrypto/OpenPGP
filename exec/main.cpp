@@ -151,9 +151,9 @@ bool parse_command(std::string & input){
         std::cout << std::endl;
     }
     else if (cmd == "test"){
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
         try{
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
             const std::string passphrase = "abc";
             const std::string message = "testing testing 123";
 
@@ -236,8 +236,8 @@ bool parse_command(std::string & input){
     else if (cmd == "generatekeypair"){
         Options options;
         options["-o"] = "";
-        options["-pks"] = "2048";
-        options["-sks"] = "2048";
+        options["-pks"] = "1024";
+        options["-sks"] = "1024";
         options["-pws"] = "";
         options["-u"] = "";
         options["-c"] = "";
@@ -255,7 +255,6 @@ bool parse_command(std::string & input){
 
         output(pub.write(), options["-o"] + ".public");
         output(pri.write(), options["-o"] + ".private");
-
     }
     else if (cmd == "generate-revoke-cert"){
         std::string pri_file, passphrase;
@@ -606,29 +605,22 @@ bool parse_command(std::string & input){
 
 int main(int argc, char * argv[]){
     std::string input = "";
-//    // no commandline arguments
-//    if (argc == 1){
-//        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
-//                  << "Type help or ? for command syntax\n\n"
-//                  << std::endl;
-//        while (parse_command(input)){
-//            std::cout << "> ";
-//            getline(std::cin, input);
-//        }
-//    // has commandline arguments
-//    }
-//    else{
-//        for(int x = 1; x < argc; x++){
-//            input += std::string(argv[x]) + " ";
-//        }
-//        parse_command(input);
-//    }
-//    input = "generatekeypair -o test -u test -e test@test.test -pw abc";
-//    parse_command(input);
-
-    PGP pub, pri;
-    generate_keys(pub, pri, "abc", "abc", "", "12345@134.com", 1024, 1024);
-
-
+    // no commandline arguments
+    if (argc == 1){
+        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
+                  << "Type help or ? for command syntax\n\n"
+                  << std::endl;
+        while (parse_command(input)){
+            std::cout << "> ";
+            getline(std::cin, input);
+        }
+    }
+    // has commandline arguments
+    else{
+        for(int x = 1; x < argc; x++){
+            input += std::string(argv[x]) + " ";
+        }
+        parse_command(input);
+    }
     return 0;
 }
