@@ -47,6 +47,6 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 //  key id (optional)
 //
 // All other fields should be filled by the user
-void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 1024, const unsigned int subkey_size = 1024);
+void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 2048, const unsigned int subkey_size = 2048);
 
 #endif

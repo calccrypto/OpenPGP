@@ -159,12 +159,7 @@ bool parse_command(std::string & input){
 
             std::cout << "Generate Keys" << std::endl;
             PGP pub, pri;
-            generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing");
-
-            std::ofstream f1("test.public");
-            f1 << pub.write();
-            std::ofstream f2("test.private");
-            f2 << pri.write();
+            generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing", 2048, 2048);
 
             std::cout << "Show Keysn\n" << pub.show() << "\n" << pri.show() << std::endl;
 

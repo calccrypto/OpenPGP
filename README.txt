@@ -107,4 +107,5 @@ Notes:
     not this one (yet).
 
     If for some reason the program cannot operate on some data
-    properly, the entire program will crash through the exit function.
+    properly, an exception of value 1 will be thrown, with an
+    error message written to cerr.

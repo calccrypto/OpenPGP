@@ -2,12 +2,14 @@
 
 void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
     BBS((mpz_class) (uint32_t) now()); // seed just in case not seeded
-    if ((DSA_bits < 512) || (DSA_bits & 511)){
-        std::cerr << "Error: DSA keysize should be at least 512 bits, and a multiple of 512, preferrably 1024, 2048, or 3072." << std::endl;
+
+    if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
+        std::cerr << "Error: Keysize must be at least 512 bits." << std::endl;
         throw 1;
     }
-    if (ElGamal_bits < 512){
-        std::cerr << "Error: ElGamal keysize is too small." << std::endl;
+
+    if (DSA_bits & 1023){
+        std::cerr << "Error: DSA keysize should be 1024, 2048, or 3072 bits." << std::endl;
         throw 1;
     }
 
@@ -19,7 +21,11 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     mpz_class elgamal_pri = elgamal_pub[3];
     elgamal_pub.pop_back();
 
+    // Key creation time
     time_t time = now();
+
+    // hash algorithm for signature
+    uint8_t hash_alg = (DSA_bits == 1024)?2:8;
 
     // Secret Key Packet
     Tag5 * sec = new Tag5;
@@ -28,7 +34,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     sec -> set_pka(17);// DSA
     sec -> set_mpi(dsa_pub);
     sec -> set_s2k_con(254);
-    sec -> set_sym(9);// AES
+    sec -> set_sym(9);// AES256
 
     // Secret Key Packet S2K
     S2K3 * sec_s2k3 = new S2K3;
@@ -56,7 +62,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     sig -> set_version(4);
     sig -> set_type(0x13);
     sig -> set_pka(17);
-    sig -> set_hash(2);
+    sig -> set_hash(hash_alg);
     Tag2Sub2 * tag2sub2 = new Tag2Sub2; tag2sub2 -> set_time(time);
     sig -> set_hashed_subpackets({tag2sub2});
     Tag2Sub16 * tag2sub16 = new Tag2Sub16; tag2sub16 -> set_keyid(keyid);
@@ -72,7 +78,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     ssb -> set_pka(16);// ElGamal
     ssb -> set_mpi(elgamal_pub);
     ssb -> set_s2k_con(254);
-    ssb -> set_sym(9);// AES
+    ssb -> set_sym(9);// AES256
 
     // Secret Subkey S2K
     S2K3 * ssb_s2k3 = new S2K3;
@@ -91,7 +97,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     subsig -> set_version(4);
     subsig -> set_type(0x18);
     subsig -> set_pka(17);
-    subsig -> set_hash(2);
+    subsig -> set_hash(hash_alg);
     subsig -> set_hashed_subpackets({tag2sub2});
     subsig -> set_unhashed_subpackets({tag2sub16});
     sig_hash = to_sign_18(sec, ssb, subsig);
