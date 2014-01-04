@@ -11,8 +11,8 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
         throw 1;
     }
 
-    unsigned int length = 0;
-    unsigned int remove = 1;
+    unsigned int length = 0;                                                    // length of the data without the header
+    unsigned int remove = 1;                                                    // how much more stuff to remove
     std::string packet;
 
     if (!(ctb & 0x40)){                                                         // Old length type RFC4880 sec 4.2.1
@@ -31,7 +31,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 			remove += 5;
 		}
 		else if ((ctb & 3) == 3){                                               // indeterminate length; header is 1 octet long; packet continues until end of data
-			length = (uint8_t) data[1];
+			length = data[1];
             remove += 1;
 		}
     }
@@ -52,9 +52,9 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 			remove += 5;
 		}
 		else if (224 <= first_octet){                                           // unknown
-			tag = -1;                                                           // partial
+//			tag = -1;                                                           // partial
 			length = partialBodyLen(first_octet);
-			remove += 1;
+			remove += 0;
 		}
 	}
 	packet = data.substr(remove, length);								    	// Get packet

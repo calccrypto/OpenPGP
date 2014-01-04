@@ -54,9 +54,9 @@ class PGP{
         PGP(std::ifstream & f);
         ~PGP();
 
-        void read(std::string & data);
+        void read(std::string & data);                                          // read key, including ASCII Armor; data is destroyed
         void read(std::ifstream & file);
-        void read_raw(std::string & data);                                      // reads packet data only
+        void read_raw(std::string & data);                                      // reads packet data only; data is destroyed
         std::string show();                                                     // display key information
         std::string raw(uint8_t header = 0);                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
         std::string write(uint8_t header = 0);                                  // output with ASCII Armor and converted to Radix64
@@ -72,11 +72,11 @@ class PGP{
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header);
         void set_packets(const std::vector <Packet *> & p);
 
-        std::string keyid();                                                // keyid that is searched for on keyservers
-        std::string list_keys();                                            // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
+        std::string keyid();                                                   // keyid that is searched for on keyservers
+        std::string list_keys();                                               // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
 
-        PGP operator=(const PGP & pgp);                                     // get deep copy object
-        PGP * clone();                                                      // get deep copy pointer
+        PGP operator=(const PGP & pgp);                                        // get deep copy object
+        PGP * clone();                                                         // get deep copy pointer
 };
 
 // Display key id of primary key
