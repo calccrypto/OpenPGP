@@ -26,5 +26,11 @@ THE SOFTWARE.
 
 #ifndef __PGP_PUBLIC_KEY__
 #define __PGP_PUBLIC_KEY
-class PGPPublicKey : PGPKey {};
+class PGPPublicKey : public PGPKey {
+    public:
+        PGPPublicKey();
+        PGPPublicKey(const PGPPublicKey & pgp);
+        PGPPublicKey(std::string & data);
+        PGPPublicKey(std::ifstream & f);
+};
 #endif

@@ -26,5 +26,11 @@ THE SOFTWARE.
 
 #ifndef __PGP_PRIVATE_KEY__
 #define __PGP_PRIVATE_KEY__
-class PGPPrivateKey : PGPKey {};
+class PGPPrivateKey : public PGPKey {
+    public:
+        PGPPrivateKey();
+        PGPPrivateKey(const PGPPrivateKey & pgp);
+        PGPPrivateKey(std::string & data);
+        PGPPrivateKey(std::ifstream & f);
+};
 #endif

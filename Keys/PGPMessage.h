@@ -26,5 +26,11 @@ THE SOFTWARE.
 
 #ifndef __PGP_MESSAGE__
 #define __PGP_MESSAGE__
-class PGPMessage{};
+class PGPMessage : public PGP{
+    public:
+        PGPMessage();
+        PGPMessage(const PGPMessage & pgp);
+        PGPMessage(std::string & data);
+        PGPMessage(std::ifstream & f);
+};
 #endif

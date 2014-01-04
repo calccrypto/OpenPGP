@@ -26,5 +26,11 @@ THE SOFTWARE.
 
 #ifndef __PGP_SIGNATURE__
 #define __PGP_SIGNATURE__
-class PGPSignature{};
+class PGPSignature : public PGP {
+    public:
+        PGPSignature();
+        PGPSignature(const PGPSignature & pgp);
+        PGPSignature(std::string & data);
+        PGPSignature(std::ifstream & f);
+};
 #endif

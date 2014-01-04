@@ -78,11 +78,17 @@
 		<Unit filename="../Keys/PGP.cpp" />
 		<Unit filename="../Keys/PGP.h" />
 		<Unit filename="../Keys/PGPKey.h" />
+		<Unit filename="../Keys/PGPMessage.cpp" />
 		<Unit filename="../Keys/PGPMessage.h" />
+		<Unit filename="../Keys/PGPMessageX.cpp" />
 		<Unit filename="../Keys/PGPMessageX.h" />
+		<Unit filename="../Keys/PGPMessageXY.cpp" />
 		<Unit filename="../Keys/PGPMessageXY.h" />
+		<Unit filename="../Keys/PGPPrivateKey.cpp" />
 		<Unit filename="../Keys/PGPPrivateKey.h" />
+		<Unit filename="../Keys/PGPPublicKey.cpp" />
 		<Unit filename="../Keys/PGPPublicKey.h" />
+		<Unit filename="../Keys/PGPSignature.cpp" />
 		<Unit filename="../Keys/PGPSignature.h" />
 		<Unit filename="../Keys/PGPSignedMessage.cpp" />
 		<Unit filename="../Keys/PGPSignedMessage.h" />

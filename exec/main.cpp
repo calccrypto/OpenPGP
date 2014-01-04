@@ -174,6 +174,7 @@ bool parse_command(std::string & input){
 
             std::cout << "Verify" << std::endl;
             if (!verify_message(m, pub)){
+                std::cerr << "Error: Could not verify signature." << std::endl;
                 throw 1;
             }
 

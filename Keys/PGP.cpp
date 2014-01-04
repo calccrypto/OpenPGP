@@ -22,12 +22,12 @@ PGP::PGP(const PGP & pgp){
 
 PGP::PGP(std::string & data){
     armored = true;
-    read(data);
+    read(data, -1);
 }
 
 PGP::PGP(std::ifstream & f){
     armored = true;
-    read(f);
+    read(f, -1);
 }
 
 PGP::~PGP(){
@@ -37,7 +37,7 @@ PGP::~PGP(){
     packets.clear();
 }
 
-void PGP::read(std::string & data){
+void PGP::read(std::string & data, int8_t type){
     std::string ori = data;
 
     // remove extra data and parse unsecured data
@@ -60,6 +60,7 @@ void PGP::read(std::string & data){
         }
     }
 
+    // find type of PGP block
     for(x = 0; x < 7; x++){
         std::string match = "-----BEGIN PGP " + ASCII_Armor_Header[x] + "-----";
         if (match == data.substr(0, match.size())){
@@ -67,12 +68,22 @@ void PGP::read(std::string & data){
         }
     }
 
+    // if there is a type this key is supposed to be, check that it is that type
+    if (type != -1){
+        if (x != (unsigned int) type){
+            std::cerr << "Error: Input is not a PGP " << ASCII_Armor_Header[type] << std::endl;
+            throw 1;
+        }
+    }
+
+    // no ASCII Armor header found
     if (x == 7){
         std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw file data." << std::endl;
         read_raw(ori);
         return;
     }
 
+    // Signed message
     if (x == 6){
         std::cerr << "Error: Data contains message section. Use PGPMessage to parse this data." << std::endl;
         throw 1;
@@ -169,11 +180,11 @@ void PGP::read(std::string & data){
     armored = true;
 }
 
-void PGP::read(std::ifstream & file){
+void PGP::read(std::ifstream & file, int8_t type){
     std::stringstream s;
     s << file.rdbuf();
     std::string data = s.str();
-    read(data);
+    read(data, -1);
 }
 
 void PGP::read_raw(std::string & data){

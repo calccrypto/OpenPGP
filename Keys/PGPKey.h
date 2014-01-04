@@ -27,5 +27,5 @@ THE SOFTWARE.
 
 #ifndef __PGP_KEY__
 #define __PGP_KEY__
-class PGPKey : PGP {};
+class PGPKey : public PGP {};
 #endif
