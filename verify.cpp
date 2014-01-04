@@ -58,6 +58,16 @@ bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mp
 }
 
 bool verify_file(const std::string & data, PGP & sig, PGP & key){
+    if (sig.get_ASCII_Armor() != 5){
+        std::cerr << "Error: A signature packet is required." << std::endl;
+        throw 1;
+    }
+
+    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: A PGP key is required." << std::endl;
+        throw 1;
+    }
+
     std::string temp = sig.get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
 
@@ -99,6 +109,16 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key){
 
 // Signature type 0x00 and 0x01
 bool verify_message(PGPSignedMessage & message, PGP & key){
+    if (message.get_key().get_ASCII_Armor() != 5){
+        std::cerr << "Error: A private key is required." << std::endl;
+        throw 1;
+    }
+
+    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: A PGP key is required." << std::endl;
+        throw 1;
+    }
+
     // Find key id from signature to match with public key
     std::string temp = message.get_key().get_packets()[0] -> raw();
     Tag2 * signature = new Tag2; signature -> read(temp);
@@ -129,6 +149,16 @@ bool verify_message(PGPSignedMessage & message, PGP & key){
 
 // Signature Type 0x10 - 0x13
 bool verify_signature(PGP & key, PGP & signer){
+    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: A PGP key is required." << std::endl;
+        throw 1;
+    }
+
+    if ((signer.get_ASCII_Armor() != 1) && (signer.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: A PGP key is required." << std::endl;
+        throw 1;
+    }
+
     std::vector <Packet *> packets = signer.get_packets();
 
     // find signing key
@@ -227,6 +257,16 @@ bool verify_signature(PGP & key, PGP & signer){
 }
 
 bool verify_revoke(PGP & key, PGP & rev){
+    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: A PGP key is required." << std::endl;
+        throw 1;
+    }
+
+    if (rev.get_ASCII_Armor() != 1){
+        std::cerr << "Error: A revocation key is required." << std::endl;
+        throw 1;
+    }
+
     std::vector <Packet *> keys = key.get_packets();
 
     // copy revocation signature into tag2

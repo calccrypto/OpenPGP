@@ -25,11 +25,11 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
-#include "Keys/PGPTypes.h"
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
 #include "consts.h"
+#include "PGP.h"
 #include "PKCS1.h"
 #include "usehash.h"
 

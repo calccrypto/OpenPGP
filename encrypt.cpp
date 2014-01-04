@@ -40,6 +40,11 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data,
 PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
+        std::cerr << "Error: No encrypting key found." << std::endl;
+        throw 1;
+    }
+
     std::vector <Packet *> packets = pub.get_packets();
     Tag6 * public_key = find_encrypting_key(pub);
 

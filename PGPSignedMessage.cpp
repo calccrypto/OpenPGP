@@ -116,12 +116,12 @@ std::string PGPSignedMessage::show(){
     return "Message:\n" + message + "\n\n" + key.show();
 }
 
-std::string PGPSignedMessage::write(){
+std::string PGPSignedMessage::write(uint8_t header){
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
     for(std::pair <std::string, std::string> & k : Armor_Header){
         out += k.first + ":" + k.second + "\n";
     }
-    return out + "\n" + message + "\n" + key.write();
+    return out + "\n" + message + "\n" + key.write(header);
 }
 
 uint8_t PGPSignedMessage::get_ASCII_Armor(){

@@ -29,8 +29,9 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
-#include "Keys/PGPTypes.h"
 #include "Packets/packets.h"
+#include "PGP.h"
+#include "PGPSignedMessage.h"
 #include "PKA/PKA.h"
 #include "sigcalc.h"
 

@@ -53,7 +53,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
     // calculate and check checksum
     if(pri -> get_s2k_con() == 254){
         if (use_hash(s2k -> get_hash(), secret_key) != checksum){
-            std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
+            std::cerr << "Error: Secret key checksum and calculated checksum do not match." << std::endl;
             throw 1;
         }
     }
@@ -64,7 +64,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
         }
         if (unhexlify(makehex(sum, 4)) != checksum){
             if (use_hash(s2k -> get_hash(), secret_key) != checksum){
-                std::cerr << "Error: secret key checksum and calculated checksum do not match." << std::endl;
+                std::cerr << "Error: Secret key checksum and calculated checksum do not match." << std::endl;
                 throw 1;
             }
         }
@@ -77,9 +77,14 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
     return out;
 }
 
-std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase){
+std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
+    if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
+        std::cerr << "Error: No encrypted message found." << std::endl;
+        throw 1;
+    }
+
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: No Private Key given." << std::endl;
+        std::cerr << "Error: No Private Key found." << std::endl;
         throw 1;
     }
 

@@ -46,11 +46,12 @@ std::string Packet::write_new_length(std::string data){
 
 Packet::~Packet(){}
 
-std::string Packet::write(bool header){
-    if (!header && (tag < 16)){
-        return write_old_length(raw());
+std::string Packet::write(uint8_t header){
+    if ((header && ((header == 2) || ((header == 1) && (tag > 15)))) ||   // if user set packet header or
+       (!header && ((format || ((!format) && (tag > 15)))))){             // if user did not set packet header and format is new, or format is old but tag is greater than 15
+        return write_new_length(raw());
     }
-    return write_new_length(raw());
+    return write_old_length(raw());
 }
 
 uint8_t Packet::get_tag(){

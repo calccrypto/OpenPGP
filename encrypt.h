@@ -24,9 +24,9 @@ THE SOFTWARE.
 */
 #include <gmpxx.h>
 
-#include "Keys/PGPTypes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
+#include "PGP.h"
 #include "PKCS1.h"
 #include "usehash.h"
 

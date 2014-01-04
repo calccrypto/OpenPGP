@@ -2,5 +2,4 @@ Add compression/decompression algorithms
 Write Twofish
 Find PGP keys with packets I have never seen before
 Figure out how to read a gpg .sig file
-Key packets version bug (add update functions for certain packets)
-need to check if key is valid before actions
+Figure out why certain gpg blocks fail

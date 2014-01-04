@@ -113,6 +113,11 @@ PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint
 }
 
 PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+    if (pri.get_ASCII_Armor() != 2){
+        std::cerr << "Error: A private key is required for the second argument." << std::endl;
+        throw 1;
+    }
+
     std::vector <Packet *> packets = pri.get_packets();
 
     Tag2 * rev = revoke_primary_key_cert(pri, passphrase, code, reason);
@@ -140,6 +145,11 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
 }
 
 PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+    if (pri.get_ASCII_Armor() != 2){
+        std::cerr << "Error: A private key is required for the second argument." << std::endl;
+        throw 1;
+    }
+
     std::vector <Packet *> packets = pri.get_packets();
 
     Tag2 * rev = revoke_subkey_cert(pri, passphrase, code, reason);

@@ -28,12 +28,12 @@ THE SOFTWARE.
 #include <vector>
 #include <utility>
 
-#include "../common/includes.h"
-#include "../Packets/packets.h"
-#include "../Subpackets/subpackets.h"
-#include "../consts.h"
-#include "../pgptime.h"
-#include "../radix64.h"
+#include "common/includes.h"
+#include "Packets/packets.h"
+#include "Subpackets/subpackets.h"
+#include "consts.h"
+#include "pgptime.h"
+#include "radix64.h"
 
 #ifndef __PGP_BASE__
 #define __PGP_BASE__
@@ -54,12 +54,12 @@ class PGP{
         PGP(std::ifstream & f);
         ~PGP();
 
-        void read(std::string & data, int8_t type = -1);
-        void read(std::ifstream & file, int8_t type = -1);
+        void read(std::string & data);
+        void read(std::ifstream & file);
         void read_raw(std::string & data);                                      // reads packet data only
         std::string show();                                                     // display key information
-        std::string raw();                                                      // write packets only
-        std::string write();                                                    // output with ASCII Armor and converted to Radix64
+        std::string raw(uint8_t header = 0);                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        std::string write(uint8_t header = 0);                                  // output with ASCII Armor and converted to Radix64
 
         bool get_armored();
         uint8_t get_ASCII_Armor();

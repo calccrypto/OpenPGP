@@ -43,7 +43,7 @@ class PGPSignedMessage{
         void read(std::string & data);
         void read(std::ifstream & file);
         std::string show();
-        std::string write();
+        std::string write(uint8_t header = 0);
 
         uint8_t get_ASCII_Armor();
         std::vector <std::pair <std::string, std::string> > get_Armor_Header();
@@ -59,4 +59,3 @@ class PGPSignedMessage{
         PGPSignedMessage operator=(const PGPSignedMessage & pgpsignedmessage);
 };
 #endif
-

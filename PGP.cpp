@@ -22,12 +22,12 @@ PGP::PGP(const PGP & pgp){
 
 PGP::PGP(std::string & data){
     armored = true;
-    read(data, -1);
+    read(data);
 }
 
 PGP::PGP(std::ifstream & f){
     armored = true;
-    read(f, -1);
+    read(f);
 }
 
 PGP::~PGP(){
@@ -37,7 +37,7 @@ PGP::~PGP(){
     packets.clear();
 }
 
-void PGP::read(std::string & data, int8_t type){
+void PGP::read(std::string & data){
     std::string ori = data;
 
     // remove extra data and parse unsecured data
@@ -65,14 +65,6 @@ void PGP::read(std::string & data, int8_t type){
         std::string match = "-----BEGIN PGP " + ASCII_Armor_Header[x] + "-----";
         if (match == data.substr(0, match.size())){
             break;
-        }
-    }
-
-    // if there is a type this key is supposed to be, check that it is that type
-    if (type != -1){
-        if (x != (unsigned int) type){
-            std::cerr << "Error: Input is not a PGP " << ASCII_Armor_Header[type] << std::endl;
-            throw 1;
         }
     }
 
@@ -180,11 +172,11 @@ void PGP::read(std::string & data, int8_t type){
     armored = true;
 }
 
-void PGP::read(std::ifstream & file, int8_t type){
+void PGP::read(std::ifstream & file){
     std::stringstream s;
     s << file.rdbuf();
     std::string data = s.str();
-    read(data, -1);
+    read(data);
 }
 
 void PGP::read_raw(std::string & data){
@@ -207,16 +199,16 @@ std::string PGP::show(){
     return out.str();
 }
 
-std::string PGP::raw(){
+std::string PGP::raw(uint8_t header){
     std::string out = "";
     for(Packet *& p : packets){
-        out += p -> write();
+        out += p -> write(header);
     }
     return out;
 }
 
-std::string PGP::write(){
-    std::string packet_string = raw();
+std::string PGP::write(uint8_t header){
+    std::string packet_string = raw(header);
     if (!armored){
         return packet_string;
     }

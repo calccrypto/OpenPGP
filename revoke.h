@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
-#include "Keys/PGPTypes.h"
+#include "PGP.h"
 #include "PKCS1.h"
 #include "sign.h"
 
