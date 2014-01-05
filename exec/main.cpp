@@ -42,8 +42,10 @@ THE SOFTWARE.
 
 typedef std::map <std::string, std::string> Options;
 
-std::vector <std::string> commands = {
-    "exit|quit\n",                                                          // end program
+const std::vector <std::string> commands = {
+    "help [optional search string]",                                        // get help on commands; if there is a search string, it only searches the front of strings for matches
+
+    "exit | quit\n",                                                        // end program
 
     "test",                                                                 // test the program
 
@@ -146,12 +148,28 @@ bool parse_command(std::string & input){
     else if ((cmd == "exit") || (cmd == "quit")){
         return 0;
     }
-    else if ((cmd == "?") || (cmd == "help")){
-        std::cout << "Commands:\n";
-        for(std::string & c : commands){
-            std::cout << "    " << c << std::endl;
+    else if (cmd == "help"){
+        std::string which;
+        tokens >> which;
+        if (!which.size()){
+            std::cout << "Commands:\n";
+            for(const std::string & c : commands){
+                std::cout << "    " << c << std::endl;
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
+        else{
+            bool found = false;
+            for(const std::string & c : commands){
+                if (c.substr(0, which.size()) == which){ // only check if front matches
+                    std::cout << "" + c << std::endl;
+                    found = true;
+                }
+            }
+            if (!found){
+                std::cerr << "Error: Search string \"" << which << "\" does not match any commands." << std::endl;
+            }
+        }
     }
     else if (cmd == "test"){
         try{
@@ -164,7 +182,7 @@ bool parse_command(std::string & input){
             PGP pub, pri;
             generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing", 2048, 2048);
 
-            std::cout << "Show Keys" << std::endl;
+            std::cout << "Show Keys (sent into null stream)" << std::endl;
             null_out << pub.show() << pri.show() << std::endl;
 
             std::cout << "Encrypt Message" << std::endl;
@@ -203,7 +221,7 @@ bool parse_command(std::string & input){
     else if (cmd == "list"){
         std::string file_name;
         if (!(tokens >> file_name) || (file_name == "")){
-            std::cout << "Syntax: " << commands[2] << std::endl;
+            std::cout << "Syntax: " << commands[3] << std::endl;
             return 1;
         }
         std::ifstream f(file_name.c_str());
@@ -224,11 +242,10 @@ bool parse_command(std::string & input){
     }
     else if (cmd == "show"){
         std::string type, file_name;
-
         if (!(tokens >> type >> file_name) ||
            (!((type == "-k") || (type == "-K")) && !((type == "-m") || (type == "-M"))) ||
             (file_name == "")){
-            std::cout << "Syntax: " << commands[3] << std::endl;
+            std::cout << "Syntax: " << commands[4] << std::endl;
             return 1;
         }
 
@@ -246,7 +263,7 @@ bool parse_command(std::string & input){
             std::cout << message.show() << std::endl;
         }
         else{
-            std::cout << "Syntax: " << commands[3] << std::endl;
+            std::cout << "Syntax: " << commands[4] << std::endl;
         }
     }
     else if (cmd == "generatekeypair"){
@@ -258,11 +275,10 @@ bool parse_command(std::string & input){
         options["-u"] = "";
         options["-c"] = "";
         options["-e"] = "";
-
         parse_options(tokens, options);
 
         if (options.find("-h") != options.end()){
-            std::cout << "Syntax: " << commands[4] << std::endl;
+            std::cout << "Syntax: " << commands[5] << std::endl;
             return 1;
         }
 
@@ -283,7 +299,7 @@ bool parse_command(std::string & input){
     else if (cmd == "generate-revoke-cert"){
         std::string pri_file, passphrase;
         if (!(tokens >> pri_file >> passphrase) || (pri_file == "")){
-            std::cout << "Syntax: " << commands[5] << std::endl;
+            std::cout << "Syntax: " << commands[6] << std::endl;
             return 1;
         }
         std::ifstream f(pri_file.c_str());
@@ -313,7 +329,7 @@ bool parse_command(std::string & input){
     else if (cmd == "encrypt"){
         std::string data_file, pub_file;
         if (!(tokens >> data_file >> pub_file) || (data_file == "") || (pub_file == "")){
-            std::cout << "Syntax: " << commands[6] << std::endl;
+            std::cout << "Syntax: " << commands[7] << std::endl;
             return 1;
         }
 
@@ -354,7 +370,7 @@ bool parse_command(std::string & input){
     else if (cmd == "decrypt"){
         std::string data_file, pri, passphrase;
         if (!(tokens >> data_file >> pri >> passphrase) || (data_file == "") || (pri == "")){
-            std::cout << "Syntax: " << commands[7] << std::endl;
+            std::cout << "Syntax: " << commands[8] << std::endl;
             return 1;
         }
 
@@ -395,7 +411,7 @@ bool parse_command(std::string & input){
     else if (cmd == "revoke-key"){
         std::string pri, passphrase;
         if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[8] << std::endl;
+            std::cout << "Syntax: " << commands[9] << std::endl;
             return 1;
         }
 
@@ -426,7 +442,7 @@ bool parse_command(std::string & input){
     else if (cmd == "revoke-subkey"){
         std::string pri, passphrase;
         if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[9] << std::endl;
+            std::cout << "Syntax: " << commands[10] << std::endl;
             return 1;
         }
 
@@ -475,7 +491,7 @@ bool parse_command(std::string & input){
     else if (cmd == "sign-file"){
         std::string filename, pri, passphrase;
         if (!(tokens >> filename >> pri >> passphrase) || (filename == "") || (pri == "")){
-            std::cout << "Syntax: " << commands[10] << std::endl;
+            std::cout << "Syntax: " << commands[11] << std::endl;
             return 1;
         }
 
@@ -509,7 +525,7 @@ bool parse_command(std::string & input){
     else if (cmd == "sign-message"){
         std::string data_file, pri, passphrase;
         if (!(tokens >> data_file >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[11] << std::endl;
+            std::cout << "Syntax: " << commands[12] << std::endl;
             return 1;
         }
 
@@ -547,7 +563,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-file"){
         std::string filename, signame, pub;
         if (!(tokens >> filename >> signame >> pub) || (filename == "") || (signame == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[12] << std::endl;
+            std::cout << "Syntax: " << commands[13] << std::endl;
             return 1;
         }
 
@@ -580,7 +596,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-message"){
         std::string data, pub;
         if (!(tokens >> data >> pub) || (data == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[13] << std::endl;
+            std::cout << "Syntax: " << commands[14] << std::endl;
             return 1;
         }
         std::ifstream m(data.c_str());
@@ -608,7 +624,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-key"){
         std::string key_file, signer_file;
         if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
-            std::cout << "Syntax: " << commands[14] << std::endl;
+            std::cout << "Syntax: " << commands[15] << std::endl;
             return 1;
         }
 
