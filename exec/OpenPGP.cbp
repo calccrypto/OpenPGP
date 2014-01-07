@@ -31,7 +31,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../Compression/pgpzlib.cpp" />
 		<Unit filename="../Encryptions/AES.cpp" />
 		<Unit filename="../Encryptions/AES.h" />
 		<Unit filename="../Encryptions/AES_Const.h" />
