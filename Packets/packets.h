@@ -21,6 +21,7 @@
 #include "Tag17.h"
 #include "Tag18.h"
 #include "Tag19.h"
+#include "TagX.h"
 
 // Functions that cannot be placed inside Packet class and are needed globally
 
@@ -31,6 +32,6 @@ unsigned int partialBodyLen(uint8_t first_octet);
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format);
 
 // parses raw packet data
-Packet * read_packet(uint8_t & tag, std::string & packet_data);
+Packet * read_packet(const bool format, const uint8_t tag, std::string & packet_data);
 
 #endif

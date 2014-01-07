@@ -70,18 +70,18 @@ unsigned int Packet::get_size(){
     return size;
 }
 
-void Packet::set_tag(uint8_t t){
+void Packet::set_tag(const uint8_t t){
     tag = t;
 }
 
-void Packet::set_format(bool f){
+void Packet::set_format(const bool f){
     format = f;
 }
 
-void Packet::set_version(unsigned int v){
+void Packet::set_version(const unsigned int v){
     version = v;
 }
 
-void Packet::set_size(unsigned int s){
+void Packet::set_size(const unsigned int s){
     size = s;
 }

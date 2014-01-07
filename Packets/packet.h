@@ -37,10 +37,10 @@ class Packet{
         unsigned int get_size();
 
         // Modifiers
-        void set_tag(uint8_t t);
-        void set_format(bool f);
-        void set_version(unsigned int v);
-        void set_size(unsigned int s);
+        void set_tag(const uint8_t t);
+        void set_format(const bool f);
+        void set_version(const unsigned int v);
+        void set_size(const unsigned int s);
 
         virtual Packet * clone() = 0;
 };

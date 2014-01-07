@@ -184,8 +184,7 @@ void PGP::read_raw(std::string & data){
     bool format;
     while (data.size()){
         std::string packet_data = read_packet_header(data, tag, format);
-        Packet * temp = read_packet(tag, packet_data);
-        temp -> set_format(format);
+        Packet * temp = read_packet(format, tag, packet_data);
         packets.push_back(temp);
     }
     armored = false;
@@ -194,7 +193,12 @@ void PGP::read_raw(std::string & data){
 std::string PGP::show(){
     std::stringstream out;
     for(Packet *& p : packets){
-        out << (p -> get_format()?"New":"Old")  << ": " << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ") (" << p -> get_size() << " octets)\n" + p -> show() << "\n";
+        out << (p -> get_format()?"New":"Old")  << ": ";
+        try{// defined packets have name and tag number
+            out << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ")";
+        }
+        catch (const std::out_of_range & e){}// catch out of range error for const std::map
+        out << "(" << p -> get_size() << " octets)\n" + p -> show() << "\n";
     }
     return out.str();
 }

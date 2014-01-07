@@ -7,8 +7,9 @@ unsigned int partialBodyLen(uint8_t first_octet){
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format){
     uint8_t ctb = data[0];													    // Name "ctb" came from Version 2 [RFC 1991]
     if (!(ctb & 0x80)){
-        std::cerr << "Error: First bit of tag header MUST be 1." << std::endl;
-        throw 1;
+        std::cerr << "Warning: First bit of packet header is not 1." << std::endl;
+//        std::cerr << "Error: First bit of packet header MUST be 1." << std::endl;
+//        throw 1;
     }
 
     unsigned int length = 0;                                                    // length of the data without the header
@@ -62,7 +63,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
     return packet;
 }
 
-Packet * read_packet(uint8_t & tag, std::string & packet_data){
+Packet * read_packet(const bool format, const uint8_t tag, std::string & packet_data){
     Packet * out;
     switch (tag){
         case 0:
@@ -121,10 +122,13 @@ Packet * read_packet(uint8_t & tag, std::string & packet_data){
             out = new Tag19;
             break;
         default:
-            std::cerr << "Error: Tag not defined or reserved." << std::endl;
-            throw 1;
+            out = new TagX;
+//            std::cerr << "Error: Tag not defined or reserved." << std::endl;
+//            throw 1;
             break;
     }
+    out -> set_tag(tag);
+    out -> set_format(format);
     out -> set_size(packet_data.size());
     out -> read(packet_data);
     return out;

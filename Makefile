@@ -6,12 +6,15 @@ CFLAGS=-std=c++11 -Wall -c
 debug: CFLAGS += -g
 debug: all
 
-all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o usehash.o verify.o common Compression Encryptions Hashes Packets PKA RNG Subpackets
 
-.PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
+.PHONY: common Compression Encryptions Hashes Packets PKA RNG Subpackets
 
 common:
 	$(MAKE) -C common
+
+Compression:
+	$(MAKE) -C Compression
 
 Encryptions:
 	$(MAKE) -C Encryptions
