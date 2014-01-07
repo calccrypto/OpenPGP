@@ -180,11 +180,8 @@ void PGP::read(std::ifstream & file){
 }
 
 void PGP::read_raw(std::string & data){
-    uint8_t tag;
-    bool format;
     while (data.size()){
-        std::string packet_data = read_packet_header(data, tag, format);
-        Packet * temp = read_packet(format, tag, packet_data);
+        Packet * temp = read_packet(data);
         packets.push_back(temp);
     }
     armored = false;

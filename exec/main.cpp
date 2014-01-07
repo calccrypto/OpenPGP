@@ -676,7 +676,5 @@ int main(int argc, char * argv[]){
         }
         parse_command(input);
     }
-    input = "show -k OpenPGP.cbp.asc";
-    parse_command(input);
     return 0;
 }

@@ -31,11 +31,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../Compression/pgpbzip2.h" />
-		<Unit filename="../Compression/pgpcompress.h" />
-		<Unit filename="../Compression/pgpzip.h" />
 		<Unit filename="../Compression/pgpzlib.cpp" />
-		<Unit filename="../Compression/pgpzlib.h" />
 		<Unit filename="../Encryptions/AES.cpp" />
 		<Unit filename="../Encryptions/AES.h" />
 		<Unit filename="../Encryptions/AES_Const.h" />

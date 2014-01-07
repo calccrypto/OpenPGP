@@ -28,10 +28,12 @@
 // calculates the length of a pertial body
 unsigned int partialBodyLen(uint8_t first_octet);
 
-// Reads and removes packet header, returning the raw packet data. Input data is shortened
+// reads and removes packet header, returning the raw packet data. Input data is shortened
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format);
 
 // parses raw packet data
-Packet * read_packet(const bool format, const uint8_t tag, std::string & packet_data);
+Packet * read_packet_raw(const bool format, const uint8_t tag, std::string & packet_data);
 
+// parse packet with header; wrapper for read_packet_header and read_packet_raw
+Packet * read_packet(std::string & data);
 #endif

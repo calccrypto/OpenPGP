@@ -188,14 +188,14 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     // clean up decrypted data for output
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
-        if (data[0] < 4){
+        if (data[0] < 4){ // 0 - Uncompressed; 1 - ZIP [RFC1951]; 2 - ZLIB [RFC1950]; 3 - BZip2 [BZ2]
             packet = 8;
         }
         else if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
             packet = 11;
         }
         else{
-            std::cerr << "Error: Unknown output format." << std::endl;
+            std::cerr << "Error: Unknown output format: '" << (char) data[0] << "'." << std::endl;
             throw 1;
         }
     }
@@ -217,7 +217,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         // can't use unless/until compression algorithms are implemented
 //        Tag8 tag8(data);
 //        data = tag8.get_data();
-        data = "Data in hex, so its easier to copy to a " + Compression_Algorithms.at(data[0]) + " decompressor:\n\n" + hexlify(data.substr(1, data.size() - 1));
+        data = "Data in hex, so it's easier to copy to a " + Compression_Algorithms.at(data[0]) + " decompressor:\n\n" + hexlify(data.substr(1, data.size() - 1));
     }
     else if (packet == 11){ // Literal Data Packet (Tag 11)
         Tag11 tag11(data);

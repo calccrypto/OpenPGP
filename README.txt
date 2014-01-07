@@ -24,8 +24,7 @@ IMPORTANT:
 This is a C++ implementation of the majority of RFC 4880,
 the OpenPGP Message Format. In addition to the included files,
 the GNU Multiprecision Library is necessary (gmp.org,
-sudo apt-get install libdev-gmp, or equivalent). Libraries for
-zip, zlib, and bzip2 might eventually be needed.
+sudo apt-get install libdev-gmp, or equivalent).
 
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me

@@ -1,5 +1,4 @@
 // Compressed Data Packet
-#include "../Compression/pgpcompress.h"
 #include "packet.h"
 
 #ifndef __TAG8__

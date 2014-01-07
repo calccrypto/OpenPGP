@@ -6,15 +6,12 @@ CFLAGS=-std=c++11 -Wall -c
 debug: CFLAGS += -g
 debug: all
 
-all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o usehash.o verify.o common Compression Encryptions Hashes Packets PKA RNG Subpackets
+all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o usehash.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
 
-.PHONY: common Compression Encryptions Hashes Packets PKA RNG Subpackets
+.PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
 common:
 	$(MAKE) -C common
-
-Compression:
-	$(MAKE) -C Compression
 
 Encryptions:
 	$(MAKE) -C Encryptions
@@ -52,7 +49,7 @@ mpi.o: mpi.h mpi.cpp common/includes.h
 PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h Subpackets/subpackets.h consts.h pgptime.h radix64.h
 	$(CC) $(CFLAGS) PGP.cpp
 
-PGPSignedMessage.o: PGPSignedMessage.h PGPSignedMessage.cpp
+PGPSignedMessage.o: PGPSignedMessage.h PGPSignedMessage.cpp PGP.h
 	$(CC) $(CFLAGS) PGPSignedMessage.cpp
 
 pgptime.o: pgptime.h pgptime.cpp consts.h
@@ -80,4 +77,11 @@ verify.o: verify.h verify.cpp Packets/packets.h PGP.h PGPSignedMessage.h PKA/PKA
 	$(CC) $(CFLAGS) $(LFLAGS) verify.cpp
 
 clean:
-	rm -f *.o common/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o
+	rm -f *.o
+	$(MAKE) -C common clean
+	$(MAKE) -C Encryptions clean
+	$(MAKE) -C Hashes clean
+	$(MAKE) -C Packets clean
+	$(MAKE) -C PKA clean
+	$(MAKE) -C RNG clean
+	$(MAKE) -C Subpackets clean

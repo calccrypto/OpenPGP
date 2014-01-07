@@ -63,7 +63,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
     return packet;
 }
 
-Packet * read_packet(const bool format, const uint8_t tag, std::string & packet_data){
+Packet * read_packet_raw(const bool format, const uint8_t tag, std::string & packet_data){
     Packet * out;
     switch (tag){
         case 0:
@@ -134,3 +134,9 @@ Packet * read_packet(const bool format, const uint8_t tag, std::string & packet_
     return out;
 }
 
+Packet * read_packet(std::string & data){
+    bool format;
+    uint8_t tag;
+    std::string packet_data = read_packet_header(data, tag, format);
+    return read_packet_raw(format, tag, packet_data);
+}
