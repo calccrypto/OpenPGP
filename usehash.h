@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#include <exception>
+
 #include "Hashes/Hashes.h"
 
 #ifndef __USE_HASH__

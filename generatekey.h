@@ -23,6 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#include <exception>
+#include <iostream>
+#include <vector>
+
 #include <gmpxx.h>
 
 #include "PKA/PKA.h"

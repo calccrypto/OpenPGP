@@ -2,6 +2,7 @@
 Public Key Algorithm list
 */
 
+#include <exception>
 #include <sstream>
 
 #include <gmpxx.h>

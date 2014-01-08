@@ -24,6 +24,7 @@ THE SOFTWARE.
 */
 
 #include <chrono>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <map>

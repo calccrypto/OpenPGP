@@ -214,10 +214,8 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
 
     // extract data for output
     if (packet == 8){ // Compressed Data Packet (Tag 8)
-        // can't use unless/until compression algorithms are implemented
-//        Tag8 tag8(data);
-//        data = tag8.get_data();
-        data = "Data in hex, so it's easier to copy to a " + Compression_Algorithms.at(data[0]) + " decompressor:\n\n" + hexlify(data.substr(1, data.size() - 1));
+        Tag8 tag8(data);
+        return tag8.get_data();
     }
     else if (packet == 11){ // Literal Data Packet (Tag 11)
         Tag11 tag11(data);

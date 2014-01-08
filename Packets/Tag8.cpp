@@ -6,6 +6,9 @@ std::string Tag8::compress(std::string data){
         case 0: // Uncompressed
             out = data;
             break;
+        case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107: case 108: case 109: case 110:
+            std::cerr << "Error: Private/Experimental algorithm." << std::endl;
+            throw 1;
         case 1: // ZIP [RFC1951]
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
@@ -23,6 +26,9 @@ std::string Tag8::decompress(std::string data){
         case 0: // Uncompressed
             out = data;
             break;
+        case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107: case 108: case 109: case 110:
+            std::cerr << "Error: Private/Experimental algorithm." << std::endl;
+            throw 1;
         case 1: // ZIP [RFC1951]
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
@@ -71,7 +77,8 @@ std::string Tag8::get_compressed_data(){
 }
 
 std::string Tag8::get_data(){
-    return decompress(compressed_data);
+    return "Data in hex, so it's easier to copy to a " + Compression_Algorithms.at(comp) + " decompressor:\n\n" + hexlify(compressed_data);
+//    return decompress(compressed_data);
 }
 
 void Tag8::set_comp(const uint8_t c){

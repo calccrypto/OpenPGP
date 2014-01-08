@@ -7,6 +7,7 @@ seeding once will seed for the entire program.
 
 #include <algorithm>
 #include <ctime>
+#include <exception>
 #include <iostream>
 
 #include <gmpxx.h>
