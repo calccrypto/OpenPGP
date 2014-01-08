@@ -4,9 +4,9 @@ Some functions were heavily influenced by python 2.7.2
 */
 
 #include <cstdint>
-#include <exception>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 #ifndef __INCLUDES__
 #define __INCLUDES__

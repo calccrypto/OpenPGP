@@ -25,8 +25,7 @@ void Tag17::read(std::string & data){
                 temp = new Tag17Sub1;
                 break;
             default:
-                std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
-                throw 1;
+                throw std::runtime_error("Error: Subpacket tag not defined or reserved.");
                 break;
         }
         subpacket = subpacket.substr(1, subpacket.size() - 1);

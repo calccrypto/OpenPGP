@@ -23,8 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <exception>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 #include "Packets/packets.h"
 #include "PGP.h"

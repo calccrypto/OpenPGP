@@ -42,8 +42,8 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, con
         return DSA_sign(hashed_data, pri, pub);
     }
     else{
-        std::cerr << "Error: Undefined or incorrect PKA number: " << (int) pka << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) pka;
+        throw std::runtime_error("Error: Undefined or incorrect PKA number: " + s.str());
     }
     return {};
 }
@@ -92,14 +92,12 @@ Tag2 * create_sig_packet(const uint8_t type, Tag5 * tag5, ID * id){
 Tag2 * create_sig_packet(const uint8_t type, PGP & key){
     Tag5 * tag5 = find_signing_key(key);
     if (!tag5){
-        std::cerr << "Error: No Private Key packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Private Key packet found.");
     }
 
     ID * id = find_signer_id(key);
     if (!id){
-        std::cerr << "Error : No ID packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No ID packet found.");
     }
 
     Tag2 * out = create_sig_packet(type, tag5, id);
@@ -111,14 +109,12 @@ Tag2 * create_sig_packet(const uint8_t type, PGP & key){
 
 PGP sign_file(const std::string & data, PGP & key, const std::string & passphrase){
     if (key.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required.");
     }
 
     Tag5 * signer = find_signing_key(key);
     if (!signer){
-        std::cerr << "Error: No Private Key packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Private Key packet found.");
     }
 
     Tag2 * sig = create_sig_packet(0x00, signer);
@@ -141,8 +137,7 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
 
 PGP sign_file(std::ifstream & f, PGP & key, const std::string & passphrase){
     if (!f){
-        std::cerr << "Error: Bad file." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Bad file.");
     }
     std::stringstream s;
     s << f.rdbuf();
@@ -153,14 +148,12 @@ PGP sign_file(std::ifstream & f, PGP & key, const std::string & passphrase){
 
 PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::string & passphrase){
     if (key.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required.");
     }
 
     Tag5 * signer = find_signing_key(key);
     if (!signer){
-        std::cerr << "Error: No Private Key packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Private Key packet found.");
     }
 
     Tag2 * sig = create_sig_packet(0x01, signer);
@@ -190,8 +183,8 @@ PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::st
 
 Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::string & passphrase){
     if ((cert < 0x10) || (cert > 0x13)){
-        std::cerr << "Error: Invalid Certification Value: " << (int) cert << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) cert;
+        throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
     Tag2 * sig = create_sig_packet(cert, key);
@@ -218,8 +211,8 @@ Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::stri
 
 Tag2 * sign_subkey(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase){
     if ((binding != 0x18) && (binding != 0x19)){
-        std::cerr << "Error: Invalid Binding Signature Value: " << (int) binding << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) binding;
+        throw std::runtime_error("Error: Invalid Binding Signature Value: " + s.str());
     }
 
     Tag2 * sig = create_sig_packet(binding, primary);

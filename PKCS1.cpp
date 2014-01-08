@@ -3,8 +3,7 @@
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
     if (m.size() > (k - 11)){
-        std::cerr << "Error: EME-PKCS1 Message too long." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: EME-PKCS1 Message too long.");
     }
     std::string EM = zero + "\x02";
     while (EM.size() < k - m.size() - 1){
@@ -31,8 +30,7 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m){
             }
         }
     }
-    std::cerr << "Error: EME-PKCS1 Decoding Error." << std::endl;
-    throw 1;
+    throw std::runtime_error("Error: EME-PKCS1 Decoding Error.");
 }
 
 std::string EMSA_PKCS1_v1_5(const uint8_t & h, std::string & hashed_data, const unsigned int & keylength){

@@ -6,11 +6,11 @@ std::string Packet::write_old_length(std::string data){
         out[0] |= 0;                                                       // 1 octet
         out += std::string(1, length);
     }
-    if ((256 <= length) && (length < 65536)){
+    else if ((256 <= length) && (length < 65536)){
         out[0] |= 1;
         out += unhexlify(makehex(length, 4));
     }
-    if (65536 <= length){
+    else if (65536 <= length){
         out[0] |= 2;                                                       // 4 octets
         out += unhexlify(makehex(length, 8));
     }

@@ -7,15 +7,13 @@ std::string Tag8::compress(std::string data){
             out = data;
             break;
         case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107: case 108: case 109: case 110:
-            std::cerr << "Error: Private/Experimental algorithm." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Private/Experimental algorithm.");
         case 1: // ZIP [RFC1951]
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
         default:
-            std::cerr << "Error: Compression functions not implemented." << std::endl;
-            throw 1;
-            break;
+            throw std::runtime_error("Error: Compression functions not implemented.");
+                        break;
     }
     return out;
 }
@@ -27,15 +25,13 @@ std::string Tag8::decompress(std::string data){
             out = data;
             break;
         case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107: case 108: case 109: case 110:
-            std::cerr << "Error: Private/Experimental algorithm." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Private/Experimental algorithm.");
         case 1: // ZIP [RFC1951]
         case 2: // ZLIB [RFC1950]
         case 3: // BZip2 [BZ2]
         default:
-            std::cerr << "Error: Decompression functions not implemented." << std::endl;
-            throw 1;
-            break;
+            throw std::runtime_error("Error: Decompression functions not implemented.");
+                        break;
     }
     return out;
 }

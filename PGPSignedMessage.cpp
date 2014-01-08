@@ -38,8 +38,7 @@ void PGPSignedMessage::read(std::string & data){
     }
 
     if (data.substr(0, 34) != "-----BEGIN PGP SIGNED MESSAGE-----"){
-        std::cerr << "Error: Data does not contain message section. Use PGP to parse this data." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Data does not contain message section. Use PGP to parse this data.");
     }
 
     ASCII_Armor = 6;
@@ -50,8 +49,7 @@ void PGPSignedMessage::read(std::string & data){
         x++;
     }
     if (x == data.size()){
-        std::cerr << "Error: End to Armor Header Line not found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: End to Armor Header Line not found.");
     }
     data = data.substr(x + 1, data.size() - x - 1);
 

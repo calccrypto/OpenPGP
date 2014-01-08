@@ -135,8 +135,8 @@ std::vector <Subpacket *> Tag2::read_subpackets(std::string & data){
                 temp = new Tag2Sub32;
                 break;
             default:
-                std::cerr << "Error: Subpacket tag not defined or reserved." << std::endl;
-                throw 1;
+                std::cerr << "Error: Unknown subpacket tag. Ignoring." << std::endl;
+                continue;
                 break;
         }
         temp -> read(subpacket_data);
@@ -151,8 +151,7 @@ void Tag2::read(std::string & data){
     version = data[0];
     if (version < 4){
         if (data[1] != 5){
-            std::cerr << "Error: Length of hashed material must be 5." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Length of hashed material must be 5.");
         }
         type = data[2];
         time = toint(data.substr(3, 4), 256);
@@ -310,8 +309,8 @@ std::string Tag2::get_keyid(){
         }
     }
     else{
-        std::cerr << "Error: Signature Packet version " << version << " not defined." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) version;
+        throw std::runtime_error("Error: Signature Packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -352,8 +351,8 @@ std::string Tag2::get_up_to_hashed(){
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
     else{
-        std::cerr << "Error: Signature packet version " << (int) version << " not defined." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) version;
+        throw std::runtime_error("Error: Signature packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -427,8 +426,7 @@ void Tag2::set_time(const uint32_t t){
 
 void Tag2::set_keyid(const std::string & k){
     if (k.size() != 8){
-        std::cerr << "Error: Key ID must be 8 octets." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Key ID must be 8 octets.");
     }
 
     if (version == 3){

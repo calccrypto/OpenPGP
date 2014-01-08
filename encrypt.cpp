@@ -27,8 +27,8 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std
         return ElGamal_encrypt(data, pub);
     }
     else{
-        std::cerr << "Error: PKA number " << pka << " not allowed or unknown." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) pka;
+        throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
     }
     return {}; // should never reach here; mainly just to remove compiler warnings
 }
@@ -41,16 +41,14 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
-        std::cerr << "Error: No encrypting key found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No encrypting key found.");
     }
 
     std::vector <Packet *> packets = pub.get_packets();
     Tag6 * public_key = find_encrypting_key(pub);
 
     if (!public_key){
-        std::cerr << "Error: No encrypting key found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No encrypting key found.");
     }
 
     std::vector <mpz_class> mpi = public_key -> get_mpi();

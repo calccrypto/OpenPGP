@@ -83,7 +83,7 @@ std::string Tag5::show_common(){
     else{
         out << "2 Octet Checksum\n";
     }
-    out << "        " << hexlify(secret) << std::endl;
+    out << "        " << hexlify(secret);
     return out.str();
 }
 
@@ -112,8 +112,7 @@ std::string Tag5::raw(){
     std::string out = raw_tag6() + std::string(1, s2k_con);
     if (s2k_con > 253){
         if (!s2k){
-            std::cerr << "Error: S2K has not been set." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: S2K has not been set.");
         }
         out += std::string(1, sym) + s2k -> write();
     }

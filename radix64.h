@@ -24,7 +24,6 @@ THE SOFTWARE.
 */
 
 #include <algorithm>
-#include <exception>
 #include <iostream>
 
 #include "common/includes.h"

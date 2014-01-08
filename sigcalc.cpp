@@ -9,8 +9,8 @@ std::string addtrailer(const std::string & data, Tag2 * sig){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
     }
     else{
-        std::cerr << "Error: addtrailer for version " << (int) sig -> get_version() << " not defined." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) sig -> get_version();
+        throw std::runtime_error("Error: addtrailer for version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -37,8 +37,8 @@ std::string certification(uint8_t version, ID * id){
         }
     }
     else{
-        std::cerr << "Error: Certification for version " << (int) version << " not defined." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) version;
+        throw std::runtime_error("Error: Certification for version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -67,8 +67,7 @@ std::string to_sign_01(const std::string & data, Tag2 * tag2){
 
 std::string to_sign_02(Tag2 * tag2){
     if (tag2 -> get_version() == 3){
-        std::cerr << "Error: It does not make sense to have a V3 standalone signature." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: It does not make sense to have a V3 standalone signature.");
     }
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
@@ -98,9 +97,8 @@ std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2){
 }
 
 std::string to_sign_1f(Tag2 * tag2){
-    std::cerr << "Error: Signature directly on a key has not implemented." << std::endl;
-    throw 1;
-//    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    throw std::runtime_error("Error: Signature directly on a key has not implemented.");
+    //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
 }
 
@@ -117,9 +115,8 @@ std::string to_sign_30(Key * key, ID * id, Tag2 * tag2){
 }
 
 std::string to_sign_40(Tag2 * tag2){
-    std::cerr << "Error: Signature directly on a key has not implemented." << std::endl;
-    throw 1;
-//    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    throw std::runtime_error("Error: Signature directly on a key has not implemented.");
+    //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
 }
 

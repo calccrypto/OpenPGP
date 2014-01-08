@@ -2,8 +2,7 @@
 
 Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
     Tag5 * signer = find_signing_key(pri);
@@ -19,8 +18,7 @@ Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const 
     }
 
     if (!key){
-        std::cerr << "Error: No Secret Key packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Secret Key packet found.");
     }
 
     Tag2 * sig = create_sig_packet(0x20, signer);
@@ -59,8 +57,7 @@ PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const
 
 Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
     Tag5 * signer = find_signing_key(pri);
@@ -76,8 +73,7 @@ Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8
     }
 
     if (!key){
-        std::cerr << "Error: No Secret Subkey packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
     Tag2 * sig = create_sig_packet(0x28, signer);
@@ -114,8 +110,7 @@ PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint
 
 PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
     std::vector <Packet *> packets = pri.get_packets();
@@ -146,8 +141,7 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
 
 PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: A private key is required for the second argument." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
     std::vector <Packet *> packets = pri.get_packets();

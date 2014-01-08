@@ -30,8 +30,8 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
         return ElGamal_decrypt(data, pri, pub);
     }
     else{
-        std::cerr << "Error: PKA number " << pka << " not allowed or unknown." << std::endl;
-        throw 1;
+        std::stringstream s; s << (int) pka;
+        throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -53,8 +53,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
     // calculate and check checksum
     if(pri -> get_s2k_con() == 254){
         if (use_hash(s2k -> get_hash(), secret_key) != checksum){
-            std::cerr << "Error: Secret key checksum and calculated checksum do not match." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match.");
         }
     }
     else{ // all other values; **UNTESTED**
@@ -64,8 +63,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
         }
         if (unhexlify(makehex(sum, 4)) != checksum){
             if (use_hash(s2k -> get_hash(), secret_key) != checksum){
-                std::cerr << "Error: Secret key checksum and calculated checksum do not match." << std::endl;
-                throw 1;
+                throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match.");
             }
         }
     }
@@ -79,13 +77,11 @@ std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passp
 
 std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
-        std::cerr << "Error: No encrypted message found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No encrypted message found.");
     }
 
     if (pri.get_ASCII_Armor() != 2){
-        std::cerr << "Error: No Private Key found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No Private Key found.");
     }
 
     // reused variables
@@ -116,9 +112,8 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         Tag5 * sec = find_decrypting_key(pri);
 
         if (!sec){
-            std::cerr << "Error: Correct Private Key not found." << std::endl;
-            throw 1;
-        }
+            throw std::runtime_error("Error: Correct Private Key not found.");
+                    }
 
         std::vector <mpz_class> pub = sec -> get_mpi();
         std::vector <mpz_class> pri = decrypt_secret_key(sec, passphrase);
@@ -135,9 +130,8 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             sum += (unsigned uint8_t) c;
         }
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
-            std::cerr << "Error: Calculated session key checksum does not match given checksum." << std::endl;
+            throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");
             delete sec;
-            throw 1;
         }
         delete sec;
     }
@@ -149,8 +143,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         session_key = data.substr(1, data.size() - 1);
     }
     else{
-        std::cerr << "Error: No session key packet found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No session key packet found.");
     }
 
     BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;        // get blocksize
@@ -174,8 +167,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         }
     }
     if (!data.size()){
-        std::cerr << "Error: No encrypted data packets found." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: No encrypted data packets found.");
     }
 
     if (sym == 2){ // Triple DES
@@ -195,16 +187,14 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             packet = 11;
         }
         else{
-            std::cerr << "Error: Unknown output format: '" << (char) data[0] << "'." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Unknown output format: '" + std::string(1, data[0]) + "'.");
         }
     }
     else if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
         checksum = data.substr(data.size() - 20, 20);       // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);            // remove SHA1 checksum
         if (use_hash(2, data) != checksum){                 // check SHA1 checksum
-            std::cerr << "Error: Given Checksum and calculated checksum do not match." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Given Checksum and calculated checksum do not match.");
         }
         data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header

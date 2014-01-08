@@ -27,12 +27,10 @@ SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::
             alg = new AES(key);
             break;
         case 10:
-            std::cerr << "Error: Twofish has not yet been implemented yet." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Twofish has not yet been implemented yet.");
             break;
         default:
-            std::cerr << "Error: Unknown symmetric key algorithm value." << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Unknown symmetric key algorithm value.");
             break;
     }
     return alg;
@@ -117,8 +115,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg * crypt, const uint8_t packet, const std:
 
     // 6
     if (prefix.substr(BS - 2, 2) != check){
-        std::cerr << "Error: Bad OpenPGP_CFB check value." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Bad OpenPGP_CFB check value.");
     }
     std::string P = "";
     unsigned int x = (packet == 9)?2:0; // 7

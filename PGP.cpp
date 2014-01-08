@@ -77,8 +77,7 @@ void PGP::read(std::string & data){
 
     // Signed message
     if (x == 6){
-        std::cerr << "Error: Data contains message section. Use PGPMessage to parse this data." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Data contains message section. Use PGPMessage to parse this data.");
     }
 
     ASCII_Armor = x;
@@ -89,9 +88,8 @@ void PGP::read(std::string & data){
         x++;
     }
     if (x == data.size()){
-        std::cerr << "Error: End to Armor Header Line not found." << std::endl;
-        throw 1;
-    }
+        throw std::runtime_error("Error: End to Armor Header Line not found.");
+            }
 
     data = data.substr(x + 1, data.size() - x - 1);
 
@@ -289,8 +287,7 @@ std::string PGP::keyid(){
         }
     }
     else{
-        std::cerr << "Error: PGP block type is incorrect." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: PGP block type is incorrect.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -338,8 +335,7 @@ std::string PGP::list_keys(){
         return out.str();
     }
     else{
-        std::cerr << "Error: Not a PGP Key. Cannot Display." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Not a PGP Key. Cannot Display.");
     }
 }
 

@@ -25,9 +25,8 @@ std::string ascii2radix64(std::string str, char char62, char char63){
 
 std::string radix642ascii(std::string str, char char62, char char63){
     if (str.size() & 3){
-        std::cerr << "Error: Input string length is not a multiple of 4." << std::endl;
-        throw 1;
-    }
+        throw std::runtime_error("Error: Input string length is not a multiple of 4.");
+            }
 
     std::string bin = "";
 
@@ -38,7 +37,7 @@ std::string radix642ascii(std::string str, char char62, char char63){
         str = str.substr(0, str.size() - 1);
     }
 
-    for(unsigned int x = 0; x < str.size(); x++)
+    for(unsigned int x = 0; x < str.size(); x++){
         if (('A' <= str[x]) && (str[x] <= 'Z')){
             bin += makebin(str[x] - 0x41, 6);
         }
@@ -55,9 +54,9 @@ std::string radix642ascii(std::string str, char char62, char char63){
             bin += makebin(0x3f, 6);
         }
         else{
-            std::cerr << "Error: Invalid Radix64 character found: " + std::string(1, str[x]) << std::endl;
-            throw 1;
+            throw std::runtime_error("Error: Invalid Radix64 character found: " + std::string(1, str[x]));
         }
+    }
     bin += std::string(unpad * 6, '0');
     str = "";
     for(unsigned int x = 0; x < bin.size(); x += 8){

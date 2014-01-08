@@ -33,7 +33,7 @@ std::string Tag4::show(){
 }
 
 std::string Tag4::raw(){
-    std::cerr << "Warning: Function not completed" << std::endl;
+    std::cerr << "Warning: Function not completed" << std::endl;;
     std::string out = "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, nested);
     // need to add nested packet
     return out;
@@ -76,8 +76,7 @@ void Tag4::set_pka(const uint8_t p){
 
 void Tag4::set_keyid(const std::string & k){
     if (k.size() != 8){
-        std::cerr << "Error: Key ID must be 8 octets." << std::endl;
-        throw 1;
+        throw std::runtime_error("Error: Key ID must be 8 octets.");
     }
     keyid = k;
     size = raw().size();
