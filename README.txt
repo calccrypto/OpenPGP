@@ -107,5 +107,4 @@ Notes:
     not this one (yet).
 
     If for some reason the program cannot operate on some data
-    properly, an exception of value 1 will be thrown, with an
-    error message written to stderr.
+    properly, an exception will be thrown.

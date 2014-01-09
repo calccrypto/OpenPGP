@@ -1,8 +1,7 @@
 #include "SHA1.h"
 
 void SHA1::run(const std::string & data, uint32_t & H0, uint32_t & H1, uint32_t & H2, uint32_t & H3, uint32_t & H4){
-    unsigned int n = 0;
-    for(; n < (data.size() >> 6); n++){
+    for(unsigned int n = 0; n < (data.size() >> 6); n++){
         uint32_t skey[80];
         for(uint8_t x = 0; x < 16; x++){
             skey[x] = toint(data.substr((n << 6) + (x << 2), 4), 256);
