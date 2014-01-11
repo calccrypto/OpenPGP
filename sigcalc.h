@@ -27,10 +27,10 @@ THE SOFTWARE.
 #include <sstream>
 #include <stdexcept>
 
+#include "Hashes/Hashes.h"
 #include "Packets/packets.h"
 #include "PGP.h"
 #include "pgptime.h"
-#include "usehash.h"
 
 #ifndef __SIGNATURE__
 #define __SIGNATURE__

@@ -1,4 +1,4 @@
-#include "usehash.h"
+#include "Hashes.h"
 
 std::string use_hash(uint8_t flag, std::string data){
     switch (flag){

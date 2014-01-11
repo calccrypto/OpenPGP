@@ -34,6 +34,7 @@ Tag2::~Tag2(){
     }
     unhashed_subpackets.clear();
 }
+
 // Extracts Subpacket data for figuring which subpacket type to create
 // Some data is destroyed in the process
 std::string Tag2::read_subpacket(std::string & data){

@@ -9,10 +9,11 @@ std::string PGP::format_string(std::string data, uint8_t line_length){
 }
 
 PGP::PGP(){
-    armored = false;
+    armored = true;
 }
 
 PGP::PGP(const PGP & pgp){
+    armored = pgp.armored;
     ASCII_Armor = pgp.ASCII_Armor;
     Armor_Header = pgp.Armor_Header;
     for(Packet * const & p : pgp.packets){

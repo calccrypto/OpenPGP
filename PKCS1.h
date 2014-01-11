@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include "RNG/RNG.h"
 #include "consts.h"
 #include "pgptime.h"
-#include "usehash.h"
 
 #ifndef __PKCS1__
 #define __PKCS1__

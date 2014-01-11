@@ -30,11 +30,11 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
+#include "Hashes/Hashes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
 #include "PGP.h"
 #include "PKCS1.h"
-#include "usehash.h"
 
 #ifndef __PGPENCRYPT__
 #define __PGPENCRYPT__

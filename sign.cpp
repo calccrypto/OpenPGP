@@ -19,13 +19,18 @@ Tag5 * find_signing_key(PGP & k){
     return NULL;
 }
 
-Tag13 * find_signer_id(PGP & k){
+ID * find_signer_id(PGP & k){
     std::vector <Packet *> packets = k.get_packets();
     for(Packet *& p : packets){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
             Tag13 * tag13 = new Tag13(data);
             return tag13;
+        }
+        if (p -> get_tag() == 17){
+            std::string data = p -> raw();
+            Tag17 * tag17 = new Tag17(data);
+            return tag17;
         }
     }
     return NULL;
@@ -139,11 +144,8 @@ PGP sign_file(std::ifstream & f, PGP & key, const std::string & passphrase){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }
-    std::stringstream s;
-    s << f.rdbuf();
-    std::string data = s.str();
-
-    return sign_file(data, key, passphrase);
+    std::stringstream s; s << f.rdbuf();
+    return sign_file(s.str(), key, passphrase);
 }
 
 PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::string & passphrase){
@@ -181,7 +183,16 @@ PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::st
     return message;
 }
 
-Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::string & passphrase){
+Tag2 * standalone_signature(Tag5 * key, Tag2 * src, const std::string & passphrase){
+    Tag2 * sig = create_sig_packet(0x02, key);
+    std::string hashed_data = to_sign_02(src);
+    sig -> set_left16(hashed_data.substr(0, 2));
+    sig -> set_mpi(pka_sign(hashed_data, key, passphrase, src -> get_hash()));
+
+    return sig;
+}
+
+Tag2 * sign_primary_key(Tag5 * key, ID * id, const std::string & passphrase, const uint8_t cert){
     if ((cert < 0x10) || (cert > 0x13)){
         std::stringstream s; s << (int) cert;
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
@@ -209,7 +220,144 @@ Tag2 * sign_primary_key(const uint8_t cert, Tag5 * key, ID * id, const std::stri
     return sig;
 }
 
-Tag2 * sign_subkey(const uint8_t binding, Tag5 * primary, Tag7 * sub, const std::string & passphrase){
+PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase, const uint8_t cert){
+    if (signee.get_ASCII_Armor() != 1){
+        throw std::runtime_error("Error: Signee key should be public.");
+    }
+
+    if (signer.get_ASCII_Armor() != 2){
+        throw std::runtime_error("Error: Signer key should be private.");
+    }
+
+    if ((cert < 0x10) || (cert > 0x13)){
+        std::stringstream s; s << (int) cert;
+        throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
+    }
+
+
+    Tag6 * signee_primary_key = NULL;
+    ID * signee_id = NULL;
+
+    // find primary key; generally packet[0]
+    std::vector <Packet *> signee_packets = signee.get_packets_clone();
+    unsigned int i = 0;
+    for(i = 0; i < signee_packets.size(); i++){
+        if (signee_packets[i] -> get_tag() == 6){
+            std::string raw = signee_packets[i] -> raw();
+            signee_primary_key = new Tag6(raw);
+            break;
+        }
+    }
+
+    // move pointer to user id
+    i++;
+
+    // check for user id packet
+    if (!(i < signee_packets.size())){
+        throw std::runtime_error("Error: No packets following Primary Key.");
+    }
+    if ((signee_packets[i] -> get_tag() != 13) && (signee_packets[i] -> get_tag() != 17)){
+        throw std::runtime_error("Error: No User ID packet following Primary Key");
+    }
+
+    // get signee user id packet
+    std::string raw_id = signee_packets[i] -> raw();
+    if (signee_packets[i] -> get_tag() == 13){
+        signee_id = new Tag13(raw_id);
+    }
+    else if (signee_packets[i] -> get_tag() == 17){
+        signee_id = new Tag17(raw_id);
+    }
+
+    // move i to after primary key signature
+    i++;
+
+    // get signer's signing packet
+    Tag5 * signer_signing_key = find_signing_key(signer);
+
+    // check if the signer has alreaady signed this key
+    unsigned int j = i;
+    while ((j < signee_packets.size()) && (signee_packets[j] -> get_tag() == 2)){
+        std::string raw = signee_packets[j++] -> raw();
+        Tag2 tag2(raw);
+        // search unhashed subpackets first (key id is usually in there)
+        for(Subpacket *& s: tag2.get_unhashed_subpackets()){
+            if (s -> get_type() == 16){
+                raw = s -> raw();
+                Tag2Sub16 tag2sub16(raw);
+                if (tag2sub16.get_keyid() == signer_signing_key -> get_keyid()){
+                    std::cerr << "Warning: Key " << signee << " has already been signed by this key " << signer << ". Nothing done. " << std::endl;
+                    return signee;
+                }
+            }
+        }
+
+        // search hashed subpackets
+        for(Subpacket *& s: tag2.get_hashed_subpackets()){
+            if (s -> get_type() == 16){
+                raw = s -> raw();
+                Tag2Sub16 tag2sub16(raw);
+                if (tag2sub16.get_keyid() == signer_signing_key -> get_keyid()){
+                    std::cerr << "Warning: Key " << signee << " has already been signed by this key " << signer << std::endl;
+                    return signee;
+                }
+            }
+        }
+    }
+
+    // sign key
+    Tag2 * sig = create_sig_packet(cert, signer_signing_key);
+    std::string hashed_data;
+    // really not necessary since they all call to_sign_10
+    if (cert == 0x10){
+        hashed_data = to_sign_10(signee_primary_key, signee_id, sig);
+    }
+    else if (cert == 0x11){
+        hashed_data = to_sign_11(signee_primary_key, signee_id, sig);
+    }
+    else if (cert == 0x12){
+        hashed_data = to_sign_12(signee_primary_key, signee_id, sig);
+    }
+    else if (cert == 0x13){
+        hashed_data = to_sign_13(signee_primary_key, signee_id, sig);
+    }
+
+    sig -> set_left16(hashed_data.substr(0, 2));
+    sig -> set_mpi(pka_sign(hashed_data, signer_signing_key, passphrase, sig -> get_hash()));
+
+    // Create output key
+    PGP out(signee);
+    std::vector <Packet *> out_packets;
+
+    j = 0;
+    // push all packets up to and including out packet into new packets
+    do{
+        out_packets.push_back(signee_packets[j]);
+    }
+    while ((j < signee_packets.size()) && (j++ < i));
+
+    // append revocation signature to key
+    out_packets.push_back(sig);
+
+    // append rest of packets
+    while (j < signee_packets.size()){
+        out_packets.push_back(signee_packets[j++]);
+    }
+    out.set_packets(out_packets);
+
+    delete signee_primary_key;
+    delete signee_id;
+    delete signer_signing_key;
+    delete sig;
+
+    for(Packet *& p: signee_packets){
+        delete p;
+    }
+
+    return out;
+}
+
+Tag2 * sign_subkey(Tag5 * primary, Tag7 * sub, const std::string & passphrase, const uint8_t binding){
     if ((binding != 0x18) && (binding != 0x19)){
         std::stringstream s; s << (int) binding;
         throw std::runtime_error("Error: Invalid Binding Signature Value: " + s.str());

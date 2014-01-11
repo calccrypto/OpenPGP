@@ -31,9 +31,9 @@ THE SOFTWARE.
 #include <gmpxx.h>
 
 #include "Packets/packets.h"
+#include "PKA/PKA.h"
 #include "PGP.h"
 #include "PGPSignedMessage.h"
-#include "PKA/PKA.h"
 #include "sigcalc.h"
 
 #ifndef __VERIFY__
@@ -42,7 +42,7 @@ THE SOFTWARE.
 std::string find_keyid(Tag2 * tag2);
 std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key);
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key);
 
 // Use string.size() to check if input was verified.
 bool verify_file(const std::string & data, PGP & sig, PGP & key);
@@ -50,5 +50,6 @@ bool verify_file(std::ifstream & f, PGP & sig, PGP & key);
 
 bool verify_message(PGPSignedMessage & message, PGP & key);
 bool verify_signature(PGP & sig, PGP & key);
+bool verify_revoke(Tag6 * key, Tag2 * rev);
 bool verify_revoke(PGP & key, PGP & rev);
 #endif

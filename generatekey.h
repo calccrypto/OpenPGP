@@ -30,6 +30,7 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
+#include "Hashes/Hashes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
 #include "PGP.h"
@@ -37,7 +38,6 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "sign.h"
 #include "sigcalc.h"
-#include "usehash.h"
 
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__

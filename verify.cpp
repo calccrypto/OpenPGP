@@ -46,7 +46,7 @@ std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & k
     return keys;
 }
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, std::vector <mpz_class> & key){
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key){
     std::vector <mpz_class> signature = tag2 -> get_mpi();
     if ((tag2 -> get_pka() == 1) || (tag2 -> get_pka() == 3)){
         return RSA_verify(hashed_message, signature, key);
@@ -246,6 +246,10 @@ bool verify_signature(PGP & key, PGP & signer){
     return out;
 }
 
+bool verify_revoke(Tag6 * key, Tag2 * rev){
+    return pka_verify(use_hash(rev -> get_hash(), addtrailer(overkey(key), rev)), rev, key -> get_mpi());
+}
+
 bool verify_revoke(PGP & key, PGP & rev){
     if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
@@ -262,8 +266,7 @@ bool verify_revoke(PGP & key, PGP & rev){
 
     // get revocation key; assume only 1 packet
     std::string rev_str = rev_pointers[0] -> raw();
-    Tag2 * revoke = new Tag2;
-    revoke -> read(rev_str);
+    Tag2 revoke(rev_str);
 
     // for each key packet
     for(Packet *& p : keys){
@@ -274,13 +277,10 @@ bool verify_revoke(PGP & key, PGP & rev){
             (p -> get_tag() == 14)){
 
             // copy key into Tag 6
-            Tag6 * tag6 = new Tag6;
             std::string key_str = p -> raw();
-            tag6 -> read(key_str);
-            std::vector <mpz_class> mpi = tag6 -> get_mpi();
-            std::string to_hash = addtrailer(overkey(tag6), revoke);
-            delete tag6;
-            if (pka_verify(to_hash, revoke, mpi)){
+            Tag6 tag6(key_str);
+
+            if (verify_revoke(&tag6, &revoke)){
                 return true;
             }
         }

@@ -13,4 +13,6 @@
 #include "SHA512.h"
 #include "SHA384.h"
 
+std::string use_hash(uint8_t flag, std::string data);
+
 #endif

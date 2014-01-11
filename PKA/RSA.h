@@ -8,7 +8,6 @@
 #include "../common/includes.h"
 #include "../RNG/RNG.h"
 #include "../pgptime.h"
-#include "../usehash.h"
 
 #ifndef __RSA__
 #define __RSA__

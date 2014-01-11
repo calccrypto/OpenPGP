@@ -53,6 +53,7 @@
 		<Unit filename="../Encryptions/TDES.h" />
 		<Unit filename="../Hashes/Hash.cpp" />
 		<Unit filename="../Hashes/Hash.h" />
+		<Unit filename="../Hashes/Hashes.cpp" />
 		<Unit filename="../Hashes/Hashes.h" />
 		<Unit filename="../Hashes/MD5.cpp" />
 		<Unit filename="../Hashes/MD5.h" />
@@ -231,8 +232,6 @@
 		<Unit filename="../sigcalc.h" />
 		<Unit filename="../sign.cpp" />
 		<Unit filename="../sign.h" />
-		<Unit filename="../usehash.cpp" />
-		<Unit filename="../usehash.h" />
 		<Unit filename="../verify.cpp" />
 		<Unit filename="../verify.h" />
 		<Unit filename="main.cpp" />

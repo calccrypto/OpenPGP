@@ -80,6 +80,10 @@ const std::vector <std::string> commands = {
     "            -o output name\n"                                          // filename; default stdout
     "            -d delete original?",                                      // t or f; default false
 
+    "revoke target revocation_certificate\n"                                // revoke a key with a revocation certificate
+    "        options:\n"
+    "            -o output name",                                           // filename; default stdout
+
     "revoke-key private_key passphrase [options]\n"                         // revoke a primary key
     "        options:\n"
     "            -o output name\n"                                          // filename; default stdout
@@ -95,6 +99,11 @@ const std::vector <std::string> commands = {
     "sign-file data_file private_key passphrase [options]\n"                // sign a file
     "        options:\n"
     "            -o output name",                                           // filename; default stdout
+
+    "sign-key signee signer passphrase\n"                                   // sign a key
+    "        options:\n"
+    "            -o output name\n"                                          // filename; default stdout
+    "            -c certification level",                                   // 0x10 - 0x13; default 0x13 (without "0x")
 
     "sign-message data_file private_key passphrase [options]\n"             // sign a string in a file
     "        options:\n"
@@ -178,6 +187,9 @@ bool parse_command(std::string & input){
             PGP pub, pri;
             generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing", 2048, 2048);
 
+            std::cout << "Generate Revocation Certificate" << std::endl;
+            PGP rev = revoke_primary_key_cert_key(pri, passphrase, 1, "Test Key");
+
             std::cout << "Show Keys (sent into null stream)" << std::endl;
             null_out << pub.show() << pri.show();
 
@@ -200,8 +212,11 @@ bool parse_command(std::string & input){
                 throw std::runtime_error("Error: Could not verify key signature.");
             }
 
-            std::cout << "Revoke Key" << std::endl;
-            PGP rev = revoke_key(pri, passphrase, 0);
+            std::cout << "Revoke Primary Key" << std::endl;
+            revoke_with_cert(pub, rev);
+
+            std::cout << "Revoke User ID" << std::endl;
+            revoke_uid(pub, pri, passphrase, 32, "Test Key");
 
             std::cout << "Test took " << std::chrono::duration_cast<std::chrono::duration<double> >(std::chrono::high_resolution_clock::now() - start).count() << " seconds." << std::endl;
         }
@@ -302,8 +317,7 @@ bool parse_command(std::string & input){
 
         try{
             PGP pri(f);
-            PGP rev = revoke_primary_key_cert_key(pri, passphrase, options["-c"][0] - '0', options["-r"]);
-            output(rev.write(), options["-o"]);
+            output(revoke_primary_key_cert_key(pri, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -374,8 +388,7 @@ bool parse_command(std::string & input){
         try{
             PGP key(k);
             PGP message(f);
-            std::string cleartext = decrypt_message(message, key, passphrase);
-            output(cleartext, options["-o"]);
+            output(decrypt_message(message, key, passphrase), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -385,10 +398,40 @@ bool parse_command(std::string & input){
             remove(data_file.c_str());
         }
     }
+    else if (cmd == "revoke"){
+        std::string target_file, rev_cert_file;
+        if (!(tokens >> target_file >> rev_cert_file) || (target_file == "") || (rev_cert_file == "")){
+            std::cout << "Syntax: " << commands[9] << std::endl;
+            return 1;
+        }
+        std::ifstream t(target_file.c_str());
+        if (!t){
+            std::cerr << "IOError: File " << target_file << " not opened." << std::endl;
+            return 1;
+        }
+        std::ifstream cert(rev_cert_file.c_str());
+        if (!cert){
+            std::cerr << "IOError: File " << rev_cert_file << " not opened." << std::endl;
+            return 1;
+        }
+
+        Options options;
+        options["-o"] = "";
+        parse_options(tokens, options);
+
+        try{
+            PGP key(t);
+            PGP rev(cert);
+            output(revoke_with_cert(key, rev).write(), options["-o"]);
+        }
+        catch (std::exception & e){
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
     else if (cmd == "revoke-key"){
         std::string pri, passphrase;
         if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[9] << std::endl;
+            std::cout << "Syntax: " << commands[10] << std::endl;
             return 1;
         }
 
@@ -406,8 +449,7 @@ bool parse_command(std::string & input){
 
         try{
             PGP key(f);
-            PGP rev = revoke_key(key, passphrase, options["-c"][0] - '0', options["-r"]);
-            output(rev.write(), options["-o"]);
+            output(revoke_key(key, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -416,7 +458,7 @@ bool parse_command(std::string & input){
     else if (cmd == "revoke-subkey"){
         std::string pri, passphrase;
         if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[10] << std::endl;
+            std::cout << "Syntax: " << commands[11] << std::endl;
             return 1;
         }
 
@@ -452,8 +494,7 @@ bool parse_command(std::string & input){
         parse_options(tokens, options);
 
         try{
-            PGP rev = revoke_subkey(key, passphrase, options["-c"][0] - '0', options["-r"]);
-            output(rev.write(), options["-o"]);
+            output(revoke_subkey(key, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -462,7 +503,7 @@ bool parse_command(std::string & input){
     else if (cmd == "sign-file"){
         std::string filename, pri, passphrase;
         if (!(tokens >> filename >> pri >> passphrase) || (filename == "") || (pri == "")){
-            std::cout << "Syntax: " << commands[11] << std::endl;
+            std::cout << "Syntax: " << commands[12] << std::endl;
             return 1;
         }
 
@@ -483,8 +524,39 @@ bool parse_command(std::string & input){
 
         try{
             PGP key(k);
-            PGP signature = sign_file(f, key, passphrase);
-            output(signature.write(), options["-o"]);
+            output(sign_file(f, key, passphrase).write(), options["-o"]);
+        }
+        catch (const std::exception & e){
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
+    else if (cmd == "sign-key"){
+        std::string signee_filename, signer_filename, passphrase;
+        if (!(tokens >> signee_filename >> signer_filename >> passphrase) || (signee_filename == "") || (signer_filename == "")){
+            std::cout << "Syntax: " << commands[13] << std::endl;
+            return 1;
+        }
+
+        std::ifstream signee_file(signee_filename.c_str());
+        if (!signee_file){
+            std::cerr << "IOError: File " << signee_filename << " not opened." << std::endl;
+            return 1;
+        }
+        std::ifstream signer_file(signer_filename.c_str());
+        if (!signer_file){
+            std::cerr << "IOError: File " << signer_filename << " not opened." << std::endl;
+            return 1;
+        }
+
+        Options options;
+        options["-o"] = "";
+        options["-c"] = "13";
+        parse_options(tokens, options);
+
+        try{
+            PGP signee(signee_file);
+            PGP signer(signer_file);
+            output(sign_primary_key(signee, signer, passphrase, mpz_class(options["-c"], 16).get_ui()).write(), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -493,7 +565,7 @@ bool parse_command(std::string & input){
     else if (cmd == "sign-message"){
         std::string data_file, pri, passphrase;
         if (!(tokens >> data_file >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[12] << std::endl;
+            std::cout << "Syntax: " << commands[14] << std::endl;
             return 1;
         }
 
@@ -518,8 +590,7 @@ bool parse_command(std::string & input){
 
         try{
             PGP key(k);
-            PGPSignedMessage message = sign_message(text, key, passphrase);
-            output(message.write(), options["-o"]);
+            output(sign_message(text, key, passphrase).write(), options["-o"]);
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << std::endl;
@@ -528,7 +599,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-file"){
         std::string filename, signame, pub;
         if (!(tokens >> filename >> signame >> pub) || (filename == "") || (signame == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[13] << std::endl;
+            std::cout << "Syntax: " << commands[15] << std::endl;
             return 1;
         }
 
@@ -558,7 +629,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-message"){
         std::string data, pub;
         if (!(tokens >> data >> pub) || (data == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[14] << std::endl;
+            std::cout << "Syntax: " << commands[16] << std::endl;
             return 1;
         }
         std::ifstream m(data.c_str());
@@ -583,7 +654,7 @@ bool parse_command(std::string & input){
     else if (cmd == "verify-key"){
         std::string key_file, signer_file;
         if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
-            std::cout << "Syntax: " << commands[15] << std::endl;
+            std::cout << "Syntax: " << commands[17] << std::endl;
             return 1;
         }
 

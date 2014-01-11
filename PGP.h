@@ -41,7 +41,7 @@ THE SOFTWARE.
 #define __PGP_BASE__
 class PGP{
     protected:
-        bool armored;
+        bool armored;                                                           // default true
         uint8_t ASCII_Armor;                                                    // What type of key is this
         std::vector <std::pair <std::string, std::string> > Armor_Header;       // messages in the header
         std::vector <Packet*> packets;                                          // main data

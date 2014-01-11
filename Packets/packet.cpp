@@ -47,7 +47,8 @@ std::string Packet::write_new_length(std::string data){
 Packet::~Packet(){}
 
 std::string Packet::write(uint8_t header){
-    if ((header && ((header == 2) || ((header == 1) && (tag > 15)))) ||   // if user set packet header or
+    if ((header && ((header == 2) ||                                      // if user set new packet header or
+       ((header == 1) && (tag > 15)))) ||                                 // if user set new packet header but tag is greater than 15 or
        (!header && ((format || ((!format) && (tag > 15)))))){             // if user did not set packet header and format is new, or format is old but tag is greater than 15
         return write_new_length(raw());
     }

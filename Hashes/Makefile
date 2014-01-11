@@ -5,10 +5,13 @@ CFLAGS=-std=c++11 -Wall -c
 debug: BFLAGS += -g
 debug: all
 
-all: Hash.o MD5.o RIPEMD160.o SHA1.o SHA224.o SHA256.o SHA2_Functions.o SHA384.o SHA512.o
+all: Hash.o Hashes.o MD5.o RIPEMD160.o SHA1.o SHA224.o SHA256.o SHA2_Functions.o SHA384.o SHA512.o
 
 Hash.o: Hash.h Hash.cpp ../common/includes.h
 	$(CC) $(CFLAGS) Hash.cpp
+
+Hashes.o: Hashes.h Hashes.cpp ../common/cryptomath.h ../common/includes.h Hash.h RIPEMD160.h SHA1.h SHA256.h SHA224.h SHA512.h SHA384.h
+	$(CC) $(CFLAGS) Hashes.cpp
 
 MD5.o: MD5.h MD5.cpp ../common/cryptomath.h ../common/includes.h Hash.h MD5_Const.h
 	$(CC) $(CFLAGS) MD5.cpp
