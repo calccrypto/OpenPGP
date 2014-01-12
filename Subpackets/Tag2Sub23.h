@@ -1,8 +1,9 @@
 // Key Server Preferences
-#include "subpacket.h"
-
 #ifndef __TAG2SUB23__
 #define __TAG2SUB23__
+
+#include "subpacket.h"
+
 class Tag2Sub23 : public Subpacket{
     private:
         char flags;

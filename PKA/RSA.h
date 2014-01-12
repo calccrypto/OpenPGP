@@ -1,3 +1,6 @@
+#ifndef __RSA__
+#define __RSA__
+
 #include <algorithm>
 #include <vector>
 #include <iostream>
@@ -8,9 +11,6 @@
 #include "../common/includes.h"
 #include "../RNG/RNG.h"
 #include "../pgptime.h"
-
-#ifndef __RSA__
-#define __RSA__
 
 // Generate RSA key values
 std::vector <mpz_class> RSA_keygen(const uint32_t & bits = 2048);

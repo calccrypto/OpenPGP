@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 #include "../PGP.h"
@@ -40,14 +41,14 @@ THE SOFTWARE.
 #include "../sign.h"
 #include "../verify.h"
 
-typedef std::map <std::string, std::string> Options;
+typedef std::map <std::string, std::string> Options;                        // simple type for storing function options + values
 
 const std::vector <std::string> commands = {
     "help [optional search string]",                                        // get help on commands; if there is a search string, it only searches the front of strings for matches
 
     "exit | quit\n",                                                        // end program
 
-    "test",                                                                 // test the program
+    "test",                                                                 // test some functions
 
     "list key_file",                                                        // list keys in file, like 'gpg --list-keys'
 
@@ -116,6 +117,7 @@ const std::vector <std::string> commands = {
     "verify-key key_file signer_key_file",                                  // verify signature
 };
 
+// simple stringstream to option + value
 void parse_options(std::stringstream & tokens, Options & options){
     std::string o, v;
     while (tokens >> o >> v){
@@ -143,41 +145,41 @@ void output(const std::string & data, const std::string & filename = ""){
     }
 }
 
-// function to parse above commands
+// function to parse commands
 bool parse_command(std::string & input){
-    std::stringstream tokens(input);
-    std::string cmd; tokens >> cmd;
-    if (cmd == ""){
-        return 1;
-    }
-    else if ((cmd == "exit") || (cmd == "quit")){
-        return 0;
-    }
-    else if (cmd == "help"){
-        std::string which;
-        tokens >> which;
-        if (!which.size()){
-            std::cout << "Commands:\n";
-            for(const std::string & c : commands){
-                std::cout << "    " << c << std::endl;
-            }
-            std::cout << std::endl;
+    try{
+        std::stringstream tokens(input);
+        std::string cmd; tokens >> cmd;
+        if (cmd == ""){
+            return 1;
         }
-        else{
-            bool found = false;
-            for(const std::string & c : commands){
-                if (c.substr(0, which.size()) == which){ // only check if front matches
-                    std::cout << "" + c << std::endl;
-                    found = true;
+        else if ((cmd == "exit") || (cmd == "quit")){
+            return 0;
+        }
+        else if (cmd == "help"){
+            std::string which;
+            tokens >> which;
+            if (!which.size()){
+                std::cout << "Commands:\n";
+                for(const std::string & c : commands){
+                    std::cout << "    " << c << std::endl;
+                }
+                std::cout << std::endl;
+            }
+            else{
+                bool found = false;
+                for(const std::string & c : commands){
+                    if (c.substr(0, which.size()) == which){ // only check if front matches
+                        std::cout << "" + c << std::endl;
+                        found = true;
+                    }
+                }
+                if (!found){
+                    std::cerr << "Error: Search string \"" + which + "\" does not match any commands." << std::endl;
                 }
             }
-            if (!found){
-                std::cerr << "Error: Search string \"" + which + "\" does not match any commands." << std::endl;
-            }
         }
-    }
-    else if (cmd == "test"){
-        try{
+        else if (cmd == "test"){
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
             const std::string passphrase = "abc";
@@ -220,466 +222,359 @@ bool parse_command(std::string & input){
 
             std::cout << "Test took " << std::chrono::duration_cast<std::chrono::duration<double> >(std::chrono::high_resolution_clock::now() - start).count() << " seconds." << std::endl;
         }
+        else if (cmd == "list"){
+            std::string file_name;
+            if (!(tokens >> file_name) || (file_name == "")){
+                throw std::runtime_error("Syntax: " + commands[3]);
+            }
+            std::ifstream f(file_name.c_str());
+            if (!f){
+                throw std::runtime_error("Error: File " + file_name + " not opened.");
+            }
 
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << "\nTest Failed." << std::endl;
-        }
-    }
-    else if (cmd == "list"){
-        std::string file_name;
-        if (!(tokens >> file_name) || (file_name == "")){
-            std::cout << "Syntax: " << commands[3] << std::endl;
-            return 1;
-        }
-        std::ifstream f(file_name.c_str());
-        if (!f){
-            std::cerr << "Error: File " << file_name << " not opened." << std::endl;
-            return 1;
-        }
-        try{
             PGP k(f);
             std::cout << k.list_keys() << std::endl;
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "show"){
-        std::string type, file_name;
-        if (!(tokens >> type >> file_name) ||
-           (!((type == "-k") || (type == "-K")) && !((type == "-m") || (type == "-M"))) ||
-            (file_name == "")){
-            std::cout << "Syntax: " << commands[4] << std::endl;
-            return 1;
-        }
+        else if (cmd == "show"){
+            std::string type, file_name;
+            if (!(tokens >> type >> file_name) ||
+               (!((type == "-k") || (type == "-K")) && !((type == "-m") || (type == "-M"))) ||
+                (file_name == "")){
+                throw std::runtime_error("Syntax: " + commands[4]);
+                return 1;
+            }
 
-        std::ifstream f(file_name.c_str());
-        if (!f){
-            std::cerr << "Error: File " << file_name << " not opened." << std::endl;
-            return 1;
+            std::ifstream f(file_name.c_str());
+            if (!f){
+                throw std::runtime_error("Error: File " + file_name + " not opened.");
+            }
+            if ((type == "-k") || (type == "-K")){
+                PGP key(f);
+                std::cout << key.show() << std::endl;
+            }
+            else if ((type == "-m") || (type == "-M")){
+                PGPSignedMessage message(f);
+                std::cout << message.show() << std::endl;
+            }
+            else{
+                std::cout << "Syntax: " << commands[4] << std::endl;
+            }
         }
-        if ((type == "-k") || (type == "-K")){
-            PGP key(f);
-            std::cout << key.show() << std::endl;
-        }
-        else if ((type == "-m") || (type == "-M")){
-            PGPSignedMessage message(f);
-            std::cout << message.show() << std::endl;
-        }
-        else{
-            std::cout << "Syntax: " << commands[4] << std::endl;
-        }
-    }
-    else if (cmd == "generatekeypair"){
-        Options options;
-        options["-o"] = "";
-        options["-pks"] = "1024";
-        options["-sks"] = "1024";
-        options["-pws"] = "";
-        options["-u"] = "";
-        options["-c"] = "";
-        options["-e"] = "";
-        parse_options(tokens, options);
+        else if (cmd == "generatekeypair"){
+            Options options;
+            options["-o"] = "";
+            options["-pks"] = "1024";
+            options["-sks"] = "1024";
+            options["-pws"] = "";
+            options["-u"] = "";
+            options["-c"] = "";
+            options["-e"] = "";
+            parse_options(tokens, options);
 
-        if (options.find("-h") != options.end()){
-            std::cout << "Syntax: " << commands[5] << std::endl;
-            return 1;
-        }
+            if (options.find("-h") != options.end()){
+                throw std::runtime_error("Syntax: " + commands[5]);
+            }
 
-        try{
             PGP pub, pri;
             generate_keys(pub, pri, options["-pw"], options["-u"], options["-c"], options["-e"], mpz_class(options["-pks"], 10).get_ui(), mpz_class(options["-sks"], 10).get_ui());
 
             output(pub.write(), options["-o"] + ".public");
             output(pri.write(), options["-o"] + ".private");
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "generate-revoke-cert"){
-        std::string pri_file, passphrase;
-        if (!(tokens >> pri_file >> passphrase) || (pri_file == "")){
-            std::cout << "Syntax: " << commands[6] << std::endl;
-            return 1;
-        }
-        std::ifstream f(pri_file.c_str());
-        if (!f){
-            std::cerr << "Error: Could not open private key file." << std::endl;
-            return 1;
-        }
+        else if (cmd == "generate-revoke-cert"){
+            std::string pri_file, passphrase;
+            if (!(tokens >> pri_file >> passphrase) || (pri_file == "")){
+                throw std::runtime_error("Syntax: " + commands[6]);
+            }
+            std::ifstream f(pri_file.c_str());
+            if (!f){
+                throw std::runtime_error("Error: File " + pri_file + " not opened.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-c"] = "0";
-        options["-r"] = "";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            options["-c"] = "0";
+            options["-r"] = "";
+            parse_options(tokens, options);
 
-        try{
             PGP pri(f);
             output(revoke_primary_key_cert_key(pri, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "encrypt"){
-        std::string data_file, pub_file;
-        if (!(tokens >> data_file >> pub_file) || (data_file == "") || (pub_file == "")){
-            std::cout << "Syntax: " << commands[7] << std::endl;
-            return 1;
-        }
+        else if (cmd == "encrypt"){
+            std::string data_file, pub_file;
+            if (!(tokens >> data_file >> pub_file) || (data_file == "") || (pub_file == "")){
+                throw std::runtime_error("Syntax: " + commands[7]);
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-d"] = "f";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            options["-d"] = "f";
+            parse_options(tokens, options);
 
-        std::ifstream d(data_file.c_str(), std::ios::binary);
-        if (!d){
-            std::cerr << "Error: Could not open source file." << std::endl;
-            return 1;
-        }
-        std::stringstream s;
-        s << d.rdbuf();
+            std::ifstream d(data_file.c_str(), std::ios::binary);
+            if (!d){
+                throw std::runtime_error("Error: File " + data_file + " not opened.");
+            }
 
-        std::ifstream k(pub_file.c_str());
-        if (!k){
-            std::cerr << "Error: Could not open key file." << std::endl;
-            return 1;
-        }
+            std::ifstream k(pub_file.c_str());
+            if (!k){
+                throw std::runtime_error("Error: File " + pub_file + " not opened.");
+            }
 
-        try{
+            std::stringstream s;
+            s << d.rdbuf();
+
             PGP key(k);
             output(encrypt(s.str(), key).write(), options["-o"]);
-        }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
 
-        if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
-            remove(data_file.c_str());
+            if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
+                remove(data_file.c_str());
+            }
         }
-    }
-    else if (cmd == "decrypt"){
-        std::string data_file, pri, passphrase;
-        if (!(tokens >> data_file >> pri >> passphrase) || (data_file == "") || (pri == "")){
-            std::cout << "Syntax: " << commands[8] << std::endl;
-            return 1;
-        }
+        else if (cmd == "decrypt"){
+            std::string data_file, pri, passphrase;
+            if (!(tokens >> data_file >> pri >> passphrase) || (data_file == "") || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[8]);
+            }
 
-        std::ifstream k(pri.c_str());
-        if (!k){
-            std::cerr << "Error: File " << pri << " not opened." << std::endl;
-            return 1;
-        }
+            std::ifstream k(pri.c_str());
+            if (!k){
+                throw std::runtime_error("Error: File " + pri + " not opened.");
+            }
 
-        std::ifstream f(data_file.c_str());
-        if (!f){
-            std::cerr << "Error: File " << data_file << " not opened." << std::endl;
-            return 1;
-        }
+            std::ifstream f(data_file.c_str());
+            if (!f){
+                throw std::runtime_error("Error: File " + data_file + " not opened.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-d"] = "f";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            options["-d"] = "f";
+            parse_options(tokens, options);
 
-        try{
             PGP key(k);
             PGP message(f);
             output(decrypt_message(message, key, passphrase), options["-o"]);
+            if (tolower(options["-d"][0]) == 't'){
+                remove(data_file.c_str());
+            }
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
+        else if (cmd == "revoke"){
+            std::string target_file, rev_cert_file;
+            if (!(tokens >> target_file >> rev_cert_file) || (target_file == "") || (rev_cert_file == "")){
+                throw std::runtime_error("Syntax: " + commands[9]);
+            }
+            std::ifstream t(target_file.c_str());
+            if (!t){
+                throw std::runtime_error("IOError: File " + target_file + " not opened.");
+            }
+            std::ifstream cert(rev_cert_file.c_str());
+            if (!cert){
+                throw std::runtime_error("IOError: File " + rev_cert_file + " not opened.");
+            }
 
-        if (tolower(options["-d"][0]) == 't'){
-            remove(data_file.c_str());
-        }
-    }
-    else if (cmd == "revoke"){
-        std::string target_file, rev_cert_file;
-        if (!(tokens >> target_file >> rev_cert_file) || (target_file == "") || (rev_cert_file == "")){
-            std::cout << "Syntax: " << commands[9] << std::endl;
-            return 1;
-        }
-        std::ifstream t(target_file.c_str());
-        if (!t){
-            std::cerr << "IOError: File " << target_file << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream cert(rev_cert_file.c_str());
-        if (!cert){
-            std::cerr << "IOError: File " << rev_cert_file << " not opened." << std::endl;
-            return 1;
-        }
+            Options options;
+            options["-o"] = "";
+            parse_options(tokens, options);
 
-        Options options;
-        options["-o"] = "";
-        parse_options(tokens, options);
-
-        try{
             PGP key(t);
             PGP rev(cert);
             output(revoke_with_cert(key, rev).write(), options["-o"]);
         }
-        catch (std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "revoke-key"){
-        std::string pri, passphrase;
-        if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[10] << std::endl;
-            return 1;
-        }
+        else if (cmd == "revoke-key"){
+            std::string pri, passphrase;
+            if (!(tokens >> pri >> passphrase) || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[10]);
+            }
 
-        std::ifstream f(pri.c_str());
-        if (!f){
-            std::cerr << "Error: Could not open private key file." << std::endl;
-            return 1;
-        }
+            std::ifstream f(pri.c_str());
+            if (!f){
+                throw std::runtime_error("Error: Could not open private key file.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-c"] = "0";
-        options["-r"] = "";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            options["-c"] = "0";
+            options["-r"] = "";
+            parse_options(tokens, options);
 
-        try{
             PGP key(f);
             output(revoke_key(key, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "revoke-subkey"){
-        std::string pri, passphrase;
-        if (!(tokens >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[11] << std::endl;
-            return 1;
-        }
-
-        std::ifstream f(pri.c_str());
-        if (!f){
-            std::cerr << "Error: Could not open private key file." << std::endl;
-            return 1;
-        }
-        PGP key(f);
-        if (key.get_ASCII_Armor() != 2){
-            std::cerr << "Error: Data is not a private key block." << std::endl;
-            return 1;
-        }
-
-        std::vector <Packet *> packets = key.get_packets();
-        bool found = false;
-        for(Packet *& p : packets){
-            if (p -> get_tag() == 7){
-                found = true;
-                break;
+        else if (cmd == "revoke-subkey"){
+            std::string pri, passphrase;
+            if (!(tokens >> pri >> passphrase) || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[11]);
             }
-        }
 
-        if (!found){
-            std::cerr << "Error: No Private Key Packet (Tag 5) found." << std::endl;
-            return 1;
-        }
+            std::ifstream f(pri.c_str());
+            if (!f){
+                std::cerr << "Error: Could not open private key file." << std::endl;
+                return 1;
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-c"] = "0";
-        options["-r"] = "";
-        parse_options(tokens, options);
+            PGP key(f);
 
-        try{
+            // find private subkey
+            std::vector <Packet *> packets = key.get_packets();
+            bool found = false;
+            for(Packet *& p : packets){
+                if (p -> get_tag() == 7){
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found){
+                throw std::runtime_error("Error: No Private Subkey Packet (Tag 5) found.");
+            }
+
+            Options options;
+            options["-o"] = "";
+            options["-c"] = "0";
+            options["-r"] = "";
+            parse_options(tokens, options);
+
             output(revoke_subkey(key, passphrase, options["-c"][0] - '0', options["-r"]).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "sign-file"){
-        std::string filename, pri, passphrase;
-        if (!(tokens >> filename >> pri >> passphrase) || (filename == "") || (pri == "")){
-            std::cout << "Syntax: " << commands[12] << std::endl;
-            return 1;
-        }
+        else if (cmd == "sign-file"){
+            std::string filename, pri, passphrase;
+            if (!(tokens >> filename >> pri >> passphrase) || (filename == "") || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[12]);
+            }
 
-        std::ifstream k(pri.c_str());
-        if (!k){
-            std::cerr << "IOError: File " << pri << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream f(filename.c_str(), std::ios::binary);
-        if (!f){
-            std::cerr << "IOError: file " << filename << " could not be created." << std::endl;
-            return 1;
-        }
+            std::ifstream k(pri.c_str());
+            if (!k){
+                throw std::runtime_error("IOError: File " + pri + " not opened.");
+            }
+            std::ifstream f(filename.c_str(), std::ios::binary);
+            if (!f){
+                throw std::runtime_error("IOError: file " + filename + " could not be created.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            parse_options(tokens, options);
 
-        try{
             PGP key(k);
             output(sign_file(f, key, passphrase).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "sign-key"){
-        std::string signee_filename, signer_filename, passphrase;
-        if (!(tokens >> signee_filename >> signer_filename >> passphrase) || (signee_filename == "") || (signer_filename == "")){
-            std::cout << "Syntax: " << commands[13] << std::endl;
-            return 1;
-        }
+        else if (cmd == "sign-key"){
+            std::string signee_filename, signer_filename, passphrase;
+            if (!(tokens >> signee_filename >> signer_filename >> passphrase) || (signee_filename == "") || (signer_filename == "")){
+                throw std::runtime_error("Syntax: " + commands[13]);
+            }
 
-        std::ifstream signee_file(signee_filename.c_str());
-        if (!signee_file){
-            std::cerr << "IOError: File " << signee_filename << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream signer_file(signer_filename.c_str());
-        if (!signer_file){
-            std::cerr << "IOError: File " << signer_filename << " not opened." << std::endl;
-            return 1;
-        }
+            std::ifstream signee_file(signee_filename.c_str());
+            if (!signee_file){
+                throw std::runtime_error("IOError: File " + signee_filename + " not opened.");
+            }
+            std::ifstream signer_file(signer_filename.c_str());
+            if (!signer_file){
+                throw std::runtime_error("IOError: File " + signer_filename + " not opened.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        options["-c"] = "13";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            options["-c"] = "13";
+            parse_options(tokens, options);
 
-        try{
             PGP signee(signee_file);
             PGP signer(signer_file);
             output(sign_primary_key(signee, signer, passphrase, mpz_class(options["-c"], 16).get_ui()).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "sign-message"){
-        std::string data_file, pri, passphrase;
-        if (!(tokens >> data_file >> pri >> passphrase) || (pri == "")){
-            std::cout << "Syntax: " << commands[14] << std::endl;
-            return 1;
-        }
+        else if (cmd == "sign-message"){
+            std::string data_file, pri, passphrase;
+            if (!(tokens >> data_file >> pri >> passphrase) || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[14]);
+            }
 
-        std::ifstream d(data_file.c_str());
-        if (!d){
-            std::cerr << "IOError: File " << data_file << " not opened." << std::endl;
-            return 1;
-        }
-        std::stringstream s;
-        s << d.rdbuf();
-        std::string text = s.str();
+            std::ifstream d(data_file.c_str());
+            if (!d){
+                std::cerr << "IOError: File " << data_file << " not opened." << std::endl;
+            }
+            std::stringstream s;
+            s << d.rdbuf();
+            std::string text = s.str();
 
-        std::ifstream k(pri.c_str());
-        if (!k){
-            std::cerr << "IOError: File " << pri << " not opened." << std::endl;
-            return 1;
-        }
+            std::ifstream k(pri.c_str());
+            if (!k){
+                throw std::runtime_error("IOError: File " + pri + " not opened.");
+            }
 
-        Options options;
-        options["-o"] = "";
-        parse_options(tokens, options);
+            Options options;
+            options["-o"] = "";
+            parse_options(tokens, options);
 
-        try{
             PGP key(k);
             output(sign_message(text, key, passphrase).write(), options["-o"]);
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "verify-file"){
-        std::string filename, signame, pub;
-        if (!(tokens >> filename >> signame >> pub) || (filename == "") || (signame == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[15] << std::endl;
-            return 1;
-        }
+        else if (cmd == "verify-file"){
+            std::string filename, signame, pub;
+            if (!(tokens >> filename >> signame >> pub) || (filename == "") || (signame == "") || (pub == "")){
+                throw std::runtime_error("Syntax: " + commands[15]);
+            }
 
-        std::ifstream f(filename.c_str(), std::ios::binary);
-        if (!f){
-            std::cerr << "Error: File " << filename << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream s(signame.c_str());
-        if (!s){
-            std::cerr << "Error: File " << signame << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream k(pub.c_str());
-        if (!k){
-            std::cerr << "Error: File " << pub << " not opened." << std::endl;
-            return 1;
-        }
-        try{
+            std::ifstream f(filename.c_str(), std::ios::binary);
+            if (!f){
+                throw std::runtime_error("Error: File " + filename + " not opened.");
+            }
+            std::ifstream s(signame.c_str());
+            if (!s){
+                throw std::runtime_error("Error: File " + signame + " not opened.");
+                return 1;
+            }
+            std::ifstream k(pub.c_str());
+            if (!k){
+                throw std::runtime_error("Error: File " + pub + " not opened.");
+            }
+
             PGP key(k), sig(s);
             std::cout << "File " << filename << " was" << (verify_file(f, sig, key)?"":" not") << " signed by key " << key << "." << std::endl;
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "verify-message"){
-        std::string data, pub;
-        if (!(tokens >> data >> pub) || (data == "") || (pub == "")){
-            std::cout << "Syntax: " << commands[16] << std::endl;
-            return 1;
-        }
-        std::ifstream m(data.c_str());
-        if (!m){
-            std::cerr << "Error: File " << data << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream k(pub.c_str());
-        if (!k){
-            std::cerr << "Error: File " << pub << " not opened." << std::endl;
-            return 1;
-        }
-        try {
+        else if (cmd == "verify-message"){
+            std::string data, pub;
+            if (!(tokens >> data >> pub) || (data == "") || (pub == "")){
+                throw std::runtime_error("Syntax: " + commands[16]);
+            }
+            std::ifstream m(data.c_str());
+            if (!m){
+                throw std::runtime_error("Error: File " + data + " not opened.");
+            }
+            std::ifstream k(pub.c_str());
+            if (!k){
+                throw std::runtime_error("Error: File " + pub + " not opened.");
+            }
+
             PGP key(k);
             PGPSignedMessage message(m);
             std::cout << "This message was" << (verify_message(message, key)?"":" not") << " signed by this key." << std::endl;
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-    else if (cmd == "verify-key"){
-        std::string key_file, signer_file;
-        if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
-            std::cout << "Syntax: " << commands[17] << std::endl;
-            return 1;
-        }
+        else if (cmd == "verify-key"){
+            std::string key_file, signer_file;
+            if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
+                throw std::runtime_error("Syntax: " + commands[17]);
+            }
 
-        std::ifstream k(key_file.c_str());
-        if (!k){
-            std::cerr << "Error: File " << key_file << " not opened." << std::endl;
-            return 1;
-        }
-        std::ifstream s(signer_file.c_str());
-        if (!s){
-            std::cerr << "Error: File " << signer_file << " not opened." << std::endl;
-            return 1;
-        }
+            std::ifstream k(key_file.c_str());
+            if (!k){
+                throw std::runtime_error("Error: File " + key_file + " not opened.");
+            }
+            std::ifstream s(signer_file.c_str());
+            if (!s){
+                throw std::runtime_error("Error: File " + signer_file + " not opened.");
+            }
 
-        try{
             PGP key(k);
             PGP signer(s);
             std::cout << "Key " << key << " was" << std::string(verify_signature(key, signer)?"":" not") << " signed by key " << signer << "." << std::endl;
         }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << std::endl;
+        else{
+            std::cerr << "CommandError: " << cmd << " not defined." << std::endl;
         }
     }
-    else{
-        std::cerr << "CommandError: " << cmd << " not defined." << std::endl;
+    catch (const std::exception & e){
+        std::cerr << e.what() << std::endl;
     }
     return 1;
 }

@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __PGPENCRYPT__
+#define __PGPENCRYPT__
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -35,9 +38,7 @@ THE SOFTWARE.
 #include "cfb.h"
 #include "PGP.h"
 #include "PKCS1.h"
-
-#ifndef __PGPENCRYPT__
-#define __PGPENCRYPT__
+#include "revoke.h"
 
 Tag6 * find_encrypting_key(PGP & k);
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub);

@@ -1,3 +1,6 @@
+#ifndef __SUBPACKET__
+#define __SUBPACKET__
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -6,8 +9,6 @@
 #include "../consts.h"
 #include "../pgptime.h"
 
-#ifndef __SUBPACKET__
-#define __SUBPACKET__
 class Subpacket{
     protected:
         uint8_t type = 0;

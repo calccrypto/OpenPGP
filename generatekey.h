@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __GENERATE_KEY__
+#define __GENERATE_KEY__
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -38,9 +41,6 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "sign.h"
 #include "sigcalc.h"
-
-#ifndef __GENERATE_KEY__
-#define __GENERATE_KEY__
 
 // Fills in provided empty keys
 void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);

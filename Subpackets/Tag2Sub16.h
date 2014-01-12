@@ -1,8 +1,9 @@
 // Issuer
-#include "subpacket.h"
-
 #ifndef __TAG2SUB16__
 #define __TAG2SUB16__
+
+#include "subpacket.h"
+
 class Tag2Sub16 : public Subpacket{
     private:
         std::string keyid; // 8 octets

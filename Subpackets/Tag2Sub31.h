@@ -1,8 +1,9 @@
 // Signature Target
-#include "subpacket.h"
-
 #ifndef __TAG2SUB31__
 #define __TAG2SUB31__
+
+#include "subpacket.h"
+
 class Tag2Sub31 : public Subpacket{
     private:
         uint8_t pka;

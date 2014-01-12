@@ -24,12 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __RIPEMD160__
+#define __RIPEMD160__
+
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
 #include "Hash.h"
-
-#ifndef __RIPEMD160__
-#define __RIPEMD160__
 
 #include "RIPEMD_Const.h"
 #include "RIPEMD160_Const.h"

@@ -1,8 +1,9 @@
 // Signature Creation Time
-#include "subpacket.h"
-
 #ifndef __TAG2SUB2__
 #define __TAG2SUB2__
+
+#include "subpacket.h"
+
 class Tag2Sub2 : public Subpacket{
     private:
         time_t time;

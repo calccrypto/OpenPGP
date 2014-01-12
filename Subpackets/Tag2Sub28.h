@@ -1,8 +1,9 @@
 // Signer's User ID
-#include "subpacket.h"
-
 #ifndef __TAG2SUB28__
 #define __TAG2SUB28__
+
+#include "subpacket.h"
+
 class Tag2Sub28 : public Subpacket{
     private:
         std::string signer;

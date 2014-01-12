@@ -1,8 +1,9 @@
-#include "subpacket.h"
-
+// Revocable
 #ifndef __TAG2SUB7__
 #define __TAG2SUB7__
-// Revocable
+
+#include "subpacket.h"
+
 class Tag2Sub7 : public Subpacket{
     private:
         bool revocable;

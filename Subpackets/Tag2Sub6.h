@@ -1,8 +1,9 @@
 // Regular Expression
-#include "subpacket.h"
-
 #ifndef __TAG2SUB6__
 #define __TAG2SUB6__
+
+#include "subpacket.h"
+
 class Tag2Sub6 : public Subpacket{
     private:
         std::string regex;

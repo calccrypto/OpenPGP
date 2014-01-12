@@ -1,8 +1,9 @@
 // User ID Packet
-#include "packet.h"
-
 #ifndef __TAG13__
 #define __TAG13__
+
+#include "packet.h"
+
 class Tag13 : public ID{
     private:
         std::string name;

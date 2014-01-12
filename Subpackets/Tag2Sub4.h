@@ -1,8 +1,9 @@
 // Exportable Certification
-#include "subpacket.h"
-
 #ifndef __TAG2SUB4__
 #define __TAG2SUB4__
+
+#include "subpacket.h"
+
 class Tag2Sub4 : public Subpacket{
     private:
         bool exportable;

@@ -2,6 +2,9 @@
 Public Key Algorithm list
 */
 
+#ifndef __PKA__
+#define __PKA__
+
 #include <sstream>
 
 #include <gmpxx.h>
@@ -10,8 +13,6 @@ Public Key Algorithm list
 #include "ElGamal.h"
 #include "RSA.h"
 
-#ifndef __PKA__
-#define __PKA__
 /*
 param:
     DSA = {L, N}

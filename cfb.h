@@ -23,15 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __OPENPGP_CFB__
+#define __OPENPGP_CFB__
+
 #include <iostream>
 #include <stdexcept>
 
 #include "Encryptions/Encryptions.h"
 #include "RNG/RNG.h"
 #include "consts.h"
-
-#ifndef __OPENPGP_OpenPGP_CFB__
-#define __OPENPGP_OpenPGP_CFB__
 
 const std::string TDES_mode1 = "e";
 const std::string TDES_mode2 = "d";

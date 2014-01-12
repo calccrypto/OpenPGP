@@ -1,10 +1,11 @@
 // Symmetric-Key Encrypted Session Key Packet
+#ifndef __TAG3__
+#define __TAG3__
+
 #include "../cfb.h"
 #include "packet.h"
 #include "s2k.h"
 
-#ifndef __TAG3__
-#define __TAG3__
 class Tag3 : public Packet{
     private:
         uint8_t sym;

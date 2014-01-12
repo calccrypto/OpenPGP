@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __PGPTIME__
+#define __PGPTIME__
+
 #include <ctime>
 #include <iostream>
 #include <sstream>
 
 #include "consts.h"
-
-#ifndef __PGPTIME__
-#define __PGPTIME__
 
 // get current time since epoch
 time_t now();

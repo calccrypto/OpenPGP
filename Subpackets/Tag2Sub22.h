@@ -1,8 +1,9 @@
 // Preferred Compression Algorithms
-#include "subpacket.h"
-
 #ifndef __TAG2SUB22__
 #define __TAG2SUB22__
+
+#include "subpacket.h"
+
 class Tag2Sub22 : public Subpacket{
     private:
         std::string pca;

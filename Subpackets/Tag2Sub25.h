@@ -1,8 +1,9 @@
 // Primary User ID
-#include "subpacket.h"
-
 #ifndef __TAG2SUB25__
 #define __TAG2SUB25__
+
+#include "subpacket.h"
+
 class Tag2Sub25 : public Subpacket{
     private:
         bool primary;

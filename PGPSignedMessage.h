@@ -23,10 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "PGP.h"
-
 #ifndef __PGP_SIGNED_MESSSAGE_BLOCK__
 #define __PGP_SIGNED_MESSSAGE_BLOCK__
+
+#include "PGP.h"
+
 class PGPSignedMessage{
     private:
         uint8_t ASCII_Armor;

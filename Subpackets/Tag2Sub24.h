@@ -1,8 +1,9 @@
 // Preferred Key Server
-#include "subpacket.h"
-
 #ifndef __TAG2SUB24__
 #define __TAG2SUB24__
+
+#include "subpacket.h"
+
 class Tag2Sub24 : public Subpacket{
     private:
         std::string pks;

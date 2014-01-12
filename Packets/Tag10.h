@@ -1,8 +1,9 @@
 // Marker Packet
-#include "packet.h"
-
 #ifndef __TAG10__
 #define __TAG10__
+
+#include "packet.h"
+
 class Tag10 : public Packet{
     private:
         std::string pgp; // "PGP"

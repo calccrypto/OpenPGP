@@ -23,15 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __S2K__
+#define __S2K__
+
 #include <iostream>
 #include <sstream>
 
 #include "../common/includes.h"
 #include "../Hashes/Hashes.h"
 #include "../consts.h"
-
-#ifndef __S2K__
-#define __S2K__
 
 #define EXPBIAS 6
 uint32_t coded_count(unsigned int c);

@@ -1,8 +1,9 @@
 // Modification Detection Code Packet
-#include "packet.h"
-
 #ifndef __TAG19__
 #define __TAG19__
+
+#include "packet.h"
+
 class Tag19 : public Packet{
     private:
         std::string hash;

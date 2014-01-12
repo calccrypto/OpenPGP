@@ -1,8 +1,9 @@
 // Preferred Hash Algorithms
-#include "subpacket.h"
-
 #ifndef __TAG2SUB21__
 #define __TAG2SUB21__
+
+#include "subpacket.h"
+
 class Tag2Sub21 : public Subpacket{
     private:
         std::string pha;

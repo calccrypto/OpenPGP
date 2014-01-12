@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __SIGN__
+#define __SIGN__
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -37,10 +40,9 @@ THE SOFTWARE.
 #include "PGP.h"
 #include "PGPSignedMessage.h"
 #include "pgptime.h"
+#include "revoke.h"
 #include "sigcalc.h"
 
-#ifndef __SIGN__
-#define __SIGN__
 // Extract private key data
 Tag5 * find_signing_key(PGP & k);
 ID * find_signer_id(PGP & k);

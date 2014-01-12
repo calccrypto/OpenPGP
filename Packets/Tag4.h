@@ -1,8 +1,9 @@
 // One-Pass Signature Packet
-#include "packet.h"
-
 #ifndef __TAG4__
 #define __TAG4__
+
+#include "packet.h"
+
 class Tag4 : public Packet{
     private:
         uint8_t type;

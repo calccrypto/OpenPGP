@@ -1,8 +1,9 @@
 // Image Attribute
-#include "subpacket.h"
-
 #ifndef __TAG17SUB1__
 #define __TAG17SUB1__
+
+#include "subpacket.h"
+
 class Tag17Sub1 : public Subpacket{
     private:
         uint8_t version;

@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __SHA256__
+#define __SHA256__
+
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
 #include "Hash.h"
-
-#ifndef __SHA256__
-#define __SHA256__
 
 #include "SHA2_Functions.h"
 #include "SHA256_Const.h"

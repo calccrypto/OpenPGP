@@ -2,6 +2,9 @@
 Input data should already be formatted and ready for hashing
 */
 
+#ifndef __DSA__
+#define __DSA__
+
 #include <vector>
 #include <iostream>
 
@@ -12,8 +15,6 @@ Input data should already be formatted and ready for hashing
 #include "../RNG/RNG.h"
 #include "../pgptime.h"
 
-#ifndef __DSA__
-#define __DSA__
 // Generate new set of parameters
 std::vector <mpz_class> new_DSA_public(const uint32_t & L = 2048, const uint32_t & N = 256);
 

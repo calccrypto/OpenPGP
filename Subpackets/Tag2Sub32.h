@@ -1,9 +1,10 @@
 // Embedded Signature
+#ifndef __TAG2SUB32__
+#define __TAG2SUB32__
+
 #include "../Packets/Tag2.h"
 #include "subpacket.h"
 
-#ifndef __TAG2SUB32__
-#define __TAG2SUB32__
 class Tag2Sub32 : public Subpacket{
     private:
         Tag2 * embedded;

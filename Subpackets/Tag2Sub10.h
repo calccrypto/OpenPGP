@@ -1,8 +1,9 @@
 // Placeholder for backward compatibility
-#include "subpacket.h"
-
 #ifndef __TAG2SUB10__
 #define __TAG2SUB10__
+
+#include "subpacket.h"
+
 class Tag2Sub10 : public Subpacket{
     private:
         std::string stuff;

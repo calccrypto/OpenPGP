@@ -122,6 +122,11 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
         throw std::runtime_error("Error: No Private Key packet found.");
     }
 
+    // Check if key has been revoked
+    if (check_revoked(key, signer -> get_keyid())){
+        throw std::runtime_error("Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.");
+    }
+
     Tag2 * sig = create_sig_packet(0x00, signer);
 
     std::string hashed_data = to_sign_00(data, sig);
@@ -281,7 +286,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
         std::string raw = signee_packets[j++] -> raw();
         Tag2 tag2(raw);
         // search unhashed subpackets first (key id is usually in there)
-        for(Subpacket *& s: tag2.get_unhashed_subpackets()){
+        for(Subpacket *& s : tag2.get_unhashed_subpackets()){
             if (s -> get_type() == 16){
                 raw = s -> raw();
                 Tag2Sub16 tag2sub16(raw);
@@ -293,7 +298,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
         }
 
         // search hashed subpackets
-        for(Subpacket *& s: tag2.get_hashed_subpackets()){
+        for(Subpacket *& s : tag2.get_hashed_subpackets()){
             if (s -> get_type() == 16){
                 raw = s -> raw();
                 Tag2Sub16 tag2sub16(raw);

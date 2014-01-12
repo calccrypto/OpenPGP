@@ -1,8 +1,9 @@
 // Compressed Data Packet
-#include "packet.h"
-
 #ifndef __TAG8__
 #define __TAG8__
+
+#include "packet.h"
+
 class Tag8 : public Packet{
     private:
         uint8_t comp;

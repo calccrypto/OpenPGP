@@ -37,7 +37,7 @@ cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 decrypt.o: decrypt.h decrypt.cpp Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGP.h PKCS1.h
 	$(CC) $(CFLAGS) $(LFLAGS) decrypt.cpp
 
-encrypt.o: encrypt.h encrypt.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h
+encrypt.o: encrypt.h encrypt.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h revoke.h
 	$(CC) $(CFLAGS) $(LFLAGS) encrypt.cpp
 
 generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h pgptime.h PKCS1.h sign.h sigcalc.h

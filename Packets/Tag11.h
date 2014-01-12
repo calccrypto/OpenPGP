@@ -1,8 +1,9 @@
 // Literal Data Packet
-#include "packet.h"
-
 #ifndef __TAG11__
 #define __TAG11__
+
+#include "packet.h"
+
 class Tag11 : public Packet{
     private:
         uint8_t format;

@@ -296,6 +296,36 @@ std::string PGP::keyid(){
 // output is copied from gpg --list-keys
 std::string PGP::list_keys(){
     if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
+        // scan for revoked keys
+        std::map <std::string, std::string> revoked;
+        for(Packet *& p : packets){
+            if (p -> get_tag() == 2){
+                std::string raw = p -> raw();
+                Tag2 tag2(raw);
+                if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
+                    bool found = false;
+                    for(Subpacket *& s : tag2.get_unhashed_subpackets()){
+                        if (s -> get_type() == 16){
+                            raw = s -> raw();
+                            Tag2Sub16 tag2sub16(raw);
+                            revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                            found = true;
+                        }
+                    }
+                    if (!found){
+                        for(Subpacket *& s : tag2.get_hashed_subpackets()){
+                            if (s -> get_type() == 16){
+                                raw = s -> raw();
+                                Tag2Sub16 tag2sub16(raw);
+                                revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                                found = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         std::stringstream out;
         for(Packet *& p : packets){
             std::string data = p -> raw();
@@ -303,12 +333,15 @@ std::string PGP::list_keys(){
                 case 5: case 6: case 7: case 14:
                     {
                         Tag6 tag6(data);
+                        std::map <std::string, std::string>::iterator r = revoked.find(tag6.get_keyid());
                         std::stringstream s;
                         s << tag6.get_mpi()[0].get_str(2).size();
                         out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, " ")
                                << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
                                << hexlify(tag6.get_keyid().substr(4, 4)) << " "
-                               << show_date(tag6.get_time()) << "\n";
+                               << show_date(tag6.get_time())
+                               << ((r == revoked.end())?std::string(""):(std::string(" [revoked: ") + revoked[tag6.get_keyid()] + std::string("]")))
+                               << "\n";
                     }
                     break;
                 case 13:

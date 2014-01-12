@@ -23,12 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __HASH__
+#define __HASH__
+
 #include <iostream>
 
 #include "../common/includes.h"
 
-#ifndef __HASH__
-#define __HASH__
 class Hash{
     protected:
         unsigned int bytes = 0;

@@ -1,8 +1,9 @@
 // Revocation Key
-#include "subpacket.h"
-
 #ifndef __TAG2SUB12__
 #define __TAG2SUB12__
+
+#include "subpacket.h"
+
 class Tag2Sub12 : public Subpacket{
     private:
         uint8_t _class;

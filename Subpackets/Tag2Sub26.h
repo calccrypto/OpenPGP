@@ -1,8 +1,9 @@
 // Policy URI
-#include "subpacket.h"
-
 #ifndef __TAG2SUB26__
 #define __TAG2SUB26__
+
+#include "subpacket.h"
+
 class Tag2Sub26 : public Subpacket{
     private:
         std::string uri;

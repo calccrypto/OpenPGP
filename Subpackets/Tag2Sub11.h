@@ -1,8 +1,9 @@
 // Preferred Symmetric Algorithms
-#include "subpacket.h"
-
 #ifndef __TAG2SUB11__
 #define __TAG2SUB11__
+
+#include "subpacket.h"
+
 class Tag2Sub11 : public Subpacket{
     private:
         std::string psa;

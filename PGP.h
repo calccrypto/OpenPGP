@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __PGP_BASE__
+#define __PGP_BASE__
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -37,8 +40,6 @@ THE SOFTWARE.
 #include "pgptime.h"
 #include "radix64.h"
 
-#ifndef __PGP_BASE__
-#define __PGP_BASE__
 class PGP{
     protected:
         bool armored;                                                           // default true

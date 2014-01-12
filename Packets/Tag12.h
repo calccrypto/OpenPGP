@@ -1,8 +1,9 @@
 // Trust Packet
-#include "packet.h"
-
 #ifndef __TAG12__
 #define __TAG12__
+
+#include "packet.h"
+
 class Tag12 : public Packet{
     private:
         std::string trust;

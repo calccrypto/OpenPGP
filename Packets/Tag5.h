@@ -1,9 +1,10 @@
 // Secret-Key Packet
+#ifndef __TAG5__
+#define __TAG5__
+
 #include "Tag6.h"
 #include "s2k.h"
 
-#ifndef __TAG5__
-#define __TAG5__
 class Tag5 : public Tag6{
     protected:
         uint8_t s2k_con;

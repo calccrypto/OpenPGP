@@ -1,8 +1,9 @@
 // Trust Signature
-#include "subpacket.h"
-
 #ifndef __TAG2SUB5__
 #define __TAG2SUB5__
+
+#include "subpacket.h"
+
 class Tag2Sub5 : public Subpacket{
     private:
         uint8_t level;

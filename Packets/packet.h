@@ -1,3 +1,6 @@
+#ifndef __PACKET__
+#define __PACKET__
+
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -7,9 +10,6 @@
 #include "../consts.h"
 #include "../mpi.h"
 #include "../pgptime.h"
-
-#ifndef __PACKET__
-#define __PACKET__
 
 class Packet{
     protected:

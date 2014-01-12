@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __VERIFY__
+#define __VERIFY__
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -35,9 +38,6 @@ THE SOFTWARE.
 #include "PGP.h"
 #include "PGPSignedMessage.h"
 #include "sigcalc.h"
-
-#ifndef __VERIFY__
-#define __VERIFY__
 
 std::string find_keyid(Tag2 * tag2);
 std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);

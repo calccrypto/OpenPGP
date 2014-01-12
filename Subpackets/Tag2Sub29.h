@@ -1,8 +1,9 @@
-#include "subpacket.h"
-
+// Reason for Revocation
 #ifndef __TAG2SUB29__
 #define __TAG2SUB29__
-// Reason for Revocation
+
+#include "subpacket.h"
+
 class Tag2Sub29 : public Subpacket{
     private:
         uint8_t code;

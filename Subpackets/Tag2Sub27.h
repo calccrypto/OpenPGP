@@ -1,8 +1,9 @@
 // Key Flags
-#include "subpacket.h"
-
 #ifndef __TAG2SUB27__
 #define __TAG2SUB27__
+
+#include "subpacket.h"
+
 class Tag2Sub27 : public Subpacket{
     private:
         char flags;

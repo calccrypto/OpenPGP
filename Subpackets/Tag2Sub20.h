@@ -1,8 +1,9 @@
 // Notation Data
-#include "subpacket.h"
-
 #ifndef __TAG2SUB20__
 #define __TAG2SUB20__
+
+#include "subpacket.h"
+
 class Tag2Sub20 : public Subpacket{
     private:
         std::string flags;  // 4 octets

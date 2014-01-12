@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __PKCS1__
+#define __PKCS1__
+
 #include <iostream>
 #include <stdexcept>
 
@@ -33,8 +36,6 @@ THE SOFTWARE.
 #include "consts.h"
 #include "pgptime.h"
 
-#ifndef __PKCS1__
-#define __PKCS1__
 // RFC 4880 13.1.1
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k);
 

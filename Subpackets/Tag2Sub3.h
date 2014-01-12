@@ -1,8 +1,9 @@
 // Signature Expiration Time
-#include "subpacket.h"
-
 #ifndef __TAG2SUB3__
 #define __TAG2SUB3__
+
+#include "subpacket.h"
+
 class Tag2Sub3 : public Subpacket{
     private:
         time_t time;

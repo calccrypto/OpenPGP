@@ -1,8 +1,9 @@
 // Features
-#include "subpacket.h"
-
 #ifndef __TAG2SUB30__
 #define __TAG2SUB30__
+
+#include "subpacket.h"
+
 class Tag2Sub30 : public Subpacket{
     private:
         char flags;

@@ -1,9 +1,11 @@
 // Signature Packet
 #include "../Subpackets/subpackets.h"
-#include "packet.h"
 
 #ifndef __TAG2__
 #define __TAG2__
+
+#include "packet.h"
+
 class Tag2 : public Packet{
     private:
         // common

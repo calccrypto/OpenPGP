@@ -23,10 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <iostream>
-
 #ifndef __SHA2_FUNCTIONS__
 #define __SHA2_FUNCTIONS__
+
+#include <iostream>
+
 uint64_t Ch(const uint64_t &  m, const uint64_t & n, const uint64_t & o);
 uint64_t  Maj(const uint64_t & m, const uint64_t & n, const uint64_t & o);
 #endif

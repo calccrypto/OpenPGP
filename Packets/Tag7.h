@@ -1,9 +1,10 @@
 // Secret-Subkey Packet
+#ifndef __TAG7__
+#define __TAG7__
+
 #include "Tag5.h"
 #include "Tag14.h"
 
-#ifndef __TAG7__
-#define __TAG7__
 class Tag7 : public Tag5{
     public:
         Tag7();

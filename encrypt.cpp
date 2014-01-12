@@ -51,6 +51,11 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
+    // Check if key has been revoked
+    if (check_revoked(packets, public_key -> get_keyid())){
+        throw std::runtime_error("Error: Key " + hexlify(public_key -> get_keyid()) + " has been revoked. Nothing done.");
+    }
+
     std::vector <mpz_class> mpi = public_key -> get_mpi();
     Tag1 * tag1 = new Tag1;
     tag1 -> set_keyid(public_key -> get_keyid());

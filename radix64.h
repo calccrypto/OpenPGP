@@ -23,13 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __RADIX64__
+#define __RADIX64__
+
 #include <algorithm>
 #include <iostream>
 
 #include "common/includes.h"
 
-#ifndef __RADIX64__
-#define __RADIX64__
 // RFC 4880 sec 6.2 - max is 76 for OpenPGP
 const unsigned int MAX_LINE_LENGTH = 64;
 

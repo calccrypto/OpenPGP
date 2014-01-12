@@ -5,14 +5,14 @@ Only one "real" instance of BBS exists at a time, since
 seeding once will seed for the entire program.
 */
 
+#ifndef __BBS__
+#define __BBS__
+
 #include <algorithm>
 #include <ctime>
 #include <iostream>
 
 #include <gmpxx.h>
-
-#ifndef __BBS__
-#define __BBS__
 
 #include "../common/cryptomath.h"
 #include "../pgptime.h"

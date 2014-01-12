@@ -1,9 +1,10 @@
 // Public-Key Packet
+#ifndef __TAG6__
+#define __TAG6__
+
 #include "../Hashes/Hashes.h"
 #include "packet.h"
 
-#ifndef __TAG6__
-#define __TAG6__
 class Tag6 : public Key{
     protected:
         time_t time;
@@ -32,8 +33,8 @@ class Tag6 : public Key{
         void set_pka(const uint8_t p);
         void set_mpi(const std::vector <mpz_class> & m);
 
-        std::string get_fingerprint();
-        std::string get_keyid();
+        std::string get_fingerprint();                      // binary
+        std::string get_keyid();                            // binary
 
         Tag6 * clone();
 };

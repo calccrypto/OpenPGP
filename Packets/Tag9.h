@@ -1,8 +1,9 @@
-#include "packet.h"
-
+// Symmetrically Encrypted Data Packet
 #ifndef __TAG9__
 #define __TAG9__
-// Symmetrically Encrypted Data Packet
+
+#include "packet.h"
+
 class Tag9 : public Packet{
     private:
         std::string encrypted_data;

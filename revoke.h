@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __REVOKE__
+#define __REVOKE__
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -35,8 +38,9 @@ THE SOFTWARE.
 #include "sign.h"
 #include "verify.h"
 
-#ifndef __REVOKE___
-#define __REVOKE__
+bool check_revoked(const std::vector <Packet *> & packets, const std::string & keyid);
+bool check_revoked(PGP & key, const std::string & keyid);
+
 // main function to revoke a primary key
 Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 // packages certification into a key

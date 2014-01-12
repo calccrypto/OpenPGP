@@ -23,13 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+
+#ifndef __PGP_CONSTS__
+#define __PGP_CONSTS__
+
 #include <cstdint>
 #include <iostream>
 #include <map>
 #include <utility>
 
-#ifndef __PGP_CONSTS__
-#define __PGP_CONSTS__
 // ASCII data at beginning and end of OpenPGP packet
 const std::string ASCII_Armor_Header[7] = {
                "MESSAGE",                               // Used for signed, encrypted, or compressed files.

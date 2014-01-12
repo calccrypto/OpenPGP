@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __SHA1__
+#define __SHA1__
+
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
 #include "Hash.h"
-
-#ifndef __SHA1__
-#define __SHA1__
 
 class SHA1 : public Hash {
     private:

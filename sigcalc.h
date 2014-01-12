@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#ifndef __SIGNATURE__
+#define __SIGNATURE__
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -31,9 +34,6 @@ THE SOFTWARE.
 #include "Packets/packets.h"
 #include "PGP.h"
 #include "pgptime.h"
-
-#ifndef __SIGNATURE__
-#define __SIGNATURE__
 
 // Modify data for signature version 3 or 4
 //

@@ -1,9 +1,9 @@
 // partial length packet?
+#ifndef __TAGX__
+#define __TAGX__
 
 #include "Packet.h"
 
-#ifndef __TAGX__
-#define __TAGX__
 class TagX : public Packet{
     private:
         std::string stream;

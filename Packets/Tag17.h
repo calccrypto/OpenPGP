@@ -1,9 +1,10 @@
 // User Attribute Packet
+#ifndef __TAG17__
+#define __TAG17__
+
 #include "../Subpackets/subpackets.h"
 #include "packet.h"
 
-#ifndef __TAG17__
-#define __TAG17__
 class Tag17 : public ID{
     private:
         uint64_t length;

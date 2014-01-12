@@ -1,4 +1,42 @@
 #include "revoke.h"
+bool check_revoked(const std::vector <Packet *> & packets, const std::string & keyid){
+    for(Packet * const & p: packets){
+        // if a signature packet
+        if (p -> get_tag() == 2){
+            std::string raw = p -> raw();
+            Tag2 tag2(raw);
+            for(Subpacket *& s: tag2.get_unhashed_subpackets()){
+                if (s -> get_type() == 16){
+                    raw = s -> raw();
+                    Tag2Sub16 tag2sub16(raw);
+                    // check that this signature packet is for the public key
+                    if (tag2sub16.get_keyid() == keyid){
+                        if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
+                            return true;
+                        }
+                    }
+                }
+            }
+            for(Subpacket *& s: tag2.get_hashed_subpackets()){
+                if (s -> get_type() == 16){
+                    raw = s -> raw();
+                    Tag2Sub16 tag2sub16(raw);
+                    // check that this signature packet is for the public key
+                    if (tag2sub16.get_keyid() == keyid){
+                        if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool check_revoked(PGP & key, const std::string & keyid){
+    return check_revoked(key.get_packets(), keyid);
+}
 
 Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
@@ -295,7 +333,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
 
     // find key id to revoke
     // search unhashed subpackets
-    for(Subpacket *& s: tag2.get_unhashed_subpackets()){
+    for(Subpacket *& s : tag2.get_unhashed_subpackets()){
         if (s -> get_type() == 16){
             std::string raws = s -> raw();
             Tag2Sub16 tag2sub16(raws);
@@ -305,7 +343,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
     if (!r_keyid.size()){
         // search hashed subpackets
-        for(Subpacket *& s: tag2.get_hashed_subpackets()){
+        for(Subpacket *& s : tag2.get_hashed_subpackets()){
             if (s -> get_type() == 16){
                 std::string raws = s -> raw();
                 Tag2Sub16 tag2sub16(raws);

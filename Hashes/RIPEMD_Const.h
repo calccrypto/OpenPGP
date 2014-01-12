@@ -23,10 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include <iostream>
-
 #ifndef __RIPEMD_CONST__
 #define __RIPEMD_CONST__
+
+#include <iostream>
+
 const uint32_t RIPEMD_H0 = 0x67452301;
 const uint32_t RIPEMD_H1 = 0xEFCDAB89;
 const uint32_t RIPEMD_H2 = 0x98BADCFE;

@@ -1,8 +1,9 @@
 // Key Experiation Time
-#include "subpacket.h"
-
 #ifndef __TAG2SUB9__
 #define __TAG2SUB9__
+
+#include "subpacket.h"
+
 class Tag2Sub9 : public Subpacket{
     private:
         time_t time;

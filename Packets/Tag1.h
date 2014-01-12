@@ -1,8 +1,8 @@
 // Public-Key Encrypted Session Key Packet
-#include "packet.h"
-
 #ifndef __TAG1__
 #define __TAG1__
+
+#include "packet.h"
 class Tag1 : public Packet{
     private:
         std::string keyid;              // 8 octets
