@@ -90,7 +90,8 @@ When building for another project, remember to link GMP to
 the main program.
 
 Notes:
-    Keyrings were not implemented.
+    Keyrings were not implemented. Rather, keys are read
+    from the directory used as arguments to functions.
 
     There are some things that are not implemented, such as
     the Twofish algorithm and compression/decompression of data.

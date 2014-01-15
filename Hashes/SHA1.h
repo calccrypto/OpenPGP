@@ -34,14 +34,9 @@ class SHA1 : public Hash {
     private:
         uint32_t h0, h1, h2, h3, h4;
 
-        void run(const std::string & data, uint32_t & H0, uint32_t & H1, uint32_t & H2, uint32_t & H3, uint32_t & H4);
-
     public:
-        SHA1(const std::string & data = "");
-        void update(const std::string & data = "");
+        SHA1(const std::string & str = "");
         std::string hexdigest();
-        unsigned int blocksize();
-        unsigned int digestsize();
 };
 
 #endif

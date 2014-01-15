@@ -35,13 +35,9 @@ THE SOFTWARE.
 class MD5 : public Hash{
     private:
         uint32_t h0, h1, h2, h3;
-        void run(const std::string & data, uint32_t & H0, uint32_t & H1, uint32_t & H2, uint32_t & H3);
 
     public:
         MD5(const std::string & data = "");
-        void update(const std::string & data = "");
         std::string hexdigest();
-        unsigned int blocksize();
-        unsigned int digestsize();
 };
 #endif

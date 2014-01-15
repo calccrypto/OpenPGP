@@ -42,14 +42,13 @@ class SHA256 : public Hash{
         uint32_t s0(const uint32_t & value);
         uint32_t s1(const uint32_t & value);
 
-        void run(const std::string & data, uint32_t & H0, uint32_t & H1, uint32_t & H2, uint32_t & H3, uint32_t & H4, uint32_t & H5, uint32_t & H6, uint32_t & H7);
+        virtual void original_h();
+
+        void run(const std::string & str);
 
     public:
         SHA256(const std::string & data = "");
-        void update(const std::string & data = "");
         std::string hexdigest();
-        unsigned int blocksize();
-        virtual unsigned int digestsize();;
 };
 
 #endif

@@ -127,7 +127,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key
         uint16_t sum = 0;
         for(char & c : session_key){                                                        // calculate session key checksum
-            sum += (unsigned uint8_t) c;
+            sum += (uint8_t) c;
         }
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");

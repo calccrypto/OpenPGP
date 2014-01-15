@@ -39,13 +39,8 @@ class RIPEMD160 : public Hash{
         uint32_t h0, h1, h2, h3, h4;
         uint32_t F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round);
 
-        void run(const std::string & data, uint32_t & H0, uint32_t & H1, uint32_t & H2, uint32_t & H3, uint32_t & H4);
-
     public:
         RIPEMD160(const std::string & data = "");
-        void update(const std::string & data = "");
         std::string hexdigest();
-        unsigned int blocksize();
-        unsigned int digestsize();
 };
 #endif

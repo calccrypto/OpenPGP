@@ -31,16 +31,9 @@ THE SOFTWARE.
 #include "../common/includes.h"
 
 class Hash{
-    protected:
-        unsigned int bytes = 0;
-        std::string buffer = "";
-
     public:
         Hash();
-        virtual void update(const std::string & data = "") = 0;
         virtual std::string hexdigest() = 0;
         std::string digest();
-        virtual unsigned int blocksize() = 0;
-        virtual unsigned int digestsize() = 0;
 };
 #endif

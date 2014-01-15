@@ -41,13 +41,12 @@ class SHA512 : public Hash{
         uint64_t s0(uint64_t & value);
         uint64_t s1(uint64_t & value);
 
-        void run(const std::string & data, uint64_t & H0, uint64_t & H1, uint64_t & H2, uint64_t & H3, uint64_t & H4, uint64_t & H5, uint64_t & H6, uint64_t & H7);
+        virtual void original_h();
+
+        void run(const std::string & str);
 
     public:
         SHA512(const std::string & data = "");
-        void update(const std::string & data = "");
         std::string hexdigest();
-        unsigned int blocksize();
-        virtual unsigned int digestsize();
 };
 #endif
