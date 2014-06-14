@@ -156,7 +156,7 @@ bool parse_command(std::string & input){
         else if ((cmd == "exit") || (cmd == "quit")){
             return 0;
         }
-        else if (cmd == "help"){
+        else if ((cmd == "help") || (cmd == "?")){
             std::string which;
             tokens >> which;
             if (!which.size()){
