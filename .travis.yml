@@ -1,0 +1,9 @@
+language: cpp
+
+compiler:
+  - clang
+
+before_script:
+  - cd tests && make
+
+script: ./tests
