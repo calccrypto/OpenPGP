@@ -18,23 +18,17 @@ uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z
     }
 }
 
-RIPEMD160::RIPEMD160(const std::string & str){
-    h0 = RIPEMD_H0;
-    h1 = RIPEMD_H1;
-    h2 = RIPEMD_H2;
-    h3 = RIPEMD_H3;
-    h4 = RIPEMD_H4;
-    uint32_t bytes = str.size();
-    std::string data = str + "\x80" + std::string((((bytes & 63) > 55)?119:55) - (bytes & 63), 0);
-    std::string temp = "";
-    for(unsigned int x = 0; x < data.size() >> 2; x++){
-        temp += little_end(data.substr(x << 2, 4), 256);
+std::string RIPEMD160::to_little_end(const std::string &data){
+    std::string result;
+    for(unsigned int x = 0; x < (data.size() >> 2); x++){
+        result += little_end(data.substr(x << 2, 4), 256);
     }
-    data = temp;
-    temp = unhexlify(makehex(((uint64_t) bytes << 3), 16));
-    data += temp.substr(4, 4) + temp.substr(0, 4);
+    return result;
+}
+
+void RIPEMD160::calc(const std::string &data, context &state){
     for(unsigned int i = 0; i < (data.size() >> 6); i++){
-        uint32_t a = h0, b = h1, c = h2, d = h3, e = h4, A = h0, B = h1, C = h2, D = h3, E = h4;
+        uint32_t a = state.h0, b = state.h1, c = state.h2, d = state.h3, e = state.h4, A = state.h0, B = state.h1, C = state.h2, D = state.h3, E = state.h4;
         uint32_t X[16];
         for(uint8_t j = 0; j < 16; j++){
             X[j] = toint(data.substr(i << 6, 64).substr(j << 2, 4), 256);
@@ -47,15 +41,44 @@ RIPEMD160::RIPEMD160(const std::string & str){
             A = E; E = D; D = ROL(C, 10, 32); C = B; B = T;
 
         }
-        T = h1 + c + D;
-        h1 = h2 + d + E;
-        h2 = h3 + e + A;
-        h3 = h4 + a + B;
-        h4 = h0 + b + C;
-        h0 = T;
+        T        = state.h1 + c + D;
+        state.h1 = state.h2 + d + E;
+        state.h2 = state.h3 + e + A;
+        state.h3 = state.h4 + a + B;
+        state.h4 = state.h0 + b + C;
+        state.h0 = T;
     }
 }
 
+RIPEMD160::RIPEMD160() :
+    Hash(),
+    ctx(RIPEMD_H0, RIPEMD_H1, RIPEMD_H2, RIPEMD_H3, RIPEMD_H4)
+{}
+
+RIPEMD160::RIPEMD160(const std::string & str) :
+    RIPEMD160()
+{
+    update(str);
+}
+
+void RIPEMD160::update(const std::string & str){
+    std::string data = stack + str;
+    stack.clear();
+    std::string::size_type size = ((data.size() >> 6) << 6);
+    if ( std::string::size_type rem = ( data.size() - size ) ){
+        stack = data.substr(size, rem);
+    }
+    calc(to_little_end(data.substr(0, size)), ctx);
+    clen += size;
+}
+
 std::string RIPEMD160::hexdigest(){
-    return little_end(makehex(h0, 8)) + little_end(makehex(h1, 8)) + little_end(makehex(h2, 8)) + little_end(makehex(h3, 8)) + little_end(makehex(h4, 8));
+    context tmp = ctx;
+    uint16_t size = stack.size();
+    std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0);
+    last = to_little_end(last);
+    std::string temp = unhexlify(makehex(((clen+size) << 3), 16));
+    last += temp.substr(4, 4) + temp.substr(0, 4);
+    calc(last, tmp);
+    return little_end(makehex(tmp.h0, 8)) + little_end(makehex(tmp.h1, 8)) + little_end(makehex(tmp.h2, 8)) + little_end(makehex(tmp.h3, 8)) + little_end(makehex(tmp.h4, 8));
 }

@@ -35,7 +35,14 @@ THE SOFTWARE.
 
 class SHA512 : public Hash{
     protected:
-        uint64_t h0, h1, h2, h3, h4, h5, h6, h7;
+        struct context{
+            uint64_t h0, h1, h2, h3, h4, h5, h6, h7;
+            ~context(){
+                h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
+            }
+        };
+        context ctx;
+
         uint64_t S0(uint64_t & value);
         uint64_t S1(uint64_t & value);
         uint64_t s0(uint64_t & value);
@@ -43,10 +50,12 @@ class SHA512 : public Hash{
 
         virtual void original_h();
 
-        void run(const std::string & str);
+        void calc(const std::string & data, context & state);
 
     public:
-        SHA512(const std::string & data = "");
+        SHA512();
+        SHA512(const std::string & data);
+        void update(const std::string & str);
         std::string hexdigest();
 };
 #endif

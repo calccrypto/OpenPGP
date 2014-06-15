@@ -33,7 +33,8 @@ class SHA224 : public SHA256{
         void original_h();
 
     public:
-        SHA224(const std::string & data = "");
+        SHA224();
+        SHA224(const std::string & data);
         std::string hexdigest();
 };
 #endif

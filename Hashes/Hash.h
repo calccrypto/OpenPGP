@@ -33,7 +33,13 @@ THE SOFTWARE.
 class Hash{
     public:
         Hash();
+        virtual ~Hash();
+        virtual void update(const std::string & str) = 0;
         virtual std::string hexdigest() = 0;
         std::string digest();
+
+    protected:
+        std::string stack;
+        uint64_t clen;
 };
 #endif

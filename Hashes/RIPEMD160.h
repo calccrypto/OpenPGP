@@ -36,11 +36,30 @@ THE SOFTWARE.
 
 class RIPEMD160 : public Hash{
     private:
-        uint32_t h0, h1, h2, h3, h4;
+        struct context{
+            uint32_t h0, h1, h2, h3, h4;
+            context(uint32_t h0, uint32_t h1, uint32_t h2, uint32_t h3, uint32_t h4) :
+                h0(h0),
+                h1(h1),
+                h2(h2),
+                h3(h3),
+                h4(h4)
+            {}
+            ~context(){
+                h0 = h1 = h2 = h3 = h4 = 0;
+            }
+        };
+        context ctx;
+
         uint32_t F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round);
 
+        std::string to_little_end(const std::string & data);
+        void calc(const std::string & data, context & state);
+
     public:
-        RIPEMD160(const std::string & data = "");
+        RIPEMD160();
+        RIPEMD160(const std::string & data);
+        void update(const std::string & data);
         std::string hexdigest();
 };
 #endif

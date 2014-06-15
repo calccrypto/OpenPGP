@@ -35,7 +35,14 @@ THE SOFTWARE.
 
 class SHA256 : public Hash{
     protected:
-        uint32_t h0, h1, h2, h3, h4, h5, h6, h7;
+        struct context{
+            uint32_t h0, h1, h2, h3, h4, h5, h6, h7;
+
+            ~context(){
+                h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
+            }
+        };
+        context ctx;
 
         uint32_t S0(const uint32_t & value);
         uint32_t S1(const uint32_t & value);
@@ -44,10 +51,13 @@ class SHA256 : public Hash{
 
         virtual void original_h();
 
-        void run(const std::string & str);
+        void calc(const std::string & data, context & state);
 
     public:
-        SHA256(const std::string & data = "");
+        SHA256();
+        SHA256(const std::string & data);
+
+        void update(const std::string &str);
         std::string hexdigest();
 };
 
