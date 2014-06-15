@@ -23,6 +23,8 @@ before_install:
   - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
   - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
 
+  - sudo apt-get install libgmp-dev
+
 before_script:
   - cd tests && make
 
