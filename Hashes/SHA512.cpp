@@ -30,7 +30,7 @@ void SHA512::original_h(){
 void SHA512::run(const std::string & str){
     original_h();
     uint64_t bytes = str.size();
-    std::string data = str + "\x80" + std::string((((bytes & 127) > 111)?238:111) - (bytes & 127), 0) + unhexlify(makehex((uint64_t) bytes << 3, 32));
+    std::string data = str + "\x80" + std::string((((bytes & 127) > 111)?239:111) - (bytes & 127), 0) + unhexlify(makehex((uint64_t) bytes << 3, 32));
     for(unsigned int n = 0; n < (data.size() >> 7); n++){
         std::string temp = data.substr(n << 7, 128);
         uint64_t skey[80];
