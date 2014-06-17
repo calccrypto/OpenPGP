@@ -29,6 +29,9 @@ SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::
         case 10:
             throw std::runtime_error("Error: Twofish has not yet been implemented yet.");
             break;
+        case 11: case 12: case 13:
+            alg = new Camellia(key);
+            break;
         default:
             throw std::runtime_error("Error: Unknown symmetric key algorithm value.");
             break;
