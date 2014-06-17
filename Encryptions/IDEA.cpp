@@ -25,7 +25,7 @@ std::string IDEA::run(const std::string & DATA){
     }
 
     if (DATA.size() != 8){
-        throw std::runtime_error("Error: Key must be 64 bits in length.");
+        throw std::runtime_error("Error: Data must be 64 bits in length.");
     }
 
     uint16_t x1 = toint(DATA.substr(0, 2), 256);
@@ -70,7 +70,7 @@ void IDEA::setkey(const std::string & KEY){
         throw std::runtime_error("Error: Key has already been set.");
     }
     if (KEY.size() != 16){
-        throw std::runtime_error("Error: Data must be 128 bits in length.");
+        throw std::runtime_error("Error: Key must be 128 bits in length.");
     }
 
     std::string key = hexlify(KEY);
