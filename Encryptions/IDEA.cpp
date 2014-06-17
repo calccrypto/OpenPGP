@@ -5,6 +5,9 @@
 uint16_t IDEA::mult(uint32_t value1, uint32_t value2){
     //Special condition used by IDEA
     //where 0 is equivalent to 65536//
+    if (value1 == 0 && value2 == 0){
+        return 1;
+    }
     if (value1 == 0){
         value1 = 65536;
     }
