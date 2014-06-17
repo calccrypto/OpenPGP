@@ -11,7 +11,7 @@ includes.o: includes.h includes.cpp
 	$(CXX) $(CFLAGS) includes.cpp
 
 integer.o: integer.h integer.cpp
-	$(CC) $(CFLAGS) integer.cpp
+	$(CXX) $(CFLAGS) integer.cpp
 
 clean:
 	rm -f *.o

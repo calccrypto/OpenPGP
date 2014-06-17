@@ -22,6 +22,9 @@ Camellia.o: Camellia.cpp Camellia.h Camellia_Const.h ../common/integer.h ../comm
 CAST128.o: CAST128.h CAST128.cpp ../common/cryptomath.h SymAlg.h CAST_Const.h CAST128_Const.h
 	$(CXX) $(CFLAGS) CAST128.cpp
 
+Camellia.o: Camellia.h Camellia.cpp ../common/cryptomath.h ../common/integer.h SymAlg.h Camellia_Const.h
+	$(CXX) $(CFLAGS) Camellia.cpp
+
 DES.o: DES.h DES.cpp SymAlg.h DES_Const.h
 	$(CXX) $(CFLAGS) DES.cpp
 
