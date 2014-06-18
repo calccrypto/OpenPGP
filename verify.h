@@ -42,7 +42,8 @@ THE SOFTWARE.
 std::string find_keyid(Tag2 * tag2);
 std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key);
+bool pka_verify(std::string hashed_message, const uint8_t pka, const std::vector<mpz_class> &key, const std::vector<mpz_class> &signature, const uint8_t h = 0);
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key, const uint8_t h = 0);
 
 // Use string.size() to check if input was verified.
 bool verify_file(const std::string & data, PGP & sig, PGP & key);

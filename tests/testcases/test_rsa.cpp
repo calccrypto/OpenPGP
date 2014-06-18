@@ -25,10 +25,12 @@ TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
             auto msg = RSA_SIGGEN_MSG[i][x];
             int h = std::get<0>(msg);
             std::string data = unhexlify(std::get<1>(msg));
+            std::string digest = use_hash(h, data);
 
-            auto ret = pka_sign(use_hash(h, data), PKA_RSA, {n, e}, {d}, h);
+            auto ret = pka_sign(digest, PKA_RSA, {n, e}, {d}, h);
             ASSERT_EQ(ret.size(), 1);
             EXPECT_EQ(to_hex(ret[0]), RSA_SIGGEN_SIG[i][x]);
+            EXPECT_TRUE(pka_verify(digest, PKA_RSA, {n, e}, {mpz_class(RSA_SIGGEN_SIG[i][x], 16)}, h));
         }
     }
 }

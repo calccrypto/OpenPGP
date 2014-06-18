@@ -1,4 +1,7 @@
 #include "verify.h"
+
+#include "PKCS1.h"
+
 std::string find_keyid(Tag2 * tag2){
     std::string out = "";
     // Search Subpackets
@@ -46,15 +49,20 @@ std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & k
     return keys;
 }
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key){
-    std::vector <mpz_class> signature = tag2 -> get_mpi();
-    if ((tag2 -> get_pka() == 1) || (tag2 -> get_pka() == 3)){
+bool pka_verify(std::string hashed_message, const uint8_t pka, const std::vector<mpz_class> & key, const std::vector<mpz_class> & signature, const uint8_t h){
+    if ((pka == 1) || (pka == 3)){ // RSA
+        hashed_message = EMSA_PKCS1_v1_5(h, hashed_message, key[0].get_str(2).size() >> 3);
         return RSA_verify(hashed_message, signature, key);
     }
-    if (tag2 -> get_pka() == 17){
+    else if (pka == 17){ // DSA
         return DSA_verify(hashed_message, signature, key);
     }
     return false;
+}
+
+bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key, const uint8_t h){
+    std::vector <mpz_class> signature = tag2 -> get_mpi();
+    return pka_verify(hashed_message, tag2 -> get_pka(), key, signature, h);
 }
 
 bool verify_file(const std::string & data, PGP & sig, PGP & key){
