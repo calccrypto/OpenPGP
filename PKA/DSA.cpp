@@ -64,14 +64,18 @@ std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
     return {x};
 }
 
-std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub, mpz_class k){
     BBS((mpz_class) (int) now()); // seed just in case not seeded
 
-    mpz_class k, r = 0, s = 0;
+    bool set_k = (k == 0);
+
+    mpz_class r = 0, s = 0;
     while ((r == 0) || (s == 0)){
         // 0 < k < q
-        k.set_str(BBS().rand(pub[1].get_str(2).size()), 2);
-        k %= pub[1];
+        if ( set_k ) {
+            k.set_str(BBS().rand(pub[1].get_str(2).size()), 2);
+            k %= pub[1];
+        }
 
         // r = (g^k mod p) mod q
         mpz_powm_sec(r.get_mpz_t(), pub[2].get_mpz_t(), k.get_mpz_t(), pub[0].get_mpz_t());
@@ -90,9 +94,9 @@ std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_
     return {r, s};
 }
 
-std::vector <mpz_class> DSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+std::vector <mpz_class> DSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub, mpz_class k){
     mpz_class m(hexlify(data), 16);
-    return DSA_sign(m, pri, pub);
+    return DSA_sign(m, pri, pub, k);
 }
 
 bool DSA_verify(const mpz_class & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub){
