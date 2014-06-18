@@ -22,8 +22,8 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L = 2048, const uint32_t
 std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub);
 
 // Sign hash of data
-std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
-std::vector <mpz_class> DSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
+std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub, mpz_class k = 0);
+std::vector <mpz_class> DSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub, mpz_class k = 0);
 
 // Verify signature on hash
 bool DSA_verify(const mpz_class & data, const std::vector <mpz_class> & sig, const std::vector <mpz_class> & pub);

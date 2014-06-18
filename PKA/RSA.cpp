@@ -50,9 +50,11 @@ mpz_class RSA_sign(const std::string & data, const std::vector <mpz_class> & pri
 }
 
 bool RSA_verify(mpz_class & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub){
-    return (RSA_encrypt(data, pub) == mpz_class(data));
+    mpz_class in = signature[0];
+    return (RSA_encrypt(in, pub) == data);
 }
 
 bool RSA_verify(const std::string & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub){
-    return (RSA_encrypt(data, pub) == mpz_class(hexlify(data), 16));
+    mpz_class in(hexlify(data), 16);
+    return RSA_verify(in, signature, pub);
 }
