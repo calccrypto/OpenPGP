@@ -3,12 +3,15 @@ Copyright (c) 2013 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 
+[![Build Status](https://travis-ci.org/mugwort-rc/OpenPGP.svg?branch=master)](https://travis-ci.org/mugwort-rc/OpenPGP)
+
 With much help from:
     Alex Stapleton (OpenPGP-SDK)
     Auston Sterling - Massive amounts of debugging and programming help
     Jon Callas (RFC 4880)
     Herbert Hanewinkel (hanewin.net)
     Many people on the StackExchange network
+    mugwort-rc
     pgpdump.net
     PortablePGP
 
