@@ -5,7 +5,7 @@ CFLAGS=-std=c++11 -Wall -c
 debug: BFLAGS += -g
 debug: all
 
-all: SymAlg.o AES.o Blowfish.o CAST128.o DES.o IDEA.o TDES.o
+all: SymAlg.o AES.o Blowfish.o CAST128.o DES.o IDEA.o TDES.o Twofish.o
 
 SymAlg.o: SymAlg.h SymAlg.cpp
 	$(CXX) $(CFLAGS) SymAlg.cpp
@@ -27,6 +27,9 @@ IDEA.o: IDEA.h IDEA.cpp ../common/cryptomath.h SymAlg.h
 
 TDES.o: TDES.h TDES.cpp DES.h SymAlg.h
 	$(CXX) $(CFLAGS) TDES.cpp
+
+Twofish.o: Twofish.h Twofish.cpp SymAlg.h Twofish_Const.h
+	$(CXX) $(CFLAGS) Twofish.cpp
 
 clean:
 	rm -f *.o
