@@ -15,17 +15,17 @@ void Tag6::read_tag6(std::string & data){
         data = data.substr(6, data.size() - 6);
 
         // at minimum RSA
-        mpi.push_back(read_MPI(data));              // RSA n, DSA p, ElGamal p
-        mpi.push_back(read_MPI(data));              // RSA e, DSA q, ElGamal g
+        mpi.push_back(read_MPI(data));             // RSA n, DSA p, ElGamal p
+        mpi.push_back(read_MPI(data));             // RSA e, DSA q, ElGamal g
 
         // DSA
         if (pka == 17){
-            mpi.push_back(read_MPI(data));          // DSA g
-            mpi.push_back(read_MPI(data));          // DSA y
+            mpi.push_back(read_MPI(data));         // DSA g
+            mpi.push_back(read_MPI(data));         // DSA y
         }
         // Elgamal
         else if (pka == 16)
-            mpi.push_back(read_MPI(data));          // ElGamal y
+            mpi.push_back(read_MPI(data));         // ElGamal y
     }
 }
 

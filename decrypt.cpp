@@ -132,6 +132,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");
             delete sec;
+            sec = NULL;
         }
         delete sec;
     }
@@ -146,7 +147,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         throw std::runtime_error("Error: No session key packet found.");
     }
 
-    BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;        // get blocksize
+    BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;           // get blocksize
 
     // Find encrypted data
     data = "";

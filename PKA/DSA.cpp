@@ -16,7 +16,7 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
 
     // random prime p = kq + 1
     mpz_class p("1" + BBS().rand(L - 1), 2);      // pick random starting point
-    p = ((p - 1) / q) * q + 1;          // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
+    p = ((p - 1) / q) * q + 1;                    // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!mpz_probab_prime_p(p.get_mpz_t(), 25)){
         p += q;
     }

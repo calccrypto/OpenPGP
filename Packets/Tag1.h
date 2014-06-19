@@ -5,7 +5,7 @@
 #include "packet.h"
 class Tag1 : public Packet{
     private:
-        std::string keyid;              // 8 octets
+        std::string keyid;                // 8 octets
         uint8_t pka;
         std::vector <mpz_class> mpi;      // algorithm specific fields
 

@@ -11,7 +11,7 @@ std::string Packet::write_old_length(std::string data){
         out += unhexlify(makehex(length, 4));
     }
     else if (65536 <= length){
-        out[0] |= 2;                                                       // 4 octets
+        out[0] |= 2;                                                      // 4 octets
         out += unhexlify(makehex(length, 8));
     }
     else{
