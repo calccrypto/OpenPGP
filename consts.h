@@ -341,6 +341,9 @@ const std::map <uint8_t, std::string> Symmetric_Algorithms = {
                 std::make_pair(8, "AES192"),
                 std::make_pair(9, "AES256"),
                 std::make_pair(10, "Twofish 256"),
+                std::make_pair(11, "Camellia128"),
+                std::make_pair(12, "Camellia192"),
+                std::make_pair(13, "Camellia256"),
                 std::make_pair(100, "Private/Experimental algorithm"),
                 std::make_pair(101, "Private/Experimental algorithm"),
                 std::make_pair(102, "Private/Experimental algorithm"),
@@ -365,6 +368,9 @@ const std::map <std::string, uint16_t> Symmetric_Algorithm_Block_Length = {
                 std::make_pair("AES192", 128),
                 std::make_pair("AES256", 128),
                 std::make_pair("Twofish 256", 128),
+                std::make_pair("Camellia128", 128),
+                std::make_pair("Camellia192", 128),
+                std::make_pair("Camellia256", 128),
 };
 
 // Key size of Symmetric Key Algorithms
@@ -377,6 +383,9 @@ const std::map <std::string, uint16_t> Symmetric_Algorithm_Key_Length = {
                 std::make_pair("AES192", 192),
                 std::make_pair("AES256", 256),
                 std::make_pair("Twofish 256", 256),
+                std::make_pair("Camellia128", 128),
+                std::make_pair("Camellia192", 192),
+                std::make_pair("Camellia256", 256),
 };
 
 // User Attribute Tags
