@@ -35,16 +35,16 @@ cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 	$(CXX) $(CFLAGS) cfb.cpp
 
 decrypt.o: decrypt.h decrypt.cpp Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGP.h PKCS1.h
-	$(CXX) $(CFLAGS) $(LFLAGS) decrypt.cpp
+	$(CXX) $(CFLAGS) decrypt.cpp
 
 encrypt.o: encrypt.h encrypt.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h revoke.h
-	$(CXX) $(CFLAGS) $(LFLAGS) encrypt.cpp
+	$(CXX) $(CFLAGS) encrypt.cpp
 
 generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h pgptime.h PKCS1.h sign.h sigcalc.h
-	$(CXX) $(CFLAGS) $(LFLAGS) generatekey.cpp
+	$(CXX) $(CFLAGS) generatekey.cpp
 
 mpi.o: mpi.h mpi.cpp common/includes.h
-	$(CXX) $(CFLAGS) $(LFLAGS) mpi.cpp
+	$(CXX) $(CFLAGS) mpi.cpp
 
 PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h Subpackets/subpackets.h consts.h pgptime.h radix64.h
 	$(CXX) $(CFLAGS) PGP.cpp
@@ -56,22 +56,22 @@ pgptime.o: pgptime.h pgptime.cpp consts.h
 	$(CXX) $(CFLAGS) pgptime.cpp
 
 PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNG.h consts.h pgptime.h
-	$(CXX) $(CFLAGS) $(LFLAGS) PKCS1.cpp
+	$(CXX) $(CFLAGS) PKCS1.cpp
 
 radix64.o: radix64.h radix64.cpp common/includes.h
 	$(CXX) $(CFLAGS) radix64.cpp
 
 revoke.o: revoke.h revoke.cpp PGP.h PKCS1.h sign.h verify.h
-	$(CXX) $(CFLAGS) $(LFLAGS) revoke.cpp
+	$(CXX) $(CFLAGS) revoke.cpp
 
 sigcalc.o: sigcalc.h sigcalc.cpp Hashes/Hashes.h Packets/packets.h PGP.h pgptime.h
 	$(CXX) $(CFLAGS) sigcalc.cpp
 
 sign.o: sign.h sign.cpp common/includes.h Packets/packets.h PKA/PKA.h decrypt.h PGP.h PGPSignedMessage.h pgptime.h sigcalc.h
-	$(CXX) $(CFLAGS) $(LFLAGS) sign.cpp
+	$(CXX) $(CFLAGS) sign.cpp
 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h PGP.h PGPSignedMessage.h sigcalc.h
-	$(CXX) $(CFLAGS) $(LFLAGS) verify.cpp
+	$(CXX) $(CFLAGS) verify.cpp
 
 clean:
 	rm -f *.o

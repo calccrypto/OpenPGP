@@ -8,7 +8,7 @@ debug: all
 all: BBS.o
 
 BBS.o: BBS.h BBS.cpp ../common/cryptomath.h ../pgptime.h
-	$(CXX) $(CFLAGS) $(LFLAGS) BBS.cpp
+	$(CXX) $(CFLAGS) BBS.cpp
 
 clean:
 	rm -f *.o
