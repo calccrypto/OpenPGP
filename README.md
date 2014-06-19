@@ -1,10 +1,9 @@
 # OpenPGP in C++
-Copyright (c) 2013 Jason Lee @ calccrypto at gmail.com
+#### Copyright (c) 2013 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 
-[![Build Status](https://travis-ci.org/mugwort-rc/OpenPGP.svg?branch=master)](https://travis-ci.org/mugwort-rc/OpenPGP)
-
+[![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
 <pre>
 With much help from:
     Alex Stapleton (OpenPGP-SDK)
