@@ -5,8 +5,8 @@ Please see LICENSE file for license.
 
 [![Build Status](https://travis-ci.org/mugwort-rc/OpenPGP.svg?branch=master)](https://travis-ci.org/mugwort-rc/OpenPGP)
 
+<pre>
 With much help from:
-
     Alex Stapleton (OpenPGP-SDK)
     Auston Sterling - Massive amounts of debugging and programming help
     Jon Callas (RFC 4880)
@@ -17,7 +17,6 @@ With much help from:
     PortablePGP
 
 IMPORTANT:
-
     This library was not written for actual use.
     Rather, it was meant for learning about the
     internals of PGP can easily use/add a few 
@@ -45,7 +44,6 @@ is none of my concern or responsibility.
 
 This library should be relatively straightforward to use:
 Simply #include whatever functions needed:
-
     key generation - generatekey.h
     key revokation - revoke.h
     encrypt        - encrypt.h
@@ -58,7 +56,6 @@ which can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 
 The data types have some standard functions:
-
     read  - reads data without the respective
             header information
 
@@ -80,7 +77,6 @@ Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
 To build the command line program:
-
     Use the Code::Blocks project file
 
     or
@@ -98,14 +94,13 @@ When building for another project, remember to link GMP to
 the main program.
 
 Notes:
-
     Keyrings were not implemented. Rather, keys are read
     from the directory used as arguments to functions.
 
     There are some things that are not implemented, such as
-    the Twofish algorithm and compression/decompression of data.
-    If someone would be willing to work on that part, it would
-    be much appreciated.
+    the compression and decompression algorithms. If someone 
+    would be willing to work on that part, it would be much 
+    appreciated.
 
     There are also several untested functions, having never
     encountered real versions of those packets/subpackets.
@@ -118,3 +113,4 @@ Notes:
 
     If for some reason the program cannot operate on some data
     properly, an exception will be thrown.
+</pre>
