@@ -13,5 +13,6 @@
 #include "DES.h"
 #include "IDEA.h"
 #include "TDES.h"
+#include "Twofish.h"
 
 #endif

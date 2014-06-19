@@ -364,7 +364,7 @@ const std::map <std::string, uint16_t> Symmetric_Algorithm_Block_Length = {
                 std::make_pair("AES128", 128),
                 std::make_pair("AES192", 128),
                 std::make_pair("AES256", 128),
-                std::make_pair("Twofish 256", 256),
+                std::make_pair("Twofish 256", 128),
 };
 
 // Key size of Symmetric Key Algorithms

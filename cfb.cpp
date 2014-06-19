@@ -27,7 +27,7 @@ SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::
             alg = new AES(key);
             break;
         case 10:
-            throw std::runtime_error("Error: Twofish has not yet been implemented yet.");
+            alg = new Twofish(key);
             break;
         default:
             throw std::runtime_error("Error: Unknown symmetric key algorithm value.");
