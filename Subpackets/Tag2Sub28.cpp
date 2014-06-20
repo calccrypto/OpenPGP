@@ -32,6 +32,6 @@ void Tag2Sub28::set_signer(const std::string & s){
     signer = s;
 }
 
-Tag2Sub28 * Tag2Sub28::clone(){
-    return new Tag2Sub28(*this);
+Subpacket::Ptr Tag2Sub28::clone(){
+    return Ptr(new Tag2Sub28(*this));
 }

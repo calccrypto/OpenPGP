@@ -9,6 +9,8 @@ class Tag10 : public Packet{
         std::string pgp; // "PGP"
 
     public:
+        typedef std::shared_ptr<Tag10> Ptr;
+
         Tag10();
         Tag10(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag10 : public Packet{
 
         void set_pgp(const std::string & s = "PGP");
 
-        Tag10 * clone();
+        Packet::Ptr clone();
 };
 #endif

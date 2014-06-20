@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __S2K__
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "../common/includes.h"
@@ -44,6 +45,8 @@ class S2K{
         std::string show_octect1();
 
     public:
+        typedef std::shared_ptr<S2K> Ptr;
+
         virtual ~S2K();
         virtual void read(std::string & data) = 0;
         virtual std::string show() = 0;
@@ -57,11 +60,13 @@ class S2K{
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);
 
-        virtual S2K * clone() = 0;
+        virtual Ptr clone() = 0;
 };
 
 class S2K0: public S2K{
     public:
+        typedef std::shared_ptr<S2K0> Ptr;
+
         S2K0();
         virtual ~S2K0();
         virtual void read(std::string & data);
@@ -69,7 +74,7 @@ class S2K0: public S2K{
         virtual std::string raw();
         virtual std::string run(std::string pass, unsigned int sym_len);
 
-        S2K0 * clone();
+        S2K::Ptr clone();
 };
 
 class S2K1 : public S2K0{
@@ -77,6 +82,8 @@ class S2K1 : public S2K0{
         std::string salt;   // 8 octets
 
     public:
+        typedef std::shared_ptr<S2K1> Ptr;
+
         S2K1();
         virtual ~S2K1();
         virtual void read(std::string & data);
@@ -88,7 +95,7 @@ class S2K1 : public S2K0{
 
         void set_salt(const std::string & s);
 
-        S2K1 * clone();
+        S2K::Ptr clone();
 };
 
 class S2K3 : public S2K1{
@@ -96,6 +103,8 @@ class S2K3 : public S2K1{
         uint8_t count;
 
     public:
+        typedef std::shared_ptr<S2K3> Ptr;
+
         S2K3();
         ~S2K3();
         void read(std::string & data);
@@ -107,6 +116,6 @@ class S2K3 : public S2K1{
 
         void set_count(const uint8_t c);
 
-        S2K3 * clone();
+        S2K::Ptr clone();
 };
 #endif

@@ -7,9 +7,11 @@
 
 class Tag2Sub32 : public Subpacket{
     private:
-        Tag2 * embedded;
+        Tag2::Ptr embedded;
 
     public:
+        typedef std::shared_ptr<Tag2Sub32> Ptr;
+
         Tag2Sub32();
         Tag2Sub32(const Tag2Sub32 & tag2sub32);
         Tag2Sub32(std::string & data);
@@ -18,11 +20,11 @@ class Tag2Sub32 : public Subpacket{
         std::string show();
         std::string raw();
 
-        Tag2 * get_embedded();
+        Tag2::Ptr get_embedded();
 
-        void set_embedded(Tag2 * e);
+        void set_embedded(Tag2::Ptr e);
 
-        Tag2Sub32 * clone();
+        Subpacket::Ptr clone();
         Tag2Sub32 operator=(const Tag2Sub32 & tag2sub32);
 };
 #endif

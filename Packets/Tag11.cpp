@@ -67,6 +67,6 @@ void Tag11::set_literal(const std::string & l){
     size = raw().size();
 }
 
-Tag11 * Tag11::clone(){
-    return new Tag11(*this);
+Packet::Ptr Tag11::clone(){
+    return Ptr(new Tag11(*this));
 }

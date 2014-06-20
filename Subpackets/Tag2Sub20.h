@@ -13,6 +13,8 @@ class Tag2Sub20 : public Subpacket{
         std::string n;      // nlen octets long
 
     public:
+        typedef std::shared_ptr<Tag2Sub20> Ptr;
+
         Tag2Sub20();
         Tag2Sub20(std::string & data);
         void read(std::string & data);
@@ -27,6 +29,6 @@ class Tag2Sub20 : public Subpacket{
         void set_m(const std::string & s);
         void set_n(const std::string & s);
 
-        Tag2Sub20 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

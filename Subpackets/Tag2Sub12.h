@@ -11,6 +11,8 @@ class Tag2Sub12 : public Subpacket{
         std::string fingerprint; // 20 octets
 
     public:
+        typedef std::shared_ptr<Tag2Sub12> Ptr;
+
         Tag2Sub12();
         Tag2Sub12(std::string & data);
         void read(std::string & data);
@@ -25,6 +27,6 @@ class Tag2Sub12 : public Subpacket{
         void set_pka(const uint8_t p);
         void set_fingerprint(const std::string & f);
 
-        Tag2Sub12 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

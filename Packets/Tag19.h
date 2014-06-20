@@ -9,6 +9,8 @@ class Tag19 : public Packet{
         std::string hash;
 
     public:
+        typedef std::shared_ptr<Tag19> Ptr;
+
         Tag19();
         Tag19(std::string & data);
         std::string show();
@@ -19,6 +21,6 @@ class Tag19 : public Packet{
 
         void set_hash(const std::string & h);
 
-        Tag19 * clone();
+        Packet::Ptr clone();
 };
 #endif

@@ -43,6 +43,6 @@ void Tag2Sub29::set_reason(const std::string & r){
     reason = r;
 }
 
-Tag2Sub29 * Tag2Sub29::clone(){
-    return new Tag2Sub29(*this);
+Subpacket::Ptr Tag2Sub29::clone(){
+    return Ptr(new Tag2Sub29(*this));
 }

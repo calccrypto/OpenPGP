@@ -9,13 +9,15 @@ class Tag9 : public Packet{
         std::string encrypted_data;
 
     public:
+        typedef std::shared_ptr<Tag9> Ptr;
+
         Tag9();
         Tag9(std::string & data);
         void read(std::string & data);
         std::string show();
         std::string raw();
 
-        Tag9 * clone();
+        Packet::Ptr clone();
 
         std::string get_encrypted_data();
 

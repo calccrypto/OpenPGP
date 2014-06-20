@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "revoke.h"
 
-Tag6 * find_encrypting_key(PGP & k);
+Tag6::Ptr find_encrypting_key(PGP & k);
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub);
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <mpz_class> & pub);
 

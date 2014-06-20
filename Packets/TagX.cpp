@@ -24,6 +24,6 @@ void TagX::set_stream(const std::string & data){
     stream = data;
 }
 
-TagX * TagX::clone(){
-    return new TagX(*this);
+Packet::Ptr TagX::clone(){
+    return Ptr(new TagX(*this));
 }

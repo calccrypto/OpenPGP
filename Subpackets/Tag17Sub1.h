@@ -13,6 +13,8 @@ class Tag17Sub1 : public Subpacket{
         static unsigned int count;
 
     public:
+        typedef std::shared_ptr<Tag17Sub1> Ptr;
+
         Tag17Sub1();
         Tag17Sub1(std::string & data);
         void read(std::string & data);
@@ -23,6 +25,6 @@ class Tag17Sub1 : public Subpacket{
 
         void set_image(const std::string & i);
 
-        Tag17Sub1 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

@@ -9,6 +9,8 @@ class Tag2Sub30 : public Subpacket{
         char flags;
 
     public:
+        typedef std::shared_ptr<Tag2Sub30> Ptr;
+
         Tag2Sub30();
         Tag2Sub30(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub30 : public Subpacket{
 
         void set_flags(const char f);
 
-        Tag2Sub30 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

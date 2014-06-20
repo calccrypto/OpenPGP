@@ -9,6 +9,8 @@ class Tag2Sub7 : public Subpacket{
         bool revocable;
 
     public:
+        typedef std::shared_ptr<Tag2Sub7> Ptr;
+
         Tag2Sub7();
         Tag2Sub7(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub7 : public Subpacket{
 
         void set_revocable(const bool r);
 
-        Tag2Sub7 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

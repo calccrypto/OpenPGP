@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -25,6 +26,8 @@ class Packet{
         std::string write_new_length(std::string data);
 
     public:
+        typedef std::shared_ptr<Packet> Ptr;
+
         virtual ~Packet();
         virtual void read(std::string & data) = 0;
         virtual std::string show() = 0;
@@ -43,12 +46,18 @@ class Packet{
         void set_version(const unsigned int v);
         void set_size(const unsigned int s);
 
-        virtual Packet * clone() = 0;
+        virtual Ptr clone() = 0;
 };
 
 // For Tags 5, 6, 7, and 14
-class Key : public Packet{};
+class Key : public Packet{
+    public:
+        typedef std::shared_ptr<Key> Ptr;
+};
 
 // For Tags 13 and 17
-class ID : public Packet{};
+class ID : public Packet{
+    public:
+        typedef std::shared_ptr<ID> Ptr;
+};
 #endif

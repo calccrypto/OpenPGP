@@ -416,9 +416,9 @@ bool parse_command(std::string & input){
             PGP key(f);
 
             // find private subkey
-            std::vector <Packet *> packets = key.get_packets();
+            std::vector <Packet::Ptr> packets = key.get_packets();
             bool found = false;
-            for(Packet *& p : packets){
+            for(Packet::Ptr & p : packets){
                 if (p -> get_tag() == 7){
                     found = true;
                     break;

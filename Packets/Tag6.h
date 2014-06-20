@@ -19,6 +19,8 @@ class Tag6 : public Key{
         std::string raw_tag6();
 
     public:
+        typedef std::shared_ptr<Tag6> Ptr;
+
         Tag6();
         Tag6(std::string & data);
         virtual void read(std::string & data);
@@ -36,6 +38,6 @@ class Tag6 : public Key{
         std::string get_fingerprint();                      // binary
         std::string get_keyid();                            // binary
 
-        Tag6 * clone();
+        Packet::Ptr clone();
 };
 #endif

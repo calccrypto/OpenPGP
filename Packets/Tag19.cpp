@@ -34,6 +34,6 @@ void Tag19::set_hash(const std::string & h){
     size = raw().size();
 }
 
-Tag19 * Tag19::clone(){
-    return new Tag19(*this);
+Packet::Ptr Tag19::clone(){
+    return Ptr(new Tag19(*this));
 }

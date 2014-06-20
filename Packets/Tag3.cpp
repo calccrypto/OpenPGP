@@ -2,8 +2,6 @@
 Tag3::Tag3(){
     tag = 3;
     version = 4;
-    s2k = NULL;
-    esk = NULL;
 }
 
 Tag3::Tag3(const Tag3 & tag3){
@@ -13,7 +11,7 @@ Tag3::Tag3(const Tag3 & tag3){
     size = tag3.size;
     sym = tag3.sym;
     s2k = tag3.s2k -> clone();
-    esk = new std::string(*esk);
+    esk = std::make_shared<std::string>(*tag3.esk);
 }
 
 Tag3::Tag3(std::string & data){
@@ -22,8 +20,6 @@ Tag3::Tag3(std::string & data){
 }
 
 Tag3::~Tag3(){
-    delete s2k;
-    delete esk;
 }
 
 void Tag3::read(std::string & data){
@@ -32,18 +28,18 @@ void Tag3::read(std::string & data){
     sym = data[1];
     data = data.substr(2, data.size() - 2);
     if (data[2] == 0){
-        s2k = new S2K0;
+        s2k = std::make_shared<S2K0>();
     }
     if (data[2] == 1){
-        s2k = new S2K0;
+        s2k = std::make_shared<S2K0>();
     }
     if (data[2] == 3){
-        s2k = new S2K0;
+        s2k = std::make_shared<S2K0>();
     }
     s2k -> read(data);
 
     if (data.size()){
-        esk = new std::string(data);
+        esk = std::make_shared<std::string>(data);
     }
 }
 
@@ -66,20 +62,20 @@ uint8_t Tag3::get_sym(){
     return sym;
 }
 
-S2K * Tag3::get_s2k(){
+S2K::Ptr Tag3::get_s2k(){
     return s2k;
 }
 
-S2K * Tag3::get_s2k_clone(){
+S2K::Ptr Tag3::get_s2k_clone(){
     return s2k -> clone();
 }
 
-std::string * Tag3::get_esk(){
+std::shared_ptr<std::string> Tag3::get_esk(){
     return esk;
 }
 
-std::string * Tag3::get_esk_clone(){
-    return new std::string(*esk);
+std::shared_ptr<std::string> Tag3::get_esk_clone(){
+    return std::make_shared<std::string>(*esk);
 }
 
 std::string Tag3::get_key(std::string pass){
@@ -99,34 +95,29 @@ void Tag3::set_sym(const uint8_t s){
     size = raw().size();
 }
 
-void Tag3::set_s2k(S2K * s){
-    delete s2k;
+void Tag3::set_s2k(S2K::Ptr s){
     s2k = s -> clone();
     size = raw().size();
 }
 
 void Tag3::set_esk(std::string * s){
-    delete esk;
-    esk = new std::string(*s);
+    esk = std::make_shared<std::string>(*s);
     size = raw().size();
 }
 
 void Tag3::set_key(std::string pass, std::string sk){
     //sk should be 1 byte symmetric key algorithm + session key
-    delete esk;
-    if (sk.size()){
-        esk = NULL;
-    }
-    else{
-        esk = new std::string(use_normal_CFB_encrypt(sym, sk, pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0)));
+    esk.reset();
+    if ( ! sk.size()){
+        esk = std::make_shared<std::string>(use_normal_CFB_encrypt(sym, sk, pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)), 0)));
     }
     size = raw().size();
 }
 
-Tag3 * Tag3::clone(){
-    Tag3 * out = new Tag3(*this);
+Packet::Ptr Tag3::clone(){
+    Ptr out(new Tag3(*this));
     out -> s2k = s2k -> clone();
-    out -> esk = new std::string(*esk);
+    out -> esk = std::make_shared<std::string>(*esk);
     return out;
 }
 
@@ -137,6 +128,6 @@ Tag3 Tag3::operator=(const Tag3 & tag3){
     size = tag3.size;
     sym = tag3.sym;
     s2k = tag3.s2k -> clone();
-    esk = new std::string(*esk);
+    esk = std::make_shared<std::string>(*esk);
     return *this;
 }

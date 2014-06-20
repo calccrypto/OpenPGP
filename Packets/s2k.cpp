@@ -58,8 +58,8 @@ std::string S2K0::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-S2K0 * S2K0::clone(){
-    return new S2K0(*this);
+S2K::Ptr S2K0::clone(){
+    return Ptr(new S2K0(*this));
 }
 
 S2K1::S2K1(){
@@ -103,8 +103,8 @@ void S2K1::set_salt(const std::string & s){
     salt = s;
 }
 
-S2K1 * S2K1::clone(){
-    return new S2K1(*this);
+S2K::Ptr S2K1::clone(){
+    return Ptr(new S2K1(*this));
 }
 
 S2K3::S2K3(){
@@ -157,6 +157,6 @@ void S2K3::set_count(const uint8_t c){
     count = c;
 }
 
-S2K3 * S2K3::clone(){
-    return new S2K3(*this);
+S2K::Ptr S2K3::clone(){
+    return Ptr(new S2K3(*this));
 }

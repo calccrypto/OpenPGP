@@ -32,8 +32,8 @@ unsigned int partialBodyLen(uint8_t first_octet);
 std::string read_packet_header(std::string & data, uint8_t & tag, bool & format);
 
 // parses raw packet data
-Packet * read_packet_raw(const bool format, const uint8_t tag, std::string & packet_data);
+Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, std::string & packet_data);
 
 // parse packet with header; wrapper for read_packet_header and read_packet_raw
-Packet * read_packet(std::string & data);
+Packet::Ptr read_packet(std::string & data);
 #endif

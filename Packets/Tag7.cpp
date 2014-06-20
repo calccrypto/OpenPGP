@@ -1,7 +1,6 @@
 #include "Tag7.h"
 Tag7::Tag7(){
     tag = 7;
-    s2k = NULL;
 }
 
 Tag7::Tag7(const Tag7 & tag7){
@@ -22,13 +21,10 @@ Tag7::Tag7(const Tag7 & tag7){
 
 Tag7::Tag7(std::string & data){
     tag = 7;
-    s2k = NULL;
     read(data);
 }
 
 Tag7::~Tag7(){
-    delete s2k;
-    s2k = NULL;
 }
 
 Tag14 Tag7::get_public_obj(){
@@ -38,15 +34,15 @@ Tag14 Tag7::get_public_obj(){
     return out;
 }
 
-Tag14 * Tag7::get_public_ptr(){
+Tag14::Ptr Tag7::get_public_ptr(){
     std::string data = raw();
-    Tag14 * out = new Tag14(data);
+    Tag14::Ptr out(new Tag14(data));
     out -> set_tag(14);
     return out;
 }
 
-Tag7 * Tag7::clone(){
-    Tag7 * out = new Tag7(*this);
+Packet::Ptr Tag7::clone(){
+    Ptr out(new Tag7(*this));
     out -> s2k = s2k -> clone();
     return out;
 }

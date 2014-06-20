@@ -11,6 +11,8 @@ class Tag2Sub31 : public Subpacket{
         std::string hash;
 
     public:
+        typedef std::shared_ptr<Tag2Sub31> Ptr;
+
         Tag2Sub31();
         Tag2Sub31(std::string & data);
         void read(std::string & data);
@@ -25,6 +27,6 @@ class Tag2Sub31 : public Subpacket{
         void set_ha(const uint8_t h);
         void set_hash(const std::string & h);
 
-        Tag2Sub31 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

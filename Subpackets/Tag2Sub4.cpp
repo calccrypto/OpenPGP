@@ -30,6 +30,6 @@ void Tag2Sub4::set_exportable(const bool e){
     exportable = e;
 }
 
-Tag2Sub4 * Tag2Sub4::clone(){
-    return new Tag2Sub4(*this);
+Subpacket::Ptr Tag2Sub4::clone(){
+    return Ptr(new Tag2Sub4(*this));
 }

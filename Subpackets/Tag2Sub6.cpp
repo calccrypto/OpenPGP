@@ -29,6 +29,6 @@ void Tag2Sub6::set_regex(const std::string & r){
     regex = r;
 }
 
-Tag2Sub6 * Tag2Sub6::clone(){
-    return new Tag2Sub6(*this);
+Subpacket::Ptr Tag2Sub6::clone(){
+    return Ptr(new Tag2Sub6(*this));
 }

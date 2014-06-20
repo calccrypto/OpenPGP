@@ -92,6 +92,6 @@ void Tag8::set_compressed_data(const std::string & data){
     size = raw().size();
 }
 
-Tag8 * Tag8::clone(){
-    return new Tag8(*this);
+Packet::Ptr Tag8::clone(){
+    return Ptr(new Tag8(*this));
 }

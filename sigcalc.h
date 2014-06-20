@@ -54,7 +54,7 @@ THE SOFTWARE.
 // After all this has been hashed in a single hash context, the
 // resulting hash field is used in the signature algorithm and placed
 // at the end of the Signature packet.
-std::string addtrailer(const std::string & data, Tag2 * sig);
+std::string addtrailer(const std::string & data, Tag2::Ptr sig);
 
 // Signature over a key
 //
@@ -62,7 +62,7 @@ std::string addtrailer(const std::string & data, Tag2 * sig);
 // octet 0x99, followed by a two-octet length of the key, and then body
 // of the key packet. (Note that this is an old-style packet header for
 // a key packet with two-octet length.)
-std::string overkey(Key * key);
+std::string overkey(Key::Ptr key);
 
 // Signature Type 0x10 - 0x13
 //
@@ -74,7 +74,7 @@ std::string overkey(Key * key);
 // 0xD1 for User Attribute certifications, followed by a four-octet
 // number giving the length of the User ID or User Attribute data, and
 // then the User ID or User Attribute data.
-std::string certification(uint8_t version, ID * id);
+std::string certification(uint8_t version, ID::Ptr id);
 
 // Hash of data to sign
 
@@ -84,7 +84,7 @@ std::string certification(uint8_t version, ID * id);
 //
 // For binary document signatures (type 0x00), the document data is
 // hashed directly.
-std::string to_sign_00(const std::string & data, Tag2 * tag2);
+std::string to_sign_00(const std::string & data, Tag2::Ptr tag2);
 
 // 0x01: Signature of a canonical text document.
 // This means the signer owns it, created it, or certifies that it
@@ -94,30 +94,30 @@ std::string to_sign_00(const std::string & data, Tag2 * tag2);
 // For text document signatures (type 0x01), the
 // document is canonicalized by converting line endings to <CR><LF>,
 // and the resulting data is hashed.
-std::string to_sign_01(const std::string & data, Tag2 * tag2);
+std::string to_sign_01(const std::string & data, Tag2::Ptr tag2);
 
 // 0x02: Standalone signature.
 // This signature is a signature of only its own subpacket contents.
 // It is calculated identically to a signature over a zero-length
 // binary document. Note that it doesn’t make sense to have a V3
 // standalone signature.
-std::string to_sign_02(Tag2 * tag2);
+std::string to_sign_02(Tag2::Ptr tag2);
 
 // 0x10: Generic certification of a User ID and Public-Key packet.
 // The issuer of this certification does not make any particular
 // assertion as to how well the certifier has checked that the owner
 // of the key is in fact the person described by the User ID.
-std::string to_sign_10(Key * key, ID * id, Tag2 * tag2);
+std::string to_sign_10(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2);
 
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // The issuer of this certification has not done any verification of
 // the claim that the owner of this key is the User ID specified.
-std::string to_sign_11(Key * key, ID * id, Tag2 * tag2);
+std::string to_sign_11(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2);
 
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // The issuer of this certification has done some casual
 // verification of the claim of identity.
-std::string to_sign_12(Key * key, ID * id, Tag2 * tag2);
+std::string to_sign_12(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2);
 
 // 0x13: Positive certification of a User ID and Public-Key packet.
 // The issuer of this certification has done substantial
@@ -125,7 +125,7 @@ std::string to_sign_12(Key * key, ID * id, Tag2 * tag2);
 // Most OpenPGP implementations make their "key signatures" as 0x10
 // certifications. Some implementations can issue 0x11-0x13
 // certifications, but few differentiate between the types.
-std::string to_sign_13(Key * key, ID * id, Tag2 * tag2);
+std::string to_sign_13(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2);
 
 // 0x18: Subkey Binding Signature
 // This signature is a statement by the top-level signing key that
@@ -135,14 +135,14 @@ std::string to_sign_13(Key * key, ID * id, Tag2 * tag2);
 // an Embedded Signature subpacket in this binding signature that
 // contains a 0x19 signature made by the signing subkey on the
 // primary key and subkey.
-std::string to_sign_18(Key * primary, Key * key, Tag2 * tag2);
+std::string to_sign_18(Key::Ptr primary, Key::Ptr key, Tag2::Ptr tag2);
 
 // 0x19: Primary Key Binding Signature
 // This signature is a statement by a signing subkey, indicating
 // that it is owned by the primary key and subkey. This signature
 // is calculated the same way as a 0x18 signature: directly on the
 // primary key and subkey, and not on any User ID or other packets.
-std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2);
+std::string to_sign_19(Key::Ptr primary, Key::Ptr key, Tag2::Ptr tag2);
 
 // 0x1F: Signature directly on a key
 // This signature is calculated directly on a key. It binds the
@@ -152,14 +152,14 @@ std::string to_sign_19(Key * primary, Key * key, Tag2 * tag2);
 // appropriate for statements that non-self certifiers want to make
 // about the key itself, rather than the binding between a key and a
 // name.
-std::string to_sign_1f(Tag2 * tag2);
+std::string to_sign_1f(Tag2::Ptr tag2);
 
 // 0x20: Key revocation signature
 // The signature is calculated directly on the key being revoked. A
 // revoked key is not to be used. Only revocation signatures by the
 // key being revoked, or by an authorized revocation key, should be
 // considered valid revocation signatures.
-std::string to_sign_20(Key * key, Tag2 * tag2);
+std::string to_sign_20(Key::Ptr key, Tag2::Ptr tag2);
 
 // 0x28: Subkey revocation signature
 // The signature is calculated directly on the subkey being revoked.
@@ -167,7 +167,7 @@ std::string to_sign_20(Key * key, Tag2 * tag2);
 // by the top-level signature key that is bound to this subkey, or
 // by an authorized revocation key, should be considered valid
 // revocation signatures.
-std::string to_sign_28(Key * key, Tag2 * tag2);
+std::string to_sign_28(Key::Ptr key, Tag2::Ptr tag2);
 
 // 0x30: Certification revocation signature
 // This signature revokes an earlier User ID certification signature
@@ -177,12 +177,12 @@ std::string to_sign_28(Key * key, Tag2 * tag2);
 // is computed over the same data as the certificate that it
 // revokes, and should have a later creation date than that
 // certificate.
-std::string to_sign_30(Key * key, ID * id, Tag2 * tag2);
+std::string to_sign_30(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2);
 
 // 0x40: Timestamp signature.
 // This signature is only meaningful for the timestamp contained in
 // it.
-std::string to_sign_40(Tag2 * tag2);
+std::string to_sign_40(Tag2::Ptr tag2);
 
 // 0x50: Third-Party Confirmation signature.
 // This signature is a signature over some other OpenPGP Signature
@@ -201,5 +201,5 @@ std::string to_sign_40(Tag2 * tag2);
 // of the Signature packet being hashed is not included in the hash, and
 // the unhashed subpacket data length value is set to zero.
 
-std::string to_sign_50(Tag2 & sig, Tag2 * tag2);
+std::string to_sign_50(Tag2 & sig, Tag2::Ptr tag2);
 #endif

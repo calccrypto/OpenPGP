@@ -51,6 +51,6 @@ void Tag2Sub12::set_fingerprint(const std::string & f){
     fingerprint = f;
 }
 
-Tag2Sub12 * Tag2Sub12::clone(){
-    return new Tag2Sub12(*this);
+Subpacket::Ptr Tag2Sub12::clone(){
+    return Ptr(new Tag2Sub12(*this));
 }

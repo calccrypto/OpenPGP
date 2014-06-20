@@ -9,7 +9,7 @@ class Tag5 : public Tag6{
     protected:
         uint8_t s2k_con;
         uint8_t sym;
-        S2K * s2k;
+        S2K::Ptr s2k;
         std::string IV;
         std::string secret;
 
@@ -17,6 +17,8 @@ class Tag5 : public Tag6{
         std::string show_common();
 
     public:
+        typedef std::shared_ptr<Tag5> Ptr;
+
         Tag5();
         Tag5(const Tag5 & tag5);
         Tag5(std::string & data);
@@ -27,21 +29,21 @@ class Tag5 : public Tag6{
 
         uint8_t get_s2k_con();
         uint8_t get_sym();
-        S2K * get_s2k();
-        S2K * get_s2k_clone();
+        S2K::Ptr get_s2k();
+        S2K::Ptr get_s2k_clone();
         std::string get_IV();
         std::string get_secret();
 
         Tag6 get_public_obj();      // extract public key from private key
-        Tag6 * get_public_ptr();    // extract public key from private key into a pointer
+        Tag6::Ptr get_public_ptr();    // extract public key from private key into a pointer
 
         void set_s2k_con(const uint8_t c);
         void set_sym(const uint8_t s);
-        void set_s2k(S2K * s);
+        void set_s2k(S2K::Ptr s);
         void set_IV(const std::string & iv);
         void set_secret(const std::string & s);
 
-        Tag5 * clone();
+        Packet::Ptr clone();
         Tag5 operator=(const Tag5 & tag5);
 };
 #endif

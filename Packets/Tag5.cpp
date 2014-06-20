@@ -3,7 +3,6 @@ Tag5::Tag5(){
     tag = 5;
     s2k_con = 0;
     sym = 0;
-    s2k = NULL;
 }
 
 Tag5::Tag5(const Tag5 & tag5){
@@ -26,27 +25,25 @@ Tag5::Tag5(std::string & data){
     tag = 5;
     s2k_con = 0;
     sym = 0;
-    s2k = NULL;
     read(data);
 }
 
 Tag5::~Tag5(){
-    delete s2k;
 }
 
 void Tag5::read_s2k(std::string & data){
-    delete s2k;
+    s2k.reset();
     uint8_t length = 0;
     if (data[0] == 0){
-        s2k = new S2K0;
+        s2k = std::make_shared<S2K0>();
         length = 2;
     }
     else if (data[0] == 1){
-        s2k = new S2K1;
+        s2k = std::make_shared<S2K1>();
         length = 10;
     }
     else if (data[0] == 3){
-        s2k = new S2K3;
+        s2k = std::make_shared<S2K3>();
         length = 11;
     }
     std::string s2k_str = data.substr(0, length);
@@ -130,11 +127,11 @@ uint8_t Tag5::get_sym(){
     return sym;
 }
 
-S2K * Tag5::get_s2k(){
+S2K::Ptr Tag5::get_s2k(){
     return s2k;
 }
 
-S2K * Tag5::get_s2k_clone(){
+S2K::Ptr Tag5::get_s2k_clone(){
     return s2k -> clone();
 }
 
@@ -152,9 +149,9 @@ Tag6 Tag5::get_public_obj(){
     return out;
 }
 
-Tag6 * Tag5::get_public_ptr(){
+Tag6::Ptr Tag5::get_public_ptr(){
     std::string data = raw();
-    Tag6 * out = new Tag6(data);
+    Tag6::Ptr out(new Tag6(data));
     return out;
 }
 
@@ -182,16 +179,15 @@ void Tag5::set_sym(const uint8_t s){
     size += secret.size();
 }
 
-void Tag5::set_s2k(S2K * s){
-    delete s2k;
+void Tag5::set_s2k(S2K::Ptr s){
     if (s -> get_type() == 0){
-        s2k = new S2K0;
+        s2k = std::make_shared<S2K0>();
     }
     else if (s -> get_type() == 1){
-        s2k = new S2K1;
+        s2k = std::make_shared<S2K1>();
     }
     else if (s -> get_type() == 3){
-        s2k = new S2K3;
+        s2k = std::make_shared<S2K3>();
     }
     s2k = s -> clone();
     size = raw_tag6().size() + 1;
@@ -228,8 +224,8 @@ void Tag5::set_secret(const std::string & s){
     size += secret.size();
 }
 
-Tag5 * Tag5::clone(){
-    Tag5 * out = new Tag5(*this);
+Packet::Ptr Tag5::clone(){
+    Tag5::Ptr out(new Tag5(*this));
     out -> s2k = s2k -> clone();
     return out;
 }

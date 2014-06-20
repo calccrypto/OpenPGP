@@ -1,23 +1,22 @@
 #include "decrypt.h"
 
-Tag5 * find_decrypting_key(PGP & k){
+Tag5::Ptr find_decrypting_key(PGP & k){
     if (k.get_ASCII_Armor() == 2){
-        std::vector <Packet *> packets = k.get_packets();
-        for(Packet *& p : packets){
+        std::vector <Packet::Ptr> packets = k.get_packets();
+        for(Packet::Ptr & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
                 std::string data = p -> raw();
-                Tag5 * key = new Tag5(data);
+                Tag5::Ptr key = std::make_shared<Tag5>(data);
                 // make sure key has signing material
                 if ((key -> get_pka() == 1) || // RSA
                     (key -> get_pka() == 2) || // RSA
                     (key -> get_pka() == 16)){ // ElGamal
                         return key;
                 }
-                delete key;
             }
         }
     }
-    return NULL;
+    return Tag5::Ptr();
 }
 
 std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
@@ -36,9 +35,9 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <mpz_class> decrypt_secret_key(Tag5 * pri, const std::string & passphrase){
+std::vector <mpz_class> decrypt_secret_key(Tag5::Ptr pri, const std::string & passphrase){
     std::vector <mpz_class> out;
-    S2K * s2k = pri -> get_s2k();
+    S2K::Ptr s2k = pri -> get_s2k();
 
     // calculate key used in encryption algorithm
     std::string key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(pri -> get_sym())) >> 3);
@@ -94,8 +93,8 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     unsigned int BS;                            // blocksize of symmetric key algorithm
 
     // find session key
-    std::vector <Packet *> message_packets = m.get_packets();
-    for(Packet *& p : message_packets){
+    std::vector <Packet::Ptr> message_packets = m.get_packets();
+    for(Packet::Ptr & p : message_packets){
         if ((p -> get_tag() == 1) || (p -> get_tag() == 3)){
             data = p -> raw();
             packet = p -> get_tag();
@@ -109,7 +108,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
-        Tag5 * sec = find_decrypting_key(pri);
+        Tag5::Ptr sec = find_decrypting_key(pri);
 
         if (!sec){
             throw std::runtime_error("Error: Correct Private Key not found.");
@@ -131,10 +130,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         }
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");
-            delete sec;
-            sec = NULL;
         }
-        delete sec;
     }
     else if (packet == 3){ //Symmetric-Key Encrypted Session Key Packet (Tag 3)
         /* untested */
@@ -151,7 +147,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
 
     // Find encrypted data
     data = "";
-    for(Packet *& p : message_packets){
+    for(Packet::Ptr & p : message_packets){
         if (p -> get_tag() == 9){
             data = p -> raw();
             Tag9 tag9(data);

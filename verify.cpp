@@ -2,12 +2,12 @@
 
 #include "PKCS1.h"
 
-std::string find_keyid(Tag2 * tag2){
+std::string find_keyid(Tag2::Ptr tag2){
     std::string out = "";
     // Search Subpackets
     // Most likely in unhashed subpackets
-    std::vector <Subpacket *> subpackets = tag2 -> get_unhashed_subpackets();
-    for(Subpacket *& s : subpackets){
+    std::vector <Subpacket::Ptr> subpackets = tag2 -> get_unhashed_subpackets();
+    for(Subpacket::Ptr & s : subpackets){
         if (s -> get_type() == 16){
             std::string temp = s -> raw();
             Tag2Sub16 tag2sub16(temp);
@@ -18,7 +18,7 @@ std::string find_keyid(Tag2 * tag2){
     // if not found in unhashed subpackets, search hashed subpackets
     if (!out.size()){
         subpackets = tag2 -> get_hashed_subpackets();
-        for(Subpacket *& s : subpackets){
+        for(Subpacket::Ptr & s : subpackets){
             if (s -> get_type() == 16){
                 std::string temp = s -> raw();
                 Tag2Sub16 tag2sub16(temp);
@@ -32,18 +32,16 @@ std::string find_keyid(Tag2 * tag2){
 
 std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key){
     std::vector <mpz_class> keys;
-    std::vector <Packet *> packets = key.get_packets();
-    for(Packet *& p : packets){
+    std::vector <Packet::Ptr> packets = key.get_packets();
+    for(Packet::Ptr & p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
             std::string temp = p -> raw();
-            Tag6 * tag6 = new Tag6;
+            Tag6::Ptr tag6(new Tag6);
             tag6 -> read(temp);
             if (tag6 -> get_keyid() == keyid){
                 keys = tag6 -> get_mpi();
-                delete tag6;
                 break;
             }
-            delete tag6;
         }
     }
     return keys;
@@ -60,7 +58,7 @@ bool pka_verify(std::string hashed_message, const uint8_t pka, const std::vector
     return false;
 }
 
-bool pka_verify(const std::string & hashed_message, Tag2 * tag2, const std::vector <mpz_class> & key, const uint8_t h){
+bool pka_verify(const std::string & hashed_message, Tag2::Ptr tag2, const std::vector <mpz_class> & key, const uint8_t h){
     std::vector <mpz_class> signature = tag2 -> get_mpi();
     return pka_verify(hashed_message, tag2 -> get_pka(), key, signature, h);
 }
@@ -75,7 +73,7 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
     }
 
     std::string temp = sig.get_packets()[0] -> raw();
-    Tag2 * signature = new Tag2; signature -> read(temp);
+    Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
 
     // Check left 16 bits
     std::string hash = to_sign_00(data, signature);
@@ -95,7 +93,6 @@ bool verify_file(const std::string & data, PGP & sig, PGP & key){
         return false;
     }
     bool out = pka_verify(hash, signature, keys);
-    delete signature;
     return out;
 }
 
@@ -122,7 +119,7 @@ bool verify_message(PGPSignedMessage & message, PGP & key){
 
     // Find key id from signature to match with public key
     std::string temp = message.get_key().get_packets()[0] -> raw();
-    Tag2 * signature = new Tag2; signature -> read(temp);
+    Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
 
     // check left 16 bits
     std::string hash = to_sign_01(message.get_message(), signature);
@@ -156,11 +153,11 @@ bool verify_signature(PGP & key, PGP & signer){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
-    std::vector <Packet *> packets = signer.get_packets();
+    std::vector <Packet::Ptr> packets = signer.get_packets();
 
     // find signing key
     std::vector <mpz_class> signing_key;
-    for(Packet *& p : packets){
+    for(Packet::Ptr& p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
             std::string data = p -> raw();
             Tag6 tag6(data);
@@ -172,7 +169,7 @@ bool verify_signature(PGP & key, PGP & signer){
     }
     // if no signing key found, search subkeys
     if (!signing_key.size()){
-        for(Packet *& p : packets){
+        for(Packet::Ptr& p : packets){
             if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
                 Tag6 tag6(data);
@@ -197,27 +194,26 @@ bool verify_signature(PGP & key, PGP & signer){
 
     bool out = true;
 
-    Tag6 * tag6 = NULL;
+    Tag6::Ptr tag6;
     // for each packet
-    for(Packet *& p : packets){
+    for(Packet::Ptr& p : packets){
         std::string data = p -> raw();
         switch (p -> get_tag()){
             case 5: case 6: case 7: case 14:            // key packet
-                tag6 = new Tag6;
+                tag6 = std::make_shared<Tag6>();
                 tag6 -> read(data);
                 k += overkey(tag6);                     // add current key packet to previous ones
                 version = tag6 -> get_version();
-                delete tag6;
-                tag6 = NULL;
+                tag6.reset();
                 break;
             case 13: case 17:                           // User packet
                 {
-                    ID * id = NULL;
+                    ID::Ptr id;
                     if (p -> get_tag() == 13){
-                        id = new Tag13;
+                        id = std::make_shared<Tag13>();
                     }
                     if (p -> get_tag() == 17){
-                        id = new Tag17;
+                        id = std::make_shared<Tag17>();
                     }
                     id -> read(data);
                     u = certification(version, id);     // write over old user information
@@ -226,7 +222,7 @@ bool verify_signature(PGP & key, PGP & signer){
             case 2:                                     // signature packet
                 {
                     // copy packet data into signature packet
-                    Tag2 * tag2 = new Tag2;
+                    Tag2::Ptr tag2(new Tag2);
                     tag2 -> read(data);
 
                     // if signature is keybinding, erase the user information
@@ -250,11 +246,10 @@ bool verify_signature(PGP & key, PGP & signer){
                 break;
         }
     }
-    delete tag6;
     return out;
 }
 
-bool verify_revoke(Tag6 * key, Tag2 * rev){
+bool verify_revoke(Tag6::Ptr key, Tag2::Ptr rev){
     return pka_verify(use_hash(rev -> get_hash(), addtrailer(overkey(key), rev)), rev, key -> get_mpi());
 }
 
@@ -267,17 +262,17 @@ bool verify_revoke(PGP & key, PGP & rev){
         throw std::runtime_error("Error: A revocation key is required.");
     }
 
-    std::vector <Packet *> keys = key.get_packets();
+    std::vector <Packet::Ptr> keys = key.get_packets();
 
     // copy revocation signature into tag2
-    std::vector <Packet *> rev_pointers = rev.get_packets();
+    std::vector <Packet::Ptr> rev_pointers = rev.get_packets();
 
     // get revocation key; assume only 1 packet
     std::string rev_str = rev_pointers[0] -> raw();
-    Tag2 revoke(rev_str);
+    Tag2::Ptr revoke = std::make_shared<Tag2>(rev_str);
 
     // for each key packet
-    for(Packet *& p : keys){
+    for(Packet::Ptr & p : keys){
         // if the packet is a key packet
         if ((p -> get_tag() == 5) ||
             (p -> get_tag() == 6) ||
@@ -286,9 +281,9 @@ bool verify_revoke(PGP & key, PGP & rev){
 
             // copy key into Tag 6
             std::string key_str = p -> raw();
-            Tag6 tag6(key_str);
+            Tag6::Ptr tag6 = std::make_shared<Tag6>(key_str);
 
-            if (verify_revoke(&tag6, &revoke)){
+            if (verify_revoke(tag6, revoke)){
                 return true;
             }
         }

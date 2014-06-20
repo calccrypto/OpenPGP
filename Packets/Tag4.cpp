@@ -87,6 +87,6 @@ void Tag4::set_nested(const uint8_t n){
     size = raw().size();
 }
 
-Tag4 * Tag4::clone(){
-    return new Tag4(*this);
+Packet::Ptr Tag4::clone(){
+    return Ptr(new Tag4(*this));
 }

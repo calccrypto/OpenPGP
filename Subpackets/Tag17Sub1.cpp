@@ -46,6 +46,6 @@ void Tag17Sub1::set_image(const std::string & i){
     image = i;
 }
 
-Tag17Sub1 * Tag17Sub1::clone(){
-    return new Tag17Sub1(*this);
+Subpacket::Ptr Tag17Sub1::clone(){
+    return Ptr(new Tag17Sub1(*this));
 }

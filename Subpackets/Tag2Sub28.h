@@ -9,6 +9,8 @@ class Tag2Sub28 : public Subpacket{
         std::string signer;
 
     public:
+        typedef std::shared_ptr<Tag2Sub28> Ptr;
+
         Tag2Sub28();
         Tag2Sub28(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub28 : public Subpacket{
 
         void set_signer(const std::string & s);
 
-        Tag2Sub28 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

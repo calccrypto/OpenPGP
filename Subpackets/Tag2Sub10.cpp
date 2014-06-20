@@ -29,6 +29,6 @@ void Tag2Sub10::set_stuff(const std::string & s){
     stuff = s;
 }
 
-Tag2Sub10 * Tag2Sub10::clone(){
-    return new Tag2Sub10(*this);
+Subpacket::Ptr Tag2Sub10::clone(){
+    return Ptr(new Tag2Sub10(*this));
 }

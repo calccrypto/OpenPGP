@@ -36,6 +36,6 @@ void Tag18::set_protected_data(const std::string & p){
     size = raw().size();
 }
 
-Tag18 * Tag18::clone(){
-    return new Tag18(*this);
+Packet::Ptr Tag18::clone(){
+    return Ptr(new Tag18(*this));
 }

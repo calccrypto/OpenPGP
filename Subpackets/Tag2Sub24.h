@@ -9,6 +9,8 @@ class Tag2Sub24 : public Subpacket{
         std::string pks;
 
     public:
+        typedef std::shared_ptr<Tag2Sub24> Ptr;
+
         Tag2Sub24();
         Tag2Sub24(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub24 : public Subpacket{
 
         void set_pks(const std::string & p);
 
-        Tag2Sub24 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

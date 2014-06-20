@@ -9,6 +9,8 @@ class TagX : public Packet{
         std::string stream;
 
     public:
+        typedef std::shared_ptr<TagX> Ptr;
+
         TagX();
         TagX(const std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class TagX : public Packet{
 
         void set_stream(const std::string & data);
 
-        TagX * clone();
+        Packet::Ptr clone();
 };
 #endif

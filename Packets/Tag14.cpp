@@ -8,6 +8,6 @@ Tag14::Tag14(std::string & data){
     read(data);
 }
 
-Tag14 * Tag14::clone(){
-    return new Tag14(*this);
+Packet::Ptr Tag14::clone(){
+    return Ptr(new Tag14(*this));
 }

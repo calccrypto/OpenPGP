@@ -37,6 +37,6 @@ void Tag10::set_pgp(const std::string & s){
     size = 3;
 }
 
-Tag10 * Tag10::clone(){
-    return new Tag10(*this);
+Packet::Ptr Tag10::clone(){
+    return Ptr(new Tag10(*this));
 }

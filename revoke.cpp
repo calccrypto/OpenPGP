@@ -1,11 +1,11 @@
 #include "revoke.h"
-bool check_revoked(const std::vector <Packet *> & packets, const std::string & keyid){
-    for(Packet * const & p: packets){
+bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string & keyid){
+    for(Packet::Ptr const & p: packets){
         // if a signature packet
         if (p -> get_tag() == 2){
             std::string raw = p -> raw();
             Tag2 tag2(raw);
-            for(Subpacket *& s: tag2.get_unhashed_subpackets()){
+            for(Subpacket::Ptr & s: tag2.get_unhashed_subpackets()){
                 if (s -> get_type() == 16){
                     raw = s -> raw();
                     Tag2Sub16 tag2sub16(raw);
@@ -17,7 +17,7 @@ bool check_revoked(const std::vector <Packet *> & packets, const std::string & k
                     }
                 }
             }
-            for(Subpacket *& s: tag2.get_hashed_subpackets()){
+            for(Subpacket::Ptr & s: tag2.get_hashed_subpackets()){
                 if (s -> get_type() == 16){
                     raw = s -> raw();
                     Tag2Sub16 tag2sub16(raw);
@@ -38,20 +38,20 @@ bool check_revoked(PGP & key, const std::string & keyid){
     return check_revoked(key.get_packets(), keyid);
 }
 
-Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5 * signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri);
 
     // find the primary key
-    Tag5 * key = NULL;
-    std::vector <Packet *> packets = pri.get_packets();
-    for(Packet *& p : packets){
+    Tag5::Ptr key;
+    std::vector <Packet::Ptr> packets = pri.get_packets();
+    for(Packet::Ptr& p : packets){
         if (p -> get_tag() == 5){
             std::string data = p -> raw();
-            key = new Tag5(data);
+            key = std::make_shared<Tag5>(data);
             break;
         }
     }
@@ -60,11 +60,11 @@ Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const 
         throw std::runtime_error("Error: No Secret Key packet found.");
     }
 
-    Tag2 * sig = create_sig_packet(0x20, signer);
+    Tag2::Ptr sig = create_sig_packet(0x20, signer);
 
     // add revocation subpacket
-    std::vector <Subpacket *> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29 * revoke = new Tag2Sub29;
+    std::vector <Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
+    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -75,14 +75,11 @@ Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const 
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    delete signer;
-    delete key;
-
     return sig;
 }
 
 PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
-    Tag2 * sig = revoke_primary_key_cert(pri, passphrase, code, reason);
+    Tag2::Ptr sig = revoke_primary_key_cert(pri, passphrase, code, reason);
 
     PGP signature;
     signature.set_ASCII_Armor(1);
@@ -91,25 +88,23 @@ PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
 
-    delete sig;
-
     return signature;
 }
 
-Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+Tag2::Ptr revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5 * signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri);
 
     // find subkey
-    Tag7 * key = NULL;
-    std::vector <Packet *> packets = pri.get_packets();
-    for(Packet *& p : packets){
+    Tag7::Ptr key;
+    std::vector <Packet::Ptr> packets = pri.get_packets();
+    for(Packet::Ptr & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
-            key = new Tag7(data);
+            key = std::make_shared<Tag7>(data);
             break;
         }
     }
@@ -118,11 +113,11 @@ Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    Tag2 * sig = create_sig_packet(0x28, signer);
+    Tag2::Ptr sig = create_sig_packet(0x28, signer);
 
     // add revocation subpacket
-    std::vector <Subpacket *> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29 * revoke = new Tag2Sub29;
+    std::vector <Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
+    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -133,14 +128,11 @@ Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    delete signer;
-    delete key;
-
     return sig;
 }
 
 PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
-    Tag2 * sig = revoke_subkey_cert(pri, passphrase, code, reason);
+    Tag2::Ptr sig = revoke_subkey_cert(pri, passphrase, code, reason);
 
     PGP signature;
     signature.set_ASCII_Armor(1);
@@ -160,15 +152,15 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5 * signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri);
 
     // find subkey
-    Tag7 * key = NULL;
-    std::vector <Packet *> packets = pri.get_packets();
-    for(Packet *& p : packets){
+    Tag7::Ptr key;
+    std::vector <Packet::Ptr> packets = pri.get_packets();
+    for(Packet::Ptr & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
-            key = new Tag7(data);
+            key = std::make_shared<Tag7>(data);
             break;
         }
     }
@@ -177,16 +169,16 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    ID * uid = find_signer_id(pri);
+    ID::Ptr uid = find_signer_id(pri);
     if (!uid){
         throw std::runtime_error("Error: No User ID packet found.");
     }
 
-    Tag2 * sig = create_sig_packet(0x30, signer);
+    Tag2::Ptr sig = create_sig_packet(0x30, signer);
 
     // add revocation subpacket
-    std::vector <Subpacket *> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29 * revoke = new Tag2Sub29;
+    std::vector <Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
+    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -197,13 +189,10 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    delete signer;
-    delete key;
-
     // Create output key
     PGP revoked(pub);
-    std::vector <Packet *> old_packets = pub.get_packets_clone();
-    std::vector <Packet *> new_packets;
+    std::vector <Packet::Ptr> old_packets = pub.get_packets_clone();
+    std::vector <Packet::Ptr> new_packets;
 
     unsigned int i = 0;
     // push all packets up to and including revoked packet into new packets
@@ -221,9 +210,6 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
     }
     revoked.set_packets(new_packets);
 
-    for(Packet *& p: old_packets){
-        delete p;
-    }
     return revoked;
 }
 
@@ -232,15 +218,15 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    std::vector <Packet *> packets = pri.get_packets();
+    std::vector <Packet::Ptr> packets = pri.get_packets();
 
-    Tag2 * rev = revoke_primary_key_cert(pri, passphrase, code, reason);
+    Tag2::Ptr rev = revoke_primary_key_cert(pri, passphrase, code, reason);
 
     std::string data = packets[0] -> raw();
-    Tag6 * primary = new Tag6(data);
+    Tag6::Ptr primary = std::make_shared<Tag6>(data);
 
     // assume first packet is primary key, and add a revocation signature as the next packet
-    std::vector <Packet *> new_packets = {primary, rev};
+    std::vector <Packet::Ptr> new_packets = {primary, rev};
     // clone the rest of the packets
     for(unsigned int i = 1; i < packets.size(); i++){
         new_packets.push_back(packets[i] -> clone());
@@ -251,10 +237,6 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
 
-    for(Packet *& p : new_packets){
-        delete p;
-    }
-
     return revoked;
 }
 
@@ -263,12 +245,12 @@ PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code,
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    std::vector <Packet *> packets = pri.get_packets();
+    std::vector <Packet::Ptr> packets = pri.get_packets();
 
-    Tag2 * rev = revoke_subkey_cert(pri, passphrase, code, reason);
+    Tag2::Ptr rev = revoke_subkey_cert(pri, passphrase, code, reason);
 
     // assume first packet is primary key
-    std::vector <Packet *> new_packets;
+    std::vector <Packet::Ptr> new_packets;
 
     // clone all packets up to and including the subkey
     unsigned int i = 0;
@@ -289,10 +271,6 @@ PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code,
     revoked.set_ASCII_Armor(1); // public key
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
-
-    for(Packet *& p : new_packets){
-        delete p;
-    }
 
     return revoked;
 }
@@ -318,22 +296,22 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
 
     std::string raw = revoke.get_packets()[0] -> raw();
-    Tag2 tag2(raw);
+    Tag2::Ptr tag2 = std::make_shared<Tag2>(raw);
 
-    if ((tag2.get_type() != 0x20) && (tag2.get_type() != 0x28)){
-        std::stringstream s; s << (int) tag2.get_type();
+    if ((tag2->get_type() != 0x20) && (tag2->get_type() != 0x28)){
+        std::stringstream s; s << (int) tag2->get_type();
         throw std::runtime_error("Error: Invalid signature type found: " + s.str());
     }
 
     // which packet to look for
-    uint8_t which = (tag2.get_type() == 0x20)?6:14;
+    uint8_t which = (tag2->get_type() == 0x20)?6:14;
 
     std::string r_keyid = "";
     std::string k_keyid = "";
 
     // find key id to revoke
     // search unhashed subpackets
-    for(Subpacket *& s : tag2.get_unhashed_subpackets()){
+    for(Subpacket::Ptr & s : tag2->get_unhashed_subpackets()){
         if (s -> get_type() == 16){
             std::string raws = s -> raw();
             Tag2Sub16 tag2sub16(raws);
@@ -343,7 +321,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
     if (!r_keyid.size()){
         // search hashed subpackets
-        for(Subpacket *& s : tag2.get_hashed_subpackets()){
+        for(Subpacket::Ptr & s : tag2->get_hashed_subpackets()){
             if (s -> get_type() == 16){
                 std::string raws = s -> raw();
                 Tag2Sub16 tag2sub16(raws);
@@ -357,7 +335,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
 
     // find key with key id
-    for(Packet *& p: pub.get_packets()){
+    for(Packet::Ptr & p: pub.get_packets()){
         if (p -> get_tag() == which){
             raw = p -> raw();
             Tag6 tag6(raw);
@@ -376,8 +354,8 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
 
     // Create output key
     PGP revoked(pub);
-    std::vector <Packet *> old_packets = pub.get_packets_clone();
-    std::vector <Packet *> new_packets;
+    std::vector <Packet::Ptr> old_packets = pub.get_packets_clone();
+    std::vector <Packet::Ptr> new_packets;
 
     unsigned int i = 0;
     // push all packets up to and including revoked packet into new packets
@@ -387,15 +365,12 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     while ((i < old_packets.size()) && (old_packets[i++] -> get_tag() != which));
 
     // append revocation signature to key
-    new_packets.push_back(&tag2);
+    new_packets.push_back(tag2);
     // append rest of packets
     while (i < old_packets.size()){
         new_packets.push_back(old_packets[i++]);
     }
     revoked.set_packets(new_packets);
 
-    for(Packet *& p: old_packets){
-        delete p;
-    }
     return revoked;
 }

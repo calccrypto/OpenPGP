@@ -16,7 +16,7 @@ PGP::PGP(const PGP & pgp){
     armored = pgp.armored;
     ASCII_Armor = pgp.ASCII_Armor;
     Armor_Header = pgp.Armor_Header;
-    for(Packet * const & p : pgp.packets){
+    for(Packet::Ptr const & p : pgp.packets){
         packets.push_back(p -> clone());
     }
 }
@@ -32,9 +32,6 @@ PGP::PGP(std::ifstream & f){
 }
 
 PGP::~PGP(){
-    for(Packet *& p : packets){
-        delete p;
-    }
     packets.clear();
 }
 
@@ -180,7 +177,7 @@ void PGP::read(std::ifstream & file){
 
 void PGP::read_raw(std::string & data){
     while (data.size()){
-        Packet * temp = read_packet(data);
+        Packet::Ptr temp = read_packet(data);
         packets.push_back(temp);
     }
     armored = false;
@@ -188,7 +185,7 @@ void PGP::read_raw(std::string & data){
 
 std::string PGP::show(){
     std::stringstream out;
-    for(Packet *& p : packets){
+    for(Packet::Ptr & p : packets){
         out << (p -> get_format()?"New":"Old")  << ": ";
         try{// defined packets have name and tag number
             out << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ")";
@@ -201,7 +198,7 @@ std::string PGP::show(){
 
 std::string PGP::raw(uint8_t header){
     std::string out = "";
-    for(Packet *& p : packets){
+    for(Packet::Ptr & p : packets){
         out += p -> write(header);
     }
     return out;
@@ -232,13 +229,13 @@ std::vector <std::pair <std::string, std::string> > PGP::get_Armor_Header(){
     return Armor_Header;
 }
 
-std::vector <Packet *> PGP::get_packets(){
+std::vector <Packet::Ptr> PGP::get_packets(){
     return packets;
 }
 
-std::vector <Packet *> PGP::get_packets_clone(){
-    std::vector <Packet *> out;
-    for(Packet *& p : packets){
+std::vector <Packet::Ptr> PGP::get_packets_clone(){
+    std::vector <Packet::Ptr> out;
+    for(Packet::Ptr & p : packets){
         out.push_back(p -> clone());
     }
     return out;
@@ -257,19 +254,16 @@ void PGP::set_Armor_Header(const std::vector <std::pair <std::string, std::strin
     Armor_Header = header;
 }
 
-void PGP::set_packets(const std::vector <Packet *> & p){
-    for(Packet *& t : packets){
-        delete t;
-    }
+void PGP::set_packets(const std::vector <Packet::Ptr> & p){
     packets.clear();
-    for(Packet * const & t : p){
+    for(Packet::Ptr const & t : p){
         packets.push_back(t -> clone());
     }
 }
 
 std::string PGP::keyid(){
     if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
-        for(Packet *& p : packets){
+        for(Packet::Ptr & p : packets){
             // find primary key
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
                 std::string data = p -> raw();
@@ -278,7 +272,7 @@ std::string PGP::keyid(){
             }
         }
         // if no primary key is found
-        for(Packet *& p : packets){
+        for(Packet::Ptr & p : packets){
             // find subkey
             if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
@@ -298,13 +292,13 @@ std::string PGP::list_keys(){
     if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
         // scan for revoked keys
         std::map <std::string, std::string> revoked;
-        for(Packet *& p : packets){
+        for(Packet::Ptr & p : packets){
             if (p -> get_tag() == 2){
                 std::string raw = p -> raw();
                 Tag2 tag2(raw);
                 if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                     bool found = false;
-                    for(Subpacket *& s : tag2.get_unhashed_subpackets()){
+                    for(Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
                         if (s -> get_type() == 16){
                             raw = s -> raw();
                             Tag2Sub16 tag2sub16(raw);
@@ -313,7 +307,7 @@ std::string PGP::list_keys(){
                         }
                     }
                     if (!found){
-                        for(Subpacket *& s : tag2.get_hashed_subpackets()){
+                        for(Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
                             if (s -> get_type() == 16){
                                 raw = s -> raw();
                                 Tag2Sub16 tag2sub16(raw);
@@ -327,7 +321,7 @@ std::string PGP::list_keys(){
         }
 
         std::stringstream out;
-        for(Packet *& p : packets){
+        for(Packet::Ptr & p : packets){
             std::string data = p -> raw();
             switch (p -> get_tag()){
                 case 5: case 6: case 7: case 14:
@@ -353,8 +347,8 @@ std::string PGP::list_keys(){
                 case 17:
                     {
                         Tag17 tag17(data);
-                        std::vector <Subpacket *> subpackets = tag17.get_attributes();
-                        for(Subpacket * s : subpackets){
+                        std::vector <Subpacket::Ptr> subpackets = tag17.get_attributes();
+                        for(Subpacket::Ptr s : subpackets){
                             // since only subpacket type 1 is defined
                             data = s -> raw();
                             Tag17Sub1 sub1(data);
@@ -373,8 +367,8 @@ std::string PGP::list_keys(){
     }
 }
 
-PGP * PGP::clone(){
-    PGP * out = new PGP;
+PGP::Ptr PGP::clone(){
+    PGP::Ptr out(new PGP);
     out -> ASCII_Armor = ASCII_Armor;
     out -> Armor_Header = Armor_Header;
     out -> packets = get_packets_clone();
@@ -384,7 +378,7 @@ PGP * PGP::clone(){
 PGP PGP::operator=(const PGP & pgp){
     ASCII_Armor = pgp.ASCII_Armor;
     Armor_Header = pgp.Armor_Header;
-    for(Packet * const & p : pgp.packets){
+    for(Packet::Ptr const & p : pgp.packets){
         packets.push_back(p -> clone());
     }
     return *this;

@@ -11,6 +11,8 @@ class Tag13 : public ID{
         std::string email;
 
     public:
+        typedef std::shared_ptr<Tag13> Ptr;
+
         Tag13();
         Tag13(std::string & data);
         void read(std::string & data);
@@ -25,6 +27,6 @@ class Tag13 : public ID{
         void set_comment(const std::string & c);
         void set_email(const std::string & e);
 
-        Tag13 * clone();
+        Packet::Ptr clone();
 };
 #endif

@@ -9,6 +9,8 @@ class Tag2Sub25 : public Subpacket{
         bool primary;
 
     public:
+        typedef std::shared_ptr<Tag2Sub25> Ptr;
+
         Tag2Sub25();
         Tag2Sub25(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub25 : public Subpacket{
 
         void set_primary(const bool p);
 
-        Tag2Sub25 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

@@ -29,6 +29,6 @@ void Tag2Sub26::set_uri(const std::string & u){
     uri = u;
 }
 
-Tag2Sub26 * Tag2Sub26::clone(){
-    return new Tag2Sub26(*this);
+Subpacket::Ptr Tag2Sub26::clone(){
+    return Ptr(new Tag2Sub26(*this));
 }

@@ -8,6 +8,8 @@ class Tag18 : public Packet{
         std::string protected_data;
 
     public:
+        typedef std::shared_ptr<Tag18> Ptr;
+
         Tag18();
         Tag18(std::string & data);
         void read(std::string & data);
@@ -18,6 +20,6 @@ class Tag18 : public Packet{
 
         void set_protected_data(const std::string & p);
 
-        Tag18 * clone();
+        Packet::Ptr clone();
 };
 #endif

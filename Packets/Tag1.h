@@ -10,6 +10,8 @@ class Tag1 : public Packet{
         std::vector <mpz_class> mpi;      // algorithm specific fields
 
     public:
+        typedef std::shared_ptr<Tag1> Ptr;
+
         Tag1();
         Tag1(std::string & data);
         void read(std::string & data);
@@ -24,6 +26,6 @@ class Tag1 : public Packet{
         void set_pka(const uint8_t p);
         void set_mpi(const std::vector <mpz_class> & m);
 
-        Tag1 * clone();
+        Packet::Ptr clone();
 };
 #endif

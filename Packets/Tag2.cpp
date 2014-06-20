@@ -25,13 +25,7 @@ Tag2::Tag2(std::string & data){
 }
 
 Tag2::~Tag2(){
-    for(Subpacket *& s : hashed_subpackets){
-        delete s;
-    }
     hashed_subpackets.clear();
-    for(Subpacket *& s : unhashed_subpackets){
-        delete s;
-    }
     unhashed_subpackets.clear();
 }
 
@@ -57,83 +51,83 @@ std::string Tag2::read_subpacket(std::string & data){
     return out;
 }
 
-std::vector <Subpacket *> Tag2::read_subpackets(std::string & data){
-    std::vector <Subpacket *> out;
+std::vector <Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
+    std::vector <Subpacket::Ptr> out;
     while (data.size()){
-        Subpacket * temp = NULL;
+        Subpacket::Ptr temp;
         std::string subpacket_data = read_subpacket(data);
         uint8_t sub = subpacket_data[0];
         subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
         switch (sub){
             // reserved sub values will crash the program
             case 2:
-                temp = new Tag2Sub2;
+                temp = std::make_shared<Tag2Sub2>();
                 break;
             case 3:
-                temp = new Tag2Sub3;
+                temp = std::make_shared<Tag2Sub3>();
                 break;
             case 4:
-                temp = new Tag2Sub4;
+                temp = std::make_shared<Tag2Sub4>();
                 break;
             case 5:
-                temp = new Tag2Sub5;
+                temp = std::make_shared<Tag2Sub5>();
                 break;
             case 6:
-                temp = new Tag2Sub6;
+                temp = std::make_shared<Tag2Sub6>();
                 break;
             case 9:
-                temp = new Tag2Sub9;
+                temp = std::make_shared<Tag2Sub9>();
                 break;
             case 10:
-                temp = new Tag2Sub10;
+                temp = std::make_shared<Tag2Sub10>();
                 break;
             case 11:
-                temp = new Tag2Sub11;
+                temp = std::make_shared<Tag2Sub11>();
                 break;
             case 12:
-                temp = new Tag2Sub12;
+                temp = std::make_shared<Tag2Sub12>();
                 break;
             case 16:
-                temp = new Tag2Sub16;
+                temp = std::make_shared<Tag2Sub16>();
                 break;
             case 20:
-                temp = new Tag2Sub20;
+                temp = std::make_shared<Tag2Sub20>();
                 break;
             case 21:
-                temp = new Tag2Sub21;
+                temp = std::make_shared<Tag2Sub21>();
                 break;
             case 22:
-                temp = new Tag2Sub22;
+                temp = std::make_shared<Tag2Sub22>();
                 break;
             case 23:
-                temp = new Tag2Sub23;
+                temp = std::make_shared<Tag2Sub23>();
                 break;
             case 24:
-                temp = new Tag2Sub24;
+                temp = std::make_shared<Tag2Sub24>();
                 break;
             case 25:
-                temp = new Tag2Sub25;
+                temp = std::make_shared<Tag2Sub25>();
                 break;
             case 26:
-                temp = new Tag2Sub26;
+                temp = std::make_shared<Tag2Sub26>();
                 break;
             case 27:
-                temp = new Tag2Sub27;
+                temp = std::make_shared<Tag2Sub27>();
                 break;
             case 28:
-                temp = new Tag2Sub28;
+                temp = std::make_shared<Tag2Sub28>();
                 break;
             case 29:
-                temp = new Tag2Sub29;
+                temp = std::make_shared<Tag2Sub29>();
                 break;
             case 30:
-                temp = new Tag2Sub30;
+                temp = std::make_shared<Tag2Sub30>();
                 break;
             case 31:
-                temp = new Tag2Sub31;
+                temp = std::make_shared<Tag2Sub31>();
                 break;
             case 32:
-                temp = new Tag2Sub32;
+                temp = std::make_shared<Tag2Sub32>();
                 break;
             default:
                 std::cerr << "Error: Unknown subpacket tag. Ignoring." << std::endl;
@@ -217,13 +211,13 @@ std::string Tag2::show(){
             << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
-            for(Subpacket *& s : hashed_subpackets){
+            for(Subpacket::Ptr & s : hashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
         if (unhashed_subpackets.size()){
             out << "    Unhashed Sub:\n";
-            for(Subpacket *& s : unhashed_subpackets){
+            for(Subpacket::Ptr & s : unhashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
@@ -245,11 +239,11 @@ std::string Tag2::raw(){
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket *& s : hashed_subpackets){
+        for(Subpacket::Ptr & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         std::string unhashed_str = "";
-        for(Subpacket *& s : unhashed_subpackets){
+        for(Subpacket::Ptr & s : unhashed_subpackets){
             unhashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
@@ -285,7 +279,7 @@ uint32_t Tag2::get_time(){
         return time;
     }
     else if (version == 4){
-        for(Subpacket * s : hashed_subpackets){
+        for(Subpacket::Ptr s : hashed_subpackets){
             if (s -> get_type() == 2){
                 std::string data = s -> raw();
                 Tag2Sub2 sub2(data);
@@ -301,7 +295,7 @@ std::string Tag2::get_keyid(){
         return keyid;
     }
     else if (version == 4){
-        for(Subpacket * s : unhashed_subpackets){
+        for(Subpacket::Ptr s : unhashed_subpackets){
             if (s -> get_type() == 16){
                 std::string data = s -> raw();
                 Tag2Sub16 sub16(data);
@@ -316,25 +310,25 @@ std::string Tag2::get_keyid(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <Subpacket *> Tag2::get_hashed_subpackets(){
+std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets(){
     return hashed_subpackets;
 }
 
-std::vector <Subpacket *> Tag2::get_hashed_subpackets_clone(){
-    std::vector <Subpacket *> out;
-    for(Subpacket *& s : hashed_subpackets){
+std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets_clone(){
+    std::vector <Subpacket::Ptr> out;
+    for(Subpacket::Ptr & s : hashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
 }
 
-std::vector <Subpacket *> Tag2::get_unhashed_subpackets(){
+std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets(){
     return unhashed_subpackets;
 }
 
-std::vector <Subpacket *> Tag2::get_unhashed_subpackets_clone(){
-    std::vector <Subpacket *> out;
-    for(Subpacket *& s : unhashed_subpackets){
+std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone(){
+    std::vector <Subpacket::Ptr> out;
+    for(Subpacket::Ptr & s : unhashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -346,7 +340,7 @@ std::string Tag2::get_up_to_hashed(){
     }
     else if (version == 4){
         std::string hashed = "";
-        for(Subpacket *& s : hashed_subpackets){
+        for(Subpacket::Ptr & s : hashed_subpackets){
             hashed += s -> write();
         }
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
@@ -365,7 +359,7 @@ std::string Tag2::get_without_unhashed(){
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket *& s : hashed_subpackets){
+        for(Subpacket::Ptr & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + zero + zero + left16;
@@ -412,13 +406,12 @@ void Tag2::set_time(const uint32_t t){
                 break;
             }
         }
-        Tag2Sub2 * sub2 = new Tag2Sub2;
+        Tag2Sub2::Ptr sub2 = std::make_shared<Tag2Sub2>();
         sub2 -> set_time(t);
         if (i == hashed_subpackets.size()){ // not found
             hashed_subpackets.push_back(sub2);
         }
         else{                               // found
-            delete hashed_subpackets[i];
             hashed_subpackets[i] = sub2;
         }
     }
@@ -440,43 +433,36 @@ void Tag2::set_keyid(const std::string & k){
                 break;
             }
         }
-        Tag2Sub16 * sub16 = new Tag2Sub16;
+        Tag2Sub16::Ptr sub16 = std::make_shared<Tag2Sub16>();
         sub16 -> set_keyid(k);
         if (i == unhashed_subpackets.size()){   // not found
             unhashed_subpackets.push_back(sub16);
         }
         else{                                   // found
-            delete unhashed_subpackets[i];
             unhashed_subpackets[i] = sub16;
         }
     }
     size = raw().size();
 }
 
-void Tag2::set_hashed_subpackets(const std::vector <Subpacket *> & h){
-    for(Subpacket *& s : hashed_subpackets){
-        delete s;
-    }
+void Tag2::set_hashed_subpackets(const std::vector <Subpacket::Ptr> & h){
     hashed_subpackets.clear();
-    for(Subpacket *const & s : h){
+    for(Subpacket::Ptr const & s : h){
         hashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
 }
 
-void Tag2::set_unhashed_subpackets(const std::vector <Subpacket *> & u){
-    for(Subpacket *& s : unhashed_subpackets){
-        delete s;
-    }
+void Tag2::set_unhashed_subpackets(const std::vector <Subpacket::Ptr> & u){
     unhashed_subpackets.clear();
-    for(Subpacket * const & s : u){
+    for(Subpacket::Ptr const & s : u){
         unhashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
 }
 
-Tag2 * Tag2::clone(){
-    Tag2 * out = new Tag2(*this);
+Packet::Ptr Tag2::clone(){
+    Ptr out(new Tag2(*this));
     out -> hashed_subpackets = get_hashed_subpackets_clone();
     out -> unhashed_subpackets = get_unhashed_subpackets_clone();
     return out;

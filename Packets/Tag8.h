@@ -13,6 +13,8 @@ class Tag8 : public Packet{
         std::string decompress(std::string data);
 
     public:
+        typedef std::shared_ptr<Tag8> Ptr;
+
         Tag8();
         Tag8(std::string & data);
         void read(std::string & data);
@@ -27,6 +29,6 @@ class Tag8 : public Packet{
         void set_data(const std::string & data);
         void set_compressed_data(const std::string & data);
 
-        Tag8 * clone();
+        Packet::Ptr clone();
 };
 #endif

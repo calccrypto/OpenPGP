@@ -32,6 +32,6 @@ void Tag9::set_encrypted_data(const std::string & e){
     size = raw().size();
 }
 
-Tag9 * Tag9::clone(){
-    return new Tag9(*this);
+Packet::Ptr Tag9::clone(){
+    return Ptr(new Tag9(*this));
 }

@@ -160,6 +160,6 @@ std::string Tag6::get_keyid(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-Tag6 * Tag6::clone(){
-    return new Tag6(*this);
+Packet::Ptr Tag6::clone(){
+    return Ptr(new Tag6(*this));
 }

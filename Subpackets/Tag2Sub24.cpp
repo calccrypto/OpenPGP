@@ -29,6 +29,6 @@ void Tag2Sub24::set_pks(const std::string & p){
     pks = p;
 }
 
-Tag2Sub24 * Tag2Sub24::clone(){
-    return new Tag2Sub24(*this);
+Subpacket::Ptr Tag2Sub24::clone(){
+    return Ptr(new Tag2Sub24(*this));
 }

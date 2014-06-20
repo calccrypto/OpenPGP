@@ -9,6 +9,8 @@ class Tag2Sub16 : public Subpacket{
         std::string keyid; // 8 octets
 
     public:
+        typedef std::shared_ptr<Tag2Sub16> Ptr;
+
         Tag2Sub16();
         Tag2Sub16(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub16 : public Subpacket{
 
         void set_keyid(const std::string & k);
 
-        Tag2Sub16 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

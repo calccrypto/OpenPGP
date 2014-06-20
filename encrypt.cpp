@@ -1,22 +1,21 @@
 #include "encrypt.h"
-Tag6 * find_encrypting_key(PGP & k){
+Tag6::Ptr find_encrypting_key(PGP & k){
     if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
-        std::vector <Packet *> packets = k.get_packets();
-        for(Packet *& p : packets){
+        std::vector <Packet::Ptr> packets = k.get_packets();
+        for(Packet::Ptr & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
-                Tag6 * key = new Tag6(data);
+                Tag6::Ptr key(new Tag6(data));
                 // make sure key has signing material
                 if ((key -> get_pka() == 1) || // RSA
                     (key -> get_pka() == 2) || // RSA
                     (key -> get_pka() == 16)){ // ElGamal
                         return key;
                 }
-                delete key;
             }
         }
     }
-    return NULL;
+    return Tag6::Ptr();
 }
 
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub){
@@ -44,8 +43,8 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
-    std::vector <Packet *> packets = pub.get_packets();
-    Tag6 * public_key = find_encrypting_key(pub);
+    std::vector <Packet::Ptr> packets = pub.get_packets();
+    Tag6::Ptr public_key = find_encrypting_key(pub);
 
     if (!public_key){
         throw std::runtime_error("Error: No encrypting key found.");
@@ -57,7 +56,7 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     }
 
     std::vector <mpz_class> mpi = public_key -> get_mpi();
-    Tag1 * tag1 = new Tag1;
+    Tag1::Ptr tag1 = std::make_shared<Tag1>();
     tag1 -> set_keyid(public_key -> get_keyid());
     tag1 -> set_pka(public_key -> get_pka());
 
@@ -92,14 +91,14 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
     std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1));
 
-    Packet * encrypted = NULL;
+    Packet::Ptr encrypted;
 
     if (!hash){
         // Symmetrically Encrypted Data Packet
         Tag9 tag9;
         tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, tag11.write(true), session_key, prefix));
         std::string raw = tag9.raw();
-        encrypted = new Tag9;
+        encrypted = std::make_shared<Tag9>();
         encrypted -> read(raw);
     }
     else{
@@ -114,7 +113,7 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
         // encrypt((literal_data_packet(plain text) + MDC SHA1(20 octets)))
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, tag18.get_protected_data() + tag19.write(), session_key, prefix));
         std::string raw = tag18.raw();
-        encrypted = new Tag18;
+        encrypted = std::make_shared<Tag18>();
         encrypted -> read(raw);
     }
 
@@ -131,8 +130,5 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     m = 0;
     session_key = "";
     prefix = "";
-    delete tag1;
-    delete public_key;
-    delete encrypted;
     return out;
 }

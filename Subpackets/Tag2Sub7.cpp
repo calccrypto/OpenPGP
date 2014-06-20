@@ -30,6 +30,6 @@ void Tag2Sub7::set_revocable(const bool r){
     revocable = r;
 }
 
-Tag2Sub7 * Tag2Sub7::clone(){
-    return new Tag2Sub7(*this);
+Subpacket::Ptr Tag2Sub7::clone(){
+    return Ptr(new Tag2Sub7(*this));
 }

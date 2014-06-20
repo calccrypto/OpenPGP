@@ -8,29 +8,29 @@ std::string xor_strings(const std::string & str1, const std::string & str2){
     return out;
 }
 
-SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::string & key2, const std::string & key3){
-    SymAlg * alg = NULL;
+SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::string & key2, const std::string & key3){
+    SymAlg::Ptr alg;
     switch(sym_alg){
         case 1:
-            alg = new IDEA(key);
+            alg = std::make_shared<IDEA>(key);
             break;
         case 2:
-            alg = new TDES(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
+            alg = std::make_shared<TDES>(key, TDES_mode1, key2, TDES_mode2, key3, TDES_mode3);
             break;
         case 3:
-            alg = new CAST128(key);
+            alg = std::make_shared<CAST128>(key);
             break;
         case 4:
-            alg = new Blowfish(key);
+            alg = std::make_shared<Blowfish>(key);
             break;
         case 7: case 8: case 9:
-            alg = new AES(key);
+            alg = std::make_shared<AES>(key);
             break;
         case 10:
-            alg = new Twofish(key);
+            alg = std::make_shared<Twofish>(key);
             break;
         case 11: case 12: case 13:
-            alg = new Camellia(key);
+            alg = std::make_shared<Camellia>(key);
             break;
         default:
             throw std::runtime_error("Error: Unknown symmetric key algorithm value.");
@@ -39,7 +39,7 @@ SymAlg * use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::
     return alg;
 }
 
-std::string OpenPGP_CFB_encrypt(SymAlg * crypt, const uint8_t packet, const std::string & data, std::string prefix){
+std::string OpenPGP_CFB_encrypt(SymAlg::Ptr crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
     if (prefix.size() > BS){
@@ -97,7 +97,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg * crypt, const uint8_t packet, const std:
     return C;
 }
 
-std::string OpenPGP_CFB_decrypt(SymAlg * crypt, const uint8_t packet, const std::string & data){
+std::string OpenPGP_CFB_decrypt(SymAlg::Ptr crypt, const uint8_t packet, const std::string & data){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
     // 1
@@ -135,9 +135,8 @@ std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet,
     if (!sym_alg){
         return data;
     }
-    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    SymAlg::Ptr alg = use_sym_alg(sym_alg, key, key2, key3);
     std::string out = OpenPGP_CFB_encrypt(alg, packet, data, prefix);
-    delete alg;
     return out;
 }
 
@@ -145,13 +144,12 @@ std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet,
     if (!sym_alg){
         return data;
     }
-    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    SymAlg::Ptr alg = use_sym_alg(sym_alg, key, key2, key3);
     std::string out = OpenPGP_CFB_decrypt(alg, packet, data);
-    delete alg;
     return out;
 }
 
-std::string normal_CFB_encrypt(SymAlg * crypt, std::string & data, std::string & IV){
+std::string normal_CFB_encrypt(SymAlg::Ptr crypt, std::string & data, std::string & IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
@@ -163,7 +161,7 @@ std::string normal_CFB_encrypt(SymAlg * crypt, std::string & data, std::string &
     return out;
 }
 
-std::string normal_CFB_decrypt(SymAlg * crypt, std::string & data, std::string & IV){
+std::string normal_CFB_decrypt(SymAlg::Ptr crypt, std::string & data, std::string & IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
@@ -179,9 +177,8 @@ std::string use_normal_CFB_encrypt(const uint8_t sym_alg, std::string data, std:
     if (!sym_alg){
         return data;
     }
-    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    SymAlg::Ptr alg = use_sym_alg(sym_alg, key, key2, key3);
     std::string out = normal_CFB_encrypt(alg, data, IV);
-    delete alg;
     return out;
 }
 
@@ -189,8 +186,7 @@ std::string use_normal_CFB_decrypt(const uint8_t sym_alg, std::string data, std:
     if (!sym_alg){
         return data;
     }
-    SymAlg * alg = use_sym_alg(sym_alg, key, key2, key3);
+    SymAlg::Ptr alg = use_sym_alg(sym_alg, key, key2, key3);
     std::string out = normal_CFB_decrypt(alg, data, IV);
-    delete alg;
     return out;
 }

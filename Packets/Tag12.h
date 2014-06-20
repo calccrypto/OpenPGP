@@ -9,6 +9,8 @@ class Tag12 : public Packet{
         std::string trust;
 
     public:
+        typedef std::shared_ptr<Tag12> Ptr;
+
         Tag12();
         Tag12(std::string & data);
         Tag12(std::ifstream & f);
@@ -20,6 +22,6 @@ class Tag12 : public Packet{
 
         void set_trust(const std::string & t);
 
-        Tag12 * clone();
+        Packet::Ptr clone();
 };
 #endif

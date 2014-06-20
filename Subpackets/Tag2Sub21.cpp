@@ -33,6 +33,6 @@ void Tag2Sub21::set_pha(const std::string & p){
     pha = p;
 }
 
-Tag2Sub21 * Tag2Sub21::clone(){
-    return new Tag2Sub21(*this);
+Subpacket::Ptr Tag2Sub21::clone(){
+    return Ptr(new Tag2Sub21(*this));
 }

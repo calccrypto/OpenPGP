@@ -109,6 +109,6 @@ void Tag13::set_email(const std::string & e){
     size = raw().size();
 }
 
-Tag13 * Tag13::clone(){
-    return new Tag13(*this);
+Packet::Ptr Tag13::clone(){
+    return Ptr(new Tag13(*this));
 }

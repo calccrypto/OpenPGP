@@ -9,6 +9,8 @@ class Tag2Sub3 : public Subpacket{
         time_t time;
 
     public:
+        typedef std::shared_ptr<Tag2Sub3> Ptr;
+
         Tag2Sub3();
         Tag2Sub3(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub3 : public Subpacket{
 
         void set_time(const time_t t);
 
-        Tag2Sub3 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

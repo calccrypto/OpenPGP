@@ -73,6 +73,6 @@ void Tag1::set_mpi(const std::vector <mpz_class> & m){
     size = raw().size();
 }
 
-Tag1 * Tag1::clone(){
-    return new Tag1(*this);
+Packet::Ptr Tag1::clone(){
+    return Ptr(new Tag1(*this));
 }

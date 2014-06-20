@@ -38,16 +38,16 @@ THE SOFTWARE.
 #include "sign.h"
 #include "verify.h"
 
-bool check_revoked(const std::vector <Packet *> & packets, const std::string & keyid);
+bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string & keyid);
 bool check_revoked(PGP & key, const std::string & keyid);
 
 // main function to revoke a primary key
-Tag2 * revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 // packages certification into a key
 PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 
 // main function to revoke a subkey
-Tag2 * revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+Tag2::Ptr revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 // packages certification into a key
 PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
 

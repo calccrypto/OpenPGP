@@ -35,6 +35,6 @@ void Tag2Sub23::set_flags(const char c){
     flags = c;
 }
 
-Tag2Sub23 * Tag2Sub23::clone(){
-    return new Tag2Sub23(*this);
+Subpacket::Ptr Tag2Sub23::clone(){
+    return Ptr(new Tag2Sub23(*this));
 }

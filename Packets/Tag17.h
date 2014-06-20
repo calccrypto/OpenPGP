@@ -11,12 +11,14 @@ class Tag17 : public ID{
         uint8_t type;
 
         // only defined subpacket is 1
-        std::vector <Subpacket *> attributes;
+        std::vector <Subpacket::Ptr> attributes;
 
         std::string read_subpacket(std::string & data);
         std::string write_subpacket(uint8_t s_type, std::string data);
 
     public:
+        typedef std::shared_ptr<Tag17> Ptr;
+
         Tag17();
         Tag17(std::string & data);
         ~Tag17();
@@ -24,10 +26,10 @@ class Tag17 : public ID{
         std::string show();
         std::string raw();
 
-        std::vector <Subpacket *> get_attributes();
-        std::vector <Subpacket *> get_attributes_clone();
-        void set_attibutes(const std::vector <Subpacket *> & a);
+        std::vector <Subpacket::Ptr> get_attributes();
+        std::vector <Subpacket::Ptr> get_attributes_clone();
+        void set_attibutes(const std::vector <Subpacket::Ptr> & a);
 
-        Tag17 * clone();
+        Packet::Ptr clone();
 };
 #endif

@@ -36,6 +36,6 @@ void Tag2Sub3::set_time(const time_t t){
     time = t;
 }
 
-Tag2Sub3 * Tag2Sub3::clone(){
-    return new Tag2Sub3(*this);
+Subpacket::Ptr Tag2Sub3::clone(){
+    return Ptr(new Tag2Sub3(*this));
 }

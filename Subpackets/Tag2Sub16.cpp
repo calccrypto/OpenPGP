@@ -33,6 +33,6 @@ void Tag2Sub16::set_keyid(const std::string & k){
     keyid = k;
 }
 
-Tag2Sub16 * Tag2Sub16::clone(){
-    return new Tag2Sub16(*this);
+Subpacket::Ptr Tag2Sub16::clone(){
+    return Ptr(new Tag2Sub16(*this));
 }

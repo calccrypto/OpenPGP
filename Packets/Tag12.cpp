@@ -32,6 +32,6 @@ void Tag12::set_trust(const std::string & t){
     size = raw().size();
 }
 
-Tag12 * Tag12::clone(){
-    return new Tag12(*this);
+Packet::Ptr Tag12::clone(){
+    return Ptr(new Tag12(*this));
 }

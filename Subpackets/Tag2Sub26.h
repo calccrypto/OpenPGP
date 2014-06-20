@@ -9,6 +9,8 @@ class Tag2Sub26 : public Subpacket{
         std::string uri;
 
     public:
+        typedef std::shared_ptr<Tag2Sub26> Ptr;
+
         Tag2Sub26();
         Tag2Sub26(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub26 : public Subpacket{
 
         void set_uri(const std::string & u);
 
-        Tag2Sub26 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

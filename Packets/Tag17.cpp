@@ -9,20 +9,17 @@ Tag17::Tag17(std::string & data){
 }
 
 Tag17::~Tag17(){
-    for(Subpacket *& s : attributes){
-        delete s;
-    }
 }
 
 void Tag17::read(std::string & data){
     size = data.size();
     while (data.size()){
-        Subpacket * temp;
+        Subpacket::Ptr temp;
         std::string subpacket = read_subpacket(data);
         uint8_t type = subpacket[0];
         switch (type){
             case 1:
-                temp = new Tag17Sub1;
+                temp = std::make_shared<Tag17Sub1>();
                 break;
             default:
                 throw std::runtime_error("Error: Subpacket tag not defined or reserved.");
@@ -44,7 +41,7 @@ std::string Tag17::show(){
 
 std::string Tag17::raw(){
     std::string out = "";
-    for(Subpacket * a : attributes){
+    for(Subpacket::Ptr a : attributes){
         out += a -> write();
     }
     return out;
@@ -86,30 +83,27 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <Subpacket *> Tag17::get_attributes(){
+std::vector <Subpacket::Ptr> Tag17::get_attributes(){
     return attributes;
 }
 
-std::vector <Subpacket *> Tag17::get_attributes_clone(){
-    std::vector <Subpacket *> out;
-    for(Subpacket *& s : attributes){
-        Subpacket * temp = s -> clone();
+std::vector <Subpacket::Ptr> Tag17::get_attributes_clone(){
+    std::vector <Subpacket::Ptr> out;
+    for(Subpacket::Ptr & s : attributes){
+        Subpacket::Ptr temp = s -> clone();
         out.push_back(temp);
     }
     return out;
 }
 
-void Tag17::set_attibutes(const std::vector <Subpacket *> & a){
-    for(Subpacket *& s : attributes){
-        delete s;
-    }
+void Tag17::set_attibutes(const std::vector <Subpacket::Ptr> & a){
     attributes.clear();
-    for(Subpacket * const & s : a){
+    for(Subpacket::Ptr const & s : a){
         attributes.push_back(s);
     }
     size = raw().size();
 }
 
-Tag17 * Tag17::clone(){
-    return new Tag17(*this);
+Packet::Ptr Tag17::clone(){
+    return Ptr(new Tag17(*this));
 }

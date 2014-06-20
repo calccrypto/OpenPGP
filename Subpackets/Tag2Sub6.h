@@ -9,6 +9,8 @@ class Tag2Sub6 : public Subpacket{
         std::string regex;
 
     public:
+        typedef std::shared_ptr<Tag2Sub6> Ptr;
+
         Tag2Sub6();
         Tag2Sub6(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub6 : public Subpacket{
 
         void set_regex(const std::string & r);
 
-        Tag2Sub6 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

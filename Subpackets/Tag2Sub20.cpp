@@ -62,6 +62,6 @@ void Tag2Sub20::set_n(const std::string & s){
     n = s;
 }
 
-Tag2Sub20 * Tag2Sub20::clone(){
-    return new Tag2Sub20(*this);
+Subpacket::Ptr Tag2Sub20::clone(){
+    return Ptr(new Tag2Sub20(*this));
 }

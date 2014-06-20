@@ -29,6 +29,6 @@ void Tag2Sub25::set_primary(const bool p){
     primary = p;
 }
 
-Tag2Sub25 * Tag2Sub25::clone(){
-    return new Tag2Sub25(*this);
+Subpacket::Ptr Tag2Sub25::clone(){
+    return Ptr(new Tag2Sub25(*this));
 }

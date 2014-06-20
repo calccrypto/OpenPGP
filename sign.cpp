@@ -1,39 +1,38 @@
 #include "sign.h"
-Tag5 * find_signing_key(PGP & k){
+Tag5::Ptr find_signing_key(PGP & k){
     if (k.get_ASCII_Armor() == 2){
-        std::vector <Packet *> packets = k.get_packets();
-        for(Packet *& p : packets){
+        std::vector <Packet::Ptr> packets = k.get_packets();
+        for(Packet::Ptr & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
                 std::string data = p -> raw();
-                Tag5 * signer = new Tag5(data);
+                Tag5::Ptr signer(new Tag5(data));
                 // make sure key has signing material
                 if ((signer -> get_pka() == 1) || // RSA
                     (signer -> get_pka() == 3) || // RSA
                     (signer -> get_pka() == 17)){ // DSA
                         return signer;
                 }
-                delete signer;
             }
         }
     }
-    return NULL;
+    return Tag5::Ptr();
 }
 
-ID * find_signer_id(PGP & k){
-    std::vector <Packet *> packets = k.get_packets();
-    for(Packet *& p : packets){
+ID::Ptr find_signer_id(PGP & k){
+    std::vector <Packet::Ptr> packets = k.get_packets();
+    for(Packet::Ptr & p : packets){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
-            Tag13 * tag13 = new Tag13(data);
+            Tag13::Ptr tag13(new Tag13(data));
             return tag13;
         }
         if (p -> get_tag() == 17){
             std::string data = p -> raw();
-            Tag17 * tag17 = new Tag17(data);
+            Tag17::Ptr tag17(new Tag17(data));
             return tag17;
         }
     }
-    return NULL;
+    return ID::Ptr();
 }
 
 std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri, const uint8_t h){
@@ -53,15 +52,15 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, con
     return {};
 }
 
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5 * tag5, const std::string & passphrase, const uint8_t h){
+std::vector <mpz_class> pka_sign(const std::string & hashed_data, Tag5::Ptr tag5, const std::string & passphrase, const uint8_t h){
     std::vector <mpz_class> pub = tag5 -> get_mpi();
     std::vector <mpz_class> pri = decrypt_secret_key(tag5, passphrase);
     return pka_sign(hashed_data, tag5 -> get_pka(), pub, pri, h);
 }
 
-Tag2 * create_sig_packet(const uint8_t type, Tag5 * tag5, ID * id){
+Tag2::Ptr create_sig_packet(const uint8_t type, Tag5::Ptr tag5, ID::Ptr id){
     // Set up signature packet
-    Tag2 * tag2 = new Tag2;
+    Tag2::Ptr tag2(new Tag2);
     tag2 -> set_version(4);
     tag2 -> set_pka(tag5 -> get_pka());
     tag2 -> set_type(type);
@@ -71,44 +70,38 @@ Tag2 * create_sig_packet(const uint8_t type, Tag5 * tag5, ID * id){
     }
 
     // Set Time
-    Tag2Sub2 * tag2sub2 = new Tag2Sub2;
+    Tag2Sub2::Ptr tag2sub2 = std::make_shared<Tag2Sub2>();
     tag2sub2 -> set_time(now());
     tag2 -> set_hashed_subpackets({tag2sub2});
 
     if (id){
         // Signer ID
-        Tag2Sub28 * tag2sub28 = new Tag2Sub28;
+        Tag2Sub28::Ptr tag2sub28 = std::make_shared<Tag2Sub28>();
         tag2sub28 -> set_signer(id -> raw());
         tag2 -> set_hashed_subpackets({tag2sub2, tag2sub28});
-        delete tag2sub28;
     }
 
     // Set Key ID
-    Tag2Sub16 * tag2sub16 = new Tag2Sub16;
+    Tag2Sub16::Ptr tag2sub16 = std::make_shared<Tag2Sub16>();
     tag2sub16 -> set_keyid(tag5 -> get_keyid());
     tag2 -> set_unhashed_subpackets({tag2sub16});
-
-    delete tag2sub2;
-    delete tag2sub16;
 
     return tag2;
 }
 
-Tag2 * create_sig_packet(const uint8_t type, PGP & key){
-    Tag5 * tag5 = find_signing_key(key);
+Tag2::Ptr create_sig_packet(const uint8_t type, PGP & key){
+    Tag5::Ptr tag5 = find_signing_key(key);
     if (!tag5){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
 
-    ID * id = find_signer_id(key);
+    ID::Ptr id = find_signer_id(key);
     if (!id){
         throw std::runtime_error("Error: No ID packet found.");
     }
 
-    Tag2 * out = create_sig_packet(type, tag5, id);
+    Tag2::Ptr out = create_sig_packet(type, tag5, id);
 
-    delete tag5;
-    delete id;
     return out;
 }
 
@@ -117,7 +110,7 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5 * signer = find_signing_key(key);
+    Tag5::Ptr signer = find_signing_key(key);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -127,7 +120,7 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
         throw std::runtime_error("Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.");
     }
 
-    Tag2 * sig = create_sig_packet(0x00, signer);
+    Tag2::Ptr sig = create_sig_packet(0x00, signer);
 
     std::string hashed_data = to_sign_00(data, sig);
     sig -> set_left16(hashed_data.substr(0, 2));
@@ -138,9 +131,6 @@ PGP sign_file(const std::string & data, PGP & key, const std::string & passphras
     std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string>("Version", "cc")};
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
-
-    delete sig;
-    delete signer;
 
     return signature;
 }
@@ -158,12 +148,12 @@ PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::st
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5 * signer = find_signing_key(key);
+    Tag5::Ptr signer = find_signing_key(key);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
 
-    Tag2 * sig = create_sig_packet(0x01, signer);
+    Tag2::Ptr sig = create_sig_packet(0x01, signer);
 
     std::string hashed_data = to_sign_01(text, sig);
     sig -> set_left16(hashed_data.substr(0, 2));
@@ -182,14 +172,11 @@ PGPSignedMessage sign_message(const std::string & text, PGP & key, const std::st
     message.set_message(text);
     message.set_key(signature);
 
-    delete sig;
-    delete signer;
-
     return message;
 }
 
-Tag2 * standalone_signature(Tag5 * key, Tag2 * src, const std::string & passphrase){
-    Tag2 * sig = create_sig_packet(0x02, key);
+Tag2::Ptr standalone_signature(Tag5::Ptr key, Tag2::Ptr src, const std::string & passphrase){
+    Tag2::Ptr sig = create_sig_packet(0x02, key);
     std::string hashed_data = to_sign_02(src);
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, key, passphrase, src -> get_hash()));
@@ -197,13 +184,13 @@ Tag2 * standalone_signature(Tag5 * key, Tag2 * src, const std::string & passphra
     return sig;
 }
 
-Tag2 * sign_primary_key(Tag5 * key, ID * id, const std::string & passphrase, const uint8_t cert){
+Tag2::Ptr sign_primary_key(Tag5::Ptr key, ID::Ptr id, const std::string & passphrase, const uint8_t cert){
     if ((cert < 0x10) || (cert > 0x13)){
         std::stringstream s; s << (int) cert;
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
-    Tag2 * sig = create_sig_packet(cert, key);
+    Tag2::Ptr sig = create_sig_packet(cert, key);
     std::string hashed_data;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
@@ -240,16 +227,16 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
     }
 
 
-    Tag6 * signee_primary_key = NULL;
-    ID * signee_id = NULL;
+    Tag6::Ptr signee_primary_key;
+    ID::Ptr signee_id;
 
     // find primary key; generally packet[0]
-    std::vector <Packet *> signee_packets = signee.get_packets_clone();
+    std::vector <Packet::Ptr> signee_packets = signee.get_packets_clone();
     unsigned int i = 0;
     for(i = 0; i < signee_packets.size(); i++){
         if (signee_packets[i] -> get_tag() == 6){
             std::string raw = signee_packets[i] -> raw();
-            signee_primary_key = new Tag6(raw);
+            signee_primary_key = std::make_shared<Tag6>(raw);
             break;
         }
     }
@@ -268,17 +255,17 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
     // get signee user id packet
     std::string raw_id = signee_packets[i] -> raw();
     if (signee_packets[i] -> get_tag() == 13){
-        signee_id = new Tag13(raw_id);
+        signee_id = std::make_shared<Tag13>(raw_id);
     }
     else if (signee_packets[i] -> get_tag() == 17){
-        signee_id = new Tag17(raw_id);
+        signee_id = std::make_shared<Tag17>(raw_id);
     }
 
     // move i to after primary key signature
     i++;
 
     // get signer's signing packet
-    Tag5 * signer_signing_key = find_signing_key(signer);
+    Tag5::Ptr signer_signing_key = find_signing_key(signer);
 
     // check if the signer has alreaady signed this key
     unsigned int j = i;
@@ -286,7 +273,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
         std::string raw = signee_packets[j++] -> raw();
         Tag2 tag2(raw);
         // search unhashed subpackets first (key id is usually in there)
-        for(Subpacket *& s : tag2.get_unhashed_subpackets()){
+        for(Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
             if (s -> get_type() == 16){
                 raw = s -> raw();
                 Tag2Sub16 tag2sub16(raw);
@@ -298,7 +285,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
         }
 
         // search hashed subpackets
-        for(Subpacket *& s : tag2.get_hashed_subpackets()){
+        for(Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
             if (s -> get_type() == 16){
                 raw = s -> raw();
                 Tag2Sub16 tag2sub16(raw);
@@ -311,7 +298,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
     }
 
     // sign key
-    Tag2 * sig = create_sig_packet(cert, signer_signing_key);
+    Tag2::Ptr sig = create_sig_packet(cert, signer_signing_key);
     std::string hashed_data;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
@@ -332,7 +319,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
 
     // Create output key
     PGP out(signee);
-    std::vector <Packet *> out_packets;
+    std::vector <Packet::Ptr> out_packets;
 
     j = 0;
     // push all packets up to and including out packet into new packets
@@ -350,25 +337,16 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
     }
     out.set_packets(out_packets);
 
-    delete signee_primary_key;
-    delete signee_id;
-    delete signer_signing_key;
-    delete sig;
-
-    for(Packet *& p: signee_packets){
-        delete p;
-    }
-
     return out;
 }
 
-Tag2 * sign_subkey(Tag5 * primary, Tag7 * sub, const std::string & passphrase, const uint8_t binding){
+Tag2::Ptr sign_subkey(Tag5::Ptr primary, Tag7::Ptr sub, const std::string & passphrase, const uint8_t binding){
     if ((binding != 0x18) && (binding != 0x19)){
         std::stringstream s; s << (int) binding;
         throw std::runtime_error("Error: Invalid Binding Signature Value: " + s.str());
     }
 
-    Tag2 * sig = create_sig_packet(binding, primary);
+    Tag2::Ptr sig = create_sig_packet(binding, primary);
 
     std::string hashed_data;
     if (binding == 0x18){

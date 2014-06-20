@@ -10,6 +10,8 @@ class Tag2Sub5 : public Subpacket{
         uint8_t amount;
 
     public:
+        typedef std::shared_ptr<Tag2Sub5> Ptr;
+
         Tag2Sub5();
         Tag2Sub5(std::string & data);
         void read(std::string & data);
@@ -22,6 +24,6 @@ class Tag2Sub5 : public Subpacket{
         void set_level(const uint8_t l);
         void set_amount(const uint8_t a);
 
-        Tag2Sub5 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

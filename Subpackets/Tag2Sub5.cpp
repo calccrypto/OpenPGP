@@ -42,6 +42,6 @@ void Tag2Sub5::set_amount(const uint8_t a){
     amount = a;
 }
 
-Tag2Sub5 * Tag2Sub5::clone(){
-    return new Tag2Sub5(*this);
+Subpacket::Ptr Tag2Sub5::clone(){
+    return Ptr(new Tag2Sub5(*this));
 }

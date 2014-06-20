@@ -9,6 +9,8 @@ class Tag2Sub21 : public Subpacket{
         std::string pha;
 
     public:
+        typedef std::shared_ptr<Tag2Sub21> Ptr;
+
         Tag2Sub21();
         Tag2Sub21(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub21 : public Subpacket{
 
         void set_pha(const std::string & p);
 
-        Tag2Sub21 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

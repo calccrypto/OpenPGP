@@ -9,6 +9,8 @@ class Tag2Sub4 : public Subpacket{
         bool exportable;
 
     public:
+        typedef std::shared_ptr<Tag2Sub4> Ptr;
+
         Tag2Sub4();
         Tag2Sub4(std::string & data);
         void read(std::string & data);
@@ -19,6 +21,6 @@ class Tag2Sub4 : public Subpacket{
 
         void set_exportable(const bool e);
 
-        Tag2Sub4 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

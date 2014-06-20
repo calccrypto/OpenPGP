@@ -33,6 +33,6 @@ void Tag2Sub11::set_psa(const std::string & s){
     psa = s;
 }
 
-Tag2Sub11 * Tag2Sub11::clone(){
-    return new Tag2Sub11(*this);
+Subpacket::Ptr Tag2Sub11::clone(){
+    return Ptr(new Tag2Sub11(*this));
 }

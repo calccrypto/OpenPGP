@@ -12,6 +12,8 @@ class Tag11 : public Packet{
         std::string literal;
 
     public:
+        typedef std::shared_ptr<Tag11> Ptr;
+
         Tag11();
         Tag11(std::string & data);
         std::string show();
@@ -28,6 +30,6 @@ class Tag11 : public Packet{
         void set_time(const uint32_t t);
         void set_literal(const std::string & l);
 
-        Tag11 * clone();
+        Packet::Ptr clone();
 };
 #endif

@@ -10,6 +10,8 @@ class Tag2Sub29 : public Subpacket{
         std::string reason;
 
     public:
+        typedef std::shared_ptr<Tag2Sub29> Ptr;
+
         Tag2Sub29();
         Tag2Sub29(std::string & data);
         void read(std::string & data);
@@ -22,6 +24,6 @@ class Tag2Sub29 : public Subpacket{
         void set_code(const uint8_t c);
         void set_reason(const std::string & r);
 
-        Tag2Sub29 * clone();
+        Subpacket::Ptr clone();
 };
 #endif

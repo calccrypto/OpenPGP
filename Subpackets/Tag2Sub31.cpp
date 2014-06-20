@@ -51,6 +51,6 @@ void Tag2Sub31::set_hash(const std::string & h){
     hash = h;
 }
 
-Tag2Sub31 * Tag2Sub31::clone(){
-    return new Tag2Sub31(*this);
+Subpacket::Ptr Tag2Sub31::clone(){
+    return Ptr(new Tag2Sub31(*this));
 }

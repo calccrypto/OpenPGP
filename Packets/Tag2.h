@@ -20,16 +20,18 @@ class Tag2 : public Packet{
         std::string keyid = "";
 
         // version 4 stuff
-        std::vector <Subpacket *> hashed_subpackets;
-        std::vector <Subpacket *> unhashed_subpackets;
+        std::vector <Subpacket::Ptr> hashed_subpackets;
+        std::vector <Subpacket::Ptr> unhashed_subpackets;
 
         // Function to read subpacket headers
         std::string read_subpacket(std::string & data);
 
         // Function to parse all subpackets
-        std::vector <Subpacket *> read_subpackets(std::string & data);
+        std::vector <Subpacket::Ptr> read_subpackets(std::string & data);
 
     public:
+        typedef std::shared_ptr<Tag2> Ptr;
+
         Tag2();
         Tag2(const Tag2 & tag2);
         Tag2(std::string & data);
@@ -48,10 +50,10 @@ class Tag2 : public Packet{
         uint32_t get_time();
         std::string get_keyid();
 
-        std::vector <Subpacket *> get_hashed_subpackets();
-        std::vector <Subpacket *> get_hashed_subpackets_clone();
-        std::vector <Subpacket *> get_unhashed_subpackets();
-        std::vector <Subpacket *> get_unhashed_subpackets_clone();
+        std::vector <Subpacket::Ptr> get_hashed_subpackets();
+        std::vector <Subpacket::Ptr> get_hashed_subpackets_clone();
+        std::vector <Subpacket::Ptr> get_unhashed_subpackets();
+        std::vector <Subpacket::Ptr> get_unhashed_subpackets_clone();
         std::string get_up_to_hashed();             // used for signature trailer
         std::string get_without_unhashed();         // used for signature type 0x50
 
@@ -66,10 +68,10 @@ class Tag2 : public Packet{
         void set_keyid(const std::string & k);
 
         // Do not use pointers from get_*_pointers(). Use pointers from get_*_clone()
-        void set_hashed_subpackets(const std::vector <Subpacket *> & h);
-        void set_unhashed_subpackets(const std::vector <Subpacket *> & u);
+        void set_hashed_subpackets(const std::vector <Subpacket::Ptr> & h);
+        void set_unhashed_subpackets(const std::vector <Subpacket::Ptr> & u);
 
-        Tag2 * clone();
+        Packet::Ptr clone();
         Tag2 operator=(const Tag2 & tag2);
 };
 #endif

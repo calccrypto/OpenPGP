@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "../common/includes.h"
@@ -17,6 +18,8 @@ class Subpacket{
         std::string write_subpacket(const std::string & data);
 
     public:
+        typedef std::shared_ptr<Subpacket> Ptr;
+
         virtual ~Subpacket();
         virtual void read(std::string & data) = 0;
         virtual std::string show() = 0;
@@ -29,6 +32,6 @@ class Subpacket{
         void set_type(uint8_t t);
         void set_size(unsigned int s);
 
-        virtual Subpacket * clone() = 0;
+        virtual Ptr clone() = 0;
 };
 #endif

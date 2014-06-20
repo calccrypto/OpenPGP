@@ -33,6 +33,6 @@ void Tag2Sub22::set_pca(const std::string & c){
     pca = c;
 }
 
-Tag2Sub22 * Tag2Sub22::clone(){
-    return new Tag2Sub22(*this);
+Subpacket::Ptr Tag2Sub22::clone(){
+    return Ptr(new Tag2Sub22(*this));
 }

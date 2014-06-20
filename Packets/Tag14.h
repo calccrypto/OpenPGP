@@ -6,8 +6,10 @@
 
 class Tag14 : public Tag6{
     public:
+        typedef std::shared_ptr<Tag14> Ptr;
+
         Tag14();
         Tag14(std::string & data);
-        Tag14 * clone();
+        Packet::Ptr clone();
 };
 #endif
