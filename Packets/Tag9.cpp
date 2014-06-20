@@ -1,10 +1,13 @@
 #include "Tag9.h"
-Tag9::Tag9(){
-    tag = 9;
+
+Tag9::Tag9() :
+    Packet(9)
+{
 }
 
-Tag9::Tag9(std::string & data){
-    tag = 9;
+Tag9::Tag9(std::string & data) :
+    Tag9()
+{
     read(data);
 }
 
@@ -32,6 +35,6 @@ void Tag9::set_encrypted_data(const std::string & e){
     size = raw().size();
 }
 
-Packet::Ptr Tag9::clone(){
+Packet::Ptr Tag9::clone() const{
     return Ptr(new Tag9(*this));
 }

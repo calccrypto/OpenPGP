@@ -1,10 +1,14 @@
 #include "Tag2Sub22.h"
-Tag2Sub22::Tag2Sub22(){
-    type = 22;
+
+Tag2Sub22::Tag2Sub22() :
+    Subpacket(22),
+    pca()
+{
 }
 
-Tag2Sub22::Tag2Sub22(std::string & data){
-    type = 22;
+Tag2Sub22::Tag2Sub22(std::string & data) :
+    Tag2Sub22()
+{
     read(data);
 }
 
@@ -33,6 +37,6 @@ void Tag2Sub22::set_pca(const std::string & c){
     pca = c;
 }
 
-Subpacket::Ptr Tag2Sub22::clone(){
+Subpacket::Ptr Tag2Sub22::clone() const{
     return Ptr(new Tag2Sub22(*this));
 }

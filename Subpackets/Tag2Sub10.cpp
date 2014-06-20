@@ -1,10 +1,14 @@
 #include "Tag2Sub10.h"
-Tag2Sub10::Tag2Sub10(){
-    type = 10;
+
+Tag2Sub10::Tag2Sub10() :
+    Subpacket(10),
+    stuff()
+{
 }
 
-Tag2Sub10::Tag2Sub10(std::string & data){
-    type = 10;
+Tag2Sub10::Tag2Sub10(std::string & data) :
+    Tag2Sub10()
+{
     read(data);
 }
 
@@ -29,6 +33,6 @@ void Tag2Sub10::set_stuff(const std::string & s){
     stuff = s;
 }
 
-Subpacket::Ptr Tag2Sub10::clone(){
+Subpacket::Ptr Tag2Sub10::clone() const{
     return Ptr(new Tag2Sub10(*this));
 }

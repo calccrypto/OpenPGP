@@ -1,16 +1,20 @@
 #include "Tag2Sub32.h"
-Tag2Sub32::Tag2Sub32(){
-    type = 32;
+
+Tag2Sub32::Tag2Sub32() :
+    Subpacket(32),
+    embedded()
+{
 }
 
-Tag2Sub32::Tag2Sub32(const Tag2Sub32 & tag2sub32){
-    type = tag2sub32.type;
-    size = tag2sub32.size;
-    embedded = std::dynamic_pointer_cast<Tag2>(tag2sub32.embedded -> clone());
+Tag2Sub32::Tag2Sub32(const Tag2Sub32 & copy) :
+    Subpacket(copy),
+    embedded(std::dynamic_pointer_cast<Tag2>(copy.embedded -> clone()))
+{
 }
 
-Tag2Sub32::Tag2Sub32(std::string & data){
-    type = 32;
+Tag2Sub32::Tag2Sub32(std::string & data) :
+    Tag2Sub32()
+{
     read(data);
 }
 
@@ -39,13 +43,12 @@ void Tag2Sub32::set_embedded(Tag2::Ptr e){
     embedded = std::dynamic_pointer_cast<Tag2>(e -> clone());
 }
 
-Subpacket::Ptr Tag2Sub32::clone(){
+Subpacket::Ptr Tag2Sub32::clone() const{
     return Ptr(new Tag2Sub32(*this));
 }
 
-Tag2Sub32 Tag2Sub32::operator=(const Tag2Sub32 & tag2sub32){
-    type = tag2sub32.type;
-    size = tag2sub32.size;
-    embedded = std::dynamic_pointer_cast<Tag2>(tag2sub32.embedded -> clone());
+Tag2Sub32 & Tag2Sub32::operator=(const Tag2Sub32 & copy){
+    Subpacket::operator =(copy);
+    embedded = std::dynamic_pointer_cast<Tag2>(copy.embedded -> clone());
     return *this;
 }

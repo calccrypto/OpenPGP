@@ -27,6 +27,6 @@ class Tag13 : public ID{
         void set_comment(const std::string & c);
         void set_email(const std::string & e);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

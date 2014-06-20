@@ -122,12 +122,16 @@ std::string AES::OUT(std::vector <uint32_t> & data){
     return unhexlify(out);
 }
 
-AES::AES(){
-    keyset = false;
+AES::AES() :
+    SymAlg(),
+    b(0), rounds(0), columns(0),
+    keys()
+{
 }
 
-AES::AES(const std::string & KEY){
-    keyset = false;
+AES::AES(const std::string & KEY) :
+    AES()
+{
     setkey(KEY);
 }
 

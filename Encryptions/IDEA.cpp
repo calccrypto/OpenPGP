@@ -59,12 +59,16 @@ std::string IDEA::run(const std::string & DATA){
     return unhexlify(makehex(x1, 4) + makehex(x2, 4) + makehex(x3, 4) + makehex(x4, 4));
 }
 
-IDEA::IDEA(){
-    keyset = false;
+IDEA::IDEA() :
+    SymAlg(),
+    keys(),
+    k()
+{
 }
 
-IDEA::IDEA(const std::string & KEY){
-    keyset = false;
+IDEA::IDEA(const std::string & KEY) :
+    IDEA()
+{
     setkey(KEY);
 }
 

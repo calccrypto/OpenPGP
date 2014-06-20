@@ -1,12 +1,14 @@
 #include "Tag2Sub9.h"
-Tag2Sub9::Tag2Sub9(){
-    type = 9;
-    size = 4;
+
+Tag2Sub9::Tag2Sub9() :
+    Subpacket(9, 4),
+    time()
+{
 }
 
-Tag2Sub9::Tag2Sub9(std::string & data){
-    type = 9;
-    size = 4;
+Tag2Sub9::Tag2Sub9(std::string & data) :
+    Tag2Sub9()
+{
     read(data);
 }
 
@@ -39,6 +41,6 @@ void Tag2Sub9::set_time(const time_t t){
     time = t;
 }
 
-Subpacket::Ptr Tag2Sub9::clone(){
+Subpacket::Ptr Tag2Sub9::clone() const{
     return Ptr(new Tag2Sub9(*this));
 }

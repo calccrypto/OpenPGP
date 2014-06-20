@@ -21,6 +21,6 @@ class Tag2Sub26 : public Subpacket{
 
         void set_uri(const std::string & u);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

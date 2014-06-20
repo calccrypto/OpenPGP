@@ -18,11 +18,15 @@ class Tag6 : public Key{
         std::string show_tag6();
         std::string raw_tag6();
 
+        Tag6(uint8_t tag);
+
     public:
         typedef std::shared_ptr<Tag6> Ptr;
 
         Tag6();
         Tag6(std::string & data);
+        virtual ~Tag6();
+
         virtual void read(std::string & data);
         virtual std::string show();
         virtual std::string raw();
@@ -38,6 +42,10 @@ class Tag6 : public Key{
         std::string get_fingerprint();                      // binary
         std::string get_keyid();                            // binary
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
+
+        Tag6(const Tag6 & copy);
+        Tag6& operator=(const Tag6 & copy);
+
 };
 #endif

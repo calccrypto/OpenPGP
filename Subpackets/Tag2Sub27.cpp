@@ -1,10 +1,14 @@
 #include "Tag2Sub27.h"
-Tag2Sub27::Tag2Sub27(){
-    type = 27;
+
+Tag2Sub27::Tag2Sub27() :
+    Subpacket(27),
+    flags()
+{
 }
 
-Tag2Sub27::Tag2Sub27(std::string & data){
-    type = 27;
+Tag2Sub27::Tag2Sub27(std::string & data) :
+    Tag2Sub27()
+{
     read(data);
 }
 
@@ -35,6 +39,6 @@ void Tag2Sub27::set_flags(const char f){
     flags = f;
 }
 
-Subpacket::Ptr Tag2Sub27::clone(){
+Subpacket::Ptr Tag2Sub27::clone() const{
     return Ptr(new Tag2Sub27(*this));
 }

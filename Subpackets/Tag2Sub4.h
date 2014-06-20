@@ -21,6 +21,6 @@ class Tag2Sub4 : public Subpacket{
 
         void set_exportable(const bool e);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

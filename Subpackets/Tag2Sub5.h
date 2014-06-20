@@ -24,6 +24,6 @@ class Tag2Sub5 : public Subpacket{
         void set_level(const uint8_t l);
         void set_amount(const uint8_t a);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

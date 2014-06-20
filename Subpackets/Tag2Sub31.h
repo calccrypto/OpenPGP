@@ -27,6 +27,6 @@ class Tag2Sub31 : public Subpacket{
         void set_ha(const uint8_t h);
         void set_hash(const std::string & h);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

@@ -44,6 +44,24 @@ std::string Packet::write_new_length(std::string data){
     return out + data;
 }
 
+Packet::Packet(uint8_t tag, uint8_t version) :
+    tag(tag),
+    version(version),
+    format(true),
+    size(0)
+{
+}
+
+Packet::Packet(uint8_t tag) :
+    Packet(tag, 0)
+{
+}
+
+Packet::Packet() :
+    Packet(0)
+{
+}
+
 Packet::~Packet(){}
 
 std::string Packet::write(uint8_t header){
@@ -85,4 +103,37 @@ void Packet::set_version(const unsigned int v){
 
 void Packet::set_size(const unsigned int s){
     size = s;
+}
+
+Packet::Packet(const Packet &copy) :
+    tag(copy.tag),
+    version(copy.version),
+    format(copy.format),
+    size(copy.size)
+{
+}
+
+Packet & Packet::operator =(const Packet & copy)
+{
+    tag = copy.tag;
+    version = copy.version;
+    format = copy.format;
+    size = copy.size;
+    return *this;
+}
+
+// explicitly that it is inheritable.
+Key::~Key(){}
+ID::~ID(){}
+
+Key & Key::operator =(const Key & copy)
+{
+    Packet::operator =(copy);
+    return *this;
+}
+
+ID & ID::operator =(const ID & copy)
+{
+    Packet::operator =(copy);
+    return *this;
 }

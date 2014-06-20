@@ -16,13 +16,15 @@ class Tag5 : public Tag6{
         void read_s2k(std::string & data);
         std::string show_common();
 
+        Tag5(uint8_t tag);
+
     public:
         typedef std::shared_ptr<Tag5> Ptr;
 
         Tag5();
-        Tag5(const Tag5 & tag5);
+        Tag5(const Tag5 & copy);
         Tag5(std::string & data);
-        ~Tag5();
+        virtual ~Tag5();
         void read(std::string & data);
         std::string show();
         std::string raw();
@@ -43,7 +45,7 @@ class Tag5 : public Tag6{
         void set_IV(const std::string & iv);
         void set_secret(const std::string & s);
 
-        Packet::Ptr clone();
-        Tag5 operator=(const Tag5 & tag5);
+        Packet::Ptr clone() const;
+        Tag5 & operator =(const Tag5 & copy);
 };
 #endif

@@ -21,6 +21,6 @@ class Tag2Sub16 : public Subpacket{
 
         void set_keyid(const std::string & k);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

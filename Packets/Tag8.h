@@ -29,6 +29,6 @@ class Tag8 : public Packet{
         void set_data(const std::string & data);
         void set_compressed_data(const std::string & data);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

@@ -5,6 +5,11 @@ uint32_t coded_count(unsigned int c){
     return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);
 }
 
+S2K::S2K(uint8_t type) :
+    type(type),
+    hash()
+{}
+
 S2K::~S2K(){}
 
 std::string S2K::write(){
@@ -27,8 +32,14 @@ void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
-S2K0::S2K0(){
-    type = 0;
+S2K0::S2K0(uint8_t type) :
+    S2K(type)
+{
+}
+
+S2K0::S2K0() :
+    S2K0(0)
+{
 }
 
 S2K0::~S2K0(){}
@@ -62,8 +73,15 @@ S2K::Ptr S2K0::clone(){
     return Ptr(new S2K0(*this));
 }
 
-S2K1::S2K1(){
-    type = 1;
+S2K1::S2K1(uint8_t type) :
+    S2K0(type),
+    salt()
+{
+}
+
+S2K1::S2K1() :
+    S2K1(1)
+{
 }
 
 S2K1::~S2K1(){}
@@ -107,8 +125,10 @@ S2K::Ptr S2K1::clone(){
     return Ptr(new S2K1(*this));
 }
 
-S2K3::S2K3(){
-    type = 3;
+S2K3::S2K3() :
+    S2K1(3),
+    count()
+{
 }
 
 S2K3::~S2K3(){}

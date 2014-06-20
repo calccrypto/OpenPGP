@@ -25,6 +25,6 @@ class Tag17Sub1 : public Subpacket{
 
         void set_image(const std::string & i);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

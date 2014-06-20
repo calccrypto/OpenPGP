@@ -1,10 +1,15 @@
 #include "Tag2Sub29.h"
-Tag2Sub29::Tag2Sub29(){
-    type = 29;
+
+Tag2Sub29::Tag2Sub29() :
+    Subpacket(29),
+    code(),
+    reason()
+{
 }
 
-Tag2Sub29::Tag2Sub29(std::string & data){
-    type = 29;
+Tag2Sub29::Tag2Sub29(std::string & data) :
+    Tag2Sub29()
+{
     read(data);
 }
 
@@ -43,6 +48,6 @@ void Tag2Sub29::set_reason(const std::string & r){
     reason = r;
 }
 
-Subpacket::Ptr Tag2Sub29::clone(){
+Subpacket::Ptr Tag2Sub29::clone() const{
     return Ptr(new Tag2Sub29(*this));
 }

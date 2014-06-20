@@ -96,7 +96,7 @@ std::string to_sign_19(Key::Ptr primary, Key::Ptr key, Tag2::Ptr tag2){
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
 }
 
-std::string to_sign_1f(Tag2::Ptr tag2){
+std::string to_sign_1f(Tag2::Ptr /*tag2*/){
     throw std::runtime_error("Error: Signature directly on a key has not implemented.");
     //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
@@ -114,13 +114,13 @@ std::string to_sign_30(Key::Ptr key, ID::Ptr id, Tag2::Ptr tag2){
     return to_sign_10(key, id, tag2);
 }
 
-std::string to_sign_40(Tag2::Ptr tag2){
+std::string to_sign_40(Tag2::Ptr /*tag2*/){
     throw std::runtime_error("Error: Signature directly on a key has not implemented.");
     //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
 }
 
-std::string to_sign_50(Tag2 & sig, Tag2::Ptr tag2){
+std::string to_sign_50(Tag2 & sig, Tag2::Ptr /*tag2*/){
     std::string data = sig.get_without_unhashed();
     return "\x88" + unhexlify(makehex(data.size(), 8)) + data;
 }

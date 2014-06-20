@@ -1,12 +1,14 @@
 #include "Tag2Sub7.h"
-Tag2Sub7::Tag2Sub7(){
-    type = 7;
-    size = 1;
+
+Tag2Sub7::Tag2Sub7() :
+    Subpacket(7, 1),
+    revocable()
+{
 }
 
-Tag2Sub7::Tag2Sub7(std::string & data){
-    type = 7;
-    size = 1;
+Tag2Sub7::Tag2Sub7(std::string & data) :
+    Tag2Sub7()
+{
     read(data);
 }
 
@@ -30,6 +32,6 @@ void Tag2Sub7::set_revocable(const bool r){
     revocable = r;
 }
 
-Subpacket::Ptr Tag2Sub7::clone(){
+Subpacket::Ptr Tag2Sub7::clone() const{
     return Ptr(new Tag2Sub7(*this));
 }

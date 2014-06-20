@@ -1,12 +1,14 @@
 #include "Tag18.h"
-Tag18::Tag18(){
-    tag = 18;
-    version = 1;
+
+Tag18::Tag18() :
+    Packet(18, 1),
+    protected_data()
+{
 }
 
-Tag18::Tag18(std::string & data){
-    tag = 18;
-    version = 1;
+Tag18::Tag18(std::string & data) :
+    Tag18()
+{
     read(data);
 }
 
@@ -36,6 +38,6 @@ void Tag18::set_protected_data(const std::string & p){
     size = raw().size();
 }
 
-Packet::Ptr Tag18::clone(){
+Packet::Ptr Tag18::clone() const{
     return Ptr(new Tag18(*this));
 }

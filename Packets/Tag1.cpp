@@ -1,12 +1,13 @@
 #include "Tag1.h"
-Tag1::Tag1(){
-    tag = 1;
-    version = 3;
+
+Tag1::Tag1() :
+    Packet(1, 3)
+{
 }
 
-Tag1::Tag1(std::string & data){
-    tag = 1;
-    version = 3;
+Tag1::Tag1(std::string & data) :
+    Tag1()
+{
     read(data);
 }
 
@@ -73,6 +74,6 @@ void Tag1::set_mpi(const std::vector <mpz_class> & m){
     size = raw().size();
 }
 
-Packet::Ptr Tag1::clone(){
+Packet::Ptr Tag1::clone() const{
     return Ptr(new Tag1(*this));
 }

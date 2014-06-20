@@ -21,6 +21,6 @@ class TagX : public Packet{
 
         void set_stream(const std::string & data);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

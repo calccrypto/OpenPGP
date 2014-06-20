@@ -27,6 +27,6 @@ class Tag2Sub12 : public Subpacket{
         void set_pka(const uint8_t p);
         void set_fingerprint(const std::string & f);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

@@ -1,12 +1,13 @@
 #include "Tag2Sub16.h"
-Tag2Sub16::Tag2Sub16(){
-    type = 16;
-    size = 8;
+
+Tag2Sub16::Tag2Sub16() :
+    Subpacket(16, 8)
+{
 }
 
-Tag2Sub16::Tag2Sub16(std::string & data){
-    type = 16;
-    size = 8;
+Tag2Sub16::Tag2Sub16(std::string & data) :
+    Tag2Sub16()
+{
     read(data);
 }
 
@@ -33,6 +34,6 @@ void Tag2Sub16::set_keyid(const std::string & k){
     keyid = k;
 }
 
-Subpacket::Ptr Tag2Sub16::clone(){
+Subpacket::Ptr Tag2Sub16::clone() const{
     return Ptr(new Tag2Sub16(*this));
 }

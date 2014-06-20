@@ -10,6 +10,6 @@ class Tag14 : public Tag6{
 
         Tag14();
         Tag14(std::string & data);
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

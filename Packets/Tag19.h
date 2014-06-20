@@ -21,6 +21,6 @@ class Tag19 : public Packet{
 
         void set_hash(const std::string & h);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

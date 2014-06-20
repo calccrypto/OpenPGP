@@ -202,12 +202,16 @@ std::string Camellia::run(const std::string & data){
     return unhexlify(makehex(D2, 16) + makehex(D1, 16));
 }
 
-Camellia::Camellia(){
-    keyset = false;
+Camellia::Camellia() :
+    SymAlg(),
+    keysize(0),
+    keys()
+{
 }
 
-Camellia::Camellia(const std::string & KEY){
-    keyset = false;
+Camellia::Camellia(const std::string & KEY) :
+    Camellia()
+{
     setkey(KEY);
 }
 

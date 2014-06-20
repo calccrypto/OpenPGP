@@ -1,10 +1,14 @@
 #include "Tag2Sub6.h"
-Tag2Sub6::Tag2Sub6(){
-    type = 6;
+
+Tag2Sub6::Tag2Sub6() :
+    Subpacket(6),
+    regex()
+{
 }
 
-Tag2Sub6::Tag2Sub6(std::string & data){
-    type = 6;
+Tag2Sub6::Tag2Sub6(std::string & data) :
+    Tag2Sub6()
+{
     read(data);
 }
 
@@ -29,6 +33,6 @@ void Tag2Sub6::set_regex(const std::string & r){
     regex = r;
 }
 
-Subpacket::Ptr Tag2Sub6::clone(){
+Subpacket::Ptr Tag2Sub6::clone() const{
     return Ptr(new Tag2Sub6(*this));
 }

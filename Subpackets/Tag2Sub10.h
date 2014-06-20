@@ -21,6 +21,6 @@ class Tag2Sub10 : public Subpacket{
 
         void set_stuff(const std::string & s);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

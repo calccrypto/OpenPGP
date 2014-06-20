@@ -21,6 +21,6 @@ class Tag2Sub30 : public Subpacket{
 
         void set_flags(const char f);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

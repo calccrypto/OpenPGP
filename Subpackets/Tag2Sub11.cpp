@@ -1,10 +1,14 @@
 #include "Tag2Sub11.h"
-Tag2Sub11::Tag2Sub11(){
-    type = 11;
+
+Tag2Sub11::Tag2Sub11() :
+    Subpacket(11),
+    psa()
+{
 }
 
-Tag2Sub11::Tag2Sub11(std::string & data){
-    type = 11;
+Tag2Sub11::Tag2Sub11(std::string & data) :
+    Tag2Sub11()
+{
     read(data);
 }
 
@@ -33,6 +37,6 @@ void Tag2Sub11::set_psa(const std::string & s){
     psa = s;
 }
 
-Subpacket::Ptr Tag2Sub11::clone(){
+Subpacket::Ptr Tag2Sub11::clone() const{
     return Ptr(new Tag2Sub11(*this));
 }

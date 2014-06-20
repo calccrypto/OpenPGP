@@ -12,10 +12,14 @@
 
 class Subpacket{
     protected:
-        uint8_t type = 0;
-        unsigned int size = 0; // only used for displaying. recalculated when writing
+        uint8_t type;
+        unsigned int size; // only used for displaying. recalculated when writing
 
         std::string write_subpacket(const std::string & data);
+
+        Subpacket(uint8_t type = 0, unsigned int size = 0);
+        Subpacket(const Subpacket & copy);
+        Subpacket & operator =(const Subpacket & copy);
 
     public:
         typedef std::shared_ptr<Subpacket> Ptr;
@@ -32,6 +36,6 @@ class Subpacket{
         void set_type(uint8_t t);
         void set_size(unsigned int s);
 
-        virtual Ptr clone() = 0;
+        virtual Ptr clone() const = 0;
 };
 #endif

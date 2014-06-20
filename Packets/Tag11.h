@@ -30,6 +30,6 @@ class Tag11 : public Packet{
         void set_time(const uint32_t t);
         void set_literal(const std::string & l);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

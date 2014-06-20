@@ -1,12 +1,15 @@
 #include "Tag2Sub5.h"
-Tag2Sub5::Tag2Sub5(){
-    type = 5;
-    size = 2;
+
+Tag2Sub5::Tag2Sub5() :
+    Subpacket(5, 2),
+    level(),
+    amount()
+{
 }
 
-Tag2Sub5::Tag2Sub5(std::string & data){
-    type = 5;
-    size = 2;
+Tag2Sub5::Tag2Sub5(std::string & data) :
+    Tag2Sub5()
+{
     read(data);
 }
 
@@ -42,6 +45,6 @@ void Tag2Sub5::set_amount(const uint8_t a){
     amount = a;
 }
 
-Subpacket::Ptr Tag2Sub5::clone(){
+Subpacket::Ptr Tag2Sub5::clone() const{
     return Ptr(new Tag2Sub5(*this));
 }

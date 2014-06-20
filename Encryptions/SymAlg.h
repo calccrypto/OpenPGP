@@ -12,6 +12,7 @@ class SymAlg{
     public:
         typedef std::shared_ptr<SymAlg> Ptr;
 
+        SymAlg();
         virtual ~SymAlg();
         virtual std::string encrypt(const std::string & DATA) = 0;
         virtual std::string decrypt(const std::string & DATA) = 0;

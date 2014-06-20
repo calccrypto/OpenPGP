@@ -21,6 +21,6 @@ class Tag2Sub11 : public Subpacket{
 
         void set_psa(const std::string & s);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

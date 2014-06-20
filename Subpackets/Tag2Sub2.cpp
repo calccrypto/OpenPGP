@@ -1,11 +1,14 @@
 #include "Tag2Sub2.h"
-Tag2Sub2::Tag2Sub2(){
-    type = 2;
-    size = 4;
+
+Tag2Sub2::Tag2Sub2() :
+    Subpacket(2, 4),
+    time()
+{
 }
 
-Tag2Sub2::Tag2Sub2(std::string & data){
-    type = 2;
+Tag2Sub2::Tag2Sub2(std::string & data) :
+    Tag2Sub2()
+{
     read(data);
 }
 
@@ -29,6 +32,6 @@ void Tag2Sub2::set_time(const time_t t){
     time = t;
 }
 
-Subpacket::Ptr Tag2Sub2::clone(){
+Subpacket::Ptr Tag2Sub2::clone() const{
     return Ptr(new Tag2Sub2(*this));
 }

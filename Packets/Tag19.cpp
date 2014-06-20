@@ -1,12 +1,15 @@
 #include "Tag19.h"
-Tag19::Tag19(){
-    tag = 19;
+
+Tag19::Tag19() :
+    Packet(19),
+    hash()
+{
     size = 20;
 }
 
-Tag19::Tag19(std::string & data){
-    tag = 19;
-    size = 20;
+Tag19::Tag19(std::string & data) :
+    Tag19()
+{
     read(data);
 }
 
@@ -34,6 +37,6 @@ void Tag19::set_hash(const std::string & h){
     size = raw().size();
 }
 
-Packet::Ptr Tag19::clone(){
+Packet::Ptr Tag19::clone() const{
     return Ptr(new Tag19(*this));
 }

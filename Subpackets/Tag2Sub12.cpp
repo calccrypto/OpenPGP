@@ -1,10 +1,16 @@
 #include "Tag2Sub12.h"
-Tag2Sub12::Tag2Sub12(){
-    type = 12;
+
+Tag2Sub12::Tag2Sub12() :
+    Subpacket(12),
+    _class(),
+    pka(),
+    fingerprint()
+{
 }
 
-Tag2Sub12::Tag2Sub12(std::string & data){
-    type = 12;
+Tag2Sub12::Tag2Sub12(std::string & data) :
+    Tag2Sub12()
+{
     read(data);
 }
 
@@ -51,6 +57,6 @@ void Tag2Sub12::set_fingerprint(const std::string & f){
     fingerprint = f;
 }
 
-Subpacket::Ptr Tag2Sub12::clone(){
+Subpacket::Ptr Tag2Sub12::clone() const{
     return Ptr(new Tag2Sub12(*this));
 }

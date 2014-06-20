@@ -1,12 +1,14 @@
 #include "Tag2Sub28.h"
-Tag2Sub28::Tag2Sub28(){
-    type = 28;
-    size = 0;
+
+Tag2Sub28::Tag2Sub28() :
+    Subpacket(28, 0),
+    signer()
+{
 }
 
-Tag2Sub28::Tag2Sub28(std::string & data){
-    type = 28;
-    size = 0;
+Tag2Sub28::Tag2Sub28(std::string & data) :
+    Tag2Sub28()
+{
     read(data);
 }
 
@@ -32,6 +34,6 @@ void Tag2Sub28::set_signer(const std::string & s){
     signer = s;
 }
 
-Subpacket::Ptr Tag2Sub28::clone(){
+Subpacket::Ptr Tag2Sub28::clone() const{
     return Ptr(new Tag2Sub28(*this));
 }

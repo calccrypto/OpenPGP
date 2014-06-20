@@ -1,21 +1,24 @@
 #include "Tag3.h"
-Tag3::Tag3(){
-    tag = 3;
-    version = 4;
+
+Tag3::Tag3() :
+    Packet(3, 4),
+    sym(),
+    s2k(),
+    esk()
+{
 }
 
-Tag3::Tag3(const Tag3 & tag3){
-    tag = tag3.tag;
-    version = tag3.version;
-    format = tag3.format;
-    size = tag3.size;
-    sym = tag3.sym;
-    s2k = tag3.s2k -> clone();
-    esk = std::make_shared<std::string>(*tag3.esk);
+Tag3::Tag3(const Tag3 & copy) :
+    Packet(copy),
+    sym(copy.sym),
+    s2k(copy.s2k -> clone()),
+    esk(std::make_shared<std::string>(*copy.esk))
+{
 }
 
-Tag3::Tag3(std::string & data){
-    tag = 2;
+Tag3::Tag3(std::string & data) :
+    Tag3()
+{
     read(data);
 }
 
@@ -114,20 +117,17 @@ void Tag3::set_key(std::string pass, std::string sk){
     size = raw().size();
 }
 
-Packet::Ptr Tag3::clone(){
+Packet::Ptr Tag3::clone() const{
     Ptr out(new Tag3(*this));
     out -> s2k = s2k -> clone();
     out -> esk = std::make_shared<std::string>(*esk);
     return out;
 }
 
-Tag3 Tag3::operator=(const Tag3 & tag3){
-    tag = tag3.tag;
-    version = tag3.version;
-    format = tag3.format;
-    size = tag3.size;
-    sym = tag3.sym;
-    s2k = tag3.s2k -> clone();
-    esk = std::make_shared<std::string>(*esk);
+Tag3 & Tag3::operator=(const Tag3 & copy){
+    Packet::operator =(copy);
+    sym = copy.sym;
+    s2k = copy.s2k -> clone();
+    esk = std::make_shared<std::string>(*copy.esk);
     return *this;
 }

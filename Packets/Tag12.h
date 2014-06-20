@@ -22,6 +22,6 @@ class Tag12 : public Packet{
 
         void set_trust(const std::string & t);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

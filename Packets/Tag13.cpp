@@ -1,10 +1,16 @@
 #include "Tag13.h"
-Tag13::Tag13(){
-    tag = 13;
+
+Tag13::Tag13() :
+    ID(13),
+    name(),
+    comment(),
+    email()
+{
 }
 
-Tag13::Tag13(std::string & data){
-    tag = 13;
+Tag13::Tag13(std::string & data) :
+    Tag13()
+{
     read(data);
 }
 
@@ -109,6 +115,6 @@ void Tag13::set_email(const std::string & e){
     size = raw().size();
 }
 
-Packet::Ptr Tag13::clone(){
+Packet::Ptr Tag13::clone() const{
     return Ptr(new Tag13(*this));
 }

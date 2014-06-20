@@ -26,6 +26,6 @@ class Tag1 : public Packet{
         void set_pka(const uint8_t p);
         void set_mpi(const std::vector <mpz_class> & m);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

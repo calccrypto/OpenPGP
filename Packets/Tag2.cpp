@@ -1,22 +1,30 @@
 #include "Tag2.h"
-Tag2::Tag2(){
-    tag = 2;
+
+Tag2::Tag2() :
+    Packet(2),
+    type(0),
+    pka(0),
+    hash(0),
+    mpi(),
+    left16(),
+    time(0),
+    keyid(),
+    hashed_subpackets(),
+    unhashed_subpackets()
+{
 }
 
-Tag2::Tag2(const Tag2 & tag2){
-    tag = tag2.tag;
-    version = tag2.version;
-    format = tag2.format;
-    size = tag2.size;
-    type = tag2.type;
-    pka = tag2.pka;
-    hash = tag2.hash;
-    mpi = tag2.mpi;
-    left16 = tag2.left16;
-    time = tag2.time;
-    keyid = tag2.keyid;
-    hashed_subpackets = get_hashed_subpackets_clone();
-    unhashed_subpackets = get_unhashed_subpackets_clone();
+Tag2::Tag2(const Tag2 & copy) :
+    Packet(copy),
+    type(copy.type),
+    pka(copy.pka),
+    hash(copy.hash),
+    mpi(copy.mpi),
+    left16(copy.left16),
+    keyid(copy.keyid),
+    hashed_subpackets(copy.get_hashed_subpackets_clone()),
+    unhashed_subpackets(copy.get_unhashed_subpackets_clone())
+{
 }
 
 Tag2::Tag2(std::string & data){
@@ -314,9 +322,9 @@ std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets(){
     return hashed_subpackets;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets_clone(){
+std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets_clone() const{
     std::vector <Subpacket::Ptr> out;
-    for(Subpacket::Ptr & s : hashed_subpackets){
+    for(Subpacket::Ptr const & s : hashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -326,9 +334,9 @@ std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets(){
     return unhashed_subpackets;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone(){
+std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone() const{
     std::vector <Subpacket::Ptr> out;
-    for(Subpacket::Ptr & s : unhashed_subpackets){
+    for(Subpacket::Ptr const & s : unhashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -461,26 +469,23 @@ void Tag2::set_unhashed_subpackets(const std::vector <Subpacket::Ptr> & u){
     size = raw().size();
 }
 
-Packet::Ptr Tag2::clone(){
+Packet::Ptr Tag2::clone() const{
     Ptr out(new Tag2(*this));
     out -> hashed_subpackets = get_hashed_subpackets_clone();
     out -> unhashed_subpackets = get_unhashed_subpackets_clone();
     return out;
 }
 
-Tag2 Tag2::operator=(const Tag2 & tag2){
-    tag = tag2.tag;
-    version = tag2.version;
-    format = tag2.format;
-    size = tag2.size;
-    type = tag2.type;
-    pka = tag2.pka;
-    hash = tag2.hash;
-    mpi = tag2.mpi;
-    left16 = tag2.left16;
-    time = tag2.time;
-    keyid = tag2.keyid;
-    hashed_subpackets = get_hashed_subpackets_clone();
-    unhashed_subpackets = get_unhashed_subpackets_clone();
+Tag2 & Tag2::operator =(const Tag2 & copy){
+    Packet::operator =(copy);
+    type = copy.type;
+    pka = copy.pka;
+    hash = copy.hash;
+    mpi = copy.mpi;
+    left16 = copy.left16;
+    time = copy.time;
+    keyid = copy.keyid;
+    hashed_subpackets = copy.get_hashed_subpackets_clone();
+    unhashed_subpackets = copy.get_unhashed_subpackets_clone();
     return *this;
 }

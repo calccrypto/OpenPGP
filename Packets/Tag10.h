@@ -21,6 +21,6 @@ class Tag10 : public Packet{
 
         void set_pgp(const std::string & s = "PGP");
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

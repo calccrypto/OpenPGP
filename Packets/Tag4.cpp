@@ -1,11 +1,16 @@
 #include "Tag4.h"
-Tag4::Tag4(){
-    tag = 4;
-    version = 3;
+
+Tag4::Tag4() :
+    Packet(4, 3),
+    type(), hash(), pka(),
+    keyid(),
+    nested()
+{
 }
 
-Tag4::Tag4(std::string & data){
-    tag = 4;
+Tag4::Tag4(std::string & data) :
+    Tag4()
+{
     read(data);
 }
 
@@ -87,6 +92,6 @@ void Tag4::set_nested(const uint8_t n){
     size = raw().size();
 }
 
-Packet::Ptr Tag4::clone(){
+Packet::Ptr Tag4::clone() const{
     return Ptr(new Tag4(*this));
 }

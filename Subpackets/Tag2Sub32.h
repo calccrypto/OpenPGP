@@ -24,7 +24,7 @@ class Tag2Sub32 : public Subpacket{
 
         void set_embedded(Tag2::Ptr e);
 
-        Subpacket::Ptr clone();
-        Tag2Sub32 operator=(const Tag2Sub32 & tag2sub32);
+        Subpacket::Ptr clone() const;
+        Tag2Sub32 & operator=(const Tag2Sub32 & copy);
 };
 #endif

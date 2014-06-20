@@ -17,7 +17,7 @@ class Tag7 : public Tag5{
         Tag14 get_public_obj();      // extract public subkey from private key
         Tag14::Ptr get_public_ptr();    // extract public subkey from private key into a pointer
 
-        Packet::Ptr clone();
-        Tag7 operator=(const Tag7 & tag7);
+        Packet::Ptr clone() const;
+        Tag7 & operator=(const Tag7 & copy);
 };
 #endif

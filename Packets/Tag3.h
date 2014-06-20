@@ -35,7 +35,7 @@ class Tag3 : public Packet{
         void set_esk(std::string * s);
         void set_key(std::string pass, std::string sk = "");
 
-        Packet::Ptr clone();
-        Tag3 operator=(const Tag3 & tag3);
+        Packet::Ptr clone() const;
+        Tag3 & operator=(const Tag3 & tag3);
 };
 #endif

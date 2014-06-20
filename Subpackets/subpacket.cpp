@@ -13,6 +13,12 @@ std::string Subpacket::write_subpacket(const std::string & data){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
+Subpacket::Subpacket(uint8_t type, unsigned int size) :
+    type(type),
+    size(size)
+{
+}
+
 Subpacket::~Subpacket(){}
 
 std::string Subpacket::write(){
@@ -33,4 +39,15 @@ void Subpacket::set_type(uint8_t t){
 
 void Subpacket::set_size(unsigned int s){
     size = s;
+}
+
+Subpacket::Subpacket(const Subpacket & copy) :
+    type(copy.type),
+    size(copy.size)
+{}
+
+Subpacket & Subpacket::operator =(const Subpacket & copy){
+    type = copy.type;
+    size = copy.size;
+    return *this;
 }

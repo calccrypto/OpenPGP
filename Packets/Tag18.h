@@ -20,6 +20,6 @@ class Tag18 : public Packet{
 
         void set_protected_data(const std::string & p);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

@@ -1,14 +1,16 @@
 #include "Tag17Sub1.h"
+
 unsigned int Tag17Sub1::count = 0;
 
-Tag17Sub1::Tag17Sub1(){
-    type = 1;
+Tag17Sub1::Tag17Sub1() :
+    Subpacket(1)
+{
     count++;
 }
 
-Tag17Sub1::Tag17Sub1(std::string & data){
-    type = 1;
-    count++;
+Tag17Sub1::Tag17Sub1(std::string & data) :
+    Tag17Sub1()
+{
     read(data);
 }
 
@@ -46,6 +48,6 @@ void Tag17Sub1::set_image(const std::string & i){
     image = i;
 }
 
-Subpacket::Ptr Tag17Sub1::clone(){
+Subpacket::Ptr Tag17Sub1::clone() const {
     return Ptr(new Tag17Sub1(*this));
 }

@@ -1,12 +1,14 @@
 #include "Tag10.h"
-Tag10::Tag10(){
-    tag = 10;
-    pgp = "PGP";
+
+Tag10::Tag10() :
+    Packet(10),
+    pgp("PGP")
+{
 }
 
-Tag10::Tag10(std::string & data){
-    tag = 10;
-    pgp = "PGP";
+Tag10::Tag10(std::string & data) :
+    Tag10()
+{
     read(data);
 }
 
@@ -37,6 +39,6 @@ void Tag10::set_pgp(const std::string & s){
     size = 3;
 }
 
-Packet::Ptr Tag10::clone(){
+Packet::Ptr Tag10::clone() const{
     return Ptr(new Tag10(*this));
 }

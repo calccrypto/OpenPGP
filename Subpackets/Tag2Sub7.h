@@ -21,6 +21,6 @@ class Tag2Sub7 : public Subpacket{
 
         void set_revocable(const bool r);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

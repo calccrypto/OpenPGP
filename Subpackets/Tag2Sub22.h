@@ -21,6 +21,6 @@ class Tag2Sub22 : public Subpacket{
 
         void set_pca(const std::string & c);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

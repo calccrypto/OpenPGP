@@ -21,6 +21,6 @@ class Tag2Sub25 : public Subpacket{
 
         void set_primary(const bool p);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

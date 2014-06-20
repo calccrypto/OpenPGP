@@ -1,8 +1,14 @@
 #include "TagX.h"
-TagX::TagX(){}
 
-TagX::TagX(const std::string & data){
-    stream = data;
+TagX::TagX() :
+    TagX(std::string())
+{
+}
+
+TagX::TagX(const std::string & data) :
+    Packet(),
+    stream(data)
+{
 }
 
 void TagX::read(std::string & data){
@@ -24,6 +30,6 @@ void TagX::set_stream(const std::string & data){
     stream = data;
 }
 
-Packet::Ptr TagX::clone(){
+Packet::Ptr TagX::clone() const{
     return Ptr(new TagX(*this));
 }

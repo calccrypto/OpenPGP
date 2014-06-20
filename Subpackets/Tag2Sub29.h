@@ -24,6 +24,6 @@ class Tag2Sub29 : public Subpacket{
         void set_code(const uint8_t c);
         void set_reason(const std::string & r);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

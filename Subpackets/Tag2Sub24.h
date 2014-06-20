@@ -21,6 +21,6 @@ class Tag2Sub24 : public Subpacket{
 
         void set_pks(const std::string & p);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

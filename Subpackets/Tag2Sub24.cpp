@@ -1,10 +1,14 @@
 #include "Tag2Sub24.h"
-Tag2Sub24::Tag2Sub24(){
-    type = 24;
+
+Tag2Sub24::Tag2Sub24() :
+    Subpacket(24),
+    pks()
+{
 }
 
-Tag2Sub24::Tag2Sub24(std::string & data){
-    type = 24;
+Tag2Sub24::Tag2Sub24(std::string & data) :
+    Tag2Sub24()
+{
     read(data);
 }
 
@@ -29,6 +33,6 @@ void Tag2Sub24::set_pks(const std::string & p){
     pks = p;
 }
 
-Subpacket::Ptr Tag2Sub24::clone(){
+Subpacket::Ptr Tag2Sub24::clone() const{
     return Ptr(new Tag2Sub24(*this));
 }

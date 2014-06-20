@@ -44,6 +44,8 @@ class S2K{
         std::string show_octect0();
         std::string show_octect1();
 
+        S2K(uint8_t type);
+
     public:
         typedef std::shared_ptr<S2K> Ptr;
 
@@ -64,6 +66,9 @@ class S2K{
 };
 
 class S2K0: public S2K{
+    protected:
+        S2K0(uint8_t type);
+
     public:
         typedef std::shared_ptr<S2K0> Ptr;
 
@@ -80,6 +85,8 @@ class S2K0: public S2K{
 class S2K1 : public S2K0{
     protected:
         std::string salt;   // 8 octets
+
+        S2K1(uint8_t type);
 
     public:
         typedef std::shared_ptr<S2K1> Ptr;

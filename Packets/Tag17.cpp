@@ -1,10 +1,15 @@
 #include "Tag17.h"
-Tag17::Tag17(){
-    tag = 17;
+
+Tag17::Tag17() :
+    ID(17),
+    length(),
+    type()
+{
 }
 
-Tag17::Tag17(std::string & data){
-    tag = 17;
+Tag17::Tag17(std::string & data) :
+    Tag17()
+{
     read(data);
 }
 
@@ -104,6 +109,6 @@ void Tag17::set_attibutes(const std::vector <Subpacket::Ptr> & a){
     size = raw().size();
 }
 
-Packet::Ptr Tag17::clone(){
+Packet::Ptr Tag17::clone() const{
     return Ptr(new Tag17(*this));
 }

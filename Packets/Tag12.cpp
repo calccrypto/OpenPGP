@@ -1,10 +1,14 @@
 #include "Tag12.h"
-Tag12::Tag12(){
-    tag = 12;
+
+Tag12::Tag12() :
+    Packet(12),
+    trust()
+{
 }
 
-Tag12::Tag12(std::string & data){
-    tag = 12;
+Tag12::Tag12(std::string & data) :
+    Tag12()
+{
     read(data);
 }
 
@@ -32,6 +36,6 @@ void Tag12::set_trust(const std::string & t){
     size = raw().size();
 }
 
-Packet::Ptr Tag12::clone(){
+Packet::Ptr Tag12::clone() const{
     return Ptr(new Tag12(*this));
 }

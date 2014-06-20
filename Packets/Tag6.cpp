@@ -77,14 +77,27 @@ std::string Tag6::raw_tag6(){
     return out;
 }
 
-Tag6::Tag6(){
-    tag = 6;
+Tag6::Tag6(uint8_t tag) :
+    Key(tag),
+    time(),
+    pka(),
+    mpi(),
+    expire()
+{
 }
 
-Tag6::Tag6(std::string & data){
-    tag = 6;
+Tag6::Tag6() :
+    Tag6(6)
+{
+}
+
+Tag6::Tag6(std::string & data) :
+    Tag6()
+{
     read(data);
 }
+
+Tag6::~Tag6(){}
 
 void Tag6::read(std::string & data){
     read_tag6(data);
@@ -160,6 +173,25 @@ std::string Tag6::get_keyid(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-Packet::Ptr Tag6::clone(){
+Packet::Ptr Tag6::clone() const{
     return Ptr(new Tag6(*this));
+}
+
+Tag6::Tag6(const Tag6 & copy) :
+    Key(copy),
+    time(copy.time),
+    pka(copy.pka),
+    mpi(copy.mpi),
+    expire(copy.expire)
+{
+}
+
+Tag6 &Tag6::operator =(const Tag6 & copy)
+{
+    Key::operator =(copy);
+    time = copy.time;
+    pka = copy.pka;
+    mpi = copy.mpi;
+    expire = copy.expire;
+    return *this;
 }

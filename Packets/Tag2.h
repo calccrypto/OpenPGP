@@ -9,15 +9,15 @@
 class Tag2 : public Packet{
     private:
         // common
-        uint8_t type = 0;
-        uint8_t pka = 0;
-        uint8_t hash = 0;
+        uint8_t type;
+        uint8_t pka;
+        uint8_t hash;
         std::vector <mpz_class> mpi;
-        std::string left16 = "";        // 2 octets
+        std::string left16;        // 2 octets
 
         // version 3 stuff
-        uint32_t time = 0;
-        std::string keyid = "";
+        uint32_t time;
+        std::string keyid;
 
         // version 4 stuff
         std::vector <Subpacket::Ptr> hashed_subpackets;
@@ -51,9 +51,9 @@ class Tag2 : public Packet{
         std::string get_keyid();
 
         std::vector <Subpacket::Ptr> get_hashed_subpackets();
-        std::vector <Subpacket::Ptr> get_hashed_subpackets_clone();
+        std::vector <Subpacket::Ptr> get_hashed_subpackets_clone() const;
         std::vector <Subpacket::Ptr> get_unhashed_subpackets();
-        std::vector <Subpacket::Ptr> get_unhashed_subpackets_clone();
+        std::vector <Subpacket::Ptr> get_unhashed_subpackets_clone() const;
         std::string get_up_to_hashed();             // used for signature trailer
         std::string get_without_unhashed();         // used for signature type 0x50
 
@@ -71,7 +71,7 @@ class Tag2 : public Packet{
         void set_hashed_subpackets(const std::vector <Subpacket::Ptr> & h);
         void set_unhashed_subpackets(const std::vector <Subpacket::Ptr> & u);
 
-        Packet::Ptr clone();
-        Tag2 operator=(const Tag2 & tag2);
+        Packet::Ptr clone() const;
+        Tag2 & operator =(const Tag2 & copy);
 };
 #endif

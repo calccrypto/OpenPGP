@@ -30,6 +30,6 @@ class Tag17 : public ID{
         std::vector <Subpacket::Ptr> get_attributes_clone();
         void set_attibutes(const std::vector <Subpacket::Ptr> & a);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

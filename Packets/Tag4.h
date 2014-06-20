@@ -33,6 +33,6 @@ class Tag4 : public Packet{
         void set_keyid(const std::string & k);
         void set_nested(const uint8_t n);
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 };
 #endif

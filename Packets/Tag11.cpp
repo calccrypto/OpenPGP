@@ -1,10 +1,17 @@
 #include "Tag11.h"
-Tag11::Tag11(){
-    tag = 11;
+
+Tag11::Tag11() :
+    Packet(11),
+    format(),
+    filename(),
+    time(),
+    literal()
+{
 }
 
-Tag11::Tag11(std::string & data){
-    tag = 11;
+Tag11::Tag11(std::string & data) :
+    Tag11()
+{
     read(data);
 }
 
@@ -67,6 +74,6 @@ void Tag11::set_literal(const std::string & l){
     size = raw().size();
 }
 
-Packet::Ptr Tag11::clone(){
+Packet::Ptr Tag11::clone() const{
     return Ptr(new Tag11(*this));
 }

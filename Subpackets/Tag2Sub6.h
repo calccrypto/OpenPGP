@@ -21,6 +21,6 @@ class Tag2Sub6 : public Subpacket{
 
         void set_regex(const std::string & r);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

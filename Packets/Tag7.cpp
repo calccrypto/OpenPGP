@@ -1,26 +1,18 @@
 #include "Tag7.h"
-Tag7::Tag7(){
-    tag = 7;
+
+Tag7::Tag7() :
+    Tag5(7)
+{
 }
 
-Tag7::Tag7(const Tag7 & tag7){
-    tag = tag7.tag;
-    version = tag7.version;
-    format = tag7.format;
-    size = tag7.size;
-    time = tag7.time;
-    pka = tag7.pka;
-    mpi = tag7.mpi;
-    expire = tag7.expire;
-    s2k_con = tag7.s2k_con;
-    sym = tag7.sym;
-    s2k = tag7.s2k -> clone();
-    IV = tag7.IV;
-    secret = tag7.secret;
+Tag7::Tag7(const Tag7 & copy) :
+    Tag5(copy)
+{
 }
 
-Tag7::Tag7(std::string & data){
-    tag = 7;
+Tag7::Tag7(std::string & data) :
+    Tag7()
+{
     read(data);
 }
 
@@ -41,25 +33,13 @@ Tag14::Ptr Tag7::get_public_ptr(){
     return out;
 }
 
-Packet::Ptr Tag7::clone(){
+Packet::Ptr Tag7::clone() const{
     Ptr out(new Tag7(*this));
     out -> s2k = s2k -> clone();
     return out;
 }
 
-Tag7 Tag7::operator=(const Tag7 & tag7){
-    tag = tag7.tag;
-    version = tag7.version;
-    format = tag7.format;
-    size = tag7.size;
-    time = tag7.time;
-    pka = tag7.pka;
-    mpi = tag7.mpi;
-    expire = tag7.expire;
-    s2k_con = tag7.s2k_con;
-    sym = tag7.sym;
-    s2k = tag7.s2k -> clone();
-    IV = tag7.IV;
-    secret = tag7.secret;
+Tag7 & Tag7::operator=(const Tag7 & copy){
+    Tag5::operator =(copy);
     return *this;
 }

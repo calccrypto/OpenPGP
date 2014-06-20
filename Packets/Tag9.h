@@ -17,7 +17,7 @@ class Tag9 : public Packet{
         std::string show();
         std::string raw();
 
-        Packet::Ptr clone();
+        Packet::Ptr clone() const;
 
         std::string get_encrypted_data();
 

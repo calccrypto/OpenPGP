@@ -1,24 +1,28 @@
 #include "Tag5.h"
-Tag5::Tag5(){
-    tag = 5;
-    s2k_con = 0;
-    sym = 0;
+
+Tag5::Tag5(uint8_t tag) :
+    Tag6(tag),
+    s2k_con(0),
+    sym(0),
+    s2k(),
+    IV(),
+    secret()
+{
 }
 
-Tag5::Tag5(const Tag5 & tag5){
-    tag = tag5.tag;
-    version = tag5.version;
-    format = tag5.format;
-    size = tag5.size;
-    time = tag5.time;
-    pka = tag5.pka;
-    mpi = tag5.mpi;
-    expire = tag5.expire;
-    s2k_con = tag5.s2k_con;
-    sym = tag5.sym;
-    s2k = tag5.s2k -> clone();
-    IV = tag5.IV;
-    secret = tag5.secret;
+Tag5::Tag5() :
+    Tag5(5)
+{
+}
+
+Tag5::Tag5(const Tag5 & copy) :
+    Tag6(copy),
+    s2k_con(copy.s2k_con),
+    sym(copy.sym),
+    s2k(copy.s2k),
+    IV(copy.IV),
+    secret(copy.secret)
+{
 }
 
 Tag5::Tag5(std::string & data){
@@ -224,25 +228,18 @@ void Tag5::set_secret(const std::string & s){
     size += secret.size();
 }
 
-Packet::Ptr Tag5::clone(){
+Packet::Ptr Tag5::clone() const{
     Tag5::Ptr out(new Tag5(*this));
     out -> s2k = s2k -> clone();
     return out;
 }
 
-Tag5 Tag5::operator=(const Tag5 & tag5){
-    tag = tag5.tag;
-    version = tag5.version;
-    format = tag5.format;
-    size = tag5.size;
-    time = tag5.time;
-    pka = tag5.pka;
-    mpi = tag5.mpi;
-    expire = tag5.expire;
-    s2k_con = tag5.s2k_con;
-    sym = tag5.sym;
-    s2k = tag5.s2k -> clone();
-    IV = tag5.IV;
-    secret = tag5.secret;
+Tag5 & Tag5::operator =(const Tag5 & copy){
+    Tag6::operator =(copy);
+    s2k_con = copy.s2k_con;
+    sym = copy.sym;
+    s2k = copy.s2k -> clone();
+    IV = copy.IV;
+    secret = copy.secret;
     return *this;
 }

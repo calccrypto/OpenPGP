@@ -21,6 +21,6 @@ class Tag2Sub28 : public Subpacket{
 
         void set_signer(const std::string & s);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif

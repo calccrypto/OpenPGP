@@ -36,14 +36,16 @@ std::string Tag8::decompress(std::string data){
     return out;
 }
 
-Tag8::Tag8(){
-    tag = 8;
-    version = 3;
-    comp = 0;
+Tag8::Tag8() :
+    Packet(8, 3),
+    comp(0),
+    compressed_data()
+{
 }
 
-Tag8::Tag8(std::string & data){
-    tag = 8;
+Tag8::Tag8(std::string & data) :
+    Tag8()
+{
     read(data);
 }
 
@@ -92,6 +94,6 @@ void Tag8::set_compressed_data(const std::string & data){
     size = raw().size();
 }
 
-Packet::Ptr Tag8::clone(){
+Packet::Ptr Tag8::clone() const{
     return Ptr(new Tag8(*this));
 }

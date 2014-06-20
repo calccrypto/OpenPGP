@@ -21,6 +21,6 @@ class Tag2Sub3 : public Subpacket{
 
         void set_time(const time_t t);
 
-        Subpacket::Ptr clone();
+        Subpacket::Ptr clone() const;
 };
 #endif
