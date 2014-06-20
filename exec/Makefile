@@ -1,6 +1,6 @@
 # OpenPGP executable Makefile
 CXX?=g++
-LFLAGS=-lgmpxx -lgmp
+LFLAGS=-lOpenPGP -lgmpxx -lgmp -L..
 CFLAGS=-std=c++11 -Wall
 TARGET=OpenPGP
 
@@ -15,7 +15,7 @@ libs:
 	$(MAKE) -C ..
 
 $(TARGET): main.cpp libs
-	$(CXX) $(CFLAGS) main.cpp ../*.o ../*/*.o $(LFLAGS) -o $(TARGET)
+	$(CXX) $(CFLAGS) main.cpp $(LFLAGS) -o $(TARGET)
 
 clean:
 	rm -f $(TARGET)

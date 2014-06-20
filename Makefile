@@ -2,11 +2,13 @@
 CXX?=g++
 LFLAGS=-lgmp -lgmpxx
 CFLAGS=-std=c++11 -Wall -c
+AR=ar
+TARGET=libOpenPGP.a
 
 debug: CFLAGS += -g
 debug: all
 
-all: cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+all: $(TARGET)
 
 .PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
 
@@ -72,6 +74,9 @@ sign.o: sign.h sign.cpp common/includes.h Packets/packets.h PKA/PKA.h decrypt.h 
 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h PGP.h PGPSignedMessage.h sigcalc.h
 	$(CXX) $(CFLAGS) verify.cpp
+
+$(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+	$(AR) -r $(TARGET) *.o */*.o
 
 clean:
 	rm -f *.o
