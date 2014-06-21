@@ -40,10 +40,10 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "revoke.h"
 
-Tag6::Ptr find_encrypting_key(PGP & k);
+Tag6::Ptr find_encrypting_key(const PGP & k);
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub);
 std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <mpz_class> & pub);
 
 // Encrypt data
-PGP encrypt(const std::string & data, PGP & pub, bool hash = true, uint8_t sym_alg = 9);
+PGP encrypt(const std::string & data, const PGP & pub, bool hash = true, uint8_t sym_alg = 9);
 #endif

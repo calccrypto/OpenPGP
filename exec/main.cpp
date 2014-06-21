@@ -418,7 +418,7 @@ bool parse_command(std::string & input){
             // find private subkey
             std::vector <Packet::Ptr> packets = key.get_packets();
             bool found = false;
-            for(Packet::Ptr & p : packets){
+            for(Packet::Ptr const & p : packets){
                 if (p -> get_tag() == 7){
                     found = true;
                     break;

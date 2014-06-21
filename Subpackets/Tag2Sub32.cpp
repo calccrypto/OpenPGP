@@ -39,7 +39,7 @@ Tag2::Ptr Tag2Sub32::get_embedded() const{
     return embedded;
 }
 
-void Tag2Sub32::set_embedded(Tag2::Ptr e){
+void Tag2Sub32::set_embedded(const Tag2::Ptr & e){
     embedded = std::dynamic_pointer_cast<Tag2>(e -> clone());
 }
 

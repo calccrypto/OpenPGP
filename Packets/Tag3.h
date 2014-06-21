@@ -31,7 +31,7 @@ class Tag3 : public Packet{
         std::string get_key(std::string pass) const;
 
         void set_sym(const uint8_t s);
-        void set_s2k(S2K::Ptr s);
+        void set_s2k(const S2K::Ptr & s);
         void set_esk(std::string * s);
         void set_key(std::string pass, std::string sk = "");
 

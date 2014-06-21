@@ -33,6 +33,6 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m){
     throw std::runtime_error("Error: EME-PKCS1 Decoding Error.");
 }
 
-std::string EMSA_PKCS1_v1_5(const uint8_t & h, std::string & hashed_data, const unsigned int & keylength){
+std::string EMSA_PKCS1_v1_5(const uint8_t & h, const std::string & hashed_data, const unsigned int & keylength){
     return zero + "\x01" + std::string(keylength - (Hash_ASN1_DER.at(Hash_Algorithms.at(h)).size() >> 1) - 3 - (Hash_Length.at(Hash_Algorithms.at(h)) >> 3), 0xff) + zero + unhexlify(Hash_ASN1_DER.at(Hash_Algorithms.at(h))) + hashed_data;
 }

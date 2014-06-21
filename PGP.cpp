@@ -266,9 +266,9 @@ void PGP::set_packets(const std::vector <Packet::Ptr> & p){
     }
 }
 
-std::string PGP::keyid(){
+std::string PGP::keyid() const{
     if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             // find primary key
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
                 std::string data = p -> raw();
@@ -277,7 +277,7 @@ std::string PGP::keyid(){
             }
         }
         // if no primary key is found
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             // find subkey
             if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
@@ -293,11 +293,11 @@ std::string PGP::keyid(){
 }
 
 // output is copied from gpg --list-keys
-std::string PGP::list_keys(){
+std::string PGP::list_keys() const{
     if ((ASCII_Armor == 1) || (ASCII_Armor == 2)){
         // scan for revoked keys
         std::map <std::string, std::string> revoked;
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             if (p -> get_tag() == 2){
                 std::string raw = p -> raw();
                 Tag2 tag2(raw);
@@ -326,7 +326,7 @@ std::string PGP::list_keys(){
         }
 
         std::stringstream out;
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             std::string data = p -> raw();
             switch (p -> get_tag()){
                 case 5: case 6: case 7: case 14:
@@ -372,7 +372,7 @@ std::string PGP::list_keys(){
     }
 }
 
-PGP::Ptr PGP::clone(){
+PGP::Ptr PGP::clone() const{
     PGP::Ptr out(new PGP);
     out -> ASCII_Armor = ASCII_Armor;
     out -> Armor_Header = Armor_Header;
@@ -388,7 +388,7 @@ PGP & PGP::operator=(const PGP & copy){
     return *this;
 }
 
-std::ostream & operator<<(std::ostream & stream, PGP & pgp){
+std::ostream & operator<<(std::ostream & stream, const PGP & pgp){
     stream << hexlify(pgp.keyid());
     return stream;
 }

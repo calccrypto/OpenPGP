@@ -1,8 +1,8 @@
 #include "encrypt.h"
-Tag6::Ptr find_encrypting_key(PGP & k){
+Tag6::Ptr find_encrypting_key(const PGP & k){
     if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
         std::vector <Packet::Ptr> packets = k.get_packets();
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
                 Tag6::Ptr key(new Tag6(data));
@@ -36,7 +36,7 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data,
     return pka_encrypt(pka, mpz_class(hexlify(data), 16), pub);
 }
 
-PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
+PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_alg){
     BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){

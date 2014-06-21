@@ -5,7 +5,7 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
         if (p -> get_tag() == 2){
             std::string raw = p -> raw();
             Tag2 tag2(raw);
-            for(Subpacket::Ptr & s: tag2.get_unhashed_subpackets()){
+            for(Subpacket::Ptr const & s: tag2.get_unhashed_subpackets()){
                 if (s -> get_type() == 16){
                     raw = s -> raw();
                     Tag2Sub16 tag2sub16(raw);
@@ -17,7 +17,7 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
                     }
                 }
             }
-            for(Subpacket::Ptr & s: tag2.get_hashed_subpackets()){
+            for(Subpacket::Ptr const & s: tag2.get_hashed_subpackets()){
                 if (s -> get_type() == 16){
                     raw = s -> raw();
                     Tag2Sub16 tag2sub16(raw);
@@ -34,7 +34,7 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
     return false;
 }
 
-bool check_revoked(PGP & key, const std::string & keyid){
+bool check_revoked(const PGP & key, const std::string & keyid){
     return check_revoked(key.get_packets(), keyid);
 }
 
@@ -48,7 +48,7 @@ Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, con
     // find the primary key
     Tag5::Ptr key;
     std::vector <Packet::Ptr> packets = pri.get_packets();
-    for(Packet::Ptr& p : packets){
+    for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 5){
             std::string data = p -> raw();
             key = std::make_shared<Tag5>(data);
@@ -101,7 +101,7 @@ Tag2::Ptr revoke_subkey_cert(PGP & pri, const std::string & passphrase, const ui
     // find subkey
     Tag7::Ptr key;
     std::vector <Packet::Ptr> packets = pri.get_packets();
-    for(Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
             key = std::make_shared<Tag7>(data);
@@ -157,7 +157,7 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
     // find subkey
     Tag7::Ptr key;
     std::vector <Packet::Ptr> packets = pri.get_packets();
-    for(Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
             key = std::make_shared<Tag7>(data);
@@ -311,7 +311,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
 
     // find key id to revoke
     // search unhashed subpackets
-    for(Subpacket::Ptr & s : tag2->get_unhashed_subpackets()){
+    for(Subpacket::Ptr const & s : tag2->get_unhashed_subpackets()){
         if (s -> get_type() == 16){
             std::string raws = s -> raw();
             Tag2Sub16 tag2sub16(raws);
@@ -321,7 +321,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
     if (!r_keyid.size()){
         // search hashed subpackets
-        for(Subpacket::Ptr & s : tag2->get_hashed_subpackets()){
+        for(Subpacket::Ptr const & s : tag2->get_hashed_subpackets()){
             if (s -> get_type() == 16){
                 std::string raws = s -> raw();
                 Tag2Sub16 tag2sub16(raws);
@@ -335,7 +335,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
 
     // find key with key id
-    for(Packet::Ptr & p: pub.get_packets()){
+    for(Packet::Ptr const & p: pub.get_packets()){
         if (p -> get_tag() == which){
             raw = p -> raw();
             Tag6 tag6(raw);

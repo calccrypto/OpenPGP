@@ -1,9 +1,9 @@
 #include "decrypt.h"
 
-Tag5::Ptr find_decrypting_key(PGP & k){
+Tag5::Ptr find_decrypting_key(const PGP & k){
     if (k.get_ASCII_Armor() == 2){
         std::vector <Packet::Ptr> packets = k.get_packets();
-        for(Packet::Ptr & p : packets){
+        for(Packet::Ptr const & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
                 std::string data = p -> raw();
                 Tag5::Ptr key = std::make_shared<Tag5>(data);
@@ -35,7 +35,7 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <mpz_class> decrypt_secret_key(Tag5::Ptr pri, const std::string & passphrase){
+std::vector <mpz_class> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase){
     std::vector <mpz_class> out;
     S2K::Ptr s2k = pri -> get_s2k();
 
@@ -94,7 +94,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
 
     // find session key
     std::vector <Packet::Ptr> message_packets = m.get_packets();
-    for(Packet::Ptr & p : message_packets){
+    for(Packet::Ptr const & p : message_packets){
         if ((p -> get_tag() == 1) || (p -> get_tag() == 3)){
             data = p -> raw();
             packet = p -> get_tag();
@@ -147,7 +147,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
 
     // Find encrypted data
     data = "";
-    for(Packet::Ptr & p : message_packets){
+    for(Packet::Ptr const & p : message_packets){
         if (p -> get_tag() == 9){
             data = p -> raw();
             Tag9 tag9(data);

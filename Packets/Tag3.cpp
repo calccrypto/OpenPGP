@@ -98,7 +98,7 @@ void Tag3::set_sym(const uint8_t s){
     size = raw().size();
 }
 
-void Tag3::set_s2k(S2K::Ptr s){
+void Tag3::set_s2k(const S2K::Ptr & s){
     s2k = s -> clone();
     size = raw().size();
 }

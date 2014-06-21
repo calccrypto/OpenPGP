@@ -376,7 +376,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
 
     // write changes to public key
     std::vector <Packet::Ptr> pub_packets;
-    for(Packet::Ptr p : packets){
+    for(Packet::Ptr const & p : packets){
         std::string data = p -> raw();
         if (p -> get_tag() == 5){ // Secret Key packet
             Tag6::Ptr tag6(new Tag6(data));

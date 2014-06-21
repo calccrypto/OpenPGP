@@ -47,7 +47,7 @@ std::string Tag17::show() const{
 
 std::string Tag17::raw() const{
     std::string out = "";
-    for(Subpacket::Ptr a : attributes){
+    for(Subpacket::Ptr const & a : attributes){
         out += a -> write();
     }
     return out;

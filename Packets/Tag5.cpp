@@ -182,7 +182,7 @@ void Tag5::set_sym(const uint8_t s){
     size += secret.size();
 }
 
-void Tag5::set_s2k(S2K::Ptr s){
+void Tag5::set_s2k(const S2K::Ptr & s){
     if (s -> get_type() == 0){
         s2k = std::make_shared<S2K0>();
     }

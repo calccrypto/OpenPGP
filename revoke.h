@@ -39,7 +39,7 @@ THE SOFTWARE.
 #include "verify.h"
 
 bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string & keyid);
-bool check_revoked(PGP & key, const std::string & keyid);
+bool check_revoked(const PGP & key, const std::string & keyid);
 
 // main function to revoke a primary key
 Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");

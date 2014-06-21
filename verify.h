@@ -39,18 +39,18 @@ THE SOFTWARE.
 #include "PGPSignedMessage.h"
 #include "sigcalc.h"
 
-std::string find_keyid(Tag2::Ptr tag2);
-std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, PGP & key);
+std::string find_keyid(const Tag2::Ptr & tag2);
+std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, const PGP & key);
 
-bool pka_verify(std::string hashed_message, const uint8_t pka, const std::vector<mpz_class> &key, const std::vector<mpz_class> &signature, const uint8_t h = 0);
-bool pka_verify(const std::string & hashed_message, Tag2::Ptr tag2, const std::vector <mpz_class> & key, const uint8_t h = 0);
+bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<mpz_class> &key, const std::vector<mpz_class> &signature, const uint8_t h = 0);
+bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <mpz_class> & key, const uint8_t h = 0);
 
 // Use string.size() to check if input was verified.
-bool verify_file(const std::string & data, PGP & sig, PGP & key);
-bool verify_file(std::ifstream & f, PGP & sig, PGP & key);
+bool verify_file(const std::string & data, const PGP & sig, const PGP & key);
+bool verify_file(std::ifstream & f, const PGP & sig, const PGP & key);
 
-bool verify_message(PGPSignedMessage & message, PGP & key);
-bool verify_signature(PGP & sig, PGP & key);
-bool verify_revoke(Tag6::Ptr key, Tag2::Ptr rev);
-bool verify_revoke(PGP & key, PGP & rev);
+bool verify_message(const PGPSignedMessage & message, const PGP & key);
+bool verify_signature(const PGP & sig, const PGP & key);
+bool verify_revoke(const Tag6::Ptr & key, const Tag2::Ptr & rev);
+bool verify_revoke(const PGP & key, const PGP & rev);
 #endif

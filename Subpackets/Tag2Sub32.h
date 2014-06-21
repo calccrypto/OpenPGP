@@ -22,7 +22,7 @@ class Tag2Sub32 : public Subpacket{
 
         Tag2::Ptr get_embedded() const;
 
-        void set_embedded(Tag2::Ptr e);
+        void set_embedded(const Tag2::Ptr & e);
 
         Subpacket::Ptr clone() const;
         Tag2Sub32 & operator=(const Tag2Sub32 & copy);

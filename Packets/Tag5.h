@@ -41,7 +41,7 @@ class Tag5 : public Tag6{
 
         void set_s2k_con(const uint8_t c);
         void set_sym(const uint8_t s);
-        void set_s2k(S2K::Ptr s);
+        void set_s2k(const S2K::Ptr & s);
         void set_IV(const std::string & iv);
         void set_secret(const std::string & s);
 

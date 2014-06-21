@@ -77,13 +77,13 @@ class PGP{
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header);
         void set_packets(const std::vector <Packet::Ptr> & p);
 
-        std::string keyid();                                                   // keyid that is searched for on keyservers
-        std::string list_keys();                                               // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
+        std::string keyid() const;                                             // keyid that is searched for on keyservers
+        std::string list_keys() const;                                         // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
 
         PGP & operator=(const PGP & copy);                                     // get deep copy object
-        Ptr clone();                                                         // get deep copy pointer
+        Ptr clone() const;                                                // get deep copy pointer
 };
 
 // Display key id of primary key
-std::ostream & operator<<(std::ostream & stream, PGP & pgp);
+std::ostream & operator<<(std::ostream & stream, const PGP & pgp);
 #endif
