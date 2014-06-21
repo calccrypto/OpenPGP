@@ -17,7 +17,7 @@ void Tag2Sub11::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub11::show(){
+std::string Tag2Sub11::show() const{
     std::stringstream out;
     for(unsigned int x = 0; x < psa.size(); x++){
         out << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
@@ -25,11 +25,11 @@ std::string Tag2Sub11::show(){
     return out.str();
 }
 
-std::string Tag2Sub11::raw(){
+std::string Tag2Sub11::raw() const{
     return psa;
 }
 
-std::string Tag2Sub11::get_psa(){
+std::string Tag2Sub11::get_psa() const{
     return psa;
 }
 

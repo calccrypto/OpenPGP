@@ -14,10 +14,10 @@ class Tag2Sub11 : public Subpacket{
         Tag2Sub11();
         Tag2Sub11(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_psa();  // string containing Symmetric Key Algorithm values (ex: "\x07\x08\x09")
+        std::string get_psa() const;  // string containing Symmetric Key Algorithm values (ex: "\x07\x08\x09")
 
         void set_psa(const std::string & s);
 

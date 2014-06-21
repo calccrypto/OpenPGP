@@ -18,14 +18,14 @@ class Tag4 : public Packet{
         Tag4();
         Tag4(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_type();
-        uint8_t get_hash();
-        uint8_t get_pka();
-        std::string get_keyid();
-        uint8_t get_nested();
+        uint8_t get_type() const;
+        uint8_t get_hash() const;
+        uint8_t get_pka() const;
+        std::string get_keyid() const;
+        uint8_t get_nested() const;
 
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);

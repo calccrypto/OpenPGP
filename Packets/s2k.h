@@ -51,18 +51,18 @@ class S2K{
 
         virtual ~S2K();
         virtual void read(std::string & data) = 0;
-        virtual std::string show() = 0;
-        virtual std::string raw() = 0;
-        std::string write();
-        virtual std::string run(std::string pass, unsigned int sym_len) = 0;
+        virtual std::string show() const = 0;
+        virtual std::string raw() const = 0;
+        std::string write() const;
+        virtual std::string run(std::string pass, unsigned int sym_len) const = 0;
 
-        uint8_t get_type();
-        uint8_t get_hash();
+        uint8_t get_type() const;
+        uint8_t get_hash() const;
 
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);
 
-        virtual Ptr clone() = 0;
+        virtual Ptr clone() const = 0;
 };
 
 class S2K0: public S2K{
@@ -75,11 +75,11 @@ class S2K0: public S2K{
         S2K0();
         virtual ~S2K0();
         virtual void read(std::string & data);
-        virtual std::string show();
-        virtual std::string raw();
-        virtual std::string run(std::string pass, unsigned int sym_len);
+        virtual std::string show() const;
+        virtual std::string raw() const;
+        virtual std::string run(std::string pass, unsigned int sym_len) const;
 
-        S2K::Ptr clone();
+        S2K::Ptr clone() const;
 };
 
 class S2K1 : public S2K0{
@@ -94,15 +94,15 @@ class S2K1 : public S2K0{
         S2K1();
         virtual ~S2K1();
         virtual void read(std::string & data);
-        virtual std::string show();
-        virtual std::string raw();
-        virtual std::string run(std::string pass, unsigned int sym_len);
+        virtual std::string show() const;
+        virtual std::string raw() const;
+        virtual std::string run(std::string pass, unsigned int sym_len) const;
 
-        std::string get_salt();
+        std::string get_salt() const;
 
         void set_salt(const std::string & s);
 
-        S2K::Ptr clone();
+        S2K::Ptr clone() const;
 };
 
 class S2K3 : public S2K1{
@@ -115,14 +115,14 @@ class S2K3 : public S2K1{
         S2K3();
         ~S2K3();
         void read(std::string & data);
-        std::string show();
-        std::string raw();
-        std::string run(std::string pass, unsigned int sym_len);
+        std::string show() const;
+        std::string raw() const;
+        std::string run(std::string pass, unsigned int sym_len) const;
 
-        uint8_t get_count();
+        uint8_t get_count() const;
 
         void set_count(const uint8_t c);
 
-        S2K::Ptr clone();
+        S2K::Ptr clone() const;
 };
 #endif

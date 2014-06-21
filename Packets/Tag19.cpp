@@ -18,17 +18,17 @@ void Tag19::read(std::string & data){
     hash = data;
 }
 
-std::string Tag19::show(){
+std::string Tag19::show() const{
     std::stringstream out;
     out << "    SHA - 1 Hash of previous packet: " << hash << "\n";
     return out.str();
 }
 
-std::string Tag19::raw(){
+std::string Tag19::raw() const{
     return hash;
 }
 
-std::string Tag19::get_hash(){
+std::string Tag19::get_hash() const{
     return hash;
 }
 

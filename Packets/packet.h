@@ -20,10 +20,10 @@ class Packet{
         unsigned int size;  // This value is only correct when the packet was generated with the read() function
 
         // returns packet data with old format packet length
-        std::string write_old_length(std::string data);
+        std::string write_old_length(std::string data) const;
 
         // returns packet data with new format packet length
-        std::string write_new_length(std::string data);
+        std::string write_new_length(std::string data) const;
 
         Packet(uint8_t tag);
         Packet(uint8_t tag, uint8_t version);
@@ -37,15 +37,15 @@ class Packet{
         Packet();
         virtual ~Packet();
         virtual void read(std::string & data) = 0;
-        virtual std::string show() = 0;
-        virtual std::string raw() = 0;
-        std::string write(uint8_t header = 0); // 0 for use default; 1 for OLD; 2 for NEW
+        virtual std::string show() const = 0;
+        virtual std::string raw() const = 0;
+        std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
 
         // Accessors
-        uint8_t get_tag();
-        bool get_format();
-        unsigned int get_version();
-        unsigned int get_size();
+        uint8_t get_tag() const;
+        bool get_format() const;
+        unsigned int get_version() const;
+        unsigned int get_size() const;
 
         // Modifiers
         void set_tag(const uint8_t t);

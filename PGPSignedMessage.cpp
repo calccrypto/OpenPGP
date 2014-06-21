@@ -121,31 +121,31 @@ void PGPSignedMessage::read(std::ifstream & file){
     read(data);
 }
 
-std::string PGPSignedMessage::show(){
+std::string PGPSignedMessage::show() const{
     return "Message:\n" + message + "\n\n" + key.show();
 }
 
-std::string PGPSignedMessage::write(uint8_t header){
+std::string PGPSignedMessage::write(uint8_t header) const{
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
-    for(std::pair <std::string, std::string> & k : Armor_Header){
+    for(std::pair <std::string, std::string> const & k : Armor_Header){
         out += k.first + ":" + k.second + "\n";
     }
     return out + "\n" + message + "\n" + key.write(header);
 }
 
-uint8_t PGPSignedMessage::get_ASCII_Armor(){
+uint8_t PGPSignedMessage::get_ASCII_Armor() const{
     return ASCII_Armor;
 }
 
-std::vector <std::pair <std::string, std::string> > PGPSignedMessage::get_Armor_Header(){
+std::vector <std::pair <std::string, std::string> > PGPSignedMessage::get_Armor_Header() const{
     return Armor_Header;
 }
 
-std::string PGPSignedMessage::get_message(){
+std::string PGPSignedMessage::get_message() const{
     return message;
 }
 
-PGP PGPSignedMessage::get_key(){
+PGP PGPSignedMessage::get_key() const{
     return key;
 }
 

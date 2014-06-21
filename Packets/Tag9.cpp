@@ -17,17 +17,17 @@ void Tag9::read(std::string & data){
     encrypted_data = data;
 }
 
-std::string Tag9::show(){
+std::string Tag9::show() const{
     std::stringstream out;
     out << "    Encrypted Data (" << encrypted_data.size() << " octets): " << hexlify(encrypted_data) << "\n";
     return out.str();
 }
 
-std::string Tag9::raw(){
+std::string Tag9::raw() const{
     return encrypted_data;
 }
 
-std::string Tag9::get_encrypted_data(){
+std::string Tag9::get_encrypted_data() const{
     return encrypted_data;
 }
 

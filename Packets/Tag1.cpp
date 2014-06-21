@@ -24,7 +24,7 @@ void Tag1::read(std::string & data){
         mpi.push_back(read_MPI(data));
 }
 
-std::string Tag1::show(){
+std::string Tag1::show() const{
     std::stringstream out;
     out << "    Version: " << static_cast <unsigned int> (version) << "\n"
         << "    KeyID: " << hexlify(keyid) << "\n"
@@ -39,7 +39,7 @@ std::string Tag1::show(){
     return out.str();
 }
 
-std::string Tag1::raw(){
+std::string Tag1::raw() const{
     std::string out = "\x03" + keyid + std::string(1, pka);
     for(unsigned int x = 0; x < mpi.size(); x++){
         out += write_MPI(mpi[x]);
@@ -47,15 +47,15 @@ std::string Tag1::raw(){
     return out;
 }
 
-std::string Tag1::get_keyid(){
+std::string Tag1::get_keyid() const{
     return keyid;
 }
 
-uint8_t Tag1::get_pka(){
+uint8_t Tag1::get_pka() const{
     return pka;
 }
 
-std::vector <mpz_class> Tag1::get_mpi(){
+std::vector <mpz_class> Tag1::get_mpi() const{
     return mpi;
 }
 

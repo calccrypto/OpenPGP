@@ -20,15 +20,15 @@ class Tag3 : public Packet{
         Tag3(std::string & data);
         ~Tag3();
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_sym();
-        S2K::Ptr get_s2k();
-        S2K::Ptr get_s2k_clone();
-        std::shared_ptr<std::string> get_esk();
-        std::shared_ptr<std::string> get_esk_clone();
-        std::string get_key(std::string pass);
+        uint8_t get_sym() const;
+        S2K::Ptr get_s2k() const;
+        S2K::Ptr get_s2k_clone() const;
+        std::shared_ptr<std::string> get_esk() const;
+        std::shared_ptr<std::string> get_esk_clone() const;
+        std::string get_key(std::string pass) const;
 
         void set_sym(const uint8_t s);
         void set_s2k(S2K::Ptr s);

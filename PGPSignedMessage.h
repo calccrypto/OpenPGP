@@ -45,13 +45,13 @@ class PGPSignedMessage{
 
         void read(std::string & data);
         void read(std::ifstream & file);
-        std::string show();
-        std::string write(uint8_t header = 0);
+        std::string show() const;
+        std::string write(uint8_t header = 0) const;
 
-        uint8_t get_ASCII_Armor();
-        std::vector <std::pair <std::string, std::string> > get_Armor_Header();
-        std::string get_message();
-        PGP get_key();
+        uint8_t get_ASCII_Armor() const;
+        std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
+        std::string get_message() const;
+        PGP get_key() const;
 
         void set_ASCII_Armor(const uint8_t a);
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);

@@ -23,7 +23,7 @@ void Tag17Sub1::read(std::string & data){
     image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
 }
 
-std::string Tag17Sub1::show(){
+std::string Tag17Sub1::show() const{
     std::stringstream filename;
     filename << "image" << count << "." << User_Attributes.at(encoding);
     std::ofstream f(filename.str().c_str(), std::ios::binary);
@@ -39,11 +39,11 @@ std::string Tag17Sub1::show(){
     return out.str();
 }
 
-std::string Tag17Sub1::raw(){
+std::string Tag17Sub1::raw() const{
     return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
-std::string Tag17Sub1::get_image(){
+std::string Tag17Sub1::get_image() const{
     return image;
 }
 

@@ -18,10 +18,10 @@ class Tag17Sub1 : public Subpacket{
         Tag17Sub1();
         Tag17Sub1(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_image();
+        std::string get_image() const;
 
         void set_image(const std::string & i);
 

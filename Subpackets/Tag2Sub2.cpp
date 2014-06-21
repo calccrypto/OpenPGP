@@ -16,15 +16,15 @@ void Tag2Sub2::read(std::string & data){
     time = toint(data, 256);
 }
 
-std::string Tag2Sub2::show(){
+std::string Tag2Sub2::show() const{
     return "            Creation Time: " + show_time(time) + "\n";
 }
 
-std::string Tag2Sub2::raw(){
+std::string Tag2Sub2::raw() const{
     return unhexlify(makehex(static_cast <uint32_t> (time), 8));
 }
 
-time_t Tag2Sub2::get_time(){
+time_t Tag2Sub2::get_time() const{
     return time;
 }
 

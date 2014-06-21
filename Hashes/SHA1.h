@@ -49,13 +49,13 @@ class SHA1 : public Hash {
 
         context ctx;
 
-        void calc(const std::string & data, context & state);
+        void calc(const std::string & data, context & state) const;
 
     public:
         SHA1();
         SHA1(const std::string & str);
         void update(const std::string & str);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 
 #endif

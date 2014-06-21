@@ -25,7 +25,7 @@ void Tag2Sub20::read(std::string & data){
     size = mlen + nlen + 4;
 }
 
-std::string Tag2Sub20::show(){
+std::string Tag2Sub20::show() const{
     std::stringstream out;
     for(unsigned int x = 0; x < 4; x++){
         out << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
@@ -35,19 +35,19 @@ std::string Tag2Sub20::show(){
         << "            Value: " << n << "\n";
     return out.str();
 }
-std::string Tag2Sub20::raw(){
+std::string Tag2Sub20::raw() const{
     return flags + unhexlify(makehex(m.size(), 4)) + unhexlify(makehex(n.size(), 4)) + m + n;
 }
 
-std::string Tag2Sub20::get_flags(){
+std::string Tag2Sub20::get_flags() const{
     return flags;
 }
 
-std::string Tag2Sub20::get_m(){
+std::string Tag2Sub20::get_m() const{
     return m;
 }
 
-std::string Tag2Sub20::get_n(){
+std::string Tag2Sub20::get_n() const{
     return n;
 }
 

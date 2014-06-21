@@ -14,10 +14,10 @@ class TagX : public Packet{
         TagX();
         TagX(const std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_stream();
+        std::string get_stream() const;
 
         void set_stream(const std::string & data);
 

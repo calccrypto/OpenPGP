@@ -15,14 +15,14 @@ void TagX::read(std::string & data){
     stream = data;
 }
 
-std::string TagX::show(){
+std::string TagX::show() const{
     return "    " + hexlify(stream);
 }
-std::string TagX::raw(){
+std::string TagX::raw() const{
     return stream;
 }
 
-std::string TagX::get_stream(){
+std::string TagX::get_stream() const{
     return stream;
 }
 

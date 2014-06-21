@@ -24,7 +24,7 @@ void Tag11::read(std::string & data){
     literal = data.substr(len + 6, data.size() - len - 6);
 }
 
-std::string Tag11::show(){
+std::string Tag11::show() const{
     std::stringstream out;
     out << "    Format: " << BTU.at(format) << "\n"
         << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
@@ -34,23 +34,23 @@ std::string Tag11::show(){
     return out.str();
 }
 
-std::string Tag11::raw(){
+std::string Tag11::raw() const{
     return std::string(1, format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
 }
 
-uint8_t Tag11::get_format(){
+uint8_t Tag11::get_format() const{
     return format;
 }
 
-std::string Tag11::get_filename(){
+std::string Tag11::get_filename() const{
     return filename;
 }
 
-uint32_t Tag11::get_time(){
+uint32_t Tag11::get_time() const{
     return time;
 }
 
-std::string Tag11::get_literal(){
+std::string Tag11::get_literal() const{
     return literal;
 }
 

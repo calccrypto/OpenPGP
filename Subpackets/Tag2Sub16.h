@@ -14,10 +14,10 @@ class Tag2Sub16 : public Subpacket{
         Tag2Sub16();
         Tag2Sub16(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_keyid();
+        std::string get_keyid() const;
 
         void set_keyid(const std::string & k);
 

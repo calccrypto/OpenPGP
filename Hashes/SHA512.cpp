@@ -1,18 +1,18 @@
 #include "SHA512.h"
 
-uint64_t SHA512::S0(uint64_t & value){
+uint64_t SHA512::S0(uint64_t & value) const{
     return ROR(value, 28, 64) ^ ROR(value, 34, 64) ^ ROR(value, 39, 64);
 }
 
-uint64_t SHA512::S1(uint64_t & value){
+uint64_t SHA512::S1(uint64_t & value) const{
     return ROR(value, 14, 64) ^ ROR(value, 18, 64) ^ ROR(value, 41, 64);
 }
 
-uint64_t SHA512::s0(uint64_t & value){
+uint64_t SHA512::s0(uint64_t & value) const{
     return ROR(value, 1, 64) ^ ROR(value, 8, 64) ^ (value >> 7);
 }
 
-uint64_t SHA512::s1(uint64_t & value){
+uint64_t SHA512::s1(uint64_t & value) const{
     return ROR(value, 19, 64) ^ ROR(value, 61, 64) ^ (value >> 6);
 }
 
@@ -27,7 +27,7 @@ void SHA512::original_h(){
     ctx.h7 = 0x5be0cd19137e2179ULL;
 }
 
-void SHA512::calc(const std::string & data, context & state){
+void SHA512::calc(const std::string & data, context & state) const{
     for(unsigned int n = 0; n < (data.size() >> 7); n++){
         std::string temp = data.substr(n << 7, 128);
         uint64_t skey[80];
@@ -78,7 +78,7 @@ void SHA512::update(const std::string &str){
     clen += size;
 }
 
-std::string SHA512::hexdigest(){
+std::string SHA512::hexdigest() const{
     context tmp = ctx;
     uint64_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 127) > 111)?239:111) - (size & 127), 0) + unhexlify(makehex((clen+size) << 3, 32));

@@ -35,8 +35,8 @@ class Hash{
         Hash();
         virtual ~Hash();
         virtual void update(const std::string & str) = 0;
-        virtual std::string hexdigest() = 0;
-        std::string digest();
+        virtual std::string hexdigest() const = 0;
+        std::string digest() const;
 
     protected:
         std::string stack;

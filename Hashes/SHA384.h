@@ -35,6 +35,6 @@ class SHA384 : public SHA512{
     public:
         SHA384();
         SHA384(const std::string & data);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 #endif

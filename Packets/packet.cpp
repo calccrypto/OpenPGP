@@ -1,5 +1,5 @@
 #include "packet.h"
-std::string Packet::write_old_length(std::string data){
+std::string Packet::write_old_length(std::string data) const{
     unsigned int length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
     if (length < 256){
@@ -21,7 +21,7 @@ std::string Packet::write_old_length(std::string data){
 }
 
 // returns formatted length string
-std::string Packet::write_new_length(std::string data){
+std::string Packet::write_new_length(std::string data) const{
     std::string out(1, 0b11000000 | tag);
     unsigned int length = data.size();
     if (length < 192){
@@ -64,7 +64,7 @@ Packet::Packet() :
 
 Packet::~Packet(){}
 
-std::string Packet::write(uint8_t header){
+std::string Packet::write(uint8_t header) const{
     if ((header && ((header == 2) ||                                      // if user set new packet header or
        ((header == 1) && (tag > 15)))) ||                                 // if user set new packet header but tag is greater than 15 or
        (!header && ((format || ((!format) && (tag > 15)))))){             // if user did not set packet header and format is new, or format is old but tag is greater than 15
@@ -73,19 +73,19 @@ std::string Packet::write(uint8_t header){
     return write_old_length(raw());
 }
 
-uint8_t Packet::get_tag(){
+uint8_t Packet::get_tag() const{
     return tag;
 }
 
-bool Packet::get_format(){
+bool Packet::get_format() const{
     return format;
 }
 
-unsigned int Packet::get_version(){
+unsigned int Packet::get_version() const{
     return version;
 }
 
-unsigned int Packet::get_size(){
+unsigned int Packet::get_size() const{
     return size;
 }
 

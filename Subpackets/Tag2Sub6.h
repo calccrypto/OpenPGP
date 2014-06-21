@@ -14,10 +14,10 @@ class Tag2Sub6 : public Subpacket{
         Tag2Sub6();
         Tag2Sub6(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_regex();
+        std::string get_regex() const;
 
         void set_regex(const std::string & r);
 

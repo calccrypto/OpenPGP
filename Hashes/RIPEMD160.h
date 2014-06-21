@@ -51,15 +51,15 @@ class RIPEMD160 : public Hash{
         };
         context ctx;
 
-        uint32_t F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round);
+        uint32_t F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const;
 
-        std::string to_little_end(const std::string & data);
-        void calc(const std::string & data, context & state);
+        std::string to_little_end(const std::string & data) const;
+        void calc(const std::string & data, context & state) const;
 
     public:
         RIPEMD160();
         RIPEMD160(const std::string & data);
         void update(const std::string & data);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 #endif

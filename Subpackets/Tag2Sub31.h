@@ -16,12 +16,12 @@ class Tag2Sub31 : public Subpacket{
         Tag2Sub31();
         Tag2Sub31(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_pka();
-        uint8_t get_ha();
-        std::string get_hash();
+        uint8_t get_pka() const;
+        uint8_t get_ha() const;
+        std::string get_hash() const;
 
         void set_pka(const uint8_t p);
         void set_ha(const uint8_t h);

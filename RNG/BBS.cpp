@@ -43,7 +43,7 @@ void BBS::r_number(){
     mpz_powm_sec(state.get_mpz_t(), state.get_mpz_t(), mpz_class(2).get_mpz_t(), m.get_mpz_t());
 }
 
-bool BBS::parity(const std::string & par){
+bool BBS::parity(const std::string & par) const{
     mpz_class value = state;
     if (par == "least"){
         return ((state & 1) == 1);

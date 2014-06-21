@@ -1,6 +1,6 @@
 #include "PGP.h"
 
-std::string PGP::format_string(std::string data, uint8_t line_length){
+std::string PGP::format_string(std::string data, uint8_t line_length) const{
     std::string out = "";
     for(unsigned int i = 0; i < data.size(); i += line_length){
         out += data.substr(i, line_length) + "\n";
@@ -188,9 +188,9 @@ void PGP::read_raw(std::string & data){
     armored = false;
 }
 
-std::string PGP::show(){
+std::string PGP::show() const{
     std::stringstream out;
-    for(Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         out << (p -> get_format()?"New":"Old")  << ": ";
         try{// defined packets have name and tag number
             out << Packet_Tags.at(p -> get_tag()) << " (Tag " << static_cast <int> (p -> get_tag()) << ")";
@@ -201,40 +201,40 @@ std::string PGP::show(){
     return out.str();
 }
 
-std::string PGP::raw(uint8_t header){
+std::string PGP::raw(uint8_t header) const{
     std::string out = "";
-    for(Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         out += p -> write(header);
     }
     return out;
 }
 
-std::string PGP::write(uint8_t header){
+std::string PGP::write(uint8_t header) const{
     std::string packet_string = raw(header);
     if (!armored){
         return packet_string;
     }
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
-    for(std::pair <std::string, std::string> & key : Armor_Header){
+    for(std::pair <std::string, std::string> const & key : Armor_Header){
         out += key.first + ": " + key.second + "\n";
     }
     out += "\n";
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
 }
 
-bool PGP::get_armored(){
+bool PGP::get_armored() const{
     return armored;
 }
 
-uint8_t PGP::get_ASCII_Armor(){
+uint8_t PGP::get_ASCII_Armor() const{
     return ASCII_Armor;
 }
 
-std::vector <std::pair <std::string, std::string> > PGP::get_Armor_Header(){
+std::vector <std::pair <std::string, std::string> > PGP::get_Armor_Header() const{
     return Armor_Header;
 }
 
-std::vector <Packet::Ptr> PGP::get_packets(){
+std::vector <Packet::Ptr> PGP::get_packets() const{
     return packets;
 }
 

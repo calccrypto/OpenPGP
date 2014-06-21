@@ -20,7 +20,7 @@ void Tag2Sub31::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub31::show(){
+std::string Tag2Sub31::show() const{
     std::stringstream out;
     out << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
         << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << static_cast <unsigned int> (ha) << ")\n"
@@ -28,19 +28,19 @@ std::string Tag2Sub31::show(){
     return out.str();
 }
 
-std::string Tag2Sub31::raw(){
+std::string Tag2Sub31::raw() const{
     return std::string(1, pka) + std::string(1, ha) + hash;
 }
 
-uint8_t Tag2Sub31::get_pka(){
+uint8_t Tag2Sub31::get_pka() const{
     return pka;
 }
 
-uint8_t Tag2Sub31::get_ha(){
+uint8_t Tag2Sub31::get_ha() const{
     return ha;
 }
 
-std::string Tag2Sub31::get_hash(){
+std::string Tag2Sub31::get_hash() const{
     return hash;
 }
 

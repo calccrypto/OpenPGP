@@ -27,15 +27,15 @@ void Tag2Sub32::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub32::show(){
+std::string Tag2Sub32::show() const{
     return embedded -> show();
 }
 
-std::string Tag2Sub32::raw(){
+std::string Tag2Sub32::raw() const{
     return embedded -> raw();
 }
 
-Tag2::Ptr Tag2Sub32::get_embedded(){
+Tag2::Ptr Tag2Sub32::get_embedded() const{
     return embedded;
 }
 

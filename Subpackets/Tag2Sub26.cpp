@@ -17,15 +17,15 @@ void Tag2Sub26::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub26::show(){
+std::string Tag2Sub26::show() const{
     return "            Policy - " + uri;
 }
 
-std::string Tag2Sub26::raw(){
+std::string Tag2Sub26::raw() const{
     return uri;
 }
 
-std::string Tag2Sub26::get_uri(){
+std::string Tag2Sub26::get_uri() const{
     return uri;
 }
 

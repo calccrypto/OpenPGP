@@ -43,19 +43,19 @@ class SHA512 : public Hash{
         };
         context ctx;
 
-        uint64_t S0(uint64_t & value);
-        uint64_t S1(uint64_t & value);
-        uint64_t s0(uint64_t & value);
-        uint64_t s1(uint64_t & value);
+        uint64_t S0(uint64_t & value) const;
+        uint64_t S1(uint64_t & value) const;
+        uint64_t s0(uint64_t & value) const;
+        uint64_t s1(uint64_t & value) const;
 
         virtual void original_h();
 
-        void calc(const std::string & data, context & state);
+        void calc(const std::string & data, context & state) const;
 
     public:
         SHA512();
         SHA512(const std::string & data);
         void update(const std::string & str);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 #endif

@@ -44,21 +44,21 @@ class SHA256 : public Hash{
         };
         context ctx;
 
-        uint32_t S0(const uint32_t & value);
-        uint32_t S1(const uint32_t & value);
-        uint32_t s0(const uint32_t & value);
-        uint32_t s1(const uint32_t & value);
+        uint32_t S0(const uint32_t & value) const;
+        uint32_t S1(const uint32_t & value) const;
+        uint32_t s0(const uint32_t & value) const;
+        uint32_t s1(const uint32_t & value) const;
 
         virtual void original_h();
 
-        void calc(const std::string & data, context & state);
+        void calc(const std::string & data, context & state) const;
 
     public:
         SHA256();
         SHA256(const std::string & data);
 
         void update(const std::string &str);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 
 #endif

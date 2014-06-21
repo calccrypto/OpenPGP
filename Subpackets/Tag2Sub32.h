@@ -17,10 +17,10 @@ class Tag2Sub32 : public Subpacket{
         Tag2Sub32(std::string & data);
         ~Tag2Sub32();
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        Tag2::Ptr get_embedded();
+        Tag2::Ptr get_embedded() const;
 
         void set_embedded(Tag2::Ptr e);
 

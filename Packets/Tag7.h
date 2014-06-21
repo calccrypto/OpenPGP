@@ -14,8 +14,8 @@ class Tag7 : public Tag5{
         Tag7(std::string & data);
         ~Tag7();
 
-        Tag14 get_public_obj();      // extract public subkey from private key
-        Tag14::Ptr get_public_ptr();    // extract public subkey from private key into a pointer
+        Tag14 get_public_obj() const;      // extract public subkey from private key
+        Tag14::Ptr get_public_ptr() const; // extract public subkey from private key into a pointer
 
         Packet::Ptr clone() const;
         Tag7 & operator=(const Tag7 & copy);

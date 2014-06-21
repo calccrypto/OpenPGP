@@ -14,10 +14,10 @@ class Tag2Sub26 : public Subpacket{
         Tag2Sub26();
         Tag2Sub26(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_uri();
+        std::string get_uri() const;
 
         void set_uri(const std::string & u);
 

@@ -14,10 +14,10 @@ class Tag2Sub7 : public Subpacket{
         Tag2Sub7();
         Tag2Sub7(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        bool get_revocable();
+        bool get_revocable() const;
 
         void set_revocable(const bool r);
 

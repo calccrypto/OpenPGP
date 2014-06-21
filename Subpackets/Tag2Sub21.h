@@ -14,10 +14,10 @@ class Tag2Sub21 : public Subpacket{
         Tag2Sub21();
         Tag2Sub21(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_pha();  // returns string of preferred hash algorithms (ex: "\x01\x02\x03")
+        std::string get_pha() const;  // returns string of preferred hash algorithms (ex: "\x01\x02\x03")
 
         void set_pha(const std::string & p);
 

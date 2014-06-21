@@ -26,7 +26,7 @@ void Tag4::read(std::string & data){
 }
 
 // need to indent for nested
-std::string Tag4::show(){
+std::string Tag4::show() const{
     std::stringstream out;
     out << "Version: " << static_cast <unsigned int> (version) << "\n"
         << "Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
@@ -37,30 +37,30 @@ std::string Tag4::show(){
     return out.str();
 }
 
-std::string Tag4::raw(){
+std::string Tag4::raw() const{
     std::cerr << "Warning: Function not completed" << std::endl;;
     std::string out = "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, nested);
     // need to add nested packet
     return out;
 }
 
-uint8_t Tag4::get_type(){
+uint8_t Tag4::get_type() const{
     return type;
 }
 
-uint8_t Tag4::get_hash(){
+uint8_t Tag4::get_hash() const{
     return hash;
 }
 
-uint8_t Tag4::get_pka(){
+uint8_t Tag4::get_pka() const{
     return pka;
 }
 
-std::string Tag4::get_keyid(){
+std::string Tag4::get_keyid() const{
     return keyid;
 }
 
-uint8_t Tag4::get_nested(){
+uint8_t Tag4::get_nested() const{
     return nested;
 }
 

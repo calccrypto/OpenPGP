@@ -1,6 +1,6 @@
 #include "RIPEMD160.h"
 
-uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round){
+uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const{
     if (round < 16){
         return x ^ y ^ z;
     }
@@ -18,7 +18,7 @@ uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z
     }
 }
 
-std::string RIPEMD160::to_little_end(const std::string &data){
+std::string RIPEMD160::to_little_end(const std::string &data) const{
     std::string result;
     for(unsigned int x = 0; x < (data.size() >> 2); x++){
         result += little_end(data.substr(x << 2, 4), 256);
@@ -26,7 +26,7 @@ std::string RIPEMD160::to_little_end(const std::string &data){
     return result;
 }
 
-void RIPEMD160::calc(const std::string &data, context &state){
+void RIPEMD160::calc(const std::string &data, context &state) const{
     for(unsigned int i = 0; i < (data.size() >> 6); i++){
         uint32_t a = state.h0, b = state.h1, c = state.h2, d = state.h3, e = state.h4, A = state.h0, B = state.h1, C = state.h2, D = state.h3, E = state.h4;
         uint32_t X[16];
@@ -72,7 +72,7 @@ void RIPEMD160::update(const std::string & str){
     clen += size;
 }
 
-std::string RIPEMD160::hexdigest(){
+std::string RIPEMD160::hexdigest() const{
     context tmp = ctx;
     uint16_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0);

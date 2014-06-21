@@ -12,7 +12,7 @@ Tag3::Tag3(const Tag3 & copy) :
     Packet(copy),
     sym(copy.sym),
     s2k(copy.s2k -> clone()),
-    esk(std::make_shared<std::string>(*copy.esk))
+    esk(copy.get_esk_clone())
 {
 }
 
@@ -46,7 +46,7 @@ void Tag3::read(std::string & data){
     }
 }
 
-std::string Tag3::show(){
+std::string Tag3::show() const{
     std::stringstream out;
     out << "    Version: " << static_cast <unsigned int> (version) << "\n"
         << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
@@ -57,31 +57,31 @@ std::string Tag3::show(){
     return out.str();
 }
 
-std::string Tag3::raw(){
+std::string Tag3::raw() const{
     return std::string(1, version) + std::string(1, sym) + s2k -> write() + *esk;
 }
 
-uint8_t Tag3::get_sym(){
+uint8_t Tag3::get_sym() const{
     return sym;
 }
 
-S2K::Ptr Tag3::get_s2k(){
+S2K::Ptr Tag3::get_s2k() const{
     return s2k;
 }
 
-S2K::Ptr Tag3::get_s2k_clone(){
+S2K::Ptr Tag3::get_s2k_clone() const{
     return s2k -> clone();
 }
 
-std::shared_ptr<std::string> Tag3::get_esk(){
+std::shared_ptr<std::string> Tag3::get_esk() const{
     return esk;
 }
 
-std::shared_ptr<std::string> Tag3::get_esk_clone(){
+std::shared_ptr<std::string> Tag3::get_esk_clone() const{
     return std::make_shared<std::string>(*esk);
 }
 
-std::string Tag3::get_key(std::string pass){
+std::string Tag3::get_key(std::string pass) const{
     std::cerr << "Warning: This function is untested. Potentially incorrect" << std::endl;
     std::string out = s2k -> run(pass, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)));
     if (esk){

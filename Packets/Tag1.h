@@ -15,12 +15,12 @@ class Tag1 : public Packet{
         Tag1();
         Tag1(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_keyid();
-        uint8_t get_pka();
-        std::vector <mpz_class> get_mpi();
+        std::string get_keyid() const;
+        uint8_t get_pka() const;
+        std::vector <mpz_class> get_mpi() const;
 
         void set_keyid(const std::string & k);
         void set_pka(const uint8_t p);

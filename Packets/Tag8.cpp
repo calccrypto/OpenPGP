@@ -55,26 +55,26 @@ void Tag8::read(std::string & data){
     compressed_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag8::show(){
+std::string Tag8::show() const{
     std::stringstream out;
     out << "    Compression Algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
         << "    Data in hex (" << compressed_data.size() << " octets): " << hexlify(compressed_data) << "\n";
     return out.str();
 }
 
-std::string Tag8::raw(){
+std::string Tag8::raw() const{
     return std::string(1, comp) + compressed_data;
 }
 
-uint8_t Tag8::get_comp(){
+uint8_t Tag8::get_comp() const{
     return comp;
 }
 
-std::string Tag8::get_compressed_data(){
+std::string Tag8::get_compressed_data() const{
     return compressed_data;
 }
 
-std::string Tag8::get_data(){
+std::string Tag8::get_data() const{
     return "Data in hex, so it's easier to copy to a " + Compression_Algorithms.at(comp) + " decompressor:\n\n" + hexlify(compressed_data);
 //    return decompress(compressed_data);
 }

@@ -18,12 +18,12 @@ class Tag8 : public Packet{
         Tag8();
         Tag8(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_comp();
-        std::string get_data();
-        std::string get_compressed_data();
+        uint8_t get_comp() const;
+        std::string get_data() const;
+        std::string get_compressed_data() const;
 
         void set_comp(const uint8_t c);
         void set_data(const std::string & data);

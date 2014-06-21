@@ -1,6 +1,6 @@
 #include "MD5.h"
 
-std::string MD5::to_little_end(const std::string &data){
+std::string MD5::to_little_end(const std::string &data) const{
     std::string result;
     for(unsigned int x = 0; x < (data.size() >> 2); x++){
         result += little_end(data.substr(x << 2, 4), 256);
@@ -8,7 +8,7 @@ std::string MD5::to_little_end(const std::string &data){
     return result;
 }
 
-void MD5::calc(const std::string &data, context &state){
+void MD5::calc(const std::string &data, context &state) const{
     for(unsigned int i = 0; i < (data.size() >> 6); i++){
         uint32_t a = state.h0, b = state.h1, c = state.h2, d = state.h3;
         uint32_t w[16];
@@ -68,7 +68,7 @@ void MD5::update(const std::string & str){
     clen += size;
 }
 
-std::string MD5::hexdigest(){
+std::string MD5::hexdigest() const{
     context tmp = ctx;
     uint16_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0);

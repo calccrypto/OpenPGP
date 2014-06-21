@@ -17,7 +17,7 @@ void Tag2Sub30::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub30::show(){
+std::string Tag2Sub30::show() const{
     std::stringstream out;
     for(uint8_t bit = 0; bit < 8; bit++){
         if (flags & (1 << bit)){
@@ -27,11 +27,11 @@ std::string Tag2Sub30::show(){
     return out.str();
 }
 
-std::string Tag2Sub30::raw(){
+std::string Tag2Sub30::raw() const{
     return std::string(1, flags);
 }
 
-char Tag2Sub30::get_flags(){
+char Tag2Sub30::get_flags() const{
     return flags;
 }
 

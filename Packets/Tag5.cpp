@@ -54,7 +54,7 @@ void Tag5::read_s2k(std::string & data){
     s2k -> read(s2k_str);
 }
 
-std::string Tag5::show_common(){
+std::string Tag5::show_common() const{
     std::stringstream out;
     if (s2k_con > 253){
         out << "    String-to-Key Usage Conventions: " << static_cast <int> (s2k_con) << "\n"
@@ -104,11 +104,11 @@ void Tag5::read(std::string & data){
     secret = data;
 }
 
-std::string Tag5::show(){
+std::string Tag5::show() const{
     return show_tag6() + show_common();
 }
 
-std::string Tag5::raw(){
+std::string Tag5::raw() const{
     std::string out = raw_tag6() + std::string(1, s2k_con);
     if (s2k_con > 253){
         if (!s2k){
@@ -122,37 +122,37 @@ std::string Tag5::raw(){
     return out + secret;
 }
 
-uint8_t Tag5::get_s2k_con(){
+uint8_t Tag5::get_s2k_con() const{
     return s2k_con;
 }
 
-uint8_t Tag5::get_sym(){
+uint8_t Tag5::get_sym() const{
     return sym;
 }
 
-S2K::Ptr Tag5::get_s2k(){
+S2K::Ptr Tag5::get_s2k() const{
     return s2k;
 }
 
-S2K::Ptr Tag5::get_s2k_clone(){
+S2K::Ptr Tag5::get_s2k_clone() const{
     return s2k -> clone();
 }
 
-std::string Tag5::get_IV(){
+std::string Tag5::get_IV() const{
     return IV;
 }
 
-std::string Tag5::get_secret(){
+std::string Tag5::get_secret() const{
     return secret;
 }
 
-Tag6 Tag5::get_public_obj(){
+Tag6 Tag5::get_public_obj() const{
     std::string data = raw();
     Tag6 out(data);
     return out;
 }
 
-Tag6::Ptr Tag5::get_public_ptr(){
+Tag6::Ptr Tag5::get_public_ptr() const{
     std::string data = raw();
     Tag6::Ptr out(new Tag6(data));
     return out;

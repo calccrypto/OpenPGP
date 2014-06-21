@@ -13,10 +13,10 @@ class Tag18 : public Packet{
         Tag18();
         Tag18(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_protected_data();
+        std::string get_protected_data() const;
 
         void set_protected_data(const std::string & p);
 

@@ -21,7 +21,7 @@ void Tag2Sub12::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub12::show(){
+std::string Tag2Sub12::show() const{
     std::stringstream out;
     out << "            Class: " << static_cast <unsigned int> (_class) << "\n"
         << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
@@ -29,19 +29,19 @@ std::string Tag2Sub12::show(){
     return out.str();
 }
 
-std::string Tag2Sub12::raw(){
+std::string Tag2Sub12::raw() const{
     return std::string(1, _class) + std::string(1, pka) + unhexlify(fingerprint);
 }
 
-uint8_t Tag2Sub12::get_class(){
+uint8_t Tag2Sub12::get_class() const{
     return _class;
 }
 
-uint8_t Tag2Sub12::get_pka(){
+uint8_t Tag2Sub12::get_pka() const{
     return pka;
 }
 
-std::string Tag2Sub12::get_fingerprint(){
+std::string Tag2Sub12::get_fingerprint() const{
     return fingerprint;
 }
 

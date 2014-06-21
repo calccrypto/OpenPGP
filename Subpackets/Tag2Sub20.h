@@ -18,12 +18,12 @@ class Tag2Sub20 : public Subpacket{
         Tag2Sub20();
         Tag2Sub20(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_flags();
-        std::string get_m();
-        std::string get_n();
+        std::string get_flags() const;
+        std::string get_m() const;
+        std::string get_n() const;
 
         void set_flags(const std::string & f);
         void set_m(const std::string & s);

@@ -37,25 +37,25 @@ class Tag2 : public Packet{
         Tag2(std::string & data);
         ~Tag2();
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_type();
-        uint8_t get_pka();
-        uint8_t get_hash();
-        std::string get_left16();// whatever is stored, not calculated
-        std::vector <mpz_class> get_mpi();
+        uint8_t get_type() const;
+        uint8_t get_pka() const;
+        uint8_t get_hash() const;
+        std::string get_left16() const;// whatever is stored, not calculated
+        std::vector <mpz_class> get_mpi() const;
 
         // special functions: works differently depending on version
-        uint32_t get_time();
-        std::string get_keyid();
+        uint32_t get_time() const;
+        std::string get_keyid() const;
 
-        std::vector <Subpacket::Ptr> get_hashed_subpackets();
+        std::vector <Subpacket::Ptr> get_hashed_subpackets() const;
         std::vector <Subpacket::Ptr> get_hashed_subpackets_clone() const;
-        std::vector <Subpacket::Ptr> get_unhashed_subpackets();
+        std::vector <Subpacket::Ptr> get_unhashed_subpackets() const;
         std::vector <Subpacket::Ptr> get_unhashed_subpackets_clone() const;
-        std::string get_up_to_hashed();             // used for signature trailer
-        std::string get_without_unhashed();         // used for signature type 0x50
+        std::string get_up_to_hashed() const;             // used for signature trailer
+        std::string get_without_unhashed() const;         // used for signature type 0x50
 
         void set_pka(const uint8_t p);
         void set_type(const uint8_t t);

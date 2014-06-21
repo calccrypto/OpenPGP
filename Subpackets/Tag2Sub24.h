@@ -14,10 +14,10 @@ class Tag2Sub24 : public Subpacket{
         Tag2Sub24();
         Tag2Sub24(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_pks();
+        std::string get_pks() const;
 
         void set_pks(const std::string & p);
 

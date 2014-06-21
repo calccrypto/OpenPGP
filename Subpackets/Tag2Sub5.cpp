@@ -18,22 +18,22 @@ void Tag2Sub5::read(std::string & data){
     amount = data[1];
 }
 
-std::string Tag2Sub5::show(){
+std::string Tag2Sub5::show() const{
     std::stringstream out;
     out << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
         << "            Trust Amount: " << static_cast <unsigned int> (amount) << "\n";
     return out.str();
 }
 
-std::string Tag2Sub5::raw(){
+std::string Tag2Sub5::raw() const{
     return std::string(1, level) + std::string(1, amount);
 }
 
-uint8_t Tag2Sub5::get_level(){
+uint8_t Tag2Sub5::get_level() const{
     return level;
 }
 
-uint8_t Tag2Sub5::get_amount(){
+uint8_t Tag2Sub5::get_amount() const{
     return amount;
 }
 

@@ -14,10 +14,10 @@ class Tag10 : public Packet{
         Tag10();
         Tag10(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_pgp();
+        std::string get_pgp() const;
 
         void set_pgp(const std::string & s = "PGP");
 

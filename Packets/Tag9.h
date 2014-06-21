@@ -14,12 +14,12 @@ class Tag9 : public Packet{
         Tag9();
         Tag9(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
         Packet::Ptr clone() const;
 
-        std::string get_encrypted_data();
+        std::string get_encrypted_data() const;
 
         void set_encrypted_data(const std::string & e);
 };

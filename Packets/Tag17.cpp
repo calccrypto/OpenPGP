@@ -37,7 +37,7 @@ void Tag17::read(std::string & data){
     }
 }
 
-std::string Tag17::show(){
+std::string Tag17::show() const{
     std::string out = "";
     for(unsigned int i = 0; i < attributes.size(); i++){
         out += attributes[i] -> show();
@@ -45,7 +45,7 @@ std::string Tag17::show(){
     return out;
 }
 
-std::string Tag17::raw(){
+std::string Tag17::raw() const{
     std::string out = "";
     for(Subpacket::Ptr a : attributes){
         out += a -> write();
@@ -76,7 +76,7 @@ std::string Tag17::read_subpacket(std::string & data){
     return out;
 }
 
-std::string Tag17::write_subpacket(uint8_t s_type, std::string data){
+std::string Tag17::write_subpacket(uint8_t s_type, std::string data) const{
     if (data.size() < 192){
         return std::string(1, data.size()) + std::string(1, s_type) + data;
     }
@@ -89,13 +89,13 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <Subpacket::Ptr> Tag17::get_attributes(){
+std::vector <Subpacket::Ptr> Tag17::get_attributes() const{
     return attributes;
 }
 
-std::vector <Subpacket::Ptr> Tag17::get_attributes_clone(){
+std::vector <Subpacket::Ptr> Tag17::get_attributes_clone() const{
     std::vector <Subpacket::Ptr> out;
-    for(Subpacket::Ptr & s : attributes){
+    for(Subpacket::Ptr const & s : attributes){
         Subpacket::Ptr temp = s -> clone();
         out.push_back(temp);
     }

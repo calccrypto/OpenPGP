@@ -16,15 +16,15 @@ void Tag2Sub4::read(std::string & data){
     exportable = data[0];
 }
 
-std::string Tag2Sub4::show(){
+std::string Tag2Sub4::show() const{
     return std::string("            Exportable: ") + (exportable?"True":"False") + "\n";
 }
 
-std::string Tag2Sub4::raw(){
+std::string Tag2Sub4::raw() const{
     return (exportable?"\x01":zero);
 }
 
-bool Tag2Sub4::get_exportable(){
+bool Tag2Sub4::get_exportable() const{
     return exportable;
 }
 

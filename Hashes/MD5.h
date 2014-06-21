@@ -48,13 +48,13 @@ class MD5 : public Hash{
         };
         context ctx;
 
-        std::string to_little_end(const std::string & data);
-        void calc(const std::string & data, context & state);
+        std::string to_little_end(const std::string & data) const;
+        void calc(const std::string & data, context & state) const;
 
     public:
         MD5();
         MD5(const std::string & data);
         void update(const std::string & data);
-        std::string hexdigest();
+        std::string hexdigest() const;
 };
 #endif

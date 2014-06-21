@@ -16,12 +16,12 @@ class Tag13 : public ID{
         Tag13();
         Tag13(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_name();
-        std::string get_comment();
-        std::string get_email();
+        std::string get_name() const;
+        std::string get_comment() const;
+        std::string get_email() const;
 
         void set_name(const std::string & n);
         void set_comment(const std::string & c);

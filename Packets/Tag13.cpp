@@ -61,7 +61,7 @@ void Tag13::read(std::string & data){
     }
 }
 
-std::string Tag13::show(){
+std::string Tag13::show() const{
     std::stringstream out;
     out << "    User ID: " << name;
     if (comment != ""){
@@ -74,7 +74,7 @@ std::string Tag13::show(){
     return out.str();
 }
 
-std::string Tag13::raw(){
+std::string Tag13::raw() const{
     std::string out = "";
     if (name != ""){
         out += name + "";
@@ -88,15 +88,15 @@ std::string Tag13::raw(){
     return out;
 }
 
-std::string Tag13::get_name(){
+std::string Tag13::get_name() const{
     return name;
 }
 
-std::string Tag13::get_comment(){
+std::string Tag13::get_comment() const{
     return comment;
 }
 
-std::string Tag13::get_email(){
+std::string Tag13::get_email() const{
     return email;
 }
 

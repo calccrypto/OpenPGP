@@ -17,15 +17,15 @@ void Tag2Sub28::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub28::show(){
+std::string Tag2Sub28::show() const{
     return "            ID: " + signer + "\n";
 }
 
-std::string Tag2Sub28::raw(){
+std::string Tag2Sub28::raw() const{
     return signer;
 }
 
-std::string Tag2Sub28::get_signer(){
+std::string Tag2Sub28::get_signer() const{
     return signer;
 }
 

@@ -15,11 +15,11 @@ class Tag2Sub5 : public Subpacket{
         Tag2Sub5();
         Tag2Sub5(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_level();
-        uint8_t get_amount();
+        uint8_t get_level() const;
+        uint8_t get_amount() const;
 
         void set_level(const uint8_t l);
         void set_amount(const uint8_t a);

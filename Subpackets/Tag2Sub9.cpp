@@ -16,7 +16,7 @@ void Tag2Sub9::read(std::string & data){
     time = static_cast <time_t> (toint(data, 256));
 }
 
-std::string Tag2Sub9::show(){
+std::string Tag2Sub9::show() const{
     std::stringstream out;
     out << "            Key Expiration Time (Days): ";
     if (time == 0){
@@ -29,11 +29,11 @@ std::string Tag2Sub9::show(){
     return out.str();
 }
 
-std::string Tag2Sub9::raw(){
+std::string Tag2Sub9::raw() const{
     return unhexlify(makehex(time, 8));
 }
 
-time_t Tag2Sub9::get_time(){
+time_t Tag2Sub9::get_time() const{
     return time;
 }
 

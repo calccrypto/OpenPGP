@@ -16,15 +16,15 @@ void Tag2Sub7::read(std::string & data){
     revocable = data[0];
 }
 
-std::string Tag2Sub7::show(){
+std::string Tag2Sub7::show() const{
     return std::string("            Revocable: ") + (revocable?"True":"False") + "\n";
 }
 
-std::string Tag2Sub7::raw(){
+std::string Tag2Sub7::raw() const{
     return (revocable?"\x01":zero);
 }
 
-bool Tag2Sub7::get_revocable(){
+bool Tag2Sub7::get_revocable() const{
     return revocable;
 }
 

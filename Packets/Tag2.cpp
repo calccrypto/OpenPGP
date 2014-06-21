@@ -203,7 +203,7 @@ void Tag2::read(std::string & data){
     }
 }
 
-std::string Tag2::show(){
+std::string Tag2::show() const{
     std::stringstream out;
     out << "    Version: " << static_cast <unsigned int> (version) << "\n";
     if (version < 4){
@@ -221,13 +221,13 @@ std::string Tag2::show(){
             << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
-            for(Subpacket::Ptr & s : hashed_subpackets){
+            for(Subpacket::Ptr const & s : hashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
         if (unhashed_subpackets.size()){
             out << "    Unhashed Sub:\n";
-            for(Subpacket::Ptr & s : unhashed_subpackets){
+            for(Subpacket::Ptr const & s : unhashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
@@ -242,54 +242,54 @@ std::string Tag2::show(){
     return out.str();
 }
 
-std::string Tag2::raw(){
+std::string Tag2::raw() const{
     std::string out(1, version);
     if (version < 4){// to recreate older keys
         out += "\x05" + std::string(1, type) + unhexlify(makehex(time, 8)) + keyid + std::string(1, pka) + std::string(1, hash) + left16;
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket::Ptr & s : hashed_subpackets){
+        for(Subpacket::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         std::string unhashed_str = "";
-        for(Subpacket::Ptr & s : unhashed_subpackets){
+        for(Subpacket::Ptr const & s : unhashed_subpackets){
             unhashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
     }
-    for(mpz_class & i : mpi){
+    for(mpz_class const & i : mpi){
         out += write_MPI(i);
     }
     return out;
 }
 
-uint8_t Tag2::get_type(){
+uint8_t Tag2::get_type() const{
     return type;
 }
 
-uint8_t Tag2::get_pka(){
+uint8_t Tag2::get_pka() const{
     return pka;
 }
 
-uint8_t Tag2::get_hash(){
+uint8_t Tag2::get_hash() const{
     return hash;
 }
 
-std::string Tag2::get_left16(){
+std::string Tag2::get_left16() const{
     return left16;
 }
 
-std::vector <mpz_class> Tag2::get_mpi(){
+std::vector <mpz_class> Tag2::get_mpi() const{
     return mpi;
 }
 
-uint32_t Tag2::get_time(){
+uint32_t Tag2::get_time() const{
     if (version == 3){
         return time;
     }
     else if (version == 4){
-        for(Subpacket::Ptr s : hashed_subpackets){
+        for(Subpacket::Ptr const & s : hashed_subpackets){
             if (s -> get_type() == 2){
                 std::string data = s -> raw();
                 Tag2Sub2 sub2(data);
@@ -300,12 +300,12 @@ uint32_t Tag2::get_time(){
     return 0;
 }
 
-std::string Tag2::get_keyid(){
+std::string Tag2::get_keyid() const{
     if (version == 3){
         return keyid;
     }
     else if (version == 4){
-        for(Subpacket::Ptr s : unhashed_subpackets){
+        for(Subpacket::Ptr const & s : unhashed_subpackets){
             if (s -> get_type() == 16){
                 std::string data = s -> raw();
                 Tag2Sub16 sub16(data);
@@ -320,7 +320,7 @@ std::string Tag2::get_keyid(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets(){
+std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets() const{
     return hashed_subpackets;
 }
 
@@ -332,7 +332,7 @@ std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets_clone() const{
     return out;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets(){
+std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets() const{
     return unhashed_subpackets;
 }
 
@@ -344,13 +344,13 @@ std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone() const{
     return out;
 }
 
-std::string Tag2::get_up_to_hashed(){
+std::string Tag2::get_up_to_hashed() const{
     if (version == 3){
         return "\x03" + std::string(1, type) + unhexlify(makehex(time, 8));
     }
     else if (version == 4){
         std::string hashed = "";
-        for(Subpacket::Ptr & s : hashed_subpackets){
+        for(Subpacket::Ptr const & s : hashed_subpackets){
             hashed += s -> write();
         }
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
@@ -362,19 +362,19 @@ std::string Tag2::get_up_to_hashed(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::string Tag2::get_without_unhashed(){
+std::string Tag2::get_without_unhashed() const{
     std::string out(1, version);
     if (version < 4){// to recreate older keys
         out += "\x05" + std::string(1, type) + unhexlify(makehex(time, 8)) + keyid + std::string(1, pka) + std::string(1, hash) + left16;
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket::Ptr & s : hashed_subpackets){
+        for(Subpacket::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + zero + zero + left16;
     }
-    for(mpz_class & i : mpi){
+    for(mpz_class const & i : mpi){
         out += write_MPI(i);
     }
     return out;

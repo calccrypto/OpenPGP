@@ -16,6 +16,6 @@ class SymAlg{
         virtual ~SymAlg();
         virtual std::string encrypt(const std::string & DATA) = 0;
         virtual std::string decrypt(const std::string & DATA) = 0;
-        virtual unsigned int blocksize() = 0;
+        virtual unsigned int blocksize() const = 0;
 };
 #endif

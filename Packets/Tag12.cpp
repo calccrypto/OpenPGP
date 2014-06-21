@@ -17,17 +17,17 @@ void Tag12::read(std::string & data){
     trust = data;
 }
 
-std::string Tag12::show(){
+std::string Tag12::show() const{
     std::stringstream out;
     out << "    Data (" << trust.size() << " octets): " << trust << "\n";
     return out.str();
 }
 
-std::string Tag12::raw(){
+std::string Tag12::raw() const{
     return trust;
 }
 
-std::string Tag12::get_trust(){
+std::string Tag12::get_trust() const{
     return trust;
 }
 

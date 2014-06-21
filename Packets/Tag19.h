@@ -13,11 +13,11 @@ class Tag19 : public Packet{
 
         Tag19();
         Tag19(std::string & data);
-        std::string show();
         void read(std::string & data);
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        std::string get_hash();
+        std::string get_hash() const;
 
         void set_hash(const std::string & h);
 

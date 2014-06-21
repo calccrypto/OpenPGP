@@ -17,7 +17,7 @@ void Tag2Sub22::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub22::show(){
+std::string Tag2Sub22::show() const{
     std::stringstream out;
     for(unsigned int x = 0; x < pca.size(); x++){
         out << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
@@ -25,11 +25,11 @@ std::string Tag2Sub22::show(){
     return out.str();
 }
 
-std::string Tag2Sub22::raw(){
+std::string Tag2Sub22::raw() const{
     return pca;
 }
 
-std::string Tag2Sub22::get_pca(){
+std::string Tag2Sub22::get_pca() const{
     return pca;
 }
 

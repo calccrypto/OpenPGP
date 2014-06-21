@@ -23,6 +23,6 @@ SHA384::SHA384(const std::string & str) :
     update(str);
 }
 
-std::string SHA384::hexdigest(){
+std::string SHA384::hexdigest() const{
     return SHA512::hexdigest().substr(0, 96);
 }

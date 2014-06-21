@@ -1,7 +1,6 @@
 #include "SHA1.h"
 
-void SHA1::calc(const std::string & data, context & state)
-{
+void SHA1::calc(const std::string & data, context & state) const{
     for(unsigned int n = 0; n < (data.size() >> 6); n++){
         std::string temp = data.substr(n << 6, 64);
         uint32_t skey[80];
@@ -67,7 +66,7 @@ void SHA1::update(const std::string & str){
     clen += size;
 }
 
-std::string SHA1::hexdigest(){
+std::string SHA1::hexdigest() const{
     context tmp = ctx;
     uint16_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0) + unhexlify(makehex((clen+size) << 3, 16));

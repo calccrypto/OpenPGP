@@ -1,18 +1,18 @@
 #include "SHA256.h"
 
-uint32_t SHA256::S0(const uint32_t & value){
+uint32_t SHA256::S0(const uint32_t & value) const{
     return ROR(value, 2, 32) ^ ROR(value, 13, 32) ^ ROR(value, 22, 32);
 }
 
-uint32_t SHA256::S1(const uint32_t & value){
+uint32_t SHA256::S1(const uint32_t & value) const{
     return ROR(value, 6, 32) ^ ROR(value, 11, 32) ^ ROR(value, 25, 32);
 }
 
-uint32_t SHA256::s0(const uint32_t & value){
+uint32_t SHA256::s0(const uint32_t & value) const{
     return ROR(value, 7, 32) ^ ROR(value, 18, 32) ^ (value >> 3);
 }
 
-uint32_t SHA256::s1(const uint32_t & value){
+uint32_t SHA256::s1(const uint32_t & value) const{
     return ROR(value, 17, 32) ^ ROR(value, 19, 32) ^ (value >> 10);
 }
 
@@ -27,8 +27,7 @@ void SHA256::original_h(){
     ctx.h7 = 0x5be0cd19;
 }
 
-void SHA256::calc(const std::string &data, context &state)
-{
+void SHA256::calc(const std::string &data, context &state) const{
     for(unsigned int n = 0; n < (data.size() >> 6); n++){
         std::string temp = data.substr(n << 6, 64);
         uint32_t skey[64];
@@ -79,7 +78,7 @@ void SHA256::update(const std::string &str){
     clen += size;
 }
 
-std::string SHA256::hexdigest(){
+std::string SHA256::hexdigest() const{
     context tmp = ctx;
     uint32_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0) + unhexlify(makehex((clen+size) << 3, 16));

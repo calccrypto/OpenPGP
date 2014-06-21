@@ -16,7 +16,7 @@ void Tag2Sub3::read(std::string & data){
     time = toint(data, 256);
 }
 
-std::string Tag2Sub3::show(){
+std::string Tag2Sub3::show() const{
     std::stringstream out;
     out << "            Signature Expiration Time (Days): ";
     if (time == 0)
@@ -27,11 +27,11 @@ std::string Tag2Sub3::show(){
     return out.str();
 }
 
-std::string Tag2Sub3::raw(){
+std::string Tag2Sub3::raw() const{
     return unhexlify(makehex(time, 8));
 }
 
-time_t Tag2Sub3::get_time(){
+time_t Tag2Sub3::get_time() const{
     return time;
 }
 

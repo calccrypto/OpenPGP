@@ -12,15 +12,15 @@ S2K::S2K(uint8_t type) :
 
 S2K::~S2K(){}
 
-std::string S2K::write(){
+std::string S2K::write() const{
     return raw();
 }
 
-uint8_t S2K::get_type(){
+uint8_t S2K::get_type() const{
     return type;
 }
 
-uint8_t S2K::get_hash(){
+uint8_t S2K::get_hash() const{
     return hash;
 }
 
@@ -50,17 +50,17 @@ void S2K0::read(std::string & data){
     data = data.substr(2, data.size() - 2);
 }
 
-std::string S2K0::show(){
+std::string S2K0::show() const{
     std::stringstream out;
     out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n";
     return out.str();
 }
 
-std::string S2K0::raw(){
+std::string S2K0::raw() const{
     return "\x00" + std::string(1, hash);
 }
 
-std::string S2K0::run(std::string pass, unsigned int sym_len){
+std::string S2K0::run(std::string pass, unsigned int sym_len) const{
     std::string out = "";
     unsigned int counter = 0;
     while (out.size() < sym_len){
@@ -69,7 +69,7 @@ std::string S2K0::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-S2K::Ptr S2K0::clone(){
+S2K::Ptr S2K0::clone() const{
     return Ptr(new S2K0(*this));
 }
 
@@ -93,18 +93,18 @@ void S2K1::read(std::string & data){
     data = data.substr(10, data.size() - 10);
 }
 
-std::string S2K1::show(){
+std::string S2K1::show() const{
     std::stringstream out;
     out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << "        Salt: " << hexlify(salt) << "\n";
     return out.str();
 }
 
-std::string S2K1::raw(){
+std::string S2K1::raw() const{
     return "\x01" + std::string(1, hash) + salt;
 }
 
-std::string S2K1::run(std::string pass, unsigned int sym_len){
+std::string S2K1::run(std::string pass, unsigned int sym_len) const{
     std::string out = "";
     unsigned int counter = 0;
     while (out.size() < sym_len){
@@ -113,7 +113,7 @@ std::string S2K1::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-std::string S2K1::get_salt(){
+std::string S2K1::get_salt() const{
     return salt;
 }
 
@@ -121,7 +121,7 @@ void S2K1::set_salt(const std::string & s){
     salt = s;
 }
 
-S2K::Ptr S2K1::clone(){
+S2K::Ptr S2K1::clone() const{
     return Ptr(new S2K1(*this));
 }
 
@@ -141,7 +141,7 @@ void S2K3::read(std::string & data){
     data = data.substr(11, data.size() - 11);
 }
 
-std::string S2K3::show(){
+std::string S2K3::show() const{
     std::stringstream out;
     out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << "        Salt: " << hexlify(salt) << "\n"
@@ -149,11 +149,11 @@ std::string S2K3::show(){
     return out.str();
 }
 
-std::string S2K3::raw(){
+std::string S2K3::raw() const{
     return "\x03" + std::string(1, hash) + salt + unhexlify(makehex(count, 2));
 }
 
-std::string S2K3::run(std::string pass, unsigned int sym_len){
+std::string S2K3::run(std::string pass, unsigned int sym_len) const{
     // get string to hash
     std::string to_hash = "";
     while (to_hash.size() < coded_count(count)){// coded count is count of octets, not iterations
@@ -169,7 +169,7 @@ std::string S2K3::run(std::string pass, unsigned int sym_len){
     return out.substr(0, sym_len);
 }
 
-uint8_t S2K3::get_count(){
+uint8_t S2K3::get_count() const{
     return count;
 }
 
@@ -177,6 +177,6 @@ void S2K3::set_count(const uint8_t c){
     count = c;
 }
 
-S2K::Ptr S2K3::clone(){
+S2K::Ptr S2K3::clone() const{
     return Ptr(new S2K3(*this));
 }

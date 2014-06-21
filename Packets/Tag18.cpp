@@ -18,18 +18,18 @@ void Tag18::read(std::string & data){
     protected_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag18::show(){
+std::string Tag18::show() const{
     std::stringstream out;
     out << "    Version: " << static_cast <unsigned int> (version) << "\n"
         << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
     return out.str();
 }
 
-std::string Tag18::raw(){
+std::string Tag18::raw() const{
     return std::string(1, version) + protected_data;
 }
 
-std::string Tag18::get_protected_data(){
+std::string Tag18::get_protected_data() const{
     return protected_data;
 }
 

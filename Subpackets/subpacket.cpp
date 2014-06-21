@@ -1,6 +1,6 @@
 #include "subpacket.h"
 
-std::string Subpacket::write_subpacket(const std::string & data){
+std::string Subpacket::write_subpacket(const std::string & data) const{
     if (data.size() < 192){
         return std::string(1, data.size()) + data;
     }
@@ -21,15 +21,15 @@ Subpacket::Subpacket(uint8_t type, unsigned int size) :
 
 Subpacket::~Subpacket(){}
 
-std::string Subpacket::write(){
+std::string Subpacket::write() const{
     return write_subpacket(std::string(1, type) + raw());
 }
 
-uint8_t Subpacket::get_type(){
+uint8_t Subpacket::get_type() const{
     return type;
 }
 
-unsigned int Subpacket::get_size(){
+unsigned int Subpacket::get_size() const{
     return size;
 }
 

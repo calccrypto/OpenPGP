@@ -19,15 +19,15 @@ void Tag10::read(std::string & data){
     }
 }
 
-std::string Tag10::show(){
+std::string Tag10::show() const{
     return "    PGP\n";
 }
 
-std::string Tag10::raw(){
+std::string Tag10::raw() const{
     return "PGP";
 }
 
-std::string Tag10::get_pgp(){
+std::string Tag10::get_pgp() const{
     return pgp;
 }
 

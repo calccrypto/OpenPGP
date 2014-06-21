@@ -16,12 +16,12 @@ class Tag2Sub12 : public Subpacket{
         Tag2Sub12();
         Tag2Sub12(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_class();
-        uint8_t get_pka();
-        std::string get_fingerprint();
+        uint8_t get_class() const;
+        uint8_t get_pka() const;
+        std::string get_fingerprint() const;
 
         void set_class(const uint8_t c);
         void set_pka(const uint8_t p);

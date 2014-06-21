@@ -26,7 +26,7 @@ class BBS{
 
         void init(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q);
         void r_number();
-        bool parity(const std::string & par);
+        bool parity(const std::string & par) const;
 
     public:
         BBS(...);

@@ -15,11 +15,11 @@ class Tag2Sub29 : public Subpacket{
         Tag2Sub29();
         Tag2Sub29(std::string & data);
         void read(std::string & data);
-        std::string show();
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_code();
-        std::string get_reason();
+        uint8_t get_code() const;
+        std::string get_reason() const;
 
         void set_code(const uint8_t c);
         void set_reason(const std::string & r);

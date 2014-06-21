@@ -16,14 +16,14 @@ class Tag11 : public Packet{
 
         Tag11();
         Tag11(std::string & data);
-        std::string show();
         void read(std::string & data);
-        std::string raw();
+        std::string show() const;
+        std::string raw() const;
 
-        uint8_t get_format();
-        std::string get_filename();
-        uint32_t get_time();
-        std::string get_literal();
+        uint8_t get_format() const;
+        std::string get_filename() const;
+        uint32_t get_time() const;
+        std::string get_literal() const;
 
         void set_format(const uint8_t f);
         void set_filename(const std::string & f);

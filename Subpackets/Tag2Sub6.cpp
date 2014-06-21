@@ -17,15 +17,15 @@ void Tag2Sub6::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub6::show(){
+std::string Tag2Sub6::show() const{
     return "            Regular Expression: " + regex + "\n";
 }
 
-std::string Tag2Sub6::raw(){
+std::string Tag2Sub6::raw() const{
     return regex + zero; // might not need '+ zero'
 }
 
-std::string Tag2Sub6::get_regex(){
+std::string Tag2Sub6::get_regex() const{
     return regex;
 }
 

@@ -16,15 +16,15 @@ void Tag2Sub16::read(std::string & data){
     keyid = data;
 }
 
-std::string Tag2Sub16::show(){
+std::string Tag2Sub16::show() const{
     return "            Key ID: " + hexlify(keyid) + "\n";
 }
 
-std::string Tag2Sub16::raw(){
+std::string Tag2Sub16::raw() const{
     return keyid;
 }
 
-std::string Tag2Sub16::get_keyid(){
+std::string Tag2Sub16::get_keyid() const{
     return keyid;
 }
 

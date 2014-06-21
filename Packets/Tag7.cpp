@@ -19,14 +19,14 @@ Tag7::Tag7(std::string & data) :
 Tag7::~Tag7(){
 }
 
-Tag14 Tag7::get_public_obj(){
+Tag14 Tag7::get_public_obj() const{
     std::string data = raw();
     Tag14 out(data);
     out.set_tag(14);
     return out;
 }
 
-Tag14::Ptr Tag7::get_public_ptr(){
+Tag14::Ptr Tag7::get_public_ptr() const{
     std::string data = raw();
     Tag14::Ptr out(new Tag14(data));
     out -> set_tag(14);

@@ -15,7 +15,7 @@ class Subpacket{
         uint8_t type;
         unsigned int size; // only used for displaying. recalculated when writing
 
-        std::string write_subpacket(const std::string & data);
+        std::string write_subpacket(const std::string & data) const;
 
         Subpacket(uint8_t type = 0, unsigned int size = 0);
         Subpacket(const Subpacket & copy);
@@ -26,12 +26,12 @@ class Subpacket{
 
         virtual ~Subpacket();
         virtual void read(std::string & data) = 0;
-        virtual std::string show() = 0;
-        virtual std::string raw() = 0; // returns raw subpacket data, with no header
-        std::string write();
+        virtual std::string show() const = 0;
+        virtual std::string raw() const = 0; // returns raw subpacket data, with no header
+        std::string write() const;
 
-        uint8_t get_type();
-        unsigned int get_size();
+        uint8_t get_type() const;
+        unsigned int get_size() const;
 
         void set_type(uint8_t t);
         void set_size(unsigned int s);

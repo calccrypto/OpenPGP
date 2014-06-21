@@ -29,7 +29,7 @@ void Tag6::read_tag6(std::string & data){
     }
 }
 
-std::string Tag6::show_tag6(){
+std::string Tag6::show_tag6() const{
     std::stringstream out;
     out << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
         << "    Creation Time: " << show_time(time) << "\n";
@@ -65,7 +65,7 @@ std::string Tag6::show_tag6(){
     return out.str();
 }
 
-std::string Tag6::raw_tag6(){
+std::string Tag6::raw_tag6() const{
     std::string out = std::string(1, version) + unhexlify(makehex(time, 8));
     if (version < 4){// to recreate older keys
         out += unhexlify(makehex(expire, 4));
@@ -103,23 +103,23 @@ void Tag6::read(std::string & data){
     read_tag6(data);
 }
 
-std::string Tag6::show(){
+std::string Tag6::show() const{
     return show_tag6();
 }
 
-std::string Tag6::raw(){
+std::string Tag6::raw() const{
     return raw_tag6();
 }
 
-time_t Tag6::get_time(){
+time_t Tag6::get_time() const{
     return time;
 }
 
-uint8_t Tag6::get_pka(){
+uint8_t Tag6::get_pka() const{
     return pka;
 }
 
-std::vector <mpz_class> Tag6::get_mpi(){
+std::vector <mpz_class> Tag6::get_mpi() const{
     return mpi;
 }
 
@@ -138,10 +138,10 @@ void Tag6::set_mpi(const std::vector <mpz_class> & m){
     size = raw().size();
 }
 
-std::string Tag6::get_fingerprint(){
+std::string Tag6::get_fingerprint() const{
     if (version == 3){
         std::string data = "";
-        for(mpz_class & i : mpi){
+        for(mpz_class const & i : mpi){
             std::string m = write_MPI(i);
             data += m.substr(2, m.size() - 2);
         }
@@ -158,7 +158,7 @@ std::string Tag6::get_fingerprint(){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::string Tag6::get_keyid(){
+std::string Tag6::get_keyid() const{
     if (version == 3){
         std::string data = write_MPI(mpi[0]);
         return data.substr(data.size() - 8, 8);
