@@ -219,10 +219,6 @@ class integer{
 
         // Logical Operators
         bool operator!();
-        template <typename Z> bool operator&&(const Z & rhs){return static_cast <bool> (*this) && static_cast <bool> (rhs);}
-        bool operator&&(integer rhs);
-        template <typename Z> bool operator||(const Z & rhs){return static_cast <bool> (*this) || static_cast <bool> (rhs);}
-        bool operator||(integer rhs);
 
         // Comparison Operators
         template <typename Z> bool operator==(const Z & rhs){return (*this == integer(rhs));}

@@ -267,14 +267,6 @@ bool integer::operator!(){
     return !static_cast <bool> (*this);
 }
 
-bool integer::operator&&(integer rhs){
-    return static_cast <bool> (*this) && static_cast <bool> (rhs);
-}
-
-bool integer::operator||(integer rhs){
-    return static_cast <bool> (*this) || static_cast <bool> (rhs);
-}
-
 // Comparison Operators
 bool integer::operator==(const integer & rhs){
     return ((_sign == rhs._sign) && (value == rhs.value));
