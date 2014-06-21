@@ -25,10 +25,9 @@ Tag5::Tag5(const Tag5 & copy) :
 {
 }
 
-Tag5::Tag5(std::string & data){
-    tag = 5;
-    s2k_con = 0;
-    sym = 0;
+Tag5::Tag5(std::string & data) :
+    Tag5(5)
+{
     read(data);
 }
 

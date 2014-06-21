@@ -36,8 +36,10 @@ class PGPSignedMessage{
         PGP key;
 
     public:
+        typedef std::shared_ptr<PGPSignedMessage> Ptr;
+
         PGPSignedMessage();
-        PGPSignedMessage(const PGPSignedMessage & pgpsignedmessage);
+        PGPSignedMessage(const PGPSignedMessage & copy);
         PGPSignedMessage(std::string & data);
         PGPSignedMessage(std::ifstream & f);
 
@@ -56,7 +58,7 @@ class PGPSignedMessage{
         void set_message(const std::string & data);
         void set_key(const PGP & k);
 
-        PGPSignedMessage * clone();
-        PGPSignedMessage operator=(const PGPSignedMessage & pgpsignedmessage);
+        Ptr clone() const;
+        PGPSignedMessage & operator=(const PGPSignedMessage & copy);
 };
 #endif

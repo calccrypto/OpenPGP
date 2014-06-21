@@ -1,7 +1,8 @@
 #include "Tag2Sub16.h"
 
 Tag2Sub16::Tag2Sub16() :
-    Subpacket(16, 8)
+    Subpacket(16, 8),
+    keyid()
 {
 }
 

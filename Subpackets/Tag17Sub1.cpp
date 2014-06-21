@@ -3,7 +3,10 @@
 unsigned int Tag17Sub1::count = 0;
 
 Tag17Sub1::Tag17Sub1() :
-    Subpacket(1)
+    Subpacket(1),
+    version(),
+    encoding(),
+    image()
 {
     count++;
 }

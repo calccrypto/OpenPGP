@@ -8,26 +8,31 @@ std::string PGP::format_string(std::string data, uint8_t line_length){
     return out;
 }
 
-PGP::PGP(){
-    armored = true;
+PGP::PGP() :
+    armored(true),
+    ASCII_Armor(),
+    Armor_Header(),
+    packets()
+{
 }
 
-PGP::PGP(const PGP & pgp){
-    armored = pgp.armored;
-    ASCII_Armor = pgp.ASCII_Armor;
-    Armor_Header = pgp.Armor_Header;
-    for(Packet::Ptr const & p : pgp.packets){
-        packets.push_back(p -> clone());
-    }
+PGP::PGP(const PGP & copy) :
+    armored(copy.armored),
+    ASCII_Armor(copy.ASCII_Armor),
+    Armor_Header(copy.Armor_Header),
+    packets(copy.get_packets_clone())
+{
 }
 
-PGP::PGP(std::string & data){
-    armored = true;
+PGP::PGP(std::string & data) :
+    PGP()
+{
     read(data);
 }
 
-PGP::PGP(std::ifstream & f){
-    armored = true;
+PGP::PGP(std::ifstream & f) :
+    PGP()
+{
     read(f);
 }
 
@@ -233,9 +238,9 @@ std::vector <Packet::Ptr> PGP::get_packets(){
     return packets;
 }
 
-std::vector <Packet::Ptr> PGP::get_packets_clone(){
+std::vector <Packet::Ptr> PGP::get_packets_clone() const{
     std::vector <Packet::Ptr> out;
-    for(Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         out.push_back(p -> clone());
     }
     return out;
@@ -375,12 +380,11 @@ PGP::Ptr PGP::clone(){
     return out;
 }
 
-PGP PGP::operator=(const PGP & pgp){
-    ASCII_Armor = pgp.ASCII_Armor;
-    Armor_Header = pgp.Armor_Header;
-    for(Packet::Ptr const & p : pgp.packets){
-        packets.push_back(p -> clone());
-    }
+PGP & PGP::operator=(const PGP & copy){
+    armored = copy.armored;
+    ASCII_Armor = copy.ASCII_Armor;
+    Armor_Header = copy.Armor_Header;
+    packets = copy.get_packets_clone();
     return *this;
 }
 

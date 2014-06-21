@@ -21,14 +21,16 @@ Tag2::Tag2(const Tag2 & copy) :
     hash(copy.hash),
     mpi(copy.mpi),
     left16(copy.left16),
+    time(copy.time),
     keyid(copy.keyid),
     hashed_subpackets(copy.get_hashed_subpackets_clone()),
     unhashed_subpackets(copy.get_unhashed_subpackets_clone())
 {
 }
 
-Tag2::Tag2(std::string & data){
-    tag = 2;
+Tag2::Tag2(std::string & data) :
+    Tag2()
+{
     read(data);
 }
 

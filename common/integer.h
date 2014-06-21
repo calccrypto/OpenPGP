@@ -101,12 +101,12 @@ class integer{
         integer();
         integer(const bool & b);
         integer(const integer & rhs);
-        template <typename Z> integer(Z val){setFromZ(val);}
+        template <typename Z> integer(Z val) : integer() {setFromZ(val);}
         integer(base & val, bool s = false);
 
         // Written by Corbin
         // Slightly modified by me
-        template <typename Iterator> integer(Iterator start, const Iterator& end, uint16_t b){
+        template <typename Iterator> integer(Iterator start, const Iterator& end, uint16_t b) : integer() {
             bool s = false;
             if (start == end)
                 return;

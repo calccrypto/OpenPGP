@@ -1,7 +1,10 @@
 #include "Tag1.h"
 
 Tag1::Tag1() :
-    Packet(1, 3)
+    Packet(1, 3),
+    keyid(),
+    pka(),
+    mpi()
 {
 }
 

@@ -59,13 +59,17 @@ bool BBS::parity(const std::string & par){
     }
 }
 
-BBS::BBS(...){
+BBS::BBS(...) :
+    par()
+{
     if (!seeded){
         throw std::runtime_error("Error: BBS must be seeded first.");
     }
 }
 
-BBS::BBS(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q){
+BBS::BBS(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q) :
+    par()
+{
     init(SEED, bits, p, q);
 }
 

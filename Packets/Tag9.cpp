@@ -1,7 +1,8 @@
 #include "Tag9.h"
 
 Tag9::Tag9() :
-    Packet(9)
+    Packet(9),
+    encrypted_data()
 {
 }
 

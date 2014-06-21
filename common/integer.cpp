@@ -10,24 +10,38 @@ void integer::trim(){                             // remove 0 bytes from top of 
 }
 
 // Constructors
-integer::integer(): _sign(false){}
+integer::integer() :
+    _sign(false),
+    value()
+{}
 
-integer::integer(const bool & b): _sign(false), value(1, b){
+integer::integer(const bool & b) :
+    _sign(false),
+    value(1, b)
+{
     trim();
 }
 
-integer::integer(const integer & rhs): _sign(rhs._sign), value(rhs.value){
+integer::integer(const integer & copy) :
+    _sign(copy._sign),
+    value(copy.value)
+{
     trim();
 }
 
-integer::integer(base & val, bool s): _sign(s), value(val){
+integer::integer(base & val, bool s) :
+    _sign(s),
+    value(val)
+{
     trim();
 }
 
 // need at least gcc 4.7 to compile next line, otherwise use uncommented version
 // integer(const std::string & val, uint16_t base): integer(val.begin(), val.end(), base){}
 
-integer::integer(const std::string & val, uint16_t b){
+integer::integer(const std::string & val, uint16_t b) :
+    integer()
+{
     *this = integer(val.begin(), val.end(), b);
 }
 

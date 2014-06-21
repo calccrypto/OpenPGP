@@ -54,7 +54,7 @@ class PGP{
         typedef std::shared_ptr<PGP> Ptr;
 
         PGP();
-        PGP(const PGP & pgp);
+        PGP(const PGP & copy);
         PGP(std::string & data);                                                // data fed into this constructor will be destroyed
         PGP(std::ifstream & f);
         ~PGP();
@@ -70,7 +70,7 @@ class PGP{
         uint8_t get_ASCII_Armor();
         std::vector <std::pair <std::string, std::string> > get_Armor_Header();
         std::vector <Packet::Ptr> get_packets();                                   // get copy of all packet pointers
-        std::vector <Packet::Ptr> get_packets_clone();                             // clone all packets
+        std::vector <Packet::Ptr> get_packets_clone() const;                       // clone all packets
 
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
@@ -80,7 +80,7 @@ class PGP{
         std::string keyid();                                                   // keyid that is searched for on keyservers
         std::string list_keys();                                               // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
 
-        PGP operator=(const PGP & pgp);                                        // get deep copy object
+        PGP & operator=(const PGP & copy);                                     // get deep copy object
         Ptr clone();                                                         // get deep copy pointer
 };
 

@@ -1,19 +1,30 @@
 #include "PGPSignedMessage.h"
-PGPSignedMessage::PGPSignedMessage(){}
+PGPSignedMessage::PGPSignedMessage() :
+    ASCII_Armor(),
+    Armor_Header(),
+    message(),
+    key()
+{
+}
 
-PGPSignedMessage::PGPSignedMessage(const PGPSignedMessage & pgpsignedmessage){
-    ASCII_Armor = pgpsignedmessage.ASCII_Armor;
-    Armor_Header = pgpsignedmessage.Armor_Header;
-    message = pgpsignedmessage.message;
-    key = pgpsignedmessage.key;
+PGPSignedMessage::PGPSignedMessage(const PGPSignedMessage & copy) :
+    ASCII_Armor(copy.ASCII_Armor),
+    Armor_Header(copy.Armor_Header),
+    message(copy.message),
+    key(copy.key)
+{
     key.set_armored(true);
 }
 
-PGPSignedMessage::PGPSignedMessage(std::string & data){
+PGPSignedMessage::PGPSignedMessage(std::string & data) :
+    PGPSignedMessage()
+{
     read(data);
 }
 
-PGPSignedMessage::PGPSignedMessage(std::ifstream & f){
+PGPSignedMessage::PGPSignedMessage(std::ifstream & f) :
+    PGPSignedMessage()
+{
     read(f);
 }
 
@@ -155,8 +166,8 @@ void PGPSignedMessage::set_key(const PGP & k){
     key.set_armored(true);
 }
 
-PGPSignedMessage * PGPSignedMessage::clone(){
-    PGPSignedMessage * out = new PGPSignedMessage;
+PGPSignedMessage::Ptr PGPSignedMessage::clone() const{
+    Ptr out(new PGPSignedMessage);
     out -> ASCII_Armor = ASCII_Armor;
     out -> Armor_Header = Armor_Header;
     out -> message = message;
@@ -164,10 +175,10 @@ PGPSignedMessage * PGPSignedMessage::clone(){
     return out;
 }
 
-PGPSignedMessage PGPSignedMessage::operator=(const PGPSignedMessage & pgpsignedmessage){
-    ASCII_Armor = pgpsignedmessage.ASCII_Armor;
-    Armor_Header = pgpsignedmessage.Armor_Header;
-    message = pgpsignedmessage.message;
-    key = pgpsignedmessage.key;
+PGPSignedMessage & PGPSignedMessage::operator=(const PGPSignedMessage & copy){
+    ASCII_Armor = copy.ASCII_Armor;
+    Armor_Header = copy.Armor_Header;
+    message = copy.message;
+    key = copy.key;
     return *this;
 }

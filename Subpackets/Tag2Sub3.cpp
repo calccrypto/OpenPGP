@@ -1,7 +1,8 @@
 #include "Tag2Sub3.h"
 
 Tag2Sub3::Tag2Sub3() :
-    Subpacket(3, 4)
+    Subpacket(3, 4),
+    time(0)
 {
 }
 

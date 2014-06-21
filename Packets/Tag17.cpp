@@ -3,7 +3,8 @@
 Tag17::Tag17() :
     ID(17),
     length(),
-    type()
+    type(),
+    attributes()
 {
 }
 
