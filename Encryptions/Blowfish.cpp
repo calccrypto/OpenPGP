@@ -65,7 +65,7 @@ void Blowfish::setkey(const std::string & KEY){
 
     key = key.substr(0, 72);
     for(uint8_t x = 0; x < 18; x++){
-        p[x] ^= (uint32_t) toint(key.substr(x << 2, 4), 256);
+        p[x] ^= static_cast <uint32_t> (toint(key.substr(x << 2, 4), 256));
     }
 
     std::string ini(8, 0);

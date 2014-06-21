@@ -13,7 +13,7 @@ Tag2Sub9::Tag2Sub9(std::string & data) :
 }
 
 void Tag2Sub9::read(std::string & data){
-    time = (time_t) toint(data, 256);
+    time = static_cast <time_t> (toint(data, 256));
 }
 
 std::string Tag2Sub9::show(){

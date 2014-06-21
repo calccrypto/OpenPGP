@@ -57,7 +57,7 @@ std::string Tag17::raw(){
 std::string Tag17::read_subpacket(std::string & data){
     size = data.size();
     uint32_t length = 0;
-    uint8_t first_octet = (unsigned char) data[0];
+    uint8_t first_octet = static_cast <unsigned char> (data[0]);
     if (first_octet < 192){
         length = first_octet;
         data = data.substr(1, data.size() - 1);

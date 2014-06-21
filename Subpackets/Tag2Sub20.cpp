@@ -28,7 +28,7 @@ void Tag2Sub20::read(std::string & data){
 std::string Tag2Sub20::show(){
     std::stringstream out;
     for(unsigned int x = 0; x < 4; x++){
-        out << "            Flag - " << Notation.at(flags[x]) << " (not " << (unsigned int) flags[x] << ")\n";
+        out << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
     }
     out << "\n"
         << "            Name: " << m << "\n"

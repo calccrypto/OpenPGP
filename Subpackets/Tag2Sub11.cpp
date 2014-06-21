@@ -20,7 +20,7 @@ void Tag2Sub11::read(std::string & data){
 std::string Tag2Sub11::show(){
     std::stringstream out;
     for(unsigned int x = 0; x < psa.size(); x++){
-        out << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << (unsigned int) psa[x] << ")\n";
+        out << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
     }
     return out.str();
 }

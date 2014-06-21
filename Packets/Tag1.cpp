@@ -23,9 +23,9 @@ void Tag1::read(std::string & data){
 
 std::string Tag1::show(){
     std::stringstream out;
-    out << "    Version: " << (unsigned int) version << "\n"
+    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
         << "    KeyID: " << hexlify(keyid) << "\n"
-        << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n";
+        << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
     if (pka < 4){           // RSA
         out << "    RSA m**e mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
     }

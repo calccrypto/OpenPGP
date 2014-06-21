@@ -9,7 +9,7 @@ std::string addtrailer(const std::string & data, Tag2::Ptr sig){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
     }
     else{
-        std::stringstream s; s << (int) sig -> get_version();
+        std::stringstream s; s << static_cast <int> (sig -> get_version());
         throw std::runtime_error("Error: addtrailer for version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -37,7 +37,7 @@ std::string certification(uint8_t version, ID::Ptr id){
         }
     }
     else{
-        std::stringstream s; s << (int) version;
+        std::stringstream s; s << static_cast <int> (version);
         throw std::runtime_error("Error: Certification for version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings

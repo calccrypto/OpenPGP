@@ -26,7 +26,7 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std
         return ElGamal_encrypt(data, pub);
     }
     else{
-        std::stringstream s; s << (int) pka;
+        std::stringstream s; s << static_cast <int> (pka);
         throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
     }
     return {}; // should never reach here; mainly just to remove compiler warnings
@@ -37,7 +37,7 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data,
 }
 
 PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: No encrypting key found.");
@@ -70,7 +70,7 @@ PGP encrypt(const std::string & data, PGP & pub, bool hash, uint8_t sym_alg){
     // get checksum of session key
     uint16_t sum = 0;
     for(char & x : session_key){
-        sum += (unsigned char) x;
+        sum += static_cast <unsigned char> (x);
     }
 
     std::string nibbles = mpi[0].get_str(16);      // get hex representation of modulus

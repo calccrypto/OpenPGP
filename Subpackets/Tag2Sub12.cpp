@@ -23,8 +23,8 @@ void Tag2Sub12::read(std::string & data){
 
 std::string Tag2Sub12::show(){
     std::stringstream out;
-    out << "            Class: " << (unsigned int) _class << "\n"
-        << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
+    out << "            Class: " << static_cast <unsigned int> (_class) << "\n"
+        << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
         << "            Fingerprint: " << fingerprint << "\n";
     return out.str();
 }

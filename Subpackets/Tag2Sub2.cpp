@@ -21,7 +21,7 @@ std::string Tag2Sub2::show(){
 }
 
 std::string Tag2Sub2::raw(){
-    return unhexlify(makehex((uint32_t) time, 8));
+    return unhexlify(makehex(static_cast <uint32_t> (time), 8));
 }
 
 time_t Tag2Sub2::get_time(){

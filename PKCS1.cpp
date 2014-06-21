@@ -1,7 +1,7 @@
 #include "PKCS1.h"
 
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
     if (m.size() > (k - 11)){
         throw std::runtime_error("Error: EME-PKCS1 Message too long.");
     }

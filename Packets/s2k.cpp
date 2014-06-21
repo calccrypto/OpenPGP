@@ -52,7 +52,7 @@ void S2K0::read(std::string & data){
 
 std::string S2K0::show(){
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << (int) hash << ")\n";
+    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n";
     return out.str();
 }
 
@@ -95,7 +95,7 @@ void S2K1::read(std::string & data){
 
 std::string S2K1::show(){
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << (int) hash << ")\n"
+    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << "        Salt: " << hexlify(salt) << "\n";
     return out.str();
 }
@@ -143,9 +143,9 @@ void S2K3::read(std::string & data){
 
 std::string S2K3::show(){
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << (int) hash << ")\n"
+    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << "        Salt: " << hexlify(salt) << "\n"
-        << "        Coded Count: " << coded_count(count) << " (count " << (int) count << ")\n";
+        << "        Coded Count: " << coded_count(count) << " (count " << static_cast <int> (count) << ")\n";
     return out.str();
 }
 

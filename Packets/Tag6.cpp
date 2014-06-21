@@ -31,7 +31,7 @@ void Tag6::read_tag6(std::string & data){
 
 std::string Tag6::show_tag6(){
     std::stringstream out;
-    out << "    Version: " << (unsigned int) version << " - " << ((version < 4)?"Old":"New") << "\n"
+    out << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
         << "    Creation Time: " << show_time(time) << "\n";
     if (version < 4){
         out << "    Expiration Time (Days): " << expire;
@@ -39,12 +39,12 @@ std::string Tag6::show_tag6(){
             out << " (Never)";
         }
         out << "\n"
-            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
+            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
             << "    RSA n: " << mpi[0].get_str(16) << "(" << mpi[0].get_str(2).size() << " bits)\n"
             << "    RSA e: " << mpi[1].get_str(16) << "\n";
     }
     else if (version == 4){
-        out << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n";
+        out << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
 
         if (pka < 4){
             out << "    RSA n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
@@ -152,7 +152,7 @@ std::string Tag6::get_fingerprint(){
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
-        std::stringstream s; s << (int) version;
+        std::stringstream s; s << static_cast <int> (version);
         throw std::runtime_error("Error: Public Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -167,7 +167,7 @@ std::string Tag6::get_keyid(){
         return get_fingerprint().substr(12, 8);
     }
     else{
-        std::stringstream s; s << (int) version;
+        std::stringstream s; s << static_cast <int> (version);
         throw std::runtime_error("Error: Public Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings

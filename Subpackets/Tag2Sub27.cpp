@@ -21,7 +21,7 @@ std::string Tag2Sub27::show(){
     std::stringstream out;
     for(uint8_t bit = 0; bit < 8; bit++){
         if (flags & (1 << bit)){
-            out << "            Flag - " << Flags.at(1 << bit) << " (key " << (unsigned int) (1 << bit) << ")\n";
+            out << "            Flag - " << Flags.at(1 << bit) << " (key " << static_cast <unsigned int> (1 << bit) << ")\n";
         }
     }
     return out.str();

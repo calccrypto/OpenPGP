@@ -22,8 +22,8 @@ void Tag2Sub31::read(std::string & data){
 
 std::string Tag2Sub31::show(){
     std::stringstream out;
-    out << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
-        << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << (unsigned int) ha << ")\n"
+    out << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << static_cast <unsigned int> (ha) << ")\n"
         << "            Hash: " << hexlify(hash);
     return out.str();
 }

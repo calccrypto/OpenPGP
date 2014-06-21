@@ -21,7 +21,7 @@ void Tag2Sub29::read(std::string & data){
 
 std::string Tag2Sub29::show(){
     std::stringstream out;
-    out << "            Reason " << (unsigned int) code << " - " << Revoke.at(code) << "\n";
+    out << "            Reason " << static_cast <unsigned int> (code) << " - " << Revoke.at(code) << "\n";
     if (code){
         out << "            Comment - " << reason << "\n";
     }

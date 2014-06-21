@@ -58,9 +58,9 @@ void Tag5::read_s2k(std::string & data){
 std::string Tag5::show_common(){
     std::stringstream out;
     if (s2k_con > 253){
-        out << "    String-to-Key Usage Conventions: " << (int) s2k_con << "\n"
-            << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << (unsigned int) sym << ")\n"
-            << "    " << String2Key_Specifiers.at(s2k -> get_type()) << " (s2k " << (int) s2k -> get_type() << "):\n" << s2k -> show();
+        out << "    String-to-Key Usage Conventions: " << static_cast <int> (s2k_con) << "\n"
+            << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
+            << "    " << String2Key_Specifiers.at(s2k -> get_type()) << " (s2k " << static_cast <int> (s2k -> get_type()) << "):\n" << s2k -> show();
         if (s2k -> get_type()){
             out << "    IV: " << hexlify(IV) << "\n";
         }

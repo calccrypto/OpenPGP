@@ -188,7 +188,7 @@ std::string PGP::show(){
     for(Packet::Ptr & p : packets){
         out << (p -> get_format()?"New":"Old")  << ": ";
         try{// defined packets have name and tag number
-            out << Packet_Tags.at(p -> get_tag()) << " (Tag " << (int) p -> get_tag() << ")";
+            out << Packet_Tags.at(p -> get_tag()) << " (Tag " << static_cast <int> (p -> get_tag()) << ")";
         }
         catch (const std::out_of_range & e){}// catch out of range error for const std::map
         out << "(" << p -> get_size() << " octets)\n" + p -> show() << "\n";

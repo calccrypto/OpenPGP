@@ -20,7 +20,7 @@ void Tag2Sub21::read(std::string & data){
 std::string Tag2Sub21::show(){
     std::stringstream out;
     for(unsigned int x = 0; x < pha.size(); x++){
-        out << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << (unsigned int) pha[x] << ")\n";
+        out << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")\n";
     }
     return out.str();
 }

@@ -41,7 +41,7 @@ Tag2::~Tag2(){
 // Some data is destroyed in the process
 std::string Tag2::read_subpacket(std::string & data){
     uint32_t length = 0;
-    uint8_t first_octet = (unsigned char) data[0];
+    uint8_t first_octet = static_cast <unsigned char> (data[0]);
     if (first_octet < 192){
         length = first_octet;
         data = data.substr(1, data.size() - 1);
@@ -203,30 +203,30 @@ void Tag2::read(std::string & data){
 
 std::string Tag2::show(){
     std::stringstream out;
-    out << "    Version: " << (unsigned int) version << "\n";
+    out << "    Version: " << static_cast <unsigned int> (version) << "\n";
     if (version < 4){
         out << "    Hashed Material:\n"
             << "        Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
             << "        Creation Time: " << show_time(time) << "\n"
             << "    Signer's Key ID: " << hexlify(keyid) << "\n"
-            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
-            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n";
+            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n";
     }
     if (version == 4){
         out << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
-            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n"
+            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
             << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
             for(Subpacket::Ptr & s : hashed_subpackets){
-                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
+                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
         if (unhashed_subpackets.size()){
             out << "    Unhashed Sub:\n";
             for(Subpacket::Ptr & s : unhashed_subpackets){
-                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << (int) s -> get_type() << ") (" << s -> get_size() << " octets)\n" << s -> show();
+                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
     }
@@ -312,7 +312,7 @@ std::string Tag2::get_keyid(){
         }
     }
     else{
-        std::stringstream s; s << (int) version;
+        std::stringstream s; s << static_cast <int> (version);
         throw std::runtime_error("Error: Signature Packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -354,7 +354,7 @@ std::string Tag2::get_up_to_hashed(){
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
     else{
-        std::stringstream s; s << (int) version;
+        std::stringstream s; s << static_cast <int> (version);
         throw std::runtime_error("Error: Signature packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings

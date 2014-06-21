@@ -19,7 +19,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
         format = false;
         tag = (ctb >> 2) & 15;                                                  // get tag value
 		if (!(ctb & 3)){
-			length = (uint8_t) data[1];
+            length = static_cast <uint8_t> (data[1]);
 			remove += 1;
 		}
 		else if ((ctb & 3) == 1){
@@ -38,7 +38,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 	else /*if (ctb & 0x40)*/{   												// New length type RFC4880 sec 4.2.2
 		format = true;
 		tag = ctb & 63;                                                         // get tag value
-		uint8_t first_octet = (unsigned char) data[1];
+        uint8_t first_octet = static_cast <unsigned char> (data[1]);
 		if (first_octet < 192){                                                 // 0 - 192
 			length = first_octet;
 			remove += 1;

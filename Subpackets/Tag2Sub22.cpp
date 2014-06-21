@@ -20,7 +20,7 @@ void Tag2Sub22::read(std::string & data){
 std::string Tag2Sub22::show(){
     std::stringstream out;
     for(unsigned int x = 0; x < pca.size(); x++){
-        out << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << (unsigned int) pca[x] << ")\n";
+        out << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
     }
     return out.str();
 }

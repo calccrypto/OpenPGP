@@ -20,8 +20,8 @@ void Tag2Sub5::read(std::string & data){
 
 std::string Tag2Sub5::show(){
     std::stringstream out;
-    out << "            Trust Level: " << (unsigned int) level << "\n"
-        << "            Trust Amount: " << (unsigned int) amount << "\n";
+    out << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
+        << "            Trust Amount: " << static_cast <unsigned int> (amount) << "\n";
     return out.str();
 }
 

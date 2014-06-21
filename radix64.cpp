@@ -60,7 +60,7 @@ std::string radix642ascii(std::string str, char char62, char char63){
     bin += std::string(unpad * 6, '0');
     str = "";
     for(unsigned int x = 0; x < bin.size(); x += 8){
-        str += std::string(1, (unsigned char) toint(bin.substr(x, 8), 2));
+        str += std::string(1, static_cast <unsigned char> (toint(bin.substr(x, 8), 2)));
     }
     return str.substr(0, str.size() - unpad);                     // remove padding when returning
 }
@@ -71,7 +71,7 @@ uint32_t crc24(const std::string & str){
     const uint32_t POLY = 0x1864CFB;
     uint32_t crc = INIT;
     for(unsigned int x = 0; x < str.size(); x++){
-        crc ^= ((unsigned char) str[x]) << 16;
+        crc ^= static_cast <unsigned char> (str[x]) << 16;
         for(unsigned int y = 0; y < 8; y++){
             crc <<= 1;
             if (crc & 0x1000000){

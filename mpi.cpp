@@ -10,7 +10,7 @@ std::string write_MPI(const mpz_class & data){
 
 // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
 mpz_class read_MPI(std::string & data){
-    uint16_t size = (((uint8_t) data[0]) << 8) + (uint8_t) data[1];                 // get bits
+    uint16_t size = (static_cast <uint8_t> (data[0]) << 8) + static_cast <uint8_t> (data[1]);                 // get bits
     while (size & 7){
         size++;                                                                     // pad to nearest byte
     }

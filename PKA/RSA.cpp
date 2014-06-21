@@ -1,6 +1,6 @@
 #include "RSA.h"
 std::vector <mpz_class> RSA_keygen(const unsigned int & bits){
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
 	mpz_class p = 3, q = 3;
 	while (p == q){

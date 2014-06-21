@@ -29,7 +29,7 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
         return ElGamal_decrypt(data, pri, pub);
     }
     else{
-        std::stringstream s; s << (int) pka;
+        std::stringstream s; s << static_cast <int> (pka);
         throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -58,7 +58,7 @@ std::vector <mpz_class> decrypt_secret_key(Tag5::Ptr pri, const std::string & pa
     else{ // all other values; **UNTESTED**
         uint16_t sum = 0;
         for(char & c : secret_key){
-            sum += (unsigned char) c;
+            sum += static_cast <unsigned char> (c);
         }
         if (unhexlify(makehex(sum, 4)) != checksum){
             if (use_hash(s2k -> get_hash(), secret_key) != checksum){
@@ -126,7 +126,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key
         uint16_t sum = 0;
         for(char & c : session_key){                                                        // calculate session key checksum
-            sum += (uint8_t) c;
+            sum += static_cast <uint8_t> (c);
         }
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");

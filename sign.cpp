@@ -46,7 +46,7 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, con
         return DSA_sign(hashed_data, pri, pub);
     }
     else{
-        std::stringstream s; s << (int) pka;
+        std::stringstream s; s << static_cast <int> (pka);
         throw std::runtime_error("Error: Undefined or incorrect PKA number: " + s.str());
     }
     return {};
@@ -186,7 +186,7 @@ Tag2::Ptr standalone_signature(Tag5::Ptr key, Tag2::Ptr src, const std::string &
 
 Tag2::Ptr sign_primary_key(Tag5::Ptr key, ID::Ptr id, const std::string & passphrase, const uint8_t cert){
     if ((cert < 0x10) || (cert > 0x13)){
-        std::stringstream s; s << (int) cert;
+        std::stringstream s; s << static_cast <int> (cert);
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
@@ -222,7 +222,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
     }
 
     if ((cert < 0x10) || (cert > 0x13)){
-        std::stringstream s; s << (int) cert;
+        std::stringstream s; s << static_cast <int> (cert);
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
@@ -342,7 +342,7 @@ PGP sign_primary_key(PGP & signee, PGP & signer, const std::string & passphrase,
 
 Tag2::Ptr sign_subkey(Tag5::Ptr primary, Tag7::Ptr sub, const std::string & passphrase, const uint8_t binding){
     if ((binding != 0x18) && (binding != 0x19)){
-        std::stringstream s; s << (int) binding;
+        std::stringstream s; s << static_cast <int> (binding);
         throw std::runtime_error("Error: Invalid Binding Signature Value: " + s.str());
     }
 

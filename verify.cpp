@@ -240,7 +240,7 @@ bool verify_signature(PGP & key, PGP & signer){
                 break;
             default:
                 {
-                    std::stringstream s; s << (int) p -> get_tag();
+                    std::stringstream s; s << static_cast <int> (p -> get_tag());
                     throw std::runtime_error("Error: Incorrect packet type found: " + s.str());
                 }
                 break;

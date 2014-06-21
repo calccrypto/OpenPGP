@@ -299,7 +299,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     Tag2::Ptr tag2 = std::make_shared<Tag2>(raw);
 
     if ((tag2->get_type() != 0x20) && (tag2->get_type() != 0x28)){
-        std::stringstream s; s << (int) tag2->get_type();
+        std::stringstream s; s << static_cast <int> (tag2->get_type());
         throw std::runtime_error("Error: Invalid signature type found: " + s.str());
     }
 

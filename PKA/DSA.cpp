@@ -4,7 +4,7 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
     // random prime q
     mpz_class q("1" + BBS().rand(N - 1), 2);
@@ -33,7 +33,7 @@ std::vector <mpz_class> new_DSA_public(const uint32_t & L, const uint32_t & N){
 }
 
 std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
     mpz_class x = 0;
     std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesnt work for some reason
@@ -65,7 +65,7 @@ std::vector <mpz_class> DSA_keygen(std::vector <mpz_class> & pub){
 }
 
 std::vector <mpz_class> DSA_sign(const mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub, mpz_class k){
-    BBS((mpz_class) (int) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
 
     bool set_k = (k == 0);
 

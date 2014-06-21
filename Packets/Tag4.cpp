@@ -28,12 +28,12 @@ void Tag4::read(std::string & data){
 // need to indent for nested
 std::string Tag4::show(){
     std::stringstream out;
-    out << "Version: " << (unsigned int) version << "\n"
-        << "Signature Type: " << Signature_Types.at(type) << " (sig " << (unsigned int) type << ")\n"
-        << "Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << (unsigned int) hash << ")\n"
-        << "Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << (unsigned int) pka << ")\n"
+    out << "Version: " << static_cast <unsigned int> (version) << "\n"
+        << "Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
+        << "Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << "Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
         << "KeyID: " << keyid << "\n"
-        << "Nested: " << (bool) nested << "\n";
+        << "Nested: " << static_cast <bool> (nested) << "\n";
     return out.str();
 }
 

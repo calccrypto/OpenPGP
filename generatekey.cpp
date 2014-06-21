@@ -1,7 +1,7 @@
 #include "generatekey.h"
 
 void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
-    BBS((mpz_class) (uint32_t) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
         throw std::runtime_error("Error: Keysize must be at least 512 bits.");
@@ -115,7 +115,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 }
 
 void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
-    BBS((mpz_class) (uint32_t) now()); // seed just in case not seeded
+    BBS(static_cast <mpz_class> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     // at most only 1 of each pair is expected
     std::vector <mpz_class> pub_key;
@@ -170,7 +170,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                 }
             }
             else{
-                std::stringstream s; s << (int) prikey -> get_pka();
+                std::stringstream s; s << static_cast <int> (prikey -> get_pka());
                 throw std::runtime_error("Error: Undefined or reserved PKA number: " + s.str());
             }
 
@@ -192,7 +192,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else{
                 uint16_t sum = 0;
                 for(char & c : secret){
-                    sum += (uint8_t) c;
+                    sum += static_cast <uint8_t> (c);
                 }
                 check = unhexlify(makehex(sum, 4));
             }
@@ -335,7 +335,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
                 }
             }
             else{
-                std::stringstream s; s << (int) prisubkey -> get_pka();
+                std::stringstream s; s << static_cast <int> (prisubkey -> get_pka());
                 throw std::runtime_error("Error: Undefined or reserved PKA number: " + s.str());
             }
 
@@ -357,7 +357,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             else{
                 uint16_t sum = 0;
                 for(char & c : secret){
-                    sum += (uint8_t) c;
+                    sum += static_cast <uint8_t> (c);
                 }
                 check = unhexlify(makehex(sum, 4));
             }
@@ -368,7 +368,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             key = true;
         }
         else{
-            std::stringstream s; s << (int) p -> get_tag();
+            std::stringstream s; s << static_cast <int> (p -> get_tag());
             throw std::runtime_error("Error: Packet Tag " + s.str() + " does not belong in a private key.");
             break;
         }
@@ -390,7 +390,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
             pub_packets.push_back(p -> clone());
         }
         else{
-            std::stringstream s; s << (int) p -> get_tag();
+            std::stringstream s; s << static_cast <int> (p -> get_tag());
             throw std::runtime_error("Error: Packet Tag " + s.str() + " doesnt belong here.");
             break;
         }
