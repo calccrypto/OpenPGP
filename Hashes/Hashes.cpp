@@ -1,6 +1,6 @@
 #include "Hashes.h"
 
-std::string use_hash(uint8_t flag, std::string data){
+std::string use_hash(uint8_t flag, const std::string & data){
     switch (flag){
         case 0: // don't hash; not defined in standard
             return data;
