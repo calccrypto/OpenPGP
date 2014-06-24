@@ -1,12 +1,15 @@
 #include "decrypt.h"
 
-Tag5::Ptr find_decrypting_key(const PGP & k){
+Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid){
     if (k.get_ASCII_Armor() == 2){
         std::vector <Packet::Ptr> packets = k.get_packets();
         for(Packet::Ptr const & p : packets){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
                 std::string data = p -> raw();
                 Tag5::Ptr key = std::make_shared<Tag5>(data);
+                if ( key->get_public_ptr()->get_keyid() != keyid ){
+                    continue;
+                }
                 // make sure key has signing material
                 if ((key -> get_pka() == 1) || // RSA
                     (key -> get_pka() == 2) || // RSA
@@ -108,7 +111,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
-        Tag5::Ptr sec = find_decrypting_key(pri);
+        Tag5::Ptr sec = find_decrypting_key(pri, tag1.get_keyid());
 
         if (!sec){
             throw std::runtime_error("Error: Correct Private Key not found.");

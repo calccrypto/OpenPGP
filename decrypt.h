@@ -41,7 +41,7 @@ THE SOFTWARE.
 #include "PGP.h"
 #include "PKCS1.h"
 
-Tag5::Ptr find_decrypting_key(const PGP & k);
+Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid);
 std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub = {});
 std::vector <mpz_class> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
 std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase);
