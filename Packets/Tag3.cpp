@@ -30,14 +30,14 @@ void Tag3::read(std::string & data){
 	version = data[0];                  // 4
     sym = data[1];
     data = data.substr(2, data.size() - 2);
-    if (data[2] == 0){
+    if (data[0] == 0){
         s2k = std::make_shared<S2K0>();
     }
-    if (data[2] == 1){
-        s2k = std::make_shared<S2K0>();
+    if (data[0] == 1){
+        s2k = std::make_shared<S2K1>();
     }
-    if (data[2] == 3){
-        s2k = std::make_shared<S2K0>();
+    if (data[0] == 3){
+        s2k = std::make_shared<S2K3>();
     }
     s2k -> read(data);
 
@@ -119,6 +119,7 @@ void Tag3::set_key(std::string pass, std::string sk){
 
 Packet::Ptr Tag3::clone() const{
     Ptr out(new Tag3(*this));
+    out -> sym = sym;
     out -> s2k = s2k -> clone();
     out -> esk = std::make_shared<std::string>(*esk);
     return out;
