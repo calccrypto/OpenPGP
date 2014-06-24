@@ -79,7 +79,7 @@ $(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.
 	$(AR) -r $(TARGET) *.o */*.o
 
 clean:
-	rm -f *.o
+	rm -f *.o *.a
 	$(MAKE) -C common clean
 	$(MAKE) -C Encryptions clean
 	$(MAKE) -C Hashes clean
