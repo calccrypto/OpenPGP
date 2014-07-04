@@ -102,7 +102,7 @@ std::vector <Subpacket::Ptr> Tag17::get_attributes_clone() const{
     return out;
 }
 
-void Tag17::set_attibutes(const std::vector <Subpacket::Ptr> & a){
+void Tag17::set_attributes(const std::vector <Subpacket::Ptr> & a){
     attributes.clear();
     for(Subpacket::Ptr const & s : a){
         attributes.push_back(s);

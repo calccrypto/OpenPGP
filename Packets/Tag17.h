@@ -28,7 +28,7 @@ class Tag17 : public ID{
 
         std::vector <Subpacket::Ptr> get_attributes() const;
         std::vector <Subpacket::Ptr> get_attributes_clone() const;
-        void set_attibutes(const std::vector <Subpacket::Ptr> & a);
+        void set_attributes(const std::vector <Subpacket::Ptr> & a);
 
         Packet::Ptr clone() const;
 };
