@@ -30,7 +30,32 @@ THE SOFTWARE.
 
 #include "common/includes.h"
 
-std::string write_MPI(const mpz_class & data);  // given some value, return the formatted mpi
-mpz_class read_MPI(std::string & data);         // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
+typedef mpz_class PGPMPI;
+
+PGPMPI rawtompi(const std::string & raw);
+PGPMPI hextompi(const std::string & hex);
+PGPMPI dectompi(const std::string & dec);
+PGPMPI bintompi(const std::string & bin);
+
+std::string mpitoraw(const PGPMPI & a);
+std::string mpitohex(const PGPMPI & a);
+std::string mpitodec(const PGPMPI & a);
+std::string mpitobin(const PGPMPI & a);
+
+unsigned long mpitoulong(const PGPMPI & a);
+
+unsigned int bitsize(const PGPMPI & a);
+
+bool knuth_prime_test(const PGPMPI & a, int test);
+
+PGPMPI mpigcd(const PGPMPI & a, const PGPMPI & b);
+PGPMPI nextprime(const PGPMPI & a);
+PGPMPI powm(const PGPMPI & base, const PGPMPI & exp, const PGPMPI & mod);
+PGPMPI invert(const PGPMPI & a, const PGPMPI & b);
+
+PGPMPI random(unsigned int bits);
+
+std::string write_MPI(const PGPMPI & data);  // given some value, return the formatted mpi
+PGPMPI read_MPI(std::string & data);         // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
 
 #endif

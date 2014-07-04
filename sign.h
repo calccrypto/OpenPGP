@@ -31,12 +31,11 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
-#include <gmpxx.h>
-
 #include "common/includes.h"
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
 #include "decrypt.h"
+#include "mpi.h"
 #include "PGP.h"
 #include "PGPSignedMessage.h"
 #include "pgptime.h"
@@ -47,8 +46,8 @@ THE SOFTWARE.
 Tag5::Ptr find_signing_key(const PGP & k);
 ID::Ptr find_signer_id(const PGP & k);
 
-std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri, const uint8_t h = 0);
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h = 0);
+std::vector <PGPMPI> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <PGPMPI> & pub, const std::vector <PGPMPI> & pri, const uint8_t h = 0);
+std::vector <PGPMPI> pka_sign(const std::string & hashed_data, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h = 0);
 
 // Generates new default signature packet
 Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID::Ptr & id = ID::Ptr());

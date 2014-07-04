@@ -18,7 +18,7 @@ Tag6::Ptr find_encrypting_key(const PGP & k){
     return Tag6::Ptr();
 }
 
-std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub){
+std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub){
     if (pka < 3){   // RSA
         return {RSA_encrypt(data, pub)};
     }
@@ -32,12 +32,12 @@ std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std
     return {}; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <mpz_class> & pub){
-    return pka_encrypt(pka, mpz_class(hexlify(data), 16), pub);
+std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <PGPMPI> & pub){
+    return pka_encrypt(pka, rawtompi(data), pub);
 }
 
 PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_alg){
-    BBS(static_cast <mpz_class> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: No encrypting key found.");
@@ -55,7 +55,7 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
         throw std::runtime_error("Error: Key " + hexlify(public_key -> get_keyid()) + " has been revoked. Nothing done.");
     }
 
-    std::vector <mpz_class> mpi = public_key -> get_mpi();
+    std::vector <PGPMPI> mpi = public_key -> get_mpi();
     Tag1::Ptr tag1 = std::make_shared<Tag1>();
     tag1 -> set_keyid(public_key -> get_keyid());
     tag1 -> set_pka(public_key -> get_pka());
@@ -64,7 +64,7 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
 
     // generate session key
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
-    std::string session_key = mpz_class(BBS().rand(key_len), 2).get_str(16);
+    std::string session_key = mpitohex(bintompi(BBS().rand(key_len)));
     session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
 
     // get checksum of session key
@@ -73,9 +73,9 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
         sum += static_cast <unsigned char> (x);
     }
 
-    std::string nibbles = mpi[0].get_str(16);      // get hex representation of modulus
+    std::string nibbles = mpitohex(mpi[0]);      // get hex representation of modulus
     nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
-    mpz_class m(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)), 16);
+    PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)));
 
     // encrypt m
     tag1 -> set_mpi(pka_encrypt(public_key -> get_pka(), m, mpi));

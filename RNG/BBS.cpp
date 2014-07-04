@@ -1,11 +1,11 @@
 #include "BBS.h"
 bool BBS::seeded = false;
 
-mpz_class BBS::state = 0;
+PGPMPI BBS::state = 0;
 
-mpz_class BBS::m = 0;
+PGPMPI BBS::m = 0;
 
-void BBS::init(const mpz_class & seed, const unsigned int & bits, mpz_class p, mpz_class q){
+void BBS::init(const PGPMPI & seed, const unsigned int & bits, PGPMPI p, PGPMPI q){
     if (!seeded){
         /*
         p and q should be:
@@ -17,20 +17,20 @@ void BBS::init(const mpz_class & seed, const unsigned int & bits, mpz_class p, m
         rng.seed(rng.get_z_bits(bits));                          // seed itself with random garbage
         if (p == 0){
             p = rng.get_z_bits(bits);
-            mpz_nextprime(p.get_mpz_t(), p.get_mpz_t());         // find closest prime
+            p = nextprime(p);                                    // find closest prime
             while ((p & 3) != 3){                                // search for primes that are 3 = p mod 4
                 p += 1;
-                mpz_nextprime(p.get_mpz_t(), p.get_mpz_t());     // find next prime
+                p = nextprime(p);                                // find next prime
             }
         }
         if (q == 0){
             q = rng.get_z_bits(bits);
-            mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());         // find closest prime
-            mpz_class pq_gcd = 1025;
+            q = nextprime(q);                                    // find closest prime
+            PGPMPI pq_gcd = 1025;
             while (((q & 3) != 3) && (pq_gcd < 1024)){           // search for primes that are 3 = q mod 4 and gcd(p - 1, q - 1) is small
                 q += 1;
-                mpz_nextprime(q.get_mpz_t(), q.get_mpz_t());     // find next prime
-                mpz_gcd(pq_gcd.get_mpz_t() , mpz_class(p - 1).get_mpz_t(), mpz_class(q - 1).get_mpz_t());
+                q = nextprime(q);                                // find next prime
+                pq_gcd = mpigcd(p-1, q-1);
             }
         }
         m = p * q;
@@ -40,11 +40,11 @@ void BBS::init(const mpz_class & seed, const unsigned int & bits, mpz_class p, m
 }
 
 void BBS::r_number(){
-    mpz_powm_sec(state.get_mpz_t(), state.get_mpz_t(), mpz_class(2).get_mpz_t(), m.get_mpz_t());
+    state = powm(state, PGPMPI(2), m);
 }
 
 bool BBS::parity(const std::string & par) const{
-    mpz_class value = state;
+    PGPMPI value = state;
     if (par == "least"){
         return ((state & 1) == 1);
     }
@@ -67,16 +67,16 @@ BBS::BBS(...) :
     }
 }
 
-BBS::BBS(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q) :
+BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q) :
     par()
 {
     init(SEED, bits, p, q);
 }
 
-std::string BBS::rand(const mpz_class & bits, const std::string & par){
+std::string BBS::rand(const PGPMPI & bits, const std::string & par){
     // returns string because SIZE might be larger than 64 bits
     std::string out = "";
-    for(mpz_class x = 0; x < bits; x++){
+    for(PGPMPI x = 0; x < bits; x++){
         r_number();
         out += "01"[parity(par)];
     }

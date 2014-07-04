@@ -276,7 +276,7 @@ bool parse_command(std::string & input){
             }
 
             PGP pub, pri;
-            generate_keys(pub, pri, options["-pw"], options["-u"], options["-c"], options["-e"], mpz_class(options["-pks"], 10).get_ui(), mpz_class(options["-sks"], 10).get_ui());
+            generate_keys(pub, pri, options["-pw"], options["-u"], options["-c"], options["-e"], mpitoulong(dectompi(options["-pks"])), mpitoulong(dectompi(options["-sks"])));
 
             output(pub.write(), options["-o"] + ".public");
             output(pri.write(), options["-o"] + ".private");
@@ -481,7 +481,7 @@ bool parse_command(std::string & input){
 
             PGP signee(signee_file);
             PGP signer(signer_file);
-            output(sign_primary_key(signee, signer, passphrase, mpz_class(options["-c"], 16).get_ui()).write(), options["-o"]);
+            output(sign_primary_key(signee, signer, passphrase, mpitoulong(hextompi(options["-c"]))).write(), options["-o"]);
         }
         else if (cmd == "sign-message"){
             std::string data_file, pri, passphrase;

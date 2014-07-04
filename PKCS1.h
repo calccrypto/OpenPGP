@@ -29,11 +29,10 @@ THE SOFTWARE.
 #include <iostream>
 #include <stdexcept>
 
-#include <gmpxx.h>
-
 #include "common/includes.h"
 #include "RNG/RNG.h"
 #include "consts.h"
+#include "mpi.h"
 #include "pgptime.h"
 
 // RFC 4880 13.1.1

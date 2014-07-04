@@ -1,7 +1,7 @@
 #include "generatekey.h"
 
 void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
-    BBS(static_cast <mpz_class> (static_cast <uint32_t> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
         throw std::runtime_error("Error: Keysize must be at least 512 bits.");
@@ -12,11 +12,11 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     }
 
     // generate pka values
-    std::vector <mpz_class> dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
-    std::vector <mpz_class> dsa_pri = DSA_keygen(dsa_pub);
+    std::vector <PGPMPI> dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
+    std::vector <PGPMPI> dsa_pri = DSA_keygen(dsa_pub);
 
-    std::vector <mpz_class> elgamal_pub = ElGamal_keygen(ElGamal_bits);
-    mpz_class elgamal_pri = elgamal_pub[3];
+    std::vector <PGPMPI> elgamal_pub = ElGamal_keygen(ElGamal_bits);
+    PGPMPI elgamal_pri = elgamal_pub[3];
     elgamal_pub.pop_back();
 
     // Key creation time
@@ -115,13 +115,13 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 }
 
 void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
-    BBS(static_cast <mpz_class> (static_cast <uint32_t> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     // at most only 1 of each pair is expected
-    std::vector <mpz_class> pub_key;
-    std::vector <mpz_class> pri_key;
-    std::vector <mpz_class> pub_subkey;
-    std::vector <mpz_class> pri_subkey;
+    std::vector <PGPMPI> pub_key;
+    std::vector <PGPMPI> pri_key;
+    std::vector <PGPMPI> pub_subkey;
+    std::vector <PGPMPI> pri_subkey;
 
     Tag5::Ptr prikey;
     Tag7::Ptr prisubkey;
@@ -181,7 +181,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
 
             // put private key into packet
             std::string secret = "";
-            for(mpz_class & i : pri_key){
+            for(PGPMPI & i : pri_key){
                 secret += write_MPI(i);
             }
 
@@ -346,7 +346,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
 
             // put private key into packet
             std::string secret = "";
-            for(mpz_class & i : pri_subkey){
+            for(PGPMPI & i : pri_subkey){
                 secret += write_MPI(i);
             }
 

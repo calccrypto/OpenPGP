@@ -7,7 +7,7 @@ Public Key Algorithm list
 
 #include <sstream>
 
-#include <gmpxx.h>
+#include "../mpi.h"
 
 #include "DSA.h"
 #include "ElGamal.h"
@@ -21,6 +21,6 @@ param:
 
 pub and pri are destination containers
 */
-void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & param, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri);
+void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & param, std::vector <PGPMPI> & pub, std::vector <PGPMPI> & pri);
 
 #endif

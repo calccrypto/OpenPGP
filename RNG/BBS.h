@@ -12,25 +12,24 @@ seeding once will seed for the entire program.
 #include <ctime>
 #include <iostream>
 
-#include <gmpxx.h>
-
 #include "../common/cryptomath.h"
+#include "../mpi.h"
 #include "../pgptime.h"
 
 class BBS{
     private:
         static bool seeded;                                   // whether or not BBS is seeded
-        static mpz_class state;                               // current state
-        static mpz_class m;                                   // large integer
+        static PGPMPI state;                               // current state
+        static PGPMPI m;                                   // large integer
         std::string par;                                      // even, odd, or least
 
-        void init(const mpz_class & SEED, const unsigned int & bits, mpz_class p, mpz_class q);
+        void init(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q);
         void r_number();
         bool parity(const std::string & par) const;
 
     public:
         BBS(...);
-        BBS(const mpz_class & SEED, const unsigned int & bits = 1024, mpz_class p = 0, mpz_class q = 0);
-        std::string rand(const mpz_class & bits = 1, const std::string & par = "even");
+        BBS(const PGPMPI & SEED, const unsigned int & bits = 1024, PGPMPI p = 0, PGPMPI q = 0);
+        std::string rand(const PGPMPI & bits = 1, const std::string & par = "even");
 };
 #endif

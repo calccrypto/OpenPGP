@@ -234,10 +234,10 @@ std::string Tag2::show() const{
     }
     out << "    Hash Left 16 Bits: " << hexlify(left16) << "\n";
     if (pka < 4)
-        out << "    RSA m**d mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
+        out << "    RSA m**d mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n";
     else if (pka == 17){
-        out << "    DSA r (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
-            << "    DSA s (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
+        out << "    DSA r (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+            << "    DSA s (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
     }
     return out.str();
 }
@@ -258,7 +258,7 @@ std::string Tag2::raw() const{
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
     }
-    for(mpz_class const & i : mpi){
+    for(PGPMPI const & i : mpi){
         out += write_MPI(i);
     }
     return out;
@@ -280,7 +280,7 @@ std::string Tag2::get_left16() const{
     return left16;
 }
 
-std::vector <mpz_class> Tag2::get_mpi() const{
+std::vector <PGPMPI> Tag2::get_mpi() const{
     return mpi;
 }
 
@@ -374,7 +374,7 @@ std::string Tag2::get_without_unhashed() const{
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + zero + zero + left16;
     }
-    for(mpz_class const & i : mpi){
+    for(PGPMPI const & i : mpi){
         out += write_MPI(i);
     }
     return out;
@@ -400,7 +400,7 @@ void Tag2::set_left16(const std::string & l){
     size = raw().size();
 }
 
-void Tag2::set_mpi(const std::vector <mpz_class> & m){
+void Tag2::set_mpi(const std::vector <PGPMPI> & m){
     mpi = m;
     size = raw().size();
 }

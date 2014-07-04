@@ -1,6 +1,6 @@
 #include "PKA.h"
-void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & param, std::vector <mpz_class> & pub, std::vector <mpz_class> & pri){
-    std::vector <mpz_class> temp;
+void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & param, std::vector <PGPMPI> & pub, std::vector <PGPMPI> & pri){
+    std::vector <PGPMPI> temp;
     switch (pka){
         case 1: case 2: case 3: // RSA
             temp = RSA_keygen(param[0]);

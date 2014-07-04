@@ -31,19 +31,18 @@ THE SOFTWARE.
 #include <sstream>
 #include <stdexcept>
 
-#include <gmpxx.h>
-
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
+#include "mpi.h"
 #include "PGP.h"
 #include "PGPSignedMessage.h"
 #include "sigcalc.h"
 
 std::string find_keyid(const Tag2::Ptr & tag2);
-std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, const PGP & key);
+std::vector <PGPMPI> find_matching_pub_key(const std::string & keyid, const PGP & key);
 
-bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<mpz_class> &key, const std::vector<mpz_class> &signature, const uint8_t h = 0);
-bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <mpz_class> & key, const uint8_t h = 0);
+bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<PGPMPI> &key, const std::vector<PGPMPI> &signature, const uint8_t h = 0);
+bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <PGPMPI> & key, const uint8_t h = 0);
 
 // Use string.size() to check if input was verified.
 bool verify_file(const std::string & data, const PGP & sig, const PGP & key);

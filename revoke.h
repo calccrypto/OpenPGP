@@ -31,8 +31,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
-#include <gmpxx.h>
-
+#include "mpi.h"
 #include "PGP.h"
 #include "PKCS1.h"
 #include "sign.h"
