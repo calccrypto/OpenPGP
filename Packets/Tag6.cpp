@@ -40,26 +40,26 @@ std::string Tag6::show_tag6() const{
         }
         out << "\n"
             << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-            << "    RSA n: " << mpi[0].get_str(16) << "(" << mpi[0].get_str(2).size() << " bits)\n"
-            << "    RSA e: " << mpi[1].get_str(16) << "\n";
+            << "    RSA n: " << mpitohex(mpi[0]) << "(" << bitsize(mpi[0]) << " bits)\n"
+            << "    RSA e: " << mpitohex(mpi[1]) << "\n";
     }
     else if (version == 4){
         out << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
 
         if (pka < 4){
-            out << "    RSA n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    RSA e (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
+            out << "    RSA n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+                << "    RSA e (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
         }
         else if (pka == 17){
-            out << "    DSA p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    DSA q (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n"
-                << "    DSA g (" << mpi[2].get_str(2).size() << " bits): " << mpi[2].get_str(16) << "\n"
-                << "    DSA y (" << mpi[3].get_str(2).size() << " bits): " << mpi[3].get_str(16) << "\n";
+            out << "    DSA p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+                << "    DSA q (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
+                << "    DSA g (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]) << "\n"
+                << "    DSA y (" << bitsize(mpi[3]) << " bits): " << mpitohex(mpi[3]) << "\n";
         }
         else if (pka == 16){
-            out << "    Elgamal p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
-                << "    Elgamal g (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n"
-                << "    Elgamal y (" << mpi[2].get_str(2).size() << " bits): " << mpi[2].get_str(16) << "\n";
+            out << "    Elgamal p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+                << "    Elgamal g (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
+                << "    Elgamal y (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]) << "\n";
         }
     }
     return out.str();
@@ -119,7 +119,7 @@ uint8_t Tag6::get_pka() const{
     return pka;
 }
 
-std::vector <mpz_class> Tag6::get_mpi() const{
+std::vector <PGPMPI> Tag6::get_mpi() const{
     return mpi;
 }
 
@@ -133,7 +133,7 @@ void Tag6::set_pka(uint8_t p){
     size = raw().size();
 }
 
-void Tag6::set_mpi(const std::vector <mpz_class> & m){
+void Tag6::set_mpi(const std::vector <PGPMPI> & m){
     mpi = m;
     size = raw().size();
 }
@@ -141,7 +141,7 @@ void Tag6::set_mpi(const std::vector <mpz_class> & m){
 std::string Tag6::get_fingerprint() const{
     if (version == 3){
         std::string data = "";
-        for(mpz_class const & i : mpi){
+        for(PGPMPI const & i : mpi){
             std::string m = write_MPI(i);
             data += m.substr(2, m.size() - 2);
         }

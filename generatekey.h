@@ -31,11 +31,10 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
-#include <gmpxx.h>
-
 #include "Hashes/Hashes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
+#include "mpi.h"
 #include "PGP.h"
 #include "pgptime.h"
 #include "PKCS1.h"

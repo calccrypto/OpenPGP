@@ -9,7 +9,7 @@ class Tag6 : public Key{
     protected:
         time_t time;
         uint8_t pka;
-        std::vector <mpz_class> mpi;
+        std::vector <PGPMPI> mpi;
 
         // version 3
         uint32_t expire;
@@ -33,11 +33,11 @@ class Tag6 : public Key{
 
         time_t get_time() const;
         uint8_t get_pka() const;
-        std::vector <mpz_class> get_mpi() const;
+        std::vector <PGPMPI> get_mpi() const;
 
         void set_time(const time_t t);
         void set_pka(const uint8_t p);
-        void set_mpi(const std::vector <mpz_class> & m);
+        void set_mpi(const std::vector <PGPMPI> & m);
 
         std::string get_fingerprint() const;                      // binary
         std::string get_keyid() const;                            // binary

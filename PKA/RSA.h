@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-#include <gmpxx.h>
+#include "../mpi.h"
 
 #include "../consts.h"
 #include "../common/includes.h"
@@ -13,20 +13,20 @@
 #include "../pgptime.h"
 
 // Generate RSA key values
-std::vector <mpz_class> RSA_keygen(const uint32_t & bits = 2048);
+std::vector <PGPMPI> RSA_keygen(const uint32_t & bits = 2048);
 
 // Encrypt some data
-mpz_class RSA_encrypt(mpz_class & data, const std::vector <mpz_class> & pub);
-mpz_class RSA_encrypt(const std::string & data, const std::vector <mpz_class> & pub);
+PGPMPI RSA_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub);
+PGPMPI RSA_encrypt(const std::string & data, const std::vector <PGPMPI> & pub);
 
 // Decrypt some data
-mpz_class RSA_decrypt(mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
+PGPMPI RSA_decrypt(const PGPMPI & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub);
 
 // Sign some data
-mpz_class RSA_sign(mpz_class & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
-mpz_class RSA_sign(const std::string & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub);
+PGPMPI RSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub);
+PGPMPI RSA_sign(const std::string & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub);
 
 // Verify signature
-bool RSA_verify(mpz_class & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub);
-bool RSA_verify(const std::string & data, const std::vector <mpz_class> & signature, const std::vector <mpz_class> & pub);
+bool RSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & signature, const std::vector <PGPMPI> & pub);
+bool RSA_verify(const std::string & data, const std::vector <PGPMPI> & signature, const std::vector <PGPMPI> & pub);
 #endif

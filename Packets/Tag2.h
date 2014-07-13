@@ -12,7 +12,7 @@ class Tag2 : public Packet{
         uint8_t type;
         uint8_t pka;
         uint8_t hash;
-        std::vector <mpz_class> mpi;
+        std::vector <PGPMPI> mpi;
         std::string left16;        // 2 octets
 
         // version 3 stuff
@@ -44,7 +44,7 @@ class Tag2 : public Packet{
         uint8_t get_pka() const;
         uint8_t get_hash() const;
         std::string get_left16() const;// whatever is stored, not calculated
-        std::vector <mpz_class> get_mpi() const;
+        std::vector <PGPMPI> get_mpi() const;
 
         // special functions: works differently depending on version
         uint32_t get_time() const;
@@ -61,7 +61,7 @@ class Tag2 : public Packet{
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);
         void set_left16(const std::string & l);
-        void set_mpi(const std::vector <mpz_class> & m);
+        void set_mpi(const std::vector <PGPMPI> & m);
 
         // special functions: works differently depending on version
         void set_time(const uint32_t t);

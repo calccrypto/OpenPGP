@@ -7,7 +7,7 @@ class Tag1 : public Packet{
     private:
         std::string keyid;                // 8 octets
         uint8_t pka;
-        std::vector <mpz_class> mpi;      // algorithm specific fields
+        std::vector <PGPMPI> mpi;      // algorithm specific fields
 
     public:
         typedef std::shared_ptr<Tag1> Ptr;
@@ -20,11 +20,11 @@ class Tag1 : public Packet{
 
         std::string get_keyid() const;
         uint8_t get_pka() const;
-        std::vector <mpz_class> get_mpi() const;
+        std::vector <PGPMPI> get_mpi() const;
 
         void set_keyid(const std::string & k);
         void set_pka(const uint8_t p);
-        void set_mpi(const std::vector <mpz_class> & m);
+        void set_mpi(const std::vector <PGPMPI> & m);
 
         Packet::Ptr clone() const;
 };

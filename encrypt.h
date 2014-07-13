@@ -31,18 +31,17 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
-#include <gmpxx.h>
-
 #include "Hashes/Hashes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"
+#include "mpi.h"
 #include "PGP.h"
 #include "PKCS1.h"
 #include "revoke.h"
 
 Tag6::Ptr find_encrypting_key(const PGP & k);
-std::vector <mpz_class> pka_encrypt(const uint8_t pka, mpz_class data, const std::vector <mpz_class> & pub);
-std::vector <mpz_class> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <mpz_class> & pub);
+std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub);
+std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <PGPMPI> & pub);
 
 // Encrypt data
 PGP encrypt(const std::string & data, const PGP & pub, bool hash = true, uint8_t sym_alg = 9);

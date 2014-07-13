@@ -35,11 +35,11 @@ ID::Ptr find_signer_id(const PGP & k){
     return ID::Ptr();
 }
 
-std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <mpz_class> & pub, const std::vector <mpz_class> & pri, const uint8_t h){
+std::vector <PGPMPI> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <PGPMPI> & pub, const std::vector <PGPMPI> & pri, const uint8_t h){
     if ((pka == 1) || (pka == 3)){ // RSA
         // RFC 4880 sec 5.2.2
         // If RSA, hash value is encoded using EMSA-PKCS1-v1_5
-        hashed_data = EMSA_PKCS1_v1_5(h, hashed_data, pub[0].get_str(2).size() >> 3);
+        hashed_data = EMSA_PKCS1_v1_5(h, hashed_data, bitsize(pub[0]) >> 3);
         return {RSA_sign(hashed_data, pri, pub)};
     }
     else if (pka == 17){ // DSA
@@ -52,9 +52,9 @@ std::vector <mpz_class> pka_sign(std::string hashed_data, const uint8_t pka, con
     return {};
 }
 
-std::vector <mpz_class> pka_sign(const std::string & hashed_data, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h){
-    std::vector <mpz_class> pub = tag5 -> get_mpi();
-    std::vector <mpz_class> pri = decrypt_secret_key(tag5, passphrase);
+std::vector <PGPMPI> pka_sign(const std::string & hashed_data, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h){
+    std::vector <PGPMPI> pub = tag5 -> get_mpi();
+    std::vector <PGPMPI> pri = decrypt_secret_key(tag5, passphrase);
     return pka_sign(hashed_data, tag5 -> get_pka(), pub, pri, h);
 }
 

@@ -30,11 +30,11 @@ std::string Tag1::show() const{
         << "    KeyID: " << hexlify(keyid) << "\n"
         << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
     if (pka < 4){           // RSA
-        out << "    RSA m**e mod n (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n";
+        out << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n";
     }
     else if (pka == 16){
-        out << "    Elgamal g**k mod p (" << mpi[0].get_str(2).size() << " bits): " << mpi[0].get_str(16) << "\n"
-            << "    Elgamal m * y**k mod p (" << mpi[1].get_str(2).size() << " bits): " << mpi[1].get_str(16) << "\n";
+        out << "    Elgamal g**k mod p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+            << "    Elgamal m * y**k mod p (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
     }
     return out.str();
 }
@@ -55,7 +55,7 @@ uint8_t Tag1::get_pka() const{
     return pka;
 }
 
-std::vector <mpz_class> Tag1::get_mpi() const{
+std::vector <PGPMPI> Tag1::get_mpi() const{
     return mpi;
 }
 
@@ -72,7 +72,7 @@ void Tag1::set_pka(const uint8_t p){
     size = raw().size();
 }
 
-void Tag1::set_mpi(const std::vector <mpz_class> & m){
+void Tag1::set_mpi(const std::vector <PGPMPI> & m){
     mpi = m;
     size = raw().size();
 }

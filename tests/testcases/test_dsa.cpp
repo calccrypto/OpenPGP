@@ -14,17 +14,17 @@ TEST(DSATest, test_dsa_siggen) {
     ASSERT_EQ(DSA_SIGGEN_K.size(), DSA_SIGGEN_R.size());
     ASSERT_EQ(DSA_SIGGEN_R.size(), DSA_SIGGEN_S.size());
 
-    auto p = mpz_class(DSA_SIGGEN_P, 16);
-    auto q = mpz_class(DSA_SIGGEN_Q, 16);
-    auto g = mpz_class(DSA_SIGGEN_G, 16);
+    auto p = hextompi(DSA_SIGGEN_P);
+    auto q = hextompi(DSA_SIGGEN_Q);
+    auto g = hextompi(DSA_SIGGEN_G);
     for ( unsigned int i = 0; i < DSA_SIGGEN_MSG.size(); ++i ) {
         auto digest = SHA1(unhexlify(DSA_SIGGEN_MSG[i])).digest();
-        auto x = mpz_class(DSA_SIGGEN_X[i], 16);
-        auto y = mpz_class(DSA_SIGGEN_Y[i], 16);
-        auto k = mpz_class(DSA_SIGGEN_K[i], 16);
-        auto r = mpz_class(DSA_SIGGEN_R[i], 16);
-        auto s = mpz_class(DSA_SIGGEN_S[i], 16);
-        std::vector<mpz_class> sig = {r, s};
+        auto x = hextompi(DSA_SIGGEN_X[i]);
+        auto y = hextompi(DSA_SIGGEN_Y[i]);
+        auto k = hextompi(DSA_SIGGEN_K[i]);
+        auto r = hextompi(DSA_SIGGEN_R[i]);
+        auto s = hextompi(DSA_SIGGEN_S[i]);
+        std::vector<PGPMPI> sig = {r, s};
         EXPECT_EQ(DSA_sign(digest, {x}, {p, q, g, y}, k), sig);
         EXPECT_TRUE(pka_verify(digest, PKA_DSA, {p, q, g, y}, sig));
 

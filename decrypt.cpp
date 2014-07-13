@@ -22,11 +22,9 @@ Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid){
     return Tag5::Ptr();
 }
 
-std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const std::vector <mpz_class> & pri, const std::vector <mpz_class> & pub){
+std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub){
     if (pka < 3){   // RSA
-        std::string out = RSA_decrypt(data[0], pri, pub).get_str(16);
-        out = std::string(out.size() & 1, '0') + out;
-        return unhexlify(out);
+        return mpitoraw(RSA_decrypt(data[0], pri, pub));
     }
     if (pka == 16){ // ElGamal
         return ElGamal_decrypt(data, pri, pub);
@@ -38,8 +36,8 @@ std::string pka_decrypt(const uint8_t pka, std::vector <mpz_class> & data, const
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <mpz_class> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase){
-    std::vector <mpz_class> out;
+std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase){
+    std::vector <PGPMPI> out;
     S2K::Ptr s2k = pri -> get_s2k();
 
     // calculate key used in encryption algorithm
@@ -108,7 +106,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
-        std::vector <mpz_class> session_key_mpi = tag1.get_mpi();
+        std::vector <PGPMPI> session_key_mpi = tag1.get_mpi();
 
         // find corresponding secret key
         Tag5::Ptr sec = find_decrypting_key(pri, tag1.get_keyid());
@@ -117,8 +115,8 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             throw std::runtime_error("Error: Correct Private Key not found.");
                     }
 
-        std::vector <mpz_class> pub = sec -> get_mpi();
-        std::vector <mpz_class> pri = decrypt_secret_key(sec, passphrase);
+        std::vector <PGPMPI> pub = sec -> get_mpi();
+        std::vector <PGPMPI> pri = decrypt_secret_key(sec, passphrase);
 
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE

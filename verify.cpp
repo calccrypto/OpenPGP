@@ -30,8 +30,8 @@ std::string find_keyid(const Tag2::Ptr & tag2){
     return out;
 }
 
-std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, const PGP & key){
-    std::vector <mpz_class> keys;
+std::vector <PGPMPI> find_matching_pub_key(const std::string & keyid, const PGP & key){
+    std::vector <PGPMPI> keys;
     std::vector <Packet::Ptr> packets = key.get_packets();
     for(Packet::Ptr const & p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
@@ -47,9 +47,9 @@ std::vector <mpz_class> find_matching_pub_key(const std::string & keyid, const P
     return keys;
 }
 
-bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<mpz_class> & key, const std::vector<mpz_class> & signature, const uint8_t h){
+bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<PGPMPI> & key, const std::vector<PGPMPI> & signature, const uint8_t h){
     if ((pka == 1) || (pka == 3)){ // RSA
-        std::string new_hashed_message = EMSA_PKCS1_v1_5(h, hashed_message, key[0].get_str(2).size() >> 3);
+        std::string new_hashed_message = EMSA_PKCS1_v1_5(h, hashed_message, bitsize(key[0]) >> 3);
         return RSA_verify(new_hashed_message, signature, key);
     }
     else if (pka == 17){ // DSA
@@ -58,8 +58,8 @@ bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std
     return false;
 }
 
-bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <mpz_class> & key, const uint8_t h){
-    std::vector <mpz_class> signature = tag2 -> get_mpi();
+bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <PGPMPI> & key, const uint8_t h){
+    std::vector <PGPMPI> signature = tag2 -> get_mpi();
     return pka_verify(hashed_message, tag2 -> get_pka(), key, signature, h);
 }
 
@@ -88,7 +88,7 @@ bool verify_file(const std::string & data, const PGP & sig, const PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <mpz_class> keys = find_matching_pub_key(keyid, key);
+    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, key);
     if (!keys.size()){
         return false;
     }
@@ -134,7 +134,7 @@ bool verify_message(const PGPSignedMessage & message, const PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <mpz_class> keys = find_matching_pub_key(keyid, key);
+    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, key);
     if (!keys.size()){
         return false;
     }
@@ -156,7 +156,7 @@ bool verify_signature(const PGP & key, const PGP & signer){
     std::vector <Packet::Ptr> packets = signer.get_packets();
 
     // find signing key
-    std::vector <mpz_class> signing_key;
+    std::vector <PGPMPI> signing_key;
     for(Packet::Ptr const & p : packets){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
             std::string data = p -> raw();
