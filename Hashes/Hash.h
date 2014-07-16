@@ -27,11 +27,14 @@ THE SOFTWARE.
 #define __HASH__
 
 #include <iostream>
+#include <memory>
 
 #include "../common/includes.h"
 
 class Hash{
     public:
+        typedef std::shared_ptr<Hash> Ptr;
+
         Hash();
         virtual ~Hash();
         virtual void update(const std::string & str) = 0;
