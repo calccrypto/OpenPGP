@@ -7,6 +7,8 @@ build/
 [Bb]in/
 [Oo]bj/
 *.o
+*.a
+*.exe
 
 #############
 ## Windows detritus

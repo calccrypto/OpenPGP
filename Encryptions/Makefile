@@ -2,7 +2,8 @@
 CXX?=g++
 LFLAGS=
 CFLAGS=-std=c++11 -Wall -c
-debug: BFLAGS += -g
+
+debug: CFLAGS += -g
 debug: all
 
 all: SymAlg.o AES.o Blowfish.o Camellia.o CAST128.o DES.o IDEA.o TDES.o Twofish.o

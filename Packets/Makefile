@@ -2,7 +2,8 @@
 CXX?=g++
 LFLAGS=-lgmp -lgmpxx
 CFLAGS=-std=c++11 -Wall -c
-debug: BFLAGS += -g
+
+debug: CFLAGS += -g
 debug: all
 
 all: packet.o packets.o s2k.o Tag0.o Tag1.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o TagX.o

@@ -5,7 +5,7 @@ CFLAGS=-std=c++11 -Wall -pthread -Igtest-1.7.0/include
 AR=ar
 TARGET=tests
 
-debug: BFLAGS += -g
+debug: CFLAGS += -g
 debug: all
 
 all: $(TARGET)

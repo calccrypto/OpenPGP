@@ -4,7 +4,7 @@ LFLAGS=-lOpenPGP -lgmpxx -lgmp -L..
 CFLAGS=-std=c++11 -Wall
 TARGET=OpenPGP
 
-debug: BFLAGS += -g
+debug: CFLAGS += -g
 debug: all
 
 all: $(TARGET)

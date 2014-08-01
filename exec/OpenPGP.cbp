@@ -42,6 +42,9 @@
 		<Unit filename="../Encryptions/CAST128.h" />
 		<Unit filename="../Encryptions/CAST128_Const.h" />
 		<Unit filename="../Encryptions/CAST_Const.h" />
+		<Unit filename="../Encryptions/Camellia.cpp" />
+		<Unit filename="../Encryptions/Camellia.h" />
+		<Unit filename="../Encryptions/Camellia_Const.h" />
 		<Unit filename="../Encryptions/DES.cpp" />
 		<Unit filename="../Encryptions/DES.h" />
 		<Unit filename="../Encryptions/DES_Const.h" />
@@ -52,6 +55,9 @@
 		<Unit filename="../Encryptions/SymAlg.h" />
 		<Unit filename="../Encryptions/TDES.cpp" />
 		<Unit filename="../Encryptions/TDES.h" />
+		<Unit filename="../Encryptions/Twofish.cpp" />
+		<Unit filename="../Encryptions/Twofish.h" />
+		<Unit filename="../Encryptions/Twofish_Const.h" />
 		<Unit filename="../Hashes/Hash.cpp" />
 		<Unit filename="../Hashes/Hash.h" />
 		<Unit filename="../Hashes/Hashes.cpp" />
@@ -214,6 +220,8 @@
 		<Unit filename="../common/cryptomath.h" />
 		<Unit filename="../common/includes.cpp" />
 		<Unit filename="../common/includes.h" />
+		<Unit filename="../common/integer.cpp" />
+		<Unit filename="../common/integer.h" />
 		<Unit filename="../consts.h" />
 		<Unit filename="../decrypt.cpp" />
 		<Unit filename="../decrypt.h" />

@@ -2,7 +2,8 @@
 CXX?=g++
 LFLAGS=-lgmp -lgmpxx
 CFLAGS=-std=c++11 -Wall -c
-debug: BFLAGS += -g
+
+debug: CFLAGS += -g
 debug: all
 
 all: PKA.o DSA.o ElGamal.o RSA.o
