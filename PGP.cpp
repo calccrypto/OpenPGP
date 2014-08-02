@@ -335,7 +335,7 @@ std::string PGP::list_keys() const{
                         std::map <std::string, std::string>::iterator r = revoked.find(tag6.get_keyid());
                         std::stringstream s;
                         s << bitsize(tag6.get_mpi()[0]);
-                        out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, " ")
+                        out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, ' ')
                                << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
                                << hexlify(tag6.get_keyid().substr(4, 4)) << " "
                                << show_date(tag6.get_time())

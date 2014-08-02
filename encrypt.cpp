@@ -89,7 +89,7 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
 
     // generate prefix
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
-    std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1));
+    std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1, '0'));
 
     Packet::Ptr encrypted;
 
