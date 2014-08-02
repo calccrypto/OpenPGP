@@ -78,10 +78,18 @@ void SHA512::update(const std::string &str){
     clen += size;
 }
 
-std::string SHA512::hexdigest() const{
+std::string SHA512::hexdigest(){
     context tmp = ctx;
     uint64_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 127) > 111)?239:111) - (size & 127), 0) + unhexlify(makehex((clen+size) << 3, 32));
     calc(last, tmp);
     return makehex(tmp.h0, 16) + makehex(tmp.h1, 16) + makehex(tmp.h2, 16) + makehex(tmp.h3, 16) + makehex(tmp.h4, 16) + makehex(tmp.h5, 16) + makehex(tmp.h6, 16) + makehex(tmp.h7, 16);
+}
+
+unsigned int SHA512::blocksize() const{
+    return 1024;
+}
+
+unsigned int SHA512::digestsize() const{
+    return 512;
 }

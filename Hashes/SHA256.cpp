@@ -78,10 +78,18 @@ void SHA256::update(const std::string &str){
     clen += size;
 }
 
-std::string SHA256::hexdigest() const{
+std::string SHA256::hexdigest(){
     context tmp = ctx;
     uint32_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0) + unhexlify(makehex((clen+size) << 3, 16));
     calc(last, tmp);
     return makehex(tmp.h0, 8) + makehex(tmp.h1, 8) + makehex(tmp.h2, 8) + makehex(tmp.h3, 8) + makehex(tmp.h4, 8) + makehex(tmp.h5, 8) + makehex(tmp.h6, 8) + makehex(tmp.h7, 8);
+}
+
+unsigned int SHA256::blocksize() const{
+    return 512;
+}
+
+unsigned int SHA256::digestsize() const{
+    return 256;
 }

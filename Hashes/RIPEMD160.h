@@ -60,6 +60,8 @@ class RIPEMD160 : public Hash{
         RIPEMD160();
         RIPEMD160(const std::string & data);
         void update(const std::string & data);
-        std::string hexdigest() const;
+        std::string hexdigest();
+        unsigned int blocksize() const;
+        unsigned int digestsize() const;
 };
 #endif

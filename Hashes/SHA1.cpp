@@ -66,10 +66,18 @@ void SHA1::update(const std::string & str){
     clen += size;
 }
 
-std::string SHA1::hexdigest() const{
+std::string SHA1::hexdigest(){
     context tmp = ctx;
     uint16_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0) + unhexlify(makehex((clen+size) << 3, 16));
     calc(last, tmp);
     return makehex(tmp.h0, 8) + makehex(tmp.h1, 8) + makehex(tmp.h2, 8) + makehex(tmp.h3, 8) + makehex(tmp.h4, 8);
+}
+
+unsigned int SHA1::blocksize() const{
+    return 512;
+}
+
+unsigned int SHA1::digestsize() const{
+    return 160;
 }

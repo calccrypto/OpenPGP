@@ -55,6 +55,8 @@ class MD5 : public Hash{
         MD5();
         MD5(const std::string & data);
         void update(const std::string & data);
-        std::string hexdigest() const;
+        std::string hexdigest();
+        unsigned int blocksize() const;
+        unsigned int digestsize() const;
 };
 #endif

@@ -72,7 +72,7 @@ void RIPEMD160::update(const std::string & str){
     clen += size;
 }
 
-std::string RIPEMD160::hexdigest() const{
+std::string RIPEMD160::hexdigest(){
     context tmp = ctx;
     uint16_t size = stack.size();
     std::string last = stack + "\x80" + std::string((((size & 63) > 55)?119:55) - (size & 63), 0);
@@ -81,4 +81,12 @@ std::string RIPEMD160::hexdigest() const{
     last += temp.substr(4, 4) + temp.substr(0, 4);
     calc(last, tmp);
     return little_end(makehex(tmp.h0, 8)) + little_end(makehex(tmp.h1, 8)) + little_end(makehex(tmp.h2, 8)) + little_end(makehex(tmp.h3, 8)) + little_end(makehex(tmp.h4, 8));
+}
+
+unsigned int RIPEMD160::blocksize() const{
+    return 512;
+}
+
+unsigned int RIPEMD160::digestsize() const{
+    return 160;
 }

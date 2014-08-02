@@ -35,6 +35,8 @@ class SHA224 : public SHA256{
     public:
         SHA224();
         SHA224(const std::string & data);
-        std::string hexdigest() const;
+        std::string hexdigest();
+        unsigned int blocksize() const;
+        unsigned int digestsize() const;
 };
 #endif

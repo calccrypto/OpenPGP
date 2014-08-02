@@ -10,6 +10,6 @@ Hash::~Hash(){
     clen = 0;
 }
 
-std::string Hash::digest() const{
+std::string Hash::digest(){
     return unhexlify(hexdigest());
 }
