@@ -292,7 +292,7 @@ unsigned int AES::blocksize() const{
     return 128;
 }
 /*
-// More readable/easier to understant version of AES
+// More readable/easier to understand version of AES
 // slightly less efficient though
 
 void AES::shiftrow(std::vector <std::vector <uint8_t> > & data){
