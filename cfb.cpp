@@ -1,13 +1,5 @@
 #include "cfb.h"
 
-std::string xor_strings(const std::string & str1, const std::string & str2){
-    std::string out = "";
-    for(unsigned int x = 0; x < std::min(str1.size(), str2.size()); x++){
-        out += std::string(1, str1[x] ^ str2[x]);
-    }
-    return out;
-}
-
 SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key, const std::string & key2, const std::string & key3){
     SymAlg::Ptr alg;
     switch(sym_alg){
