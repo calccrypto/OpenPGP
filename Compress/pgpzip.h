@@ -6,5 +6,5 @@
 #include <vector>
 #include <zip.h>
 
-std::string compress(const std::vector <std::string> & filenames); // probably want to separate paths from names
-void decompress(const std::string & zippath);
+// std::string zip_compress(const std::vector <std::string> & filenames); // probably want to separate paths from names
+// void zip_decompress(const std::string & zippath);
