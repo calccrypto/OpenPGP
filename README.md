@@ -79,22 +79,7 @@ The data types have some standard functions:
 Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
-To build the command line program:
-    Use the Code::Blocks project file
-
-    or
-
-    make
-
-    or
-
-    (from OpenPGP directory)
-    g++ -std=c++11 -Wall */*.cpp *.cpp -lgmpxx -lgmp
-
-    or some equivalent.
-
-When building for another project, remember to link GMP to
-the main program.
+To build the command line program run make on OpenPGP/exec/main.cpp
 
 Notes:
     Keyrings were not implemented. Rather, keys are read
