@@ -25,7 +25,7 @@ before_install:
 
   - sudo apt-get install libgmp-dev
   - sudo apt-get install libbz2-dev
-  - sudo apt-get install libzlib1g-dev
+  - sudo apt-get install zlib1g-dev
   - sudo apt-get install libzip-dev
 
 before_script:
