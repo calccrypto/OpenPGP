@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
+#include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
@@ -40,8 +41,11 @@ THE SOFTWARE.
 #include "PGP.h"
 #include "PKCS1.h"
 
+// used internally
 Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid);
 std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub = {});
 std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
+
+// called from outside
 std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase);
 #endif

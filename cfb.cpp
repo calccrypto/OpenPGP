@@ -25,7 +25,7 @@ SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key, const st
             alg = std::make_shared<Camellia>(key);
             break;
         default:
-            throw std::runtime_error("Error: Unknown symmetric key algorithm value.");
+            throw std::runtime_error("Error: Unknown Symmetric Key Algorithm value.");
             break;
     }
     return alg;

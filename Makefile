@@ -1,6 +1,6 @@
 # OpenPGP Makefile
 CXX?=g++
-LFLAGS=-lgmp -lgmpxx
+LFLAGS=-lgmp -lgmpxx -lbz2 -lz -lzip
 CFLAGS=-std=c++11 -Wall -c
 AR=ar
 TARGET=libOpenPGP.a
@@ -10,10 +10,13 @@ debug: all
 
 all: $(TARGET)
 
-.PHONY: common Encryptions Hashes Packets PKA RNG Subpackets
+.PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets
 
 common:
 	$(MAKE) -C common
+
+Compress:
+	$(MAKE) -C Compress
 
 Encryptions:
 	$(MAKE) -C Encryptions
@@ -36,7 +39,7 @@ Subpackets:
 cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 	$(CXX) $(CFLAGS) cfb.cpp
 
-decrypt.o: decrypt.h decrypt.cpp Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGP.h PKCS1.h
+decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGP.h PKCS1.h
 	$(CXX) $(CFLAGS) decrypt.cpp
 
 encrypt.o: encrypt.h encrypt.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h revoke.h
@@ -75,12 +78,13 @@ sign.o: sign.h sign.cpp common/includes.h Packets/packets.h PKA/PKA.h decrypt.h 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h PGP.h PGPSignedMessage.h sigcalc.h
 	$(CXX) $(CFLAGS) verify.cpp
 
-$(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Encryptions Hashes Packets PKA RNG Subpackets
+$(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
 	$(AR) -r $(TARGET) *.o */*.o
 
 clean:
 	rm -f *.o *.a
 	$(MAKE) -C common clean
+	$(MAKE) -C Compress clean
 	$(MAKE) -C Encryptions clean
 	$(MAKE) -C Hashes clean
 	$(MAKE) -C Packets clean

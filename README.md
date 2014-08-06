@@ -18,20 +18,24 @@ With much help from:
 IMPORTANT:
     This library was not written for actual use.
     Rather, it was meant for learning about the
-    internals of PGP can easily use/add a few 
+    internals of PGP can easily use/add a few
     std::couts to see the internal workings.
-    So if you choose to use it in a real setting 
-    where secrecy is required, do so at your own 
+    So if you choose to use it in a real setting
+    where secrecy is required, do so at your own
     risk.
-    
+
 This is a C++ implementation of the majority of RFC 4880,
-the OpenPGP Message Format. In addition to the included files,
-the GNU Multiprecision Library is necessary (gmp.org,
-sudo apt-get install libdev-gmp, or equivalent).
+the OpenPGP Message Format.
+
+The following are the libraries necessary to build OpenPGP:
+    GMP (https://gmplib.org/, sudo apt-get install libdev-gmp, etc)
+    bzip2 (http://www.bzip.org/, sudo apt-get install libbz2-dev, etc)
+    zlib (http://www.zlib.net/, sudo apt-get install zlib1g-dev, etc)
+    libzip (http://www.nih.at/libzip/, sudo apt-get install libzip-dev, etc)
 
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me
-years to figure out most of it. No one should have to go
+a long time to figure out most of it. No one should have to go
 through that. However, knowing how PGP is structured is still
 good to know.
 
@@ -51,7 +55,7 @@ Simply #include whatever functions needed:
     verify         - verify.h
 
 The exec/main.cpp file provides a simple command line interface,
-which can be used as examples on how to use the functions. A lot 
+which can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 
 The data types have some standard functions:
@@ -95,11 +99,6 @@ the main program.
 Notes:
     Keyrings were not implemented. Rather, keys are read
     from the directory used as arguments to functions.
-
-    There are some things that are not implemented, such as
-    the compression and decompression algorithms. If someone 
-    would be willing to work on that part, it would be much 
-    appreciated.
 
     There are also several untested functions, having never
     encountered real versions of those packets/subpackets.

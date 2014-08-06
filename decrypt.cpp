@@ -83,14 +83,13 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: No Private Key found.");
     }
-
     // reused variables
     uint8_t packet;
     std::string data;
     std::string checksum;
 
     std::string session_key;                    // session key
-    uint8_t sym;                                // symmmetric key algorithm used to encrypt original data
+    uint8_t sym;                                // symmetric key algorithm used to encrypt original data
     unsigned int BS;                            // blocksize of symmetric key algorithm
 
     // find session key
@@ -113,7 +112,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
 
         if (!sec){
             throw std::runtime_error("Error: Correct Private Key not found.");
-                    }
+        }
 
         std::vector <PGPMPI> pub = sec -> get_mpi();
         std::vector <PGPMPI> pri = decrypt_secret_key(sec, passphrase);
@@ -121,7 +120,6 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         // get session key
         session_key = zero + pka_decrypt(pka, session_key_mpi, pri, pub);                   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
         session_key = EME_PKCS1v1_5_DECODE(session_key);                                    // remove EME_PKCS1 encoding
-
         sym = session_key[0];                                                               // get symmetric algorithm
         checksum = session_key.substr(session_key.size() - 2, 2);                           // get 2 octet checksum
         session_key = session_key.substr(1, session_key.size() - 3);                        // remove both from session key
@@ -174,10 +172,14 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     else{
         data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key); // decrypt encrypted data
     }
-
     // clean up decrypted data for output
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
+        
+        
+        // data at this point doesn't make sense
+        
+        
         if (data[0] < 4){ // 0 - Uncompressed; 1 - ZIP [RFC1951]; 2 - ZLIB [RFC1950]; 3 - BZip2 [BZ2]
             packet = 8;
         }

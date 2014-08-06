@@ -2,6 +2,7 @@
 #ifndef __TAG8__
 #define __TAG8__
 
+#include "../Compress/Compress.h"
 #include "packet.h"
 
 class Tag8 : public Packet{
@@ -9,8 +10,8 @@ class Tag8 : public Packet{
         uint8_t comp;
         std::string compressed_data;
 
-        std::string compress(std::string data);
-        std::string decompress(std::string data);
+        std::string compress(const std::string & data);
+        std::string decompress(const std::string & data);
 
     public:
         typedef std::shared_ptr<Tag8> Ptr;

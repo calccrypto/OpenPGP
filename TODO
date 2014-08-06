@@ -1,3 +1,3 @@
-Add compression/decompression algorithms
 Find PGP keys with formats/packets I have never seen before
 Figure out how to read a gpg .sig file
+Make error handling more reasonable (currently everything throws exceptions)
