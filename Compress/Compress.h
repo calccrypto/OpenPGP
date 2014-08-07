@@ -9,7 +9,6 @@
 #include <stdexcept>
 
 #include "pgpbzip2.h"
-#include "pgpzip.h"
 #include "pgpzlib.h"
 
 std::string PGP_compress(const uint8_t alg, const std::string & data);

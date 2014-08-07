@@ -1,8 +1,3 @@
-// Taken from the public domain file http://www.zlib.net/zpipe.c
-// changed to a .cpp
-// changed function names to zlib_compress and zlib_decompress
-// changed data source and destination from FILE * to std::string
-
 #include "pgpzlib.h"
 
 /* Compress from file source to file dest until EOF on source.
@@ -13,11 +8,13 @@
    an error reading or writing the files. */
 int zlib_compress(const std::string & src, std::string & dst, int windowBits, int level)
 {
+    dst = ""; // clear out destination
+
     int ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned char in[ZLIB_CHUNK];
+    unsigned char out[ZLIB_CHUNK];
 
     unsigned int index = 0;
     unsigned int len = src.size();
@@ -39,7 +36,7 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
         // }
         // flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
 
-        strm.avail_in = ((index + CHUNK) < len)?CHUNK:(len - index);
+        strm.avail_in = ((index + ZLIB_CHUNK) < len)?ZLIB_CHUNK:(len - index);
         for(unsigned int i = 0; i < strm.avail_in; i++){
             in[i] = src[i + index];
         }
@@ -51,11 +48,11 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
         do {
-            strm.avail_out = CHUNK;
+            strm.avail_out = ZLIB_CHUNK;
             strm.next_out = out;
             ret = deflate(&strm, flush);    /* no bad return value */
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            have = CHUNK - strm.avail_out;
+            have = ZLIB_CHUNK - strm.avail_out;
             // if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
                 // (void)deflateEnd(&strm);
                 // return Z_ERRNO;
@@ -84,11 +81,13 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
    is an error reading or writing the files. */
 int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
 {
+    dst = ""; // clear out destination
+    
     int ret;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned char in[ZLIB_CHUNK];
+    unsigned char out[ZLIB_CHUNK];
 
     unsigned int index = 0;
     unsigned int len = src.size();
@@ -111,7 +110,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
             // return Z_ERRNO;
         // }
 
-        strm.avail_in = ((index + CHUNK) < len)?CHUNK:(len - index);
+        strm.avail_in = ((index + ZLIB_CHUNK) < len)?ZLIB_CHUNK:(len - index);
         for(unsigned int i = 0; i < strm.avail_in; i++){
             in[i] = src[i + index];
         }
@@ -123,7 +122,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
 
         /* run inflate() on input until output buffer not full */
         do {
-            strm.avail_out = CHUNK;
+            strm.avail_out = ZLIB_CHUNK;
             strm.next_out = out;
             ret = inflate(&strm, Z_NO_FLUSH);
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
@@ -135,7 +134,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
                 (void)inflateEnd(&strm);
                 return ret;
             }
-            have = CHUNK - strm.avail_out;
+            have = ZLIB_CHUNK - strm.avail_out;
 
             // if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
                 // (void)inflateEnd(&strm);
@@ -153,29 +152,4 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
     /* clean up and return */
     (void)inflateEnd(&strm);
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
-}
-
-/* report a zlib or i/o error */
-void zerr(int ret)
-{
-    fputs("zpipe: ", stderr);
-    switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
-            fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
-            fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
-        fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
-        fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
-        fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
-        fputs("zlib version mismatch!\n", stderr);
-    }
 }

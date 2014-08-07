@@ -1,10 +1,9 @@
-#include <cmath>
+// Adapted from the public domain file http://www.zlib.net/zpipe.c
+
+#include <assert.h>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include <zlib.h>
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
@@ -15,7 +14,7 @@
 #  define SET_BINARY_MODE(file)
 #endif
 
-#define CHUNK 16384
+#define ZLIB_CHUNK 16384
 #define ZLIB_WINDOWBITS 15      // ZLIB format
 #define DEFLATE_WINDOWBITS -15  // Raw DEFLATE
 
@@ -27,4 +26,3 @@
 
 int zlib_compress(const std::string & src, std::string & dst, int windowBits, int level = Z_DEFAULT_COMPRESSION);
 int zlib_decompress(const std::string & src, std::string & dst, int windowBits);
-void zerr(int ret);

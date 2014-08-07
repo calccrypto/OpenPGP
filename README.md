@@ -31,7 +31,6 @@ The following are the libraries necessary to build OpenPGP:
     GMP (https://gmplib.org/, sudo apt-get install libdev-gmp, etc)
     bzip2 (http://www.bzip.org/, sudo apt-get install libbz2-dev, etc)
     zlib (http://www.zlib.net/, sudo apt-get install zlib1g-dev, etc)
-    libzip (http://www.nih.at/libzip/, sudo apt-get install libzip-dev, etc)
 
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me
@@ -87,12 +86,6 @@ Notes:
 
     There are also several untested functions, having never
     encountered real versions of those packets/subpackets.
-
-    Although data is properly encrypted and decrypted, data
-    from other PGP sources such as Bouncy Castle and GPG will
-    most likely not be able to decrypt "properly" since most
-    PGP implementations compress the data before encrypting, but
-    not this one (yet).
 
     If for some reason the program cannot operate on some data
     properly, an exception will be thrown.

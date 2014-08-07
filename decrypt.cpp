@@ -203,7 +203,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             data = PGP_decompress(1, data);
         }
     }
-
+    
     // get rid of header and figure out what type of packet data it is
     bool format;
     data = read_packet_header(data, packet, format);

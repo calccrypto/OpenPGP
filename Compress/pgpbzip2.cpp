@@ -1,66 +1,102 @@
 #include "pgpbzip2.h"
 
-int bz2_compress(FILE * in, FILE * out){
-    int rc;
-    BZFILE * bzf = BZ2_bzWriteOpen(&rc, out, bz2_BLOCKSIZE100K, bz2_VERBOSITY, bz2_WORKFACTOR);
+int bz2_compress(const std::string & src, std::string & dst){
+    dst = ""; // clear out destination
 
+    int rc, flush;
+    bz_stream strm;
+    char in[bz2_BUFFER_SIZE];
+    char out[bz2_BUFFER_SIZE];
+
+    unsigned int index = 0;
+    unsigned int len = src.size();
+
+    strm.bzalloc = NULL;
+    strm.bzfree = NULL;
+    strm.opaque = NULL;
+
+    rc = BZ2_bzCompressInit(&strm, bz2_BLOCKSIZE100K, bz2_VERBOSITY, bz2_WORKFACTOR);
     if (rc != BZ_OK){
-        BZ2_bzWriteClose(&rc, bzf, 1, 0, 0);
-        std::stringstream s; s << rc;
-        throw std::runtime_error("BZ2_bzWriteOpen Error: " + s.str());
-        //return rc;
+        BZ2_bzCompressEnd(&strm);
+        return rc;
     }
 
-    char buffer[bz2_BUFFER_SIZE];
-    memset(buffer, 0, bz2_BUFFER_SIZE);
-    
-    unsigned int len;
-    
-    while ((len = fread(buffer, sizeof(char), bz2_BUFFER_SIZE, in))){
-        BZ2_bzWrite(&rc, bzf, buffer, len);
-        if (rc != BZ_OK){
-            BZ2_bzWriteClose(&rc, bzf, 1, 0, 0);
-            std::stringstream s; s << rc;
-            throw std::runtime_error("BZ2_bzWrite Error: %d" + s.str());
-            //return rc;
+    do{
+        strm.avail_in = ((index + bz2_BUFFER_SIZE) < len)?bz2_BUFFER_SIZE:(len - index);
+        for(unsigned int i = 0; i < strm.avail_in; i++){
+            in[i] = src[i + index];
         }
-    }
+        index += strm.avail_in;
+        flush = (index == len)?BZ_FINISH:BZ_RUN;
+        
+        strm.next_in = in;
+        
+        do{
+            strm.next_out = out;
+            strm.avail_out = bz2_BUFFER_SIZE;
 
-    BZ2_bzWriteClose(&rc, bzf, 0, 0, 0);
-    return 0;
+            rc = BZ2_bzCompress(&strm, flush);
+            assert(rc != BZ_SEQUENCE_ERROR);
+
+          
+            for(unsigned int i = 0; i < bz2_BUFFER_SIZE - strm.avail_out; i++){
+                dst += std::string(1, out[i]);
+            }
+
+        } while (strm.avail_out == 0);
+        assert (strm.avail_in == 0);
+        
+    } while (flush != BZ_FINISH);
+    assert(rc == BZ_STREAM_END); 
+        
+    return BZ2_bzCompressEnd(&strm);
 }
 
-int bz2_decompress(FILE * in, FILE * out){
+int bz2_decompress(const std::string & src, std::string & dst){
+    dst = ""; // clear out destination
+
     int rc;
-    BZFILE * bzf = BZ2_bzReadOpen(&rc, in, bz2_VERBOSITY, bz2_SMALL, NULL, 0);
+    bz_stream strm;
+    char in[bz2_BUFFER_SIZE];
+    char out[bz2_BUFFER_SIZE];
 
+    unsigned int index = 0;
+    unsigned int len = src.size();
+
+    strm.bzalloc = NULL;
+    strm.bzfree = NULL;
+    strm.opaque = NULL;
+
+    rc = BZ2_bzDecompressInit(&strm, bz2_VERBOSITY, bz2_SMALL);
     if (rc != BZ_OK){
-        BZ2_bzReadClose(&rc, bzf);
-        std::stringstream s; s << rc;
-        throw std::runtime_error("BZ2_bzReadOpen Error: %d" + s.str());
-        //return rc;
+        BZ2_bzCompressEnd(&strm);
+        return rc;
     }
 
-    char buffer[bz2_BUFFER_SIZE];
-    memset(buffer, 0, bz2_BUFFER_SIZE);
-
-    while (rc == BZ_OK){
-        int read = BZ2_bzRead(&rc, bzf, buffer, bz2_BUFFER_SIZE * sizeof(char));
-        if ((rc == BZ_OK) || (rc == BZ_STREAM_END)){
-            int write = fwrite(buffer, sizeof(char), read, out);
-            if (write != read){
-                return -1; // not end of file
-            }
+    do{
+        strm.avail_in = ((index + bz2_BUFFER_SIZE) < len)?bz2_BUFFER_SIZE:(len - index);
+        for(unsigned int i = 0; i < strm.avail_in; i++){
+            in[i] = src[i + index];
         }
-    }
+        index += strm.avail_in;
+        
+        strm.next_in = in;
+        
+        do{
+            strm.next_out = out;
+            strm.avail_out = bz2_BUFFER_SIZE;
 
-    if (rc != BZ_STREAM_END){
-        BZ2_bzReadClose(&rc, bzf);
-        std::stringstream s; s << rc;
-        throw std::runtime_error("Error after BZ2_bzRead: %d" + s.str());
-        //return rc;
-    }
+            rc = BZ2_bzDecompress(&strm);
+            assert((rc == BZ_OK) || (rc == BZ_STREAM_END));
 
-    BZ2_bzReadClose(&rc, bzf);
-    return 0;
+            for(unsigned int i = 0; i < bz2_BUFFER_SIZE - strm.avail_out; i++){
+                dst += std::string(1, out[i]);
+            }
+            
+        } while (strm.avail_out == 0);
+        assert (strm.avail_in == 0);
+        
+    } while (rc != BZ_STREAM_END);
+        
+    return BZ2_bzDecompressEnd(&strm);
 }

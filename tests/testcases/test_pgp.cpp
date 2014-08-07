@@ -586,7 +586,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGP pgp_pri(in_pri);
         std::string message = decrypt_message(pgp, pgp_pri, PASSPHRASE);
-        EXPECT_EQ(message, "The magic words are squeamish ossifrage");
+        EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
     }
 }
 
