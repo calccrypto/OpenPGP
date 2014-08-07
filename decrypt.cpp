@@ -226,13 +226,13 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
                     std::string packet_data = p -> raw();
                     if (p -> get_tag() == 11){
                         Tag11 tag11(packet_data);
-                        if (tag11.get_filename() == ""){
+                        // if (tag11.get_filename() == ""){
                             data += tag11.get_literal();
-                        }
-                        else{
-                            tag11.out();
-                            data += "Data written to file '" + tag11.get_filename() + "'";
-                        }
+                        // }
+                        // else{
+                            // tag11.out();
+                            // data += "Data written to file '" + tag11.get_filename() + "'";
+                        // }
                     }
                     // else{
                         // data += p -> show() + "\n";
