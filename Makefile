@@ -42,7 +42,7 @@ cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
 decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGP.h PKCS1.h
 	$(CXX) $(CFLAGS) decrypt.cpp
 
-encrypt.o: encrypt.h encrypt.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h revoke.h
+encrypt.o: encrypt.h encrypt.cpp Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h PKCS1.h revoke.h
 	$(CXX) $(CFLAGS) encrypt.cpp
 
 generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP.h pgptime.h PKCS1.h sign.h sigcalc.h
@@ -79,7 +79,7 @@ verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h PGP.h PGPSignedMessage
 	$(CXX) $(CFLAGS) verify.cpp
 
 $(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPSignedMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
-	$(AR) -r $(TARGET) *.o */*.o
+	$(AR) -r $(TARGET) *.o common/*.o Compress/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o
 
 clean:
 	rm -f *.o *.a

@@ -31,7 +31,7 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format)
 			remove += 5;
 		}
 		else if ((ctb & 3) == 3){                                               // indeterminate length; header is 1 octet long; packet continues until end of data
-         	length = data.size() - 1 - remove;
+         	length = data.size() - 1;                                           // header is one octet long
             remove += 0;
 		}
     }

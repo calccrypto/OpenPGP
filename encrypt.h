@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
+#include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
 #include "PKA/PKA.h"
 #include "cfb.h"

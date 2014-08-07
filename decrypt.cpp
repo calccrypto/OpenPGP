@@ -101,7 +101,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             break;
         }
     }
-
+   
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
@@ -172,15 +172,23 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     else{
         data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key); // decrypt encrypted data
     }
-
-    // extract decrypted data for output
-    if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
-        data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
+    
+    if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
+        checksum = data.substr(data.size() - 20, 20);       // get given SHA1 checksum
+        data = data.substr(0, data.size() - 20);            // remove SHA1 checksum
+        if (use_hash(2, data) != checksum){                 // check SHA1 checksum
+            throw std::runtime_error("Error: Given checksum and calculated checksum do not match.");
+        }
+        data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
+    }
+    
+    data = data.substr(BS + 2, data.size() - BS - 2);       // get rid of prefix
+  
+    if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)               
         // figure out which compression algorithm was used
-
         // uncompressed literal data packet
         if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            data = Tag11(data).write(); // add in tag11 headers to be removed later
+            data = Tag11(data).write(); // add in Tag11 headers to be removed later
         }
         // BZIP2
         else if (data.substr(0, 2) == "BZ"){
@@ -195,15 +203,6 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
             data = PGP_decompress(1, data);
         }
     }
-    else if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
-        checksum = data.substr(data.size() - 20, 20);       // get given SHA1 checksum
-        data = data.substr(0, data.size() - 20);            // remove SHA1 checksum
-        if (use_hash(2, data) != checksum){                 // check SHA1 checksum
-            throw std::runtime_error("Error: Given Checksum and calculated checksum do not match.");
-        }
-        data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
-        data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
-    }
 
     // get rid of header and figure out what type of packet data it is
     bool format;
@@ -212,7 +211,19 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     // output data
     switch (packet){
         case 8: // Compressed Data Packet
-            data = Tag8(data).get_data();
+            {
+                data = Tag8(data).get_data(); // compressed packets
+                std::vector <Packet::Ptr> compressed_packets;
+                
+                while (data.size()){ // extract packets
+                    compressed_packets.push_back(read_packet(data) -> clone());
+                }
+                
+                // extract all packet data; probably needs better formatting
+                for(const Packet::Ptr & p : compressed_packets){
+                    data += p -> show() + "\n";
+                }
+            }
             break;
         case 11: // Literal Data Packet
             {
