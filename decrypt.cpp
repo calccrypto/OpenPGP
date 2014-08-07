@@ -172,22 +172,27 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     else{
         data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key); // decrypt encrypted data
     }
-    // clean up decrypted data for output
+
+    // extract decrypted data for output
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
-        
-        
-        // data at this point doesn't make sense
-        
-        
-        if (data[0] < 4){ // 0 - Uncompressed; 1 - ZIP [RFC1951]; 2 - ZLIB [RFC1950]; 3 - BZip2 [BZ2]
-            packet = 8;
+        // figure out which compression algorithm was used
+
+        // uncompressed literal data packet
+        if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
+            data = Tag11(data).write(); // add in tag11 headers to be removed later
         }
-        else if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            packet = 11;
+        // BZIP2
+        else if (data.substr(0, 2) == "BZ"){
+            data = PGP_decompress(3, data);
         }
+        // ZLIB
+        else if ((data.substr(0, 2) == "\x78\x01") || (data.substr(0, 2) == "\x78\x9c") || (data.substr(0, 2) == "\x78\xda")){
+            data = PGP_decompress(2, data);
+        }
+        // DEFLATE
         else{
-            throw std::runtime_error("Error: Unknown output format: '" + std::string(1, data[0]) + "'.");
+            data = PGP_decompress(1, data);
         }
     }
     else if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
@@ -198,24 +203,35 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
         }
         data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
         data = data.substr(BS + 2, data.size() - BS - 2);   // get rid of header
-        bool format;                                        // junk variable
-        data = read_packet_header(data, packet, format);    // get rid of header and figure out what type of packet data it is
     }
 
-    // extract data for output
-    if (packet == 8){ // Compressed Data Packet (Tag 8)
-        Tag8 tag8(data);
-        return tag8.get_data();
-    }
-    else if (packet == 11){ // Literal Data Packet (Tag 11)
-        Tag11 tag11(data);
-        data = tag11.get_literal();
-        // take out for now
-//        if (tag11.get_format() == 'b'){
-//            std::ofstream f(tag11.get_filename(), std::ios::binary);
-//            f << data;
-//            data = "Data written to file '" + tag11.get_filename() + "'";
-//        }
+    // get rid of header and figure out what type of packet data it is
+    bool format;
+    data = read_packet_header(data, packet, format);
+
+    // output data
+    switch (packet){
+        case 8: // Compressed Data Packet
+            data = Tag8(data).get_data();
+            break;
+        case 11: // Literal Data Packet
+            {
+                Tag11 tag11(data);
+                if (tag11.get_filename() == ""){
+                    data = tag11.get_literal();
+                }
+                else{
+                    tag11.write();
+                    data = "Data written to file '" + Tag11(data).get_filename() + "'";
+                }
+            }
+            break;
+        default:
+            {
+                std::stringstream s; s << packet;
+                throw std::runtime_error("Error: No action defined for packet type " + s.str());
+            }
+            break;
     }
     return data;
 }

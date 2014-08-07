@@ -1,99 +1,11 @@
 #include "Tag8.h"
 
 std::string Tag8::compress(const std::string & data){
-    if (comp){ // if the algorithm value is not zero
-        // create both files; forced to use FILE * to use compression algorithms
-        FILE * src = fopen("srctmp", "a+b");
-        FILE * dst = fopen("dsttmp", "a+b");
-        bool good = true;
-        
-        // write data to source file
-        fwrite(data.c_str(), sizeof(char), data.size(), src);
-        
-        switch (comp){
-            case 1: // ZIP [RFC1951]
-                break;
-            case 2: // ZLIB[RFC1950]
-                good = (def(src, dst, Z_DEFAULT_COMPRESSION) == Z_OK);
-                break;
-            case 3: // BZip2 [BZ2]
-                good = (bz2_compress(src, dst) == BZ_OK);
-                break;
-            case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107: case 108: case 109: case 110:
-                throw std::runtime_error("Error: Private/Experimental algorithm.");
-            default:
-                {
-                    std::stringstream tmp; tmp << (int) comp;
-                    throw std::runtime_error("Error: Unknown Compression algorithm value: " + tmp.str());
-                }
-                break;
-        }
-        
-        if (!good){
-            throw std::runtime_error("Error: Ccompression failed");
-        }
-        
-        fclose(src);
-        fclose(dst);
-        remove("srctmp");
-        
-        std::ifstream compressed("dsttmp", std::ios::binary);
-        std::stringstream buf;
-        buf << compressed.rdbuf();
-        
-        compressed.close();
-        remove("dsttmp");
-        
-        return buf.str();
-    }
-    return data; // 0: Uncompressed
+    return PGP_compress(comp, data);
 }
 
 std::string Tag8::decompress(const std::string & data){
-    if (comp){ // if the algorithm value is not zero
-        // create both files; forced to use FILE * to use compression algorithms
-        FILE * src = fopen("srctmp", "a+b");
-        FILE * dst = fopen("dsttmp", "a+b");
-        bool good = true;
-        
-        // write data to source file
-        fwrite(data.c_str(), sizeof(char), data.size(), src);
-        
-        switch (comp){
-            case 1: // ZIP [RFC1951]
-                break;
-            case 2: // ZLIB[RFC1950]
-                good = (inf(src, dst) == Z_OK);
-                break;
-            case 3: // BZip2 [BZ2]
-                good = (bz2_decompress(src, dst) == BZ_OK);
-                break;
-            default:
-                {
-                    std::stringstream tmp; tmp << (int) comp;
-                    throw std::runtime_error("Error: Unknown Compression algorithm value: " + tmp.str());
-                }
-                break;
-        }
-        
-        if (!good){
-            throw std::runtime_error("Error: Ccompression failed");
-        }
-        
-        fclose(src);
-        fclose(dst);
-        remove("srctmp");
-        
-        std::ifstream compressed("dsttmp", std::ios::binary);
-        std::stringstream buf;
-        buf << compressed.rdbuf();
-        
-        compressed.close();
-        remove("dsttmp");
-        
-        return buf.str();
-    }
-    return data; // 0: Uncompressed
+    return PGP_decompress(comp, data);
 }
 
 Tag8::Tag8() :
@@ -135,8 +47,7 @@ std::string Tag8::get_compressed_data() const{
 }
 
 std::string Tag8::get_data() const{
-    return "Data in hex, so it's easier to copy to a " + Compression_Algorithms.at(comp) + " decompressor:\n\n" + hexlify(compressed_data);
-//    return decompress(compressed_data);
+    return PGP_decompress(comp, compressed_data);
 }
 
 void Tag8::set_comp(const uint8_t c){
@@ -145,7 +56,7 @@ void Tag8::set_comp(const uint8_t c){
 }
 
 void Tag8::set_data(const std::string & data){
-    compressed_data = compress(data);
+    compressed_data = PGP_compress(comp, data);
     size = raw().size();
 }
 

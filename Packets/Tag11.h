@@ -2,6 +2,8 @@
 #ifndef __TAG11__
 #define __TAG11__
 
+#include <fstream>
+
 #include "packet.h"
 
 class Tag11 : public Packet{
@@ -24,6 +26,7 @@ class Tag11 : public Packet{
         std::string get_filename() const;
         uint32_t get_time() const;
         std::string get_literal() const;
+        bool out(); // write data to file
 
         void set_format(const uint8_t f);
         void set_filename(const std::string & f);
