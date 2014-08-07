@@ -219,7 +219,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
                     compressed_packets.push_back(read_packet(data));
                 }
                 
-                data = ""; // 'data' should be empty at this point; clear it out just in case
+                data = ""; // should be empty at this point; clear it out just in case
                 
                 // extract all packet data; probably needs better formatting
                 for(Packet::Ptr & p : compressed_packets){
