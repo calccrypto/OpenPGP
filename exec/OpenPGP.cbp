@@ -36,8 +36,6 @@
 		<Unit filename="../Compress/Compress.h" />
 		<Unit filename="../Compress/pgpbzip2.cpp" />
 		<Unit filename="../Compress/pgpbzip2.h" />
-		<Unit filename="../Compress/pgpzip.cpp" />
-		<Unit filename="../Compress/pgpzip.h" />
 		<Unit filename="../Compress/pgpzlib.cpp" />
 		<Unit filename="../Compress/pgpzlib.h" />
 		<Unit filename="../Encryptions/AES.cpp" />
