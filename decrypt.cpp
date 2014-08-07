@@ -230,7 +230,7 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
                             tag11.write();
                             data = "Data written to file '" + Tag11(data).get_filename() + "'";
                         }
-
+                        std::cout << data << std::endl;
                     }
                     // else{
                         // data += p -> show() + "\n";
