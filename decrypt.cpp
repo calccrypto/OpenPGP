@@ -221,7 +221,20 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
                 
                 // extract all packet data; probably needs better formatting
                 for(const Packet::Ptr & p : compressed_packets){
-                    data += p -> show() + "\n";
+                    if (p -> get_tag() == 11){
+                        Tag11 tag11(data);
+                        if (tag11.get_filename() == ""){
+                            data = tag11.get_literal();
+                        }
+                        else{
+                            tag11.write();
+                            data = "Data written to file '" + Tag11(data).get_filename() + "'";
+                        }
+
+                    }
+                    // else{
+                        // data += p -> show() + "\n";
+                    // }
                 }
             }
             break;
