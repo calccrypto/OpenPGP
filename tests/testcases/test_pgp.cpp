@@ -586,8 +586,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGP pgp_pri(in_pri);
         std::string message = decrypt_message(pgp, pgp_pri, PASSPHRASE);
-        // TODO: decompress
-        EXPECT_EQ(message, "Data in hex, so it's easier to copy to a ZLIB {RFC1950} decompressor:\n\n789c5b6399c49d9b5a5c9c989eaa57525112bceccae9908c5485dcc4f4cc6485f2fca2946285c4a25485e2c2d2d4c4dccce20c85fce2e2ccb422a0722e00c65417");//"The magic words are squeamish ossifrage");
+        EXPECT_EQ(message, "The magic words are squeamish ossifrage");
     }
 }
 
@@ -630,8 +629,7 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
         std::string in_pri = GPG_PRIKEY_BOB;
         PGP pgp_pri(in_pri);
         std::string message = decrypt_message(pgp, pgp_pri, PASSPHRASE);
-        // TODO: decompress
-        EXPECT_EQ(message, "Data in hex, so it's easier to copy to a ZLIB {RFC1950} decompressor:\n\n789c01690196fe900d03000801d5d7da71c354960e01ac39620b6d6573736167652e74787453a6d4da546865206d6167696320776f726473206172652073717565616d697368206f73736966726167650a89011c040001080006050253a6d4da000a0910d5d7da71c354960e470a07ff4af67884be6e08c7abb62c59e8d6fb1aaa727c76bcee25009b84c411311826c1c78d77b907ab1bd8c026f5c3c66ab3959d97428d3636bc7ad60de3ff32216ee5519e6ff24adc8bfd523637344ddf326e45dd36f50439d850fb65e4f4cbafc3620c5ba7df6c661388a3238a3b86a3a3e13994ca893766efce41a4b8eec2a58f8d769675f41d94a344982e0dfc5485407ecce86690a892dfe10bde664e1f130ace36423cb5f12b44232be29c1deef21f9915112e718a03418058c6d28fa0a0f8f5a40343bd2be9cda4653a0f14905ef853691fa1e752febc8136a79a93d37ad375ab3ee8183815d41052f0af99d8586f2c3d5f41813c22a1c5d64dcc4bbfce8f6f591ba8");//"The magic words are squeamish ossifrage");
+        EXPECT_EQ(message, "The magic words are squeamish ossifrage");
     }
 }
 
@@ -691,8 +689,7 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGP pgp_pri(in_pri);
         std::string message = decrypt_message(pgp, pgp_pri, PASSPHRASE);
-        // TODO: decompress
-        EXPECT_EQ(message, "Data in hex, so it's easier to copy to a ZLIB {RFC1950} decompressor:\n\n789c5b6399c49d9b5a5c9c989eaa57525112bcecf685908c5485dcc4f4cc6485f2fca2946285c4a25485e2c2d2d4c4dccce20c85fce2e2ccb422a0722e00c84717");//"The magic words are squeamish ossifrage");
+        EXPECT_EQ(message, "The magic words are squeamish ossifrage");
     }
 }
 
