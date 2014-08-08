@@ -2,7 +2,7 @@
 consts.h
 OpenPGP Global Values - Defined in RFC4880 and referred RFCs and a few of my own definitions
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013, 2014 Jason Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

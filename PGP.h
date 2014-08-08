@@ -2,7 +2,7 @@
 PGP.h
 main OpenPGP data structure
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013, 2014 Jason Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ class PGP{
         bool armored;                                                           // default true
         uint8_t ASCII_Armor;                                                    // What type of key is this
         std::vector <std::pair <std::string, std::string> > Armor_Header;       // messages in the header
-        std::vector <Packet::Ptr> packets;                                          // main data
+        std::vector <Packet::Ptr> packets;                                      // main data
 
         // modifies output string so each line is no longer than MAX_LINE_SIZE long
         std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
@@ -81,7 +81,7 @@ class PGP{
         std::string list_keys() const;                                         // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
 
         PGP & operator=(const PGP & copy);                                     // get deep copy object
-        Ptr clone() const;                                                // get deep copy pointer
+        Ptr clone() const;                                                     // get deep copy pointer
 };
 
 // Display key id of primary key

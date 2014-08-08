@@ -2,7 +2,7 @@
 main.cpp
 OpenPGP commandline source
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013, 2014 Jason Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -71,15 +71,18 @@ const std::vector <std::string> commands = {
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
 
-    "encrypt data_file public_key\n"                                        // encrypt a string
+    "encrypt data_file public_key [options]\n"                              // encrypt a string
     "        options:\n"
     "            -o output name\n"                                          // filename; default stdout
-    "            -d delete original?",                                      // t or f; default false
+    "            -c compression algorithm\n"                                // 0, 1, 2, or 3; default 2; see consts.h or RFC 4880 sec 9.3 for details
+    "            -d delete original?\n"                                     // t or f; default f
+    "            -mdc use_mdc?\n"                                           // t or f; default t
+    "            -s symmetric encryption algorithm",                        // 0 - 13; default 9; see consts.h or RFC 4880 sec 9.2 for details
 
     "decrypt data_file private_key passphrase [options]\n"                  // decrypt a file
     "        options:\n"
     "            -o output name\n"                                          // filename; default stdout
-    "            -d delete original?",                                      // t or f; default false
+    "            -d delete original?",                                      // t or f; default f
 
     "revoke target revocation_certificate\n"                                // revoke a key with a revocation certificate
     "        options:\n"
@@ -196,10 +199,10 @@ bool parse_command(std::string & input){
             null_out << pub.show() << pri.show();
 
             std::cout << "Encrypt Message" << std::endl;
-            PGP en = encrypt(message, pub);
+            PGP en = encrypt(pub, message);
 
             std::cout << "Decrypt Message" << std::endl;
-            decrypt_message(en, pri, passphrase);
+            decrypt_message(pri, en, passphrase);
 
             std::cout << "Sign Message" << std::endl;
             PGPSignedMessage m = sign_message(message, pri, passphrase);
@@ -308,7 +311,10 @@ bool parse_command(std::string & input){
 
             Options options;
             options["-o"] = "";
+            options["-c"] = "2";
             options["-d"] = "f";
+            options["-mdc"] = "t";
+            options["-s"] = "9";
             parse_options(tokens, options);
 
             std::ifstream d(data_file.c_str(), std::ios::binary);
@@ -325,7 +331,7 @@ bool parse_command(std::string & input){
             s << d.rdbuf();
 
             PGP key(k);
-            output(encrypt(s.str(), key).write(), options["-o"]);
+            output(encrypt(key, s.str(), data_file, options["-s"][0] - '0', options["-c"][0] - '0', (options["-mdc"] == "t")).write(), options["-o"]);
 
             if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
                 remove(data_file.c_str());
@@ -354,7 +360,7 @@ bool parse_command(std::string & input){
 
             PGP key(k);
             PGP message(f);
-            output(decrypt_message(message, key, passphrase), options["-o"]);
+            output(decrypt_message(key, message, passphrase), options["-o"]);
             if (tolower(options["-d"][0]) == 't'){
                 remove(data_file.c_str());
             }

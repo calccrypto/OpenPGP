@@ -2,7 +2,7 @@
 cfn.h
 OpenPGP CFB mode - RFC 4880 sec 13.9
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013, 2014 Jason Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

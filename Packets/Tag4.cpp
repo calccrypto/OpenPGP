@@ -25,23 +25,19 @@ void Tag4::read(std::string & data){
     data = data.substr(12, data.size() - 12);
 }
 
-// need to indent for nested
 std::string Tag4::show() const{
     std::stringstream out;
-    out << "Version: " << static_cast <unsigned int> (version) << "\n"
-        << "Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
-        << "Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-        << "Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-        << "KeyID: " << keyid << "\n"
-        << "Nested: " << static_cast <bool> (nested) << "\n";
+    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << "    Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
+        << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << "    KeyID: " << keyid << "\n"
+        << "    Nested: " << static_cast <bool> (nested) << "\n";
     return out.str();
 }
 
 std::string Tag4::raw() const{
-    std::cerr << "Warning: Function not completed" << std::endl;;
-    std::string out = "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, nested);
-    // need to add nested packet
-    return out;
+    return "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, nested);
 }
 
 uint8_t Tag4::get_type() const{

@@ -75,7 +75,7 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     return out;
 }
 
-std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
+std::string decrypt_message(const PGP & pri, const PGP & m, const std::string & passphrase){
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
         throw std::runtime_error("Error: No encrypted message found.");
     }
@@ -183,12 +183,12 @@ std::string decrypt_message(PGP & m, PGP& pri, const std::string & passphrase){
     }
     
     data = data.substr(BS + 2, data.size() - BS - 2);       // get rid of prefix
-  
+   
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)               
         // figure out which compression algorithm was used
         // uncompressed literal data packet
         if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            data = Tag11(data).write(); // add in Tag11 headers to be removed later
+            data = Tag11(data).write(2); // add in Tag11 headers to be removed later
         }
         // BZIP2
         else if (data.substr(0, 2) == "BZ"){

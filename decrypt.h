@@ -2,7 +2,7 @@
 decrypt.h
 Functions for decrypting PGP encrypted data
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013, 2014 Jason Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,5 +47,5 @@ std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const st
 std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
 
 // called from outside
-std::string decrypt_message(PGP & m, PGP & pri, const std::string & passphrase);
+std::string decrypt_message(const PGP & pri, const PGP & m, const std::string & passphrase);
 #endif

@@ -36,7 +36,7 @@ std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, co
     return pka_encrypt(pka, rawtompi(data), pub);
 }
 
-PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_alg){
+PGP encrypt(const PGP & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
     BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
@@ -73,7 +73,7 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
         sum += static_cast <unsigned char> (x);
     }
 
-    std::string nibbles = mpitohex(mpi[0]);      // get hex representation of modulus
+    std::string nibbles = mpitohex(mpi[0]);        // get hex representation of modulus
     nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
     PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)));
 
@@ -83,7 +83,7 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
     // Literal Data Packet
     Tag11 tag11;
     tag11.set_format('t');
-    tag11.set_filename("");
+    tag11.set_filename(filename);
     tag11.set_time(0);
     tag11.set_literal(data);
 
@@ -93,24 +93,29 @@ PGP encrypt(const std::string & data, const PGP & pub, bool hash, uint8_t sym_al
 
     Packet::Ptr encrypted;
 
-    if (!hash){
-        // Symmetrically Encrypted Data Packet
+    if (!mdc){
+        // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
-        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, tag11.write(true), session_key, prefix));
+        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, PGP_compress(comp, tag11.raw()), session_key, prefix));
         std::string raw = tag9.raw();
         encrypted = std::make_shared<Tag9>();
         encrypted -> read(raw);
     }
     else{
-        // Sym. Encrypted Integrity Protected Data Packet
-        Tag18 tag18;
-        tag18.set_protected_data(tag11.write(true));
+        // Compressed Data Packet (Tag 8)
+        Tag8 tag8;
+        tag8.set_comp(comp);
+        tag8.set_data(tag11.write(2)); // put source data into compressed packet
 
-        // Modification Detection Code Packet
+        // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
+        Tag18 tag18;
+        tag18.set_protected_data(tag8.write(2)); // encrypt compressed packet
+
+        // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
         tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + tag18.get_protected_data() + "\xd3\x14"));
 
-        // encrypt((literal_data_packet(plain text) + MDC SHA1(20 octets)))
+        // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, tag18.get_protected_data() + tag19.write(), session_key, prefix));
         std::string raw = tag18.raw();
         encrypted = std::make_shared<Tag18>();
