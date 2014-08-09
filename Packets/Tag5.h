@@ -60,7 +60,7 @@ class Tag5 : public Tag6{
         std::string get_IV() const;
         std::string get_secret() const;
 
-        Tag6 get_public_obj() const;      // extract public key from private key
+        Tag6 get_public_obj() const;         // extract public key from private key
         Tag6::Ptr get_public_ptr() const;    // extract public key from private key into a pointer
 
         void set_s2k_con(const uint8_t c);

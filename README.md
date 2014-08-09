@@ -11,7 +11,7 @@ With much help from:
     Jon Callas (RFC 4880)
     Herbert Hanewinkel (hanewin.net)
     Many people on the StackExchange network
-    mugwort-rc
+    mugwort-rc - Tons of testing code, code style updates, and bugfixes
     pgpdump.net
     PortablePGP
 
@@ -47,17 +47,28 @@ is none of my concern or responsibility.
 This library should be relatively straightforward to use:
 Simply #include whatever functions needed:
     key generation - generatekey.h
-    key revokation - revoke.h
+    key revocation - revoke.h
     encrypt        - encrypt.h
     decrypt        - decrypt.h
     sign           - sign.h
     verify         - verify.h
 
+Multiple classes inherit from the abstract base class PGP in
+order to make differentiating PGP block types better in code.
+    PGP - abstract base class
+    PGPDetachedSignature - detached signatures for files
+    PGPKey - base class for OpenPGP key types
+    PGPPublicKey - holds public keys; inherits PGPKey
+    PGPSecretKey - holds private keys; inherits PGPKey
+    PGPMessage - holds OpenPGP messages
+    
+PGPCleartextSignature does not inherit from PGP.
+    
 The exec/main.cpp file provides a simple command line interface,
 which can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 
-The data types have some standard functions:
+All data structures have some standard functions:
     read  - reads data without the respective
             header information
 
@@ -75,12 +86,19 @@ The data types have some standard functions:
             the object (mainly used for moving
             PGP data around).
 
+    Ptr   - a typedef for std::shared_ptr <T>, where
+            T is the class each typdef is found in.
+            
 Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
 To build the command line program run make on OpenPGP/exec/main.cpp
 
 Notes:
+    Sometimes, there are excerpts from RFC 4880 in the code.
+    Most of those excerpts are not the full text of the sections.
+    Please refer to the RFC for the full text.
+    
     Keyrings were not implemented. Rather, keys are read
     from the directory used as arguments to functions.
 
@@ -88,5 +106,6 @@ Notes:
     encountered real versions of those packets/subpackets.
 
     If for some reason the program cannot operate on some data
-    properly, an exception will be thrown.
+    properly, an exception will be thrown. This will be changed
+    sometime, so that not all errors will cause crashes.
 </pre>

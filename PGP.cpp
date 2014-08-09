@@ -13,16 +13,14 @@ PGP::PGP() :
     ASCII_Armor(),
     Armor_Header(),
     packets()
-{
-}
+{}
 
 PGP::PGP(const PGP & copy) :
     armored(copy.armored),
     ASCII_Armor(copy.ASCII_Armor),
     Armor_Header(copy.Armor_Header),
     packets(copy.get_packets_clone())
-{
-}
+{}
 
 PGP::PGP(std::string & data) :
     PGP()
@@ -370,14 +368,6 @@ std::string PGP::list_keys() const{
     else{
         throw std::runtime_error("Error: Not a PGP Key. Cannot Display.");
     }
-}
-
-PGP::Ptr PGP::clone() const{
-    PGP::Ptr out(new PGP);
-    out -> ASCII_Armor = ASCII_Armor;
-    out -> Armor_Header = Armor_Header;
-    out -> packets = get_packets_clone();
-    return out;
 }
 
 PGP & PGP::operator=(const PGP & copy){

@@ -36,39 +36,44 @@ THE SOFTWARE.
 #include "PKA/PKA.h"
 #include "decrypt.h"
 #include "mpi.h"
-#include "PGP.h"
-#include "PGPSignedMessage.h"
+#include "PGPCleartextSignature.h"
+#include "PGPDetachedSignature.h" // not used yet
+#include "PGPKey.h"
+#include "PGPMessage.h"
 #include "pgptime.h"
 #include "revoke.h"
 #include "sigcalc.h"
 
+// internal functions
 // Extract private key data
-Tag5::Ptr find_signing_key(const PGP & k);
-ID::Ptr find_signer_id(const PGP & k);
+Tag5::Ptr find_signing_key(const PGPSecretKey & k);
+ID::Ptr find_signer_id(const PGPSecretKey & k);
 
 std::vector <PGPMPI> pka_sign(std::string hashed_data, const uint8_t pka, const std::vector <PGPMPI> & pub, const std::vector <PGPMPI> & pri, const uint8_t h = 0);
 std::vector <PGPMPI> pka_sign(const std::string & hashed_data, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h = 0);
 
 // Generates new default signature packet
 Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID::Ptr & id = ID::Ptr());
-Tag2::Ptr create_sig_packet(const uint8_t type, const PGP & key);
+Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri);
+// /////////////////
+
 
 // Creates signatures
 // 0x00
-PGP sign_file(const std::string & data, const PGP & key, const std::string & passphrase);
-PGP sign_file(std::ifstream & f, const PGP & key, const std::string &  passphrase);
+PGPMessage sign_file(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data);
+PGPMessage sign_file(const PGPSecretKey & pri, const std::string & passphrase, std::ifstream & f);
 
 // 0x01
-PGPSignedMessage sign_message(const std::string & text, const PGP & key, const std::string & passphrase);
+PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text);
 
 // 0x02
-Tag2::Ptr standalone_signature(const Tag5::Ptr & key, const Tag2::Ptr & src, const std::string & passphrase);
+Tag2::Ptr standalone_signature(const Tag2::Ptr & src, const std::string & passphrase, const Tag5::Ptr & key);
 
 // 0x10 - 13
 // mainly used for key generation
 Tag2::Ptr sign_primary_key(const Tag5::Ptr & key, const ID::Ptr & id, const std::string & passphrase, const uint8_t cert = 0x13);
 //signing someone else's key; can be used for key generation
-PGP sign_primary_key(const PGP & signee, const PGP & signer, const std::string & passphrase, const uint8_t cert = 0x13);
+PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t cert = 0x13);
 
 // 0x18 - 0x19
 // mainly used for key generation

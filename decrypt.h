@@ -38,7 +38,7 @@ THE SOFTWARE.
 #include "cfb.h"
 #include "consts.h"
 #include "mpi.h"
-#include "PGP.h"
+#include "PGPKey.h"
 #include "PKCS1.h"
 
 // used internally
@@ -47,5 +47,5 @@ std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const st
 std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
 
 // called from outside
-std::string decrypt_message(const PGP & pri, const PGP & m, const std::string & passphrase);
+std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::string & passphrase);
 #endif

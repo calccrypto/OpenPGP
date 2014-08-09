@@ -75,7 +75,7 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     return out;
 }
 
-std::string decrypt_message(const PGP & pri, const PGP & m, const std::string & passphrase){
+std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::string & passphrase){
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
         throw std::runtime_error("Error: No encrypted message found.");
     }

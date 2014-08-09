@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -55,22 +56,22 @@ class PGP{
 
         PGP();
         PGP(const PGP & copy);
-        PGP(std::string & data);                                                // data fed into this constructor will be destroyed
+        PGP(std::string & data);                                               // data fed into this constructor will be destroyed
         PGP(std::ifstream & f);
         ~PGP();
 
-        void read(std::string & data);                                          // read key, including ASCII Armor; data is destroyed
+        void read(std::string & data);                                         // read key, including ASCII Armor; data is destroyed
         void read(std::ifstream & file);
-        void read_raw(std::string & data);                                      // reads packet data only; data is destroyed
-        std::string show() const;                                               // display key information
-        std::string raw(uint8_t header = 0) const;                              // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        std::string write(uint8_t header = 0) const;                            // output with ASCII Armor and converted to Radix64
+        void read_raw(std::string & data);                                     // reads packet data only; data is destroyed
+        std::string show() const;                                              // display key information
+        std::string raw(uint8_t header = 0) const;                             // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        std::string write(uint8_t header = 0) const;                           // output with ASCII Armor and converted to Radix64
 
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;
         std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
-        std::vector <Packet::Ptr> get_packets() const;                          // get copy of all packet pointers
-        std::vector <Packet::Ptr> get_packets_clone() const;                    // clone all packets
+        std::vector <Packet::Ptr> get_packets() const;                         // get copy of all packet pointers
+        std::vector <Packet::Ptr> get_packets_clone() const;                   // clone all packets
 
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
@@ -79,9 +80,11 @@ class PGP{
 
         std::string keyid() const;                                             // keyid that is searched for on keyservers
         std::string list_keys() const;                                         // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
-
+        
+        virtual bool meaningful() const = 0;                                   // check if packet sequence is meaningful and correct
+        
         PGP & operator=(const PGP & copy);                                     // get deep copy object
-        Ptr clone() const;                                                     // get deep copy pointer
+        virtual Ptr clone() const = 0;                                         // get deep copy pointer
 };
 
 // Display key id of primary key

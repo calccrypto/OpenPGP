@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "PGP.h"
-#include "PGPSignedMessage.h"
+#include "PGPCleartextSignature.h"
 #include "decrypt.h"
 
 #include "testvectors/gpg/pgpencrypt.h"
@@ -44,7 +44,7 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
 TEST(PGPTest, test_gpg_public_key) {
 
     std::string in = GPG_PUBKEY_ALICE;
-    PGP pgp(in);
+    PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 5);
@@ -250,7 +250,7 @@ TEST(PGPTest, test_gpg_public_key) {
 TEST(PGPTest, test_gpg_private_key) {
 
     std::string in = GPG_PRIKEY_ALICE;
-    PGP pgp(in);
+    PGPSecretKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 5);
@@ -482,7 +482,7 @@ TEST(PGPTest, test_gpg_private_key) {
 TEST(PGPTest, test_gpg_revoke) {
 
     std::string in = GPG_REVOKE3_ALICE;
-    PGP pgp(in);
+    PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 1);
@@ -550,7 +550,7 @@ TEST(PGPTest, test_gpg_revoke) {
 TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
 
     std::string in = GPG_PKA_ENCRYPT_TO_ALICE;
-    PGP pgp(in);
+    PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 2);
@@ -584,7 +584,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
     // tag18
     {
         std::string in_pri = GPG_PRIKEY_ALICE;
-        PGP pgp_pri(in_pri);
+        PGPSecretKey pgp_pri(in_pri);
         std::string message = decrypt_message(pgp_pri, pgp, PASSPHRASE);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
     }
@@ -593,7 +593,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
 TEST(PGPTest, test_gpg_pka_encrypt) {
 
     std::string in = GPG_PKA_ENCRYPT_ALICE_TO_BOB;
-    PGP pgp(in);
+    PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 2);
@@ -627,7 +627,7 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
     // tag18
     {
         std::string in_pri = GPG_PRIKEY_BOB;
-        PGP pgp_pri(in_pri);
+        PGPSecretKey pgp_pri(in_pri);
         std::string message = decrypt_message(pgp_pri, pgp, PASSPHRASE);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
     }
@@ -636,7 +636,7 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
 TEST(PGPTest, test_gpg_symmetric_encrypt) {
 
     std::string in = GPG_SYMMETRIC_ENCRYPT_TO_ALICE;
-    PGP pgp(in);
+    PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 3);
@@ -687,7 +687,7 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
     // tag18
     {
         std::string in_pri = GPG_PRIKEY_ALICE;
-        PGP pgp_pri(in_pri);
+        PGPSecretKey pgp_pri(in_pri);
         std::string message = decrypt_message(pgp_pri, pgp, PASSPHRASE);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
     }
@@ -696,7 +696,7 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
 TEST(PGPTest, test_gpg_clearsign) {
 
     std::string in = GPG_CLEARSIGN_ALICE;
-    PGPSignedMessage pgp(in);
+    PGPCleartextSignature pgp(in);
 
     EXPECT_EQ(pgp.get_message(), "The magic words are squeamish ossifrage");
 

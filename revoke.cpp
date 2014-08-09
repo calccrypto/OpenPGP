@@ -34,13 +34,17 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
     return false;
 }
 
-bool check_revoked(const PGP & key, const std::string & keyid){
-    return check_revoked(key.get_packets(), keyid);
+bool check_revoked(const PGPPublicKey & pub, const std::string & keyid){
+    return check_revoked(pub.get_packets(), keyid);
 }
 
-Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+bool check_revoked(const PGPSecretKey & pri, const std::string & keyid){
+    return check_revoked(pri.get_packets(), keyid);
+}
+
+Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        throw std::runtime_error("Error: A private key is required for the second argument.");
+        throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
     Tag5::Ptr signer = find_signing_key(pri);
@@ -78,10 +82,10 @@ Tag2::Ptr revoke_primary_key_cert(PGP & pri, const std::string & passphrase, con
     return sig;
 }
 
-PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     Tag2::Ptr sig = revoke_primary_key_cert(pri, passphrase, code, reason);
 
-    PGP signature;
+    PGPPublicKey signature;
     signature.set_ASCII_Armor(1);
     std::vector <std::pair <std::string, std::string> > h = {std::make_pair("Version", "cc"),
                                                              std::make_pair("Comment", "Revocation Certificate")};
@@ -91,9 +95,9 @@ PGP revoke_primary_key_cert_key(PGP & pri, const std::string & passphrase, const
     return signature;
 }
 
-Tag2::Ptr revoke_subkey_cert(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
-        throw std::runtime_error("Error: A private key is required for the second argument.");
+        throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
     Tag5::Ptr signer = find_signing_key(pri);
@@ -131,10 +135,10 @@ Tag2::Ptr revoke_subkey_cert(PGP & pri, const std::string & passphrase, const ui
     return sig;
 }
 
-PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+PGPPublicKey revoke_subkey_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     Tag2::Ptr sig = revoke_subkey_cert(pri, passphrase, code, reason);
 
-    PGP signature;
+    PGPPublicKey signature;
     signature.set_ASCII_Armor(1);
     std::vector <std::pair <std::string, std::string> > h = {std::make_pair("Version", "cc"),
                                                              std::make_pair("Comment", "Revocation Certificate")};
@@ -144,7 +148,7 @@ PGP revoke_subkey_cert_key(PGP & pri, const std::string & passphrase, const uint
     return signature;
 }
 
-PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t code, const std::string & reason){
+PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::string passphrase, const uint8_t code, const std::string & reason){
     if (pub.get_ASCII_Armor() != 1){
         throw std::runtime_error("Error: A public key is required for the first argument.");
     }
@@ -190,7 +194,7 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
     // Create output key
-    PGP revoked(pub);
+    PGPPublicKey revoked(pub);
     std::vector <Packet::Ptr> old_packets = pub.get_packets_clone();
     std::vector <Packet::Ptr> new_packets;
 
@@ -213,7 +217,7 @@ PGP revoke_uid(PGP & pub, PGP & pri, const std::string passphrase, const uint8_t
     return revoked;
 }
 
-PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
@@ -232,7 +236,7 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
         new_packets.push_back(packets[i] -> clone());
     }
 
-    PGP revoked;
+    PGPPublicKey revoked;
     revoked.set_ASCII_Armor(1); // public key
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
@@ -240,7 +244,7 @@ PGP revoke_key(PGP & pri, const std::string & passphrase, const uint8_t code, co
     return revoked;
 }
 
-PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
+PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason){
     if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
@@ -267,7 +271,7 @@ PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code,
         new_packets.push_back(packets[i++] -> clone());
     }
 
-    PGP revoked;
+    PGPPublicKey revoked;
     revoked.set_ASCII_Armor(1); // public key
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
@@ -275,7 +279,7 @@ PGP revoke_subkey(PGP & pri, const std::string & passphrase, const uint8_t code,
     return revoked;
 }
 
-PGP revoke_with_cert(PGP & pub, PGP & revoke){
+PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     if (pub.get_ASCII_Armor() != 1){
         throw std::runtime_error("Error: A public key is required.");
     }
@@ -353,7 +357,7 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     }
 
     // Create output key
-    PGP revoked(pub);
+    PGPPublicKey revoked(pub);
     std::vector <Packet::Ptr> old_packets = pub.get_packets_clone();
     std::vector <Packet::Ptr> new_packets;
 
@@ -373,4 +377,9 @@ PGP revoke_with_cert(PGP & pub, PGP & revoke){
     revoked.set_packets(new_packets);
 
     return revoked;
+}
+
+PGPPublicKey revoke_with_cert(const PGPSecretKey & pri, PGPPublicKey & revoke){
+    PGPPublicKey pub(pri);
+    return revoke_with_cert(pub, revoke);
 }

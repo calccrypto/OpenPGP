@@ -1,6 +1,6 @@
 /*
-encrypt.h
-Function to encrypt data with a PGP public key
+PGPDetachedSignature.h
+OpenPGP Detached Signature data structure (RFC 4880 sec 11.2)
 
 Copyright (c) 2013, 2014 Jason Lee
 
@@ -23,33 +23,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __PGPENCRYPT__
-#define __PGPENCRYPT__
+#ifndef __PGP_DETACHED_SIGNATURE__
+#define __PGP_DETACHED_SIGNATURE__
 
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <vector>
+#include "PGP.h"
 
-#include "Compress/Compress.h"
-#include "Hashes/Hashes.h"
-#include "PKA/PKA.h"
-#include "cfb.h"
-#include "mpi.h"
-#include "PGPKey.h"
-#include "PGPMessage.h"
-#include "PKCS1.h"
-#include "revoke.h"
+class PGPDetachedSignature : public PGP {
+    /*
+    11.4. Detached Signatures
 
-Tag6::Ptr find_encrypting_key(const PGP & k);
-std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub);
-std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <PGPMPI> & pub);
+        Some OpenPGP applications use so-called "detached signatures". For
+        example, a program bundle may contain a file, and with it a second
+        file that is a detached signature of the first file. These detached
+        signatures are simply a Signature packet stored separately from the
+        data for which they are a signature.
+    */
 
-// Encrypt data
-// Default:
-//      Symmetric Key Algorithm: AES256
-//      Compression Algorithm: ZLIB
-//      Use Modification Detection Packet: true
-//
-PGPMessage encrypt(const PGPPublicKey & pub, const std::string & data, const std::string & filename = "", const uint8_t sym_alg = 9, const uint8_t comp = 1, const bool mdc = true);
+    public:
+        typedef std::shared_ptr <PGPDetachedSignature> Ptr;
+
+        PGPDetachedSignature();
+        PGPDetachedSignature(const PGPDetachedSignature & copy);
+        PGPDetachedSignature(std::string & data);
+        PGPDetachedSignature(std::ifstream & f);
+        ~PGPDetachedSignature();
+
+        PGP::Ptr clone() const;
+
+        bool meaningful() const;
+};
 #endif

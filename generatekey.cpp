@@ -1,6 +1,6 @@
 #include "generatekey.h"
 
-void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
+void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
@@ -114,7 +114,7 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
     private_key.set_packets({sec, uid, sig, ssb, subsig});
 }
 
-void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
+void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     // at most only 1 of each pair is expected
@@ -130,7 +130,7 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
     bool id = false;            // default UID came first
     bool key = false;           // default main key came first
 
-    std::vector <Packet::Ptr> packets = pri.get_packets();
+    std::vector <Packet::Ptr> packets = private_key.get_packets();
     for(Packet::Ptr & p : packets){
         std::string data = p -> raw();
         if (p -> get_tag() == 5){     // Secret Key Packet
@@ -391,9 +391,9 @@ void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase, const 
         }
         else{
             std::stringstream s; s << static_cast <int> (p -> get_tag());
-            throw std::runtime_error("Error: Packet Tag " + s.str() + " doesnt belong here.");
+            throw std::runtime_error("Error: Packet Tag " + s.str() + " doesn't belong here.");
             break;
         }
     }
-    pub.set_packets(pub_packets);
+    public_key.set_packets(pub_packets);
 }

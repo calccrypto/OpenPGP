@@ -30,7 +30,7 @@ std::string find_keyid(const Tag2::Ptr & tag2){
     return out;
 }
 
-std::vector <PGPMPI> find_matching_pub_key(const std::string & keyid, const PGP & key){
+std::vector <PGPMPI> find_matching_pub_key(const std::string & keyid, const PGPPublicKey & key){
     std::vector <PGPMPI> keys;
     std::vector <Packet::Ptr> packets = key.get_packets();
     for(Packet::Ptr const & p : packets){
@@ -63,12 +63,12 @@ bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, cons
     return pka_verify(hashed_message, tag2 -> get_pka(), key, signature, h);
 }
 
-bool verify_file(const std::string & data, const PGP & sig, const PGP & key){
+bool verify_file(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig){
     if (sig.get_ASCII_Armor() != 5){
         throw std::runtime_error("Error: A signature packet is required.");
     }
 
-    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
@@ -88,7 +88,7 @@ bool verify_file(const std::string & data, const PGP & sig, const PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, key);
+    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, pub);
     if (!keys.size()){
         return false;
     }
@@ -96,7 +96,11 @@ bool verify_file(const std::string & data, const PGP & sig, const PGP & key){
     return out;
 }
 
-bool verify_file(std::ifstream & f, const PGP & sig, const PGP & key){
+bool verify_file(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig){
+    return verify_file(PGPPublicKey(pri), data, sig);
+}
+
+bool verify_file(const PGPPublicKey & pub, std::ifstream & f, const PGPDetachedSignature & sig){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }
@@ -104,21 +108,21 @@ bool verify_file(std::ifstream & f, const PGP & sig, const PGP & key){
     s << f.rdbuf();
     std::string data = s.str();
 
-    return verify_file(data, sig, key);
+    return verify_file(pub, data, sig);
+}
+
+bool verify_file(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig){
+    return verify_file(PGPPublicKey(pri), f, sig);
 }
 
 // Signature type 0x00 and 0x01
-bool verify_message(const PGPSignedMessage & message, const PGP & key){
-    if (message.get_key().get_ASCII_Armor() != 5){
-        throw std::runtime_error("Error: A private key is required.");
-    }
-
-    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message){
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
     // Find key id from signature to match with public key
-    std::string temp = message.get_key().get_packets()[0] -> raw();
+    std::string temp = message.get_sig().get_packets()[0] -> raw();
     Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
 
     // check left 16 bits
@@ -134,7 +138,7 @@ bool verify_message(const PGPSignedMessage & message, const PGP & key){
     }
 
     // find matching public key packet and get the mpi
-    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, key);
+    std::vector <PGPMPI> keys = find_matching_pub_key(keyid, pub);
     if (!keys.size()){
         return false;
     }
@@ -143,9 +147,13 @@ bool verify_message(const PGPSignedMessage & message, const PGP & key){
     return pka_verify(hash, signature, keys);
 }
 
+bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message){
+    return verify_cleartext_signature(PGPPublicKey(pri), message);
+}
+
 // Signature Type 0x10 - 0x13
-bool verify_signature(const PGP & key, const PGP & signer){
-    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+bool verify_signature(const PGPPublicKey & pub, const PGPPublicKey & signer){
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
@@ -190,7 +198,7 @@ bool verify_signature(const PGP & key, const PGP & signer){
     std::string u = "";
 
     // set packets to signatures to verify
-    packets = key.get_packets();
+    packets = pub.get_packets();
 
     bool out = true;
 
@@ -249,12 +257,16 @@ bool verify_signature(const PGP & key, const PGP & signer){
     return out;
 }
 
+bool verify_signature(const PGPSecretKey & pri, const PGPPublicKey & signer){
+    return verify_signature(PGPPublicKey(pri), signer);
+}
+
 bool verify_revoke(const Tag6::Ptr & key, const Tag2::Ptr & rev){
     return pka_verify(use_hash(rev -> get_hash(), addtrailer(overkey(key), rev)), rev, key -> get_mpi());
 }
 
-bool verify_revoke(const PGP & key, const PGP & rev){
-    if ((key.get_ASCII_Armor() != 1) && (key.get_ASCII_Armor() != 2)){
+bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
@@ -262,7 +274,7 @@ bool verify_revoke(const PGP & key, const PGP & rev){
         throw std::runtime_error("Error: A revocation key is required.");
     }
 
-    std::vector <Packet::Ptr> keys = key.get_packets();
+    std::vector <Packet::Ptr> keys = pub.get_packets();
 
     // copy revocation signature into tag2
     std::vector <Packet::Ptr> rev_pointers = rev.get_packets();
@@ -289,4 +301,9 @@ bool verify_revoke(const PGP & key, const PGP & rev){
         }
     }
     return false;
+}
+
+bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev){
+    PGPPublicKey pub(pri);
+    return verify_revoke(pub, rev);
 }

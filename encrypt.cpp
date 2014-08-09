@@ -36,7 +36,7 @@ std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, co
     return pka_encrypt(pka, rawtompi(data), pub);
 }
 
-PGP encrypt(const PGP & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
+PGPMessage encrypt(const PGPPublicKey & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
     BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
@@ -123,7 +123,7 @@ PGP encrypt(const PGP & pub, const std::string & data, const std::string & filen
     }
 
     // write data to output container
-    PGP out;
+    PGPMessage out;
     out.set_ASCII_Armor(0);
     std::vector <std::pair <std::string, std::string> > header;
     header.push_back(std::pair <std::string, std::string> ("Version", "cc"));

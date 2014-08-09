@@ -1,5 +1,5 @@
 #include "sign.h"
-Tag5::Ptr find_signing_key(const PGP & k){
+Tag5::Ptr find_signing_key(const PGPSecretKey & k){
     if (k.get_ASCII_Armor() == 2){
         std::vector <Packet::Ptr> packets = k.get_packets();
         for(Packet::Ptr const & p : packets){
@@ -18,7 +18,7 @@ Tag5::Ptr find_signing_key(const PGP & k){
     return Tag5::Ptr();
 }
 
-ID::Ptr find_signer_id(const PGP & k){
+ID::Ptr find_signer_id(const PGPSecretKey & k){
     std::vector <Packet::Ptr> packets = k.get_packets();
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 13){
@@ -89,7 +89,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
     return tag2;
 }
 
-Tag2::Ptr create_sig_packet(const uint8_t type, const PGP & key){
+Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & key){
     Tag5::Ptr tag5 = find_signing_key(key);
     if (!tag5){
         throw std::runtime_error("Error: No Private Key packet found.");
@@ -105,18 +105,18 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const PGP & key){
     return out;
 }
 
-PGP sign_file(const std::string & data, const PGP & key, const std::string & passphrase){
-    if (key.get_ASCII_Armor() != 2){
+PGPMessage sign_file(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data){
+    if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_signing_key(key);
+    Tag5::Ptr signer = find_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
 
     // Check if key has been revoked
-    if (check_revoked(key, signer -> get_keyid())){
+    if (check_revoked(pri, signer -> get_keyid())){
         throw std::runtime_error("Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.");
     }
 
@@ -126,29 +126,29 @@ PGP sign_file(const std::string & data, const PGP & key, const std::string & pas
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    PGP signature;
+    PGPMessage signature;
     signature.set_ASCII_Armor(5);
-    std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string>("Version", "cc")};
+    std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string> ("Version", "cc")};
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
 
     return signature;
 }
 
-PGP sign_file(std::ifstream & f, const PGP & key, const std::string & passphrase){
+PGPMessage sign_file(const PGPSecretKey & pri, const std::string & passphrase, std::ifstream & f){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }
     std::stringstream s; s << f.rdbuf();
-    return sign_file(s.str(), key, passphrase);
+    return sign_file(pri, passphrase, s.str());
 }
 
-PGPSignedMessage sign_message(const std::string & text, const PGP & key, const std::string & passphrase){
-    if (key.get_ASCII_Armor() != 2){
+PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text){
+    if (pri.get_ASCII_Armor() != 2){
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_signing_key(key);
+    Tag5::Ptr signer = find_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -159,60 +159,59 @@ PGPSignedMessage sign_message(const std::string & text, const PGP & key, const s
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    PGP signature;
+    PGPDetachedSignature signature;
     signature.set_ASCII_Armor(5);
-    std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string>("Version", "cc")};
+    std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string> ("Version", "cc")};
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
 
-    PGPSignedMessage message;
-    message.set_ASCII_Armor(6);
+    PGPCleartextSignature message;
     h = {std::pair <std::string, std::string>("Hash", Hash_Algorithms.at(sig -> get_hash()))};
     message.set_Armor_Header(h);
     message.set_message(text);
-    message.set_key(signature);
+    message.set_sig(signature);
 
     return message;
 }
 
-Tag2::Ptr standalone_signature(const Tag5::Ptr & key, const Tag2::Ptr & src, const std::string & passphrase){
-    Tag2::Ptr sig = create_sig_packet(0x02, key);
+Tag2::Ptr standalone_signature(const Tag5::Ptr & pri, const Tag2::Ptr & src, const std::string & passphrase){
+    Tag2::Ptr sig = create_sig_packet(0x02, pri);
     std::string hashed_data = to_sign_02(src);
     sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, key, passphrase, src -> get_hash()));
+    sig -> set_mpi(pka_sign(hashed_data, pri, passphrase, src -> get_hash()));
 
     return sig;
 }
 
-Tag2::Ptr sign_primary_key(const Tag5::Ptr & key, const ID::Ptr & id, const std::string & passphrase, const uint8_t cert){
+Tag2::Ptr sign_primary_key(const Tag5::Ptr & pri, const ID::Ptr & id, const std::string & passphrase, const uint8_t cert){
     if ((cert < 0x10) || (cert > 0x13)){
         std::stringstream s; s << static_cast <int> (cert);
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
-    Tag2::Ptr sig = create_sig_packet(cert, key);
+    Tag2::Ptr sig = create_sig_packet(cert, pri);
     std::string hashed_data;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
-        hashed_data = to_sign_10(key, id, sig);
+        hashed_data = to_sign_10(pri, id, sig);
     }
     else if (cert == 0x11){
-        hashed_data = to_sign_11(key, id, sig);
+        hashed_data = to_sign_11(pri, id, sig);
     }
     else if (cert == 0x12){
-        hashed_data = to_sign_12(key, id, sig);
+        hashed_data = to_sign_12(pri, id, sig);
     }
     else if (cert == 0x13){
-        hashed_data = to_sign_13(key, id, sig);
+        hashed_data = to_sign_13(pri, id, sig);
     }
 
     sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, key, passphrase, sig -> get_hash()));
+    sig -> set_mpi(pka_sign(hashed_data, pri, passphrase, sig -> get_hash()));
 
     return sig;
 }
 
-PGP sign_primary_key(const PGP & signee, const PGP & signer, const std::string & passphrase, const uint8_t cert){
+PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t cert){
     if (signee.get_ASCII_Armor() != 1){
         throw std::runtime_error("Error: Signee key should be public.");
     }
@@ -318,7 +317,7 @@ PGP sign_primary_key(const PGP & signee, const PGP & signer, const std::string &
     sig -> set_mpi(pka_sign(hashed_data, signer_signing_key, passphrase, sig -> get_hash()));
 
     // Create output key
-    PGP out(signee);
+    PGPPublicKey out(signee);
     std::vector <Packet::Ptr> out_packets;
 
     j = 0;

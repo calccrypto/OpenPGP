@@ -1,34 +1,31 @@
-#include "PGPSignedMessage.h"
-PGPSignedMessage::PGPSignedMessage() :
-    ASCII_Armor(),
+#include "PGPCleartextSignature.h"
+PGPCleartextSignature::PGPCleartextSignature() :
     Armor_Header(),
     message(),
-    key()
-{
-}
+    sig()
+{}
 
-PGPSignedMessage::PGPSignedMessage(const PGPSignedMessage & copy) :
-    ASCII_Armor(copy.ASCII_Armor),
+PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy) :
     Armor_Header(copy.Armor_Header),
     message(copy.message),
-    key(copy.key)
+    sig(copy.sig)
 {
-    key.set_armored(true);
+    sig.set_armored(true);
 }
 
-PGPSignedMessage::PGPSignedMessage(std::string & data) :
-    PGPSignedMessage()
+PGPCleartextSignature::PGPCleartextSignature(std::string & data) :
+    PGPCleartextSignature()
 {
     read(data);
 }
 
-PGPSignedMessage::PGPSignedMessage(std::ifstream & f) :
-    PGPSignedMessage()
+PGPCleartextSignature::PGPCleartextSignature(std::ifstream & f) :
+    PGPCleartextSignature()
 {
     read(f);
 }
 
-void PGPSignedMessage::read(std::string & data){
+void PGPCleartextSignature::read(std::string & data){
     // remove extra data and parse unsecured data
     unsigned int x = 0;
     // find and remove header
@@ -51,8 +48,6 @@ void PGPSignedMessage::read(std::string & data){
     if (data.substr(0, 34) != "-----BEGIN PGP SIGNED MESSAGE-----"){
         throw std::runtime_error("Error: Data does not contain message section. Use PGP to parse this data.");
     }
-
-    ASCII_Armor = 6;
 
     // remove newline after header
     x = 0;
@@ -111,74 +106,64 @@ void PGPSignedMessage::read(std::string & data){
     message = data.substr(0, x - 1); // get rid of last newline after text
     data = data.substr(x, data.size() - x);
 
-    key.read(data);
+    sig.read(data);
 }
 
-void PGPSignedMessage::read(std::ifstream & file){
+void PGPCleartextSignature::read(std::ifstream & file){
     std::stringstream s;
     s << file.rdbuf();
     std::string data = s.str();
     read(data);
 }
 
-std::string PGPSignedMessage::show() const{
-    return "Message:\n" + message + "\n\n" + key.show();
+std::string PGPCleartextSignature::show() const{
+    return "Message:\n" + message + "\n\n" + sig.show();
 }
 
-std::string PGPSignedMessage::write(uint8_t header) const{
-    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
+std::string PGPCleartextSignature::write(uint8_t header) const{
+    std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
     for(std::pair <std::string, std::string> const & k : Armor_Header){
-        out += k.first + ":" + k.second + "\n";
+        out += k.first + ": " + k.second + "\n";
     }
-    return out + "\n" + message + "\n" + key.write(header);
+    return out + "\n" + message + "\n" + sig.write(header);
 }
 
-uint8_t PGPSignedMessage::get_ASCII_Armor() const{
-    return ASCII_Armor;
-}
-
-std::vector <std::pair <std::string, std::string> > PGPSignedMessage::get_Armor_Header() const{
+std::vector <std::pair <std::string, std::string> > PGPCleartextSignature::get_Armor_Header() const{
     return Armor_Header;
 }
 
-std::string PGPSignedMessage::get_message() const{
+std::string PGPCleartextSignature::get_message() const{
     return message;
 }
 
-PGP PGPSignedMessage::get_key() const{
-    return key;
+PGPDetachedSignature PGPCleartextSignature::get_sig() const{
+    return sig;
 }
 
-void PGPSignedMessage::set_ASCII_Armor(const uint8_t a){
-    ASCII_Armor = a;
-}
-
-void PGPSignedMessage::set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a){
+void PGPCleartextSignature::set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a){
     Armor_Header = a;
 }
 
-void PGPSignedMessage::set_message(const std::string & data){
+void PGPCleartextSignature::set_message(const std::string & data){
     message = data;
 }
 
-void PGPSignedMessage::set_key(const PGP & k){
-    key = k;
-    key.set_armored(true);
+void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
+    sig = s;
+    sig.set_armored(true);
 }
 
-PGPSignedMessage::Ptr PGPSignedMessage::clone() const{
-    Ptr out(new PGPSignedMessage);
-    out -> ASCII_Armor = ASCII_Armor;
+PGPCleartextSignature::Ptr PGPCleartextSignature::clone() const{
+    PGPCleartextSignature::Ptr out(new PGPCleartextSignature);
     out -> Armor_Header = Armor_Header;
     out -> message = message;
-    out -> key = key;
+    out -> sig = sig;
     return out;
 }
 
-PGPSignedMessage & PGPSignedMessage::operator=(const PGPSignedMessage & copy){
-    ASCII_Armor = copy.ASCII_Armor;
+PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){
     Armor_Header = copy.Armor_Header;
     message = copy.message;
-    key = copy.key;
+    sig = copy.sig;
     return *this;
 }

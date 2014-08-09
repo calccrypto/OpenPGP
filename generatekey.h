@@ -35,14 +35,14 @@ THE SOFTWARE.
 #include "PKA/PKA.h"
 #include "cfb.h"
 #include "mpi.h"
-#include "PGP.h"
+#include "PGPKey.h"
 #include "pgptime.h"
 #include "PKCS1.h"
 #include "sign.h"
 #include "sigcalc.h"
 
 // Fills in provided empty keys
-void generate_keys(PGP & public_key, PGP & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);
+void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);
 
 // Given a private key with its packets filled with non PKA data, will try
 // to fill in the following fields of both the public key and private key:
@@ -52,6 +52,6 @@ void generate_keys(PGP & public_key, PGP & private_key, const std::string & pass
 //  key id (optional)
 //
 // All other fields should be filled by the user
-void add_key_values(PGP & pub, PGP & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 2048, const unsigned int subkey_size = 2048);
+void add_key_values(PGPPublicKey & pub, PGPSecretKey & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 2048, const unsigned int subkey_size = 2048);
 
 #endif

@@ -1,4 +1,4 @@
-# OpenPGP executable Makefile
+# OpenPGP commandline Makefile
 CXX?=g++
 LFLAGS=-lOpenPGP -lgmp -lgmpxx -lbz2 -lz -L..
 CFLAGS=-std=c++11 -Wall
