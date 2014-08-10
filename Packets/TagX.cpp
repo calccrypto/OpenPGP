@@ -16,7 +16,7 @@ void TagX::read(std::string & data){
 }
 
 std::string TagX::show() const{
-    return "    " + hexlify(stream);
+    return "    " + hexlify(stream) + "\n";
 }
 std::string TagX::raw() const{
     return stream;

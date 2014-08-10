@@ -122,7 +122,7 @@ const std::vector <std::string> commands = {
 
     "verify-message public_key signature_file",                             // verify detached signature
 
-    "verify-key signer_key_file key_file",                                  // verify signature
+    "verify-key signer_key_file signee_key_file",                           // verify signature
 };
 
 // simple stringstream to option + value
@@ -591,24 +591,24 @@ bool parse_command(std::string & input){
 
             PGPPublicKey pub(k);
             PGPMessage message(m);
-            std::cout << "The data on '" << message_file << "' was" << (verify_message(pub, message)?"": " not") << " signed by the key " << pub << std::endl;
+            std::cout << "The data in '" << message_file << "' was" << (verify_message(pub, message)?"": " not") << " signed by the key " << pub << std::endl;
         }
         else if (cmd == "verify-key"){
-            std::string key_file, signer_file;
-            if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
+            std::string signer_file, signee_file;
+            if (!(tokens >> signer_file >> signee_file) || (signer_file == "") || (signee_file == "")){
                 throw std::runtime_error("Syntax: " + commands[18]);
             }
-            std::ifstream k(key_file.c_str(), std::ios::binary);
-            if (!k){
-                throw std::runtime_error("Error: Key file '" + key_file + "' not opened.");
+            std::ifstream signer(signer_file.c_str(), std::ios::binary);
+            if (!signer){
+                throw std::runtime_error("Error: Key file '" + signer_file + "' not opened.");
             }
-            std::ifstream s(signer_file.c_str(), std::ios::binary);
-            if (!s){
-                throw std::runtime_error("Error: Signing Key file '" + signer_file + "' not opened.");
+            std::ifstream signee(signee_file.c_str(), std::ios::binary);
+            if (!signee){
+                throw std::runtime_error("Error: Signing Key file '" + signee_file + "' not opened.");
             }
 
-            PGPPublicKey key(k), signer(s);
-            std::cout << "Key " << key << " was" << std::string(verify_signature(signer, key)?"":" not") << " signed by key " << signer << "." << std::endl;
+            PGPPublicKey signerkey(signer), signeekey(signee);
+            std::cout << "Key " << signee_file << " was" << std::string(verify_signature(signerkey, signeekey)?"":" not") << " signed by key " << signerkey << "." << std::endl;
         }
         else{
             std::cerr << "CommandError: " << cmd << " not defined." << std::endl;

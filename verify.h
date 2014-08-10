@@ -43,11 +43,15 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // Internal functions
+// get the key id
 std::string find_keyid(const Tag2::Ptr & tag2);
-std::vector <PGPMPI> find_matching_pub_key(const std::string & keyid, const PGPPublicKey & key);
+// get the Tag6 signing packet
+Tag6::Ptr find_signingkey(const std::string & keyid, const PGPPublicKey & key);
 
-bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std::vector<PGPMPI> &key, const std::vector<PGPMPI> &signature, const uint8_t h = 0);
-bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <PGPMPI> & key, const uint8_t h = 0);
+// pka_verify with variables only
+bool pka_verify(const std::string & hashed_message, const std::vector <PGPMPI> & signing, const uint8_t hash, const uint8_t pka, const std::vector<PGPMPI> & signature);
+// pka_verify with packets
+bool pka_verify(const std::string & hashed_message, const Tag6::Ptr signing, const Tag2::Ptr & signature);
 // /////////////////
 
 // verify cleartext signature
@@ -61,6 +65,7 @@ bool verify_detachedsig(const PGPPublicKey & pub, std::ifstream & f, const PGPDe
 bool verify_detachedsig(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig);
 
 // verify OpenPGP Messages: signed, encrypted, or compressed files
+bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m); // called by the other verify_message functions
 bool verify_message(const PGPPublicKey & pub, const PGPMessage & m);
 bool verify_message(const PGPSecretKey & pri, const PGPMessage & m);
 

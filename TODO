@@ -3,4 +3,4 @@ Figure out how to read a gpg .sig file
 Make error handling more reasonable (currently everything throws exceptions)
 Move packet titles to Packet::show from PGP::show
 Recalculate signature functions
-"find signing keys" function
+encrypt+sign at once

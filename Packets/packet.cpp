@@ -49,18 +49,15 @@ Packet::Packet(uint8_t tag, uint8_t version) :
     version(version),
     format(true),
     size(0)
-{
-}
+{}
 
 Packet::Packet(uint8_t tag) :
     Packet(tag, 0)
-{
-}
+{}
 
 Packet::Packet() :
     Packet(0)
-{
-}
+{}
 
 Packet::~Packet(){}
 
@@ -110,8 +107,8 @@ Packet::Packet(const Packet &copy) :
     version(copy.version),
     format(copy.format),
     size(copy.size)
-{
-}
+{}
+
 
 Packet & Packet::operator =(const Packet & copy)
 {

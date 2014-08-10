@@ -41,7 +41,7 @@ class Packet{
     protected:
         uint8_t tag;
         uint8_t version;
-        bool format;     // OLD or NEW; only used when "show"ing. "write" will write whatever it set; default is NEW
+        bool format;        // OLD or NEW; only used when "show"ing. "write" will write whatever it set; default is NEW
         unsigned int size;  // This value is only correct when the packet was generated with the read() function
 
         // returns packet data with old format packet length

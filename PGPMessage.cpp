@@ -155,7 +155,7 @@ const bool PGPMessage::match(const Token & t) const{
 
     // get list of packets and convert them to Token
     std::list <Token> s;
-    for(const Packet::Ptr & p : packets){
+    for(Packet::Ptr const & p : packets){
         Token push;
         switch(p -> get_tag()){
             case 8:
@@ -183,7 +183,7 @@ const bool PGPMessage::match(const Token & t) const{
                 push = SP;
                 break;
             default:
-                throw std::runtime_error("Error: Non-Message packet found.");
+                throw std::runtime_error("Error: Non-Message packet found");
                 // return false;
                 break;
         }

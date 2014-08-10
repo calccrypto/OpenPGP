@@ -308,7 +308,7 @@ PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec):
     Armor_Header = sec.get_Armor_Header();
     
     // clone packets; convert secret packets into public ones
-    for(const Packet::Ptr & p : sec.get_packets()){
+    for(Packet::Ptr const & p : sec.get_packets()){
         switch (p -> get_tag()){
             case 5:
             {

@@ -71,14 +71,14 @@ void PGP::read(std::string & data){
 
     // no ASCII Armor header found
     if (x > 6){
-        std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw file data." << std::endl;
+        //std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw file data." << std::endl;
         read_raw(ori);
         return;
     }
 
-    // Signed message
+    // Cleartext Signature Framework
     if (x == 6){
-        throw std::runtime_error("Error: Data contains message section. Use PGPMessage to parse this data.");
+        throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
     }
 
     if (ASCII_Armor != 255){ // if an ASCII Armor header was set (by a child class) 

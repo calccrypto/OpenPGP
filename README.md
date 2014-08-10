@@ -53,17 +53,21 @@ Simply #include whatever functions needed:
     sign           - sign.h
     verify         - verify.h
 
-Multiple classes inherit from the base class PGP in order 
+Multiple classes inherit from the base class PGP in order
 to make differentiating PGP block types better in code.
-    PGP - base class; use if PGP data type is not known
-    PGPDetachedSignature - detached signatures for files
-    PGPKey - base class for OpenPGP key types
-    PGPPublicKey - holds public keys; inherits PGPKey
-    PGPSecretKey - holds private keys; inherits PGPKey
-    PGPMessage - holds OpenPGP messages
-    
-PGPCleartextSignature does not inherit from PGP.
-    
+    PGP                     - base class; use if PGP data type is not known
+    PGPDetachedSignature    - detached signatures for files
+    PGPKey                  - base class for OpenPGP key types
+    PGPPublicKey            - holds public keys; inherits PGPKey
+    PGPSecretKey            - holds private keys; inherits PGPKey
+    PGPMessage              - holds OpenPGP messages
+
+All these different types are able to read in any PGP data, but
+will cause problems when used.
+
+PGPCleartextSignature does not inherit from PGP and cannot
+read non-Cleartext Signature data.
+
 The exec/main.cpp file provides a simple command line interface,
 which can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
@@ -88,7 +92,7 @@ All data structures have some standard functions:
 
     Ptr   - a typedef for std::shared_ptr <T>, where
             T is the class each typdef is found in.
-            
+
 Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
@@ -98,7 +102,7 @@ Notes:
     Sometimes, there are excerpts from RFC 4880 in the code.
     Most of those excerpts are not the full text of the sections.
     Please refer to the RFC for the full text.
-    
+
     Keyrings were not implemented. Rather, keys are read
     from the directory used as arguments to functions.
 
