@@ -1,24 +1,22 @@
 #include "decrypt.h"
 
-Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid){
-    if (k.get_ASCII_Armor() == 2){
-        std::vector <Packet::Ptr> packets = k.get_packets();
-        for(Packet::Ptr const & p : packets){
-            if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
-                std::string data = p -> raw();
-                Tag5::Ptr key = std::make_shared<Tag5>(data);
-                if ( key->get_public_ptr()->get_keyid() != keyid ){
-                    continue;
-                }
-                // make sure key has signing material
-                if ((key -> get_pka() == 1) || // RSA
-                    (key -> get_pka() == 2) || // RSA
-                    (key -> get_pka() == 16)){ // ElGamal
-                        return key;
-                }
+Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
+    std::vector <Packet::Ptr> packets = k.get_packets();
+    for(Packet::Ptr const & p : packets){
+        if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
+            std::string data = p -> raw();
+            Tag5::Ptr key = std::make_shared<Tag5>(data);
+            if ( key->get_public_ptr()->get_keyid() != keyid ){
+                continue;
+            }
+            // make sure key has signing material
+            if ((key -> get_pka() == 1) || // RSA
+                (key -> get_pka() == 2) || // RSA
+                (key -> get_pka() == 16)){ // ElGamal
+                    return key;
             }
         }
-    }
+    }    
     return Tag5::Ptr();
 }
 

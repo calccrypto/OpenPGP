@@ -28,8 +28,10 @@ THE SOFTWARE.
 
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
@@ -37,6 +39,7 @@ THE SOFTWARE.
 #include "PGPKey.h"
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
+#include "PGPMessage.h"
 #include "sigcalc.h"
 
 // Internal functions
@@ -47,20 +50,25 @@ bool pka_verify(const std::string & hashed_message, const uint8_t pka, const std
 bool pka_verify(const std::string & hashed_message, const Tag2::Ptr & tag2, const std::vector <PGPMPI> & key, const uint8_t h = 0);
 // /////////////////
 
-bool verify_file(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_file(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_file(const PGPPublicKey & pub, std::ifstream & f, const PGPDetachedSignature & sig);
-bool verify_file(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig);
-
 // verify cleartext signature
 bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message);
 bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message);
+
+// verify detached signatures
+bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPPublicKey & pub, std::ifstream & f, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig);
+
+// verify OpenPGP Messages: signed, encrypted, or compressed files
+bool verify_message(const PGPPublicKey & pub, const PGPMessage & m);
+bool verify_message(const PGPSecretKey & pri, const PGPMessage & m);
 
 // verify signature on key
 bool verify_signature(const PGPPublicKey & pub, const PGPPublicKey & sig);
 bool verify_signature(const PGPSecretKey & pri, const PGPPublicKey & sig);
 
-// verifiy revocation certificate
+// verify revocation certificate
 bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);
 bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev);
 bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev);

@@ -34,7 +34,7 @@ class Tag7 : public Tag5{
         typedef std::shared_ptr<Tag7> Ptr;
 
         Tag7();
-        Tag7(const Tag7 & tag7);
+        Tag7(const Tag7 & copy);
         Tag7(std::string & data);
         ~Tag7();
 

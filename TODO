@@ -1,3 +1,6 @@
 Find PGP keys with formats/packets I have never seen before
 Figure out how to read a gpg .sig file
 Make error handling more reasonable (currently everything throws exceptions)
+Move packet titles to Packet::show from PGP::show
+Recalculate signature functions
+"find signing keys" function

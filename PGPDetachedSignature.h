@@ -48,8 +48,8 @@ class PGPDetachedSignature : public PGP {
         PGPDetachedSignature(std::ifstream & f);
         ~PGPDetachedSignature();
 
+        bool meaningful() const; // whether or not data matches Detached Signature format
+        
         PGP::Ptr clone() const;
-
-        bool meaningful() const;
 };
 #endif

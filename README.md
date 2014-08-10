@@ -53,9 +53,9 @@ Simply #include whatever functions needed:
     sign           - sign.h
     verify         - verify.h
 
-Multiple classes inherit from the abstract base class PGP in
-order to make differentiating PGP block types better in code.
-    PGP - abstract base class
+Multiple classes inherit from the base class PGP in order 
+to make differentiating PGP block types better in code.
+    PGP - base class; use if PGP data type is not known
     PGPDetachedSignature - detached signatures for files
     PGPKey - base class for OpenPGP key types
     PGPPublicKey - holds public keys; inherits PGPKey

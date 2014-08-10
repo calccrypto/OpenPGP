@@ -40,7 +40,7 @@ class Tag3 : public Packet{
         typedef std::shared_ptr<Tag3> Ptr;
 
         Tag3();
-        Tag3(const Tag3 & tag3);
+        Tag3(const Tag3 & copy);
         Tag3(std::string & data);
         ~Tag3();
         void read(std::string & data);

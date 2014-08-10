@@ -57,7 +57,7 @@ class Tag2 : public Packet{
         typedef std::shared_ptr<Tag2> Ptr;
 
         Tag2();
-        Tag2(const Tag2 & tag2);
+        Tag2(const Tag2 & copy);
         Tag2(std::string & data);
         ~Tag2();
         void read(std::string & data);

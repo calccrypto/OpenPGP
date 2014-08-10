@@ -67,26 +67,22 @@ class PGP{
         std::string raw(uint8_t header = 0) const;                             // write packets only; header is for writing default (0), old (1) or new (2) header formats
         std::string write(uint8_t header = 0) const;                           // output with ASCII Armor and converted to Radix64
 
+        // Accessors
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;
         std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
         std::vector <Packet::Ptr> get_packets() const;                         // get copy of all packet pointers
         std::vector <Packet::Ptr> get_packets_clone() const;                   // clone all packets
 
+        // Modifiers
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header);
         void set_packets(const std::vector <Packet::Ptr> & p);
 
-        std::string keyid() const;                                             // keyid that is searched for on keyservers
-        std::string list_keys() const;                                         // output is copied from gpg --list-keys; only makes sense for keys; other types output empty strings
-        
-        virtual bool meaningful() const = 0;                                   // check if packet sequence is meaningful and correct
-        
+        virtual bool meaningful() const;                                       // check if packet sequence is meaningful and correct; do not call this one
+
         PGP & operator=(const PGP & copy);                                     // get deep copy object
         virtual Ptr clone() const = 0;                                         // get deep copy pointer
 };
-
-// Display key id of primary key
-std::ostream & operator<<(std::ostream & stream, const PGP & pgp);
 #endif

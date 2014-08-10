@@ -700,7 +700,7 @@ TEST(PGPTest, test_gpg_clearsign) {
 
     EXPECT_EQ(pgp.get_message(), "The magic words are squeamish ossifrage");
 
-    auto key = pgp.get_key();
+    auto key = pgp.get_sig();
     auto packets = key.get_packets();
 
     EXPECT_EQ(packets.size(), 1);

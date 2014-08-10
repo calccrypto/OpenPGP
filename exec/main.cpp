@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 #include "../decrypt.h"                 // decrypt stuff
 #include "../encrypt.h"                 // encrypt stuff
-#include "../generatekey.h"             // generate OpenPGP keys    
+#include "../generatekey.h"             // generate OpenPGP keys
 #include "../revoke.h"                  // revoke OpenPGP keys
 #include "../sign.h"                    // sign stuff
 #include "../verify.h"                  // verify signatures
@@ -103,22 +103,24 @@ const std::vector <std::string> commands = {
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
 
-    "sign-cleartext private_key passphrase data_file [options]\n"             // sign a string in a file
+    "sign-cleartext private_key passphrase data_file [options]\n"           // sign a string in a file
     "        options:\n"
     "            -o output name",                                           // filename; default stdout
-    
+
     "sign-file private_key passphrase data_file [options]\n"                // sign a file
     "        options:\n"
     "            -o output name",                                           // filename; default stdout
 
-    "sign-key signer passphrase data_file\n"                                   // sign a key
+    "sign-key signer passphrase data_file\n"                                // sign a key
     "        options:\n"
     "            -o output name\n"                                          // filename; default stdout
     "            -c certification level",                                   // 0x10 - 0x13; default 0x13 (without "0x")
 
-    "verify-file public_key data_file signature_file",                      // verify detached signature
+    "verify-clearsign public_key data_file",                                // verify cleartext signature
 
-    "verify-message public_key data_file",                                  // verify signed message
+    "verify-detach public_key data_file signature_file",                    // verify detached signature
+
+    "verify-message public_key signature_file",                             // verify detached signature
 
     "verify-key signer_key_file key_file",                                  // verify signature
 };
@@ -135,7 +137,7 @@ void parse_options(std::stringstream & tokens, Options & options){
 void output(const std::string & data, const std::string & filename = ""){
     if (filename != ""){
         try{
-            std::ofstream out(filename.c_str());
+            std::ofstream out(filename.c_str(), std::ios::binary);
             if (!out){
                 throw std::runtime_error("Error: File " + filename + " could not be opened.");
             }
@@ -157,10 +159,10 @@ bool parse_command(std::string & input){
         std::stringstream tokens(input);
         std::string cmd; tokens >> cmd;
         if (cmd == ""){
-            return 1;
+            return true;
         }
         else if ((cmd == "exit") || (cmd == "quit")){
-            return 0;
+            return false;
         }
         else if ((cmd == "help") || (cmd == "?")){
             std::string which;
@@ -200,11 +202,11 @@ bool parse_command(std::string & input){
             std::cout << "Generate Revocation Certificate ";
             PGPPublicKey rev = revoke_primary_key_cert_key(pri, passphrase, 1, "Test Key");
             std::cout << "Passed" << std::endl;
-            
+
             std::cout << "Show Keys (sent into null stream) ";
             null_out << pub.show() << pri.show();
             std::cout << "Passed" << std::endl;
-            
+
             std::cout << "Encrypt Message ";
             PGPMessage en = encrypt(pub, message);
             std::cout << "Passed" << std::endl;
@@ -244,9 +246,9 @@ bool parse_command(std::string & input){
             if (!(tokens >> file_name) || (file_name == "")){
                 throw std::runtime_error("Syntax: " + commands[3]);
             }
-            std::ifstream f(file_name.c_str());
+            std::ifstream f(file_name.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("Error: File " + file_name + " not opened.");
+                throw std::runtime_error("Error: File '" + file_name + "' not opened.");
             }
 
             PGPPublicKey k(f);
@@ -261,9 +263,9 @@ bool parse_command(std::string & input){
                 return 1;
             }
 
-            std::ifstream f(file_name.c_str());
+            std::ifstream f(file_name.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("Error: File " + file_name + " not opened.");
+                throw std::runtime_error("Error: File '" + file_name + "' not opened.");
             }
             if ((type == "-k") || (type == "-K")){
                 PGPKey key(f);
@@ -304,9 +306,9 @@ bool parse_command(std::string & input){
             if (!(tokens >> pri_file >> passphrase) || (pri_file == "")){
                 throw std::runtime_error("Syntax: " + commands[6]);
             }
-            std::ifstream f(pri_file.c_str());
+            std::ifstream f(pri_file.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("Error: File " + pri_file + " not opened.");
+                throw std::runtime_error("Error: File '" + pri_file + "' not opened.");
             }
 
             Options options;
@@ -334,12 +336,12 @@ bool parse_command(std::string & input){
 
             std::ifstream d(data_file.c_str(), std::ios::binary);
             if (!d){
-                throw std::runtime_error("Error: File " + data_file + " not opened.");
+                throw std::runtime_error("Error: File '" + data_file + "' not opened.");
             }
 
-            std::ifstream k(pub_file.c_str());
+            std::ifstream k(pub_file.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("Error: File " + pub_file + " not opened.");
+                throw std::runtime_error("Error: File '" + pub_file + "' not opened.");
             }
 
             std::stringstream s;
@@ -358,14 +360,14 @@ bool parse_command(std::string & input){
                 throw std::runtime_error("Syntax: " + commands[8]);
             }
 
-            std::ifstream k(pri.c_str());
+            std::ifstream k(pri.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("Error: File " + pri + " not opened.");
+                throw std::runtime_error("Error: File '" + pri + "' not opened.");
             }
 
-            std::ifstream f(data_file.c_str());
+            std::ifstream f(data_file.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("Error: File " + data_file + " not opened.");
+                throw std::runtime_error("Error: File '" + data_file + "' not opened.");
             }
 
             Options options;
@@ -385,13 +387,13 @@ bool parse_command(std::string & input){
             if (!(tokens >> target_file >> rev_cert_file) || (target_file == "") || (rev_cert_file == "")){
                 throw std::runtime_error("Syntax: " + commands[9]);
             }
-            std::ifstream t(target_file.c_str());
+            std::ifstream t(target_file.c_str(), std::ios::binary);
             if (!t){
-                throw std::runtime_error("IOError: File " + target_file + " not opened.");
+                throw std::runtime_error("IOError: File '" + target_file + "' not opened.");
             }
-            std::ifstream cert(rev_cert_file.c_str());
+            std::ifstream cert(rev_cert_file.c_str(), std::ios::binary);
             if (!cert){
-                throw std::runtime_error("IOError: File " + rev_cert_file + " not opened.");
+                throw std::runtime_error("IOError: File '" + rev_cert_file + "' not opened.");
             }
 
             Options options;
@@ -408,7 +410,7 @@ bool parse_command(std::string & input){
                 throw std::runtime_error("Syntax: " + commands[10]);
             }
 
-            std::ifstream f(pri.c_str());
+            std::ifstream f(pri.c_str(), std::ios::binary);
             if (!f){
                 throw std::runtime_error("Error: Could not open private key file.");
             }
@@ -428,9 +430,9 @@ bool parse_command(std::string & input){
                 throw std::runtime_error("Syntax: " + commands[11]);
             }
 
-            std::ifstream f(pri.c_str());
+            std::ifstream f(pri.c_str(), std::ios::binary);
             if (!f){
-                std::cerr << "Error: Could not open private key file." << std::endl;
+                throw std::runtime_error("IOError: File '" + pri + "' not opened.");
                 return 1;
             }
 
@@ -461,20 +463,20 @@ bool parse_command(std::string & input){
         else if (cmd == "sign-cleartext"){
             std::string pri, passphrase, data_file;
             if (!(tokens >> pri >> passphrase >> data_file) || (pri == "")){
-                throw std::runtime_error("Syntax: " + commands[14]);
+                throw std::runtime_error("Syntax: " + commands[12]);
             }
 
-            std::ifstream d(data_file.c_str());
+            std::ifstream d(data_file.c_str(), std::ios::binary);
             if (!d){
-                std::cerr << "IOError: File " << data_file << " not opened." << std::endl;
+                std::cerr << "IOError: File '" << data_file << "' not opened." << std::endl;
             }
             std::stringstream s;
             s << d.rdbuf();
             std::string text = s.str();
 
-            std::ifstream k(pri.c_str());
+            std::ifstream k(pri.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("IOError: File " + pri + " not opened.");
+                throw std::runtime_error("IOError: File '" + pri + "' not opened.");
             }
 
             Options options;
@@ -487,16 +489,16 @@ bool parse_command(std::string & input){
         else if (cmd == "sign-file"){
             std::string pri, passphrase, filename;
             if (!(tokens >> pri >> passphrase >> filename) || (filename == "") || (pri == "")){
-                throw std::runtime_error("Syntax: " + commands[12]);
+                throw std::runtime_error("Syntax: " + commands[13]);
             }
 
-            std::ifstream k(pri.c_str());
+            std::ifstream k(pri.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("IOError: File " + pri + " not opened.");
+                throw std::runtime_error("IOError: File '" + pri + "' not opened.");
             }
             std::ifstream f(filename.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("IOError: file " + filename + " could not be created.");
+                throw std::runtime_error("IOError: file '" + filename + "' could not be created.");
             }
 
             Options options;
@@ -509,16 +511,16 @@ bool parse_command(std::string & input){
         else if (cmd == "sign-key"){
             std::string signer_filename, passphrase, signee_filename;
             if (!(tokens >> signer_filename >> passphrase >> signee_filename) || (signer_filename == "") || (signee_filename == "")){
-                throw std::runtime_error("Syntax: " + commands[13]);
+                throw std::runtime_error("Syntax: " + commands[14]);
             }
 
-            std::ifstream signee_file(signee_filename.c_str());
+            std::ifstream signee_file(signee_filename.c_str(), std::ios::binary);
             if (!signee_file){
-                throw std::runtime_error("IOError: File " + signee_filename + " not opened.");
+                throw std::runtime_error("IOError: File '" + signee_filename + "' not opened.");
             }
-            std::ifstream signer_file(signer_filename.c_str());
+            std::ifstream signer_file(signer_filename.c_str(), std::ios::binary);
             if (!signer_file){
-                throw std::runtime_error("IOError: File " + signer_filename + " not opened.");
+                throw std::runtime_error("IOError: File '" + signer_filename + "' not opened.");
             }
 
             Options options;
@@ -530,61 +532,79 @@ bool parse_command(std::string & input){
             PGPSecretKey signer(signer_file);
             output(sign_primary_key(signer, passphrase, signee, mpitoulong(hextompi(options["-c"]))).write(), options["-o"]);
         }
-        else if (cmd == "verify-file"){
-            std::string pub, filename, signame;
-            if (!(tokens >> pub >> filename >> signame) || (pub == "") || (filename == "") || (signame == "")){
-                throw std::runtime_error("Syntax: " + commands[15]);
-            }
-
-            std::ifstream f(filename.c_str(), std::ios::binary);
-            if (!f){
-                throw std::runtime_error("Error: File " + filename + " not opened.");
-            }
-            std::ifstream s(signame.c_str());
-            if (!s){
-                throw std::runtime_error("Error: File " + signame + " not opened.");
-                return 1;
-            }
-            std::ifstream k(pub.c_str());
-            if (!k){
-                throw std::runtime_error("Error: File " + pub + " not opened.");
-            }
-
-            PGPPublicKey key(k);
-            PGPDetachedSignature sig(s);
-            std::cout << "File " << filename << " was" << (verify_file(key, f, sig)?"":" not") << " signed by key " << key << "." << std::endl;
-        }
-        else if (cmd == "verify-message"){
+        else if (cmd == "verify-clearsign"){
             std::string pub, data;
             if (!(tokens >> pub >> data) || (pub == "") || (data == "")){
-                throw std::runtime_error("Syntax: " + commands[16]);
+                throw std::runtime_error("Syntax: " + commands[15]);
             }
-            std::ifstream m(data.c_str());
+            std::ifstream m(data.c_str(), std::ios::binary);
             if (!m){
-                throw std::runtime_error("Error: File " + data + " not opened.");
+                throw std::runtime_error("Error: File '" + data + "' not opened.");
             }
-            std::ifstream k(pub.c_str());
+            std::ifstream k(pub.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("Error: File " + pub + " not opened.");
+                throw std::runtime_error("Error: File '" + pub + "' not opened.");
             }
 
             PGPPublicKey key(k);
             PGPCleartextSignature message(m);
             std::cout << "This message was" << (verify_cleartext_signature(key, message)?"":" not") << " signed by this key." << std::endl;
         }
-        else if (cmd == "verify-key"){
-            std::string key_file, signer_file;
-            if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
+        else if (cmd == "verify-detach"){
+            std::string pub, filename, signame;
+            if (!(tokens >> pub >> filename >> signame) || (pub == "") || (filename == "") || (signame == "")){
+                throw std::runtime_error("Syntax: " + commands[16]);
+            }
+
+            std::ifstream f(filename.c_str(), std::ios::binary);
+            if (!f){
+                throw std::runtime_error("Error: Data file '" + filename + "' not opened.");
+            }
+            std::ifstream s(signame.c_str(), std::ios::binary);
+            if (!s){
+                throw std::runtime_error("Error: Signature file '" + signame + "' not opened.");
+                return 1;
+            }
+            std::ifstream k(pub.c_str(), std::ios::binary);
+            if (!k){
+                throw std::runtime_error("Error: Key file '" + pub + "' not opened.");
+            }
+
+            PGPPublicKey key(k);
+            PGPDetachedSignature sig(s);
+            std::cout << "File '" << filename << "' was" << (verify_detachedsig(key, f, sig)?"":" not") << " signed by key " << key << "." << std::endl;
+        }
+        else if (cmd == "verify-message"){
+            std::string key_file, message_file;
+            if (!(tokens >> key_file >> message_file) || (key_file == "") || (message_file == "")){
                 throw std::runtime_error("Syntax: " + commands[17]);
             }
 
-            std::ifstream k(key_file.c_str());
+            std::ifstream k(key_file.c_str(), std::ios::binary);
             if (!k){
-                throw std::runtime_error("Error: File " + key_file + " not opened.");
+                throw std::runtime_error("Error: Key file '" + key_file + "' not opened.");
             }
-            std::ifstream s(signer_file.c_str());
+            std::ifstream m(message_file.c_str(), std::ios::binary);
+            if (!m){
+                throw std::runtime_error("Error: Message file '" + message_file + "' not opened.");
+            }
+
+            PGPPublicKey pub(k);
+            PGPMessage message(m);
+            std::cout << "The data on '" << message_file << "' was" << (verify_message(pub, message)?"": " not") << " signed by the key " << pub << std::endl;
+        }
+        else if (cmd == "verify-key"){
+            std::string key_file, signer_file;
+            if (!(tokens >> key_file >> signer_file) || (key_file == "") || (signer_file == "")){
+                throw std::runtime_error("Syntax: " + commands[18]);
+            }
+            std::ifstream k(key_file.c_str(), std::ios::binary);
+            if (!k){
+                throw std::runtime_error("Error: Key file '" + key_file + "' not opened.");
+            }
+            std::ifstream s(signer_file.c_str(), std::ios::binary);
             if (!s){
-                throw std::runtime_error("Error: File " + signer_file + " not opened.");
+                throw std::runtime_error("Error: Signing Key file '" + signer_file + "' not opened.");
             }
 
             PGPPublicKey key(k), signer(s);
@@ -597,7 +617,7 @@ bool parse_command(std::string & input){
     catch (const std::exception & e){
         std::cerr << e.what() << std::endl;
     }
-    return 1;
+    return true;
 }
 
 int main(int argc, char * argv[]){

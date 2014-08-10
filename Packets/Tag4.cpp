@@ -5,7 +5,17 @@ Tag4::Tag4() :
     type(), hash(), pka(),
     keyid(),
     nested()
+{}
+
+Tag4::Tag4(const Tag4 & copy) :
+    Tag4()
 {
+    version = copy.version;
+    type = copy.tag;
+    hash = copy.hash;
+    pka = copy.pka;
+    keyid = copy.keyid;
+    nested = copy.nested;
 }
 
 Tag4::Tag4(std::string & data) :
@@ -31,7 +41,7 @@ std::string Tag4::show() const{
         << "    Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
         << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
         << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-        << "    KeyID: " << keyid << "\n"
+        << "    KeyID: " << hexlify(keyid) << "\n"
         << "    Nested: " << static_cast <bool> (nested) << "\n";
     return out.str();
 }

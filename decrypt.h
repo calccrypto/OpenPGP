@@ -42,7 +42,7 @@ THE SOFTWARE.
 #include "PKCS1.h"
 
 // used internally
-Tag5::Ptr find_decrypting_key(const PGP & k, const std::string &keyid);
+Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid);
 std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub = {});
 std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
 

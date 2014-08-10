@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include "PGP.h"
 
 class PGPMessage : public PGP {
-    private:
         /*
         11.3. OpenPGP Messages
 
@@ -63,6 +62,7 @@ class PGPMessage : public PGP {
             Message.
         */
 
+    public:
         enum Token { // Rules
                      OPENPGPMESSAGE,
                      ENCRYPTEDMESSAGE,
@@ -82,32 +82,36 @@ class PGPMessage : public PGP {
                      SEDP,       // Symmetrically Encrypted Data Packet (Tag 9)
                      SEIPDP,     // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
                      OPSP,       // One-Pass Signature Packet (Tag 4)
-                     SP          // Signature Packet (Tag 2)
+                     SP,         // Signature Packet (Tag 2)
+
+                     NONE        // garbage value
                 };
 
-        // Reverse Rules
-        const bool OpenPGPMessage(std::list <Token>::iterator it) const;
-        const bool CompressedMessage(std::list <Token>::iterator it) const;
-        const bool LiteralMessage(std::list <Token>::iterator it) const;
-        const bool EncryptedSessionKey(std::list <Token>::iterator it) const;
-        const bool ESKSequence(std::list <Token>::iterator it) const;
-        const bool EncryptedData(std::list <Token>::iterator it) const;
-        const bool EncryptedMessage(std::list <Token>::iterator it) const;
-        const bool OnePassSignedMessage(std::list <Token>::iterator it) const;
-        const bool SignedMessage(std::list <Token>::iterator it) const;
+    private:
+        // Reverse Rules (Reduce)
+        const bool OpenPGPMessage       (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool CompressedMessage    (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool LiteralMessage       (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool EncryptedSessionKey  (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool ESKSequence          (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool EncryptedData        (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool EncryptedMessage     (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool OnePassSignedMessage (std::list <Token>::iterator it, std::list <Token> & s) const;
+        const bool SignedMessage        (std::list <Token>::iterator it, std::list <Token> & s) const;
 
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;
-    
+
         PGPMessage();
         PGPMessage(const PGPMessage & copy);
         PGPMessage(std::string & data);
         PGPMessage(std::ifstream & f);
         ~PGPMessage();
 
+        const bool match(const Token & t) const; // check if packet composition matches some part of the OpenPGP Message rule
+        bool meaningful() const;                 // whether or not the data is an OpenPGP Message
+
         PGP::Ptr clone() const;
-        
-        bool meaningful() const;
 };
 
 #endif

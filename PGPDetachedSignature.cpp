@@ -2,28 +2,38 @@
 
 PGPDetachedSignature::PGPDetachedSignature():
     PGP()
-{}
+{
+    ASCII_Armor = 5;
+}
 
 PGPDetachedSignature::PGPDetachedSignature(const PGPDetachedSignature & copy):
     PGP(copy)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 5;
+    }
+}
 
 PGPDetachedSignature::PGPDetachedSignature(std::string & data):
     PGP(data)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 5;
+    }
+}
 
 PGPDetachedSignature::PGPDetachedSignature(std::ifstream & f):
     PGP(f)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 5;
+    }
+}
 
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
 PGP::Ptr PGPDetachedSignature::clone() const{
-    PGPDetachedSignature::Ptr out(new PGPDetachedSignature(*this));
-    // out -> ASCII_Armor = ASCII_Armor;
-    // out -> Armor_Header = Armor_Header;
-    // out -> packets = get_packets_clone();
-    return out;
+    return PGPDetachedSignature::Ptr(new PGPDetachedSignature(*this));
 }
 
 bool PGPDetachedSignature::meaningful() const{

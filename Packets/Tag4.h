@@ -40,6 +40,7 @@ class Tag4 : public Packet{
         typedef std::shared_ptr<Tag4> Ptr;
 
         Tag4();
+        Tag4(const Tag4 & copy);
         Tag4(std::string & data);
         void read(std::string & data);
         std::string show() const;
@@ -56,7 +57,7 @@ class Tag4 : public Packet{
         void set_pka(const uint8_t p);
         void set_keyid(const std::string & k);
         void set_nested(const uint8_t n);
-
+    
         Packet::Ptr clone() const;
 };
 #endif

@@ -115,60 +115,190 @@ PGPKey::PGPKey(std::ifstream & f):
 
 PGPKey::~PGPKey(){}
 
-PGP::Ptr PGPKey::clone() const{
-    return PGPKey::Ptr(new PGPKey(*this));
+std::string PGPKey::keyid() const{
+    for(Packet::Ptr const & p : packets){
+        // find primary key
+        if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
+            std::string data = p -> raw();
+            Tag6 tag6(data);
+            return tag6.get_keyid();
+        }
+    }
+    // if no primary key is found
+    for(Packet::Ptr const & p : packets){
+        // find subkey
+        if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
+            std::string data = p -> raw();
+            Tag6 tag6(data);
+            return tag6.get_keyid();
+        }
+    }
+    throw std::runtime_error("Error: PGP block type is incorrect.");
+    return ""; // should never reach here; mainly just to remove compiler warnings
+}
+
+// output is copied from gpg --list-keys
+std::string PGPKey::list_keys() const{
+    // scan for revoked keys
+    std::map <std::string, std::string> revoked;
+    for(Packet::Ptr const & p : packets){
+        if (p -> get_tag() == 2){
+            std::string raw = p -> raw();
+            Tag2 tag2(raw);
+            if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
+                bool found = false;
+                for(Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
+                    if (s -> get_type() == 16){
+                        raw = s -> raw();
+                        Tag2Sub16 tag2sub16(raw);
+                        revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                        found = true;
+                    }
+                }
+                if (!found){
+                    for(Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
+                        if (s -> get_type() == 16){
+                            raw = s -> raw();
+                            Tag2Sub16 tag2sub16(raw);
+                            revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    std::stringstream out;
+    for(Packet::Ptr const & p : packets){
+        std::string data = p -> raw();
+        switch (p -> get_tag()){
+            case 5: case 6: case 7: case 14:
+                {
+                    Tag6 tag6(data);
+                    std::map <std::string, std::string>::iterator r = revoked.find(tag6.get_keyid());
+                    std::stringstream s;
+                    s << bitsize(tag6.get_mpi()[0]);
+                    out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, ' ')
+                           << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
+                           << hexlify(tag6.get_keyid().substr(4, 4)) << " "
+                           << show_date(tag6.get_time())
+                           << ((r == revoked.end())?std::string(""):(std::string(" [revoked: ") + revoked[tag6.get_keyid()] + std::string("]")))
+                           << "\n";
+                }
+                break;
+            case 13:
+                {
+                    Tag13 tag13(data);
+                    out << "uid                   " << tag13.raw() << "\n";
+                }
+                break;
+            case 17:
+                {
+                    Tag17 tag17(data);
+                    std::vector <Subpacket::Ptr> subpackets = tag17.get_attributes();
+                    for(Subpacket::Ptr s : subpackets){
+                        // since only subpacket type 1 is defined
+                        data = s -> raw();
+                        Tag17Sub1 sub1(data);
+                        out << "att                   [jpeg image of size " << sub1.get_image().size() << "]\n";
+                    }
+                }
+                break;
+            case 2: default:
+                break;
+        }
+    }
+    return out.str();
 }
 
 bool PGPKey::meaningful() const{
     return meaningful(ASCII_Armor);
 }
 
+std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
+    stream << hexlify(pgp.keyid());
+    return stream;
+}
+
+PGP::Ptr PGPKey::clone() const{
+    return PGPKey::Ptr(new PGPKey(*this));
+}
+
 PGPSecretKey::PGPSecretKey():
    PGPKey()
-{}
+{
+    ASCII_Armor = 2;
+}
 
 PGPSecretKey::PGPSecretKey(const PGPSecretKey & copy):
     PGPKey(copy)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 2;
+    }
+}
 
 PGPSecretKey::PGPSecretKey(std::string & data):
     PGPKey(data)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 2;
+    }
+}
 
 PGPSecretKey::PGPSecretKey(std::ifstream & f):
     PGPKey(f)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 2;
+    }
+}
 
 PGPSecretKey::~PGPSecretKey(){}
-
-PGP::Ptr PGPSecretKey::clone() const{
-    return PGPSecretKey::Ptr(new PGPSecretKey(*this));
-}
 
 bool PGPSecretKey::meaningful() const{
     return PGPKey::meaningful(2);
 }
 
+PGP::Ptr PGPSecretKey::clone() const{
+    return PGPSecretKey::Ptr(new PGPSecretKey(*this));
+}
+
+std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
+    stream << hexlify(pgp.keyid());
+    return stream;
+}
+
 PGPPublicKey::PGPPublicKey():
    PGPKey()
-{}
+{
+    ASCII_Armor = 1;
+}
 
 PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy):
     PGPKey(copy)
 {
-    // armored = copy.armored;
-    // ASCII_Armor = copy.ASCII_Armor;
-    // Armor_Header = copy.Armor_Header;
-    // packets = copy.get_packets_clone();
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 1;
+    }
 }
 
 PGPPublicKey::PGPPublicKey(std::string & data):
     PGPKey(data)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 1;
+    }
+}
 
 PGPPublicKey::PGPPublicKey(std::ifstream & f):
     PGPKey(f)
-{}
+{
+    if ((ASCII_Armor == 255) && meaningful()){
+        ASCII_Armor = 1;
+    }
+}
 
 PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec):
     PGPKey()
@@ -203,10 +333,15 @@ PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec):
 
 PGPPublicKey::~PGPPublicKey(){}
 
+bool PGPPublicKey::meaningful() const {
+    return PGPKey::meaningful(1);
+}
+
 PGP::Ptr PGPPublicKey::clone() const{
     return PGPPublicKey::Ptr(new PGPPublicKey(*this));
 }
 
-bool PGPPublicKey::meaningful() const {
-    return PGPKey::meaningful(1);
+std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
+    stream << hexlify(pgp.keyid());
+    return stream;
 }

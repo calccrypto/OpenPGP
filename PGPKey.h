@@ -57,10 +57,14 @@ class PGPKey : public PGP {
         PGPKey(std::ifstream & f);
         ~PGPKey();
 
+        std::string keyid() const;           // keyid that is searched for on keyservers
+        std::string list_keys() const;       // output is copied from gpg --list-keys
+        virtual bool meaningful() const;     // whether or not data matches PGP Transferable Key format
+
         virtual PGP::Ptr clone() const;
-        
-        virtual bool meaningful() const;
 };
+
+std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp);
 
 class PGPSecretKey : public PGPKey {
     public:
@@ -72,10 +76,12 @@ class PGPSecretKey : public PGPKey {
         PGPSecretKey(std::ifstream & f);
         ~PGPSecretKey();
 
-        PGP::Ptr clone() const;
-        
         bool meaningful() const;
+
+        PGP::Ptr clone() const;
 };
+
+std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp);
 
 class PGPPublicKey : public PGPKey {
     public:
@@ -87,11 +93,12 @@ class PGPPublicKey : public PGPKey {
         PGPPublicKey(std::ifstream & f);
         PGPPublicKey(const PGPSecretKey & sec);
         ~PGPPublicKey();
-        
-        PGP::Ptr clone() const;
 
         bool meaningful() const;
+
+        PGP::Ptr clone() const;
 };
 
+std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp);
 
 #endif

@@ -11,8 +11,7 @@ Tag2::Tag2() :
     keyid(),
     hashed_subpackets(),
     unhashed_subpackets()
-{
-}
+{}
 
 Tag2::Tag2(const Tag2 & copy) :
     Packet(copy),
@@ -25,8 +24,7 @@ Tag2::Tag2(const Tag2 & copy) :
     keyid(copy.keyid),
     hashed_subpackets(copy.get_hashed_subpackets_clone()),
     unhashed_subpackets(copy.get_unhashed_subpackets_clone())
-{
-}
+{}
 
 Tag2::Tag2(std::string & data) :
     Tag2()

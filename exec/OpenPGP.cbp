@@ -91,8 +91,14 @@
 		<Unit filename="../Hashes/SHA512_Const.h" />
 		<Unit filename="../PGP.cpp" />
 		<Unit filename="../PGP.h" />
-		<Unit filename="../PGPSignedMessage.cpp" />
-		<Unit filename="../PGPSignedMessage.h" />
+		<Unit filename="../PGPCleartextSignature.cpp" />
+		<Unit filename="../PGPCleartextSignature.h" />
+		<Unit filename="../PGPDetachedSignature.cpp" />
+		<Unit filename="../PGPDetachedSignature.h" />
+		<Unit filename="../PGPKey.cpp" />
+		<Unit filename="../PGPKey.h" />
+		<Unit filename="../PGPMessage.cpp" />
+		<Unit filename="../PGPMessage.h" />
 		<Unit filename="../PKA/DSA.cpp" />
 		<Unit filename="../PKA/DSA.h" />
 		<Unit filename="../PKA/ElGamal.cpp" />
