@@ -44,7 +44,7 @@ class Tag3 : public Packet{
         Tag3(std::string & data);
         ~Tag3();
         void read(std::string & data);
-        std::string show(const uint8_t indent = 0) const;
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
         uint8_t get_sym() const;

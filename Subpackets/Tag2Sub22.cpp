@@ -3,8 +3,7 @@
 Tag2Sub22::Tag2Sub22() :
     Subpacket(22),
     pca()
-{
-}
+{}
 
 Tag2Sub22::Tag2Sub22(std::string & data) :
     Tag2Sub22()
@@ -17,10 +16,11 @@ void Tag2Sub22::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub22::show(const uint8_t indent) const{
+std::string Tag2Sub22::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
     for(unsigned int x = 0; x < pca.size(); x++){
-        out << std::string(indent, ' ') << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
+        out << std::string(tab, ' ') << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
     }
     return out.str();
 }

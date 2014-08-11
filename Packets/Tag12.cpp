@@ -3,8 +3,7 @@
 Tag12::Tag12() :
     Packet(12),
     trust()
-{
-}
+{}
 
 Tag12::Tag12(std::string & data) :
     Tag12()
@@ -17,9 +16,10 @@ void Tag12::read(std::string & data){
     trust = data;
 }
 
-std::string Tag12::show(const uint8_t indent) const{
+std::string Tag12::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent) << std::string(indent, ' ') << "    Data (" << trust.size() << " octets): " << trust << "\n";
+    out << show_title(indents, indent_size) << std::string(tab, ' ') << "    Data (" << trust.size() << " octets): " << trust << "\n";
     return out.str();
 }
 

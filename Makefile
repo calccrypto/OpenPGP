@@ -51,7 +51,7 @@ generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP
 mpi.o: mpi.h mpi.cpp common/includes.h
 	$(CXX) $(CFLAGS) mpi.cpp
 
-PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h Subpackets/subpackets.h consts.h pgptime.h radix64.h
+PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h consts.h pgptime.h radix64.h
 	$(CXX) $(CFLAGS) PGP.cpp
 
 PGPCleartextSignature.o: PGPCleartextSignature.h PGPCleartextSignature.cpp PGP.h PGPDetachedSignature.h

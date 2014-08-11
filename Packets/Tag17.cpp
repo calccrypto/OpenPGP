@@ -36,10 +36,10 @@ void Tag17::read(std::string & data){
     }
 }
 
-std::string Tag17::show(const uint8_t indent) const{
-    std::string out = show_title(indent);
+std::string Tag17::show(const uint8_t indents, const uint8_t indent_size) const{
+    std::string out = show_title(indents, indent_size);
     for(Subpacket::Ptr const & a : attributes){
-        out += a -> show(indent) + "\n";
+        out += a -> show(indents, indent_size) + "\n";
     }
     return out;
 }

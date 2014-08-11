@@ -3,8 +3,7 @@
 Tag2Sub11::Tag2Sub11() :
     Subpacket(11),
     psa()
-{
-}
+{}
 
 Tag2Sub11::Tag2Sub11(std::string & data) :
     Tag2Sub11()
@@ -17,10 +16,11 @@ void Tag2Sub11::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub11::show(const uint8_t indent) const{
+std::string Tag2Sub11::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
     for(unsigned int x = 0; x < psa.size(); x++){
-        out << std::string(indent, ' ') << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
+        out << std::string(tab, ' ') << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
     }
     return out.str();
 }

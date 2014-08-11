@@ -13,8 +13,9 @@ void TagX::read(std::string & data){
     stream = data;
 }
 
-std::string TagX::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + show_title(indent) + std::string(indent + 4, ' ') + hexlify(stream) + "\n";
+std::string TagX::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
+    return std::string(tab, ' ') + show_title(indents, indent_size) + std::string(tab + indent_size, ' ') + hexlify(stream) + "\n";
 }
 
 std::string TagX::raw() const{

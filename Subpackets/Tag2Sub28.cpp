@@ -3,8 +3,7 @@
 Tag2Sub28::Tag2Sub28() :
     Subpacket(28, 0),
     signer()
-{
-}
+{}
 
 Tag2Sub28::Tag2Sub28(std::string & data) :
     Tag2Sub28()
@@ -17,8 +16,8 @@ void Tag2Sub28::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub28::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + "            ID: " + signer + "\n";
+std::string Tag2Sub28::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + "            ID: " + signer + "\n";
 }
 
 std::string Tag2Sub28::raw() const{

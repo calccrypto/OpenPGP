@@ -16,8 +16,7 @@ std::string Subpacket::write_subpacket(const std::string & data) const{
 Subpacket::Subpacket(uint8_t type, unsigned int size) :
     type(type),
     size(size)
-{
-}
+{}
 
 Subpacket::~Subpacket(){}
 

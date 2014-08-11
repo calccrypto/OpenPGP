@@ -3,8 +3,7 @@
 Tag2Sub7::Tag2Sub7() :
     Subpacket(7, 1),
     revocable()
-{
-}
+{}
 
 Tag2Sub7::Tag2Sub7(std::string & data) :
     Tag2Sub7()
@@ -16,8 +15,8 @@ void Tag2Sub7::read(std::string & data){
     revocable = data[0];
 }
 
-std::string Tag2Sub7::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + std::string("            Revocable: ") + (revocable?"True":"False") + "\n";
+std::string Tag2Sub7::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + std::string("            Revocable: ") + (revocable?"True":"False") + "\n";
 }
 
 std::string Tag2Sub7::raw() const{

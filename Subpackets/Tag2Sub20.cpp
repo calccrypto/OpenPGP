@@ -5,8 +5,7 @@ Tag2Sub20::Tag2Sub20() :
     flags(),
     mlen(), nlen(),
     m(), n()
-{
-}
+{}
 
 Tag2Sub20::Tag2Sub20(std::string & data) :
     Tag2Sub20()
@@ -25,14 +24,15 @@ void Tag2Sub20::read(std::string & data){
     size = mlen + nlen + 4;
 }
 
-std::string Tag2Sub20::show(const uint8_t indent) const{
+std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
     for(unsigned int x = 0; x < 4; x++){
-        out << std::string(indent, ' ') << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
+        out << std::string(tab, ' ') << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
     }
-    out << std::string(indent, ' ') << "\n"
-        << std::string(indent, ' ') << "            Name: " << m << "\n"
-        << std::string(indent, ' ') << "            Value: " << n << "\n";
+    out << std::string(tab, ' ') << "\n"
+        << std::string(tab, ' ') << "            Name: " << m << "\n"
+        << std::string(tab, ' ') << "            Value: " << n << "\n";
     return out.str();
 }
 std::string Tag2Sub20::raw() const{

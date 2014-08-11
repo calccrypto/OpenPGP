@@ -191,10 +191,10 @@ void PGP::read_raw(std::string & data){
     armored = false;
 }
 
-std::string PGP::show(const uint8_t indent) const{
+std::string PGP::show(const uint8_t indents, const uint8_t indent_size) const{
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
-        out << p -> show(indent) << "\n";
+        out << p -> show(indents, indent_size) << "\n";
     }
     return out.str();
 }

@@ -4,8 +4,7 @@ Tag2Sub29::Tag2Sub29() :
     Subpacket(29),
     code(),
     reason()
-{
-}
+{}
 
 Tag2Sub29::Tag2Sub29(std::string & data) :
     Tag2Sub29()
@@ -19,11 +18,12 @@ void Tag2Sub29::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub29::show(const uint8_t indent) const{
+std::string Tag2Sub29::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << "            Reason " << static_cast <unsigned int> (code) << " - " << Revoke.at(code) << "\n";
+    out << std::string(tab, ' ') << "            Reason " << static_cast <unsigned int> (code) << " - " << Revoke.at(code) << "\n";
     if (code){
-        out << std::string(indent, ' ') << "            Comment - " << reason << "\n";
+        out << std::string(tab, ' ') << "            Comment - " << reason << "\n";
     }
     return out.str();
 }

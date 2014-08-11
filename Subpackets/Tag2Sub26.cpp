@@ -3,8 +3,7 @@
 Tag2Sub26::Tag2Sub26() :
     Subpacket(26),
     uri()
-{
-}
+{}
 
 Tag2Sub26::Tag2Sub26(std::string & data) :
     Tag2Sub26()
@@ -17,8 +16,8 @@ void Tag2Sub26::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub26::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + "            Policy - " + uri;
+std::string Tag2Sub26::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + "            Policy - " + uri;
 }
 
 std::string Tag2Sub26::raw() const{

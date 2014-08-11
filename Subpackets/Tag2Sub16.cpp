@@ -3,8 +3,7 @@
 Tag2Sub16::Tag2Sub16() :
     Subpacket(16, 8),
     keyid()
-{
-}
+{}
 
 Tag2Sub16::Tag2Sub16(std::string & data) :
     Tag2Sub16()
@@ -16,8 +15,8 @@ void Tag2Sub16::read(std::string & data){
     keyid = data;
 }
 
-std::string Tag2Sub16::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + "            Key ID: " + hexlify(keyid) + "\n";
+std::string Tag2Sub16::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + "            Key ID: " + hexlify(keyid) + "\n";
 }
 
 std::string Tag2Sub16::raw() const{

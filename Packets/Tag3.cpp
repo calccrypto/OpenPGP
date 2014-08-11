@@ -44,14 +44,15 @@ void Tag3::read(std::string & data){
     }
 }
 
-std::string Tag3::show(const uint8_t indent) const{
+std::string Tag3::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent)
-        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << std::string(indent, ' ') << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
-        << std::string(indent, ' ') << "    " << s2k -> show();
+    out << show_title(indents, indent_size)
+        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(tab, ' ') << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
+        << std::string(tab, ' ') << "    " << s2k -> show(indents, indent_size);
     if (esk){
-        out << std::string(indent, ' ') << "    Encrypted Session Key: " << *esk << "\n";
+        out << std::string(tab, ' ') << "    Encrypted Session Key: " << *esk << "\n";
     }
     return out.str();
 }

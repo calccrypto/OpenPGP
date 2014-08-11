@@ -38,7 +38,7 @@ class Tag10 : public Packet{
         Tag10();
         Tag10(std::string & data);
         void read(std::string & data);
-        std::string show(const uint8_t indent = 0) const;
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_pgp() const;

@@ -5,8 +5,7 @@ Tag13::Tag13() :
     name(),
     comment(),
     email()
-{
-}
+{}
 
 Tag13::Tag13(std::string & data) :
     Tag13()
@@ -61,14 +60,15 @@ void Tag13::read(std::string & data){
     }
 }
 
-std::string Tag13::show(const uint8_t indent) const{
+std::string Tag13::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent) << std::string(indent, ' ') << "    User ID: " << name;
+    out << show_title(indents, indent_size) << std::string(tab, ' ') << "    User ID: " << name;
     if (comment != ""){
-        out << std::string(indent, ' ') << " (" << comment << ")";
+        out << std::string(tab, ' ') << " (" << comment << ")";
     }
     if (email != ""){
-        out << std::string(indent, ' ') << " <" << email << ">";
+        out << std::string(tab, ' ') << " <" << email << ">";
     }
     out << "\n";
     return out.str();

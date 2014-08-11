@@ -3,8 +3,7 @@
 Tag2Sub10::Tag2Sub10() :
     Subpacket(10),
     stuff()
-{
-}
+{}
 
 Tag2Sub10::Tag2Sub10(std::string & data) :
     Tag2Sub10()
@@ -17,8 +16,8 @@ void Tag2Sub10::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub10::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + stuff;
+std::string Tag2Sub10::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + stuff;
 }
 
 std::string Tag2Sub10::raw() const{

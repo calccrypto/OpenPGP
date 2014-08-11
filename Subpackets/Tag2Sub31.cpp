@@ -4,8 +4,7 @@ Tag2Sub31::Tag2Sub31() :
     Subpacket(31),
     pka(), ha(),
     hash()
-{
-}
+{}
 
 Tag2Sub31::Tag2Sub31(std::string & data) :
     Tag2Sub31()
@@ -20,11 +19,12 @@ void Tag2Sub31::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub31::show(const uint8_t indent) const{
+std::string Tag2Sub31::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-        << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << static_cast <unsigned int> (ha) << ")\n"
-        << "            Hash: " << hexlify(hash);
+    out << std::string(tab, ' ') << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << std::string(tab, ' ') << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << static_cast <unsigned int> (ha) << ")\n"
+        << std::string(tab, ' ') << "            Hash: " << hexlify(hash);
     return out.str();
 }
 

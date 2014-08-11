@@ -42,7 +42,7 @@ class Tag2Sub20 : public Subpacket{
         Tag2Sub20();
         Tag2Sub20(std::string & data);
         void read(std::string & data);
-        std::string show(const uint8_t indent = 0) const;
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_flags() const;

@@ -2,8 +2,7 @@
 
 Tag14::Tag14() :
     Tag6(14)
-{
-}
+{}
 
 Tag14::Tag14(std::string & data){
     read(data);

@@ -3,8 +3,7 @@
 Tag2Sub21::Tag2Sub21() :
     Subpacket(21),
     pha()
-{
-}
+{}
 
 Tag2Sub21::Tag2Sub21(std::string & data) :
     Tag2Sub21()
@@ -17,10 +16,11 @@ void Tag2Sub21::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub21::show(const uint8_t indent) const{
+std::string Tag2Sub21::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
     for(unsigned int x = 0; x < pha.size(); x++){
-        out << std::string(indent, ' ') << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")\n";
+        out << std::string(tab, ' ') << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")\n";
     }
     return out.str();
 }

@@ -3,8 +3,7 @@
 Tag10::Tag10() :
     Packet(10),
     pgp("PGP")
-{
-}
+{}
 
 Tag10::Tag10(std::string & data) :
     Tag10()
@@ -19,8 +18,9 @@ void Tag10::read(std::string & data){
     }
 }
 
-std::string Tag10::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + show_title(indent) + std::string(indent, ' ') + "    PGP\n";
+std::string Tag10::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
+    return std::string(tab, ' ') + show_title(indents, indent_size) + std::string(tab, ' ') + "    PGP\n";
 }
 
 std::string Tag10::raw() const{

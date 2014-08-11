@@ -3,8 +3,7 @@
 Tag18::Tag18() :
     Packet(18, 1),
     protected_data()
-{
-}
+{}
 
 Tag18::Tag18(std::string & data) :
     Tag18()
@@ -18,11 +17,12 @@ void Tag18::read(std::string & data){
     protected_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag18::show(const uint8_t indent) const{
+std::string Tag18::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent)
-        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << std::string(indent, ' ') << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
+    out << show_title(indents, indent_size)
+        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(tab, ' ') << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
     return out.str();
 }
 

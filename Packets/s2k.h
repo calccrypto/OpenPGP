@@ -42,7 +42,7 @@ class S2K{
         uint8_t type; // octet 0
         uint8_t hash; // octet 1
 
-        std::string show_title(const uint8_t indent = 0) const;
+        std::string show_title(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         
         S2K(uint8_t type);
 
@@ -51,7 +51,7 @@ class S2K{
 
         virtual ~S2K();
         virtual void read(std::string & data) = 0;
-        virtual std::string show(const uint8_t indent = 0) const = 0;
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
         std::string write() const;
         virtual std::string run(std::string pass, unsigned int sym_len) const = 0;
@@ -75,7 +75,7 @@ class S2K0: public S2K{
         S2K0();
         virtual ~S2K0();
         virtual void read(std::string & data);
-        virtual std::string show(const uint8_t indent = 0) const;
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
         virtual std::string run(std::string pass, unsigned int sym_len) const;
 
@@ -94,7 +94,7 @@ class S2K1 : public S2K0{
         S2K1();
         virtual ~S2K1();
         virtual void read(std::string & data);
-        virtual std::string show(const uint8_t indent = 0) const;
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
         virtual std::string run(std::string pass, unsigned int sym_len) const;
 
@@ -115,7 +115,7 @@ class S2K3 : public S2K1{
         S2K3();
         ~S2K3();
         void read(std::string & data);
-        std::string show(const uint8_t indent = 0) const;
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
         std::string run(std::string pass, unsigned int sym_len) const;
 

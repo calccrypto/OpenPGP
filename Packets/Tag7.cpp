@@ -2,13 +2,11 @@
 
 Tag7::Tag7() :
     Tag5(7)
-{
-}
+{}
 
 Tag7::Tag7(const Tag7 & copy) :
     Tag5(copy)
-{
-}
+{}
 
 Tag7::Tag7(std::string & data) :
     Tag7()

@@ -6,8 +6,7 @@ Tag11::Tag11() :
     filename(),
     time(),
     literal()
-{
-}
+{}
 
 Tag11::Tag11(std::string & data) :
     Tag11()
@@ -29,14 +28,15 @@ void Tag11::read(std::string & data){
     literal = data.substr(len + 6, data.size() - len - 6);
 }
 
-std::string Tag11::show(const uint8_t indent) const{
+std::string Tag11::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent)
-        << std::string(indent, ' ') << "    Format: " << BTU.at(format) << "\n"
-        << std::string(indent, ' ') << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
-        << std::string(indent, ' ') << "        Filename: " << filename << "\n"
-        << std::string(indent, ' ') << "        Creation Date: " << show_time(time) << "\n"
-        << std::string(indent, ' ') << "        Data: " << literal << "\n";
+    out << show_title(indents, indent_size)
+        << std::string(tab, ' ') << "    Format: " << BTU.at(format) << "\n"
+        << std::string(tab, ' ') << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
+        << std::string(tab, ' ') << "        Filename: " << filename << "\n"
+        << std::string(tab, ' ') << "        Creation Date: " << show_time(time) << "\n"
+        << std::string(tab, ' ') << "        Data:" << literal << "\n";
     return out.str();
 }
 

@@ -3,8 +3,7 @@
 Tag2Sub9::Tag2Sub9() :
     Subpacket(9, 4),
     time()
-{
-}
+{}
 
 Tag2Sub9::Tag2Sub9(std::string & data) :
     Tag2Sub9()
@@ -16,14 +15,15 @@ void Tag2Sub9::read(std::string & data){
     time = static_cast <time_t> (toint(data, 256));
 }
 
-std::string Tag2Sub9::show(const uint8_t indent) const{
+std::string Tag2Sub9::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(indent, ' ') << "            Key Expiration Time (Days): ";
+    out << std::string(tab, ' ') << "            Key Expiration Time (Days): ";
     if (time == 0){
-        out << std::string(indent, ' ') << "Never";
+        out << std::string(tab, ' ') << "Never";
     }
     else{
-        out << std::string(indent, ' ') << show_time(time);
+        out << std::string(tab, ' ') << show_time(time);
     }
     out << "\n";
     return out.str();

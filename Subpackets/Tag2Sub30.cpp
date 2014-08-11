@@ -3,8 +3,7 @@
 Tag2Sub30::Tag2Sub30() :
     Subpacket(30),
     flags()
-{
-}
+{}
 
 Tag2Sub30::Tag2Sub30(std::string & data) :
     Tag2Sub30()
@@ -17,11 +16,12 @@ void Tag2Sub30::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub30::show(const uint8_t indent) const{
+std::string Tag2Sub30::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
     for(uint8_t bit = 0; bit < 8; bit++){
         if (flags & (1 << bit)){
-            out << std::string(indent, ' ') << "            Flag - " << Features.at(1 << bit) << " (feat " << static_cast <unsigned int> (1 << bit) << ")\n";
+            out << std::string(tab, ' ') << "            Flag - " << Features.at(1 << bit) << " (feat " << static_cast <unsigned int> (1 << bit) << ")\n";
         }
     }
     return out.str();

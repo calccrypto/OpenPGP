@@ -23,18 +23,19 @@ void Tag17Sub1::read(std::string & data){
     image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
 }
 
-std::string Tag17Sub1::show(const uint8_t indent) const{
+std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream filename;
-    filename << std::string(indent, ' ') << "image" << count << "." << User_Attributes.at(encoding);
+    filename << std::string(tab, ' ') << "image" << count << "." << User_Attributes.at(encoding);
     std::ofstream f(filename.str().c_str(), std::ios::binary);
     std::stringstream out;
     if (f.is_open()){
         f << image;
         f.close();
-        out << std::string(indent, ' ') << "    Check working directory for " << filename.str() << " (" << image.size() << " octets).\n";
+        out << std::string(tab, ' ') << "    Check working directory for " << filename.str() << " (" << image.size() << " octets).\n";
     }
     else{
-        out << std::string(indent, ' ') << "    Error Writing to " << filename.str() << " (" << image.size() << " octets).\n";
+        out << std::string(tab, ' ') << "    Error Writing to " << filename.str() << " (" << image.size() << " octets).\n";
     }
     return out.str();
 }

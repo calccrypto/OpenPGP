@@ -3,8 +3,7 @@
 Tag2Sub6::Tag2Sub6() :
     Subpacket(6),
     regex()
-{
-}
+{}
 
 Tag2Sub6::Tag2Sub6(std::string & data) :
     Tag2Sub6()
@@ -17,8 +16,8 @@ void Tag2Sub6::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub6::show(const uint8_t indent) const{
-    return std::string(indent, ' ') + "            Regular Expression: " + regex + "\n";
+std::string Tag2Sub6::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + "            Regular Expression: " + regex + "\n";
 }
 
 std::string Tag2Sub6::raw() const{

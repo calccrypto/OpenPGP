@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define __TAG8__
 
 #include "../Compress/Compress.h"
-//#include "../PGPMessage.h"
 #include "packet.h"
 
 class Tag8 : public Packet{
@@ -53,7 +52,7 @@ class Tag8 : public Packet{
         Tag8();
         Tag8(std::string & data);
         void read(std::string & data);
-        std::string show(const uint8_t indent = 0) const;
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
         uint8_t get_comp() const;                           // get compression algorithm

@@ -51,7 +51,7 @@ class Subpacket{
 
         virtual ~Subpacket();
         virtual void read(std::string & data) = 0;
-        virtual std::string show(const uint8_t indent = 0) const = 0;
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0; // returns raw subpacket data, with no header
         std::string write() const;
 

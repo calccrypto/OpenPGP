@@ -39,7 +39,7 @@ class Tag6 : public Key{
         uint32_t expire;
 
         void read_tag6(std::string & data);
-        std::string show_tag6(const uint8_t indent = 0) const;
+        std::string show_tag6(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw_tag6() const;
 
         Tag6(uint8_t tag);
@@ -52,7 +52,7 @@ class Tag6 : public Key{
         virtual ~Tag6();
 
         virtual void read(std::string & data);
-        virtual std::string show(const uint8_t indent = 0) const;
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
 
         time_t get_time() const;

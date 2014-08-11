@@ -1,4 +1,5 @@
 #include "Tag8.h"
+#include "../PGPMessage.h"
 
 std::string Tag8::compress(const std::string & data){
     return PGP_compress(comp, data);
@@ -12,8 +13,7 @@ Tag8::Tag8() :
     Packet(8, 3),
     comp(0),
     compressed_data()
-{
-}
+{}
 
 Tag8::Tag8(std::string & data) :
     Tag8()
@@ -27,13 +27,15 @@ void Tag8::read(std::string & data){
     compressed_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag8::show(const uint8_t indent) const{
+std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::string data = get_data();
+    PGPMessage decompressed;
+    decompressed.read_raw(data); // do this in case decompressed data contains headers
     std::stringstream out;
-    out << std::string(indent, ' ') << show_title(indent) 
-        << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
-        << "    Data in hex (" << compressed_data.size() << " octets): " << hexlify(compressed_data) << "\n";
-        //<< PGPMessage(data).show() << std::endl;
+    out << show_title(indents, indent_size)
+        << std::string(tab, ' ') << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n\n"
+        << decompressed.show(indents + 1, indent_size);
     return out.str();
 }
 
@@ -54,7 +56,6 @@ std::string Tag8::get_data() const{
 }
 
 void Tag8::set_comp(const uint8_t c){
-   
     // recompress data
     if (compressed_data.size()){
         std::string data = get_data(); // decompress data

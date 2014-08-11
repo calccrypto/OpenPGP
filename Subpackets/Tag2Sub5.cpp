@@ -4,8 +4,7 @@ Tag2Sub5::Tag2Sub5() :
     Subpacket(5, 2),
     level(),
     amount()
-{
-}
+{}
 
 Tag2Sub5::Tag2Sub5(std::string & data) :
     Tag2Sub5()
@@ -18,10 +17,11 @@ void Tag2Sub5::read(std::string & data){
     amount = data[1];
 }
 
-std::string Tag2Sub5::show(const uint8_t indent) const{
+std::string Tag2Sub5::show(const uint8_t indents, const uint8_t indent_size) const{
+    uint8_t tab = indents * indent_size;
     std::stringstream out;
-    out << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
-        << "            Trust Amount: " << static_cast <unsigned int> (amount) << "\n";
+    out << std::string(tab, ' ') << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
+        << std::string(tab, ' ') << "            Trust Amount: " << static_cast <unsigned int> (amount) << "\n";
     return out.str();
 }
 

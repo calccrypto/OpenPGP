@@ -3,14 +3,12 @@
 Tag2Sub32::Tag2Sub32() :
     Subpacket(32),
     embedded()
-{
-}
+{}
 
 Tag2Sub32::Tag2Sub32(const Tag2Sub32 & copy) :
     Subpacket(copy),
     embedded(std::dynamic_pointer_cast<Tag2>(copy.embedded -> clone()))
-{
-}
+{}
 
 Tag2Sub32::Tag2Sub32(std::string & data) :
     Tag2Sub32()
@@ -27,8 +25,8 @@ void Tag2Sub32::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub32::show(const uint8_t indent) const{
-    return embedded -> show();
+std::string Tag2Sub32::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + embedded -> show(indents, indent_size);
 }
 
 std::string Tag2Sub32::raw() const{

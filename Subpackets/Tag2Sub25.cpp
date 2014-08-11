@@ -3,8 +3,7 @@
 Tag2Sub25::Tag2Sub25() :
     Subpacket(25, 1),
     primary()
-{
-}
+{}
 
 Tag2Sub25::Tag2Sub25(std::string & data) :
     Tag2Sub25()
@@ -16,8 +15,8 @@ void Tag2Sub25::read(std::string & data){
     primary = data[0];
 }
 
-std::string Tag2Sub25::show(const uint8_t indent) const{
-    return std::string("            Primary: ") + (primary?"True":"False") + "\n";
+std::string Tag2Sub25::show(const uint8_t indents, const uint8_t indent_size) const{
+    return std::string(indents * indent_size, ' ') + std::string("            Primary: ") + (primary?"True":"False") + "\n";
 }
 
 std::string Tag2Sub25::raw() const{
