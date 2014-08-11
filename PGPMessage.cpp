@@ -112,14 +112,14 @@ const bool PGPMessage::SignedMessage(std::list <Token>::iterator it, std::list <
 PGPMessage::PGPMessage():
     PGP()
 {
-    ASCII_Armor = 6;
+    ASCII_Armor = 0;
 }
 
 PGPMessage::PGPMessage(const PGPMessage & copy):
     PGP(copy)
 {
     if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 6;
+        ASCII_Armor = 0;
     }
 }
 
@@ -127,7 +127,7 @@ PGPMessage::PGPMessage(std::string & data):
     PGP(data)
 {
     if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 6;
+        ASCII_Armor = 0;
     }
 }
 
@@ -135,7 +135,7 @@ PGPMessage::PGPMessage(std::ifstream & f):
     PGP(f)
 {
     if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 6;
+        ASCII_Armor = 0;
     }
 }
 

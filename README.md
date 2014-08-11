@@ -53,9 +53,8 @@ Simply #include whatever functions needed:
     sign           - sign.h
     verify         - verify.h
 
-Multiple classes inherit from the base class PGP in order
-to make differentiating PGP block types better in code.
-    PGP                     - base class; use if PGP data type is not known
+Multiple classes inherit from the abstact base class PGP in order
+to make differentiating PGP block types better in code:
     PGPDetachedSignature    - detached signatures for files
     PGPKey                  - base class for OpenPGP key types
     PGPPublicKey            - holds public keys; inherits PGPKey
@@ -90,7 +89,7 @@ All data structures have some standard functions:
             the object (mainly used for moving
             PGP data around).
 
-    Ptr   - a typedef for std::shared_ptr <T>, where
+    Ptr   - a typedef for std::shared_ptr < T >, where
             T is the class each typdef is found in.
 
 Operator= and the copy constructor have been overloaded

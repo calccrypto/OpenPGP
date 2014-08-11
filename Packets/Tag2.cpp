@@ -38,7 +38,7 @@ Tag2::~Tag2(){
 }
 
 // Extracts Subpacket data for figuring which subpacket type to create
-// Some data is destroyed in the process
+// Some data is consumed in the process
 std::string Tag2::read_subpacket(std::string & data){
     uint32_t length = 0;
     uint8_t first_octet = static_cast <unsigned char> (data[0]);
@@ -172,12 +172,14 @@ void Tag2::read(std::string & data){
             mpi.push_back(read_MPI(data));              // DSA s
         }
     }
-    if (version == 4){
+    else if (version == 4){
         type = data[1];
         pka = data[2];
         hash = data[3];
         uint16_t hashed_size = toint(data.substr(4, 2), 256);
         data = data.substr(6, data.size() - 6);
+        
+        // hashed subpackets
         std::string hashed = data.substr(0, hashed_size);
         data = data.substr(hashed_size, data.size() - hashed_size);
         hashed_subpackets = read_subpackets(hashed);
@@ -198,6 +200,10 @@ void Tag2::read(std::string & data){
 //            mpi.push_back(read_MPI(data));        // DSA r
             mpi.push_back(read_MPI(data));          // DSA s
         }
+    }
+    else{
+        std::stringstream s; s << static_cast <int> (version);
+        throw std::runtime_error("Error: Unknown version: " + s.str());
     }
 }
 

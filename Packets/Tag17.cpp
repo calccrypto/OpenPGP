@@ -54,7 +54,7 @@ std::string Tag17::raw() const{
 }
 
 // Extracts Subpacket data for figuring which subpacket type to create
-// Some data is destroyed in the process
+// Some data is consumed in the process
 std::string Tag17::read_subpacket(std::string & data){
     size = data.size();
     uint32_t length = 0;

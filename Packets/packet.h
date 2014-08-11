@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 #include "../common/includes.h"

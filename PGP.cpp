@@ -10,7 +10,7 @@ std::string PGP::format_string(std::string data, uint8_t line_length) const{
 
 PGP::PGP() :
     armored(true),
-    ASCII_Armor(255), // default uint8_t -1; use 255 to avoid compiler complaints
+    ASCII_Armor(255), // default uint8_t(-1); use 255 to avoid compiler complaints
     Armor_Header(),
     packets()
 {}
@@ -212,21 +212,11 @@ std::string PGP::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGP::write(const uint8_t header) const{
+std::string PGP::write(const uint8_t armor, const uint8_t header) const{
     std::string packet_string = raw(header);
-    if (!armored){
-        return packet_string;
+    if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
+        return packet_string;                  // return raw data
     }
-    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
-    for(std::pair <std::string, std::string> const & key : Armor_Header){
-        out += key.first + ": " + key.second + "\n";
-    }
-    out += "\n";
-    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
-}
-
-std::string PGP::output(const bool armored) const {
-    std::string packet_string = raw(0);
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
     for(std::pair <std::string, std::string> const & key : Armor_Header){
         out += key.first + ": " + key.second + "\n";
@@ -277,11 +267,6 @@ void PGP::set_packets(const std::vector <Packet::Ptr> & p){
     for(Packet::Ptr const & t : p){
         packets.push_back(t -> clone());
     }
-}
-
-bool PGP::meaningful() const{
-    throw std::runtime_error("Error: PGP::meaningful should not be called. Use inherited meaningful functions.");
-    return false; // garbage value
 }
 
 PGP & PGP::operator=(const PGP & copy){

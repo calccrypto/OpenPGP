@@ -43,10 +43,10 @@ THE SOFTWARE.
 
 class PGP{
     protected:
-        bool armored;                                                           // default true
-        uint8_t ASCII_Armor;                                                    // What type of key is this
-        std::vector <std::pair <std::string, std::string> > Armor_Header;       // messages in the header
-        std::vector <Packet::Ptr> packets;                                      // main data
+        bool armored;                                                                   // default true
+        uint8_t ASCII_Armor;                                                            // what type of key is this
+        std::vector <std::pair <std::string, std::string> > Armor_Header;               // messages in the header
+        std::vector <Packet::Ptr> packets;                                              // main data
 
         // modifies output string so each line is no longer than MAX_LINE_SIZE long
         std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
@@ -56,24 +56,23 @@ class PGP{
 
         PGP();
         PGP(const PGP & copy);
-        PGP(std::string & data);                                               // data fed into this constructor will be destroyed
+        PGP(std::string & data);                                                        // data fed into this constructor will be consumed
         PGP(std::ifstream & f);
         ~PGP();
 
-        void read(std::string & data);                                         // read key, including ASCII Armor; data is destroyed
+        void read(std::string & data);                                                  // read key, including ASCII Armor; some data is consumed
         void read(std::ifstream & file);
-        void read_raw(std::string & data);                                     // reads packet data only; data is destroyed
-        std::string show() const;                                              // display key information
-        std::string raw(const uint8_t header = 0) const;                       // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        std::string write(const uint8_t header = 0) const;                     // old or new type packet headers
-        std::string output(const bool armored = true) const;                   // force write with given armor value
-        
+        void read_raw(std::string & data);                                              // reads packet data only; data is consumed
+        std::string show() const;                                                       // display key information
+        std::string raw(const uint8_t header = 0) const;                                // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;     // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
+
         // Accessors
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;
         std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
-        std::vector <Packet::Ptr> get_packets() const;                         // get copy of all packet pointers
-        std::vector <Packet::Ptr> get_packets_clone() const;                   // clone all packets
+        std::vector <Packet::Ptr> get_packets() const;                                  // get copy of all packet pointers
+        std::vector <Packet::Ptr> get_packets_clone() const;                            // clone all packets
 
         // Modifiers
         void set_armored(const bool a);
@@ -81,9 +80,9 @@ class PGP{
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header);
         void set_packets(const std::vector <Packet::Ptr> & p);
 
-        virtual bool meaningful() const;                                       // check if packet sequence is meaningful and correct; do not call this one
+        virtual bool meaningful() const = 0;                                            // check if packet sequence is meaningful and correct
 
-        PGP & operator=(const PGP & copy);                                     // get deep copy object
-        virtual Ptr clone() const = 0;                                         // get deep copy pointer
+        PGP & operator=(const PGP & copy);                                              // get deep copy object
+        virtual Ptr clone() const = 0;                                                  // get deep copy pointer
 };
 #endif

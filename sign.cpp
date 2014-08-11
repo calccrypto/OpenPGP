@@ -87,7 +87,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
     Tag2Sub16::Ptr tag2sub16 = std::make_shared<Tag2Sub16>();
     tag2sub16 -> set_keyid(tag5 -> get_keyid());
     tag2 -> set_unhashed_subpackets({tag2sub16});
-    
+
     tag2sub2.reset();
     tag2sub16.reset();
 
@@ -213,7 +213,9 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
 
     // sign data
     Tag2::Ptr tag2 = create_sig_packet(0, pri, hash);
-    tag2 -> set_mpi(pka_sign(tag11 -> get_literal(), tag5, passphrase, hash));
+    std::string hashed_data = to_sign_00(tag11 -> get_literal(), tag2);
+    tag2 -> set_left16(hashed_data.substr(0, 2));
+    tag2 -> set_mpi(pka_sign(hashed_data, tag5, passphrase, hash));
 
     // put everything together
     PGPMessage signature;
@@ -265,7 +267,7 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
     }
 
     // create signature
-    Tag2::Ptr sig = create_sig_packet(0x01, signer);
+    Tag2::Ptr sig = create_sig_packet(0x01, signer, nullptr, hash);
     std::string hashed_data = to_sign_01(text, sig);
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
@@ -355,7 +357,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
             break;
         }
     }
-    
+
     if (!signee_primary_key){
         throw std::runtime_error("Error: No Signee primary key found.");
     }
@@ -379,11 +381,11 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     else if (signee_packets[i] -> get_tag() == 17){
         signee_id = std::make_shared<Tag17>(raw_id);
     }
-    
+
     if (!signee_id){
         throw std::runtime_error("Error: No Signee user ID found.");
     }
-    
+
     // move i to after primary key signature
     i++;
 
@@ -464,7 +466,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     for(Packet::Ptr & p : out_packets){
         p.reset();
     }
-    
+
     return out;
 }
 
