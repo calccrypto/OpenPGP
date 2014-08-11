@@ -90,7 +90,7 @@ All data structures have some standard functions:
             the object (mainly used for moving
             PGP data around).
 
-    Ptr   - a typedef for std::shared_ptr \<T\>, where
+    Ptr   - a typedef for std::shared_ptr \< T \>, where
             T is the class each typdef is found in.
 
 Operator= and the copy constructor have been overloaded
