@@ -59,7 +59,7 @@ Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey 
     }
     return out;
 }
-bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature);
+bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature){
     if ((pka == 1) || (pka == 3)){ // RSA
         std::string encoded = EMSA_PKCS1_v1_5(hash, digest, bitsize(signing[0]) >> 3);
         return RSA_verify(encoded, signature, signing);
