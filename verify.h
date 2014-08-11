@@ -49,9 +49,9 @@ std::string find_keyid(const Tag2::Ptr & tag2);
 Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & key);
 
 // pka_verify with variables only
-bool pka_verify(const std::string & hashed_message, const std::vector <PGPMPI> & signing, const uint8_t hash, const uint8_t pka, const std::vector<PGPMPI> & signature);
+bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature);
 // pka_verify with packets
-bool pka_verify(const std::string & hashed_message, const Tag6::Ptr signing, const Tag2::Ptr & signature);
+bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2::Ptr & signature);
 // /////////////////
 
 // verify cleartext signature

@@ -26,11 +26,11 @@ TEST(DSATest, test_dsa_siggen) {
         auto s = hextompi(DSA_SIGGEN_S[i]);
         std::vector<PGPMPI> sig = {r, s};
         EXPECT_EQ(DSA_sign(digest, {x}, {p, q, g, y}, k), sig);
-        EXPECT_TRUE(pka_verify(digest, PKA_DSA, {p, q, g, y}, sig));
+        EXPECT_TRUE(pka_verify(digest, 2, PKA_DSA, {p, q, g, y}, sig));
 
         //! test random k
-        auto new_sig = pka_sign(digest, PKA_DSA, {p, q, g, y}, {x});
+        auto new_sig = pka_sign(digest, PKA_DSA, {p, q, g, y}, {x}, 2);
         EXPECT_NE(new_sig, sig);
-        EXPECT_TRUE(pka_verify(digest, PKA_DSA, {p, q, g, y}, new_sig));
+        EXPECT_TRUE(pka_verify(digest, 2, PKA_DSA, {p, q, g, y}, new_sig));
     }
 }

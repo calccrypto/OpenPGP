@@ -59,20 +59,19 @@ Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey 
     }
     return out;
 }
-
-bool pka_verify(const std::string & hashed_message, const std::vector<PGPMPI> & signing, const uint8_t hash, const uint8_t pka, const std::vector<PGPMPI> & signature){
+bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature);
     if ((pka == 1) || (pka == 3)){ // RSA
-        std::string new_hashed_message = EMSA_PKCS1_v1_5(hash, hashed_message, bitsize(signing[0]) >> 3);
-        return RSA_verify(new_hashed_message, signature, signing);
+        std::string encoded = EMSA_PKCS1_v1_5(hash, digest, bitsize(signing[0]) >> 3);
+        return RSA_verify(encoded, signature, signing);
     }
     else if (pka == 17){ // DSA
-        return DSA_verify(hashed_message, signature, signing);
+        return DSA_verify(digest, signature, signing);
     }
     return false;
 }
 
-bool pka_verify(const std::string & hashed_message, const Tag6::Ptr signing, const Tag2::Ptr & signature){
-    return pka_verify(hashed_message, signing -> get_mpi(), signature -> get_hash(), signature -> get_pka(), signature -> get_mpi());
+bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2::Ptr & signature){
+    return pka_verify(digest, signature -> get_hash(), signature -> get_pka(), signing -> get_mpi(), signature -> get_mpi());
 }
 
 // Signature type 0x00 and 0x01
@@ -86,9 +85,9 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
 
     // check left 16 bits
-    std::string hash = to_sign_01(message.get_message(), signature);
-    if (hash.substr(0, 2) != signature -> get_left16()){
-        throw std::runtime_error("Error: Hash and given left 16 bits of hash do not match.");
+    std::string digest = to_sign_01(message.get_message(), signature);
+    if (digest.substr(0, 2) != signature -> get_left16()){
+        throw std::runtime_error("Error: Hash digest and given left 16 bits of hash do not match.");
     }
 
     // find key id in signature
@@ -104,7 +103,7 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     }
 
     // get string to check
-    return pka_verify(hash, signingkey, signature);
+    return pka_verify(digest, signingkey, signature);
 }
 
 bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message){
@@ -124,9 +123,9 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
 
     // Check left 16 bits
-    std::string hash = to_sign_00(data, signature);
-    if (hash.substr(0, 2) != signature -> get_left16()){
-        throw std::runtime_error("Error: Hash and given left 16 bits of hash do not match.");
+    std::string digest = to_sign_00(data, signature);
+    if (digest.substr(0, 2) != signature -> get_left16()){
+        throw std::runtime_error("Error: Hash digest and given left 16 bits of hash do not match.");
         // return false;
     }
 
@@ -142,7 +141,7 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     if (!signingkey){
         return false;
     }
-    bool out = pka_verify(hash, signingkey, signature);
+    bool out = pka_verify(digest, signingkey, signature);
     return out;
 }
 
@@ -278,13 +277,13 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
                     if (signing_key -> get_keyid() == (*(SP.begin())) -> get_keyid()){
 
                         // get hashed data
-                        std::string hashed;
+                        std::string digest;
                         switch ((*(OPSP.rbegin())) -> get_type()){
                             case 0:
-                                hashed = to_sign_00(binary, *(SP.begin()));
+                                digest = to_sign_00(binary, *(SP.begin()));
                                 break;
                             case 1:
-                                hashed = to_sign_01(text, *(SP.begin()));
+                                digest = to_sign_01(text, *(SP.begin()));
                                 break;
 
                             // don't know if other signature types can be here
@@ -301,7 +300,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
                         }
 
                         // check if the key matches this signature
-                        verify = pka_verify(hashed, signing_key, *(SP.begin()));
+                        verify = pka_verify(digest, signing_key, *(SP.begin()));
                     }
                 // }
             // }
