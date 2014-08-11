@@ -41,10 +41,10 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, con
         // RFC 4880 sec 5.2.2
         // If RSA, hash value is encoded using EMSA-PKCS1-v1_5
         std::string encoded = EMSA_PKCS1_v1_5(h, digest, bitsize(pub[0]) >> 3);
-        return {RSA_sign(hashed_data, pri, pub)};
+        return {RSA_sign(encoded, pri, pub)};
     }
     else if (pka == 17){ // DSA
-        return DSA_sign(hashed_data, pri, pub);
+        return DSA_sign(encoded, pri, pub);
     }
     else{
         std::stringstream s; s << static_cast <int> (pka);
