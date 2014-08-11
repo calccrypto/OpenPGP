@@ -4,14 +4,14 @@ Tag4::Tag4() :
     Packet(4, 3),
     type(), hash(), pka(),
     keyid(),
-    nested()
+    nested(1)
 {}
 
 Tag4::Tag4(const Tag4 & copy) :
     Tag4()
 {
     version = copy.version;
-    type = copy.tag;
+    type = copy.type;
     hash = copy.hash;
     pka = copy.pka;
     keyid = copy.keyid;

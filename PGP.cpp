@@ -198,13 +198,13 @@ std::string PGP::show() const{
         try{// defined packets have name and tag number
             out << Packet_Tags.at(p -> get_tag()) << " (Tag " << static_cast <int> (p -> get_tag()) << ")";
         }
-        catch (const std::out_of_range & e){}// catch out of range error for const std::map
+        catch (const std::out_of_range & e) {} // catch out of range error for const std::map
         out << "(" << p -> get_size() << " octets)\n" + p -> show() << "\n";
     }
     return out.str();
 }
 
-std::string PGP::raw(uint8_t header) const{
+std::string PGP::raw(const uint8_t header) const{
     std::string out = "";
     for(Packet::Ptr const & p : packets){
         out += p -> write(header);
@@ -212,11 +212,21 @@ std::string PGP::raw(uint8_t header) const{
     return out;
 }
 
-std::string PGP::write(uint8_t header) const{
+std::string PGP::write(const uint8_t header) const{
     std::string packet_string = raw(header);
     if (!armored){
         return packet_string;
     }
+    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
+    for(std::pair <std::string, std::string> const & key : Armor_Header){
+        out += key.first + ": " + key.second + "\n";
+    }
+    out += "\n";
+    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
+}
+
+std::string PGP::output(const bool armored) const {
+    std::string packet_string = raw(0);
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
     for(std::pair <std::string, std::string> const & key : Armor_Header){
         out += key.first + ": " + key.second + "\n";

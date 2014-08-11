@@ -46,7 +46,7 @@ THE SOFTWARE.
 // get the key id
 std::string find_keyid(const Tag2::Ptr & tag2);
 // get the Tag6 signing packet
-Tag6::Ptr find_signingkey(const std::string & keyid, const PGPPublicKey & key);
+Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & key);
 
 // pka_verify with variables only
 bool pka_verify(const std::string & hashed_message, const std::vector <PGPMPI> & signing, const uint8_t hash, const uint8_t pka, const std::vector<PGPMPI> & signature);

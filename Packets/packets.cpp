@@ -128,6 +128,7 @@ Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, std::string & 
     out -> set_format(format);
     out -> set_size(packet_data.size());
     out -> read(packet_data);
+
     return out;
 }
 

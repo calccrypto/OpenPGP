@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __TAG8__
 
 #include "../Compress/Compress.h"
+//#include "../PGPMessage.h"
 #include "packet.h"
 
 class Tag8 : public Packet{

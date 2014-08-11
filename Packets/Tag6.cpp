@@ -183,8 +183,7 @@ Tag6::Tag6(const Tag6 & copy) :
     pka(copy.pka),
     mpi(copy.mpi),
     expire(copy.expire)
-{
-}
+{}
 
 Tag6 &Tag6::operator =(const Tag6 & copy)
 {

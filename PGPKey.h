@@ -66,6 +66,8 @@ class PGPKey : public PGP {
 
 std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp);
 
+class PGPPublicKey;
+
 class PGPSecretKey : public PGPKey {
     public:
         typedef std::shared_ptr <PGPSecretKey> Ptr;
@@ -76,6 +78,8 @@ class PGPSecretKey : public PGPKey {
         PGPSecretKey(std::ifstream & f);
         ~PGPSecretKey();
 
+        PGPPublicKey pub() const;
+        
         bool meaningful() const;
 
         PGP::Ptr clone() const;
@@ -101,4 +105,6 @@ class PGPPublicKey : public PGPKey {
 
 std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp);
 
+// Extract Public Key data from a Secret Key
+PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri);
 #endif

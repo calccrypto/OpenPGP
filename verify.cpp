@@ -2,35 +2,35 @@
 
 #include "PKCS1.h"
 
-std::string find_keyid(const Tag2::Ptr & tag2){
-    std::string out = "";
-    // Search Subpackets
-    // Most likely in unhashed subpackets
-    std::vector <Subpacket::Ptr> subpackets = tag2 -> get_unhashed_subpackets();
-    for(Subpacket::Ptr const & s : subpackets){
-        if (s -> get_type() == 16){
-            std::string temp = s -> raw();
-            Tag2Sub16 tag2sub16(temp);
-            out = tag2sub16.get_keyid();
-            break;
-        }
-    }
-    // if not found in unhashed subpackets, search hashed subpackets
-    if (!out.size()){
-        subpackets = tag2 -> get_hashed_subpackets();
-        for(Subpacket::Ptr const & s : subpackets){
-            if (s -> get_type() == 16){
-                std::string temp = s -> raw();
-                Tag2Sub16 tag2sub16(temp);
-                out = tag2sub16.get_keyid();
-                break;
-            }
-        }
-    }
-    return out;
-}
+// std::string find_keyid(const Tag2::Ptr & tag2){
+    // std::string out = "";
+    // // Search Subpackets
+    // // Most likely in unhashed subpackets
+    // std::vector <Subpacket::Ptr> subpackets = tag2 -> get_unhashed_subpackets();
+    // for(Subpacket::Ptr const & s : subpackets){
+        // if (s -> get_type() == 16){
+            // std::string temp = s -> raw();
+            // Tag2Sub16 tag2sub16(temp);
+            // out = tag2sub16.get_keyid();
+            // break;
+        // }
+    // }
+    // // if not found in unhashed subpackets, search hashed subpackets
+    // if (!out.size()){
+        // subpackets = tag2 -> get_hashed_subpackets();
+        // for(Subpacket::Ptr const & s : subpackets){
+            // if (s -> get_type() == 16){
+                // std::string temp = s -> raw();
+                // Tag2Sub16 tag2sub16(temp);
+                // out = tag2sub16.get_keyid();
+                // break;
+            // }
+        // }
+    // }
+    // return out;
+// }
 
-Tag6::Ptr find_signingkey(const std::string & keyid, const PGPPublicKey & pub){
+Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & pub){
     Tag6::Ptr out = nullptr;
     for(Packet::Ptr const & p : pub.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
@@ -92,13 +92,13 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     }
 
     // find key id in signature
-    std::string keyid = find_keyid(signature);
+    std::string keyid = signature -> get_keyid();
     if (!keyid.size()){
         throw std::runtime_error("Error: No Key ID subpacket found.");
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_signingkey(keyid, pub);
+    Tag6::Ptr signingkey = find_public_signing_key(keyid, pub);
     if (!signingkey){
         return false;
     }
@@ -131,14 +131,14 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     }
 
     // find key id in signature
-    std::string keyid = find_keyid(signature);
+    std::string keyid = signature -> get_keyid();
     if (!keyid.size()){
         throw std::runtime_error("Error: No Key ID subpacket found.");
         // return false;
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_signingkey(keyid, pub);
+    Tag6::Ptr signingkey = find_public_signing_key(keyid, pub);
     if (!signingkey){
         return false;
     }
@@ -166,9 +166,12 @@ bool verify_detachedsig(const PGPSecretKey & pri, std::ifstream & f, const PGPDe
 }
 
 bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
+    // most of the time OpenPGP Message data is compressed
+    // then it is encrypted
+
     if (m.match(PGPMessage::ENCRYPTEDMESSAGE)){
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
-        throw std::runtime_error("Error: Use decrypt to verify message");
+        throw std::runtime_error("Error: Use decrypt to verify message.");
     }
     else if (m.match(PGPMessage::SIGNEDMESSAGE)){
         // // Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
@@ -231,7 +234,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
 
         // check for signatures
         if (!OPSP.size() || !SP.size()){
-            throw std::runtime_error("Error: No signature found");
+            throw std::runtime_error("Error: No signature found.");
         }
 
         // both lists should be the same size
@@ -306,9 +309,24 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
                 // verify = false;
                 // std:cerr << "Warning: One-Pass Signature Packet and Signature Packet KeyID mismatch" << std::endl;
             // }
+            
+            // free shared_ptr
+            OPSP.rbegin() -> reset();
+            SP.begin() -> reset();
+            
             OPSP.pop_back(); // pop top of stack
             SP.pop_front();  // pop front of queue
         }
+        
+        // cleanup remaining data
+        for(Tag4::Ptr & p : OPSP){
+            p.reset();
+        }
+        
+        for(Tag2::Ptr & p : SP){
+            p.reset();
+        }
+        
         return verify;
     }
     else if (m.match(PGPMessage::COMPRESSEDMESSAGE)){
@@ -358,6 +376,8 @@ bool verify_message(const PGPPublicKey & pub, const PGPMessage & m){
                 signing_key = tag6;
                 break;
             }
+            
+            tag6.reset();
         }
     }
     if (!signing_key){
@@ -391,7 +411,7 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
             Tag2::Ptr tag2(new Tag2(temp));
             // if this signature packet is a certification signature packet
             if ((0x10 <= tag2 -> get_type()) && (tag2 -> get_type() <= 0x13)){
-                keyid = find_keyid(tag2);
+                keyid = tag2 -> get_keyid();
                 break;            
             }            
         }
@@ -403,7 +423,7 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
     }
 
     // find signing key
-    Tag6::Ptr signingkey = find_signingkey(keyid, signer);
+    Tag6::Ptr signingkey = find_public_signing_key(keyid, signer);
 
     // if there is no matching signing key
     if (!signingkey){
@@ -511,8 +531,10 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
             Tag6::Ptr tag6 = std::make_shared<Tag6>(key_str);
 
             if (verify_revoke(tag6, revoke)){
+                tag6.reset();
                 return true;
             }
+            tag6.reset();
         }
     }
     return false;

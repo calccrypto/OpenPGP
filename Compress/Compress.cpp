@@ -1,7 +1,7 @@
 #include "Compress.h"
 
 std::string PGP_compress(const uint8_t alg, const std::string & src){
-    if (alg){ // if the algorithm value is not zero
+    if (alg && src.size()){ // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
 
@@ -33,7 +33,7 @@ std::string PGP_compress(const uint8_t alg, const std::string & src){
 }
 
 std::string PGP_decompress(const uint8_t alg, const std::string & src){
-    if (alg){ // if the algorithm value is not zero
+    if (alg && src.size()){ // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
         switch (alg){

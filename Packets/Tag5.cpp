@@ -7,13 +7,11 @@ Tag5::Tag5(uint8_t tag) :
     s2k(),
     IV(),
     secret()
-{
-}
+{}
 
 Tag5::Tag5() :
     Tag5(5)
-{
-}
+{}
 
 Tag5::Tag5(const Tag5 & copy) :
     Tag6(copy),
@@ -22,8 +20,7 @@ Tag5::Tag5(const Tag5 & copy) :
     s2k(copy.s2k),
     IV(copy.IV),
     secret(copy.secret)
-{
-}
+{}
 
 Tag5::Tag5(std::string & data) :
     Tag5(5)
@@ -31,8 +28,7 @@ Tag5::Tag5(std::string & data) :
     read(data);
 }
 
-Tag5::~Tag5(){
-}
+Tag5::~Tag5(){}
 
 void Tag5::read_s2k(std::string & data){
     s2k.reset();

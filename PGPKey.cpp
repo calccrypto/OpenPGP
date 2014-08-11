@@ -216,13 +216,13 @@ bool PGPKey::meaningful() const{
     return meaningful(ASCII_Armor);
 }
 
+PGP::Ptr PGPKey::clone() const{
+    return PGPKey::Ptr(new PGPKey(*this));
+}
+
 std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
     stream << hexlify(pgp.keyid());
     return stream;
-}
-
-PGP::Ptr PGPKey::clone() const{
-    return PGPKey::Ptr(new PGPKey(*this));
 }
 
 PGPSecretKey::PGPSecretKey():
@@ -256,6 +256,10 @@ PGPSecretKey::PGPSecretKey(std::ifstream & f):
 }
 
 PGPSecretKey::~PGPSecretKey(){}
+
+PGPPublicKey PGPSecretKey::pub() const {
+    return Secret2PublicKey(*this);
+}
 
 bool PGPSecretKey::meaningful() const{
     return PGPKey::meaningful(2);
@@ -301,35 +305,8 @@ PGPPublicKey::PGPPublicKey(std::ifstream & f):
 }
 
 PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec):
-    PGPKey()
-{
-    armored = sec.get_armored();
-    ASCII_Armor = sec.get_ASCII_Armor();
-    Armor_Header = sec.get_Armor_Header();
-    
-    // clone packets; convert secret packets into public ones
-    for(Packet::Ptr const & p : sec.get_packets()){
-        switch (p -> get_tag()){
-            case 5:
-            {
-                std::string data = p -> raw();
-                Packet::Ptr tag6(new Tag6(data));
-                packets.push_back(tag6);
-                break;
-            }
-            case 7:
-            {
-                std::string data = p -> raw();
-                Packet::Ptr tag14(new Tag14(data));
-                packets.push_back(tag14);
-                break;
-            }
-            default:
-                packets.push_back(p -> clone());
-                break;
-        }
-    }
-}
+    PGPPublicKey(Secret2PublicKey(sec))
+{}
 
 PGPPublicKey::~PGPPublicKey(){}
 
@@ -344,4 +321,35 @@ PGP::Ptr PGPPublicKey::clone() const{
 std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
     stream << hexlify(pgp.keyid());
     return stream;
+}
+
+PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
+    PGPPublicKey pub;
+    pub.set_armored(pri.get_armored());
+    pub.set_ASCII_Armor(pri.get_ASCII_Armor());
+    pub.set_Armor_Header(pri.get_Armor_Header());
+    
+    // clone packets; convert secret packets into public ones
+    std::vector <Packet::Ptr> packets;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        switch (p -> get_tag()){
+            case 5:
+            {
+                std::string data = p -> raw();
+                packets.push_back(Tag5(data).get_public_ptr());
+                break;
+            }
+            case 7:
+            {
+                std::string data = p -> raw();
+                packets.push_back(Tag7(data).get_public_ptr());
+                break;
+            }
+            default:
+                packets.push_back(p -> clone());
+                break;
+        }
+    }
+    pub.set_packets(packets);
+    return pub;
 }

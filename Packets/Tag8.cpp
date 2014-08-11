@@ -28,9 +28,11 @@ void Tag8::read(std::string & data){
 }
 
 std::string Tag8::show() const{
+    std::string data = get_data();
     std::stringstream out;
     out << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
         << "    Data in hex (" << compressed_data.size() << " octets): " << hexlify(compressed_data) << "\n";
+        //<< PGPMessage(data).show() << std::endl;
     return out.str();
 }
 
@@ -51,7 +53,16 @@ std::string Tag8::get_data() const{
 }
 
 void Tag8::set_comp(const uint8_t c){
+   
+    // recompress data
+    if (compressed_data.size()){
+        std::string data = get_data(); // decompress data
+        comp = c;                      // set new compression algorithm
+        set_data(data);                // compress data with new algorithm
+    }
+
     comp = c;
+
     size = raw().size();
 }
 

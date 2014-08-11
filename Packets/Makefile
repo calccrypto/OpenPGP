@@ -41,7 +41,7 @@ Tag6.o: Tag6.h Tag6.cpp ../Hashes/Hashes.h packet.h
 Tag7.o: Tag7.h Tag7.cpp Tag5.h Tag14.h
 	$(CXX) $(CFLAGS) Tag7.cpp
 
-Tag8.o: Tag8.h Tag8.cpp ../Compress/Compress.h packet.h
+Tag8.o: Tag8.h Tag8.cpp ../Compress/Compress.h ../PGPMessage.h packet.h
 	$(CXX) $(CFLAGS) Tag8.cpp
 
 Tag9.o: Tag9.h Tag9.cpp packet.h

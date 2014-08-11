@@ -87,6 +87,15 @@ const std::map <uint8_t, std::string> Compression_Algorithms = {
                 std::make_pair(110, "Private/Experimental algorithm"),
 };
 
+// Reverse Compression_Algorithms
+const std::map <std::string, uint8_t> Compression_Numbers = {
+                std::make_pair("Uncompressed", 0),
+                std::make_pair("ZIP", 1),
+                std::make_pair("ZLIB", 2),
+                std::make_pair("BZip2", 3),
+                // can't really reverse map 100 - 110
+};
+
 const std::string dayofweek[7] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
 
 // Features Flags
@@ -129,6 +138,17 @@ const std::map <uint8_t, std::string> Hash_Algorithms = {
                 std::make_pair(108, "Private/Experimental algorithm"),
                 std::make_pair(109, "Private/Experimental algorithm"),
                 std::make_pair(110, "Private/Experimental algorithm"),
+};
+
+// Reverse Hash_Algorithms
+const std::map <std::string, uint8_t> Hash_Numbers = {
+                std::make_pair("MD5", 1),
+                std::make_pair("SHA1", 2),
+                std::make_pair("RIPEMD160", 3),
+                std::make_pair("SHA256", 8),
+                std::make_pair("SHA384", 9),
+                std::make_pair("SHA512", 10),
+                std::make_pair("SHA224", 11),
 };
 
 // ASN.1 OIDs in hex form
@@ -330,20 +350,20 @@ const std::map <uint8_t, std::string> String2Key_Specifiers = {
 
 // Symmetric Key Algorithm Tags
 const std::map <uint8_t, std::string> Symmetric_Algorithms = {
-                std::make_pair(0, "Plaintext"),
+                std::make_pair(0, "PLAINTEXT"),
                 std::make_pair(1, "IDEA"),
-                std::make_pair(2, "TripleDES"),
+                std::make_pair(2, "TRIPLEDES"),
                 std::make_pair(3, "CAST5"),
-                std::make_pair(4, "Blowfish"),
+                std::make_pair(4, "BLOWFISH"),
                 std::make_pair(5, "Reserved"),
                 std::make_pair(6, "Reserved"),
                 std::make_pair(7, "AES128"),
                 std::make_pair(8, "AES192"),
                 std::make_pair(9, "AES256"),
-                std::make_pair(10, "Twofish 256"),
-                std::make_pair(11, "Camellia128"),
-                std::make_pair(12, "Camellia192"),
-                std::make_pair(13, "Camellia256"),
+                std::make_pair(10, "TWOFISH256"),
+                std::make_pair(11, "CAMELLIA128"),
+                std::make_pair(12, "CAMELLIA192"),
+                std::make_pair(13, "CAMELLIA256"),
                 std::make_pair(100, "Private/Experimental algorithm"),
                 std::make_pair(101, "Private/Experimental algorithm"),
                 std::make_pair(102, "Private/Experimental algorithm"),
@@ -358,34 +378,50 @@ const std::map <uint8_t, std::string> Symmetric_Algorithms = {
                 std::make_pair(255, "Private/Experimental algorithm"),
 };
 
+// Reverse Symmetric_Algorithms
+const std::map <std::string, uint8_t> Symmetric_Algorithms_Numbers = {
+                std::make_pair("PLAINTEXT", 0),
+                std::make_pair("IDEA", 1),
+                std::make_pair("TRIPLEDES", 2),
+                std::make_pair("CAST5", 3),
+                std::make_pair("BLOWFISH", 4),
+                std::make_pair("AES128", 7),
+                std::make_pair("AES192", 8),
+                std::make_pair("AES256", 9),
+                std::make_pair("TWOFISH256", 10),
+                std::make_pair("CAMELLIA128", 11),
+                std::make_pair("CAMELLIA192", 12),
+                std::make_pair("CAMELLIA256", 13),
+};
+
 // Block size of Symmetric Key Algorithms
 const std::map <std::string, uint16_t> Symmetric_Algorithm_Block_Length = {
                 std::make_pair("IDEA", 64),
-                std::make_pair("TripleDES", 64),
+                std::make_pair("TRIPLEDES", 64),
                 std::make_pair("CAST5", 64),
-                std::make_pair("Blowfish", 64),
+                std::make_pair("BLOWFISH", 64),
                 std::make_pair("AES128", 128),
                 std::make_pair("AES192", 128),
                 std::make_pair("AES256", 128),
-                std::make_pair("Twofish 256", 128),
-                std::make_pair("Camellia128", 128),
-                std::make_pair("Camellia192", 128),
-                std::make_pair("Camellia256", 128),
+                std::make_pair("Twofish256", 128),
+                std::make_pair("CAMELLIA128", 128),
+                std::make_pair("CAMELLIA192", 128),
+                std::make_pair("CAMELLIA256", 128),
 };
 
 // Key size of Symmetric Key Algorithms
 const std::map <std::string, uint16_t> Symmetric_Algorithm_Key_Length = {
                 std::make_pair("IDEA", 128),
-                std::make_pair("TripleDES", 192),
+                std::make_pair("TRIPLEDES", 192),
                 std::make_pair("CAST5", 128),
-                std::make_pair("Blowfish", 128),
+                std::make_pair("BLOWFISH", 128),
                 std::make_pair("AES128", 128),
                 std::make_pair("AES192", 192),
                 std::make_pair("AES256", 256),
-                std::make_pair("Twofish 256", 256),
-                std::make_pair("Camellia128", 128),
-                std::make_pair("Camellia192", 192),
-                std::make_pair("Camellia256", 256),
+                std::make_pair("TWOFISH256", 256),
+                std::make_pair("CAMELLIA128", 128),
+                std::make_pair("CAMELLIA192", 192),
+                std::make_pair("CAMELLIA256", 256),
 };
 
 // User Attribute Tags

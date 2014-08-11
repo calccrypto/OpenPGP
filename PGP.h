@@ -64,9 +64,10 @@ class PGP{
         void read(std::ifstream & file);
         void read_raw(std::string & data);                                     // reads packet data only; data is destroyed
         std::string show() const;                                              // display key information
-        std::string raw(uint8_t header = 0) const;                             // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        std::string write(uint8_t header = 0) const;                           // output with ASCII Armor and converted to Radix64
-
+        std::string raw(const uint8_t header = 0) const;                       // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        std::string write(const uint8_t header = 0) const;                     // old or new type packet headers
+        std::string output(const bool armored = true) const;                   // force write with given armor value
+        
         // Accessors
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;

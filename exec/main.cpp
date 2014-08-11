@@ -55,12 +55,12 @@ const std::vector <std::string> commands = {
 
     "list key_file",                                                        // list keys in file, like 'gpg --list-keys'
 
-    "show -k|-m file_name",                                                 // display contents of a key file; -k for key, -m for (unencrypted) message
+    "show -p|-c file_name",                                                 // display contents of a key file; -k for general PGP data, -c for cleartext signed data
 
     "generatekeypair [options]\n"                                           // generate new key pair
     "        options:\n"
+    "            -o output file\n"                                          // where to output data
     "            -h\n"                                                      // help, since there is no way to fail token reading
-    "            -o output name\n"                                          // filename; default stdout
     "            -pks public key size\n"                                    // bits; default 2048
     "            -sks subkey size\n"                                        // bits; default 2048
     "            -pw passphrase\n"                                          // string; default ""
@@ -70,50 +70,57 @@ const std::vector <std::string> commands = {
 
     "generate-revoke-cert private_key passphrase [options]\n"               // generate a revocation certificate for later
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
+    "            -o output file\n"                                          // where to output data
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
 
     "encrypt public_key data_file [options]\n"                              // encrypt a string
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
-    "            -c compression algorithm\n"                                // 0, 1, 2, or 3; default 2; see consts.h or RFC 4880 sec 9.3 for details
+    "            -o output file\n"                                          // where to output data
+    "            -c compression algorithm\n"                                // Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2; default ZLIB; see consts.h or RFC 4880 sec 9.3 for details
     "            -d delete original?\n"                                     // t or f; default f
     "            -mdc use_mdc?\n"                                           // t or f; default t
-    "            -s symmetric encryption algorithm",                        // 0 - 13; default 9; see consts.h or RFC 4880 sec 9.2 for details
+    "            -s symmetric encryption algorithm",                        // default AES256; see consts.h or RFC 4880 sec 9.2 for details
 
     "decrypt private_key passphrase data_file [options]\n"                  // decrypt a file
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
+    "            -o output file\n"                                          // where to output data
     "            -d delete original?",                                      // t or f; default f
 
-    "revoke target revocation_certificate\n"                                // revoke a key with a revocation certificate
-    "        options:\n"
-    "            -o output name",                                           // filename; default stdout
+    "revoke target revocation_certificate [options]",                       // revoke a key with a revocation certificate
+    "            -o output file\n",                                         // where to output data
 
     "revoke-key private_key passphrase [options]\n"                         // revoke a primary key
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
+    "            -o output file\n"                                          // where to output data
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
 
     "revoke-subkey private_key passphrase [options]\n"                      // revoke a subkey
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
+    "            -o output file\n"                                          // where to output data
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
 
     "sign-cleartext private_key passphrase data_file [options]\n"           // sign a string in a file
     "        options:\n"
-    "            -o output name",                                           // filename; default stdout
+    "            -o output file\n"                                          // where to output data
+    "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
+
+    "sign-detach private_key passphrase data_file [options]\n"              // sign a file
+    "        options:\n"
+    "            -o output file\n"                                          // where to output data
+    "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
 
     "sign-file private_key passphrase data_file [options]\n"                // sign a file
     "        options:\n"
-    "            -o output name",                                           // filename; default stdout
+    "            -o output file\n"                                          // where to output data
+    "            -c compression algorithm\n"                                // Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2; default ZLIB; see consts.h or RFC 4880 sec 9.3 for details
+    "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
 
     "sign-key signer passphrase data_file\n"                                // sign a key
     "        options:\n"
-    "            -o output name\n"                                          // filename; default stdout
+    "            -o output file\n"                                          // where to output data
     "            -c certification level",                                   // 0x10 - 0x13; default 0x13 (without "0x")
 
     "verify-clearsign public_key data_file",                                // verify cleartext signature
@@ -158,6 +165,7 @@ bool parse_command(std::string & input){
     try{
         std::stringstream tokens(input);
         std::string cmd; tokens >> cmd;
+
         if (cmd == ""){
             return true;
         }
@@ -168,11 +176,11 @@ bool parse_command(std::string & input){
             std::string which;
             tokens >> which;
             if (!which.size()){
-                std::cout << "Commands:\n";
+                std::cout << "\nNote: All commands with [options] also have options:\n    -o output file\n\nCommands:\n";
                 for(const std::string & c : commands){
                     std::cout << "    " << c << std::endl;
                 }
-                std::cout << "Passed" << std::endl;
+                std::cout << std::endl;
             }
             else{
                 bool found = false;
@@ -216,7 +224,7 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Sign Message ";
-            PGPCleartextSignature m = sign_cleartext(pri, passphrase, message);
+            PGPCleartextSignature m = sign_cleartext(pri, passphrase, message, 2);
             std::cout << "Passed" << std::endl;
 
             std::cout << "Verify Message ";
@@ -257,7 +265,7 @@ bool parse_command(std::string & input){
         else if (cmd == "show"){
             std::string type, file_name;
             if (!(tokens >> type >> file_name) ||
-               (!((type == "-k") || (type == "-K")) && !((type == "-m") || (type == "-M"))) ||
+               (!((type == "-p") || (type == "-P")) && !((type == "-c") || (type == "-C"))) ||
                 (file_name == "")){
                 throw std::runtime_error("Syntax: " + commands[4]);
                 return 1;
@@ -267,11 +275,11 @@ bool parse_command(std::string & input){
             if (!f){
                 throw std::runtime_error("Error: File '" + file_name + "' not opened.");
             }
-            if ((type == "-k") || (type == "-K")){
-                PGPKey key(f);
-                std::cout << key.show() << std::endl;
+            if ((type == "-p") || (type == "-P")){
+                PGPMessage data(f);
+                std::cout << data.show() << std::endl;
             }
-            else if ((type == "-m") || (type == "-M")){
+            else if ((type == "-c") || (type == "-c")){
                 PGPCleartextSignature message(f);
                 std::cout << message.show() << std::endl;
             }
@@ -282,6 +290,7 @@ bool parse_command(std::string & input){
         else if (cmd == "generatekeypair"){
             Options options;
             options["-o"] = "";
+            options["-a"] = "t";
             options["-pks"] = "1024";
             options["-sks"] = "1024";
             options["-pws"] = "";
@@ -328,10 +337,10 @@ bool parse_command(std::string & input){
 
             Options options;
             options["-o"] = "";
-            options["-c"] = "2";
+            options["-c"] = "ZLIB";
             options["-d"] = "f";
             options["-mdc"] = "t";
-            options["-s"] = "9";
+            options["-s"] = "AES256";
             parse_options(tokens, options);
 
             std::ifstream d(data_file.c_str(), std::ios::binary);
@@ -348,7 +357,7 @@ bool parse_command(std::string & input){
             s << d.rdbuf();
 
             PGPPublicKey key(k);
-            output(encrypt(key, s.str(), data_file, options["-s"][0] - '0', options["-c"][0] - '0', (options["-mdc"] == "t")).write(), options["-o"]);
+            output(encrypt(key, s.str(), data_file, Symmetric_Algorithms_Numbers.at(options["-s"]), Compression_Numbers.at(options["-c"]), (options["-mdc"] == "t")).write(), options["-o"]);
 
             if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
                 remove(data_file.c_str());
@@ -481,15 +490,16 @@ bool parse_command(std::string & input){
 
             Options options;
             options["-o"] = "";
+            options["-h"] = "SHA1";
             parse_options(tokens, options);
 
             PGPSecretKey key(k);
             output(sign_cleartext(key, passphrase, text).write(), options["-o"]);
         }
-        else if (cmd == "sign-file"){
+        else if (cmd == "sign-detach"){
             std::string pri, passphrase, filename;
             if (!(tokens >> pri >> passphrase >> filename) || (filename == "") || (pri == "")){
-                throw std::runtime_error("Syntax: " + commands[13]);
+                throw std::runtime_error("Syntax: " + commands[14]);
             }
 
             std::ifstream k(pri.c_str(), std::ios::binary);
@@ -498,20 +508,46 @@ bool parse_command(std::string & input){
             }
             std::ifstream f(filename.c_str(), std::ios::binary);
             if (!f){
-                throw std::runtime_error("IOError: file '" + filename + "' could not be created.");
+                throw std::runtime_error("IOError: file '" + filename + "' could not be opened.");
             }
 
             Options options;
             options["-o"] = "";
+            options["-h"] = "SHA1";
             parse_options(tokens, options);
 
             PGPSecretKey key(k);
-            output(sign_file(key, passphrase, f).write(), options["-o"]);
+            output(sign_detach(key, passphrase, f, Hash_Numbers.at(options["-h"])).write(), options["-o"]);
+        }
+        else if (cmd == "sign-file"){
+            std::string pri, passphrase, filename;
+            if (!(tokens >> pri >> passphrase >> filename) || (filename == "") || (pri == "")){
+                throw std::runtime_error("Syntax: " + commands[14]);
+            }
+
+            std::ifstream k(pri.c_str(), std::ios::binary);
+            if (!k){
+                throw std::runtime_error("IOError: File '" + pri + "' not opened.");
+            }
+            std::ifstream f(filename.c_str(), std::ios::binary);
+            if (!f){
+                throw std::runtime_error("IOError: file '" + filename + "' could not be opened.");
+            }
+
+            Options options;
+            options["-o"] = "";
+            options["-c"] = "ZLIB";
+            options["-h"] = "SHA1";
+            parse_options(tokens, options);
+            std::cout << options["-a"] << std::endl;
+
+            PGPSecretKey key(k);
+            output(sign_message(key, passphrase, filename, f, Hash_Numbers.at(options["-h"]), Compression_Numbers.at(options["-c"])).write(), options["-o"]);
         }
         else if (cmd == "sign-key"){
             std::string signer_filename, passphrase, signee_filename;
             if (!(tokens >> signer_filename >> passphrase >> signee_filename) || (signer_filename == "") || (signee_filename == "")){
-                throw std::runtime_error("Syntax: " + commands[14]);
+                throw std::runtime_error("Syntax: " + commands[15]);
             }
 
             std::ifstream signee_file(signee_filename.c_str(), std::ios::binary);
@@ -535,7 +571,7 @@ bool parse_command(std::string & input){
         else if (cmd == "verify-clearsign"){
             std::string pub, data;
             if (!(tokens >> pub >> data) || (pub == "") || (data == "")){
-                throw std::runtime_error("Syntax: " + commands[15]);
+                throw std::runtime_error("Syntax: " + commands[16]);
             }
             std::ifstream m(data.c_str(), std::ios::binary);
             if (!m){
@@ -553,7 +589,7 @@ bool parse_command(std::string & input){
         else if (cmd == "verify-detach"){
             std::string pub, filename, signame;
             if (!(tokens >> pub >> filename >> signame) || (pub == "") || (filename == "") || (signame == "")){
-                throw std::runtime_error("Syntax: " + commands[16]);
+                throw std::runtime_error("Syntax: " + commands[17]);
             }
 
             std::ifstream f(filename.c_str(), std::ios::binary);
@@ -577,7 +613,7 @@ bool parse_command(std::string & input){
         else if (cmd == "verify-message"){
             std::string key_file, message_file;
             if (!(tokens >> key_file >> message_file) || (key_file == "") || (message_file == "")){
-                throw std::runtime_error("Syntax: " + commands[17]);
+                throw std::runtime_error("Syntax: " + commands[18]);
             }
 
             std::ifstream k(key_file.c_str(), std::ios::binary);
@@ -596,7 +632,7 @@ bool parse_command(std::string & input){
         else if (cmd == "verify-key"){
             std::string signer_file, signee_file;
             if (!(tokens >> signer_file >> signee_file) || (signer_file == "") || (signee_file == "")){
-                throw std::runtime_error("Syntax: " + commands[18]);
+                throw std::runtime_error("Syntax: " + commands[19]);
             }
             std::ifstream signer(signer_file.c_str(), std::ios::binary);
             if (!signer){

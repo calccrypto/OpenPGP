@@ -149,7 +149,7 @@ const bool PGPMessage::match(const Token & t) const{
     if ((t != OPENPGPMESSAGE) && (t != ENCRYPTEDMESSAGE)  &&
         (t != SIGNEDMESSAGE)  && (t != COMPRESSEDMESSAGE) &&
         (t != LITERALMESSAGE)){
-        throw std::runtime_error("Error: Invalid token to match");
+        throw std::runtime_error("Error: Invalid token to match.");
         // return false;
     }
 
@@ -183,7 +183,7 @@ const bool PGPMessage::match(const Token & t) const{
                 push = SP;
                 break;
             default:
-                throw std::runtime_error("Error: Non-Message packet found");
+                throw std::runtime_error("Error: Non-Message packet found.");
                 // return false;
                 break;
         }
