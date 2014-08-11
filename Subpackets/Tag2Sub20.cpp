@@ -25,14 +25,14 @@ void Tag2Sub20::read(std::string & data){
     size = mlen + nlen + 4;
 }
 
-std::string Tag2Sub20::show() const{
+std::string Tag2Sub20::show(const uint8_t indent) const{
     std::stringstream out;
     for(unsigned int x = 0; x < 4; x++){
-        out << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
+        out << std::string(indent, ' ') << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
     }
-    out << "\n"
-        << "            Name: " << m << "\n"
-        << "            Value: " << n << "\n";
+    out << std::string(indent, ' ') << "\n"
+        << std::string(indent, ' ') << "            Name: " << m << "\n"
+        << std::string(indent, ' ') << "            Value: " << n << "\n";
     return out.str();
 }
 std::string Tag2Sub20::raw() const{

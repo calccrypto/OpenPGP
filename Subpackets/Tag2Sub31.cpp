@@ -20,7 +20,7 @@ void Tag2Sub31::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub31::show() const{
+std::string Tag2Sub31::show(const uint8_t indent) const{
     std::stringstream out;
     out << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
         << "            Hash Algorithm: " << Hash_Algorithms.at(ha) << " (hash " << static_cast <unsigned int> (ha) << ")\n"

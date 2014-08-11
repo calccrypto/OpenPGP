@@ -16,13 +16,15 @@ void Tag2Sub3::read(std::string & data){
     time = toint(data, 256);
 }
 
-std::string Tag2Sub3::show() const{
+std::string Tag2Sub3::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "            Signature Expiration Time (Days): ";
-    if (time == 0)
-            out << "Never\n";
-    else
-            out << show_time(time);
+    out << std::string(indent, ' ') << "            Signature Expiration Time (Days): ";
+    if (time == 0){
+        out << std::string(indent, ' ') << "Never";
+    }
+    else{
+        out << std::string(indent, ' ') << show_time(time);
+    }
     out << "\n";
     return out.str();
 }

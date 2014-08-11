@@ -16,14 +16,14 @@ void Tag2Sub9::read(std::string & data){
     time = static_cast <time_t> (toint(data, 256));
 }
 
-std::string Tag2Sub9::show() const{
+std::string Tag2Sub9::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "            Key Expiration Time (Days): ";
+    out << std::string(indent, ' ') << "            Key Expiration Time (Days): ";
     if (time == 0){
-            out << "Never\n";
+        out << std::string(indent, ' ') << "Never";
     }
     else{
-            out << show_time(time);
+        out << std::string(indent, ' ') << show_time(time);
     }
     out << "\n";
     return out.str();

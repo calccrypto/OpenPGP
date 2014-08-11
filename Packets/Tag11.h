@@ -35,7 +35,7 @@ class Tag11 : public Packet{
         uint8_t format;
         std::string filename;
         uint32_t time;
-        std::string literal;
+        std::string literal;    // source data; no line ending conversion
 
     public:
         typedef std::shared_ptr<Tag11> Ptr;
@@ -43,7 +43,7 @@ class Tag11 : public Packet{
         Tag11();
         Tag11(std::string & data);
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         uint8_t get_format() const;

@@ -41,7 +41,7 @@ class Tag2Sub32 : public Subpacket{
         Tag2Sub32(std::string & data);
         ~Tag2Sub32();
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         Tag2::Ptr get_embedded() const;

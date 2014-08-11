@@ -51,6 +51,9 @@ class Packet{
         // returns packet data with new format packet length
         std::string write_new_length(std::string data) const;
 
+        // returns first line of show functions
+        std::string show_title(const uint8_t indent = 0) const;
+
         Packet(uint8_t tag);
         Packet(uint8_t tag, uint8_t version);
         Packet(const Packet & copy);
@@ -63,7 +66,7 @@ class Packet{
         Packet();
         virtual ~Packet();
         virtual void read(std::string & data) = 0;
-        virtual std::string show() const = 0;
+        virtual std::string show(const uint8_t indent = 0) const = 0;
         virtual std::string raw() const = 0;
         std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
 

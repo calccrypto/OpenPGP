@@ -17,10 +17,10 @@ void Tag2Sub11::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub11::show() const{
+std::string Tag2Sub11::show(const uint8_t indent) const{
     std::stringstream out;
     for(unsigned int x = 0; x < psa.size(); x++){
-        out << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
+        out << std::string(indent, ' ') << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
     }
     return out.str();
 }

@@ -18,10 +18,11 @@ void Tag18::read(std::string & data){
     protected_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag18::show() const{
+std::string Tag18::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(indent, ' ') << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data) << "\n";
     return out.str();
 }
 

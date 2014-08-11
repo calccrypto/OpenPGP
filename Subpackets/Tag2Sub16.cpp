@@ -16,8 +16,8 @@ void Tag2Sub16::read(std::string & data){
     keyid = data;
 }
 
-std::string Tag2Sub16::show() const{
-    return "            Key ID: " + hexlify(keyid) + "\n";
+std::string Tag2Sub16::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + "            Key ID: " + hexlify(keyid) + "\n";
 }
 
 std::string Tag2Sub16::raw() const{

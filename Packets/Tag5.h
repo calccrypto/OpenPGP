@@ -38,7 +38,7 @@ class Tag5 : public Tag6{
         std::string secret;
 
         void read_s2k(std::string & data);
-        std::string show_common() const;
+        std::string show_common(const uint8_t indent = 0) const;
 
         Tag5(uint8_t tag);
 
@@ -50,7 +50,7 @@ class Tag5 : public Tag6{
         Tag5(std::string & data);
         virtual ~Tag5();
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         uint8_t get_s2k_con() const;

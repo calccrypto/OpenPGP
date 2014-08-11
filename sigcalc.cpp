@@ -49,13 +49,11 @@ std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2){
 
 std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
     std::string out;
-    // convert line endings ot <CR><LF>
+    // convert line endings to <CR><LF>
     if (data[0] == '\n'){
-        out = "\r\n";
+        out = "\r";
     }
-    else{
-        out = std::string(1, data[0]);
-    }
+    out += std::string(1, data[0]);
     for(unsigned int x = 1; x < data.size(); x++){
         if ((data[x] == '\n') && (data[x - 1] != '\r')){  // check to make sure lines aren't already <CR><LF>
             out += "\r";

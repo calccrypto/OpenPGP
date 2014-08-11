@@ -17,10 +17,10 @@ void Tag2Sub22::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub22::show() const{
+std::string Tag2Sub22::show(const uint8_t indent) const{
     std::stringstream out;
     for(unsigned int x = 0; x < pca.size(); x++){
-        out << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
+        out << std::string(indent, ' ') << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")\n";
     }
     return out.str();
 }

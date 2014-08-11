@@ -16,8 +16,8 @@ void Tag2Sub4::read(std::string & data){
     exportable = data[0];
 }
 
-std::string Tag2Sub4::show() const{
-    return std::string("            Exportable: ") + (exportable?"True":"False") + "\n";
+std::string Tag2Sub4::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + std::string("            Exportable: ") + (exportable?"True":"False") + "\n";
 }
 
 std::string Tag2Sub4::raw() const{

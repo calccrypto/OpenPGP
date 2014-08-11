@@ -39,7 +39,7 @@ class Tag1 : public Packet{
         Tag1();
         Tag1(std::string & data);
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         std::string get_keyid() const;

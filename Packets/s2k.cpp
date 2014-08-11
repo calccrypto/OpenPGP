@@ -5,6 +5,12 @@ uint32_t coded_count(unsigned int c){
     return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);
 }
 
+std::string S2K::show_title(const uint8_t indent) const{
+    std::stringstream out; 
+    out << std::string(indent, ' ') << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <int> (type) << "):\n";
+    return out.str();
+}
+
 S2K::S2K(uint8_t type) :
     type(type),
     hash()
@@ -34,13 +40,11 @@ void S2K::set_hash(const uint8_t h){
 
 S2K0::S2K0(uint8_t type) :
     S2K(type)
-{
-}
+{}
 
 S2K0::S2K0() :
     S2K0(0)
-{
-}
+{}
 
 S2K0::~S2K0(){}
 
@@ -50,9 +54,11 @@ void S2K0::read(std::string & data){
     data = data.substr(2, data.size() - 2);
 }
 
-std::string S2K0::show() const{
+std::string S2K0::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n";
+    out << std::string(indent, ' ') << show_title(indent) 
+        << std::string(indent, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) 
+        << ")\n";
     return out.str();
 }
 
@@ -76,13 +82,11 @@ S2K::Ptr S2K0::clone() const{
 S2K1::S2K1(uint8_t type) :
     S2K0(type),
     salt()
-{
-}
+{}
 
 S2K1::S2K1() :
     S2K1(1)
-{
-}
+{}
 
 S2K1::~S2K1(){}
 
@@ -93,10 +97,11 @@ void S2K1::read(std::string & data){
     data = data.substr(10, data.size() - 10);
 }
 
-std::string S2K1::show() const{
+std::string S2K1::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
-        << "        Salt: " << hexlify(salt) << "\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
+        << std::string(indent, ' ') << "        Salt: " << hexlify(salt) << "\n";
     return out.str();
 }
 
@@ -128,8 +133,7 @@ S2K::Ptr S2K1::clone() const{
 S2K3::S2K3() :
     S2K1(3),
     count()
-{
-}
+{}
 
 S2K3::~S2K3(){}
 
@@ -141,11 +145,12 @@ void S2K3::read(std::string & data){
     data = data.substr(11, data.size() - 11);
 }
 
-std::string S2K3::show() const{
+std::string S2K3::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
-        << "        Salt: " << hexlify(salt) << "\n"
-        << "        Coded Count: " << coded_count(count) << " (count " << static_cast <int> (count) << ")\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
+        << std::string(indent, ' ') << "        Salt: " << hexlify(salt) << "\n"
+        << std::string(indent, ' ') << "        Coded Count: " << coded_count(count) << " (count " << static_cast <int> (count) << ")\n";
     return out.str();
 }
 

@@ -24,11 +24,12 @@ void Tag1::read(std::string & data){
         mpi.push_back(read_MPI(data));
 }
 
-std::string Tag1::show() const{
+std::string Tag1::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << "    KeyID: " << hexlify(keyid) << "\n"
-        << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(indent, ' ') << "    KeyID: " << hexlify(keyid) << "\n"
+        << std::string(indent, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
     if (pka < 4){           // RSA
         out << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n";
     }

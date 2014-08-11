@@ -27,7 +27,7 @@ void Tag2Sub32::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub32::show() const{
+std::string Tag2Sub32::show(const uint8_t indent) const{
     return embedded -> show();
 }
 

@@ -1,10 +1,5 @@
 Find PGP keys with formats/packets I have never seen before
-Figure out how to read a gpg .sig file
 Make error handling more reasonable (currently everything throws exceptions)
-Move packet titles to Packet::show from PGP::show
 Recalculate signature functions
 encrypt+sign at once
-accept arguments in lowercase and uppercase
-optional ASCII armor
-format binary and text data functions in sigcalc.h
 fix memory leaks

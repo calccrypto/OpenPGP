@@ -17,8 +17,8 @@ void Tag2Sub26::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub26::show() const{
-    return "            Policy - " + uri;
+std::string Tag2Sub26::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + "            Policy - " + uri;
 }
 
 std::string Tag2Sub26::raw() const{

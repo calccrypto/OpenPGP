@@ -18,7 +18,7 @@ void Tag2Sub5::read(std::string & data){
     amount = data[1];
 }
 
-std::string Tag2Sub5::show() const{
+std::string Tag2Sub5::show(const uint8_t indent) const{
     std::stringstream out;
     out << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
         << "            Trust Amount: " << static_cast <unsigned int> (amount) << "\n";

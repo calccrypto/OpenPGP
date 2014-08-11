@@ -19,8 +19,8 @@ void Tag10::read(std::string & data){
     }
 }
 
-std::string Tag10::show() const{
-    return "    PGP\n";
+std::string Tag10::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + show_title(indent) + std::string(indent, ' ') + "    PGP\n";
 }
 
 std::string Tag10::raw() const{

@@ -5,8 +5,7 @@ Tag17::Tag17() :
     length(),
     type(),
     attributes()
-{
-}
+{}
 
 Tag17::Tag17(std::string & data) :
     Tag17()
@@ -14,8 +13,8 @@ Tag17::Tag17(std::string & data) :
     read(data);
 }
 
-Tag17::~Tag17(){
-}
+Tag17::~Tag17()
+{}
 
 void Tag17::read(std::string & data){
     size = data.size();
@@ -37,10 +36,10 @@ void Tag17::read(std::string & data){
     }
 }
 
-std::string Tag17::show() const{
-    std::string out = "";
-    for(unsigned int i = 0; i < attributes.size(); i++){
-        out += attributes[i] -> show();
+std::string Tag17::show(const uint8_t indent) const{
+    std::string out = show_title(indent);
+    for(Subpacket::Ptr const & a : attributes){
+        out += a -> show(indent) + "\n";
     }
     return out;
 }

@@ -2,22 +2,21 @@
 
 TagX::TagX() :
     TagX(std::string())
-{
-}
+{}
 
 TagX::TagX(const std::string & data) :
     Packet(),
     stream(data)
-{
-}
+{}
 
 void TagX::read(std::string & data){
     stream = data;
 }
 
-std::string TagX::show() const{
-    return "    " + hexlify(stream) + "\n";
+std::string TagX::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + show_title(indent) + std::string(indent + 4, ' ') + hexlify(stream) + "\n";
 }
+
 std::string TagX::raw() const{
     return stream;
 }

@@ -21,11 +21,11 @@ void Tag2Sub12::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub12::show() const{
+std::string Tag2Sub12::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "            Class: " << static_cast <unsigned int> (_class) << "\n"
-        << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-        << "            Fingerprint: " << fingerprint << "\n";
+    out << std::string(indent, ' ') << "            Class: " << static_cast <unsigned int> (_class) << "\n"
+        << std::string(indent, ' ') << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << std::string(indent, ' ') << "            Fingerprint: " << fingerprint << "\n";
     return out.str();
 }
 

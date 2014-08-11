@@ -17,9 +17,9 @@ void Tag12::read(std::string & data){
     trust = data;
 }
 
-std::string Tag12::show() const{
+std::string Tag12::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Data (" << trust.size() << " octets): " << trust << "\n";
+    out << std::string(indent, ' ') << show_title(indent) << std::string(indent, ' ') << "    Data (" << trust.size() << " octets): " << trust << "\n";
     return out.str();
 }
 

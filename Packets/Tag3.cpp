@@ -5,16 +5,14 @@ Tag3::Tag3() :
     sym(),
     s2k(),
     esk()
-{
-}
+{}
 
 Tag3::Tag3(const Tag3 & copy) :
     Packet(copy),
     sym(copy.sym),
     s2k(copy.s2k -> clone()),
     esk(copy.get_esk_clone())
-{
-}
+{}
 
 Tag3::Tag3(std::string & data) :
     Tag3()
@@ -22,8 +20,8 @@ Tag3::Tag3(std::string & data) :
     read(data);
 }
 
-Tag3::~Tag3(){
-}
+Tag3::~Tag3()
+{}
 
 void Tag3::read(std::string & data){
     size = data.size();
@@ -46,13 +44,14 @@ void Tag3::read(std::string & data){
     }
 }
 
-std::string Tag3::show() const{
+std::string Tag3::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
-        << "    " << String2Key_Specifiers.at(s2k -> get_type()) << " (s2k " << static_cast <int> (s2k -> get_type()) << "):\n" << s2k -> show();
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(indent, ' ') << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
+        << std::string(indent, ' ') << "    " << s2k -> show();
     if (esk){
-        out << "    Encrypted Session Key: " << *esk << "\n";
+        out << std::string(indent, ' ') << "    Encrypted Session Key: " << *esk << "\n";
     }
     return out.str();
 }

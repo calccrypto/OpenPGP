@@ -63,7 +63,7 @@ class PGP{
         void read(std::string & data);                                                  // read key, including ASCII Armor; some data is consumed
         void read(std::ifstream & file);
         void read_raw(std::string & data);                                              // reads packet data only; data is consumed
-        std::string show() const;                                                       // display key information
+        std::string show(const uint8_t indent = 0) const;                               // display information; indent is used to tab the output if desired
         std::string raw(const uint8_t header = 0) const;                                // write packets only; header is for writing default (0), old (1) or new (2) header formats
         std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;     // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
 

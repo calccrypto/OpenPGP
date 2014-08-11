@@ -17,8 +17,8 @@ void Tag2Sub6::read(std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub6::show() const{
-    return "            Regular Expression: " + regex + "\n";
+std::string Tag2Sub6::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + "            Regular Expression: " + regex + "\n";
 }
 
 std::string Tag2Sub6::raw() const{

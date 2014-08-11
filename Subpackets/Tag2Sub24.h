@@ -38,7 +38,7 @@ class Tag2Sub24 : public Subpacket{
         Tag2Sub24();
         Tag2Sub24(std::string & data);
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         std::string get_pks() const;

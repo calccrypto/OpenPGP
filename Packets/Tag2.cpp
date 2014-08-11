@@ -207,22 +207,22 @@ void Tag2::read(std::string & data){
     }
 }
 
-std::string Tag2::show() const{
+std::string Tag2::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Version: " << static_cast <unsigned int> (version) << "\n";
+    out << std::string(indent, ' ') << show_title(indent) << "    Version: " << static_cast <unsigned int> (version) << "\n";
     if (version < 4){
-        out << "    Hashed Material:\n"
-            << "        Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << "        Creation Time: " << show_time(time) << "\n"
-            << "    Signer's Key ID: " << hexlify(keyid) << "\n"
-            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n";
+        out << std::string(indent, ' ') << "    Hashed Material:\n"
+            << std::string(indent, ' ') << "        Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
+            << std::string(indent, ' ') << "        Creation Time: " << show_time(time) << "\n"
+            << std::string(indent, ' ') << "    Signer's Key ID: " << hexlify(keyid) << "\n"
+            << std::string(indent, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+            << std::string(indent, ' ') << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n";
     }
     if (version == 4){
-        out << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-            << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-            << "    Hashed Sub:\n";
+        out << std::string(indent, ' ') << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
+            << std::string(indent, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+            << std::string(indent, ' ') << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+            << std::string(indent, ' ') << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
             for(Subpacket::Ptr const & s : hashed_subpackets){
@@ -230,18 +230,18 @@ std::string Tag2::show() const{
             }
         }
         if (unhashed_subpackets.size()){
-            out << "    Unhashed Sub:\n";
+            out << std::string(indent, ' ') << "    Unhashed Sub:\n";
             for(Subpacket::Ptr const & s : unhashed_subpackets){
-                out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
+                out << std::string(indent, ' ') << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show();
             }
         }
     }
-    out << "    Hash Left 16 Bits: " << hexlify(left16) << "\n";
+    out << std::string(indent, ' ') << "    Hash Left 16 Bits: " << hexlify(left16) << "\n";
     if (pka < 4)
-        out << "    RSA m**d mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n";
+        out << std::string(indent, ' ') << "    RSA m**d mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
     else if (pka == 17){
-        out << "    DSA r (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-            << "    DSA s (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
+        out << std::string(indent, ' ') << "    DSA r (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+            << std::string(indent, ' ') << "    DSA s (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
     }
     return out.str();
 }

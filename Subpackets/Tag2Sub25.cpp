@@ -16,7 +16,7 @@ void Tag2Sub25::read(std::string & data){
     primary = data[0];
 }
 
-std::string Tag2Sub25::show() const{
+std::string Tag2Sub25::show(const uint8_t indent) const{
     return std::string("            Primary: ") + (primary?"True":"False") + "\n";
 }
 

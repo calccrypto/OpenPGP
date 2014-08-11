@@ -16,8 +16,8 @@ void Tag2Sub7::read(std::string & data){
     revocable = data[0];
 }
 
-std::string Tag2Sub7::show() const{
-    return std::string("            Revocable: ") + (revocable?"True":"False") + "\n";
+std::string Tag2Sub7::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + std::string("            Revocable: ") + (revocable?"True":"False") + "\n";
 }
 
 std::string Tag2Sub7::raw() const{

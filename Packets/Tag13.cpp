@@ -61,14 +61,14 @@ void Tag13::read(std::string & data){
     }
 }
 
-std::string Tag13::show() const{
+std::string Tag13::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    User ID: " << name;
+    out << std::string(indent, ' ') << show_title(indent) << std::string(indent, ' ') << "    User ID: " << name;
     if (comment != ""){
-        out << " (" << comment << ")";
+        out << std::string(indent, ' ') << " (" << comment << ")";
     }
     if (email != ""){
-        out << " <" << email << ">";
+        out << std::string(indent, ' ') << " <" << email << ">";
     }
     out << "\n";
     return out.str();

@@ -16,8 +16,8 @@ Tag7::Tag7(std::string & data) :
     read(data);
 }
 
-Tag7::~Tag7(){
-}
+Tag7::~Tag7()
+{}
 
 Tag14 Tag7::get_public_obj() const{
     std::string data = raw();

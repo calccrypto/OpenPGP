@@ -18,9 +18,9 @@ void Tag19::read(std::string & data){
     hash = data;
 }
 
-std::string Tag19::show() const{
+std::string Tag19::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    SHA - 1 Hash of previous packet: " << hash << "\n";
+    out << std::string(indent, ' ') << show_title(indent) << std::string(indent, ' ') << "    SHA - 1 Hash of previous packet: " << hash << "\n";
     return out.str();
 }
 

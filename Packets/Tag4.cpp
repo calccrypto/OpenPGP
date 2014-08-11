@@ -35,14 +35,15 @@ void Tag4::read(std::string & data){
     data = data.substr(12, data.size() - 12);
 }
 
-std::string Tag4::show() const{
+std::string Tag4::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << "    Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
-        << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-        << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-        << "    KeyID: " << hexlify(keyid) << "\n"
-        << "    Nested: " << static_cast <bool> (nested) << "\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << std::string(indent, ' ') << "    Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
+        << std::string(indent, ' ') << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << std::string(indent, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << std::string(indent, ' ') << "    KeyID: " << hexlify(keyid) << "\n"
+        << std::string(indent, ' ') << "    Nested: " << static_cast <bool> (nested) << "\n";
     return out.str();
 }
 

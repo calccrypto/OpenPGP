@@ -191,15 +191,10 @@ void PGP::read_raw(std::string & data){
     armored = false;
 }
 
-std::string PGP::show() const{
+std::string PGP::show(const uint8_t indent) const{
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
-        out << (p -> get_format()?"New":"Old")  << ": ";
-        try{// defined packets have name and tag number
-            out << Packet_Tags.at(p -> get_tag()) << " (Tag " << static_cast <int> (p -> get_tag()) << ")";
-        }
-        catch (const std::out_of_range & e) {} // catch out of range error for const std::map
-        out << "(" << p -> get_size() << " octets)\n" + p -> show() << "\n";
+        out << p -> show(indent) << "\n";
     }
     return out.str();
 }

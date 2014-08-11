@@ -17,9 +17,9 @@ void Tag9::read(std::string & data){
     encrypted_data = data;
 }
 
-std::string Tag9::show() const{
+std::string Tag9::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Encrypted Data (" << encrypted_data.size() << " octets): " << hexlify(encrypted_data) << "\n";
+    out << std::string(indent, ' ') << show_title(indent) << "    Encrypted Data (" << encrypted_data.size() << " octets): " << hexlify(encrypted_data) << "\n";
     return out.str();
 }
 

@@ -44,6 +44,12 @@ std::string Packet::write_new_length(std::string data) const{
     return out + data;
 }
 
+std::string Packet::show_title(const uint8_t indent) const{
+    std::stringstream out;
+    out << std::string(indent, ' ') << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")" << "(" << size << " octets)\n";
+    return out.str();
+}
+
 Packet::Packet(uint8_t tag, uint8_t version) :
     tag(tag),
     version(version),

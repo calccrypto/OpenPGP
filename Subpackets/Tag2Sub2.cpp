@@ -16,8 +16,8 @@ void Tag2Sub2::read(std::string & data){
     time = toint(data, 256);
 }
 
-std::string Tag2Sub2::show() const{
-    return "            Creation Time: " + show_time(time) + "\n";
+std::string Tag2Sub2::show(const uint8_t indent) const{
+    return std::string(indent, ' ') + "            Creation Time: " + show_time(time) + "\n";
 }
 
 std::string Tag2Sub2::raw() const{

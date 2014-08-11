@@ -37,7 +37,7 @@ class Tag18 : public Packet{
         Tag18();
         Tag18(std::string & data);
         void read(std::string & data);
-        std::string show() const;
+        std::string show(const uint8_t indent = 0) const;
         std::string raw() const;
 
         std::string get_protected_data() const;

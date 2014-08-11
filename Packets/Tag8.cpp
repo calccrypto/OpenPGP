@@ -27,10 +27,11 @@ void Tag8::read(std::string & data){
     compressed_data = data.substr(1, data.size() - 1);
 }
 
-std::string Tag8::show() const{
+std::string Tag8::show(const uint8_t indent) const{
     std::string data = get_data();
     std::stringstream out;
-    out << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
+    out << std::string(indent, ' ') << show_title(indent) 
+        << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
         << "    Data in hex (" << compressed_data.size() << " octets): " << hexlify(compressed_data) << "\n";
         //<< PGPMessage(data).show() << std::endl;
     return out.str();

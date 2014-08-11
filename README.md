@@ -69,7 +69,8 @@ read non-Cleartext Signature data.
 
 The exec/main.cpp file provides a simple command line interface,
 which can be used as examples on how to use the functions. A lot
-of the output was based on/inspired by pgpdump.net and GPG.
+of the output was based on/inspired by pgpdump.net and GPG. Build
+the command line program with make.
 
 All data structures have some standard functions:
     read  - reads data without the respective
@@ -89,13 +90,13 @@ All data structures have some standard functions:
             the object (mainly used for moving
             PGP data around).
 
-    Ptr   - a typedef for std::shared_ptr < T >, where
+    Ptr   - a typedef for std::shared_ptr \<T\>, where
             T is the class each typdef is found in.
 
 Operator= and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
-To build the command line program run make on OpenPGP/exec/main.cpp
+To build just the library, run make in OpenPGP/.
 
 Notes:
     Sometimes, there are excerpts from RFC 4880 in the code.
@@ -104,9 +105,6 @@ Notes:
 
     Keyrings were not implemented. Rather, keys are read
     from the directory used as arguments to functions.
-
-    There are also several untested functions, having never
-    encountered real versions of those packets/subpackets.
 
     If for some reason the program cannot operate on some data
     properly, an exception will be thrown. This will be changed

@@ -29,13 +29,14 @@ void Tag11::read(std::string & data){
     literal = data.substr(len + 6, data.size() - len - 6);
 }
 
-std::string Tag11::show() const{
+std::string Tag11::show(const uint8_t indent) const{
     std::stringstream out;
-    out << "    Format: " << BTU.at(format) << "\n"
-        << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
-        << "        Filename: " << filename << "\n"
-        << "        Creation Date: " << show_time(time) << "\n"
-        << "        Data: " << literal << "\n";
+    out << std::string(indent, ' ') << show_title(indent)
+        << std::string(indent, ' ') << "    Format: " << BTU.at(format) << "\n"
+        << std::string(indent, ' ') << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
+        << std::string(indent, ' ') << "        Filename: " << filename << "\n"
+        << std::string(indent, ' ') << "        Creation Date: " << show_time(time) << "\n"
+        << std::string(indent, ' ') << "        Data: " << literal << "\n";
     return out.str();
 }
 
