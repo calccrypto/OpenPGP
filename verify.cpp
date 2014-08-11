@@ -65,7 +65,7 @@ bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pk
         return RSA_verify(encoded, signature, signing);
     }
     else if (pka == 17){ // DSA
-        return DSA_verify(encoded, signature, signing);
+        return DSA_verify(digest, signature, signing);
     }
     return false;
 }

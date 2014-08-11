@@ -44,7 +44,7 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, con
         return {RSA_sign(encoded, pri, pub)};
     }
     else if (pka == 17){ // DSA
-        return DSA_sign(encoded, pri, pub);
+        return DSA_sign(digest, pri, pub);
     }
     else{
         std::stringstream s; s << static_cast <int> (pka);
