@@ -24,7 +24,7 @@ TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
             auto ret = pka_sign(digest, PKA_RSA, {n, e}, {d}, h);
             ASSERT_EQ(ret.size(), 1);
             EXPECT_EQ(mpitohex(ret[0]), RSA_SIGGEN_SIG[i][x]);
-            EXPECT_TRUE(pka_verify(digest, PKA_RSA, {n, e}, {hextompi(RSA_SIGGEN_SIG[i][x])}, h));
+            EXPECT_TRUE(pka_verify(digest, h, PKA_RSA, {n, e}, {hextompi(RSA_SIGGEN_SIG[i][x])}));
         }
     }
 }
