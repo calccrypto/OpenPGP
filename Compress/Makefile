@@ -8,7 +8,7 @@ debug: all
 
 all: compress.o bzip2.o zlib.o
 
-compress.o: Compress.h Compress.cpp pgpbzip2.h pgpzlib.h 
+compress.o: Compress.h Compress.cpp pgpbzip2.h pgpzlib.h
 	$(CXX) $(CFLAGS) Compress.cpp -lbz2 -lz
 
 bzip2.o: pgpbzip2.h pgpbzip2.cpp

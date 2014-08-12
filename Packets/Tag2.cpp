@@ -210,7 +210,7 @@ void Tag2::read(std::string & data){
 std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n" 
+    out << std::string(tab, ' ') << show_title() << "\n"
         << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version);
     if (version < 4){
         out << std::string(tab, ' ') << "    Hashed Material:\n"

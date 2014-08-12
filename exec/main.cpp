@@ -281,7 +281,7 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Verify Key "; std::cout.flush();
-            if (!verify_signature(pri, pub)){
+            if (!verify_key(pri, pub)){
                 throw std::runtime_error("Error: Could not verify key signature.");
             }
             std::cout << "Passed" << std::endl;
@@ -765,7 +765,7 @@ bool parse_command(std::string & input){
 
             PGPPublicKey signerkey(signer), signeekey(signee);
 
-            std::cout << "Key in '" << signee_file << "' was" << std::string(verify_signature(signerkey, signeekey)?"":" not") << " signed by key " << signerkey << "." << std::endl;
+            std::cout << "Key in '" << signee_file << "' was" << std::string(verify_key(signerkey, signeekey)?"":" not") << " signed by key " << signerkey << "." << std::endl;
         }
         else{
             std::cout << find_command(cmd) << std::endl;;

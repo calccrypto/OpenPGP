@@ -39,7 +39,7 @@ class BBS{
         /*
         Only one "real" instance of BBS exists at a time, since
         seeding once will seed for the entire program.
-        */          
+        */
         static bool seeded;                                   // whether or not BBS is seeded
         static PGPMPI state;                               // current state
         static PGPMPI m;                                   // large integer

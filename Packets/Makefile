@@ -14,7 +14,7 @@ packet.o: packet.h packet.cpp ../common/includes.h ../consts.h ../mpi.h ../pgpti
 packets.o: packets.h packets.cpp packet.h Tag0.h Tag1.h Tag2.h Tag3.h Tag4.h Tag5.h Tag6.h Tag7.h Tag8.h Tag9.h Tag10.h Tag11.h Tag12.h Tag13.h Tag14.h Tag17.h Tag18.h Tag19.h
 	$(CXX) $(CFLAGS) packets.cpp
 
-s2k.o: s2k.h s2k.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h 
+s2k.o: s2k.h s2k.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h
 	$(CXX) $(CFLAGS) s2k.cpp
 
 Tag0.o: Tag0.h Tag0.cpp packet.h

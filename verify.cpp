@@ -392,7 +392,7 @@ bool verify_message(const PGPSecretKey & pri, const PGPMessage & m){
 }
 
 // Signature Type 0x10 - 0x13
-bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
+bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     if ((signer.get_ASCII_Armor() != 1) && (signer.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
     }
@@ -401,11 +401,11 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
         throw std::runtime_error("Error: A PGP key is required.");
     }
 
-    std::string keyid;
-
-    // find signature packet on signee
+    // get Key ID of signer
+    std::string keyid; // signer's key id
+    // find signature packet on signer
     Tag2::Ptr signature_packet = nullptr;
-    for(Packet::Ptr const & p : signee.get_packets()){
+    for(Packet::Ptr const & p : signer.get_packets()){
         if (p -> get_tag() == 2){
             std::string temp = p -> raw();
             Tag2::Ptr tag2(new Tag2(temp));
@@ -416,18 +416,18 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
             }
         }
     }
+    signature_packet.reset();
 
     if (!keyid.size()){
-        std::cerr << "Warning: No certification signature packet found" << std::endl;
-        return false;
+        throw std::runtime_error("Error: No signer Key ID packet found.");
     }
 
     // find signing key
     Tag6::Ptr signingkey = find_public_signing_key(keyid, signer);
 
-    // if there is no matching signing key
+    // if can't find signing key packet on signer's key
     if (!signingkey){
-        return false;
+        throw std::runtime_error("Error: Cannot find signer's Signing Keys.");
     }
 
     uint8_t version = 0;
@@ -435,10 +435,8 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
     std::string u = "";
 
     // set packets to signatures to verify
-    bool out = true;
-
-    Tag6::Ptr tag6;
-    // for each packet
+    bool out = false;
+    Tag6::Ptr tag6 = nullptr;
     for(Packet::Ptr const & p : signee.get_packets()){
         std::string data = p -> raw();
         switch (p -> get_tag()){
@@ -460,24 +458,27 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
                     }
                     id -> read(data);
                     u = certification(version, id);     // write over old user information
+                    id.reset();
                 }
                 break;
             case 2:                                     // signature packet
                 {
                     // copy packet data into signature packet
-                    Tag2::Ptr tag2(new Tag2);
-                    tag2 -> read(data);
+                    Tag2::Ptr tag2(new Tag2(data));
 
-                    // if signature is keybinding, erase the user information
+                    // if signature is key binding, erase the user information
                     if ((tag2 -> get_type() == 0x18) ||
-                        (tag2 -> get_type() == 0x18)){
+                        (tag2 -> get_type() == 0x19)){
                         u = "";
                     }
+                    
                     // add hash contexts together and append trailer data
                     std::string with_trailer = addtrailer(k + u, tag2);
                     std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
                     if (hash.substr(0, 2) == tag2 -> get_left16()){// quick signature check
-                        out |= pka_verify(hash, signingkey, tag2);// proper signature check
+                        if (pka_verify(hash, signingkey, tag2)){ // proper signature check
+                            out = true;
+                        }
                     }
                 }
                 break;
@@ -488,12 +489,15 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
                 }
                 break;
         }
+        if (out){
+            break;
+        }
     }
     return out;
 }
 
-bool verify_signature(const PGPSecretKey & pri, const PGPPublicKey & signer){
-    return verify_signature(PGPPublicKey(pri), signer);
+bool verify_key(const PGPSecretKey & signer, const PGPPublicKey & signee){
+    return verify_key(PGPPublicKey(signee), signee);
 }
 
 bool verify_revoke(const Tag6::Ptr & key, const Tag2::Ptr & rev){

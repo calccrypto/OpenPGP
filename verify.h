@@ -43,9 +43,9 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // Internal functions
-// get the key id
+// get the key id; multiple keys might break this
 std::string find_keyid(const Tag2::Ptr & tag2);
-// get the Tag6 signing packet
+// get the Tag6 signing packet; multiple keys might break this
 Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & key);
 
 // pka_verify with variables only
@@ -70,8 +70,8 @@ bool verify_message(const PGPPublicKey & pub, const PGPMessage & m);
 bool verify_message(const PGPSecretKey & pri, const PGPMessage & m);
 
 // verify signature on key
-bool verify_signature(const PGPPublicKey & pub, const PGPPublicKey & sig);
-bool verify_signature(const PGPSecretKey & pri, const PGPPublicKey & sig);
+bool verify_key(const PGPPublicKey & pub, const PGPPublicKey & sig);
+bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig);
 
 // verify revocation certificate
 bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);

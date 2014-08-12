@@ -1,10 +1,8 @@
 Find PGP keys with formats/packets I have never seen before
-Make error handling more reasonable (currently everything throws exceptions)
+Make error handling more reasonable? (currently everything throws exceptions)
 Recalculate signature functions
 encrypt+sign at once
 finish sign functions
-add wrapper function to generically use any of the sign/verify functions
+wrapper function to generically use any of the sign/verify functions
 find packets properly (check if uid is associated with key, etc)
-maybe make compression algorithms consume data instead of just reading it (might not be using all the data)
 read partial packets properly
-get verify-key to work for keys with other people's signatures
