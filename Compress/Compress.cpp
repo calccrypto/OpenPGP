@@ -57,7 +57,7 @@ std::string PGP_decompress(const uint8_t alg, const std::string & src){
         if (!good){
             throw std::runtime_error("Error: Decompression failed");
         }
-        
+
         return dst;
     }
     return src; // 0: Uncompressed

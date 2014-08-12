@@ -117,7 +117,7 @@ void PGPCleartextSignature::read(std::ifstream & file){
 }
 
 std::string PGPCleartextSignature::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     return std::string(tab, ' ') + "Message:\n" + message + "\n\n" + std::string(tab, ' ') + sig.show(indents, indent_size);
 }
 

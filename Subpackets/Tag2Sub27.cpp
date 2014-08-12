@@ -17,11 +17,12 @@ void Tag2Sub27::read(std::string & data){
 }
 
 std::string Tag2Sub27::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
+    out << std::string(tab, ' ') << show_title();
     for(uint8_t bit = 0; bit < 8; bit++){
         if (flags & (1 << bit)){
-            out << std::string(tab, ' ') << "            Flag - " << Flags.at(1 << bit) << " (key " << static_cast <unsigned int> (1 << bit) << ")\n";
+            out << "\n" << std::string(tab, ' ') << "            Flag - " << Flags.at(1 << bit) << " (key " << static_cast <unsigned int> (1 << bit) << ")";
         }
     }
     return out.str();

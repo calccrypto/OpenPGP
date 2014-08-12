@@ -16,16 +16,16 @@ void Tag2Sub9::read(std::string & data){
 }
 
 std::string Tag2Sub9::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << std::string(tab, ' ') << "            Key Expiration Time (Days): ";
+    out << std::string(tab, ' ') << show_title() << "\n"
+        << std::string(tab, ' ') << "            Key Expiration Time (Days): ";
     if (time == 0){
         out << std::string(tab, ' ') << "Never";
     }
     else{
         out << std::string(tab, ' ') << show_time(time);
     }
-    out << "\n";
     return out.str();
 }
 

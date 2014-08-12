@@ -17,7 +17,7 @@ Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
             }
             key.reset();
         }
-    }    
+    }
     return nullptr;
 }
 
@@ -99,7 +99,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
             break;
         }
     }
-   
+
     if (packet == 1){ // Public-Key Encrypted Session Key Packet (Tag 1)
         Tag1 tag1(data);
         uint8_t pka = tag1.get_pka();
@@ -170,7 +170,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
     else{
         data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key); // decrypt encrypted data
     }
-    
+
     if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
         checksum = data.substr(data.size() - 20, 20);       // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);            // remove SHA1 checksum
@@ -179,10 +179,10 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
         }
         data = data.substr(0, data.size() - 2);             // get rid of \xd3\x14
     }
-    
+
     data = data.substr(BS + 2, data.size() - BS - 2);       // get rid of prefix
-   
-    if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)               
+
+    if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
         // figure out which compression algorithm was used
         // uncompressed literal data packet
         if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
@@ -201,7 +201,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
             data = PGP_decompress(1, data);
         }
     }
-    
+
     // get rid of header and figure out what type of packet data it is
     bool format;
     data = read_packet_header(data, packet, format);
@@ -212,13 +212,13 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
             {
                 data = Tag8(data).get_data(); // compressed packets
                 std::vector <Packet::Ptr> compressed_packets;
-                
+
                 while (data.size()){ // extract packets
                     compressed_packets.push_back(read_packet(data));
                 }
-                
+
                 data = ""; // should be empty at this point; clear it out just in case
-                
+
                 // extract all packet data; probably needs better formatting
                 for(Packet::Ptr & p : compressed_packets){
                     std::string packet_data = p -> raw();
@@ -236,7 +236,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
                         // data += p -> show() + "\n";
                     // }
                 }
-                
+
                 for(Packet::Ptr & p : compressed_packets){
                     p.reset();
                 }
@@ -256,7 +256,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
             break;
         default:
             {
-                std::stringstream s; s << packet;
+                std::stringstream s; s << static_cast <int> (packet);
                 throw std::runtime_error("Error: No action defined for packet type " + s.str());
             }
             break;

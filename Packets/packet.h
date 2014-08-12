@@ -51,8 +51,8 @@ class Packet{
         // returns packet data with new format packet length
         std::string write_new_length(std::string data) const;
 
-        // returns first line of show functions
-        std::string show_title(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        // returns first line of show functions (no tab or newline)
+        std::string show_title() const;
 
         Packet(uint8_t tag);
         Packet(uint8_t tag, uint8_t version);

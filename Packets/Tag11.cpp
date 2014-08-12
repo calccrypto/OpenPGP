@@ -29,14 +29,14 @@ void Tag11::read(std::string & data){
 }
 
 std::string Tag11::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size)
+    out << std::string(tab, ' ') << show_title() << "\n"
         << std::string(tab, ' ') << "    Format: " << BTU.at(format) << "\n"
         << std::string(tab, ' ') << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
         << std::string(tab, ' ') << "        Filename: " << filename << "\n"
         << std::string(tab, ' ') << "        Creation Date: " << show_time(time) << "\n"
-        << std::string(tab, ' ') << "        Data:" << literal << "\n";
+        << std::string(tab, ' ') << "        Data: " << literal;
     return out.str();
 }
 

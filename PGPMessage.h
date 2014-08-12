@@ -99,6 +99,9 @@ class PGPMessage : public PGP {
         const bool OnePassSignedMessage (std::list <Token>::iterator it, std::list <Token> & s) const;
         const bool SignedMessage        (std::list <Token>::iterator it, std::list <Token> & s) const;
 
+        Tag8::Ptr comp;         // store tag8 data, if it exists
+        void decompress();      // check if the input data is compressed
+
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;
 
@@ -107,6 +110,14 @@ class PGPMessage : public PGP {
         PGPMessage(std::string & data);
         PGPMessage(std::ifstream & f);
         ~PGPMessage();
+
+        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
+        std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
+
+        uint8_t get_comp();             // get compression algorithm
+
+        void set_comp(const uint8_t c); // set compression algorithm
 
         const bool match(const Token & t) const; // check if packet composition matches some part of the OpenPGP Message rule
         bool meaningful() const;                 // whether or not the data is an OpenPGP Message

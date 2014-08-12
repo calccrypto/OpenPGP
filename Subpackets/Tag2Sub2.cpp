@@ -16,7 +16,8 @@ void Tag2Sub2::read(std::string & data){
 }
 
 std::string Tag2Sub2::show(const uint8_t indents, const uint8_t indent_size) const{
-    return std::string(indents * indent_size, ' ') + "            Creation Time: " + show_time(time) + "\n";
+    unsigned int tab = indents * indent_size;
+    return std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + "            Creation Time: " + show_time(time);
 }
 
 std::string Tag2Sub2::raw() const{

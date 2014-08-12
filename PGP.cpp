@@ -81,12 +81,12 @@ void PGP::read(std::string & data){
         throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
     }
 
-    if (ASCII_Armor != 255){ // if an ASCII Armor header was set (by a child class) 
+    if (ASCII_Armor != 255){ // if an ASCII Armor header was set (by a child class)
         if (ASCII_Armor != x){ // check if the parsed data is the same type
             std::cerr << "Warning: ASCII Armor does not match data type." << std::endl;
         }
     }
-    
+
     ASCII_Armor = x;
 
     // remove newline after header
@@ -191,6 +191,13 @@ void PGP::read_raw(std::string & data){
     armored = false;
 }
 
+void PGP::read_raw(std::ifstream & file){
+    std::stringstream s;
+    s << file.rdbuf();
+    std::string data = s.str();
+    read_raw(data);
+}
+
 std::string PGP::show(const uint8_t indents, const uint8_t indent_size) const{
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
@@ -208,7 +215,7 @@ std::string PGP::raw(const uint8_t header) const{
 }
 
 std::string PGP::write(const uint8_t armor, const uint8_t header) const{
-    std::string packet_string = raw(header);
+    std::string packet_string = raw(header);   // raw PGP data = binary, no ASCII headers
     if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
         return packet_string;                  // return raw data
     }

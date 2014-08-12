@@ -17,7 +17,8 @@ void Tag2Sub24::read(std::string & data){
 }
 
 std::string Tag2Sub24::show(const uint8_t indents, const uint8_t indent_size) const{
-    return std::string(indents * indent_size, ' ') + "            URI - " + pks;
+    unsigned int tab = indents * indent_size;
+    return std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + "            URI - " + pks;
 }
 
 std::string Tag2Sub24::raw() const{

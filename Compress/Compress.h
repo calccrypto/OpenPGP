@@ -39,4 +39,4 @@ THE SOFTWARE.
 std::string PGP_compress(const uint8_t alg, const std::string & data);
 std::string PGP_decompress(const uint8_t alg, const std::string & data);
 
-#endif 
+#endif

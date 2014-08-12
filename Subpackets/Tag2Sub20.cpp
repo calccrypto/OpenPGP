@@ -25,14 +25,15 @@ void Tag2Sub20::read(std::string & data){
 }
 
 std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    for(unsigned int x = 0; x < 4; x++){
-        out << std::string(tab, ' ') << "            Flag - " << Notation.at(flags[x]) << " (not " << static_cast <unsigned int> (flags[x]) << ")\n";
+    out << std::string(tab, ' ') << show_title();
+    for(char const & c : flags){
+        out << "\n" << std::string(tab, ' ') << "            Flag - " << Notation.at(c) << " (not " << static_cast <unsigned int> (c) << ")";
     }
-    out << std::string(tab, ' ') << "\n"
+    out << "\n"
         << std::string(tab, ' ') << "            Name: " << m << "\n"
-        << std::string(tab, ' ') << "            Value: " << n << "\n";
+        << std::string(tab, ' ') << "            Value: " << n;
     return out.str();
 }
 std::string Tag2Sub20::raw() const{

@@ -13,6 +13,12 @@ std::string Subpacket::write_subpacket(const std::string & data) const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
+std::string Subpacket::show_title() const{
+    std::stringstream out;
+    out << "        " << Subpacket_Tags.at(type) << " Subpacket (sub " << static_cast <int> (type) << ") (" << size << " octets)";
+    return out.str();
+}
+
 Subpacket::Subpacket(uint8_t type, unsigned int size) :
     type(type),
     size(size)

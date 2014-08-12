@@ -17,10 +17,11 @@ void Tag2Sub11::read(std::string & data){
 }
 
 std::string Tag2Sub11::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    for(unsigned int x = 0; x < psa.size(); x++){
-        out << std::string(tab, ' ') << "            sym alg - " << Symmetric_Algorithms.at(psa[x]) << " (sym " << static_cast <unsigned int> (psa[x]) << ")\n";
+    out << std::string(tab, ' ') << show_title();
+    for(char const & c : psa){
+        out << "\n" << std::string(tab, ' ') << "            sym alg - " << Symmetric_Algorithms.at(c) << " (sym " << static_cast <unsigned int> (c) << ")";
     }
     return out.str();
 }

@@ -26,7 +26,7 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
     ret = deflateInit2(&strm, level, Z_DEFLATED, windowBits, 8, Z_DEFAULT_STRATEGY);
     if (ret != Z_OK)
         return ret;
-        
+
     /* compress until end of file */
     do {
         // strm.avail_in = fread(in, 1, CHUNK, source);
@@ -82,7 +82,7 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
 int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
 {
     dst = ""; // clear out destination
-    
+
     int ret;
     unsigned have;
     z_stream strm;
@@ -91,7 +91,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
 
     unsigned int index = 0;
     unsigned int len = src.size();
-    
+
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -115,7 +115,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
             in[i] = src[i + index];
         }
         index += strm.avail_in;
-        
+
         if (strm.avail_in == 0)
             break;
         strm.next_in = in;

@@ -5,9 +5,9 @@ uint32_t coded_count(unsigned int c){
     return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);
 }
 
-std::string S2K::show_title(const uint8_t indents, const uint8_t indent_size) const{
+std::string S2K::show_title() const{
     std::stringstream out; 
-    out << std::string(indents * indent_size, ' ') << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <int> (type) << "):\n";
+    out << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <int> (type) << "):";
     return out.str();
 }
 
@@ -55,9 +55,9 @@ void S2K0::read(std::string & data){
 }
 
 std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size) 
+    out << std::string(tab, ' ') << show_title() << "\n" 
         << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) 
         << ")\n";
     return out.str();
@@ -99,9 +99,9 @@ void S2K1::read(std::string & data){
 }
 
 std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size)
+    out << std::string(tab, ' ') << show_title() << "\n"
         << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << std::string(tab, ' ') << "        Salt: " << hexlify(salt) << "\n";
     return out.str();
@@ -148,9 +148,9 @@ void S2K3::read(std::string & data){
 }
 
 std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size)
+    out << std::string(tab, ' ') << show_title() << "\n"
         << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
         << std::string(tab, ' ') << "        Salt: " << hexlify(salt) << "\n"
         << std::string(tab, ' ') << "        Coded Count: " << coded_count(count) << " (count " << static_cast <int> (count) << ")\n";

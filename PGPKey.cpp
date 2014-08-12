@@ -143,14 +143,14 @@ std::string PGPKey::list_keys() const{
     std::map <std::string, std::string> revoked;
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 2){
-            std::string raw = p -> raw();
-            Tag2 tag2(raw);
+            std::string data = p -> raw();
+            Tag2 tag2(data);
             if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                 bool found = false;
                 for(Tag2Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
                     if (s -> get_type() == 16){
-                        raw = s -> raw();
-                        Tag2Sub16 tag2sub16(raw);
+                        data = s -> raw();
+                        Tag2Sub16 tag2sub16(data);
                         revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
                         found = true;
                     }
@@ -158,8 +158,8 @@ std::string PGPKey::list_keys() const{
                 if (!found){
                     for(Tag2Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
                         if (s -> get_type() == 16){
-                            raw = s -> raw();
-                            Tag2Sub16 tag2sub16(raw);
+                            data = s -> raw();
+                            Tag2Sub16 tag2sub16(data);
                             revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
                             found = true;
                         }

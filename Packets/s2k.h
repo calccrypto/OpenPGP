@@ -42,7 +42,7 @@ class S2K{
         uint8_t type; // octet 0
         uint8_t hash; // octet 1
 
-        std::string show_title(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show_title() const;
         
         S2K(uint8_t type);
 

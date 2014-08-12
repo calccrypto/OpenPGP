@@ -19,9 +19,9 @@ void Tag19::read(std::string & data){
 }
 
 std::string Tag19::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size) << std::string(tab, ' ') << "    SHA - 1 Hash of previous packet: " << hash << "\n";
+    out << std::string(tab, ' ') << show_title() << "\n" << std::string(tab, ' ') << "    SHA - 1 Hash of previous packet: " << hash;
     return out.str();
 }
 

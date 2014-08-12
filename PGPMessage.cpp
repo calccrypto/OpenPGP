@@ -109,37 +109,116 @@ const bool PGPMessage::SignedMessage(std::list <Token>::iterator it, std::list <
     return false;
 }
 
+void PGPMessage::decompress() {
+    comp = nullptr;
+    // check if compressed
+    if ((packets.size() == 1) && (packets[0] -> get_tag() == 8)){
+        std::string data = packets[0] -> raw();
+        packets.clear();                    // free up pointer to compressed packet
+        comp = Tag8::Ptr(new Tag8(data));   // put data in a Compressed Data Packet
+        data = comp -> get_data();          // get decompressed data
+        comp -> set_data("");               // free up space taken up by compressed data; also prevents data from showing twice
+        read(data);                         // read decompressed data into packets
+    }
+}
+
 PGPMessage::PGPMessage():
-    PGP()
+    PGP(),
+    comp(nullptr)
 {
     ASCII_Armor = 0;
 }
 
 PGPMessage::PGPMessage(const PGPMessage & copy):
-    PGP(copy)
+    PGP(copy),
+    comp(nullptr)
 {
+    decompress();
+
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 0;
     }
 }
 
 PGPMessage::PGPMessage(std::string & data):
-    PGP(data)
+    PGP(data),
+    comp(nullptr)
 {
+    decompress();
+
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 0;
     }
 }
 
 PGPMessage::PGPMessage(std::ifstream & f):
-    PGP(f)
+    PGP(f),
+    comp(nullptr)
 {
+    decompress();
+
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 0;
     }
 }
 
-PGPMessage::~PGPMessage(){}
+PGPMessage::~PGPMessage(){
+    comp.reset();
+}
+
+std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) const{
+    std::stringstream out;
+    if (comp){ // if compression was used, add a header
+        out << comp -> show(indents, indent_size);
+    }
+    out << PGP::show(indents + static_cast <bool> (comp), indent_size);
+    return out.str();
+}
+
+std::string PGPMessage::raw(const uint8_t header) const{
+    std::string out = PGP::raw(header);
+    if (comp){ // if compression was used; compress data
+        comp -> set_data(out);
+        out = comp -> write(header);
+        comp -> set_data(""); // hold compressed data for as little time as possible
+    }
+    return out;
+}
+
+std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
+    std::string packet_string = raw(header);
+
+    // put data into a Compressed Data Packet if compression is used
+    if (comp){
+        comp -> set_data(packet_string);
+        packet_string = comp -> write(header);
+    }
+
+    if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
+        return packet_string;                  // return raw data
+    }
+    std::string out = "-----BEGIN PGP Message-----\n";
+    for(std::pair <std::string, std::string> const & key : Armor_Header){
+        out += key.first + ": " + key.second + "\n";
+    }
+    out += "\n";
+    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP Message-----\n";
+}
+
+uint8_t PGPMessage::get_comp(){
+    if (comp){
+        return comp -> get_comp();
+    }
+    return 0;
+}
+
+void PGPMessage::set_comp(const uint8_t c){
+    comp.reset(); // free comp / set it to nullptr
+    if (c){ // if not uncompressed
+        comp = Tag8::Ptr(new Tag8);
+        comp -> set_comp(c);
+    }
+}
 
 const bool PGPMessage::match(const Token & t) const{
     if (!packets.size()){

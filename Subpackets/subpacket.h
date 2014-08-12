@@ -42,6 +42,9 @@ class Subpacket{
 
         std::string write_subpacket(const std::string & data) const;
 
+        // returns first line of show functions (no tab or newline)
+        std::string show_title() const;
+        
         Subpacket(uint8_t type = 0, unsigned int size = 0);
         Subpacket(const Subpacket & copy);
         Subpacket & operator =(const Subpacket & copy);

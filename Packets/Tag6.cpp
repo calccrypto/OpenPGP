@@ -30,37 +30,36 @@ void Tag6::read_tag6(std::string & data){
 }
 
 std::string Tag6::show_tag6(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size)
-        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
-        << std::string(tab, ' ') << "    Creation Time: " << show_time(time) << "\n";
+    out << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
+        << std::string(tab, ' ') << "    Creation Time: " << show_time(time);
     if (version < 4){
         out << std::string(tab, ' ') << "    Expiration Time (Days): " << expire;
         if (!expire){
             out << std::string(tab, ' ') << " (Never)";
         }
-        out << std::string(tab, ' ') << "\n"
+        out << "\n"
             << std::string(tab, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
             << std::string(tab, ' ') << "    RSA n: " << mpitohex(mpi[0]) << "(" << bitsize(mpi[0]) << " bits)\n"
-            << std::string(tab, ' ') << "    RSA e: " << mpitohex(mpi[1]) << "\n";
+            << std::string(tab, ' ') << "    RSA e: " << mpitohex(mpi[1]);
     }
     else if (version == 4){
         out << std::string(tab, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
         if (pka < 4){
             out << std::string(tab, ' ') << "    RSA n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-                << std::string(tab, ' ') << "    RSA e (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
+                << std::string(tab, ' ') << "    RSA e (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
         }
         else if (pka == 17){
             out << std::string(tab, ' ') << "    DSA p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
                 << std::string(tab, ' ') << "    DSA q (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
                 << std::string(tab, ' ') << "    DSA g (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]) << "\n"
-                << std::string(tab, ' ') << "    DSA y (" << bitsize(mpi[3]) << " bits): " << mpitohex(mpi[3]) << "\n";
+                << std::string(tab, ' ') << "    DSA y (" << bitsize(mpi[3]) << " bits): " << mpitohex(mpi[3]);
         }
         else if (pka == 16){
             out << std::string(tab, ' ') << "    Elgamal p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
                 << std::string(tab, ' ') << "    Elgamal g (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
-                << std::string(tab, ' ') << "    Elgamal y (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]) << "\n";
+                << std::string(tab, ' ') << "    Elgamal y (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]);
         }
     }
     return out.str();
@@ -103,7 +102,8 @@ void Tag6::read(std::string & data){
 }
 
 std::string Tag6::show(const uint8_t indents, const uint8_t indent_size) const{
-    return show_tag6(indents);
+    unsigned int tab = indents * indent_size;
+    return std::string(tab, ' ') + show_title() + "\n" + show_tag6(indents, indent_size);
 }
 
 std::string Tag6::raw() const{

@@ -24,18 +24,18 @@ void Tag1::read(std::string & data){
 }
 
 std::string Tag1::show(const uint8_t indents, const uint8_t indent_size) const{
-    uint8_t tab = indents * indent_size;
+    unsigned int tab = indents * indent_size;
     std::stringstream out;
-    out << show_title(indents, indent_size)
+    out << std::string(tab, ' ') << show_title() << "\n"
         << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
         << std::string(tab, ' ') << "    KeyID: " << hexlify(keyid) << "\n"
         << std::string(tab, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
     if (pka < 4){           // RSA
-        out << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n";
+        out << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
     }
     else if (pka == 16){
         out << "    Elgamal g**k mod p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-            << "    Elgamal m * y**k mod p (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n";
+            << "    Elgamal m * y**k mod p (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
     }
     return out.str();
 }

@@ -198,7 +198,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
             i++;
 
             if ((*(OPSP.rbegin())) -> get_nested() != 0){               // check if there are nested packets
-                break;                                                  // probably unecessary
+                break;                                                  // just in case extra data was placed, allowing for errors later
             }
         }
 
@@ -309,24 +309,24 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
                 // verify = false;
                 // std:cerr << "Warning: One-Pass Signature Packet and Signature Packet KeyID mismatch" << std::endl;
             // }
-            
+
             // free shared_ptr
             OPSP.rbegin() -> reset();
             SP.begin() -> reset();
-            
+
             OPSP.pop_back(); // pop top of stack
             SP.pop_front();  // pop front of queue
         }
-        
+
         // cleanup remaining data
         for(Tag4::Ptr & p : OPSP){
             p.reset();
         }
-        
+
         for(Tag2::Ptr & p : SP){
             p.reset();
         }
-        
+
         return verify;
     }
     else if (m.match(PGPMessage::COMPRESSEDMESSAGE)){
@@ -349,7 +349,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
 
         // extract data
         Tag11 tag11(message);
-        message = tag11.get_literal();
+        message = tag11.get_literal(); // not sure if this is correct
 
         return verify_message(signing_key, PGPMessage(message));
     }
@@ -376,7 +376,7 @@ bool verify_message(const PGPPublicKey & pub, const PGPMessage & m){
                 signing_key = tag6;
                 break;
             }
-            
+
             tag6.reset();
         }
     }
@@ -412,11 +412,11 @@ bool verify_signature(const PGPPublicKey & signer, const PGPPublicKey & signee){
             // if this signature packet is a certification signature packet
             if ((0x10 <= tag2 -> get_type()) && (tag2 -> get_type() <= 0x13)){
                 keyid = tag2 -> get_keyid();
-                break;            
-            }            
+                break;
+            }
         }
     }
-    
+
     if (!keyid.size()){
         std::cerr << "Warning: No certification signature packet found" << std::endl;
         return false;

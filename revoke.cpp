@@ -303,7 +303,7 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
 
     // only expects 1 signature packet
     if (!revoke.get_packets().size()){
-        throw std::runtime_error("Error: No pacets found in revocation key.");
+        throw std::runtime_error("Error: No packets found in revocation key.");
     }
     if (revoke.get_packets().size() > 1){
         std::cerr << "Warning: Multiple packets found. Only reading first packet." << std::endl;
