@@ -35,7 +35,7 @@ class Tag17 : public ID{
         uint8_t type;
 
         // only defined subpacket is 1
-        std::vector <Subpacket::Ptr> attributes;
+        std::vector <Tag17Subpacket::Ptr> attributes;
 
         std::string read_subpacket(std::string & data);
         std::string write_subpacket(uint8_t s_type, std::string data) const;
@@ -50,9 +50,9 @@ class Tag17 : public ID{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        std::vector <Subpacket::Ptr> get_attributes() const;
-        std::vector <Subpacket::Ptr> get_attributes_clone() const;
-        void set_attributes(const std::vector <Subpacket::Ptr> & a);
+        std::vector <Tag17Subpacket::Ptr> get_attributes() const;
+        std::vector <Tag17Subpacket::Ptr> get_attributes_clone() const;
+        void set_attributes(const std::vector <Tag17Subpacket::Ptr> & a);
 
         Packet::Ptr clone() const;
 };

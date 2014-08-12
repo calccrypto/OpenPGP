@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub20 : public Subpacket{
+class Tag2Sub20 : public Tag2Subpacket{
     private:
         std::string flags;  // 4 octets
         uint16_t mlen;
@@ -53,6 +53,6 @@ class Tag2Sub20 : public Subpacket{
         void set_m(const std::string & s);
         void set_n(const std::string & s);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

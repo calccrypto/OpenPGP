@@ -1,7 +1,7 @@
 #include "Tag2Sub27.h"
 
 Tag2Sub27::Tag2Sub27() :
-    Subpacket(27),
+    Tag2Subpacket(27),
     flags()
 {}
 
@@ -39,6 +39,6 @@ void Tag2Sub27::set_flags(const char f){
     flags = f;
 }
 
-Subpacket::Ptr Tag2Sub27::clone() const{
+Tag2Subpacket::Ptr Tag2Sub27::clone() const{
     return Ptr(new Tag2Sub27(*this));
 }

@@ -1,7 +1,7 @@
 #include "Tag2Sub22.h"
 
 Tag2Sub22::Tag2Sub22() :
-    Subpacket(22),
+    Tag2Subpacket(22),
     pca()
 {}
 
@@ -37,6 +37,6 @@ void Tag2Sub22::set_pca(const std::string & c){
     pca = c;
 }
 
-Subpacket::Ptr Tag2Sub22::clone() const{
+Tag2Subpacket::Ptr Tag2Sub22::clone() const{
     return Ptr(new Tag2Sub22(*this));
 }

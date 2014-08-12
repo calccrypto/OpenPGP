@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub16 : public Subpacket{
+class Tag2Sub16 : public Tag2Subpacket{
     private:
         std::string keyid; // 8 octets
 
@@ -45,6 +45,6 @@ class Tag2Sub16 : public Subpacket{
 
         void set_keyid(const std::string & k);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

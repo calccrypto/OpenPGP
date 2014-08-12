@@ -11,7 +11,7 @@ Tag5::Ptr find_signing_key(const PGPSecretKey & k){
                 if ((signer -> get_pka() == 1) || // RSA
                     (signer -> get_pka() == 3) || // RSA
                     (signer -> get_pka() == 17)){ // DSA
-                        return signer;
+                    return signer;
                 }
                 signer.reset();
             }
@@ -22,8 +22,7 @@ Tag5::Ptr find_signing_key(const PGPSecretKey & k){
 
 // possible to mess up
 ID::Ptr find_signer_id(const PGPSecretKey & k){
-    std::vector <Packet::Ptr> packets = k.get_packets();
-    for(Packet::Ptr const & p : packets){
+    for(Packet::Ptr const & p : k.get_packets()){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
             return Tag13::Ptr(new Tag13(data));

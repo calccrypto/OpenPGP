@@ -50,3 +50,17 @@ Subpacket & Subpacket::operator =(const Subpacket & copy){
     size = copy.size;
     return *this;
 }
+
+Tag2Subpacket::~Tag2Subpacket(){}
+
+Tag17Subpacket::~Tag17Subpacket(){}
+
+Tag2Subpacket & Tag2Subpacket::operator =(const Tag2Subpacket & copy){
+    Subpacket::operator =(copy);
+    return *this;
+}
+
+Tag17Subpacket & Tag17Subpacket::operator =(const Tag17Subpacket & copy){
+    Subpacket::operator =(copy);
+    return *this;
+}

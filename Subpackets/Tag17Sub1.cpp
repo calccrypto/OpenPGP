@@ -3,7 +3,7 @@
 unsigned int Tag17Sub1::count = 0;
 
 Tag17Sub1::Tag17Sub1() :
-    Subpacket(1),
+    Tag17Subpacket(1),
     version(),
     encoding(),
     image()
@@ -52,6 +52,6 @@ void Tag17Sub1::set_image(const std::string & i){
     image = i;
 }
 
-Subpacket::Ptr Tag17Sub1::clone() const {
+Tag17Subpacket::Ptr Tag17Sub1::clone() const {
     return Ptr(new Tag17Sub1(*this));
 }

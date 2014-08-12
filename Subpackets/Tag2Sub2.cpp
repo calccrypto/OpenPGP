@@ -1,7 +1,7 @@
 #include "Tag2Sub2.h"
 
 Tag2Sub2::Tag2Sub2() :
-    Subpacket(2, 4),
+    Tag2Subpacket(2, 4),
     time()
 {}
 
@@ -31,6 +31,6 @@ void Tag2Sub2::set_time(const time_t t){
     time = t;
 }
 
-Subpacket::Ptr Tag2Sub2::clone() const{
+Tag2Subpacket::Ptr Tag2Sub2::clone() const{
     return Ptr(new Tag2Sub2(*this));
 }

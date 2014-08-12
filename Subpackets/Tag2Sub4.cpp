@@ -1,7 +1,7 @@
 #include "Tag2Sub4.h"
 
 Tag2Sub4::Tag2Sub4() :
-    Subpacket(4, 1),
+    Tag2Subpacket(4, 1),
     exportable()
 {}
 
@@ -31,6 +31,6 @@ void Tag2Sub4::set_exportable(const bool e){
     exportable = e;
 }
 
-Subpacket::Ptr Tag2Sub4::clone() const{
+Tag2Subpacket::Ptr Tag2Sub4::clone() const{
     return Ptr(new Tag2Sub4(*this));
 }

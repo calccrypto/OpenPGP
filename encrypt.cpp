@@ -1,8 +1,7 @@
 #include "encrypt.h"
 Tag6::Ptr find_encrypting_key(const PGP & k){
     if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
-        std::vector <Packet::Ptr> packets = k.get_packets();
-        for(Packet::Ptr const & p : packets){
+        for(Packet::Ptr const & p : k.get_packets()){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
                 Tag6::Ptr key(new Tag6(data));
@@ -12,10 +11,11 @@ Tag6::Ptr find_encrypting_key(const PGP & k){
                     (key -> get_pka() == 16)){ // ElGamal
                         return key;
                 }
+                key.reset();
             }
         }
     }
-    return Tag6::Ptr();
+    return nullptr;
 }
 
 std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub){
@@ -132,8 +132,11 @@ PGPMessage encrypt(const PGPPublicKey & pub, const std::string & data, const std
     out.set_packets(packets);
 
     // erase data
+    public_key.reset();
+    tag1.reset();
     m = 0;
     session_key = "";
     prefix = "";
+    encrypted.reset();
     return out;
 }

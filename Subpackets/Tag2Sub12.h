@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub12 : public Subpacket{
+class Tag2Sub12 : public Tag2Subpacket{
     private:
         uint8_t _class;
         uint8_t pka;
@@ -51,6 +51,6 @@ class Tag2Sub12 : public Subpacket{
         void set_pka(const uint8_t p);
         void set_fingerprint(const std::string & f);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

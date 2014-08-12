@@ -1,7 +1,7 @@
 #include "Tag2Sub5.h"
 
 Tag2Sub5::Tag2Sub5() :
-    Subpacket(5, 2),
+    Tag2Subpacket(5, 2),
     level(),
     amount()
 {}
@@ -45,6 +45,6 @@ void Tag2Sub5::set_amount(const uint8_t a){
     amount = a;
 }
 
-Subpacket::Ptr Tag2Sub5::clone() const{
+Tag2Subpacket::Ptr Tag2Sub5::clone() const{
     return Ptr(new Tag2Sub5(*this));
 }

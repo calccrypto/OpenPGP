@@ -59,7 +59,7 @@ to make differentiating PGP block types better in code:
     PGPKey                  - base class for OpenPGP key types
     PGPPublicKey            - holds public keys; inherits PGPKey
     PGPSecretKey            - holds private keys; inherits PGPKey
-    PGPMessage              - holds OpenPGP messages
+    PGPMessage              - holds OpenPGP Messages
 
 All these different types are able to read in any PGP data, but
 will cause problems when used.

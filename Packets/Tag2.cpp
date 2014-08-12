@@ -59,10 +59,10 @@ std::string Tag2::read_subpacket(std::string & data){
     return out;
 }
 
-std::vector <Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
-    std::vector <Subpacket::Ptr> out;
+std::vector <Tag2Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
+    std::vector <Tag2Subpacket::Ptr> out;
     while (data.size()){
-        Subpacket::Ptr temp;
+        Tag2Subpacket::Ptr temp;
         std::string subpacket_data = read_subpacket(data);
         uint8_t sub = subpacket_data[0];
         subpacket_data = subpacket_data.substr(1, subpacket_data.size() - 1);
@@ -138,7 +138,7 @@ std::vector <Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
                 temp = std::make_shared<Tag2Sub32>();
                 break;
             default:
-                std::cerr << "Error: Unknown subpacket tag. Ignoring." << std::endl;
+                std::cerr << "Error: Unknown subpacket tag: " << static_cast <int> (sub) << " Ignoring." << std::endl;
                 continue;
                 break;
         }
@@ -226,13 +226,13 @@ std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
             << std::string(tab, ' ') << "    Hashed Sub:\n";
 
         if (hashed_subpackets.size()){
-            for(Subpacket::Ptr const & s : hashed_subpackets){
+            for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
                 out << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show(indents, indent_size);
             }
         }
         if (unhashed_subpackets.size()){
             out << std::string(tab, ' ') << "    Unhashed Sub:\n";
-            for(Subpacket::Ptr const & s : unhashed_subpackets){
+            for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
                 out << std::string(tab, ' ') << "        " << Subpacket_Tags.at(s -> get_type()) << " Subpacket (sub " << static_cast <int> (s -> get_type()) << ") (" << s -> get_size() << " octets)\n" << s -> show(indents, indent_size);
             }
         }
@@ -254,11 +254,11 @@ std::string Tag2::raw() const{
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket::Ptr const & s : hashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         std::string unhashed_str = "";
-        for(Subpacket::Ptr const & s : unhashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
             unhashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
@@ -310,7 +310,7 @@ std::string Tag2::get_keyid() const{
         return keyid;
     }
     else if (version == 4){
-        for(Subpacket::Ptr const & s : unhashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
             if (s -> get_type() == 16){
                 std::string data = s -> raw();
                 Tag2Sub16 sub16(data);
@@ -325,25 +325,25 @@ std::string Tag2::get_keyid() const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets() const{
+std::vector <Tag2Subpacket::Ptr> Tag2::get_hashed_subpackets() const{
     return hashed_subpackets;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_hashed_subpackets_clone() const{
-    std::vector <Subpacket::Ptr> out;
-    for(Subpacket::Ptr const & s : hashed_subpackets){
+std::vector <Tag2Subpacket::Ptr> Tag2::get_hashed_subpackets_clone() const{
+    std::vector <Tag2Subpacket::Ptr> out;
+    for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets() const{
+std::vector <Tag2Subpacket::Ptr> Tag2::get_unhashed_subpackets() const{
     return unhashed_subpackets;
 }
 
-std::vector <Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone() const{
-    std::vector <Subpacket::Ptr> out;
-    for(Subpacket::Ptr const & s : unhashed_subpackets){
+std::vector <Tag2Subpacket::Ptr> Tag2::get_unhashed_subpackets_clone() const{
+    std::vector <Tag2Subpacket::Ptr> out;
+    for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -460,17 +460,17 @@ void Tag2::set_keyid(const std::string & k){
     size = raw().size();
 }
 
-void Tag2::set_hashed_subpackets(const std::vector <Subpacket::Ptr> & h){
+void Tag2::set_hashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & h){
     hashed_subpackets.clear();
-    for(Subpacket::Ptr const & s : h){
+    for(Tag2Subpacket::Ptr const & s : h){
         hashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
 }
 
-void Tag2::set_unhashed_subpackets(const std::vector <Subpacket::Ptr> & u){
+void Tag2::set_unhashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & u){
     unhashed_subpackets.clear();
-    for(Subpacket::Ptr const & s : u){
+    for(Tag2Subpacket::Ptr const & s : u){
         unhashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();

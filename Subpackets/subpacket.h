@@ -60,7 +60,34 @@ class Subpacket{
 
         void set_type(uint8_t t);
         void set_size(unsigned int s);
+};
 
+class Tag2Subpacket: public Subpacket {
+    protected:
+        using Subpacket::Subpacket;
+
+        Tag2Subpacket & operator =(const Tag2Subpacket & copy);
+
+    public:
+        typedef std::shared_ptr<Tag2Subpacket> Ptr;
+
+        virtual ~Tag2Subpacket();
+        
         virtual Ptr clone() const = 0;
+};
+
+class Tag17Subpacket: public Subpacket {
+    protected:
+        using Subpacket::Subpacket;
+
+        Tag17Subpacket & operator =(const Tag17Subpacket & copy);
+
+    public:
+        typedef std::shared_ptr<Tag17Subpacket> Ptr;
+
+        virtual ~Tag17Subpacket();
+        
+        virtual Ptr clone() const = 0;
+
 };
 #endif

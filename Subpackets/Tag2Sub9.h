@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub9 : public Subpacket{
+class Tag2Sub9 : public Tag2Subpacket{
     private:
         time_t time;
 
@@ -45,6 +45,6 @@ class Tag2Sub9 : public Subpacket{
 
         void set_time(const time_t t);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

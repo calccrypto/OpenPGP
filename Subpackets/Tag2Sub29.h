@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub29 : public Subpacket{
+class Tag2Sub29 : public Tag2Subpacket{
     private:
         uint8_t code;
         std::string reason;
@@ -48,6 +48,6 @@ class Tag2Sub29 : public Subpacket{
         void set_code(const uint8_t c);
         void set_reason(const std::string & r);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub25 : public Subpacket{
+class Tag2Sub25 : public Tag2Subpacket{
     private:
         bool primary;
 
@@ -45,6 +45,6 @@ class Tag2Sub25 : public Subpacket{
 
         void set_primary(const bool p);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

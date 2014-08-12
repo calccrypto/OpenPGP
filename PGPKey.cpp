@@ -147,7 +147,7 @@ std::string PGPKey::list_keys() const{
             Tag2 tag2(raw);
             if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                 bool found = false;
-                for(Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
+                for(Tag2Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
                     if (s -> get_type() == 16){
                         raw = s -> raw();
                         Tag2Sub16 tag2sub16(raw);
@@ -156,7 +156,7 @@ std::string PGPKey::list_keys() const{
                     }
                 }
                 if (!found){
-                    for(Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
+                    for(Tag2Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
                         if (s -> get_type() == 16){
                             raw = s -> raw();
                             Tag2Sub16 tag2sub16(raw);
@@ -196,8 +196,8 @@ std::string PGPKey::list_keys() const{
             case 17:
                 {
                     Tag17 tag17(data);
-                    std::vector <Subpacket::Ptr> subpackets = tag17.get_attributes();
-                    for(Subpacket::Ptr s : subpackets){
+                    std::vector <Tag17Subpacket::Ptr> subpackets = tag17.get_attributes();
+                    for(Tag17Subpacket::Ptr s : subpackets){
                         // since only subpacket type 1 is defined
                         data = s -> raw();
                         Tag17Sub1 sub1(data);

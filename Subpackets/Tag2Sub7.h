@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub7 : public Subpacket{
+class Tag2Sub7 : public Tag2Subpacket{
     private:
         bool revocable;
 
@@ -45,6 +45,6 @@ class Tag2Sub7 : public Subpacket{
 
         void set_revocable(const bool r);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

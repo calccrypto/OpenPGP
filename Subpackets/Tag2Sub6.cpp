@@ -1,7 +1,7 @@
 #include "Tag2Sub6.h"
 
 Tag2Sub6::Tag2Sub6() :
-    Subpacket(6),
+    Tag2Subpacket(6),
     regex()
 {}
 
@@ -32,6 +32,6 @@ void Tag2Sub6::set_regex(const std::string & r){
     regex = r;
 }
 
-Subpacket::Ptr Tag2Sub6::clone() const{
+Tag2Subpacket::Ptr Tag2Sub6::clone() const{
     return Ptr(new Tag2Sub6(*this));
 }

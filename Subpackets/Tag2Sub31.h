@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub31 : public Subpacket{
+class Tag2Sub31 : public Tag2Subpacket{
     private:
         uint8_t pka;
         uint8_t ha;
@@ -51,6 +51,6 @@ class Tag2Sub31 : public Subpacket{
         void set_ha(const uint8_t h);
         void set_hash(const std::string & h);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

@@ -1,7 +1,7 @@
 #include "Tag2Sub20.h"
 
 Tag2Sub20::Tag2Sub20() :
-    Subpacket(20),
+    Tag2Subpacket(20),
     flags(),
     mlen(), nlen(),
     m(), n()
@@ -68,6 +68,6 @@ void Tag2Sub20::set_n(const std::string & s){
     n = s;
 }
 
-Subpacket::Ptr Tag2Sub20::clone() const{
+Tag2Subpacket::Ptr Tag2Sub20::clone() const{
     return Ptr(new Tag2Sub20(*this));
 }

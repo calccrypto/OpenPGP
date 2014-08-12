@@ -1,7 +1,7 @@
 #include "Tag2Sub31.h"
 
 Tag2Sub31::Tag2Sub31() :
-    Subpacket(31),
+    Tag2Subpacket(31),
     pka(), ha(),
     hash()
 {}
@@ -56,6 +56,6 @@ void Tag2Sub31::set_hash(const std::string & h){
     hash = h;
 }
 
-Subpacket::Ptr Tag2Sub31::clone() const{
+Tag2Subpacket::Ptr Tag2Sub31::clone() const{
     return Ptr(new Tag2Sub31(*this));
 }

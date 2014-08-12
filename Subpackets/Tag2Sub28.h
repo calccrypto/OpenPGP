@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub28 : public Subpacket{
+class Tag2Sub28 : public Tag2Subpacket{
     private:
         std::string signer;
 
@@ -45,6 +45,6 @@ class Tag2Sub28 : public Subpacket{
 
         void set_signer(const std::string & s);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

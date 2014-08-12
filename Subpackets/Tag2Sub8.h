@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub8 : public Subpacket{
+class Tag2Sub8 : public Tag2Subpacket{
     public:
         Tag2Sub8(...);
 };

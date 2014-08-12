@@ -1,7 +1,7 @@
 #include "Tag2Sub24.h"
 
 Tag2Sub24::Tag2Sub24() :
-    Subpacket(24),
+    Tag2Subpacket(24),
     pks()
 {}
 
@@ -32,6 +32,6 @@ void Tag2Sub24::set_pks(const std::string & p){
     pks = p;
 }
 
-Subpacket::Ptr Tag2Sub24::clone() const{
+Tag2Subpacket::Ptr Tag2Sub24::clone() const{
     return Ptr(new Tag2Sub24(*this));
 }

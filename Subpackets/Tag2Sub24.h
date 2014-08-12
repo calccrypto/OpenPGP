@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub24 : public Subpacket{
+class Tag2Sub24 : public Tag2Subpacket{
     private:
         std::string pks;
 
@@ -45,6 +45,6 @@ class Tag2Sub24 : public Subpacket{
 
         void set_pks(const std::string & p);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

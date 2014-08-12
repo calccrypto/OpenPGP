@@ -1,7 +1,7 @@
 #include "Tag2Sub29.h"
 
 Tag2Sub29::Tag2Sub29() :
-    Subpacket(29),
+    Tag2Subpacket(29),
     code(),
     reason()
 {}
@@ -48,6 +48,6 @@ void Tag2Sub29::set_reason(const std::string & r){
     reason = r;
 }
 
-Subpacket::Ptr Tag2Sub29::clone() const{
+Tag2Subpacket::Ptr Tag2Sub29::clone() const{
     return Ptr(new Tag2Sub29(*this));
 }

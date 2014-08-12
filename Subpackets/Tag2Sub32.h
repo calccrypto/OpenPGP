@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "../Packets/Tag2.h"
 #include "subpacket.h"
 
-class Tag2Sub32 : public Subpacket{
+class Tag2Sub32 : public Tag2Subpacket{
     private:
         Tag2::Ptr embedded;
 
@@ -48,7 +48,7 @@ class Tag2Sub32 : public Subpacket{
 
         void set_embedded(const Tag2::Ptr & e);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
         Tag2Sub32 & operator=(const Tag2Sub32 & copy);
 };
 #endif

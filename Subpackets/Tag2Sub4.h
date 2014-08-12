@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub4 : public Subpacket{
+class Tag2Sub4 : public Tag2Subpacket{
     private:
         bool exportable;
 
@@ -45,6 +45,6 @@ class Tag2Sub4 : public Subpacket{
 
         void set_exportable(const bool e);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

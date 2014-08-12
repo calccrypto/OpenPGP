@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub6 : public Subpacket{
+class Tag2Sub6 : public Tag2Subpacket{
     private:
         std::string regex;
 
@@ -45,6 +45,6 @@ class Tag2Sub6 : public Subpacket{
 
         void set_regex(const std::string & r);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

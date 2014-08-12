@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub5 : public Subpacket{
+class Tag2Sub5 : public Tag2Subpacket{
     private:
         uint8_t level;
         uint8_t amount;
@@ -48,6 +48,6 @@ class Tag2Sub5 : public Subpacket{
         void set_level(const uint8_t l);
         void set_amount(const uint8_t a);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

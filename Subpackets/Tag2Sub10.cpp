@@ -1,7 +1,7 @@
 #include "Tag2Sub10.h"
 
 Tag2Sub10::Tag2Sub10() :
-    Subpacket(10),
+    Tag2Subpacket(10),
     stuff()
 {}
 
@@ -32,6 +32,6 @@ void Tag2Sub10::set_stuff(const std::string & s){
     stuff = s;
 }
 
-Subpacket::Ptr Tag2Sub10::clone() const{
+Tag2Subpacket::Ptr Tag2Sub10::clone() const{
     return Ptr(new Tag2Sub10(*this));
 }

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub26 : public Subpacket{
+class Tag2Sub26 : public Tag2Subpacket{
     private:
         std::string uri;
 
@@ -45,6 +45,6 @@ class Tag2Sub26 : public Subpacket{
 
         void set_uri(const std::string & u);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

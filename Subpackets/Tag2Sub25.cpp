@@ -1,7 +1,7 @@
 #include "Tag2Sub25.h"
 
 Tag2Sub25::Tag2Sub25() :
-    Subpacket(25, 1),
+    Tag2Subpacket(25, 1),
     primary()
 {}
 
@@ -31,6 +31,6 @@ void Tag2Sub25::set_primary(const bool p){
     primary = p;
 }
 
-Subpacket::Ptr Tag2Sub25::clone() const{
+Tag2Subpacket::Ptr Tag2Sub25::clone() const{
     return Ptr(new Tag2Sub25(*this));
 }

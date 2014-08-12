@@ -1,7 +1,7 @@
 #include "Tag2Sub21.h"
 
 Tag2Sub21::Tag2Sub21() :
-    Subpacket(21),
+    Tag2Subpacket(21),
     pha()
 {}
 
@@ -37,6 +37,6 @@ void Tag2Sub21::set_pha(const std::string & p){
     pha = p;
 }
 
-Subpacket::Ptr Tag2Sub21::clone() const{
+Tag2Subpacket::Ptr Tag2Sub21::clone() const{
     return Ptr(new Tag2Sub21(*this));
 }

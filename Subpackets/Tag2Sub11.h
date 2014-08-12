@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub11 : public Subpacket{
+class Tag2Sub11 : public Tag2Subpacket{
     private:
         std::string psa;
 
@@ -45,6 +45,6 @@ class Tag2Sub11 : public Subpacket{
 
         void set_psa(const std::string & s);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

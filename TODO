@@ -2,5 +2,4 @@ Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable (currently everything throws exceptions)
 Recalculate signature functions
 encrypt+sign at once
-fix memory leaks
-split Tag2 Subpackets and Tag17 Subpackets into different types
+finish sigcalc functions

@@ -1,7 +1,7 @@
 #include "Tag2Sub26.h"
 
 Tag2Sub26::Tag2Sub26() :
-    Subpacket(26),
+    Tag2Subpacket(26),
     uri()
 {}
 
@@ -32,6 +32,6 @@ void Tag2Sub26::set_uri(const std::string & u){
     uri = u;
 }
 
-Subpacket::Ptr Tag2Sub26::clone() const{
+Tag2Subpacket::Ptr Tag2Sub26::clone() const{
     return Ptr(new Tag2Sub26(*this));
 }

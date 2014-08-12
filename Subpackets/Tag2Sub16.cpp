@@ -1,7 +1,7 @@
 #include "Tag2Sub16.h"
 
 Tag2Sub16::Tag2Sub16() :
-    Subpacket(16, 8),
+    Tag2Subpacket(16, 8),
     keyid()
 {}
 
@@ -34,6 +34,6 @@ void Tag2Sub16::set_keyid(const std::string & k){
     keyid = k;
 }
 
-Subpacket::Ptr Tag2Sub16::clone() const{
+Tag2Subpacket::Ptr Tag2Sub16::clone() const{
     return Ptr(new Tag2Sub16(*this));
 }

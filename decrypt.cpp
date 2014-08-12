@@ -1,12 +1,12 @@
 #include "decrypt.h"
 
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
-    std::vector <Packet::Ptr> packets = k.get_packets();
-    for(Packet::Ptr const & p : packets){
+    for(Packet::Ptr const & p : k.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
             std::string data = p -> raw();
             Tag5::Ptr key = std::make_shared<Tag5>(data);
-            if ( key->get_public_ptr()->get_keyid() != keyid ){
+            if (key -> get_public_ptr() -> get_keyid() != keyid ){
+                key.reset();
                 continue;
             }
             // make sure key has signing material
@@ -15,9 +15,10 @@ Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
                 (key -> get_pka() == 16)){ // ElGamal
                     return key;
             }
+            key.reset();
         }
     }    
-    return Tag5::Ptr();
+    return nullptr;
 }
 
 std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub){
@@ -91,8 +92,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
     unsigned int BS;                            // blocksize of symmetric key algorithm
 
     // find session key
-    std::vector <Packet::Ptr> message_packets = m.get_packets();
-    for(Packet::Ptr const & p : message_packets){
+    for(Packet::Ptr const & p : m.get_packets()){
         if ((p -> get_tag() == 1) || (p -> get_tag() == 3)){
             data = p -> raw();
             packet = p -> get_tag();
@@ -144,7 +144,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
 
     // Find encrypted data
     data = "";
-    for(Packet::Ptr const & p : message_packets){
+    for(Packet::Ptr const & p : m.get_packets()){
         if (p -> get_tag() == 9){
             data = p -> raw();
             Tag9 tag9(data);
@@ -186,7 +186,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
         // figure out which compression algorithm was used
         // uncompressed literal data packet
         if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            data = Tag11(data).write(2); // add in Tag11 headers to be removed later
+            data = Tag11(data).write(2);                    // add in Tag11 headers to be removed later
         }
         // BZIP2
         else if (data.substr(0, 2) == "BZ"){
@@ -235,6 +235,10 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
                     // else{
                         // data += p -> show() + "\n";
                     // }
+                }
+                
+                for(Packet::Ptr & p : compressed_packets){
+                    p.reset();
                 }
             }
             break;

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag17Sub1 : public Subpacket{
+class Tag17Sub1 : public Tag17Subpacket{
     private:
         uint8_t version;
         uint8_t encoding;
@@ -49,6 +49,6 @@ class Tag17Sub1 : public Subpacket{
 
         void set_image(const std::string & i);
 
-        Subpacket::Ptr clone() const;
+        Tag17Subpacket::Ptr clone() const;
 };
 #endif

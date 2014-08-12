@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include "subpacket.h"
 
-class Tag2Sub30 : public Subpacket{
+class Tag2Sub30 : public Tag2Subpacket{
     private:
         char flags;
 
@@ -44,6 +44,6 @@ class Tag2Sub30 : public Subpacket{
 
         void set_flags(const char f);
 
-        Subpacket::Ptr clone() const;
+        Tag2Subpacket::Ptr clone() const;
 };
 #endif

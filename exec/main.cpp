@@ -233,49 +233,49 @@ bool parse_command(std::string & input){
             const std::string passphrase = "abc";
             const std::string message = "testing testing 123";
 
-            std::cout << "Generate Keys ";
+            std::cout << "Generate Keys "; std::cout.flush();
             PGPPublicKey pub;
             PGPSecretKey pri;
             generate_keys(pub, pri, passphrase, "test key", "", "test@test.ing", 2048, 2048);
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Generate Revocation Certificate ";
+            std::cout << "Generate Revocation Certificate "; std::cout.flush();
             PGPPublicKey rev = revoke_primary_key_cert_key(pri, passphrase, 1, "Test Key");
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Show Keys (sent into null stream) ";
+            std::cout << "Show Keys (sent into null stream) "; std::cout.flush();
             null_out << pub.show() << pri.show();
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Encrypt Message ";
+            std::cout << "Encrypt Message "; std::cout.flush();
             PGPMessage en = encrypt(pub, message);
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Decrypt Message ";
+            std::cout << "Decrypt Message "; std::cout.flush();
             decrypt_message(pri, en, passphrase);
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Sign Message ";
+            std::cout << "Sign Message "; std::cout.flush();
             PGPCleartextSignature m = sign_cleartext(pri, passphrase, message, 2);
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Verify Message ";
+            std::cout << "Verify Message "; std::cout.flush();
             if (!verify_cleartext_signature(pub, m)){
                 throw std::runtime_error("Error: Could not verify message signature.");
             }
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Verify Key ";
+            std::cout << "Verify Key "; std::cout.flush();
             if (!verify_signature(pri, pub)){
                 throw std::runtime_error("Error: Could not verify key signature.");
             }
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Revoke Primary Key ";
+            std::cout << "Revoke Primary Key "; std::cout.flush();
             revoke_with_cert(pub, rev);
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Revoke User ID ";
+            std::cout << "Revoke User ID "; std::cout.flush();
             revoke_uid(pub, pri, passphrase, 32, "Test Key");
             std::cout << "Passed" << std::endl;
 

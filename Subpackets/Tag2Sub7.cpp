@@ -1,7 +1,7 @@
 #include "Tag2Sub7.h"
 
 Tag2Sub7::Tag2Sub7() :
-    Subpacket(7, 1),
+    Tag2Subpacket(7, 1),
     revocable()
 {}
 
@@ -31,6 +31,6 @@ void Tag2Sub7::set_revocable(const bool r){
     revocable = r;
 }
 
-Subpacket::Ptr Tag2Sub7::clone() const{
+Tag2Subpacket::Ptr Tag2Sub7::clone() const{
     return Ptr(new Tag2Sub7(*this));
 }
