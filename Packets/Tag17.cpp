@@ -13,8 +13,9 @@ Tag17::Tag17(std::string & data) :
     read(data);
 }
 
-Tag17::~Tag17()
-{}
+Tag17::~Tag17(){
+    attributes.clear();
+}
 
 void Tag17::read(std::string & data){
     size = data.size();
@@ -22,6 +23,7 @@ void Tag17::read(std::string & data){
         Tag17Subpacket::Ptr temp;
         std::string subpacket = read_subpacket(data);
         uint8_t type = subpacket[0];
+        subpacket = subpacket.substr(1, subpacket.size() - 1);
         switch (type){
             case 1:
                 temp = std::make_shared<Tag17Sub1>();
@@ -30,7 +32,6 @@ void Tag17::read(std::string & data){
                 throw std::runtime_error("Error: Subpacket tag not defined or reserved.");
                 break;
         }
-        subpacket = subpacket.substr(1, subpacket.size() - 1);
         temp -> read(subpacket);
         attributes.push_back(temp);
     }
@@ -57,7 +58,7 @@ std::string Tag17::raw() const{
 std::string Tag17::read_subpacket(std::string & data){
     size = data.size();
     uint32_t length = 0;
-    uint8_t first_octet = static_cast <unsigned char> (data[0]);
+    uint8_t first_octet = data[0];
     if (first_octet < 192){
         length = first_octet;
         data = data.substr(1, data.size() - 1);

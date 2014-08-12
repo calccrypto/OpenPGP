@@ -6,10 +6,9 @@ Tag17Sub1::Tag17Sub1() :
     Tag17Subpacket(1),
     version(),
     encoding(),
-    image()
-{
-    count++;
-}
+    image(),
+    current(++count)
+{}
 
 Tag17Sub1::Tag17Sub1(std::string & data) :
     Tag17Sub1()
@@ -26,17 +25,19 @@ void Tag17Sub1::read(std::string & data){
 std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) const{
     uint8_t tab = indents * indent_size;
     std::stringstream filename;
-    filename << std::string(tab, ' ') << "image" << count << "." << User_Attributes.at(encoding);
+    filename << "image" << current << "." << User_Attributes.at(encoding);
     std::ofstream f(filename.str().c_str(), std::ios::binary);
     std::stringstream out;
-    if (f.is_open()){
+    out << std::string(tab, ' ');
+    if (f){
         f << image;
         f.close();
-        out << std::string(tab, ' ') << "    Check working directory for " << filename.str() << " (" << image.size() << " octets).\n";
+        out << "    Check working directory for '";
     }
     else{
-        out << std::string(tab, ' ') << "    Error Writing to " << filename.str() << " (" << image.size() << " octets).\n";
+        out << "    Error writing to '";
     }
+    out << filename.str() << "' (" << image.size() << " octets).\n";
     return out.str();
 }
 

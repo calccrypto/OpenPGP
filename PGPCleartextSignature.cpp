@@ -91,7 +91,7 @@ void PGPCleartextSignature::read(std::string & data){
         }
 
         if (!found){
-            std::cerr << "Warning: Unknown ASCII Armor Header Key \x22" << header << "\x22" << std::endl;
+            std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << header << "\"" << std::endl;
         }
 
         x++;

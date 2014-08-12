@@ -58,7 +58,7 @@ uint32_t Tag11::get_time() const{
 
 std::string Tag11::get_literal() const{
     if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"" << std::endl;
+        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"" << std::endl;
     }
     return literal;
 }
@@ -84,7 +84,7 @@ bool Tag11::out(){
     }
 
     if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"" << std::endl;
+        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"" << std::endl;
     }
 
     out << literal;

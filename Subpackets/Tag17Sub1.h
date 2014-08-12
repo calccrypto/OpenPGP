@@ -34,8 +34,9 @@ class Tag17Sub1 : public Tag17Subpacket{
         uint8_t encoding;
         std::string image;
 
-        static unsigned int count;
-
+        static unsigned int count;  // count of all images found; incremented by creating new instances of Tag17Sub1
+        unsigned int current;       // which image this instance is
+        
     public:
         typedef std::shared_ptr<Tag17Sub1> Ptr;
 
