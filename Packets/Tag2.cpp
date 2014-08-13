@@ -148,7 +148,7 @@ std::vector <Tag2Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
     return out;
 }
 
-void Tag2::read(std::string & data){
+void Tag2::read(std::string & data, const uint8_t part){
     size = data.size();
     tag = 2;
     version = data[0];
@@ -203,7 +203,7 @@ void Tag2::read(std::string & data){
     }
     else{
         std::stringstream s; s << static_cast <int> (version);
-        throw std::runtime_error("Error: Unknown version: " + s.str());
+        throw std::runtime_error("Error: Tag2 Unknown version: " + s.str());
     }
 }
 

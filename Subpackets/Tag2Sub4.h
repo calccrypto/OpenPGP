@@ -33,7 +33,7 @@ class Tag2Sub4 : public Tag2Subpacket{
         bool exportable;
 
     public:
-        typedef std::shared_ptr<Tag2Sub4> Ptr;
+        typedef std::shared_ptr <Tag2Sub4> Ptr;
 
         Tag2Sub4();
         Tag2Sub4(std::string & data);

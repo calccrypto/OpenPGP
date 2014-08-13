@@ -35,7 +35,7 @@ class Tag2Sub31 : public Tag2Subpacket{
         std::string hash;
 
     public:
-        typedef std::shared_ptr<Tag2Sub31> Ptr;
+        typedef std::shared_ptr <Tag2Sub31> Ptr;
 
         Tag2Sub31();
         Tag2Sub31(std::string & data);

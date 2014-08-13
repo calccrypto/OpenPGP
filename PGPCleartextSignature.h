@@ -62,7 +62,7 @@ class PGPCleartextSignature {
         PGPDetachedSignature sig;
 
     public:
-        typedef std::shared_ptr<PGPCleartextSignature> Ptr;
+        typedef std::shared_ptr <PGPCleartextSignature> Ptr;
 
         PGPCleartextSignature();
         PGPCleartextSignature(const PGPCleartextSignature & copy);

@@ -33,11 +33,11 @@ class Tag9 : public Packet{
         std::string encrypted_data;
 
     public:
-        typedef std::shared_ptr<Tag9> Ptr;
+        typedef std::shared_ptr <Tag9> Ptr;
 
         Tag9();
         Tag9(std::string & data);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

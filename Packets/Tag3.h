@@ -34,24 +34,24 @@ class Tag3 : public Packet{
     private:
         uint8_t sym;
         S2K::Ptr s2k;
-        std::shared_ptr<std::string> esk; // encrypted session key
+        std::shared_ptr <std::string> esk; // encrypted session key
 
     public:
-        typedef std::shared_ptr<Tag3> Ptr;
+        typedef std::shared_ptr <Tag3> Ptr;
 
         Tag3();
         Tag3(const Tag3 & copy);
         Tag3(std::string & data);
         ~Tag3();
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
         uint8_t get_sym() const;
         S2K::Ptr get_s2k() const;
         S2K::Ptr get_s2k_clone() const;
-        std::shared_ptr<std::string> get_esk() const;
-        std::shared_ptr<std::string> get_esk_clone() const;
+        std::shared_ptr <std::string> get_esk() const;
+        std::shared_ptr <std::string> get_esk_clone() const;
         std::string get_key(std::string pass) const;
 
         void set_sym(const uint8_t s);

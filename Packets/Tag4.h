@@ -37,12 +37,12 @@ class Tag4 : public Packet{
         uint8_t nested;    // A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
 
     public:
-        typedef std::shared_ptr<Tag4> Ptr;
+        typedef std::shared_ptr <Tag4> Ptr;
 
         Tag4();
         Tag4(const Tag4 & copy);
         Tag4(std::string & data);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

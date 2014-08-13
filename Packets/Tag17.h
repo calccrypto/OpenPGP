@@ -41,12 +41,12 @@ class Tag17 : public ID{
         std::string write_subpacket(uint8_t s_type, std::string data) const;
 
     public:
-        typedef std::shared_ptr<Tag17> Ptr;
+        typedef std::shared_ptr <Tag17> Ptr;
 
         Tag17();
         Tag17(std::string & data);
         ~Tag17();
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

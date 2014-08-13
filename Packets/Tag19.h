@@ -34,11 +34,11 @@ class Tag19 : public Packet{
         std::string hash;
 
     public:
-        typedef std::shared_ptr<Tag19> Ptr;
+        typedef std::shared_ptr <Tag19> Ptr;
 
         Tag19();
         Tag19(std::string & data);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

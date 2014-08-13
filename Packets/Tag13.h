@@ -35,11 +35,11 @@ class Tag13 : public ID{
         std::string email;
 
     public:
-        typedef std::shared_ptr<Tag13> Ptr;
+        typedef std::shared_ptr <Tag13> Ptr;
 
         Tag13();
         Tag13(std::string & data);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

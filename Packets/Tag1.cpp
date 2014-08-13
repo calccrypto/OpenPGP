@@ -13,14 +13,15 @@ Tag1::Tag1(std::string & data):
     read(data);
 }
 
-void Tag1::read(std::string & data){
+void Tag1::read(std::string & data, const uint8_t part){
     size = data.size();
     version = data[0];
     keyid = data.substr(1, 8);
     pka = data[9];
     data = data.substr(10, data.size() - 10);
-    while (data.size())
+    while (data.size()){
         mpi.push_back(read_MPI(data));
+    }
 }
 
 std::string Tag1::show(const uint8_t indents, const uint8_t indent_size) const{

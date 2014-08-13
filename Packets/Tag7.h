@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 class Tag7 : public Tag5{
     public:
-        typedef std::shared_ptr<Tag7> Ptr;
+        typedef std::shared_ptr <Tag7> Ptr;
 
         Tag7();
         Tag7(const Tag7 & copy);

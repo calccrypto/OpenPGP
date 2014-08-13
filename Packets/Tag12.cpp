@@ -11,7 +11,7 @@ Tag12::Tag12(std::string & data):
     read(data);
 }
 
-void Tag12::read(std::string & data){
+void Tag12::read(std::string & data, const uint8_t part){
     size = data.size();
     trust = data;
 }

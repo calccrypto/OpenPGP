@@ -47,11 +47,11 @@ class Tag8 : public Packet{
         std::string decompress(const std::string & data);
 
     public:
-        typedef std::shared_ptr<Tag8> Ptr;
+        typedef std::shared_ptr <Tag8> Ptr;
 
         Tag8();
         Tag8(std::string & data);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

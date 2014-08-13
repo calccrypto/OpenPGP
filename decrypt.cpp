@@ -71,9 +71,9 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     while (secret_key.size()){
         out.push_back(read_MPI(secret_key));
     }
-    
+
     s2k.reset();
-    
+
     return out;
 }
 
@@ -131,7 +131,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
         if (unhexlify(makehex(sum, 4)) != checksum){                                        // check session key checksums
             throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");
         }
-        
+
         sec.reset();
     }
     else if (packet == 3){ //Symmetric-Key Encrypted Session Key Packet (Tag 3)
@@ -208,9 +208,11 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
     }
 
     // get rid of header and figure out what type of packet data it is
-    bool format;
-    data = read_packet_header(data, packet, format);
-
+    bool format;                    // not used
+    uint8_t partial = 0;            // should be used
+    data = read_packet_header(data, packet, format, partial);
+    partial = 0;                    // reset partial
+    
     // output data
     switch (packet){
         case 8: // Compressed Data Packet
@@ -219,7 +221,7 @@ std::string decrypt_message(const PGPSecretKey & pri, const PGP & m, const std::
                 std::vector <Packet::Ptr> compressed_packets;
 
                 while (data.size()){ // extract packets
-                    compressed_packets.push_back(read_packet(data));
+                    compressed_packets.push_back(read_packet(data, partial));
                 }
 
                 data = ""; // should be empty at this point; clear it out just in case

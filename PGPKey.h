@@ -65,7 +65,7 @@ class PGPKey : public PGP {
         virtual PGP::Ptr clone() const;
 };
 
-std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp);
+std::ostream & operator <<(std::ostream & stream, const PGPKey & pgp);
 
 class PGPPublicKey;
 
@@ -86,7 +86,7 @@ class PGPSecretKey : public PGPKey {
         PGP::Ptr clone() const;
 };
 
-std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp);
+std::ostream & operator <<(std::ostream & stream, const PGPSecretKey & pgp);
 
 class PGPPublicKey : public PGPKey {
     public:
@@ -104,7 +104,7 @@ class PGPPublicKey : public PGPKey {
         PGP::Ptr clone() const;
 };
 
-std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp);
+std::ostream & operator <<(std::ostream & stream, const PGPPublicKey & pgp);
 
 // Extract Public Key data from a Secret Key
 PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri);

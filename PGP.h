@@ -51,7 +51,7 @@ class PGP{
         std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
 
     public:
-        typedef std::shared_ptr<PGP> Ptr;
+        typedef std::shared_ptr <PGP> Ptr;
 
         PGP();
         PGP(const PGP & copy);                                  // clone another PGP instance

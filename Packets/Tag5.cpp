@@ -84,7 +84,7 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     return out.str();
 }
 
-void Tag5::read(std::string & data){
+void Tag5::read(std::string & data, const uint8_t part){
     size = data.size();
     read_common(data); // read public stuff
     s2k_con = data[0];

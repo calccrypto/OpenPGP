@@ -13,7 +13,7 @@ Tag19::Tag19(std::string & data):
     read(data);
 }
 
-void Tag19::read(std::string & data){
+void Tag19::read(std::string & data, const uint8_t part){
     size = data.size();
     hash = data;
 }

@@ -54,11 +54,12 @@ THE SOFTWARE.
 unsigned int partialBodyLen(uint8_t first_octet);
 
 // reads and removes packet header, returning the raw packet data. Input data is shortened
-std::string read_packet_header(std::string & data, uint8_t & tag, bool & format);
+std::string read_packet_header(std::string & data, uint8_t & tag, bool & format, uint8_t & partial);
 
 // parses raw packet data
-Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, std::string & packet_data);
+Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, const uint8_t partial, std::string & packet_data);
 
 // parse packet with header; wrapper for read_packet_header and read_packet_raw
-Packet::Ptr read_packet(std::string & data);
+// partial should be initialized with 0
+Packet::Ptr read_packet(std::string & data, uint8_t & partial);
 #endif

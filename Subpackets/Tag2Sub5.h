@@ -34,7 +34,7 @@ class Tag2Sub5 : public Tag2Subpacket{
         uint8_t amount;
 
     public:
-        typedef std::shared_ptr<Tag2Sub5> Ptr;
+        typedef std::shared_ptr <Tag2Sub5> Ptr;
 
         Tag2Sub5();
         Tag2Sub5(std::string & data);

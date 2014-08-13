@@ -3,4 +3,4 @@ Make error handling more reasonable? (currently everything throws exceptions)
 encrypt+sign stuff
 finish sign functions
 find packets properly (check if uid is associated with key, etc)
-read partial packets properly
+use partial packets properly

@@ -14,14 +14,14 @@ Tag11::Tag11(std::string & data):
     read(data);
 }
 
-void Tag11::read(std::string & data){
+void Tag11::read(std::string & data, const uint8_t part){
     size = data.size();
     format = data[0];
     uint8_t len = data[1];
     filename = data.substr(2, len);
 
     if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"" << std::endl;
+        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"." << std::endl;
     }
 
     time = toint(data.substr(2 + len, 4), 256);
@@ -58,7 +58,7 @@ uint32_t Tag11::get_time() const{
 
 std::string Tag11::get_literal() const{
     if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"" << std::endl;
+        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"." << std::endl;
     }
     return literal;
 }
@@ -67,24 +67,26 @@ bool Tag11::out(){
     std::ofstream out;
     switch (format){
         case 'b':
-            out.open(filename, std::ios::binary);
+            out.open(filename.c_str(), std::ios::binary);
             break;
         case 't': case 'u':
-            out.open(filename);
+            out.open(filename.c_str());
             break;
         default:
-            std::cerr << "Error: Unknown format type: " << static_cast <char> (format) << std::endl;
-            return false;
+            {
+                std::stringstream s; s << "Error: Unknown format type: " << static_cast <char> (format) << std::endl;
+                throw std::runtime_error(s.str());
+            }
             break;
     }
 
     if (!out){
-        std::cerr << "Error: Failed to open output file" << std::endl;
-        return true;
+        throw std::runtime_error("Error: Failed to open output file.");
+        return false;
     }
 
     if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"" << std::endl;
+        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"." << std::endl;
     }
 
     out << literal;

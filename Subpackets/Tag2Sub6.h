@@ -33,7 +33,7 @@ class Tag2Sub6 : public Tag2Subpacket{
         std::string regex;
 
     public:
-        typedef std::shared_ptr<Tag2Sub6> Ptr;
+        typedef std::shared_ptr <Tag2Sub6> Ptr;
 
         Tag2Sub6();
         Tag2Sub6(std::string & data);

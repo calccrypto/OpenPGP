@@ -33,7 +33,7 @@ class Tag2Sub16 : public Tag2Subpacket{
         std::string keyid; // 8 octets
 
     public:
-        typedef std::shared_ptr<Tag2Sub16> Ptr;
+        typedef std::shared_ptr <Tag2Sub16> Ptr;
 
         Tag2Sub16();
         Tag2Sub16(std::string & data);

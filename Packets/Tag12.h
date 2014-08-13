@@ -32,12 +32,12 @@ class Tag12 : public Packet{
         std::string trust;
 
     public:
-        typedef std::shared_ptr<Tag12> Ptr;
+        typedef std::shared_ptr <Tag12> Ptr;
 
         Tag12();
         Tag12(std::string & data);
         Tag12(std::ifstream & f);
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

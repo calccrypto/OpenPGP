@@ -34,7 +34,7 @@ class Tag2Sub32 : public Tag2Subpacket{
         Tag2::Ptr embedded;
 
     public:
-        typedef std::shared_ptr<Tag2Sub32> Ptr;
+        typedef std::shared_ptr <Tag2Sub32> Ptr;
 
         Tag2Sub32();
         Tag2Sub32(const Tag2Sub32 & tag2sub32);

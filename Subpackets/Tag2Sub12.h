@@ -35,7 +35,7 @@ class Tag2Sub12 : public Tag2Subpacket{
         std::string fingerprint; // 20 octets
 
     public:
-        typedef std::shared_ptr<Tag2Sub12> Ptr;
+        typedef std::shared_ptr <Tag2Sub12> Ptr;
 
         Tag2Sub12();
         Tag2Sub12(std::string & data);

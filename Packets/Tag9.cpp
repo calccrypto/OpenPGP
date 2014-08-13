@@ -11,7 +11,7 @@ Tag9::Tag9(std::string & data):
     read(data);
 }
 
-void Tag9::read(std::string & data){
+void Tag9::read(std::string & data, const uint8_t part){
     size = data.size();
     encrypted_data = data;
 }

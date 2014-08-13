@@ -54,13 +54,13 @@ class Tag2 : public Packet{
         std::vector <Tag2Subpacket::Ptr> read_subpackets(std::string & data);
 
     public:
-        typedef std::shared_ptr<Tag2> Ptr;
+        typedef std::shared_ptr <Tag2> Ptr;
 
         Tag2();
         Tag2(const Tag2 & copy);
         Tag2(std::string & data);
         ~Tag2();
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

@@ -3,18 +3,18 @@ std::string Packet::write_old_length(std::string data) const{
     unsigned int length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
     if (length < 256){
-        out[0] |= 0;                                                       // 1 octet
+        out[0] |= 0;                                    // 1 octet
         out += std::string(1, length);
     }
-    else if ((256 <= length) && (length < 65536)){
+    else if ((256 <= length) && (length < 65536)){      // 2 octest
         out[0] |= 1;
         out += unhexlify(makehex(length, 4));
     }
-    else if (65536 <= length){
-        out[0] |= 2;                                                      // 4 octets
+    else if (65536 <= length){                          // 4 octets
+        out[0] |= 2;
         out += unhexlify(makehex(length, 8));
     }
-    else{
+    else{                                               // partial packet
         out[0] |= 3;
     }
     return out + data;
@@ -46,10 +46,31 @@ std::string Packet::write_new_length(std::string data) const{
 
 std::string Packet::show_title() const{
     std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";
-    if (tag != 8){
+    out << (format?"New":"Old") << ": ";
+
+    // if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
+    if (tag != 254){// don't display packet name for partial packets
+        out << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";   // display packet name and tag number
+    }
+
+    if (tag != 8){ // don't display Compressed Data Packet size
         out << " (" << size << " octets)";
     }
+
+    switch (partial){
+        case 1:
+            out << " (partial start)";
+            break;
+        case 2:
+            out << " (partial continue)";
+            break;
+        case 3:
+            out << " (partial end)";
+            break;
+        default:
+            break;
+    }
+
     return out.str();
 }
 
@@ -57,7 +78,8 @@ Packet::Packet(uint8_t tag, uint8_t version):
     tag(tag),
     version(version),
     format(true),
-    size(0)
+    size(0),
+    partial(0)
 {}
 
 Packet::Packet(uint8_t tag):
@@ -71,9 +93,9 @@ Packet::Packet():
 Packet::~Packet(){}
 
 std::string Packet::write(uint8_t header) const{
-    if ((header && ((header == 2) ||                                      // if user set new packet header or
-       ((header == 1) && (tag > 15)))) ||                                 // if user set new packet header but tag is greater than 15 or
-       (!header && ((format || ((!format) && (tag > 15)))))){             // if user did not set packet header and format is new, or format is old but tag is greater than 15
+    if ((header && ((header == 2) ||                          // if user set new packet header or
+       ((header == 1) && (tag > 15)))) ||                     // if user set new packet header but tag is greater than 15 or
+       (!header && ((format || ((!format) && (tag > 15)))))){ // if user did not set packet header and format is new, or format is old but tag is greater than 15
         return write_new_length(raw());
     }
     return write_old_length(raw());
@@ -95,6 +117,10 @@ unsigned int Packet::get_size() const{
     return size;
 }
 
+uint8_t Packet::get_partial() const{
+    return partial;
+}
+
 void Packet::set_tag(const uint8_t t){
     tag = t;
 }
@@ -111,20 +137,25 @@ void Packet::set_size(const unsigned int s){
     size = s;
 }
 
+void Packet::set_partial(const uint8_t p){
+    partial = p;
+}
+
 Packet::Packet(const Packet &copy):
     tag(copy.tag),
     version(copy.version),
     format(copy.format),
-    size(copy.size)
+    size(copy.size),
+    partial(copy.partial)
 {}
 
-
-Packet & Packet::operator =(const Packet & copy)
+Packet & Packet::operator=(const Packet & copy)
 {
     tag = copy.tag;
     version = copy.version;
     format = copy.format;
     size = copy.size;
+    partial = copy.partial;
     return *this;
 }
 
@@ -164,7 +195,7 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
     out << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
         << std::string(tab, ' ') << "    Creation Time: " << show_time(time);
     if (version < 4){
-        out << "\n" 
+        out << "\n"
             << std::string(tab, ' ') << "    Expiration Time (Days): " << expire;
         if (!expire){
             out << " (Never)";
@@ -175,7 +206,7 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
             << std::string(tab, ' ') << "    RSA e: " << mpitohex(mpi[1]);
     }
     else if (version == 4){
-        out << "\n" 
+        out << "\n"
             << std::string(tab, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
         if (pka < 4){
             out << std::string(tab, ' ') << "    RSA n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
@@ -217,7 +248,7 @@ Key::Key(uint8_t tag):
 {}
 
 Key::Key():
-    Key(255) // uint8_t(-1); error value
+    Key(0)
 {}
 
 Key::Key(const Key & copy):
@@ -236,7 +267,7 @@ Key::Key(std::string & data):
 
 Key::~Key(){}
 
-void Key::read(std::string & data){
+void Key::read(std::string & data, const uint8_t part){
     read_common(data);
 }
 

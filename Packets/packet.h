@@ -41,10 +41,11 @@ THE SOFTWARE.
 
 class Packet{
     protected:
-        uint8_t tag;
+        uint8_t tag;        // RFC 4880 sec 4.3
         uint8_t version;
         bool format;        // OLD or NEW; only used when "show"ing. "write" will write whatever it set; default is NEW
         unsigned int size;  // This value is only correct when the packet was generated with the read() function
+        uint8_t partial;    // 0-3; 0 = not partial, 1 = partial begin, 2 = partial continue, 3 = partial end
 
         // returns packet data with old format packet length
         std::string write_old_length(std::string data) const;
@@ -59,14 +60,13 @@ class Packet{
         Packet(uint8_t tag, uint8_t version);
         Packet(const Packet & copy);
 
-        Packet & operator =(const Packet & copy);
 
     public:
-        typedef std::shared_ptr<Packet> Ptr;
+        typedef std::shared_ptr <Packet> Ptr;
 
         Packet();
         virtual ~Packet();
-        virtual void read(std::string & data) = 0;
+        virtual void read(std::string & data, const uint8_t part = 0) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
         std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
@@ -76,18 +76,22 @@ class Packet{
         bool get_format() const;
         unsigned int get_version() const;
         unsigned int get_size() const;
+        uint8_t get_partial() const;
 
         // Modifiers
         void set_tag(const uint8_t t);
         void set_format(const bool f);
         void set_version(const unsigned int v);
         void set_size(const unsigned int s);
+        void set_partial(const uint8_t p);
 
         virtual Ptr clone() const = 0;
+
+        Packet & operator=(const Packet & copy);
 };
 
 // For Tags 5, 6, 7, and 14
-// Key is equivalent to Tag6
+// Key is equivalent to Tag6 (but don't substitute Key for Tag6)
 class Key : public Packet{
     protected:
         time_t time;
@@ -104,14 +108,14 @@ class Key : public Packet{
         Key(uint8_t tag);
 
     public:
-        typedef std::shared_ptr<Key> Ptr;
+        typedef std::shared_ptr <Key> Ptr;
 
         Key();
         Key(const Key & copy);
         Key(std::string & data);
         virtual ~Key();
 
-        virtual void read(std::string & data);
+        virtual void read(std::string & data, const uint8_t part = 0);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
 
@@ -137,7 +141,7 @@ class ID : public Packet{
         using Packet::Packet;
 
     public:
-        typedef std::shared_ptr<ID> Ptr;
+        typedef std::shared_ptr <ID> Ptr;
 
         ID & operator =(const ID & copy);
 

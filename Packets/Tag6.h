@@ -33,7 +33,7 @@ class Tag6: public Key {
         Tag6(uint8_t tag);
 
     public:
-        typedef std::shared_ptr<Tag6> Ptr;
+        typedef std::shared_ptr <Tag6> Ptr;
 
         Tag6();
         Tag6(const Tag6 & copy);

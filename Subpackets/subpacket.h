@@ -50,7 +50,7 @@ class Subpacket{
         Subpacket & operator =(const Subpacket & copy);
 
     public:
-        typedef std::shared_ptr<Subpacket> Ptr;
+        typedef std::shared_ptr <Subpacket> Ptr;
 
         virtual ~Subpacket();
         virtual void read(std::string & data) = 0;
@@ -72,7 +72,7 @@ class Tag2Subpacket: public Subpacket {
         Tag2Subpacket & operator =(const Tag2Subpacket & copy);
 
     public:
-        typedef std::shared_ptr<Tag2Subpacket> Ptr;
+        typedef std::shared_ptr <Tag2Subpacket> Ptr;
 
         virtual ~Tag2Subpacket();
         
@@ -86,7 +86,7 @@ class Tag17Subpacket: public Subpacket {
         Tag17Subpacket & operator =(const Tag17Subpacket & copy);
 
     public:
-        typedef std::shared_ptr<Tag17Subpacket> Ptr;
+        typedef std::shared_ptr <Tag17Subpacket> Ptr;
 
         virtual ~Tag17Subpacket();
         

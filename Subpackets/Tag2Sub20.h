@@ -37,7 +37,7 @@ class Tag2Sub20 : public Tag2Subpacket{
         std::string n;      // nlen octets long
 
     public:
-        typedef std::shared_ptr<Tag2Sub20> Ptr;
+        typedef std::shared_ptr <Tag2Sub20> Ptr;
 
         Tag2Sub20();
         Tag2Sub20(std::string & data);

@@ -185,9 +185,15 @@ void PGP::read(std::ifstream & file){
 }
 
 void PGP::read_raw(std::string & data){
+    uint8_t partial = 0;
     while (data.size()){
-        packets.push_back(read_packet(data));
+        packets.push_back(read_packet(data, partial));
     }
+
+    if (partial){ // last packet must have been a partial packet
+        (*(packets.rbegin())) -> set_partial(3); // set last partial packet to partial end
+    }
+
     armored = false;
 }
 

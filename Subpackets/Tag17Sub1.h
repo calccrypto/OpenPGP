@@ -38,7 +38,7 @@ class Tag17Sub1 : public Tag17Subpacket{
         unsigned int current;       // which image this instance is
         
     public:
-        typedef std::shared_ptr<Tag17Sub1> Ptr;
+        typedef std::shared_ptr <Tag17Sub1> Ptr;
 
         Tag17Sub1();
         Tag17Sub1(std::string & data);

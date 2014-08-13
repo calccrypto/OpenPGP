@@ -47,10 +47,10 @@ class S2K{
         S2K(uint8_t type);
 
     public:
-        typedef std::shared_ptr<S2K> Ptr;
+        typedef std::shared_ptr <S2K> Ptr;
 
         virtual ~S2K();
-        virtual void read(std::string & data) = 0;
+        virtual void read(std::string & data, const uint8_t part = 0) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
         std::string write() const;
@@ -70,11 +70,11 @@ class S2K0: public S2K{
         S2K0(uint8_t type);
 
     public:
-        typedef std::shared_ptr<S2K0> Ptr;
+        typedef std::shared_ptr <S2K0> Ptr;
 
         S2K0();
         virtual ~S2K0();
-        virtual void read(std::string & data);
+        virtual void read(std::string & data, const uint8_t part = 0);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
         virtual std::string run(std::string pass, unsigned int sym_len) const;
@@ -89,11 +89,11 @@ class S2K1 : public S2K0{
         S2K1(uint8_t type);
 
     public:
-        typedef std::shared_ptr<S2K1> Ptr;
+        typedef std::shared_ptr <S2K1> Ptr;
 
         S2K1();
         virtual ~S2K1();
-        virtual void read(std::string & data);
+        virtual void read(std::string & data, const uint8_t part = 0);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
         virtual std::string run(std::string pass, unsigned int sym_len) const;
@@ -110,11 +110,11 @@ class S2K3 : public S2K1{
         uint8_t count;
 
     public:
-        typedef std::shared_ptr<S2K3> Ptr;
+        typedef std::shared_ptr <S2K3> Ptr;
 
         S2K3();
         ~S2K3();
-        void read(std::string & data);
+        void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
         std::string run(std::string pass, unsigned int sym_len) const;

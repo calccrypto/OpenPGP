@@ -32,7 +32,7 @@ class Tag2Sub30 : public Tag2Subpacket{
         char flags;
 
     public:
-        typedef std::shared_ptr<Tag2Sub30> Ptr;
+        typedef std::shared_ptr <Tag2Sub30> Ptr;
 
         Tag2Sub30();
         Tag2Sub30(std::string & data);

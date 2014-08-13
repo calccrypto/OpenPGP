@@ -33,7 +33,7 @@ class Tag2Sub28 : public Tag2Subpacket{
         std::string signer;
 
     public:
-        typedef std::shared_ptr<Tag2Sub28> Ptr;
+        typedef std::shared_ptr <Tag2Sub28> Ptr;
 
         Tag2Sub28();
         Tag2Sub28(std::string & data);

@@ -24,7 +24,7 @@ Tag4::Tag4(std::string & data):
     read(data);
 }
 
-void Tag4::read(std::string & data){
+void Tag4::read(std::string & data, const uint8_t part){
     size = data.size();
     version = data[0];                  // 3
     type = data[1];

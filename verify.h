@@ -44,7 +44,7 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // pka_verify with variables only
-bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature);
+bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector <PGPMPI> & signature);
 // pka_verify with packets
 bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2::Ptr & signature);
 // /////////////////

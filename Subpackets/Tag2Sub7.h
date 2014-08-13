@@ -33,7 +33,7 @@ class Tag2Sub7 : public Tag2Subpacket{
         bool revocable;
 
     public:
-        typedef std::shared_ptr<Tag2Sub7> Ptr;
+        typedef std::shared_ptr <Tag2Sub7> Ptr;
 
         Tag2Sub7();
         Tag2Sub7(std::string & data);

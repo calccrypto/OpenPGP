@@ -33,7 +33,7 @@ class Tag2Sub9 : public Tag2Subpacket{
         time_t time;
 
     public:
-        typedef std::shared_ptr<Tag2Sub9> Ptr;
+        typedef std::shared_ptr <Tag2Sub9> Ptr;
 
         Tag2Sub9();
         Tag2Sub9(std::string & data);
