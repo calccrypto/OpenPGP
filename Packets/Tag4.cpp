@@ -1,13 +1,13 @@
 #include "Tag4.h"
 
-Tag4::Tag4() :
+Tag4::Tag4():
     Packet(4, 3),
     type(), hash(), pka(),
     keyid(),
     nested(1)
 {}
 
-Tag4::Tag4(const Tag4 & copy) :
+Tag4::Tag4(const Tag4 & copy):
     Tag4()
 {
     version = copy.version;
@@ -18,7 +18,7 @@ Tag4::Tag4(const Tag4 & copy) :
     nested = copy.nested;
 }
 
-Tag4::Tag4(std::string & data) :
+Tag4::Tag4(std::string & data):
     Tag4()
 {
     read(data);

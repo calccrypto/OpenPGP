@@ -59,7 +59,7 @@ bool BBS::parity(const std::string & par) const{
     }
 }
 
-BBS::BBS(...) :
+BBS::BBS(...):
     par()
 {
     if (!seeded){
@@ -67,7 +67,7 @@ BBS::BBS(...) :
     }
 }
 
-BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q) :
+BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q):
     par()
 {
     init(SEED, bits, p, q);

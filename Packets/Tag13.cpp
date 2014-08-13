@@ -1,13 +1,13 @@
 #include "Tag13.h"
 
-Tag13::Tag13() :
+Tag13::Tag13():
     ID(13),
     name(),
     comment(),
     email()
 {}
 
-Tag13::Tag13(std::string & data) :
+Tag13::Tag13(std::string & data):
     Tag13()
 {
     read(data);

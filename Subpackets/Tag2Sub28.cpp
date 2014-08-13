@@ -1,11 +1,11 @@
 #include "Tag2Sub28.h"
 
-Tag2Sub28::Tag2Sub28() :
+Tag2Sub28::Tag2Sub28():
     Tag2Subpacket(28, 0),
     signer()
 {}
 
-Tag2Sub28::Tag2Sub28(std::string & data) :
+Tag2Sub28::Tag2Sub28(std::string & data):
     Tag2Sub28()
 {
     read(data);

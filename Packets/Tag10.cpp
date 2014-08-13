@@ -1,11 +1,11 @@
 #include "Tag10.h"
 
-Tag10::Tag10() :
+Tag10::Tag10():
     Packet(10),
     pgp("PGP")
 {}
 
-Tag10::Tag10(std::string & data) :
+Tag10::Tag10(std::string & data):
     Tag10()
 {
     read(data);

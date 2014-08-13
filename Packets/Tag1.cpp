@@ -1,13 +1,13 @@
 #include "Tag1.h"
 
-Tag1::Tag1() :
+Tag1::Tag1():
     Packet(1, 3),
     keyid(),
     pka(),
     mpi()
 {}
 
-Tag1::Tag1(std::string & data) :
+Tag1::Tag1(std::string & data):
     Tag1()
 {
     read(data);

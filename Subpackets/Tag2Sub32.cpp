@@ -1,16 +1,16 @@
 #include "Tag2Sub32.h"
 
-Tag2Sub32::Tag2Sub32() :
+Tag2Sub32::Tag2Sub32():
     Tag2Subpacket(32),
     embedded()
 {}
 
-Tag2Sub32::Tag2Sub32(const Tag2Sub32 & copy) :
+Tag2Sub32::Tag2Sub32(const Tag2Sub32 & copy):
     Tag2Subpacket(copy),
     embedded(std::dynamic_pointer_cast<Tag2>(copy.embedded -> clone()))
 {}
 
-Tag2Sub32::Tag2Sub32(std::string & data) :
+Tag2Sub32::Tag2Sub32(std::string & data):
     Tag2Sub32()
 {
     read(data);

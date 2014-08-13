@@ -1,13 +1,13 @@
 #include "Tag2Sub12.h"
 
-Tag2Sub12::Tag2Sub12() :
+Tag2Sub12::Tag2Sub12():
     Tag2Subpacket(12),
     _class(),
     pka(),
     fingerprint()
 {}
 
-Tag2Sub12::Tag2Sub12(std::string & data) :
+Tag2Sub12::Tag2Sub12(std::string & data):
     Tag2Sub12()
 {
     read(data);

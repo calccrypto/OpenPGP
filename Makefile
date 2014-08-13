@@ -60,7 +60,7 @@ PGPCleartextSignature.o: PGPCleartextSignature.h PGPCleartextSignature.cpp PGP.h
 PGPDetachedSignature.o: PGPDetachedSignature.h PGPDetachedSignature.cpp PGP.h
 	$(CXX) $(CFLAGS) PGPDetachedSignature.cpp
 
-PGPKey.o: PGPKey.h PGPKey.cpp PGP.h
+PGPKey.o: PGPKey.h PGPKey.cpp Packets/packets.h PGP.h
 	$(CXX) $(CFLAGS) PGPKey.cpp
 
 PGPMessage.o: PGPMessage.h PGPMessage.cpp PGP.h
@@ -75,7 +75,7 @@ PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNG.h consts.h pgptime.h
 radix64.o: radix64.h radix64.cpp common/includes.h
 	$(CXX) $(CFLAGS) radix64.cpp
 
-revoke.o: revoke.h revoke.cpp PGPKey.h PKCS1.h sign.h verify.h
+revoke.o: revoke.h revoke.cpp PGPKey.h PKCS1.h mpi.h PGPKey.h PKCS1.h sign.h verify.h
 	$(CXX) $(CFLAGS) revoke.cpp
 
 sigcalc.o: sigcalc.h sigcalc.cpp Hashes/Hashes.h Packets/packets.h pgptime.h

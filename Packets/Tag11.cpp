@@ -1,6 +1,6 @@
 #include "Tag11.h"
 
-Tag11::Tag11() :
+Tag11::Tag11():
     Packet(11),
     format(),
     filename(),
@@ -8,7 +8,7 @@ Tag11::Tag11() :
     literal()
 {}
 
-Tag11::Tag11(std::string & data) :
+Tag11::Tag11(std::string & data):
     Tag11()
 {
     read(data);

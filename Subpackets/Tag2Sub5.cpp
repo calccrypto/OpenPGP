@@ -1,12 +1,12 @@
 #include "Tag2Sub5.h"
 
-Tag2Sub5::Tag2Sub5() :
+Tag2Sub5::Tag2Sub5():
     Tag2Subpacket(5, 2),
     level(),
     amount()
 {}
 
-Tag2Sub5::Tag2Sub5(std::string & data) :
+Tag2Sub5::Tag2Sub5(std::string & data):
     Tag2Sub5()
 {
     read(data);

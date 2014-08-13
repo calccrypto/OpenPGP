@@ -1,12 +1,12 @@
 #include "Tag2Sub31.h"
 
-Tag2Sub31::Tag2Sub31() :
+Tag2Sub31::Tag2Sub31():
     Tag2Subpacket(31),
     pka(), ha(),
     hash()
 {}
 
-Tag2Sub31::Tag2Sub31(std::string & data) :
+Tag2Sub31::Tag2Sub31(std::string & data):
     Tag2Sub31()
 {
     read(data);

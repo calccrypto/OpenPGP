@@ -1,11 +1,11 @@
 #include "Tag2Sub7.h"
 
-Tag2Sub7::Tag2Sub7() :
+Tag2Sub7::Tag2Sub7():
     Tag2Subpacket(7, 1),
     revocable()
 {}
 
-Tag2Sub7::Tag2Sub7(std::string & data) :
+Tag2Sub7::Tag2Sub7(std::string & data):
     Tag2Sub7()
 {
     read(data);

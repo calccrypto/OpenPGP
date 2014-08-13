@@ -1,11 +1,11 @@
 #include "Tag2Sub6.h"
 
-Tag2Sub6::Tag2Sub6() :
+Tag2Sub6::Tag2Sub6():
     Tag2Subpacket(6),
     regex()
 {}
 
-Tag2Sub6::Tag2Sub6(std::string & data) :
+Tag2Sub6::Tag2Sub6(std::string & data):
     Tag2Sub6()
 {
     read(data);

@@ -1,25 +1,5 @@
 #include "sign.h"
 
-Tag5::Ptr find_private_signing_key(const PGPSecretKey & k){
-    if (k.get_ASCII_Armor() == 2){
-        std::vector <Packet::Ptr> packets = k.get_packets();
-        for(Packet::Ptr const & p : packets){
-            if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
-                std::string data = p -> raw();
-                Tag5::Ptr signer(new Tag5(data));
-                // make sure key has signing material
-                if ((signer -> get_pka() == 1) || // RSA
-                    (signer -> get_pka() == 3) || // RSA
-                    (signer -> get_pka() == 17)){ // DSA
-                    return signer;
-                }
-                signer.reset();
-            }
-        }
-    }
-    return nullptr;
-}
-
 // possible to mess up
 ID::Ptr find_signer_id(const PGPSecretKey & k){
     for(Packet::Ptr const & p : k.get_packets()){
@@ -94,7 +74,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
 }
 
 Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const uint8_t hash){
-    Tag5::Ptr tag5 = find_private_signing_key(pri);
+    Tag5::Ptr tag5 = find_signing_key(pri, 5);
     if (!tag5){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -117,7 +97,7 @@ Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, cons
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_private_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri, 5);
     if (!signer){
         throw std::runtime_error("Error: No Private Key for signing found.");
     }
@@ -158,7 +138,10 @@ PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & p
 
 PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const std::string & data, const uint8_t hash, const uint8_t compress){
     // find signing key
-    Tag5::Ptr tag5 = find_private_signing_key(pri);
+    Tag5::Ptr tag5 = find_signing_key(pri, 5);
+    if (!tag5){
+        throw std::runtime_error("Error: No signing key found.");
+    }
 
     // find matching signature packet
     Tag2::Ptr keysig = nullptr;
@@ -260,7 +243,7 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_private_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri, 5);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -342,7 +325,6 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
-
     Tag6::Ptr signee_primary_key = nullptr;
     ID::Ptr signee_id = nullptr;
 
@@ -389,7 +371,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     i++;
 
     // get signer's signing packet
-    Tag5::Ptr signer_signing_key = find_private_signing_key(signer);
+    Tag5::Ptr signer_signing_key = find_signing_key(signer, 5);
 
     // check if the signer has alreaady signed this key
     unsigned int j = i;
@@ -493,24 +475,15 @@ Tag2::Ptr sign_primary_key_binding(const Tag7::Ptr & subpri, const std::string &
 
 Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t hash){
     // find signing subkey
-    Tag7::Ptr signer_subkey = nullptr;
-    for(Packet::Ptr const & p : pri.get_packets()){
-        if (p -> get_tag() == 7){
-            std::string data = p -> raw();
-            Tag7::Ptr tag7(new Tag7(data));
-            if ((tag7 -> get_pka() == 1) || // RSA (Encrypt or Sign)
-                (tag7 -> get_pka() == 3) || // RSA Sign-Only
-                (tag7 -> get_pka() == 17)){ //DSA
-                signer_subkey = tag7;
-                break;
-            }
-            tag7.reset();
-        }
-    }
-
-    if (!signer_subkey){
+    Key::Ptr subkey = find_signing_key(pri, 7);
+    if (!subkey){
         throw std::runtime_error("Error: No Signing Subkey found.");
     }
+
+    // move subkey data into subkey packet
+    std::string raw = subkey -> raw();
+    subkey.reset();
+    Tag7::Ptr signer_subkey(new Tag7(raw));
 
     // get signee primary and subkey
     Tag6::Ptr signee_primary = nullptr;
@@ -547,6 +520,6 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     signer_subkey.reset();
     signee_primary.reset();
     signee_subkey.reset();
-    
+
     return sig;
 }

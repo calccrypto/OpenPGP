@@ -1,13 +1,13 @@
 #include "Tag17.h"
 
-Tag17::Tag17() :
+Tag17::Tag17():
     ID(17),
     length(),
     type(),
     attributes()
 {}
 
-Tag17::Tag17(std::string & data) :
+Tag17::Tag17(std::string & data):
     Tag17()
 {
     read(data);

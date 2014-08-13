@@ -386,3 +386,72 @@ PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
 
     return pub;
 }
+
+Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std::string & keyid){
+    if ((key -> get_ASCII_Armor() == 1) || (key -> get_ASCII_Armor() == 2)){
+        std::vector <Packet::Ptr> packets = key -> get_packets();
+        for(Packet::Ptr const & p : packets){
+            if (p -> get_tag() == tag){
+                Key::Ptr signer = nullptr;
+                switch (tag){
+                    case 5:
+                        signer = Tag5::Ptr(new Tag5);
+                        break;
+                    case 6:
+                        signer = Tag6::Ptr(new Tag6);
+                        break;
+                    case 7:
+                        signer = Tag7::Ptr(new Tag7);
+                        break;
+                    case 14:
+                        signer = Tag14::Ptr(new Tag14);
+                        break;
+                    default:
+                        throw std::runtime_error("Error: Not a key tag.");
+                        break;
+                }
+
+                std::string data = p -> raw();
+                signer -> read(data);
+
+                // make sure key has signing material
+                if ((signer -> get_pka() == 1) || // RSA (Encrypt or Sign)
+                    (signer -> get_pka() == 3) || // RSA Sign-Only
+                    (signer -> get_pka() == 17)){ // DSA
+
+                    // make sure the keyid matches the given one
+                    // expects only full matches
+                    if (keyid.size()){
+                        if (signer -> get_keyid() == keyid){
+                            return signer;
+                        }
+                        // singer.reset();
+                    }
+                    else{
+                        return signer;
+                    }
+                }
+                signer.reset();
+            }
+        }
+    }
+    return nullptr;
+}
+
+Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const std::string & keyid){
+    Key::Ptr found = find_signing_key(std::make_shared <PGPKey> (key), tag);
+    if (!found){
+        return nullptr;
+    }
+    std::string data = found -> raw();
+    return Tag6::Ptr(new Tag6(data));
+}
+
+Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid){
+    Key::Ptr found = find_signing_key(std::make_shared <PGPKey> (key), tag);
+    if (!found){
+        return nullptr;
+    }
+    std::string data = found -> raw();
+    return Tag5::Ptr(new Tag5(data));
+}

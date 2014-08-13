@@ -1,6 +1,6 @@
 #include "Tag5.h"
 
-Tag5::Tag5(uint8_t tag) :
+Tag5::Tag5(uint8_t tag):
     Tag6(tag),
     s2k_con(0),
     sym(0),
@@ -9,11 +9,11 @@ Tag5::Tag5(uint8_t tag) :
     secret()
 {}
 
-Tag5::Tag5() :
+Tag5::Tag5():
     Tag5(5)
 {}
 
-Tag5::Tag5(const Tag5 & copy) :
+Tag5::Tag5(const Tag5 & copy):
     Tag6(copy),
     s2k_con(copy.s2k_con),
     sym(copy.sym),
@@ -22,7 +22,7 @@ Tag5::Tag5(const Tag5 & copy) :
     secret(copy.secret)
 {}
 
-Tag5::Tag5(std::string & data) :
+Tag5::Tag5(std::string & data):
     Tag5(5)
 {
     read(data);
@@ -50,7 +50,7 @@ void Tag5::read_s2k(std::string & data){
     s2k -> read(s2k_str);
 }
 
-std::string Tag5::show_common(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     if (s2k_con > 253){
@@ -62,7 +62,7 @@ std::string Tag5::show_common(const uint8_t indents, const uint8_t indent_size) 
         }
     }
 
-    out << std::string(tab, ' ') << "    Encrypted Data (" << secret.size() << " octets):\n        ";
+    out << "\n" << std::string(tab, ' ') << "    Encrypted Data (" << secret.size() << " octets):\n        ";
     if (pka < 4){
         out << std::string(tab, ' ') << "RSA d, p, q, u";
     }
@@ -86,7 +86,7 @@ std::string Tag5::show_common(const uint8_t indents, const uint8_t indent_size) 
 
 void Tag5::read(std::string & data){
     size = data.size();
-    read_tag6(data);
+    read_common(data); // read public stuff
     s2k_con = data[0];
     data = data.substr(1, data.size() - 1);
     if (s2k_con > 253){
@@ -103,11 +103,11 @@ void Tag5::read(std::string & data){
 
 std::string Tag5::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
-    return std::string(tab, ' ') + show_title() + "\n" + show_tag6(indents, indent_size) + show_common(indents, indent_size);
+    return std::string(tab, ' ') + show_title() + "\n" + show_common(indents, indent_size) + show_private(indents, indent_size);
 }
 
 std::string Tag5::raw() const{
-    std::string out = raw_tag6() + std::string(1, s2k_con);
+    std::string out = raw_common() + std::string(1, s2k_con);
     if (s2k_con > 253){
         if (!s2k){
             throw std::runtime_error("Error: S2K has not been set.");
@@ -158,7 +158,7 @@ Tag6::Ptr Tag5::get_public_ptr() const{
 
 void Tag5::set_s2k_con(const uint8_t c){
     s2k_con = c;
-    size = raw_tag6().size() + 1;
+    size = raw_common().size() + 1;
     if (s2k){
         size += s2k -> write().size();
     }
@@ -170,7 +170,7 @@ void Tag5::set_s2k_con(const uint8_t c){
 
 void Tag5::set_sym(const uint8_t s){
     sym = s;
-    size = raw_tag6().size() + 1;
+    size = raw_common().size() + 1;
     if (s2k){
         size += s2k -> write().size();
     }
@@ -191,7 +191,7 @@ void Tag5::set_s2k(const S2K::Ptr & s){
         s2k = std::make_shared<S2K3>();
     }
     s2k = s -> clone();
-    size = raw_tag6().size() + 1;
+    size = raw_common().size() + 1;
     if (s2k){
         size += s2k -> write().size();
     }
@@ -203,7 +203,7 @@ void Tag5::set_s2k(const S2K::Ptr & s){
 
 void Tag5::set_IV(const std::string & iv){
     IV = iv;
-    size = raw_tag6().size() + 1;
+    size = raw_common().size() + 1;
     if (s2k){
         size += s2k -> write().size();
     }
@@ -215,7 +215,7 @@ void Tag5::set_IV(const std::string & iv){
 
 void Tag5::set_secret(const std::string & s){
     secret = s;
-    size = raw_tag6().size() + 1;
+    size = raw_common().size() + 1;
     if (s2k){
         size += s2k -> write().size();
     }
@@ -232,7 +232,7 @@ Packet::Ptr Tag5::clone() const{
 }
 
 Tag5 & Tag5::operator =(const Tag5 & copy){
-    Tag6::operator =(copy);
+    Key::operator =(copy);
     s2k_con = copy.s2k_con;
     sym = copy.sym;
     s2k = copy.s2k -> clone();

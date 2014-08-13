@@ -1,13 +1,13 @@
 #include "Tag2Sub20.h"
 
-Tag2Sub20::Tag2Sub20() :
+Tag2Sub20::Tag2Sub20():
     Tag2Subpacket(20),
     flags(),
     mlen(), nlen(),
     m(), n()
 {}
 
-Tag2Sub20::Tag2Sub20(std::string & data) :
+Tag2Sub20::Tag2Sub20(std::string & data):
     Tag2Sub20()
 {
     read(data);

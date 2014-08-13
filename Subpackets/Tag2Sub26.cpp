@@ -1,11 +1,11 @@
 #include "Tag2Sub26.h"
 
-Tag2Sub26::Tag2Sub26() :
+Tag2Sub26::Tag2Sub26():
     Tag2Subpacket(26),
     uri()
 {}
 
-Tag2Sub26::Tag2Sub26(std::string & data) :
+Tag2Sub26::Tag2Sub26(std::string & data):
     Tag2Sub26()
 {
     read(data);

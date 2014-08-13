@@ -1,11 +1,11 @@
 #include "Tag18.h"
 
-Tag18::Tag18() :
+Tag18::Tag18():
     Packet(18, 1),
     protected_data()
 {}
 
-Tag18::Tag18(std::string & data) :
+Tag18::Tag18(std::string & data):
     Tag18()
 {
     read(data);

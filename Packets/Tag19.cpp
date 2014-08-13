@@ -1,13 +1,13 @@
 #include "Tag19.h"
 
-Tag19::Tag19() :
+Tag19::Tag19():
     Packet(19),
     hash()
 {
     size = 20;
 }
 
-Tag19::Tag19(std::string & data) :
+Tag19::Tag19(std::string & data):
     Tag19()
 {
     read(data);

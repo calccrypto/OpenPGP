@@ -1,6 +1,6 @@
 #include "Tag14.h"
 
-Tag14::Tag14() :
+Tag14::Tag14():
     Tag6(14)
 {}
 

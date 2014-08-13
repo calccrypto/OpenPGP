@@ -1,11 +1,11 @@
 #include "Tag9.h"
 
-Tag9::Tag9() :
+Tag9::Tag9():
     Packet(9),
     encrypted_data()
 {}
 
-Tag9::Tag9(std::string & data) :
+Tag9::Tag9(std::string & data):
     Tag9()
 {
     read(data);

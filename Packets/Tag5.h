@@ -38,7 +38,7 @@ class Tag5 : public Tag6{
         std::string secret;
 
         void read_s2k(std::string & data);
-        std::string show_common(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show_private(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
 
         Tag5(uint8_t tag);
 

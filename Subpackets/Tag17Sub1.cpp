@@ -2,7 +2,7 @@
 
 unsigned int Tag17Sub1::count = 0;
 
-Tag17Sub1::Tag17Sub1() :
+Tag17Sub1::Tag17Sub1():
     Tag17Subpacket(1),
     version(),
     encoding(),
@@ -10,7 +10,7 @@ Tag17Sub1::Tag17Sub1() :
     current(++count)
 {}
 
-Tag17Sub1::Tag17Sub1(std::string & data) :
+Tag17Sub1::Tag17Sub1(std::string & data):
     Tag17Sub1()
 {
     read(data);

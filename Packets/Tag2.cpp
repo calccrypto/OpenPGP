@@ -1,6 +1,6 @@
 #include "Tag2.h"
 
-Tag2::Tag2() :
+Tag2::Tag2():
     Packet(2),
     type(0),
     pka(0),
@@ -13,7 +13,7 @@ Tag2::Tag2() :
     unhashed_subpackets()
 {}
 
-Tag2::Tag2(const Tag2 & copy) :
+Tag2::Tag2(const Tag2 & copy):
     Packet(copy),
     type(copy.type),
     pka(copy.pka),
@@ -26,7 +26,7 @@ Tag2::Tag2(const Tag2 & copy) :
     unhashed_subpackets(copy.get_unhashed_subpackets_clone())
 {}
 
-Tag2::Tag2(std::string & data) :
+Tag2::Tag2(std::string & data):
     Tag2()
 {
     read(data);

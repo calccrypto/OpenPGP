@@ -1,8 +1,6 @@
 Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable? (currently everything throws exceptions)
-Recalculate signature functions
 encrypt+sign stuff
 finish sign functions
-wrapper function to generically use any of the sign/verify functions
 find packets properly (check if uid is associated with key, etc)
 read partial packets properly

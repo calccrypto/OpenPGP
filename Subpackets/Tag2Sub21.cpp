@@ -1,11 +1,11 @@
 #include "Tag2Sub21.h"
 
-Tag2Sub21::Tag2Sub21() :
+Tag2Sub21::Tag2Sub21():
     Tag2Subpacket(21),
     pha()
 {}
 
-Tag2Sub21::Tag2Sub21(std::string & data) :
+Tag2Sub21::Tag2Sub21(std::string & data):
     Tag2Sub21()
 {
     read(data);

@@ -1,10 +1,10 @@
 #include "TagX.h"
 
-TagX::TagX() :
+TagX::TagX():
     TagX(std::string())
 {}
 
-TagX::TagX(const std::string & data) :
+TagX::TagX(const std::string & data):
     Packet(),
     stream(data)
 {}

@@ -794,6 +794,6 @@ int main(int argc, char * argv[]){
             input += std::string(argv[x]) + " ";
         }
         parse_command(input);
-    }    
+    }
     return 0;
 }

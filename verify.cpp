@@ -1,35 +1,5 @@
 #include "verify.h"
 
-Tag6::Ptr find_public_signing_key(const PGPPublicKey & pub, const std::string & keyid){
-    Tag6::Ptr out = nullptr;
-    for(Packet::Ptr const & p : pub.get_packets()){
-        if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
-            std::string raw = p -> raw();
-            Tag6 * temp = NULL;
-            if (p -> get_tag() == 5){
-                temp = new Tag5(raw);
-            }
-            else if (p -> get_tag() == 6){
-                temp = new Tag6(raw);
-            }
-            else if (p -> get_tag() == 7){
-                temp = new Tag7(raw);
-            }
-            else if (p -> get_tag() == 14){
-                temp = new Tag14(raw);
-            }
-
-            // check if keyids match
-            if (temp -> get_keyid() == keyid){
-                out = Tag6::Ptr(temp);
-                break;
-            }
-            delete temp;
-        }
-    }
-    return out;
-}
-
 bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature){
     if ((pka == 1) || (pka == 3)){ // RSA
         std::string encoded = EMSA_PKCS1_v1_5(hash, digest, bitsize(signing[0]) >> 3);
@@ -68,13 +38,21 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_public_signing_key(pub, keyid);
+    Tag6::Ptr signingkey = find_signing_key(pub, 6, keyid); // search for primary key
+
+    if (!signingkey){                                       // if no signing primary key
+        signingkey = find_signing_key(pub, 14, keyid);       // search for subkey
+    }
+
     if (!signingkey){
         return false;
     }
 
-    // get string to check
-    return pka_verify(digest, signingkey, signature);
+    bool out = pka_verify(digest, signingkey, signature);
+
+    signingkey.reset();
+
+    return out;
 }
 
 bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message){
@@ -91,7 +69,7 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     }
 
     std::string temp = sig.get_packets()[0] -> raw();
-    Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
+    Tag2::Ptr signature(new Tag2(temp));
 
     // Check left 16 bits
     std::string digest = to_sign_00(data, signature);
@@ -108,11 +86,19 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_public_signing_key(pub, keyid);
+    Tag6::Ptr signingkey = find_signing_key(pub, 6, keyid);
+    if (!signingkey){                                        // if no signing primary key
+        signingkey = find_signing_key(pub, 14, keyid);       // search for subkey
+    }
+
     if (!signingkey){
         return false;
     }
+
     bool out = pka_verify(digest, signingkey, signature);
+
+    signingkey.reset();
+
     return out;
 }
 
@@ -393,11 +379,13 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     }
 
     // find signing key
-    Tag6::Ptr signingkey = find_public_signing_key(signer, keyid);
+    Tag6::Ptr signingkey = find_signing_key(signer, 6, keyid);
+    if (!signingkey){                                        // if no signing primary key
+        signingkey = find_signing_key(signer, 14, keyid);       // search for subkey
+    }
 
-    // if can't find signing key packet on signer's key
     if (!signingkey){
-        throw std::runtime_error("Error: Cannot find signer's Signing Keys.");
+        return false;
     }
 
     uint8_t version = 0;

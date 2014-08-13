@@ -8,27 +8,27 @@ std::string PGP::format_string(std::string data, uint8_t line_length) const{
     return out;
 }
 
-PGP::PGP() :
+PGP::PGP():
     armored(true),
     ASCII_Armor(255), // default uint8_t(-1); use 255 to avoid compiler complaints
     Armor_Header(),
     packets()
 {}
 
-PGP::PGP(const PGP & copy) :
+PGP::PGP(const PGP & copy):
     armored(copy.armored),
     ASCII_Armor(copy.ASCII_Armor),
     Armor_Header(copy.Armor_Header),
     packets(copy.get_packets_clone())
 {}
 
-PGP::PGP(std::string & data) :
+PGP::PGP(std::string & data):
     PGP()
 {
     read(data);
 }
 
-PGP::PGP(std::ifstream & f) :
+PGP::PGP(std::ifstream & f):
     PGP()
 {
     read(f);

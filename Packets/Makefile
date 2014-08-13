@@ -8,7 +8,7 @@ debug: all
 
 all: packet.o packets.o s2k.o Tag0.o Tag1.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o TagX.o
 
-packet.o: packet.h packet.cpp ../common/includes.h ../consts.h ../mpi.h ../pgptime.h
+packet.o: packet.h packet.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h ../mpi.h ../pgptime.h
 	$(CXX) $(CFLAGS) packet.cpp
 
 packets.o: packets.h packets.cpp packet.h Tag0.h Tag1.h Tag2.h Tag3.h Tag4.h Tag5.h Tag6.h Tag7.h Tag8.h Tag9.h Tag10.h Tag11.h Tag12.h Tag13.h Tag14.h Tag17.h Tag18.h Tag19.h
@@ -35,7 +35,7 @@ Tag4.o: Tag4.h Tag4.cpp packet.h
 Tag5.o: Tag5.h Tag5.cpp s2k.h Tag6.h
 	$(CXX) $(CFLAGS) Tag5.cpp
 
-Tag6.o: Tag6.h Tag6.cpp ../Hashes/Hashes.h packet.h
+Tag6.o: Tag6.h Tag6.cpp packet.h
 	$(CXX) $(CFLAGS) Tag6.cpp
 
 Tag7.o: Tag7.h Tag7.cpp Tag5.h Tag14.h

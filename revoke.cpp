@@ -47,23 +47,12 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_private_signing_key(pri);
-
-    // find the primary key
-    Tag5::Ptr key = nullptr;
-    for(Packet::Ptr const & p : pri.get_packets()){
-        if (p -> get_tag() == 5){
-            std::string data = p -> raw();
-            key = std::make_shared<Tag5>(data);
-            break;
-        }
-    }
-
+    Tag5::Ptr key = find_signing_key(pri, 5);
     if (!key){
         throw std::runtime_error("Error: No Secret Key packet found.");
     }
 
-    Tag2::Ptr sig = create_sig_packet(0x20, signer);
+    Tag2::Ptr sig = create_sig_packet(0x20, pri);
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
@@ -76,9 +65,8 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
     // set signature data
     std::string hashed_data = to_sign_20(key, sig);
     sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    sig -> set_mpi(pka_sign(hashed_data, key, passphrase, sig -> get_hash()));
 
-    signer.reset();
     key.reset();
     revoke.reset();
 
@@ -103,7 +91,10 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_private_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri, 5);
+    if (!signer){
+        throw std::runtime_error("Error: Private signing key not found");
+    }
 
     // find subkey
     Tag7::Ptr key = nullptr;
@@ -165,7 +156,10 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5::Ptr signer = find_private_signing_key(pri);
+    Tag5::Ptr signer = find_signing_key(pri, 5);
+    if (!signer){
+        throw std::runtime_error("Error: Private signing key not found");
+    }
 
     // find subkey
     Tag7::Ptr key = nullptr;

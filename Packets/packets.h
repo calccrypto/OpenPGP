@@ -50,7 +50,7 @@ THE SOFTWARE.
 
 // Functions that cannot be placed inside Packet class and are needed globally
 
-// calculates the length of a pertial body
+// calculates the length of a partial body
 unsigned int partialBodyLen(uint8_t first_octet);
 
 // reads and removes packet header, returning the raw packet data. Input data is shortened

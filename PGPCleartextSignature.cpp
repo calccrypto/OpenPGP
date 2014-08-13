@@ -1,11 +1,11 @@
 #include "PGPCleartextSignature.h"
-PGPCleartextSignature::PGPCleartextSignature() :
+PGPCleartextSignature::PGPCleartextSignature():
     Armor_Header(),
     message(),
     sig()
 {}
 
-PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy) :
+PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy):
     Armor_Header(copy.Armor_Header),
     message(copy.message),
     sig(copy.sig)
@@ -13,13 +13,13 @@ PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy)
     sig.set_armored(true);
 }
 
-PGPCleartextSignature::PGPCleartextSignature(std::string & data) :
+PGPCleartextSignature::PGPCleartextSignature(std::string & data):
     PGPCleartextSignature()
 {
     read(data);
 }
 
-PGPCleartextSignature::PGPCleartextSignature(std::ifstream & f) :
+PGPCleartextSignature::PGPCleartextSignature(std::ifstream & f):
     PGPCleartextSignature()
 {
     read(f);

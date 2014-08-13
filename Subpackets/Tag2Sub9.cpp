@@ -1,11 +1,11 @@
 #include "Tag2Sub9.h"
 
-Tag2Sub9::Tag2Sub9() :
+Tag2Sub9::Tag2Sub9():
     Tag2Subpacket(9, 4),
     time()
 {}
 
-Tag2Sub9::Tag2Sub9(std::string & data) :
+Tag2Sub9::Tag2Sub9(std::string & data):
     Tag2Sub9()
 {
     read(data);

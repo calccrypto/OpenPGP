@@ -1,20 +1,20 @@
 #include "Tag3.h"
 
-Tag3::Tag3() :
+Tag3::Tag3():
     Packet(3, 4),
     sym(),
     s2k(),
     esk()
 {}
 
-Tag3::Tag3(const Tag3 & copy) :
+Tag3::Tag3(const Tag3 & copy):
     Packet(copy),
     sym(copy.sym),
     s2k(copy.s2k -> clone()),
     esk(copy.get_esk_clone())
 {}
 
-Tag3::Tag3(std::string & data) :
+Tag3::Tag3(std::string & data):
     Tag3()
 {
     read(data);

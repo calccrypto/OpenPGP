@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <vector>
 
 #include "../common/includes.h"
+#include "../Hashes/Hashes.h"
 #include "../consts.h"
 #include "../mpi.h"
 #include "../pgptime.h"
@@ -86,16 +87,48 @@ class Packet{
 };
 
 // For Tags 5, 6, 7, and 14
+// Key is equivalent to Tag6
 class Key : public Packet{
     protected:
-        using Packet::Packet;
+        time_t time;
+        uint8_t pka;
+        std::vector <PGPMPI> mpi;
 
-        Key & operator =(const Key & copy);
+        // version 3
+        uint32_t expire;
+
+        void read_common(std::string & data);
+        std::string show_common(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string raw_common() const;
+
+        Key(uint8_t tag);
 
     public:
         typedef std::shared_ptr<Key> Ptr;
 
+        Key();
+        Key(const Key & copy);
+        Key(std::string & data);
         virtual ~Key();
+
+        virtual void read(std::string & data);
+        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        virtual std::string raw() const;
+
+        time_t get_time() const;
+        uint8_t get_pka() const;
+        std::vector <PGPMPI> get_mpi() const;
+
+        void set_time(const time_t t);
+        void set_pka(const uint8_t p);
+        void set_mpi(const std::vector <PGPMPI> & m);
+
+        std::string get_fingerprint() const;                      // binary
+        std::string get_keyid() const;                            // binary
+
+        virtual Packet::Ptr clone() const;
+
+        Key & operator=(const Key & copy);
 };
 
 // For Tags 13 and 17
@@ -103,10 +136,10 @@ class ID : public Packet{
     protected:
         using Packet::Packet;
 
-        ID & operator =(const ID & copy);
-
     public:
         typedef std::shared_ptr<ID> Ptr;
+
+        ID & operator =(const ID & copy);
 
         virtual ~ID();
 };

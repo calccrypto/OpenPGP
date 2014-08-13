@@ -9,13 +9,13 @@ std::string Tag8::decompress(const std::string & data){
     return PGP_decompress(comp, data);
 }
 
-Tag8::Tag8() :
+Tag8::Tag8():
     Packet(8, 3),
     comp(0),
     compressed_data()
 {}
 
-Tag8::Tag8(std::string & data) :
+Tag8::Tag8(std::string & data):
     Tag8()
 {
     read(data);
