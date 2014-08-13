@@ -48,7 +48,7 @@ THE SOFTWARE.
 
 // internal functions
 // Extract private key data
-Tag5::Ptr find_signing_key(const PGPSecretKey & k);
+Tag5::Ptr find_private_signing_key(const PGPSecretKey & k);
 ID::Ptr find_signer_id(const PGPSecretKey & k);
 
 std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, const std::vector <PGPMPI> & pub, const std::vector <PGPMPI> & pri, const uint8_t hash = 2);
@@ -57,7 +57,7 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const Tag5::Ptr & tag5
 // Generates new default signature packet
 Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID::Ptr & id = ID::Ptr(), const uint8_t hash = 2);
 Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const uint8_t hash = 2);
-// /////////////////
+// //////////////////////////////////////
 
 // Creates signatures
 // common code for signing files

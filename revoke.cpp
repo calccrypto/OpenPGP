@@ -47,7 +47,7 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_private_signing_key(pri);
 
     // find the primary key
     Tag5::Ptr key = nullptr;
@@ -103,7 +103,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_private_signing_key(pri);
 
     // find subkey
     Tag7::Ptr key = nullptr;
@@ -165,7 +165,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_private_signing_key(pri);
 
     // find subkey
     Tag7::Ptr key = nullptr;

@@ -1,11 +1,12 @@
 #include "encrypt.h"
+
 Tag6::Ptr find_encrypting_key(const PGP & k){
     if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
         for(Packet::Ptr const & p : k.get_packets()){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
                 std::string data = p -> raw();
                 Tag6::Ptr key(new Tag6(data));
-                // make sure key has signing material
+                // make sure key has encrypting keys
                 if ((key -> get_pka() == 1) || // RSA
                     (key -> get_pka() == 2) || // RSA
                     (key -> get_pka() == 16)){ // ElGamal

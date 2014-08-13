@@ -1,6 +1,6 @@
 #include "verify.h"
 
-Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & pub){
+Tag6::Ptr find_public_signing_key(const PGPPublicKey & pub, const std::string & keyid){
     Tag6::Ptr out = nullptr;
     for(Packet::Ptr const & p : pub.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
@@ -68,7 +68,7 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_public_signing_key(keyid, pub);
+    Tag6::Ptr signingkey = find_public_signing_key(pub, keyid);
     if (!signingkey){
         return false;
     }
@@ -108,7 +108,7 @@ bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, cons
     }
 
     // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_public_signing_key(keyid, pub);
+    Tag6::Ptr signingkey = find_public_signing_key(pub, keyid);
     if (!signingkey){
         return false;
     }
@@ -393,7 +393,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     }
 
     // find signing key
-    Tag6::Ptr signingkey = find_public_signing_key(keyid, signer);
+    Tag6::Ptr signingkey = find_public_signing_key(signer, keyid);
 
     // if can't find signing key packet on signer's key
     if (!signingkey){
@@ -441,7 +441,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                         (tag2 -> get_type() == 0x19)){
                         u = "";
                     }
-                    
+
                     // add hash contexts together and append trailer data
                     std::string with_trailer = addtrailer(k + u, tag2);
                     std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
@@ -494,16 +494,17 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
 
     // for each key packet
     for(Packet::Ptr const & p : keys){
-        // if the packet is a key packet
+        // check if the packet is a key packet
         if ((p -> get_tag() == 5) ||
             (p -> get_tag() == 6) ||
             (p -> get_tag() == 7) ||
             (p -> get_tag() == 14)){
 
-            // copy key into Tag 6
+            // copy the key into Tag 6
             std::string key_str = p -> raw();
             Tag6::Ptr tag6 = std::make_shared<Tag6>(key_str);
 
+            // check if it was revoked
             if (verify_revoke(tag6, revoke)){
                 tag6.reset();
                 return true;

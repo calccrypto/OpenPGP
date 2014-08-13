@@ -1,6 +1,6 @@
 #include "sign.h"
 
-Tag5::Ptr find_signing_key(const PGPSecretKey & k){
+Tag5::Ptr find_private_signing_key(const PGPSecretKey & k){
     if (k.get_ASCII_Armor() == 2){
         std::vector <Packet::Ptr> packets = k.get_packets();
         for(Packet::Ptr const & p : packets){
@@ -94,7 +94,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
 }
 
 Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const uint8_t hash){
-    Tag5::Ptr tag5 = find_signing_key(pri);
+    Tag5::Ptr tag5 = find_private_signing_key(pri);
     if (!tag5){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -117,7 +117,7 @@ Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, cons
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_private_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: No Private Key for signing found.");
     }
@@ -158,7 +158,7 @@ PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & p
 
 PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const std::string & data, const uint8_t hash, const uint8_t compress){
     // find signing key
-    Tag5::Ptr tag5 = find_signing_key(pri);
+    Tag5::Ptr tag5 = find_private_signing_key(pri);
 
     // find matching signature packet
     Tag2::Ptr keysig = nullptr;
@@ -260,7 +260,7 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
         throw std::runtime_error("Error: A private key is required.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri);
+    Tag5::Ptr signer = find_private_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: No Private Key packet found.");
     }
@@ -389,7 +389,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     i++;
 
     // get signer's signing packet
-    Tag5::Ptr signer_signing_key = find_signing_key(signer);
+    Tag5::Ptr signer_signing_key = find_private_signing_key(signer);
 
     // check if the signer has alreaady signed this key
     unsigned int j = i;

@@ -7,17 +7,19 @@ bool PGPKey::meaningful(uint8_t type) const{
         key = 6;
         subkey = 14;
     }
-    if (type == 2){ // Private Key
+    else if (type == 2){ // Private Key
         key = 5;
         subkey = 7;
     }
+    else {
+        throw std::runtime_error("Error: Non-PGP key in PGPKey structure.");
+    }
 
-    unsigned int packet_count = packets.size();
-    if (packet_count < 3){ // minimum 3 packets
+    if (packets.size() < 3){ // minimum 3 packets: Primary Key + UID + Certification Signature
         return false;
     }
 
-    // One Public-Key packet
+    // One Key packet
     if (packets[0] -> get_tag() != key){
         return false;
     }
@@ -28,7 +30,7 @@ bool PGPKey::meaningful(uint8_t type) const{
 
     // Zero or more revocation signatures
     unsigned int i = 1;
-    while (packets[i] -> get_tag() == 2){
+    while ((i < packets.size()) && (packets[i] -> get_tag() == 2)){
         std::string tag2 = packets[i] -> raw();
         if (Tag2(tag2).get_type() == 0x20){ // Key revocation signature
             i++;
@@ -44,57 +46,83 @@ bool PGPKey::meaningful(uint8_t type) const{
     // User Attribute packets and User ID packets may be freely intermixed
     // in this section, so long as the signatures that follow them are
     // maintained on the proper User Attribute or User ID packet.
-
-    while ((packets[i] -> get_tag() == 13) || (packets[i] -> get_tag() == 17)){
+    bool uid = false;
+    while ((i < packets.size()) && ((packets[i] -> get_tag() == 13) || (packets[i] -> get_tag() == 17))){
         // After each User ID packet, zero or more Signature packets (certifications)
         // After each User Attribute packet, zero or more Signature packets (certifications)
+        if (packets[i] -> get_tag() == 13){
+            uid = true;
+        }
+
         i++;
-        if (packets[i] -> get_tag() == 2){
+
+        // make sure the next packet is a signature
+        if ((i >= packets.size()) || (packets[i] -> get_tag() != 2)){
+            return false;
+        }
+
+        // while the packets continue to be signature packets
+        while ((i < packets.size()) && (packets[i] -> get_tag() == 2)){
             std::string tag2 = packets[i] -> raw();
             uint8_t sig_type = Tag2(tag2).get_type();
-            if ((0x10 <= sig_type) && (sig_type <= 0x13)){ // (certifications)
+            if ((0x10 <= sig_type) && (sig_type <= 0x13)){ // make sure they are certifications
                 i++;
-            }
-        }
-        else{
-            return false;
-        }
-    }
-
-    // Zero or more Subkey packets
-    while ((packets[i] -> get_tag() == subkey)){
-        if (version == 3){ // V3 keys MUST NOT have subkeys.
-            return false;
-        }
-        // After each Subkey packet, one Signature packet, plus optionally a revocation
-        i++;
-        if (packets[i] -> get_tag() == 2){
-            std::string tag2 = packets[i] -> raw();
-            if (Tag2(tag2).get_type() == 18){ // Subkey binding signature
-                i++;
-                if (packets[i] -> get_tag() == 2){
-                    tag2 = packets[i] -> raw();
-                    if (Tag2(tag2).get_type() == 0x20){ // Key revocation signature
-                        i++;
-                    }
-                    else{
-                        break;
-                    }
-                }
-                else{
-                    return false;
-                }
             }
             else{
                 return false;
             }
         }
-        else{
+    }
+
+    if (!uid){ // at least one User ID packet
+        return false;
+    }
+
+    // Zero or more Subkey packets
+    while ((i < packets.size()) && (packets[i] -> get_tag() == subkey)){
+        if (version == 3){ // V3 keys MUST NOT have subkeys.
+            return false;
+        }
+
+        // After each Subkey packet, one Signature packet, plus optionally a revocation
+        i++;
+
+        // one Signature packet
+        if ((i >= packets.size()) || (packets[i] -> get_tag() != 2)){
+            return false;
+        }
+
+        // check that the Signature packet is a Subkey binding signature
+        std::string tag2 = packets[i] -> raw();
+        if (Tag2(tag2).get_type() != 0x18){ // type Subkey binding signature
+            return false;
+        }
+
+        // optionally a revocation
+        i++;
+        if (i >= packets.size()){ // if there are no more packets to check
+            return true;
+        }
+
+        // if the next packet is a subkey, go back to top of loop
+        if (packets[i] -> get_tag() == subkey){
+            continue;
+        }
+        else if (packets[i] -> get_tag() == 2){ // else if the next packet is a Signature packet
+            tag2 = packets[i] -> raw();
+            if (Tag2(tag2).get_type() == 0x20){ // check if it is a Key revocation signature
+                i++;
+            }
+            else{ // if not
+                return false;
+            }
+        }
+        else{ // neither a subkey or a revocation signature
             return false;
         }
     }
 
-    return true;
+    return true; // no subkeys
 }
 
 PGPKey::PGPKey():

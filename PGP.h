@@ -71,14 +71,14 @@ class PGP{
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;
         std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
-        std::vector <Packet::Ptr> get_packets() const;          // get copy of all packet pointers
-        std::vector <Packet::Ptr> get_packets_clone() const;    // clone all packets
+        std::vector <Packet::Ptr> get_packets() const;          // get copy of all packet pointers (for looping through packets)
+        std::vector <Packet::Ptr> get_packets_clone() const;    // clone all packets (for modifying packets)
 
         // Modifiers
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
         void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & header);
-        void set_packets(const std::vector <Packet::Ptr> & p);
+        void set_packets(const std::vector <Packet::Ptr> & p);  // clones the input packets
 
         virtual bool meaningful() const = 0;                    // check if packet sequence is meaningful and correct
 

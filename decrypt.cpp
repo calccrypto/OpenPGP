@@ -1,6 +1,6 @@
 #include "decrypt.h"
 
-Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
+Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid){
     for(Packet::Ptr const & p : k.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
             std::string data = p -> raw();
@@ -9,7 +9,7 @@ Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string &keyid){
                 key.reset();
                 continue;
             }
-            // make sure key has signing material
+            // make sure key has encrypting keys
             if ((key -> get_pka() == 1) || // RSA
                 (key -> get_pka() == 2) || // RSA
                 (key -> get_pka() == 16)){ // ElGamal

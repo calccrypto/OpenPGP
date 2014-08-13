@@ -6,4 +6,3 @@ finish sign functions
 wrapper function to generically use any of the sign/verify functions
 find packets properly (check if uid is associated with key, etc)
 read partial packets properly
-merge all "find packet" functions

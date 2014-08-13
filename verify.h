@@ -45,7 +45,7 @@ THE SOFTWARE.
 
 // Internal functions
 // get the Tag6 signing packet; multiple keys might break this
-Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & key);
+Tag6::Ptr find_public_signing_key(const PGPPublicKey & key, const std::string & keyid);
 
 // pka_verify with variables only
 bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector<PGPMPI> & signature);
