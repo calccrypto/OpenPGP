@@ -6,13 +6,16 @@ CFLAGS=-std=c++11 -Wall -c
 debug: CFLAGS += -g
 debug: all
 
-all: packet.o packets.o s2k.o Tag0.o Tag1.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o TagX.o
+all: packet.o packets.o Partial.o s2k.o Tag0.o Tag1.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o Tag60.o Tag61.o Tag62.o Tag63.o
 
 packet.o: packet.h packet.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h ../mpi.h ../pgptime.h
 	$(CXX) $(CFLAGS) packet.cpp
 
-packets.o: packets.h packets.cpp packet.h Tag0.h Tag1.h Tag2.h Tag3.h Tag4.h Tag5.h Tag6.h Tag7.h Tag8.h Tag9.h Tag10.h Tag11.h Tag12.h Tag13.h Tag14.h Tag17.h Tag18.h Tag19.h
+packets.o: packets.h packets.cpp packet.h Partial.h Tag0.h Tag1.h Tag2.h Tag3.h Tag4.h Tag5.h Tag6.h Tag7.h Tag8.h Tag9.h Tag10.h Tag11.h Tag12.h Tag13.h Tag14.h Tag17.h Tag18.h Tag19.h Tag60.h Tag61.h Tag62.h Tag63.h
 	$(CXX) $(CFLAGS) packets.cpp
+
+Partial.o: Partial.h Partial.cpp packet.h
+	$(CXX) $(CFLAGS) Partial.cpp
 
 s2k.o: s2k.h s2k.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h
 	$(CXX) $(CFLAGS) s2k.cpp
@@ -71,8 +74,17 @@ Tag18.o: Tag18.h Tag18.cpp packet.h
 Tag19.o: Tag19.h Tag19.cpp packet.h
 	$(CXX) $(CFLAGS) Tag19.cpp
 
-TagX.o: TagX.h TagX.cpp packet.h
-	$(CXX) $(CFLAGS) TagX.cpp
+Tag60.o: Tag60.h Tag60.cpp packet.h
+	$(CXX) $(CFLAGS) Tag60.cpp
+
+Tag61.o: Tag61.h Tag61.cpp packet.h
+	$(CXX) $(CFLAGS) Tag61.cpp
+
+Tag62.o: Tag62.h Tag62.cpp packet.h
+	$(CXX) $(CFLAGS) Tag62.cpp
+
+Tag63.o: Tag63.h Tag63.cpp packet.h
+	$(CXX) $(CFLAGS) Tag63.cpp
 
 clean:
 	rm -f *.o

@@ -80,66 +80,84 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format,
 
 Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, const uint8_t partial, std::string & packet_data){
     Packet::Ptr out;
-    switch (tag){
-        case 0:
-            throw std::runtime_error("Error: Tag number MUST NOT be 0.");
-            break;
-        case 1:
-            out = std::make_shared<Tag1>();
-            break;
-        case 2:
-            out = std::make_shared<Tag2>();
-            break;
-        case 3:
-            out = std::make_shared<Tag3>();
-            break;
-        case 4:
-            out = std::make_shared<Tag4>();
-            break;
-        case 5:
-            out = std::make_shared<Tag5>();
-            break;
-        case 6:
-            out = std::make_shared<Tag6>();
-            break;
-        case 7:
-            out = std::make_shared<Tag7>();
-            break;
-        case 8:
-            out = std::make_shared<Tag8>();
-            break;
-        case 9:
-            out = std::make_shared<Tag9>();
-            break;
-        case 10:
-            out = std::make_shared<Tag10>();
-            break;
-        case 11:
-            out = std::make_shared<Tag11>();
-            break;
-        case 12:
-            out = std::make_shared<Tag12>();
-            break;
-        case 13:
-            out = std::make_shared<Tag13>();
-            break;
-        case 14:
-            out = std::make_shared<Tag14>();
-            break;
-        case 17:
-            out = std::make_shared<Tag17>();
-            break;
-        case 18:
-            out = std::make_shared<Tag18>();
-            break;
-        case 19:
-            out = std::make_shared<Tag19>();
-            break;
-        default:
-            out = std::make_shared<TagX>();
-//            throw std::runtime_error("Error: Tag not defined or reserved.");
-            break;
+    if (partial){
+        out = std::make_shared<Partial>();
     }
+    else{
+        switch (tag){
+            case 0:
+                throw std::runtime_error("Error: Tag number MUST NOT be 0.");
+                break;
+            case 1:
+                out = std::make_shared<Tag1>();
+                break;
+            case 2:
+                out = std::make_shared<Tag2>();
+                break;
+            case 3:
+                out = std::make_shared<Tag3>();
+                break;
+            case 4:
+                out = std::make_shared<Tag4>();
+                break;
+            case 5:
+                out = std::make_shared<Tag5>();
+                break;
+            case 6:
+                out = std::make_shared<Tag6>();
+                break;
+            case 7:
+                out = std::make_shared<Tag7>();
+                break;
+            case 8:
+                out = std::make_shared<Tag8>();
+                break;
+            case 9:
+                out = std::make_shared<Tag9>();
+                break;
+            case 10:
+                out = std::make_shared<Tag10>();
+                break;
+            case 11:
+                out = std::make_shared<Tag11>();
+                break;
+            case 12:
+                out = std::make_shared<Tag12>();
+                break;
+            case 13:
+                out = std::make_shared<Tag13>();
+                break;
+            case 14:
+                out = std::make_shared<Tag14>();
+                break;
+            case 17:
+                out = std::make_shared<Tag17>();
+                break;
+            case 18:
+                out = std::make_shared<Tag18>();
+                break;
+            case 19:
+                out = std::make_shared<Tag19>();
+                break;
+            case 60:
+                out = std::make_shared<Tag60>();
+                break;
+            case 61:
+                out = std::make_shared<Tag61>();
+                break;
+            case 62:
+                out = std::make_shared<Tag62>();
+                break;
+            case 63:
+                out = std::make_shared<Tag63>();
+                break;
+            default:
+                throw std::runtime_error("Error: Tag not defined.");
+                break;
+        }
+    }
+
+    // fill in data
     out -> set_tag(tag);
     out -> set_format(format);
     out -> set_partial(partial);

@@ -74,14 +74,14 @@ bool Tag11::out(){
             break;
         default:
             {
-                std::stringstream s; s << "Error: Unknown format type: " << static_cast <char> (format) << std::endl;
+                std::stringstream s; s << "Error: Unknown Literal Data format type: " << static_cast <char> (format) << std::endl;
                 throw std::runtime_error(s.str());
             }
             break;
     }
 
     if (!out){
-        throw std::runtime_error("Error: Failed to open output file.");
+        throw std::runtime_error("Error: Failed to open file to write literal data.");
         return false;
     }
 

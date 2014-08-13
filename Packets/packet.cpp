@@ -2,20 +2,22 @@
 std::string Packet::write_old_length(std::string data) const{
     unsigned int length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
-    if (length < 256){
-        out[0] |= 0;                                    // 1 octet
-        out += std::string(1, length);
+    if (partial){
+        out[0] |= 3;                                        // partial
     }
-    else if ((256 <= length) && (length < 65536)){      // 2 octest
-        out[0] |= 1;
-        out += unhexlify(makehex(length, 4));
-    }
-    else if (65536 <= length){                          // 4 octets
-        out[0] |= 2;
-        out += unhexlify(makehex(length, 8));
-    }
-    else{                                               // partial packet
-        out[0] |= 3;
+    else {
+        if (length < 256){
+            out[0] |= 0;                                    // 1 octet
+            out += std::string(1, length);
+        }
+        else if ((256 <= length) && (length < 65536)){      // 2 octest
+            out[0] |= 1;
+            out += unhexlify(makehex(length, 4));
+        }
+        else if (65536 <= length){                          // 4 octets
+            out[0] |= 2;
+            out += unhexlify(makehex(length, 8));
+        }
     }
     return out + data;
 }
@@ -24,23 +26,30 @@ std::string Packet::write_old_length(std::string data) const{
 std::string Packet::write_new_length(std::string data) const{
     std::string out(1, 0b11000000 | tag);
     unsigned int length = data.size();
-    if (length < 192){
+    if (partial){                                           // partial
+        uint8_t bits = 0;
+        while (length > (1u << bits)){
+            bits++;
+        }
+        length = 224 + bits;
+        if (length > 254){
+            throw std::runtime_error("Error: Data in partial packet too large.");
+        }
+
         out += std::string(1, length);
     }
-    else if ((192 <= length) && (length < 8383)){
-        length -= 0xc0;
-        out += std::string(1, (length >> 8) + 0xc0 ) + std::string(1, length & 0xff);
+    else{
+        if (length < 192){                                  // 1 octet
+            out += std::string(1, length);
+        }
+        else if ((192 <= length) && (length < 8383)){       // 2 octets
+            length -= 0xc0;
+            out += std::string(1, (length >> 8) + 0xc0 ) + std::string(1, length & 0xff);
+        }
+        else if (length > 8383){                            // 3 octets
+            out += std::string(1, '\xff') + unhexlify(makehex(length, 8));
+        }
     }
-    else if (length > 8383){
-        out += std::string(1, '\xff') + unhexlify(makehex(length, 8));
-    }
-//    // partial body length
-//    uint8_t add = 0;
-//    while (!(length & 1)){
-//        add++;
-//        length >>= 1;
-//    }
-//    out += unhexlify(makehex(224 + add, 2));
     return out + data;
 }
 
@@ -48,8 +57,8 @@ std::string Packet::show_title() const{
     std::stringstream out;
     out << (format?"New":"Old") << ": ";
 
-    // if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
-    if (tag != 254){// don't display packet name for partial packets
+    if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
+    // if (tag != 254){// don't display packet name for partial packets
         out << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";   // display packet name and tag number
     }
 
@@ -68,6 +77,10 @@ std::string Packet::show_title() const{
             out << " (partial end)";
             break;
         default:
+            {
+                std::stringstream s; s << static_cast <unsigned int> (partial);
+                throw std::runtime_error("Error: Unknown partial type: " + s.str());
+            }
             break;
     }
 
@@ -320,7 +333,7 @@ std::string Key::get_fingerprint() const{
     }
     else{
         std::stringstream s; s << static_cast <int> (version);
-        throw std::runtime_error("Error: Public Key packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -330,12 +343,12 @@ std::string Key::get_keyid() const{
         std::string data = write_MPI(mpi[0]);
         return data.substr(data.size() - 8, 8);
     }
-    if (version == 4){
+    else if (version == 4){
         return get_fingerprint().substr(12, 8);
     }
     else{
         std::stringstream s; s << static_cast <int> (version);
-        throw std::runtime_error("Error: Public Key packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }

@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "packet.h"
 
+#include "Partial.h"
 #include "Tag0.h"
 #include "Tag1.h"
 #include "Tag2.h"
@@ -46,9 +47,12 @@ THE SOFTWARE.
 #include "Tag17.h"
 #include "Tag18.h"
 #include "Tag19.h"
-#include "TagX.h"
+#include "Tag60.h"
+#include "Tag61.h"
+#include "Tag62.h"
+#include "Tag63.h"
 
-// Functions that cannot be placed inside Packet class and are needed globally
+// Functions that are needed globally and cannot be placed inside Packet class
 
 // calculates the length of a partial body
 unsigned int partialBodyLen(uint8_t first_octet);

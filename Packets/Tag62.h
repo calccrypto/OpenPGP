@@ -1,6 +1,6 @@
 /*
-TagX.h
-partial length packet?
+Tag62.h
+Private or Experimental Values
 
 Copyright (c) 2013, 2014 Jason Lee
 
@@ -23,20 +23,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAGX__
-#define __TAGX__
+#ifndef __TAG62__
+#define __TAG62__
 
 #include "packet.h"
 
-class TagX : public Packet{
+class Tag62 : public Packet{
     private:
         std::string stream;
 
     public:
-        typedef std::shared_ptr <TagX> Ptr;
+        typedef std::shared_ptr <Tag62> Ptr;
 
-        TagX();
-        TagX(const std::string & data);
+        Tag62();
+        Tag62(const std::string & data);
         void read(std::string & data, const uint8_t part = 0);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
