@@ -67,6 +67,8 @@ std::string Packet::show_title() const{
     }
 
     switch (partial){
+        case 0:
+            break;
         case 1:
             out << " (partial start)";
             break;
@@ -83,7 +85,6 @@ std::string Packet::show_title() const{
             }
             break;
     }
-
     return out.str();
 }
 

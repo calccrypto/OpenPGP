@@ -193,7 +193,6 @@ void PGP::read_raw(std::string & data){
     if (partial){ // last packet must have been a partial packet
         (*(packets.rbegin())) -> set_partial(3); // set last partial packet to partial end
     }
-
     armored = false;
 }
 

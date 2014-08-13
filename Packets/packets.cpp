@@ -70,7 +70,6 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format,
             // remove += 0;
             length = partialBodyLen(data[1]);
             partial = 2;                                                   // set to partial continue
-
         }
     }
     std::string packet = data.substr(remove, length);						// Get packet
