@@ -1,35 +1,5 @@
 #include "verify.h"
 
-#include "PKCS1.h"
-
-// std::string find_keyid(const Tag2::Ptr & tag2){
-    // std::string out = "";
-    // // Search Subpackets
-    // // Most likely in unhashed subpackets
-    // std::vector <Subpacket::Ptr> subpackets = tag2 -> get_unhashed_subpackets();
-    // for(Subpacket::Ptr const & s : subpackets){
-        // if (s -> get_type() == 16){
-            // std::string temp = s -> raw();
-            // Tag2Sub16 tag2sub16(temp);
-            // out = tag2sub16.get_keyid();
-            // break;
-        // }
-    // }
-    // // if not found in unhashed subpackets, search hashed subpackets
-    // if (!out.size()){
-        // subpackets = tag2 -> get_hashed_subpackets();
-        // for(Subpacket::Ptr const & s : subpackets){
-            // if (s -> get_type() == 16){
-                // std::string temp = s -> raw();
-                // Tag2Sub16 tag2sub16(temp);
-                // out = tag2sub16.get_keyid();
-                // break;
-            // }
-        // }
-    // }
-    // return out;
-// }
-
 Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & pub){
     Tag6::Ptr out = nullptr;
     for(Packet::Ptr const & p : pub.get_packets()){

@@ -102,16 +102,21 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     subsig -> set_left16(sig_hash.substr(0, 2));
     subsig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
 
-    Tag6::Ptr pub = sec -> get_public_ptr();
-    Tag14::Ptr sub = ssb -> get_public_ptr();
-
-    public_key.set_ASCII_Armor(1);
-    public_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
-    public_key.set_packets({pub, uid, sig, sub, subsig});
-
     private_key.set_ASCII_Armor(2);
     private_key.set_Armor_Header({std::pair <std::string, std::string> ("Version", "CC")});
     private_key.set_packets({sec, uid, sig, ssb, subsig});
+
+    public_key = PGPPublicKey(private_key);
+
+    sec.reset();
+    sec_s2k3.reset();
+    uid.reset();
+    sig.reset();
+    tag2sub2.reset();
+    tag2sub16.reset();
+    ssb.reset();
+    ssb_s2k3.reset();
+    subsig.reset();
 }
 
 void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){

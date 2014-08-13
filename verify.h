@@ -40,11 +40,10 @@ THE SOFTWARE.
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
 #include "PGPMessage.h"
+#include "PKCS1.h"
 #include "sigcalc.h"
 
 // Internal functions
-// get the key id; multiple keys might break this
-std::string find_keyid(const Tag2::Ptr & tag2);
 // get the Tag6 signing packet; multiple keys might break this
 Tag6::Ptr find_public_signing_key(const std::string & keyid, const PGPPublicKey & key);
 

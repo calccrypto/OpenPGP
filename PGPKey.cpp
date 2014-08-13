@@ -21,7 +21,7 @@ bool PGPKey::meaningful(uint8_t type) const{
     if (packets[0] -> get_tag() != key){
         return false;
     }
-    
+
     // get key version
     std::string pub = packets[0] -> raw();
     uint8_t version = Tag6(pub).get_version();
@@ -137,7 +137,7 @@ std::string PGPKey::keyid() const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-// output is copied from gpg --list-keys
+// output style is copied from gpg --list-keys
 std::string PGPKey::list_keys() const{
     // scan for revoked keys
     std::map <std::string, std::string> revoked;
@@ -180,11 +180,11 @@ std::string PGPKey::list_keys() const{
                     std::stringstream s;
                     s << bitsize(tag6.get_mpi()[0]);
                     out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, ' ')
-                           << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
-                           << hexlify(tag6.get_keyid().substr(4, 4)) << " "
-                           << show_date(tag6.get_time())
-                           << ((r == revoked.end())?std::string(""):(std::string(" [revoked: ") + revoked[tag6.get_keyid()] + std::string("]")))
-                           << "\n";
+                        << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
+                        << hexlify(tag6.get_keyid().substr(4, 4)) << " "
+                        << show_date(tag6.get_time())
+                        << ((r == revoked.end())?std::string(""):(std::string(" [revoked: ") + revoked[tag6.get_keyid()] + std::string("]")))
+                        << "\n";
                 }
                 break;
             case 13:
@@ -326,9 +326,9 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
 PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
     PGPPublicKey pub;
     pub.set_armored(pri.get_armored());
-    pub.set_ASCII_Armor(pri.get_ASCII_Armor());
+    pub.set_ASCII_Armor(1); // public key ASCII Armor Header value
     pub.set_Armor_Header(pri.get_Armor_Header());
-    
+
     // clone packets; convert secret packets into public ones
     std::vector <Packet::Ptr> packets;
     for(Packet::Ptr const & p : pri.get_packets()){
@@ -351,5 +351,10 @@ PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
         }
     }
     pub.set_packets(packets);
+
+    for(Packet::Ptr & p : packets){
+        p.reset();
+    }
+
     return pub;
 }

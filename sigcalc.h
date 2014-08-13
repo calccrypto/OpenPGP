@@ -141,7 +141,7 @@ std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag
 // that it is owned by the primary key and subkey. This signature
 // is calculated the same way as a 0x18 signature: directly on the
 // primary key and subkey, and not on any User ID or other packets.
-std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2);
+std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & subkey, const Tag2::Ptr & tag2);
 
 // 0x1F: Signature directly on a key
 // This signature is calculated directly on a key. It binds the

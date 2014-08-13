@@ -129,9 +129,9 @@ Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, cons
 
     // create Signature Packet
     Tag2::Ptr sig = create_sig_packet(0x00, pri, hash);
-    std::string hashed_data = to_sign_00(data, sig);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    std::string digest = to_sign_00(data, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
 
     signer.reset();
 
@@ -212,9 +212,9 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
 
     // sign data
     Tag2::Ptr tag2 = create_sig_packet(0, pri, hash);
-    std::string hashed_data = to_sign_00(tag11 -> get_literal(), tag2);
-    tag2 -> set_left16(hashed_data.substr(0, 2));
-    tag2 -> set_mpi(pka_sign(hashed_data, tag5, passphrase, hash));
+    std::string digest = to_sign_00(tag11 -> get_literal(), tag2);
+    tag2 -> set_left16(digest.substr(0, 2));
+    tag2 -> set_mpi(pka_sign(digest, tag5, passphrase, hash));
 
     // put everything together
     PGPMessage signature;
@@ -267,9 +267,9 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
     // create signature
     Tag2::Ptr sig = create_sig_packet(0x01, signer, nullptr, hash);
-    std::string hashed_data = to_sign_01(text, sig);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    std::string digest = to_sign_01(text, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
 
     // put signature into Deatched Signature
     PGPDetachedSignature signature;
@@ -293,9 +293,9 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
 Tag2::Ptr standalone_signature(const Tag5::Ptr & pri, const Tag2::Ptr & src, const std::string & passphrase, const uint8_t hash){
     Tag2::Ptr sig = create_sig_packet(0x02, pri, nullptr, hash);
-    std::string hashed_data = to_sign_02(src);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, pri, passphrase, src -> get_hash()));
+    std::string digest = to_sign_02(src);
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, pri, passphrase, src -> get_hash()));
 
     return sig;
 }
@@ -307,23 +307,23 @@ Tag2::Ptr sign_primary_key(const Tag5::Ptr & pri, const ID::Ptr & id, const std:
     }
 
     Tag2::Ptr sig = create_sig_packet(cert, pri, nullptr, hash);
-    std::string hashed_data;
+    std::string digest;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
-        hashed_data = to_sign_10(pri, id, sig);
+        digest = to_sign_10(pri, id, sig);
     }
     else if (cert == 0x11){
-        hashed_data = to_sign_11(pri, id, sig);
+        digest = to_sign_11(pri, id, sig);
     }
     else if (cert == 0x12){
-        hashed_data = to_sign_12(pri, id, sig);
+        digest = to_sign_12(pri, id, sig);
     }
     else if (cert == 0x13){
-        hashed_data = to_sign_13(pri, id, sig);
+        digest = to_sign_13(pri, id, sig);
     }
 
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, pri, passphrase, sig -> get_hash()));
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, pri, passphrase, sig -> get_hash()));
 
     return sig;
 }
@@ -423,23 +423,23 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
 
     // sign key
     Tag2::Ptr sig = create_sig_packet(cert, signer_signing_key, nullptr, hash);
-    std::string hashed_data;
+    std::string digest;
     // really not necessary since they all call to_sign_10
     if (cert == 0x10){
-        hashed_data = to_sign_10(signee_primary_key, signee_id, sig);
+        digest = to_sign_10(signee_primary_key, signee_id, sig);
     }
     else if (cert == 0x11){
-        hashed_data = to_sign_11(signee_primary_key, signee_id, sig);
+        digest = to_sign_11(signee_primary_key, signee_id, sig);
     }
     else if (cert == 0x12){
-        hashed_data = to_sign_12(signee_primary_key, signee_id, sig);
+        digest = to_sign_12(signee_primary_key, signee_id, sig);
     }
     else if (cert == 0x13){
-        hashed_data = to_sign_13(signee_primary_key, signee_id, sig);
+        digest = to_sign_13(signee_primary_key, signee_id, sig);
     }
 
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer_signing_key, passphrase, sig -> get_hash()));
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, signer_signing_key, passphrase, sig -> get_hash()));
 
     // Create output key
     PGPPublicKey out(signee);
@@ -469,24 +469,84 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     return out;
 }
 
-Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t binding, const uint8_t hash){
-    if ((binding != 0x18) && (binding != 0x19)){
-        std::stringstream s; s << static_cast <int> (binding);
-        throw std::runtime_error("Error: Invalid Binding Signature Value: " + s.str());
+Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash){
+    Tag2::Ptr sig = create_sig_packet(0x18, primary, nullptr, hash);
+
+    std::string digest = to_sign_18(primary, sub, sig);
+
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, primary, passphrase, sig -> get_hash()));
+
+    return sig;
+}
+
+Tag2::Ptr sign_primary_key_binding(const Tag7::Ptr & subpri, const std::string & passphrase, const Tag6::Ptr & primary, const Tag14::Ptr & subkey, const uint8_t hash){
+    Tag2::Ptr sig = create_sig_packet(0x19, subpri, nullptr, hash);
+
+    std::string digest = to_sign_18(primary, subkey, sig);
+
+    sig -> set_left16(digest.substr(0, 2));
+    sig -> set_mpi(pka_sign(digest, subpri, passphrase, sig -> get_hash()));
+
+    return sig;
+}
+
+Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t hash){
+    // find signing subkey
+    Tag7::Ptr signer_subkey = nullptr;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        if (p -> get_tag() == 7){
+            std::string data = p -> raw();
+            Tag7::Ptr tag7(new Tag7(data));
+            if ((tag7 -> get_pka() == 1) || // RSA (Encrypt or Sign)
+                (tag7 -> get_pka() == 3) || // RSA Sign-Only
+                (tag7 -> get_pka() == 17)){ //DSA
+                signer_subkey = tag7;
+                break;
+            }
+            tag7.reset();
+        }
     }
 
-    Tag2::Ptr sig = create_sig_packet(binding, primary, nullptr, hash);
-
-    std::string hashed_data;
-    if (binding == 0x18){
-        hashed_data = to_sign_18(primary, sub, sig);
-    }
-    else if (binding == 0x19){
-        hashed_data = to_sign_19(primary, sub, sig);
+    if (!signer_subkey){
+        throw std::runtime_error("Error: No Signing Subkey found.");
     }
 
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, primary, passphrase, sig -> get_hash()));
+    // get signee primary and subkey
+    Tag6::Ptr signee_primary = nullptr;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        if (p -> get_tag() == 6){
+            std::string data = p -> raw();
+            signee_primary = Tag6::Ptr(new Tag6(data));
+            break;
+        }
+    }
 
+    if (!signee_primary){
+        signer_subkey.reset();
+        throw std::runtime_error("Error: Signee Primary Key not found.");
+    }
+
+    Tag14::Ptr signee_subkey = nullptr;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        if (p -> get_tag() == 14){
+            std::string data = p -> raw();
+            signee_subkey = Tag14::Ptr(new Tag14(data));
+            break;
+        }
+    }
+
+    if (!signee_subkey){
+        signer_subkey.reset();
+        signee_primary.reset();
+        throw std::runtime_error("Error: Singee Subkey not found.");
+    }
+
+    Tag2::Ptr sig = sign_primary_key_binding(signer_subkey, passphrase, signee_primary, signee_subkey, hash);
+
+    signer_subkey.reset();
+    signee_primary.reset();
+    signee_subkey.reset();
+    
     return sig;
 }

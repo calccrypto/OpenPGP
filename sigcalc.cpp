@@ -90,8 +90,8 @@ std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
 }
 
-std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2){
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
+std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & subkey, const Tag2::Ptr & tag2){
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(subkey), tag2));
 }
 
 std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){

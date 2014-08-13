@@ -87,13 +87,20 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
 
 // 0x18: Subkey Binding Signature
 // mainly used for key generation
-Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t binding = 0x18, const uint8_t hash = 2);
+Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = 2);
 
 // 0x19: Primary Key Binding Signature
+Tag2::Ptr sign_primary_key_binding(const Tag7::Ptr & subpri, const std::string & passphrase, const Tag6::Ptr & primary, const Tag14::Ptr & subkey, const uint8_t hash = 2);
+Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t hash = 2);
+
 // 0x1F: Signature directly on a key
+
+// Found in revoke.h ///////////////////////
 // 0x20: Key revocation signature
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
+// /////////////////////////////////////////
+
 // 0x40: Timestamp signature.
 // 0x50: Third-Party Confirmation signature.
 #endif
