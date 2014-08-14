@@ -77,8 +77,9 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     return out;
 }
 
-std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile){
-    uint8_t packet;                             // currently used packet tag
+PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile, const PGPPublicKey::Ptr & verify){
+    // currently packet tag being operated on
+    uint8_t packet;                             
 
     // get blocksize of symmetric key algorithm
     unsigned int BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;
@@ -191,29 +192,11 @@ std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::str
         }
     }
 
-    /*
-    5.6. Compressed Data Packet (Tag 8)
-
-        The Compressed Data packet contains compressed data. Typically, this
-        packet is found as the contents of an encrypted packet, or following
-        a Signature or One-Pass Signature packet, and contains a literal data
-        packet.
-    */
-
-    // expect a Literal Data Packet
-    bool format;
-    uint8_t partial = 0;
-    data = read_packet_header(data, packet, format, partial);
-    if (packet != 11){
-        std::stringstream s; s << Packet_Tags.at(packet) << " (Tag " << static_cast <unsigned int> (packet) << ").";
-        throw std::runtime_error("Error: Expected Literal Data Packet (Tag 11). Instead got " + s.str());
-    }
-
-    Tag11 tag11(data);
-    return tag11.out(writefile);
+    // parse decrypted data
+    return PGPMessage(data);
 }
 
-std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase, const bool writefile){
+std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase, const bool writefile, const PGPPublicKey::Ptr & verify){
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
         throw std::runtime_error("Error: No encrypted message found.");
     }
@@ -277,10 +260,32 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
 
     sec.reset();
 
-    return decrypt_data(sym, m, session_key, writefile);
+    PGPMessage decrypted = decrypt_data(sym, m, session_key, writefile, verify);
+
+    std::string out = "";
+    // if signing key provided, check the signature
+    if (verify){
+        if (verify_message(*verify, decrypted)){
+            out = "Message was signed by key ";
+        }
+        else{
+            out = "Warning: Message not signed by key ";
+        }
+        out += verify -> keyid() + ".\n";
+    }
+
+    // extract data
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == 11){
+            std::string raw = p -> raw();
+            Tag11 tag11(raw);
+            out += tag11.out(writefile);
+        }
+    }
+    return out;
 }
 
-std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, const bool writefile){
+std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, const bool writefile, const PGPPublicKey::Ptr & verify){
     std::cerr << "Warning: decrypt_sym is untested. Potentially incorrect" << std::endl;
 
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
@@ -311,5 +316,17 @@ std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, co
     Tag3 tag3(data);
     data = tag3.get_key(passphrase);
 
-    return decrypt_data(data[0], m, data.substr(1, data.size() - 1), writefile);
+    PGPMessage decrypted = decrypt_data(data[0], m, data.substr(1, data.size() - 1), writefile, nullptr);
+
+    std::string out = "";
+    // extract data
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == 11){
+            std::string raw = p -> raw();
+            Tag11 tag11(raw);
+            out += tag11.out(writefile);
+        }
+    }
+    return out;
+
 }

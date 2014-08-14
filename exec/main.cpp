@@ -93,7 +93,8 @@ const std::vector <std::string> commands = {
     "        options:\n"
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -d delete original?n"                                      // t or f; default f
-    "            -w write to file?",                                        // t or f; default t        
+    "            -v signing public key",                                    // public key file of signer
+    "            -w write to file?",                                        // t or f; default t
     // 9
     "revoke target revocation_certificate [options]\n"                      // revoke a key with a revocation certificate
     "            -o output file\n"                                          // where to output data
@@ -267,7 +268,7 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Decrypt Message "; std::cout.flush();
-            decrypt_pka(pri, en, passphrase, false);
+            decrypt_pka(pri, en, passphrase, false, nullptr);
             std::cout << "Passed" << std::endl;
 
             std::cout << "Sign Message "; std::cout.flush();
@@ -449,16 +450,23 @@ bool parse_command(std::string & input){
             Options options;
             options["-a"] = "d";
             options["-d"] = "f";
+            options["-v"] = "";
             options["-w"] = "t";
             parse_options(tokens, options);
             options["-a"] = lower(options["-a"]);
             options["-d"] = lower(options["-d"]);
             options["-w"] = lower(options["-w"]);
 
+            PGPPublicKey::Ptr signer = nullptr;
+            if (options["-v"].size()){
+                std::ifstream v(options["-v"], std::ios::binary);
+                signer = std::make_shared <PGPPublicKey> (v);
+            }
+
             PGPSecretKey key(k);
             PGPMessage message(f);
 
-            output(decrypt_pka(key, message, passphrase, (options["-w"] == "t")), "");
+            output(decrypt_pka(key, message, passphrase, (options["-w"] == "t"), signer), "");
             if (options["-d"] == "t"){
                 remove(data_file.c_str());
             }
