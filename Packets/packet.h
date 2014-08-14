@@ -54,12 +54,11 @@ class Packet{
         std::string write_new_length(std::string data) const;
 
         // returns first line of show functions (no tab or newline)
-        std::string show_title() const;
+        virtual std::string show_title() const; // virtual to allow for overriding for special cases
 
         Packet(uint8_t tag);
         Packet(uint8_t tag, uint8_t version);
         Packet(const Packet & copy);
-
 
     public:
         typedef std::shared_ptr <Packet> Ptr;

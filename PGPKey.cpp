@@ -245,7 +245,7 @@ bool PGPKey::meaningful() const{
 }
 
 PGP::Ptr PGPKey::clone() const{
-    return PGPKey::Ptr(new PGPKey(*this));
+    return std::make_shared <PGPKey> (*this);
 }
 
 std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
@@ -294,7 +294,7 @@ bool PGPSecretKey::meaningful() const{
 }
 
 PGP::Ptr PGPSecretKey::clone() const{
-    return PGPSecretKey::Ptr(new PGPSecretKey(*this));
+    return std::make_shared <PGPSecretKey> (*this);
 }
 
 std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
@@ -343,7 +343,7 @@ bool PGPPublicKey::meaningful() const {
 }
 
 PGP::Ptr PGPPublicKey::clone() const{
-    return PGPPublicKey::Ptr(new PGPPublicKey(*this));
+    return std::make_shared <PGPPublicKey> (*this);
 }
 
 std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
@@ -395,16 +395,16 @@ Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std:
                 Key::Ptr signer = nullptr;
                 switch (tag){
                     case 5:
-                        signer = Tag5::Ptr(new Tag5);
+                        signer = std::make_shared <Tag5> ();
                         break;
                     case 6:
-                        signer = Tag6::Ptr(new Tag6);
+                        signer = std::make_shared <Tag6> ();
                         break;
                     case 7:
-                        signer = Tag7::Ptr(new Tag7);
+                        signer = std::make_shared <Tag7> ();
                         break;
                     case 14:
-                        signer = Tag14::Ptr(new Tag14);
+                        signer = std::make_shared <Tag14> ();
                         break;
                     default:
                         throw std::runtime_error("Error: Not a key tag.");
@@ -444,7 +444,7 @@ Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const st
         return nullptr;
     }
     std::string data = found -> raw();
-    return Tag6::Ptr(new Tag6(data));
+    return std::make_shared <Tag6> (data);
 }
 
 Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid){
@@ -453,5 +453,5 @@ Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const st
         return nullptr;
     }
     std::string data = found -> raw();
-    return Tag5::Ptr(new Tag5(data));
+    return std::make_shared <Tag5> (data);
 }

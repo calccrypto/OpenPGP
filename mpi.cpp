@@ -71,7 +71,6 @@ PGPMPI invert(const PGPMPI &a, const PGPMPI &b){
     return ret;
 }
 
-
 PGPMPI random(unsigned int bits){
     try{
         return bintompi(BBS().rand(bits));

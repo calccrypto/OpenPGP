@@ -83,6 +83,8 @@ PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string &
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
 
+    sig.reset();
+    
     return signature;
 }
 
@@ -220,6 +222,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
     signer.reset();
     key.reset();
     uid.reset();
+    sig.reset();
 
     return revoked;
 }
@@ -247,6 +250,9 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
     revoked.set_ASCII_Armor(1); // public key
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
+
+    primary.reset();
+    new_packets.clear();
 
     return revoked;
 }
@@ -283,6 +289,8 @@ PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, c
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
 
+    new_packets.clear();
+
     return revoked;
 }
 
@@ -309,38 +317,17 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     std::string raw = revoke.get_packets()[0] -> raw();
     Tag2::Ptr tag2 = std::make_shared<Tag2>(raw);
 
-    if ((tag2->get_type() != 0x20) && (tag2->get_type() != 0x28)){
+    if ((tag2 -> get_type() != 0x20) && (tag2 -> get_type() != 0x28)){
         std::stringstream s; s << static_cast <int> (tag2->get_type());
         throw std::runtime_error("Error: Invalid signature type found: " + s.str());
     }
 
     // which packet to look for
-    uint8_t which = (tag2->get_type() == 0x20)?6:14;
+    uint8_t which = (tag2 -> get_type() == 0x20)?6:14;
 
-    std::string r_keyid = "";
+    std::string r_keyid = tag2 -> get_keyid();
     std::string k_keyid = "";
 
-    // find key id to revoke
-    // search unhashed subpackets
-    for(Subpacket::Ptr const & s : tag2->get_unhashed_subpackets()){
-        if (s -> get_type() == 16){
-            std::string raws = s -> raw();
-            Tag2Sub16 tag2sub16(raws);
-            r_keyid = tag2sub16.get_keyid();
-            break;
-        }
-    }
-    if (!r_keyid.size()){
-        // search hashed subpackets
-        for(Subpacket::Ptr const & s : tag2->get_hashed_subpackets()){
-            if (s -> get_type() == 16){
-                std::string raws = s -> raw();
-                Tag2Sub16 tag2sub16(raws);
-                r_keyid = tag2sub16.get_keyid();
-                break;
-            }
-        }
-    }
     if (!r_keyid.size()){
         throw std::runtime_error("Error: No key id found.");
     }
@@ -384,13 +371,9 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     revoked.set_packets(new_packets);
 
     // clear out data
-    for(Packet::Ptr & p : old_packets){ // clones
-        p.reset();
-    }
-
-    for(Packet::Ptr & p : new_packets){ // copies of clones; not exactly necessary
-        p.reset();
-    }
+    tag2.reset();
+    old_packets.clear();
+    new_packets.clear();
 
     return revoked;
 }

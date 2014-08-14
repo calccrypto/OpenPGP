@@ -32,6 +32,8 @@ class Partial : public Packet{
     private:
         std::string stream;
 
+        std::string show_title() const;
+
     public:
         typedef std::shared_ptr <Partial> Ptr;
 

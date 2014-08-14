@@ -20,7 +20,7 @@ Tag6::Tag6(std::string & data):
 Tag6::~Tag6(){}
 
 Packet::Ptr Tag6::clone() const{
-    return Packet::Ptr(new Tag6(*this));
+    return std::make_shared <Tag6> (*this);
 }
 
 Tag6 & Tag6::operator=(const Tag6 & copy){

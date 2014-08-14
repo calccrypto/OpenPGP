@@ -114,11 +114,11 @@ void PGPMessage::decompress() {
     // check if compressed
     if ((packets.size() == 1) && (packets[0] -> get_tag() == 8)){
         std::string data = packets[0] -> raw();
-        packets.clear();                    // free up pointer to compressed packet
-        comp = Tag8::Ptr(new Tag8(data));   // put data in a Compressed Data Packet
-        data = comp -> get_data();          // get decompressed data
-        comp -> set_data("");               // free up space taken up by compressed data; also prevents data from showing twice
-        read(data);                         // read decompressed data into packets
+        packets.clear();                        // free up pointer to compressed packet
+        comp = std::make_shared <Tag8> (data);  // put data in a Compressed Data Packet
+        data = comp -> get_data();              // get decompressed data
+        comp -> set_data("");                   // free up space taken up by compressed data; also prevents data from showing twice
+        read(data);                             // read decompressed data into packets
     }
 }
 
@@ -215,7 +215,7 @@ uint8_t PGPMessage::get_comp(){
 void PGPMessage::set_comp(const uint8_t c){
     comp.reset(); // free comp / set it to nullptr
     if (c){ // if not uncompressed
-        comp = Tag8::Ptr(new Tag8);
+        comp = std::make_shared <Tag8> ();
         comp -> set_comp(c);
     }
 }
@@ -292,5 +292,5 @@ bool PGPMessage::meaningful() const {
 }
 
 PGP::Ptr PGPMessage::clone() const{
-    return PGPMessage::Ptr(new PGPMessage);
+    return std::make_shared <PGPMessage> (*this);
 }

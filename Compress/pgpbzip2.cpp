@@ -36,9 +36,7 @@ int bz2_compress(const std::string & src, std::string & dst){
             strm.avail_out = bz2_BUFFER_SIZE;
 
             rc = BZ2_bzCompress(&strm, flush);
-            assert(rc != BZ_SEQUENCE_ERROR);
-
-
+            assert(rc != BZ_SEQUENCE_ERROR);
             for(unsigned int i = 0; i < bz2_BUFFER_SIZE - strm.avail_out; i++){
                 dst += std::string(1, out[i]);
             }

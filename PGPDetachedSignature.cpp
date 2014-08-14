@@ -33,7 +33,7 @@ PGPDetachedSignature::PGPDetachedSignature(std::ifstream & f):
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
 PGP::Ptr PGPDetachedSignature::clone() const{
-    return PGPDetachedSignature::Ptr(new PGPDetachedSignature(*this));
+    return std::make_shared <PGPDetachedSignature> (*this);
 }
 
 bool PGPDetachedSignature::meaningful() const{

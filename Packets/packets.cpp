@@ -10,9 +10,8 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format,
     unsigned int remove = 1;                                               // how much more stuff to remove from raw string
     unsigned int length = 0;                                               // length of the data without the header
 
-    if (!partial){                                                         // if partial packets have not been found
+    if (!partial){                                                         // if partial continue packets have not been found
         if (!(ctb & 0x80)){
-            // std::cerr << "Warning: First bit of packet header is not 1." << std::endl;
            throw std::runtime_error("Error: First bit of packet header MUST be 1.");
         }
 
@@ -77,9 +76,9 @@ std::string read_packet_header(std::string & data, uint8_t & tag, bool & format,
     return packet;
 }
 
-Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, const uint8_t partial, std::string & packet_data){
+Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, std::string & packet_data){
     Packet::Ptr out;
-    if (partial){
+    if (partial > 1){
         out = std::make_shared<Partial>();
     }
     else{
@@ -162,6 +161,10 @@ Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, const uint8_t 
     out -> set_partial(partial);
     out -> set_size(packet_data.size());
     out -> read(packet_data);
+
+    if (partial){
+        partial = 2;
+    }
 
     return out;
 }

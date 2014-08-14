@@ -46,6 +46,8 @@ class Tag8 : public Packet{
         std::string compress(const std::string & data);
         std::string decompress(const std::string & data);
 
+        std::string show_title() const;
+
     public:
         typedef std::shared_ptr <Tag8> Ptr;
 

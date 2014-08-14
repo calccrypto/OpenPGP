@@ -1,5 +1,29 @@
 #include "Partial.h"
 
+std::string Partial::show_title() const{
+    std::stringstream out;
+    out << (format?"New":"Old") << ": ";
+
+    switch (partial){
+        case 1:
+            out << " (partial start)";
+            break;
+        case 2:
+            out << " (partial continue)";
+            break;
+        case 3:
+            out << " (partial end)";
+            break;
+        default:
+            {
+                std::stringstream s; s << static_cast <unsigned int> (partial);
+                throw std::runtime_error("Error: Unknown partial type: " + s.str());
+            }
+            break;
+    }
+    return out.str();
+}
+
 Partial::Partial():
     Partial(std::string())
 {}

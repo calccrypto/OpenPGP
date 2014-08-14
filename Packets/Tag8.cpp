@@ -9,6 +9,32 @@ std::string Tag8::decompress(const std::string & data){
     return PGP_decompress(comp, data);
 }
 
+std::string Tag8::show_title() const{
+    std::stringstream out;
+    out << (format?"New":"Old") << ": " << Packet_Tags.at(8) << " (Tag 8)";   // display packet name and tag number
+
+    switch (partial){
+        case 0:
+            break;
+        case 1:
+            out << " (partial start)";
+            break;
+        case 2:
+            out << " (partial continue)";
+            break;
+        case 3:
+            out << " (partial end)";
+            break;
+        default:
+            {
+                std::stringstream s; s << static_cast <unsigned int> (partial);
+                throw std::runtime_error("Error: Unknown partial type: " + s.str());
+            }
+            break;
+    }
+    return out.str();
+}
+
 Tag8::Tag8():
     Packet(8, 3),
     comp(0),

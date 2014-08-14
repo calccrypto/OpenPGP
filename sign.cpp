@@ -5,11 +5,11 @@ ID::Ptr find_signer_id(const PGPSecretKey & k){
     for(Packet::Ptr const & p : k.get_packets()){
         if (p -> get_tag() == 13){
             std::string data = p -> raw();
-            return Tag13::Ptr(new Tag13(data));
+            return std::make_shared <Tag13> (data);
         }
         if (p -> get_tag() == 17){
             std::string data = p -> raw();
-            return Tag17::Ptr(new Tag17(data));
+            return std::make_shared <Tag17> (data);
         }
     }
     return nullptr;
@@ -163,17 +163,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
 
     // find ID packet
     // need better search method; possible to mess up
-    ID::Ptr id = nullptr;
-    for(Packet::Ptr const & p : pri.get_packets()){
-        if (p -> get_tag() == 13){
-            std::string data = p -> raw();
-            id = ID::Ptr(new Tag13(data));
-        }
-        else if (p -> get_tag() == 17){
-            std::string data = p -> raw();
-            id = ID::Ptr(new Tag17(data));
-        }
-    }
+    ID::Ptr id = find_signer_id(pri);
     if (!id){
         throw std::runtime_error("Error: Cannot find Signing Key ID packet.");
     }
@@ -490,7 +480,7 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 6){
             std::string data = p -> raw();
-            signee_primary = Tag6::Ptr(new Tag6(data));
+            signee_primary = std::make_shared <Tag6> (data);
             break;
         }
     }
@@ -504,7 +494,7 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 14){
             std::string data = p -> raw();
-            signee_subkey = Tag14::Ptr(new Tag14(data));
+            signee_subkey = std::make_shared <Tag14> (data);
             break;
         }
     }

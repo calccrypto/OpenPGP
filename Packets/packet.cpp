@@ -55,16 +55,16 @@ std::string Packet::write_new_length(std::string data) const{
 
 std::string Packet::show_title() const{
     std::stringstream out;
-    out << (format?"New":"Old") << ": ";
+    out << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";
 
-    if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
+    // if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
     // if (tag != 254){// don't display packet name for partial packets
-        out << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";   // display packet name and tag number
-    }
+        // out << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";   // display packet name and tag number
+    //}
 
-    if (tag != 8){ // don't display Compressed Data Packet size
-        out << " (" << size << " octets)";
-    }
+    // if (tag != 8){ // don't display Compressed Data Packet size
+        // out << " (" << size << " octets)";
+    // }
 
     switch (partial){
         case 0:

@@ -312,7 +312,16 @@ std::string Tag2::get_keyid() const{
         return keyid;
     }
     else if (version == 4){
+        // usually found in unhashed subpackets
         for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+            if (s -> get_type() == 16){
+                std::string data = s -> raw();
+                Tag2Sub16 sub16(data);
+                return sub16.get_keyid();
+            }
+        }
+        // search hashed subpackets if necessary
+        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             if (s -> get_type() == 16){
                 std::string data = s -> raw();
                 Tag2Sub16 sub16(data);
