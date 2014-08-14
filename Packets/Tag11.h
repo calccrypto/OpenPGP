@@ -50,7 +50,7 @@ class Tag11 : public Packet{
         std::string get_filename() const;
         uint32_t get_time() const;
         std::string get_literal() const;
-        bool out(); // write data to file
+        std::string out(const bool writefile = true); // send data to 
 
         void set_format(const uint8_t f);
         void set_filename(const std::string & f);

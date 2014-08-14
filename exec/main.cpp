@@ -91,9 +91,9 @@ const std::vector <std::string> commands = {
     // 8
     "decrypt-pka private_key passphrase data_file [options]\n"              // decrypt with a private key
     "        options:\n"
-    "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
-    "            -d delete original?",                                      // t or f; default f
+    "            -d delete original?n"                                      // t or f; default f
+    "            -w write to file?",                                        // t or f; default t        
     // 9
     "revoke target revocation_certificate [options]\n"                      // revoke a key with a revocation certificate
     "            -o output file\n"                                          // where to output data
@@ -267,7 +267,7 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Decrypt Message "; std::cout.flush();
-            decrypt_pka(pri, en, passphrase);
+            decrypt_pka(pri, en, passphrase, false);
             std::cout << "Passed" << std::endl;
 
             std::cout << "Sign Message "; std::cout.flush();
@@ -447,17 +447,18 @@ bool parse_command(std::string & input){
             }
 
             Options options;
-            options["-o"] = "";
             options["-a"] = "d";
             options["-d"] = "f";
+            options["-w"] = "t";
             parse_options(tokens, options);
             options["-a"] = lower(options["-a"]);
             options["-d"] = lower(options["-d"]);
+            options["-w"] = lower(options["-w"]);
 
             PGPSecretKey key(k);
             PGPMessage message(f);
 
-            output(decrypt_pka(key, message, passphrase), options["-o"]);
+            output(decrypt_pka(key, message, passphrase, (options["-w"] == "t")), "");
             if (options["-d"] == "t"){
                 remove(data_file.c_str());
             }

@@ -77,7 +77,7 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     return out;
 }
 
-std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key){
+std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile){
     uint8_t packet;                             // currently used packet tag
 
     // get blocksize of symmetric key algorithm
@@ -131,7 +131,6 @@ std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::str
     if (!data.size()){
         throw std::runtime_error("Error: No encrypted data packet(s) found.");
     }
-
 
     // decrypt data
     if (sym == 2){ // Triple DES
@@ -211,18 +210,10 @@ std::string decrypt_data(const uint8_t sym, const PGPMessage & m, const std::str
     }
 
     Tag11 tag11(data);
-    if (tag11.get_filename() == ""){
-        data = tag11.get_literal();
-    }
-    else{
-        tag11.write();
-        data = "Data written to file '" + Tag11(data).get_filename() + "'";
-    }
-
-    return data;
+    return tag11.out(writefile);
 }
 
-std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase){
+std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase, const bool writefile){
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
         throw std::runtime_error("Error: No encrypted message found.");
     }
@@ -286,10 +277,10 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
 
     sec.reset();
 
-    return decrypt_data(sym, m, session_key);
+    return decrypt_data(sym, m, session_key, writefile);
 }
 
-std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase){
+std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, const bool writefile){
     std::cerr << "Warning: decrypt_sym is untested. Potentially incorrect" << std::endl;
 
     if ((m.get_ASCII_Armor() != 0)/* && (m.get_ASCII_Armor() != 3) && (m.get_ASCII_Armor() != 4)*/){
@@ -320,5 +311,5 @@ std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase){
     Tag3 tag3(data);
     data = tag3.get_key(passphrase);
 
-    return decrypt_data(data[0], m, data.substr(1, data.size() - 1));
+    return decrypt_data(data[0], m, data.substr(1, data.size() - 1), writefile);
 }

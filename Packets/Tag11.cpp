@@ -63,35 +63,36 @@ std::string Tag11::get_literal() const{
     return literal;
 }
 
-bool Tag11::out(){
-    std::ofstream out;
-    switch (format){
-        case 'b':
-            out.open(filename.c_str(), std::ios::binary);
-            break;
-        case 't': case 'u':
-            out.open(filename.c_str());
-            break;
-        default:
-            {
-                std::stringstream s; s << "Error: Unknown Literal Data format type: " << static_cast <char> (format) << std::endl;
-                throw std::runtime_error(s.str());
-            }
-            break;
-    }
-
-    if (!out){
-        throw std::runtime_error("Error: Failed to open file to write literal data.");
-        return false;
-    }
-
+std::string Tag11::out(const bool writefile){
     if (filename == "_CONSOLE"){
         std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"." << std::endl;
     }
 
-    out << literal;
-
-    return true;
+    if ((filename != "") && writefile){
+        std::ofstream f;
+        switch (format){
+            case 'b':
+                f.open(filename.c_str(), std::ios::binary);
+                break;
+            case 't': case 'u':
+                f.open(filename.c_str());
+                break;
+            default:
+                {
+                    std::stringstream s; s << "Error: Unknown Literal Data format type: " << static_cast <char> (format) << std::endl;
+                    throw std::runtime_error(s.str());
+                }
+                break;
+        }
+        if (!f){
+            throw std::runtime_error("Error: Failed to open file to write literal data.");
+        }
+        f << literal;
+    }
+    else{
+        return literal;
+    }
+    return "Data written to file '" + filename + "'.";
 }
 
 void Tag11::set_format(const uint8_t f){
