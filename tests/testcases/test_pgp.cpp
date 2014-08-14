@@ -550,7 +550,7 @@ TEST(PGPTest, test_gpg_revoke) {
 TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
 
     std::string in = GPG_PKA_ENCRYPT_TO_ALICE;
-    PGPMessageKey pgp(in);
+    PGPMessage pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 2);
@@ -593,7 +593,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
 TEST(PGPTest, test_gpg_pka_encrypt) {
 
     std::string in = GPG_PKA_ENCRYPT_ALICE_TO_BOB;
-    PGPMessageKey pgp(in);
+    PGPMessage pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 2);
@@ -636,7 +636,7 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
 TEST(PGPTest, test_gpg_symmetric_encrypt) {
 
     std::string in = GPG_SYMMETRIC_ENCRYPT_TO_ALICE;
-    PGPMessageKey pgp(in);
+    PGPMessage pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 3);
