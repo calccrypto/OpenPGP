@@ -14,8 +14,7 @@ Tag7::Tag7(std::string & data):
     read(data);
 }
 
-Tag7::~Tag7()
-{}
+Tag7::~Tag7(){}
 
 Tag14 Tag7::get_public_obj() const{
     std::string data = raw();
@@ -32,7 +31,7 @@ Tag14::Ptr Tag7::get_public_ptr() const{
 }
 
 Packet::Ptr Tag7::clone() const{
-    Ptr out(new Tag7(*this));
+    Ptr out = std::make_shared <Tag7> (*this);
     out -> s2k = s2k -> clone();
     return out;
 }

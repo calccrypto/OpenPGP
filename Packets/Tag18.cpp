@@ -40,5 +40,5 @@ void Tag18::set_protected_data(const std::string & p){
 }
 
 Packet::Ptr Tag18::clone() const{
-    return Ptr(new Tag18(*this));
+    return std::make_shared <Tag18> (*this);
 }

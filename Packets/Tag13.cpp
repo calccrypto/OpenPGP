@@ -115,5 +115,5 @@ void Tag13::set_email(const std::string & e){
 }
 
 Packet::Ptr Tag13::clone() const{
-    return Ptr(new Tag13(*this));
+    return std::make_shared <Tag13> (*this);
 }

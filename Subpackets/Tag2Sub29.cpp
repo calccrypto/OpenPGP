@@ -50,5 +50,5 @@ void Tag2Sub29::set_reason(const std::string & r){
 }
 
 Tag2Subpacket::Ptr Tag2Sub29::clone() const{
-    return Ptr(new Tag2Sub29(*this));
+    return std::make_shared <Tag2Sub29> (*this);
 }

@@ -59,5 +59,5 @@ void Tag2Sub12::set_fingerprint(const std::string & f){
 }
 
 Tag2Subpacket::Ptr Tag2Sub12::clone() const{
-    return Ptr(new Tag2Sub12(*this));
+    return std::make_shared <Tag2Sub12> (*this);
 }

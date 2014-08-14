@@ -138,7 +138,7 @@ std::vector <Tag2Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
                 temp = std::make_shared<Tag2Sub32>();
                 break;
             default:
-                std::cerr << "Error: Unknown subpacket tag: " << static_cast <int> (sub) << " Ignoring." << std::endl;
+                std::cerr << "Error: Unknown subpacket tag: " << static_cast <unsigned int> (sub) << " Ignoring." << std::endl;
                 continue;
                 break;
         }
@@ -202,7 +202,7 @@ void Tag2::read(std::string & data, const uint8_t part){
         }
     }
     else{
-        std::stringstream s; s << static_cast <int> (version);
+        std::stringstream s; s << static_cast <unsigned int> (version);
         throw std::runtime_error("Error: Tag2 Unknown version: " + s.str());
     }
 }
@@ -330,7 +330,7 @@ std::string Tag2::get_keyid() const{
         }
     }
     else{
-        std::stringstream s; s << static_cast <int> (version);
+        std::stringstream s; s << static_cast <unsigned int> (version);
         throw std::runtime_error("Error: Signature Packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -372,7 +372,7 @@ std::string Tag2::get_up_to_hashed() const{
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
     else{
-        std::stringstream s; s << static_cast <int> (version);
+        std::stringstream s; s << static_cast <unsigned int> (version);
         throw std::runtime_error("Error: Signature packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -488,7 +488,7 @@ void Tag2::set_unhashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & u){
 }
 
 Packet::Ptr Tag2::clone() const{
-    Ptr out(new Tag2(*this));
+    Ptr out = std::make_shared <Tag2> (*this);
     out -> hashed_subpackets = get_hashed_subpackets_clone();
     out -> unhashed_subpackets = get_unhashed_subpackets_clone();
     return out;

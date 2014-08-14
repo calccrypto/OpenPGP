@@ -7,7 +7,7 @@ uint32_t coded_count(unsigned int c){
 
 std::string S2K::show_title() const{
     std::stringstream out;
-    out << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <int> (type) << "):";
+    out << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <unsigned int> (type) << "):";
     return out.str();
 }
 
@@ -58,8 +58,7 @@ std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash)
-        << ")\n";
+        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
     return out.str();
 }
 
@@ -67,17 +66,17 @@ std::string S2K0::raw() const{
     return "\x00" + std::string(1, hash);
 }
 
-std::string S2K0::run(std::string pass, unsigned int sym_len) const{
+std::string S2K0::run(const std::string & pass, unsigned int sym_key_len) const{
     std::string out = "";
     unsigned int counter = 0;
-    while (out.size() < sym_len){
+    while (out.size() < sym_key_len){
         out += use_hash(hash, std::string(counter++, 0) + pass);
     }
-    return out.substr(0, sym_len);
+    return out.substr(0, sym_key_len);
 }
 
 S2K::Ptr S2K0::clone() const{
-    return Ptr(new S2K0(*this));
+    return std::make_shared <S2K0> (*this);
 }
 
 S2K1::S2K1(uint8_t type):
@@ -102,8 +101,8 @@ std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
-        << std::string(tab, ' ') << "        Salt: " << hexlify(salt) << "\n";
+        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << std::string(tab, ' ') << "        Salt: " << hexlify(salt);
     return out.str();
 }
 
@@ -111,13 +110,13 @@ std::string S2K1::raw() const{
     return "\x01" + std::string(1, hash) + salt;
 }
 
-std::string S2K1::run(std::string pass, unsigned int sym_len) const{
+std::string S2K1::run(const std::string & pass, unsigned int sym_key_len) const{
     std::string out = "";
     unsigned int counter = 0;
-    while (out.size() < sym_len){
+    while (out.size() < sym_key_len){
         out += use_hash(hash, std::string(counter++, 0) + salt + pass);
     }
-    return out.substr(0, sym_len);
+    return out.substr(0, sym_key_len);
 }
 
 std::string S2K1::get_salt() const{
@@ -129,7 +128,7 @@ void S2K1::set_salt(const std::string & s){
 }
 
 S2K::Ptr S2K1::clone() const{
-    return Ptr(new S2K1(*this));
+    return std::make_shared <S2K1> (*this);
 }
 
 S2K3::S2K3():
@@ -151,9 +150,9 @@ std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <int> (hash) << ")\n"
+        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
         << std::string(tab, ' ') << "        Salt: " << hexlify(salt) << "\n"
-        << std::string(tab, ' ') << "        Coded Count: " << coded_count(count) << " (count " << static_cast <int> (count) << ")\n";
+        << std::string(tab, ' ') << "        Coded Count: " << coded_count(count) << " (count " << static_cast <unsigned int> (count) << ")";
     return out.str();
 }
 
@@ -161,7 +160,7 @@ std::string S2K3::raw() const{
     return "\x03" + std::string(1, hash) + salt + unhexlify(makehex(count, 2));
 }
 
-std::string S2K3::run(std::string pass, unsigned int sym_len) const{
+std::string S2K3::run(const std::string & pass, unsigned int sym_key_len) const{
     // get string to hash
     std::string to_hash = "";
     while (to_hash.size() < coded_count(count)){// coded count is count of octets, not iterations
@@ -171,10 +170,10 @@ std::string S2K3::run(std::string pass, unsigned int sym_len) const{
     // hash string
     std::string out = "";
     unsigned int context = 0;
-    while (out.size() < sym_len){
+    while (out.size() < sym_key_len){
         out += use_hash(hash, std::string(context++, 0) + to_hash);
     }
-    return out.substr(0, sym_len);
+    return out.substr(0, sym_key_len);
 }
 
 uint8_t S2K3::get_count() const{
@@ -186,5 +185,5 @@ void S2K3::set_count(const uint8_t c){
 }
 
 S2K::Ptr S2K3::clone() const{
-    return Ptr(new S2K3(*this));
+    return std::make_shared <S2K3> (*this);
 }

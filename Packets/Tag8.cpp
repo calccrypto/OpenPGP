@@ -106,5 +106,5 @@ void Tag8::set_compressed_data(const std::string & data){
 }
 
 Packet::Ptr Tag8::clone() const{
-    return Ptr(new Tag8(*this));
+    return std::make_shared <Tag8> (*this);
 }

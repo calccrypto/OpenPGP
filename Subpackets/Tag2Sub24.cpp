@@ -34,5 +34,5 @@ void Tag2Sub24::set_pks(const std::string & p){
 }
 
 Tag2Subpacket::Ptr Tag2Sub24::clone() const{
-    return Ptr(new Tag2Sub24(*this));
+    return std::make_shared <Tag2Sub24> (*this);
 }

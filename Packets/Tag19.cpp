@@ -39,5 +39,5 @@ void Tag19::set_hash(const std::string & h){
 }
 
 Packet::Ptr Tag19::clone() const{
-    return Ptr(new Tag19(*this));
+    return std::make_shared <Tag19> (*this);
 }

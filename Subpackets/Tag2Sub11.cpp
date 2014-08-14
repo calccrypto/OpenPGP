@@ -39,5 +39,5 @@ void Tag2Sub11::set_psa(const std::string & s){
 }
 
 Tag2Subpacket::Ptr Tag2Sub11::clone() const{
-    return Ptr(new Tag2Sub11(*this));
+    return std::make_shared <Tag2Sub11> (*this);
 }

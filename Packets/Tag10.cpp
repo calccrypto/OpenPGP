@@ -40,5 +40,5 @@ void Tag10::set_pgp(const std::string & s){
 }
 
 Packet::Ptr Tag10::clone() const{
-    return Ptr(new Tag10(*this));
+    return std::make_shared <Tag10> (*this);
 }

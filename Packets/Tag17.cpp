@@ -111,5 +111,5 @@ void Tag17::set_attributes(const std::vector <Tag17Subpacket::Ptr> & a){
 }
 
 Packet::Ptr Tag17::clone() const{
-    return Ptr(new Tag17(*this));
+    return std::make_shared <Tag17> (*this);
 }

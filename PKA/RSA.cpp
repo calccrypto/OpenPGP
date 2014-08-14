@@ -1,6 +1,6 @@
 #include "RSA.h"
 std::vector <PGPMPI> RSA_keygen(const unsigned int & bits){
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI p = 3, q = 3;
 	while (p == q){

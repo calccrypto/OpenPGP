@@ -175,7 +175,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
                 }
             }
             else{
-                std::stringstream s; s << static_cast <int> (prikey -> get_pka());
+                std::stringstream s; s << static_cast <unsigned int> (prikey -> get_pka());
                 throw std::runtime_error("Error: Undefined or reserved PKA number: " + s.str());
             }
 
@@ -340,7 +340,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
                 }
             }
             else{
-                std::stringstream s; s << static_cast <int> (prisubkey -> get_pka());
+                std::stringstream s; s << static_cast <unsigned int> (prisubkey -> get_pka());
                 throw std::runtime_error("Error: Undefined or reserved PKA number: " + s.str());
             }
 
@@ -373,7 +373,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             key = true;
         }
         else{
-            std::stringstream s; s << static_cast <int> (p -> get_tag());
+            std::stringstream s; s << static_cast <unsigned int> (p -> get_tag());
             throw std::runtime_error("Error: Packet Tag " + s.str() + " does not belong in a private key.");
             break;
         }
@@ -395,7 +395,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             pub_packets.push_back(p -> clone());
         }
         else{
-            std::stringstream s; s << static_cast <int> (p -> get_tag());
+            std::stringstream s; s << static_cast <unsigned int> (p -> get_tag());
             throw std::runtime_error("Error: Packet Tag " + s.str() + " doesn't belong here.");
             break;
         }

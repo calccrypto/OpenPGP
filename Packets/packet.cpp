@@ -55,16 +55,7 @@ std::string Packet::write_new_length(std::string data) const{
 
 std::string Packet::show_title() const{
     std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";
-
-    // if (((0 <= tag) && (tag < 20)) || ((60 <= tag) && (tag < 64))){ // if tag is known
-    // if (tag != 254){// don't display packet name for partial packets
-        // out << Packet_Tags.at(tag) << " (Tag " << static_cast <int> (tag) << ")";   // display packet name and tag number
-    //}
-
-    // if (tag != 8){ // don't display Compressed Data Packet size
-        // out << " (" << size << " octets)";
-    // }
+    out << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <unsigned int> (tag) << ")";
 
     switch (partial){
         case 0:
@@ -333,7 +324,7 @@ std::string Key::get_fingerprint() const{
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
-        std::stringstream s; s << static_cast <int> (version);
+        std::stringstream s; s << static_cast <unsigned int> (version);
         throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -348,14 +339,14 @@ std::string Key::get_keyid() const{
         return get_fingerprint().substr(12, 8);
     }
     else{
-        std::stringstream s; s << static_cast <int> (version);
+        std::stringstream s; s << static_cast <unsigned int> (version);
         throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 Packet::Ptr Key::clone() const{
-    return Ptr(new Key(*this));
+    return std::make_shared <Key> (*this);
 }
 
 Key & Key::operator=(const Key & copy)

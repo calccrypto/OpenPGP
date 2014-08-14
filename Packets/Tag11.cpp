@@ -115,5 +115,5 @@ void Tag11::set_literal(const std::string & l){
 }
 
 Packet::Ptr Tag11::clone() const{
-    return Ptr(new Tag11(*this));
+    return std::make_shared <Tag11> (*this);
 }

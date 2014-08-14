@@ -55,5 +55,5 @@ void Tag17Sub1::set_image(const std::string & i){
 }
 
 Tag17Subpacket::Ptr Tag17Sub1::clone() const {
-    return Ptr(new Tag17Sub1(*this));
+    return std::make_shared <Tag17Sub1> (*this);
 }

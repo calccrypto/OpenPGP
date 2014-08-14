@@ -236,8 +236,8 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
 
     Tag2::Ptr rev = revoke_primary_key_cert(pri, passphrase, code, reason);
 
-    std::string data = packets[0] -> raw();
-    Tag6::Ptr primary = std::make_shared<Tag6>(data);
+    std::string raw = packets[0] -> raw();
+    Tag6::Ptr primary = std::make_shared<Tag6>(raw);
 
     // assume first packet is primary key, and add a revocation signature as the next packet
     std::vector <Packet::Ptr> new_packets = {primary, rev};
@@ -318,7 +318,7 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     Tag2::Ptr tag2 = std::make_shared<Tag2>(raw);
 
     if ((tag2 -> get_type() != 0x20) && (tag2 -> get_type() != 0x28)){
-        std::stringstream s; s << static_cast <int> (tag2->get_type());
+        std::stringstream s; s << static_cast <unsigned int> (tag2->get_type());
         throw std::runtime_error("Error: Invalid signature type found: " + s.str());
     }
 

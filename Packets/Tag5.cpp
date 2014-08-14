@@ -54,7 +54,7 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     if (s2k_con > 253){
-        out << std::string(tab, ' ') << "    String-to-Key Usage Conventions: " << static_cast <int> (s2k_con) << "\n"
+        out << std::string(tab, ' ') << "    String-to-Key Usage Conventions: " << static_cast <unsigned int> (s2k_con) << "\n"
             << std::string(tab, ' ') << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
             << std::string(tab, ' ') << s2k -> show(indents);
         if (s2k -> get_type()){
@@ -226,7 +226,7 @@ void Tag5::set_secret(const std::string & s){
 }
 
 Packet::Ptr Tag5::clone() const{
-    Tag5::Ptr out(new Tag5(*this));
+    Ptr out = std::make_shared <Tag5> (*this);
     out -> s2k = s2k -> clone();
     return out;
 }

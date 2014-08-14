@@ -80,7 +80,7 @@ const std::vector <std::string> commands = {
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
     // 7
-    "encrypt public_key data_file [options]\n"                              // encrypt a string
+    "encrypt-pka public_key data_file [options]\n"                          // encrypt with a public key
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
@@ -89,7 +89,7 @@ const std::vector <std::string> commands = {
     "            -mdc use_mdc?\n"                                           // t or f; default t
     "            -s symmetric encryption algorithm",                        // default AES256; see consts.h or RFC 4880 sec 9.2 for details
     // 8
-    "decrypt private_key passphrase data_file [options]\n"                  // decrypt a file
+    "decrypt-pka private_key passphrase data_file [options]\n"              // decrypt with a private key
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
@@ -263,11 +263,11 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Encrypt Message "; std::cout.flush();
-            PGPMessage en = encrypt(pub, message);
+            PGPMessage en = encrypt_pka(pub, message);
             std::cout << "Passed" << std::endl;
 
             std::cout << "Decrypt Message "; std::cout.flush();
-            decrypt_message(pri, en, passphrase);
+            decrypt_pka(pri, en, passphrase);
             std::cout << "Passed" << std::endl;
 
             std::cout << "Sign Message "; std::cout.flush();
@@ -391,7 +391,7 @@ bool parse_command(std::string & input){
 
             output(revoke_primary_key_cert_key(pri, passphrase, options["-c"][0] - '0', options["-r"]).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
         }
-        else if (cmd == "encrypt"){
+        else if (cmd == "encrypt-pka"){
             std::string pub_file, data_file;
             if (!(tokens >> pub_file >> data_file) || (data_file == "") || (pub_file == "")){
                 throw std::runtime_error("Syntax: " + commands[7]);
@@ -425,13 +425,13 @@ bool parse_command(std::string & input){
 
             PGPPublicKey key(k);
 
-            output(encrypt(key, s.str(), data_file, Symmetric_Algorithms_Numbers.at(options["-s"]), Compression_Numbers.at(options["-c"]), (options["-mdc"] == "t")).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
+            output(encrypt_pka(key, s.str(), data_file, Symmetric_Algorithms_Numbers.at(options["-s"]), Compression_Numbers.at(options["-c"]), (options["-mdc"] == "t")).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
 
             if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
                 remove(data_file.c_str());
             }
         }
-        else if (cmd == "decrypt"){
+        else if (cmd == "decrypt-pka"){
             std::string pri, passphrase, data_file;
             if (!(tokens >> pri >> passphrase >> data_file) || (data_file == "") || (pri == "")){
                 throw std::runtime_error("Syntax: " + commands[8]);
@@ -457,7 +457,7 @@ bool parse_command(std::string & input){
             PGPSecretKey key(k);
             PGPMessage message(f);
 
-            output(decrypt_message(key, message, passphrase), options["-o"]);
+            output(decrypt_pka(key, message, passphrase), options["-o"]);
             if (options["-d"] == "t"){
                 remove(data_file.c_str());
             }

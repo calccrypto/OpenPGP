@@ -34,5 +34,5 @@ void Tag2Sub26::set_uri(const std::string & u){
 }
 
 Tag2Subpacket::Ptr Tag2Sub26::clone() const{
-    return Ptr(new Tag2Sub26(*this));
+    return std::make_shared <Tag2Sub26> (*this);
 }

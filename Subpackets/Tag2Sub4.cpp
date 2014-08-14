@@ -33,5 +33,5 @@ void Tag2Sub4::set_exportable(const bool e){
 }
 
 Tag2Subpacket::Ptr Tag2Sub4::clone() const{
-    return Ptr(new Tag2Sub4(*this));
+    return std::make_shared <Tag2Sub4> (*this);
 }

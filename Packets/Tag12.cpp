@@ -37,5 +37,5 @@ void Tag12::set_trust(const std::string & t){
 }
 
 Packet::Ptr Tag12::clone() const{
-    return Ptr(new Tag12(*this));
+    return std::make_shared <Tag12> (*this);
 }

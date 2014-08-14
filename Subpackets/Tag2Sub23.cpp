@@ -41,5 +41,5 @@ void Tag2Sub23::set_flags(const char c){
 }
 
 Tag2Subpacket::Ptr Tag2Sub23::clone() const{
-    return Ptr(new Tag2Sub23(*this));
+    return std::make_shared <Tag2Sub23> (*this);
 }

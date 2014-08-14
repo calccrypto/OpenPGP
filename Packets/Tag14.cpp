@@ -9,5 +9,5 @@ Tag14::Tag14(std::string & data){
 }
 
 Packet::Ptr Tag14::clone() const{
-    return Ptr(new Tag14(*this));
+    return std::make_shared <Tag14> (*this);
 }

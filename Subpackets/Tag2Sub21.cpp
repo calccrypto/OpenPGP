@@ -39,5 +39,5 @@ void Tag2Sub21::set_pha(const std::string & p){
 }
 
 Tag2Subpacket::Ptr Tag2Sub21::clone() const{
-    return Ptr(new Tag2Sub21(*this));
+    return std::make_shared <Tag2Sub21> (*this);
 }

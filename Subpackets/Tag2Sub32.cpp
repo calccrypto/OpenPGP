@@ -42,7 +42,7 @@ void Tag2Sub32::set_embedded(const Tag2::Ptr & e){
 }
 
 Tag2Subpacket::Ptr Tag2Sub32::clone() const{
-    return Ptr(new Tag2Sub32(*this));
+    return std::make_shared <Tag2Sub32> (*this);
 }
 
 Tag2Sub32 & Tag2Sub32::operator=(const Tag2Sub32 & copy){

@@ -37,5 +37,5 @@ void Tag9::set_encrypted_data(const std::string & e){
 }
 
 Packet::Ptr Tag9::clone() const{
-    return Ptr(new Tag9(*this));
+    return std::make_shared <Tag9> (*this);
 }

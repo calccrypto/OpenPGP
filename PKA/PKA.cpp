@@ -20,7 +20,7 @@ void generate_key_pair(const uint8_t pka, const std::vector <unsigned int> & par
             break;
         default:
             {
-                std::stringstream s; s << static_cast <int> (pka);
+                std::stringstream s; s << static_cast <unsigned int> (pka);
                 throw std::runtime_error("Error: Undefined or reserved PKA number: " + s.str());
             }
             break;

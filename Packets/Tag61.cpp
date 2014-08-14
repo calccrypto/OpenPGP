@@ -31,5 +31,5 @@ void Tag61::set_stream(const std::string & data){
 }
 
 Packet::Ptr Tag61::clone() const{
-    return Ptr(new Tag61(*this));
+    return std::make_shared <Tag61> (*this);
 }

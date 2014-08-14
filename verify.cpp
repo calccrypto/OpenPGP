@@ -250,7 +250,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
                             case 0x12: case 0x13:
                             default:
                                 {
-                                    std::cerr << "Warning: Bad signature type: " << static_cast <int> ((*(OPSP.rbegin())) -> get_type()) << std::endl;
+                                    std::cerr << "Warning: Bad signature type: " << static_cast <unsigned int> ((*(OPSP.rbegin())) -> get_type()) << std::endl;
                                     verify = false;
                                 }
                                 break;
@@ -442,7 +442,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                 break;
             default:
                 {
-                    std::stringstream s; s << static_cast <int> (p -> get_tag());
+                    std::stringstream s; s << static_cast <unsigned int> (p -> get_tag());
                     throw std::runtime_error("Error: Incorrect packet type found: " + s.str());
                 }
                 break;
@@ -489,8 +489,8 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
             (p -> get_tag() == 14)){
 
             // copy the key into Tag 6
-            std::string key_str = p -> raw();
-            Tag6::Ptr tag6 = std::make_shared<Tag6>(key_str);
+            std::string raw = p -> raw();
+            Tag6::Ptr tag6 = std::make_shared<Tag6>(raw);
 
             // check if it was revoked
             if (verify_revoke(tag6, revoke)){

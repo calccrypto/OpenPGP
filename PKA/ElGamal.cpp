@@ -1,6 +1,6 @@
 #include "ElGamal.h"
 std::vector <PGPMPI> ElGamal_keygen(unsigned int bits){
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bits /= 5;
     // random prime q - only used for key generation
@@ -42,7 +42,7 @@ std::vector <PGPMPI> ElGamal_keygen(unsigned int bits){
 }
 
 std::vector <PGPMPI> ElGamal_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub){
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
     PGPMPI k = bintompi(BBS().rand(bitsize(pub[0])));
     k %= pub[0];
     PGPMPI r, s;

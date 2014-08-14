@@ -101,5 +101,5 @@ void Tag4::set_nested(const uint8_t n){
 }
 
 Packet::Ptr Tag4::clone() const{
-    return Ptr(new Tag4(*this));
+    return std::make_shared <Tag4> (*this);
 }

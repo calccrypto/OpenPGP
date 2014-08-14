@@ -58,5 +58,5 @@ void Tag2Sub31::set_hash(const std::string & h){
 }
 
 Tag2Subpacket::Ptr Tag2Sub31::clone() const{
-    return Ptr(new Tag2Sub31(*this));
+    return std::make_shared <Tag2Sub31> (*this);
 }

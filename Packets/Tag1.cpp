@@ -80,5 +80,5 @@ void Tag1::set_mpi(const std::vector <PGPMPI> & m){
 }
 
 Packet::Ptr Tag1::clone() const{
-    return Ptr(new Tag1(*this));
+    return std::make_shared <Tag1> (*this);
 }

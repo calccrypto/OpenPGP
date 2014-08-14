@@ -75,7 +75,7 @@ PGPMPI random(unsigned int bits){
     try{
         return bintompi(BBS().rand(bits));
     } catch (...) {
-        BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+        BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
         return bintompi(BBS().rand(bits));
     }
 }
@@ -88,12 +88,12 @@ std::string write_MPI(const PGPMPI & data){
 
 // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
 PGPMPI read_MPI(std::string & data){
-    uint16_t size = (static_cast <uint8_t> (data[0]) << 8) + static_cast <uint8_t> (data[1]);                 // get bits
+    uint16_t size = (static_cast <uint8_t> (data[0]) << 8) + static_cast <uint8_t> (data[1]); // get bits
     while (size & 7){
-        size++;                                                                     // pad to nearest byte
+        size++;                                                                     // pad to nearest octet
     }
     size >>= 3;                                                                     // get number of octets
-    PGPMPI out = rawtompi(data.substr(2, size));                     // turn to mpz_class
+    PGPMPI out = rawtompi(data.substr(2, size));                                    // turn to mpz_class
     data = data.substr(2 + size, data.size() - 2 - size);                           // remove mpi from data
     return out;
 }

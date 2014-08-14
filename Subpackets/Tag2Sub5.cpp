@@ -47,5 +47,5 @@ void Tag2Sub5::set_amount(const uint8_t a){
 }
 
 Tag2Subpacket::Ptr Tag2Sub5::clone() const{
-    return Ptr(new Tag2Sub5(*this));
+    return std::make_shared <Tag2Sub5> (*this);
 }

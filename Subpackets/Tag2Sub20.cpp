@@ -70,5 +70,5 @@ void Tag2Sub20::set_n(const std::string & s){
 }
 
 Tag2Subpacket::Ptr Tag2Sub20::clone() const{
-    return Ptr(new Tag2Sub20(*this));
+    return std::make_shared <Tag2Sub20> (*this);
 }

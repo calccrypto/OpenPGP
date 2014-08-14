@@ -33,5 +33,5 @@ void Tag2Sub25::set_primary(const bool p){
 }
 
 Tag2Subpacket::Ptr Tag2Sub25::clone() const{
-    return Ptr(new Tag2Sub25(*this));
+    return std::make_shared <Tag2Sub25> (*this);
 }

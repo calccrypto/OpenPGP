@@ -15,7 +15,7 @@ std::string Subpacket::write_subpacket(const std::string & data) const{
 
 std::string Subpacket::show_title() const{
     std::stringstream out;
-    out << "        " << Subpacket_Tags.at(type) << " Subpacket (sub " << static_cast <int> (type) << ") (" << size << " octets)";
+    out << "        " << Subpacket_Tags.at(type) << " Subpacket (sub " << static_cast <unsigned int> (type) << ") (" << size << " octets)";
     return out.str();
 }
 

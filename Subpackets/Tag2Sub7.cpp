@@ -33,5 +33,5 @@ void Tag2Sub7::set_revocable(const bool r){
 }
 
 Tag2Subpacket::Ptr Tag2Sub7::clone() const{
-    return Ptr(new Tag2Sub7(*this));
+    return std::make_shared <Tag2Sub7> (*this);
 }

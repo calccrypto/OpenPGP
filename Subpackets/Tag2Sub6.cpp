@@ -34,5 +34,5 @@ void Tag2Sub6::set_regex(const std::string & r){
 }
 
 Tag2Subpacket::Ptr Tag2Sub6::clone() const{
-    return Ptr(new Tag2Sub6(*this));
+    return std::make_shared <Tag2Sub6> (*this);
 }

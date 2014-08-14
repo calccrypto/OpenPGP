@@ -34,5 +34,5 @@ void Tag2Sub10::set_stuff(const std::string & s){
 }
 
 Tag2Subpacket::Ptr Tag2Sub10::clone() const{
-    return Ptr(new Tag2Sub10(*this));
+    return std::make_shared <Tag2Sub10> (*this);
 }

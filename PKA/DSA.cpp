@@ -4,7 +4,7 @@ std::vector <PGPMPI> new_DSA_public(const uint32_t & L, const uint32_t & N){
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     // random prime q
     PGPMPI q = bintompi("1" + BBS().rand(N - 1));
@@ -32,7 +32,7 @@ std::vector <PGPMPI> new_DSA_public(const uint32_t & L, const uint32_t & N){
 }
 
 std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub){
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI x = 0;
     std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesnt work for some reason
@@ -64,7 +64,7 @@ std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub){
 }
 
 std::vector <PGPMPI> DSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub, PGPMPI k){
-    BBS(static_cast <PGPMPI> (static_cast <int> (now()))); // seed just in case not seeded
+    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bool set_k = (k == 0);
 

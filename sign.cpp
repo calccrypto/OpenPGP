@@ -4,12 +4,12 @@
 ID::Ptr find_signer_id(const PGPSecretKey & k){
     for(Packet::Ptr const & p : k.get_packets()){
         if (p -> get_tag() == 13){
-            std::string data = p -> raw();
-            return std::make_shared <Tag13> (data);
+            std::string raw = p -> raw();
+            return std::make_shared <Tag13> (raw);
         }
         if (p -> get_tag() == 17){
-            std::string data = p -> raw();
-            return std::make_shared <Tag17> (data);
+            std::string raw = p -> raw();
+            return std::make_shared <Tag17> (raw);
         }
     }
     return nullptr;
@@ -26,7 +26,7 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, con
         return DSA_sign(digest, pri, pub);
     }
     else{
-        std::stringstream s; s << static_cast <int> (pka);
+        std::stringstream s; s << static_cast <unsigned int> (pka);
         throw std::runtime_error("Error: Undefined or incorrect PKA number: " + s.str());
     }
     return {};
@@ -275,7 +275,7 @@ Tag2::Ptr standalone_signature(const Tag5::Ptr & pri, const Tag2::Ptr & src, con
 
 Tag2::Ptr sign_primary_key(const Tag5::Ptr & pri, const ID::Ptr & id, const std::string & passphrase, const uint8_t cert, const uint8_t hash){
     if ((cert < 0x10) || (cert > 0x13)){
-        std::stringstream s; s << static_cast <int> (cert);
+        std::stringstream s; s << static_cast <unsigned int> (cert);
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
@@ -311,7 +311,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     }
 
     if ((cert < 0x10) || (cert > 0x13)){
-        std::stringstream s; s << static_cast <int> (cert);
+        std::stringstream s; s << static_cast <unsigned int> (cert);
         throw std::runtime_error("Error: Invalid Certification Value: " + s.str());
     }
 
@@ -479,8 +479,8 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     Tag6::Ptr signee_primary = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 6){
-            std::string data = p -> raw();
-            signee_primary = std::make_shared <Tag6> (data);
+            std::string raw = p -> raw();
+            signee_primary = std::make_shared <Tag6> (raw);
             break;
         }
     }
@@ -493,8 +493,8 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     Tag14::Ptr signee_subkey = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 14){
-            std::string data = p -> raw();
-            signee_subkey = std::make_shared <Tag14> (data);
+            std::string raw = p -> raw();
+            signee_subkey = std::make_shared <Tag14> (raw);
             break;
         }
     }

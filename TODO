@@ -4,3 +4,4 @@ encrypt+sign stuff
 finish sign functions
 find packets properly (check if uid is associated with key, etc)
 deal with partial packets properly
+add encrypt/decrypt with passphrase

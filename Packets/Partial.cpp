@@ -55,5 +55,5 @@ void Partial::set_stream(const std::string & data){
 }
 
 Packet::Ptr Partial::clone() const{
-    return Ptr(new Partial(*this));
+    return std::make_shared <Partial> (*this);
 }

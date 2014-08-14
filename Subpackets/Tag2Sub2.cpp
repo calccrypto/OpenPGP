@@ -33,5 +33,5 @@ void Tag2Sub2::set_time(const time_t t){
 }
 
 Tag2Subpacket::Ptr Tag2Sub2::clone() const{
-    return Ptr(new Tag2Sub2(*this));
+    return std::make_shared <Tag2Sub2> (*this);
 }

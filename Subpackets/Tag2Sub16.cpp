@@ -36,5 +36,5 @@ void Tag2Sub16::set_keyid(const std::string & k){
 }
 
 Tag2Subpacket::Ptr Tag2Sub16::clone() const{
-    return Ptr(new Tag2Sub16(*this));
+    return std::make_shared <Tag2Sub16> (*this);
 }
