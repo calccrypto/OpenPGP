@@ -59,7 +59,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
         // 9
         C += xor_strings(FRE, data.substr(0, BS));
         unsigned int x = BS;
-        while (x < data.size()){
+        while ((x - BS) < data.size()){
             // 10
             FR = C.substr(x + 2, BS);
             // 11
@@ -76,7 +76,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
         C += xor_strings(FRE.substr(2, BS - 2), data.substr(0, BS));
         C = C.substr(0, BS << 1);
         unsigned int x = BS;
-        while (x < data.size()){
+        while ((x - BS) < data.size()){
             // 10
             FR = C.substr(x, BS);
             // 11

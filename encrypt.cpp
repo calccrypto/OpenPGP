@@ -122,7 +122,6 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, to_encrypt + tag19.write(), session_key, prefix));
         encrypted = std::make_shared<Tag18>(tag18);
     }
-    std::cout << hexlify(encrypted -> raw()) << std::endl;
 
     return encrypted;
 }
