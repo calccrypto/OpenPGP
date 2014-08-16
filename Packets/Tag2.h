@@ -67,7 +67,7 @@ class Tag2 : public Packet{
         uint8_t get_type() const;
         uint8_t get_pka() const;
         uint8_t get_hash() const;
-        std::string get_left16() const;// whatever is stored, not calculated
+        std::string get_left16() const; // whatever is stored, not calculated
         std::vector <PGPMPI> get_mpi() const;
 
         // special functions: works differently depending on version
@@ -78,8 +78,8 @@ class Tag2 : public Packet{
         std::vector <Tag2Subpacket::Ptr> get_hashed_subpackets_clone() const;
         std::vector <Tag2Subpacket::Ptr> get_unhashed_subpackets() const;
         std::vector <Tag2Subpacket::Ptr> get_unhashed_subpackets_clone() const;
-        std::string get_up_to_hashed() const;             // used for signature trailer
-        std::string get_without_unhashed() const;         // used for signature type 0x50
+        std::string get_up_to_hashed() const;                   // used for signature trailer
+        std::string get_without_unhashed() const;               // used for signature type 0x50
 
         void set_pka(const uint8_t p);
         void set_type(const uint8_t t);
@@ -93,6 +93,8 @@ class Tag2 : public Packet{
 
         void set_hashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & h);
         void set_unhashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & u);
+
+        std::string find_subpacket(const uint8_t sub) const;    // find a subpacket within Signature Packet; returns raw data of last subpacket found
 
         Packet::Ptr clone() const;
         Tag2 & operator =(const Tag2 & copy);

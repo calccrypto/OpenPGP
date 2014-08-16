@@ -178,7 +178,7 @@ void Tag2::read(std::string & data, const uint8_t part){
         hash = data[3];
         uint16_t hashed_size = toint(data.substr(4, 2), 256);
         data = data.substr(6, data.size() - 6);
-        
+
         // hashed subpackets
         std::string hashed = data.substr(0, hashed_size);
         data = data.substr(hashed_size, data.size() - hashed_size);
@@ -485,6 +485,34 @@ void Tag2::set_unhashed_subpackets(const std::vector <Tag2Subpacket::Ptr> & u){
         unhashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
+}
+
+std::string Tag2::find_subpacket(const uint8_t sub) const{
+    /*
+    5.2.4.1. Subpacket Hints
+
+        It is certainly possible for a signature to contain conflicting
+        information in subpackets. For example, a signature may contain
+        multiple copies of a preference or multiple expiration times. In
+        most cases, an implementation SHOULD use the last subpacket in the
+        signature, but MAY use any conflict resolution scheme that makes
+        more sense.
+    */
+
+    std::string out;
+    for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+        if (s -> get_type() == sub){
+            out = s -> raw();
+            break;
+        }
+    }
+    for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+        if (s -> get_type() == sub){
+            out = s -> raw();
+            break;
+        }
+    }
+    return out;
 }
 
 Packet::Ptr Tag2::clone() const{

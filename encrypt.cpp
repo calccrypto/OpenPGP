@@ -73,52 +73,21 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
             // }
         // }
 
-        // uint8_t h = 2;
+        // uint8_t h = 2; // default SHA1
         // uint8_t c = comp;
         // // if a signature packet was found
         // if (tag2){
             // // check for preferred hash algorithms
-            // bool found = false;
-            // for(Tag2Subpacket::Ptr const & s : tag2 -> get_hashed_subpackets()){
-                // if (s -> get_type() == 21){
-                    // std::string raw = s -> raw();
-                    // Tag2Sub21 tag2sub21(raw);
-                    // h = tag2sub21.get_pha()[0]; // take first one
-                    // found = true;
-                    // break;
-                // }
+            // std::string raw = tag2 -> find_subpacket(21);
+            // if (raw.size()){
+                // Tag2Sub21 tag2sub21(raw);
+                // h = tag2sub21.get_pha()[0]; // use first preferred hash algorithm
             // }
-            // if (!found){
-                // for(Tag2Subpacket::Ptr const & s : tag2 -> get_unhashed_subpackets()){
-                    // if (s -> get_type() == 21){
-                        // std::string raw = s -> raw();
-                        // Tag2Sub21 tag2sub21(raw);
-                        // h = tag2sub21.get_pha()[0]; // take first one
-                        // break;
-                    // }
-                // }
-            // }
-
             // // check for preferred compression algorithms
-            // found = false;
-            // for(Tag2Subpacket::Ptr const & s : tag2 -> get_hashed_subpackets()){
-                // if (s -> get_type() == 22){
-                    // std::string raw = s -> raw();
-                    // Tag2Sub22 tag2sub22(raw);
-                    // c = tag2sub22.get_pca()[0]; // take first one
-                    // found = true;
-                    // break;
-                // }
-            // }
-            // if (!found){
-                // for(Tag2Subpacket::Ptr const & s : tag2 -> get_unhashed_subpackets()){
-                    // if (s -> get_type() == 22){
-                        // std::string raw = s -> raw();
-                        // Tag2Sub22 tag2sub22(raw);
-                        // c = tag2sub22.get_pca()[0]; // take first one
-                        // break;
-                    // }
-                // }
+            // raw = tag2 -> find_subpacket(22);
+            // if (raw.size()){
+                // Tag2Sub22 tag2sub22(raw);
+                // h = tag2sub22.get_pca()[0]; // use first preferred compression algorithm
             // }
         // }
         // to_encrypt = sign_message(*signer, sig_passphrase, filename, tag11.raw(), h, c).raw();
