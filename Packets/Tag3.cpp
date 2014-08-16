@@ -119,12 +119,7 @@ void Tag3::set_key(const std::string & pass, const std::string & sk){
     std::cerr << "Warning: Tag3::set_key is untested. Potentially incorrect" << std::endl;
     esk.reset();
     if (!sk.size()){
-        if (sk[0] == 2){ // Triple DES
-            esk = std::make_shared<std::string>(use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass.substr(1, 8), std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sk[0])), 0), pass.substr(9, 8), pass.substr(17, 8)));
-        }
-        else{
-            esk = std::make_shared<std::string>(use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sk[0])), 0)));
-        }
+        esk = std::make_shared<std::string>(use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sk[0])), 0)));
     }
     size = raw().size();
 }

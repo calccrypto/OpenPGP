@@ -134,12 +134,7 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
     }
 
     // decrypt data
-    if (sym == 2){ // Triple DES
-        data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key.substr(0, 8), session_key.substr(8, 8), session_key.substr(16, 8));
-    }
-    else{
-        data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key);
-    }
+    data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key);
 
     // strip extra data
     if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)

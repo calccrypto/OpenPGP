@@ -90,21 +90,20 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
                 // h = tag2sub22.get_pca()[0]; // use first preferred compression algorithm
             // }
         // }
-        // to_encrypt = sign_message(*signer, sig_passphrase, filename, tag11.raw(), h, c).raw();
+        // to_encrypt = sign_message(*signer, sig_passphrase, filename, tag11.write(2), h, c).write(2);
     // }
 
     Packet::Ptr encrypted = nullptr;
 
     if (!mdc){
-        to_encrypt = tag11.raw();
-
+    to_encrypt = tag11.raw();
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
         tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, PGP_compress(comp, to_encrypt), session_key, prefix));
         encrypted = std::make_shared<Tag9>(tag9);
     }
     else{
-        to_encrypt = tag11.write(2);
+    to_encrypt = tag11.write(2);
         if (comp){
             // Compressed Data Packet (Tag 8)
             Tag8 tag8;
