@@ -135,6 +135,7 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 
     // decrypt data
     data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key);
+    std::cout << hexlify(data) << std::endl;
 
     // strip extra data
     if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)

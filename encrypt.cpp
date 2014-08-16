@@ -51,6 +51,8 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     tag11.set_time(0);
     tag11.set_literal(data);
 
+    to_encrypt = tag11.write(2);
+
     // // if message is to be signed
     // if (signer){
         // // find preferred hash and compression algorithms of the signer
@@ -96,14 +98,12 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     Packet::Ptr encrypted = nullptr;
 
     if (!mdc){
-    to_encrypt = tag11.raw();
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
-        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, PGP_compress(comp, to_encrypt), session_key, prefix));
+        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, to_encrypt, session_key, prefix));
         encrypted = std::make_shared<Tag9>(tag9);
     }
     else{
-    to_encrypt = tag11.write(2);
         if (comp){
             // Compressed Data Packet (Tag 8)
             Tag8 tag8;
@@ -122,6 +122,7 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, to_encrypt + tag19.write(), session_key, prefix));
         encrypted = std::make_shared<Tag18>(tag18);
     }
+    std::cout << hexlify(encrypted -> raw()) << std::endl;
 
     return encrypted;
 }
