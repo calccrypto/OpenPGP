@@ -37,10 +37,12 @@ std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, co
     return pka_encrypt(pka, rawtompi(data), pub);
 }
 
-Packet::Ptr encrypt_data(const std::string & session_key, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
+Packet::Ptr encrypt_data(const std::string & session_key, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc, const PGPSecretKey::Ptr & signer, const std::string & sig_passphrase){
     // generate prefix
     uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
     std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1, '0'));
+
+    std::string to_encrypt;
 
     // put data in Literal Data Packet
     Tag11 tag11;
@@ -49,40 +51,114 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     tag11.set_time(0);
     tag11.set_literal(data);
 
+    // // if message is to be signed
+    // if (signer){
+        // // find preferred hash and compression algorithms of the signer
+        // // find signing key id
+        // Tag5::Ptr tag5 = find_signing_key(*signer, 5);
+        // std::string keyid = tag5 -> get_keyid();
+        // tag5.reset();
+
+        // // find signature packet of signing key
+        // Tag2::Ptr tag2 = nullptr;
+        // for(Packet::Ptr const & p : signer -> get_packets()){
+            // if (p -> get_tag() == 2){
+                // std::string raw = p -> raw();
+                // Tag2 sig(raw);
+
+                // if (sig.get_keyid() == keyid){
+                    // tag2 = std::make_shared <Tag2> (sig);
+                    // break;
+                // }
+            // }
+        // }
+
+        // uint8_t h = 2;
+        // uint8_t c = comp;
+        // // if a signature packet was found
+        // if (tag2){
+            // // check for preferred hash algorithms
+            // bool found = false;
+            // for(Tag2Subpacket::Ptr const & s : tag2 -> get_hashed_subpackets()){
+                // if (s -> get_type() == 21){
+                    // std::string raw = s -> raw();
+                    // Tag2Sub21 tag2sub21(raw);
+                    // h = tag2sub21.get_pha()[0]; // take first one
+                    // found = true;
+                    // break;
+                // }
+            // }
+            // if (!found){
+                // for(Tag2Subpacket::Ptr const & s : tag2 -> get_unhashed_subpackets()){
+                    // if (s -> get_type() == 21){
+                        // std::string raw = s -> raw();
+                        // Tag2Sub21 tag2sub21(raw);
+                        // h = tag2sub21.get_pha()[0]; // take first one
+                        // break;
+                    // }
+                // }
+            // }
+
+            // // check for preferred compression algorithms
+            // found = false;
+            // for(Tag2Subpacket::Ptr const & s : tag2 -> get_hashed_subpackets()){
+                // if (s -> get_type() == 22){
+                    // std::string raw = s -> raw();
+                    // Tag2Sub22 tag2sub22(raw);
+                    // c = tag2sub22.get_pca()[0]; // take first one
+                    // found = true;
+                    // break;
+                // }
+            // }
+            // if (!found){
+                // for(Tag2Subpacket::Ptr const & s : tag2 -> get_unhashed_subpackets()){
+                    // if (s -> get_type() == 22){
+                        // std::string raw = s -> raw();
+                        // Tag2Sub22 tag2sub22(raw);
+                        // c = tag2sub22.get_pca()[0]; // take first one
+                        // break;
+                    // }
+                // }
+            // }
+        // }
+        // to_encrypt = sign_message(*signer, sig_passphrase, filename, tag11.raw(), h, c).raw();
+    // }
+
     Packet::Ptr encrypted = nullptr;
 
     if (!mdc){
+        to_encrypt = tag11.raw();
+
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
-        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, PGP_compress(comp, tag11.raw()), session_key, prefix));
-        std::string raw = tag9.raw();
-        encrypted = std::make_shared<Tag9>();
-        encrypted -> read(raw);
+        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, PGP_compress(comp, to_encrypt), session_key, prefix));
+        encrypted = std::make_shared<Tag9>(tag9);
     }
     else{
-        // Compressed Data Packet (Tag 8)
-        Tag8 tag8;
-        tag8.set_comp(comp);
-        tag8.set_data(tag11.write(2)); // put source data into compressed packet
-
-        // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
-        Tag18 tag18;
-        tag18.set_protected_data(tag8.write(2)); // encrypt compressed packet
+        to_encrypt = tag11.write(2);
+        if (comp){
+            // Compressed Data Packet (Tag 8)
+            Tag8 tag8;
+            tag8.set_comp(comp);
+            tag8.set_data(to_encrypt); // put source data into compressed packet
+            to_encrypt = tag8.write(2);
+        }
 
         // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
-        tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + tag18.get_protected_data() + "\xd3\x14"));
+        tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
 
+        // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
+        Tag18 tag18;
         // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
-        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, tag18.get_protected_data() + tag19.write(), session_key, prefix));
-        std::string raw = tag18.raw();
-        encrypted = std::make_shared<Tag18>();
-        encrypted -> read(raw);
+        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, to_encrypt + tag19.write(), session_key, prefix));
+        encrypted = std::make_shared<Tag18>(tag18);
     }
+
     return encrypted;
 }
 
-PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
+PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc, const PGPSecretKey::Ptr & signer, const std::string & sig_passphrase){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
@@ -129,27 +205,26 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
     tag1 -> set_mpi(pka_encrypt(public_key -> get_pka(), m, mpi));
 
     // encrypt data and put it into a packet
-    Packet::Ptr encrypted = encrypt_data(session_key, data, filename, sym_alg, comp, mdc);
+    Packet::Ptr encrypted = encrypt_data(session_key, data, filename, sym_alg, comp, mdc, signer, sig_passphrase);
 
     // write data to output container
     PGPMessage out;
     out.set_ASCII_Armor(0);
-    std::vector <std::pair <std::string, std::string> > header;
-    header.push_back(std::pair <std::string, std::string> ("Version", "cc"));
-    out.set_Armor_Header(header);
+    out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
     out.set_packets({tag1, encrypted});
 
-    // erase data
+    // clear data
     packets.clear();
     public_key.reset();
     tag1.reset();
     m = 0;
     session_key = "";
     encrypted.reset();
+
     return out;
 }
 
-PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc){
+PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc, const PGPSecretKey::Ptr & signer, const std::string & sig_passphrase){
     std::cerr << "Warning: encrypt_sym is untested. Potentially incorrect" << std::endl;
 
     // generate Symmetric-Key Encrypted Session Key Packets (Tag 3)
@@ -175,24 +250,22 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
 
     // encrypt session key
     std::string encrypted_session_key;
-    
+
     // encrypt data
-    Packet::Ptr encrypted = encrypt_data(encrypted_session_key, data, filename, sym_alg, comp, mdc);
-    
+    Packet::Ptr encrypted = encrypt_data(encrypted_session_key, data, filename, sym_alg, comp, mdc, signer, sig_passphrase);
+
     // write to output container
     PGPMessage out;
     out.set_ASCII_Armor(0);
-    std::vector <std::pair <std::string, std::string> > header;
-    header.push_back(std::pair <std::string, std::string> ("Version", "cc"));
-    out.set_Armor_Header(header);
+    out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
     out.set_packets({tag3, encrypted});
-    
+
     // clear data
     s2k.reset();
     tag3.reset();
     session_key = "";
     encrypted_session_key = "";
     encrypted.reset();
-    
+
     return out;
 }

@@ -1,7 +1,7 @@
 #include "sign.h"
 
 // possible to mess up
-ID::Ptr find_signer_id(const PGPSecretKey & k){
+ID::Ptr find_user_id(const PGPSecretKey & k){
     for(Packet::Ptr const & p : k.get_packets()){
         if (p -> get_tag() == 13){
             std::string raw = p -> raw();
@@ -79,7 +79,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const 
         throw std::runtime_error("Error: No Private Key packet found.");
     }
 
-    ID::Ptr id = find_signer_id(pri);
+    ID::Ptr id = find_user_id(pri);
     if (!id){
         throw std::runtime_error("Error: No ID packet found.");
     }
@@ -163,7 +163,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
 
     // find ID packet
     // need better search method; possible to mess up
-    ID::Ptr id = find_signer_id(pri);
+    ID::Ptr id = find_user_id(pri);
     if (!id){
         throw std::runtime_error("Error: Cannot find Signing Key ID packet.");
     }

@@ -114,11 +114,12 @@ void PGPMessage::decompress() {
     // check if compressed
     if ((packets.size() == 1) && (packets[0] -> get_tag() == 8)){
         std::string raw = packets[0] -> raw();
-        packets.clear();                        // free up pointer to compressed packet
-        comp = std::make_shared <Tag8> (raw);   // put data in a Compressed Data Packet
-        raw = comp -> get_data();               // get decompressed data
-        comp -> set_data("");                   // free up space taken up by compressed data; also prevents data from showing twice
-        read(raw);                              // read decompressed data into packets
+        packets.clear();                                    // free up pointer to compressed packet
+        comp = std::make_shared <Tag8> (raw);               // put data in a Compressed Data Packet
+        raw = comp -> get_data();                           // get decompressed data
+        comp -> set_data("");                               // free up space taken up by compressed data; also prevents data from showing twice
+        comp -> set_partial(packets[0] -> get_partial());   
+        read(raw);                                          // read decompressed data into packets
     }
 }
 
@@ -197,7 +198,7 @@ std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
     if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
         return packet_string;                  // return raw data
     }
-    std::string out = "-----BEGIN PGP Message-----\n";
+    std::string out = "-----BEGIN PGP MESSAGE-----\n";
     for(std::pair <std::string, std::string> const & key : Armor_Header){
         out += key.first + ": " + key.second + "\n";
     }

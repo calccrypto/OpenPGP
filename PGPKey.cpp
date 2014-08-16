@@ -425,7 +425,7 @@ Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std:
                         if (signer -> get_keyid() == keyid){
                             return signer;
                         }
-                        // singer.reset();
+                        signer.reset();
                     }
                     else{
                         return signer;

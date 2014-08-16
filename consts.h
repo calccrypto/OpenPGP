@@ -282,7 +282,6 @@ const std::map <uint8_t, std::string> Signature_Types = {
 
 // Subpacket Tags
 const std::map <uint8_t, std::string> Subpacket_Tags = {
-
                 std::make_pair(0, "Reserved"),
                 std::make_pair(1, "Reserved"),
                 std::make_pair(2, "Signature Creation Time"),

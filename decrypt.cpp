@@ -79,7 +79,7 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
 
 PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile, const PGPPublicKey::Ptr & verify){
     // currently packet tag being operated on
-    uint8_t packet;                             
+    uint8_t packet;
 
     // get blocksize of symmetric key algorithm
     unsigned int BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;
@@ -177,7 +177,9 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
         // expect a compressed or literal data packet
         bool format;
         uint8_t partial = 0;
+
         data = read_packet_header(data, packet, format, partial);
+
         if (packet == 8){
             Tag8 tag8(data);
             data = tag8.get_data();
@@ -260,18 +262,13 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
 
     sec.reset();
 
+    // decrypt the data with the extracted key
     PGPMessage decrypted = decrypt_data(sym, m, session_key, writefile, verify);
 
     std::string out = "";
     // if signing key provided, check the signature
     if (verify){
-        if (verify_message(*verify, decrypted)){
-            out = "Message was signed by key ";
-        }
-        else{
-            out = "Warning: Message not signed by key ";
-        }
-        out += verify -> keyid() + ".\n";
+        out = "Message was" + std::string(verify_message(*verify, decrypted)?"":" not") + " signed by key " + hexlify(verify -> keyid()) + ".\n";
     }
 
     // extract data

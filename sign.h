@@ -48,7 +48,7 @@ THE SOFTWARE.
 
 // internal functions
 // possibly returns wrong ID when multiple ID packets are present
-ID::Ptr find_signer_id(const PGPSecretKey & k);
+ID::Ptr find_user_id(const PGPSecretKey & k);
 
 std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, const std::vector <PGPMPI> & pub, const std::vector <PGPMPI> & pri, const uint8_t hash = 2);
 std::vector <PGPMPI> pka_sign(const std::string & digest, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t hash = 2);

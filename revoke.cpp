@@ -178,7 +178,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    ID::Ptr uid = find_signer_id(pri);
+    ID::Ptr uid = find_user_id(pri);
     if (!uid){
         throw std::runtime_error("Error: No User ID packet found.");
     }

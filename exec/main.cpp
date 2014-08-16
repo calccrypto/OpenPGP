@@ -57,7 +57,7 @@ const std::vector <std::string> commands = {
     // 3
     "list key_file",                                                        // list keys in file, like 'gpg --list-keys'
     // 4
-    "show -p|-c filename [options]"                                         // display contents of a key file; -k for general PGP data, -c for cleartext signed data
+    "show -p|-c filename [options]\n"                                       // display contents of a key file; -k for general PGP data, -c for cleartext signed data
     "        options:\n"
     "            -o output file\n",                                         // where to output data
     // 5
@@ -87,13 +87,15 @@ const std::vector <std::string> commands = {
     "            -c compression algorithm\n"                                // Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2; default ZLIB; see consts.h or RFC 4880 sec 9.3 for details
     "            -d delete original?\n"                                     // t or f; default f
     "            -mdc use_mdc?\n"                                           // t or f; default t
-    "            -s symmetric encryption algorithm",                        // default AES256; see consts.h or RFC 4880 sec 9.2 for details
+    "            -p passphrase for signing key\n"                           // used with "-sign"
+    "            -sign private key file\n"                                  // private key filename; option "-p" must also be used
+    "            -sym symmetric encryption algorithm",                      // default AES256; see consts.h or RFC 4880 sec 9.2 for details
     // 8
     "decrypt-pka private_key passphrase data_file [options]\n"              // decrypt with a private key
     "        options:\n"
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
-    "            -d delete original?n"                                      // t or f; default f
-    "            -v signing public key",                                    // public key file of signer
+    "            -d delete original?\n"                                     // t or f; default f
+    "            -v signing public key\n"                                   // public key file of signer
     "            -w write to file?",                                        // t or f; default t
     // 9
     "revoke target revocation_certificate [options]\n"                      // revoke a key with a revocation certificate
@@ -182,7 +184,7 @@ std::string find_command(const std::string & input){
     bool found = false;
     for(const std::string & c : commands){
         if (c.substr(0, len) == input){ // only check if front matches
-            out << c << "\n";
+            out << c << "\n\n";
             found = true;
         }
     }
@@ -230,7 +232,7 @@ bool parse_command(std::string & input){
             if (!which.size()){
                 std::cout << "\nCommands:\n";
                 for(const std::string & c : commands){
-                    std::cout << "    " << c << std::endl;
+                    std::cout << "    " << c << "\n\n";
                 }
                 std::cout << std::endl;
             }
@@ -264,7 +266,7 @@ bool parse_command(std::string & input){
             std::cout << "Passed" << std::endl;
 
             std::cout << "Encrypt Message "; std::cout.flush();
-            PGPMessage en = encrypt_pka(pub, message);
+            PGPMessage en = encrypt_pka(pub, message, "", 9, 2, true, nullptr, "");
             std::cout << "Passed" << std::endl;
 
             std::cout << "Decrypt Message "; std::cout.flush();
@@ -404,13 +406,15 @@ bool parse_command(std::string & input){
             options["-c"] = "ZLIB";
             options["-d"] = "f";
             options["-mdc"] = "t";
-            options["-s"] = "AES256";
+            // options["-p"] = "";
+            options["-sign"] = "";
+            options["-sym"] = "AES256";
             parse_options(tokens, options);
             options["-a"] = lower(options["-a"]);
             options["-c"] = upper(options["-c"]);
-            options["-d"] = upper(options["-d"]);
-            options["-mdc"] = upper(options["-mdc"]);
-            options["-s"] = upper(options["-s"]);
+            options["-d"] = lower(options["-d"]);
+            options["-mdc"] = lower(options["-mdc"]);
+            options["-sym"] = upper(options["-sym"]);
 
             std::ifstream d(data_file.c_str(), std::ios::binary);
             if (!d){
@@ -421,14 +425,32 @@ bool parse_command(std::string & input){
                 throw std::runtime_error("Error: File '" + pub_file + "' not opened.");
             }
 
+            PGPSecretKey::Ptr signer = nullptr;
+            if (options["-sign"].size()){
+                if (options.find("-p") == options.end()){ // need to check whether or not "-p" was used, not whether or not the passphrase is an empty string
+                    throw std::runtime_error("Error: Option \"-p\" and singer passphrase needed.");
+                }
+
+                std::ifstream signing(options["-sign"], std::ios::binary);
+                if (!signing){
+                    throw std::runtime_error("Error: File '" + options["-sign"] + "' not opened.");
+                }
+                signer = std::make_shared <PGPSecretKey> (signing);
+            }
+            else {
+                if (options.find("-p") != options.end()){
+                    std::cerr << "Warning: Passphrase provided without a Signing Key. Ignored." << std::endl;
+                }
+            }
+
             std::stringstream s;
             s << d.rdbuf();
 
             PGPPublicKey key(k);
 
-            output(encrypt_pka(key, s.str(), data_file, Symmetric_Algorithms_Numbers.at(options["-s"]), Compression_Numbers.at(options["-c"]), (options["-mdc"] == "t")).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
+            output(encrypt_pka(key, s.str(), data_file, Symmetric_Algorithms_Numbers.at(options["-sym"]), Compression_Numbers.at(options["-c"]), (options["-mdc"] == "t"), signer, options["-p"]).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
 
-            if (((options["-f"] == "t") || (options["-f"] == "b")) && (tolower(options["-d"][0]) == 't')){
+            if (((options["-f"] == "t") || (options["-f"] == "b")) && (options["-d"] == "t")){
                 remove(data_file.c_str());
             }
         }
@@ -460,6 +482,9 @@ bool parse_command(std::string & input){
             PGPPublicKey::Ptr signer = nullptr;
             if (options["-v"].size()){
                 std::ifstream v(options["-v"], std::ios::binary);
+                if (!v){
+                    throw std::runtime_error("Error: File '" + options["-v"] + "' not opened.");
+                }
                 signer = std::make_shared <PGPPublicKey> (v);
             }
 

@@ -5,3 +5,6 @@ encrypt+sign stuff
 deal with partial packets properly
 finish sign functions
 find packets properly (check if uid is associated with key, etc)
+use Parameter Objects to reduce argument count for functions
+encrypt for multiple recipients
+sign with multiple keys
