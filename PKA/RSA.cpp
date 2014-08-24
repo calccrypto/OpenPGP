@@ -3,7 +3,7 @@ std::vector <PGPMPI> RSA_keygen(const unsigned int & bits){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI p = 3, q = 3;
-	while (p == q){
+    while (p == q){
         p = bintompi(BBS().rand(bits));
         q = bintompi(BBS().rand(bits));
         p = nextprime(p);
@@ -13,15 +13,15 @@ std::vector <PGPMPI> RSA_keygen(const unsigned int & bits){
     PGPMPI n = p * q;
     PGPMPI tot = (p - 1) * (q - 1);
     PGPMPI e = bintompi(BBS().rand(bits));
-	e += ((e & 1) == 0);
+    e += ((e & 1) == 0);
     PGPMPI gcd = 0;
-	while (gcd != 1){
+    while (gcd != 1){
         e += 2;
         gcd = mpigcd(tot, e);
     }
     PGPMPI d;
     d = invert(e, tot);
-	return {n, e, d}; // split this into {n, e} and {d}
+    return {n, e, d}; // split this into {n, e} and {d}
 }
 
 PGPMPI RSA_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub){
