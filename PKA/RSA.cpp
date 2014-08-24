@@ -21,7 +21,7 @@ std::vector <PGPMPI> RSA_keygen(const unsigned int & bits){
     }
     PGPMPI d;
     d = invert(e, tot);
-	return {e, n, d}; // split this into {e, n} and {d}
+	return {n, e, d}; // split this into {n, e} and {d}
 }
 
 PGPMPI RSA_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub){
