@@ -1,6 +1,6 @@
 # OpenPGP Makefile
 CXX?=g++
-LFLAGS=-lgmp -lgmpxx -lbz2 -lz
+LFLAGS=
 CFLAGS=-std=c++11 -Wall -c
 AR=ar
 TARGET=libOpenPGP.a
@@ -85,7 +85,7 @@ sign.o: sign.h sign.cpp common/includes.h Compress/Compress.h Packets/packets.h 
 	$(CXX) $(CFLAGS) sign.cpp
 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPMessage.h PGPKey.h PKCS1.h sigcalc.h
-	$(CXX) $(CFLAGS) verify.cpp -lgmp -lgmpxx
+	$(CXX) $(CFLAGS) verify.cpp
 
 $(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
 	$(AR) -r $(TARGET) cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common/*.o Compress/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o

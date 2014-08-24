@@ -9,13 +9,13 @@ debug: all
 all: compress.o bzip2.o zlib.o
 
 compress.o: Compress.h Compress.cpp pgpbzip2.h pgpzlib.h
-	$(CXX) $(CFLAGS) Compress.cpp -lbz2 -lz
+	$(CXX) $(CFLAGS) Compress.cpp
 
 bzip2.o: pgpbzip2.h pgpbzip2.cpp
-	$(CXX) $(CFLAGS) pgpbzip2.cpp -lbz2
+	$(CXX) $(CFLAGS) pgpbzip2.cpp
 
 zlib.o: pgpzlib.h pgpzlib.cpp
-	$(CXX) $(CFLAGS) pgpzlib.cpp -lz
+	$(CXX) $(CFLAGS) pgpzlib.cpp
 
 clean:
 	rm -f *.o

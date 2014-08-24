@@ -22,8 +22,8 @@ gtest:
 	$(CXX) $(CFLAGS) -c -Igtest-1.7.0 gtest-1.7.0/src/gtest-all.cc -o gtest-all.o
 	$(AR) -r libgtest.a gtest-all.o
 
-$(TARGET): main.cpp libs testcases gtest
-	$(CXX) $(CFLAGS) main.cpp testcases/*.o $(LFLAGS) -o $(TARGET)
+$(TARGET): main.cc libs testcases gtest
+	$(CXX) $(CFLAGS) main.cc testcases/*.o $(LFLAGS) -o $(TARGET)
 
 clean:
 	rm -f $(TARGET) *.o *.a
