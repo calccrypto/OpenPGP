@@ -28,3 +28,18 @@ TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
         }
     }
 }
+
+TEST(RSATest, test_rsa_keygen) {
+    std::vector <PGPMPI> key = RSA_keygen(512);
+    std::vector <PGPMPI> pub = {key[0], key[1]};
+    std::vector <PGPMPI> pri = {key[2]};
+
+    PGPMPI message = rawtompi("The magic words are squeamish ossifrage\n");
+
+    auto encrypted = RSA_encrypt(message, pub);
+    auto decrypted = RSA_decrypt(encrypted, pri, pub);
+    EXPECT_EQ(decrypted, message);
+
+    auto signature = RSA_sign(message, pri, pub);
+    EXPECT_TRUE(RSA_verify(message, {signature}, pub));
+}
