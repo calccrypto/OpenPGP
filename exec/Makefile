@@ -14,7 +14,7 @@ all: $(TARGET)
 libs:
 	$(MAKE) -C ..
 
-$(TARGET): main.cpp libs
+$(TARGET): main.cpp ../OpenPGP.h libs
 	$(CXX) $(CFLAGS) main.cpp $(LFLAGS) -o $(TARGET)
 
 clean:
