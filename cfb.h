@@ -44,6 +44,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
 std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data);
 // Helper functions
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix = "");
+// always returns prefix + 2 octets + cleartext
 std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key);
 
 // Standard CFB mode

@@ -5,6 +5,8 @@ PGPMPI BBS::state = 0;
 
 PGPMPI BBS::m = 0;
 
+const PGPMPI BBS::two = 2;
+
 void BBS::init(const PGPMPI & seed, const unsigned int & bits, PGPMPI p, PGPMPI q){
     if (!seeded){
         /*
@@ -40,7 +42,7 @@ void BBS::init(const PGPMPI & seed, const unsigned int & bits, PGPMPI p, PGPMPI 
 }
 
 void BBS::r_number(){
-    state = powm(state, PGPMPI(2), m);
+    state = powm(state, two, m);
 }
 
 bool BBS::parity(const std::string & par) const{
@@ -73,12 +75,12 @@ BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q):
     init(SEED, bits, p, q);
 }
 
-std::string BBS::rand(const PGPMPI & bits, const std::string & par){
+std::string BBS::rand(const unsigned int & bits, const std::string & par){
     // returns string because SIZE might be larger than 64 bits
-    std::string out = "";
-    for(PGPMPI x = 0; x < bits; x++){
+    std::string out(bits, '0');
+    for(char & c : out){
         r_number();
-        out += "01"[parity(par)];
+        c += parity(par);
     }
     return out;
 }

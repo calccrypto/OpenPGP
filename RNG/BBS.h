@@ -40,10 +40,11 @@ class BBS{
         Only one "real" instance of BBS exists at a time, since
         seeding once will seed for the entire program.
         */
-        static bool seeded;                                   // whether or not BBS is seeded
-        static PGPMPI state;                               // current state
-        static PGPMPI m;                                   // large integer
-        std::string par;                                      // even, odd, or least
+        static bool seeded;               // whether or not BBS is seeded
+        static PGPMPI state;              // current state
+        static PGPMPI m;                  // large integer
+        const static PGPMPI two;          // constant value of 2
+        std::string par;                  // even, odd, or least
 
         void init(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q);
         void r_number();
@@ -52,6 +53,6 @@ class BBS{
     public:
         BBS(...);
         BBS(const PGPMPI & SEED, const unsigned int & bits = 1024, PGPMPI p = 0, PGPMPI q = 0);
-        std::string rand(const PGPMPI & bits = 1, const std::string & par = "even");
+        std::string rand(const unsigned int & bits = 1, const std::string & par = "even");
 };
 #endif
