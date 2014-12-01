@@ -172,7 +172,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
         x += BS;
     }
     P += xor_strings(FRE, data.substr(x, BS));
-    return prefix + prefix.substr(BS - 2, 2) + P.substr(BS + 2, P.size() - BS - 2);
+    return prefix + prefix.substr(BS - 2, 2) + P.substr(BS, P.size() - BS);
 }
 
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix){
