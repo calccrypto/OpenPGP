@@ -26,6 +26,8 @@ THE SOFTWARE.
 #ifndef __PGPMPI__
 #define __PGPMPI__
 
+#include <cstddef>
+
 #include <gmpxx.h>
 
 #include "common/includes.h"
