@@ -51,7 +51,8 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     tag11.set_time(0);
     tag11.set_literal(data);
 
-    to_encrypt = tag11.write(2);
+    // to_encrypt = tag11.write(2);
+    to_encrypt = tag11.raw();
 
     // // if message is to be signed
     // if (signer){
