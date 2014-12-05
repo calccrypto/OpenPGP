@@ -211,7 +211,7 @@ std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
     out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version);
+        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n";
     if (version < 4){
         out << std::string(tab, ' ') << "    Hashed Material:\n"
             << std::string(tab, ' ') << "        Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"

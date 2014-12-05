@@ -44,6 +44,7 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
 
     // decrypt secret key
     std::string secret_key = use_normal_CFB_decrypt(pri -> get_sym(), pri -> get_secret(), key, pri -> get_IV());
+
     // get checksum and remove it from the string
     const unsigned int hash_size = (pri -> get_s2k_con() == 254)?20:2;
     std::string checksum = secret_key.substr(secret_key.size() - hash_size, hash_size);

@@ -191,7 +191,7 @@ std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet,
     return OpenPGP_CFB_decrypt(alg, packet, data);
 }
 
-std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, std::string & data, std::string & IV){
+std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
@@ -203,7 +203,7 @@ std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, std::string & data, std::str
     return out;
 }
 
-std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, std::string & data, std::string & IV){
+std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
@@ -215,7 +215,7 @@ std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, std::string & data, std::str
     return out;
 }
 
-std::string use_normal_CFB_encrypt(const uint8_t sym_alg, std::string data, std::string key, std::string IV){
+std::string use_normal_CFB_encrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV){
     if (!sym_alg){
         return data;
     }
@@ -223,7 +223,7 @@ std::string use_normal_CFB_encrypt(const uint8_t sym_alg, std::string data, std:
     return normal_CFB_encrypt(alg, data, IV);
 }
 
-std::string use_normal_CFB_decrypt(const uint8_t sym_alg, std::string data, std::string key, std::string IV){
+std::string use_normal_CFB_decrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV){
     if (!sym_alg){
         return data;
     }

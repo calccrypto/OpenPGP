@@ -53,16 +53,17 @@ void Tag5::read_s2k(std::string & data){
 std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size) const{
     unsigned int tab = indents * indent_size;
     std::stringstream out;
+    out << "\n";
     if (s2k_con > 253){
         out << std::string(tab, ' ') << "    String-to-Key Usage Conventions: " << static_cast <unsigned int> (s2k_con) << "\n"
             << std::string(tab, ' ') << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
-            << std::string(tab, ' ') << s2k -> show(indents);
+            << std::string(tab, ' ') << s2k -> show(indents) << "\n";
         if (s2k -> get_type()){
-            out << std::string(tab, ' ') << "    IV: " << hexlify(IV);
+            out << std::string(tab, ' ') << "    IV: " << hexlify(IV) << "\n";
         }
     }
 
-    out << "\n" << std::string(tab, ' ') << "    Encrypted Data (" << secret.size() << " octets):\n        ";
+    out << std::string(tab, ' ') << "    Encrypted Data (" << secret.size() << " octets):\n        ";
     if (pka < 4){
         out << std::string(tab, ' ') << "RSA d, p, q, u";
     }
@@ -86,18 +87,61 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
 
 void Tag5::read(std::string & data, const uint8_t part){
     size = data.size();
-    read_common(data); // read public stuff
+    /*
+        - A Public-Key or Public-Subkey packet, as described above.
+    */
+    read_common(data);
+
+    /*
+        - One octet indicating string-to-key usage conventions. Zero
+        indicates that the secret-key data is not encrypted. 255 or 254
+        indicates that a string-to-key specifier is being given. Any
+        other value is a symmetric-key encryption algorithm identifier.
+    */
     s2k_con = data[0];
     data = data.substr(1, data.size() - 1);
+
     if (s2k_con > 253){
+        /*
+            - [Optional] If string-to-key usage octet was 255 or 254, a oneoctet
+            symmetric encryption algorithm.
+        */
         sym = data[0];
         data = data.substr(1, data.size() - 1);
+
+        /*
+            - [Optional] If string-to-key usage octet was 255 or 254, a
+            string-to-key specifier. The length of the string-to-key
+            specifier is implied by its type, as described above.
+        */
         read_s2k(data);
     }
+
     if (s2k_con){
+        /*
+            - [Optional] If secret data is encrypted (string-to-key usage octet
+            not zero), an Initial Vector (IV) of the same length as the
+            cipher’s block size.
+        */
         IV = data.substr(0, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
+
+        /*
+            - Plain or encrypted multiprecision integers comprising the secret
+            key data. These algorithm-specific fields are as described
+            below.
+
+            - If the string-to-key usage octet is zero or 255, then a two-octet
+            checksum of the plaintext of the algorithm-specific portion (sum
+            of all octets, mod 65536). If the string-to-key usage octet was
+            254, then a 20-octet SHA-1 hash of the plaintext of the
+            algorithm-specific portion. This checksum or hash is encrypted
+            together with the algorithm-specific fields (if string-to-key
+            usage octet is not zero). Note that for all other values, a
+            two-octet checksum is required.
+        */
         data = data.substr(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3, data.size() - (Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3));
     }
+
     secret = data;
 }
 
