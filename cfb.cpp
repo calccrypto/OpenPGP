@@ -112,7 +112,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
             x += BS;
         }
     }
-    else{ // no resynchronization
+    else if (packet == 18){ // no resynchronization
 		/*
 		5.13. Sym. Encrypted Integrity Protected Data Packet (Tag 18)
 
@@ -121,26 +121,28 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
 			data.
 		*/
 
-        // 8
+		// 8. FR is encrypted to produce FRE.
         // FRE = crypt -> encrypt(FR); // not needed
 
-        // 9
-        C += xor_strings(FRE.substr(2, BS - 2), data.substr(0, BS));
-        C = C.substr(0, BS << 1);
+		// 9. FRE is xored with the first BS octets of the given plaintext, now that we have finished encrypting the BS+2 octets of prefixed data. This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of ciphertext.
+        C += xor_strings(FRE, data.substr(0, BS));
 
         unsigned int x = BS;
         while (x < data.size()){
-            // 10
-            FR = C.substr(x, BS);
+            // 10. FR is loaded with C[BS+3] to C[BS + (BS+2)] (which is C11-C18 for an 8-octet block).
+            FR = C.substr(x + 2, BS);
 
-            // 11
+			// 11. FR is encrypted to produce FRE.
             FRE = crypt -> encrypt(FR);
 
-            // 12
-            C += xor_strings(FRE, data.substr(x - 2, BS));
+			// 12. FRE is xored with the next BS octets of plaintext, to produce the next BS octets of ciphertext. These are loaded into FR, and the process is repeated until the plaintext is used up.
+            C += xor_strings(FRE, data.substr(x, BS));
 
             x += BS;
         }
+    }
+    else{
+        throw std::runtime_error("Error: Bad packet type");
     }
     return C;
 }
@@ -163,8 +165,17 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     if (prefix.substr(BS - 2, 2) != check){
         throw std::runtime_error("Error: Bad OpenPGP_CFB check value.");
     }
+
     std::string P = "";
-    unsigned int x = (packet == 9)?2:0; // 7
+    unsigned int x = 2;
+    if (packet == 18){
+        // decrypt first block
+        std::string substr = data.substr(0, BS);
+        P += xor_strings(FRE, substr);
+        FRE = crypt -> encrypt(substr);
+        x += BS;
+    }
+
     while ((x + BS) < data.size()){
         std::string substr = data.substr(x, BS);
         P += xor_strings(FRE, substr);
@@ -172,7 +183,8 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
         x += BS;
     }
     P += xor_strings(FRE, data.substr(x, BS));
-    return prefix + prefix.substr(BS - 2, 2) + P.substr(BS, P.size() - BS);
+    P = P.substr(BS, P.size() - BS);
+    return prefix + prefix.substr(BS - 2, 2) + P;
 }
 
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix){
