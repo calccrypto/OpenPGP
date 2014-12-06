@@ -150,23 +150,23 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 
     // decompress data if necessary
     if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
-        // figure out which compression algorithm was used
-        // uncompressed literal data packet
-        if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            data = Tag11(data).write(0);                            // add in Tag11 headers to be removed later
-        }
-        // BZIP2
-        else if (data.substr(0, 2) == "BZ"){
-            data = PGP_decompress(3, data);
-        }
-        // ZLIB
-        else if ((data.substr(0, 2) == "\x78\x01") || (data.substr(0, 2) == "\x78\x9c") || (data.substr(0, 2) == "\x78\xda")){
-            data = PGP_decompress(2, data);
-        }
-        // DEFLATE
-        else{
-            data = PGP_decompress(1, data);
-        }
+        // // figure out which compression algorithm was used
+        // // uncompressed literal data packet
+        // if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
+            // data = Tag11(data).write(0);                            // add in Tag11 headers to be removed later
+        // }
+        // // BZIP2
+        // else if (data.substr(0, 2) == "BZ"){
+            // data = PGP_decompress(3, data);
+        // }
+        // // ZLIB
+        // else if ((data.substr(0, 2) == "\x78\x01") || (data.substr(0, 2) == "\x78\x9c") || (data.substr(0, 2) == "\x78\xda")){
+            // data = PGP_decompress(2, data);
+        // }
+        // // DEFLATE
+        // else{
+            // data = PGP_decompress(1, data);
+        // }
     }
     else if (packet == 18){
         // expect a compressed or literal data packet
@@ -274,6 +274,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
             out += tag11.out(writefile);
         }
     }
+
     return out;
 }
 
