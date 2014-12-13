@@ -85,15 +85,19 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     // 5. FR is encrypted to produce FRE, the encryption of the first BS octets of ciphertext.
     FRE = crypt -> encrypt(FR);
 
-    // 6. The left two octets of FRE get xored with the next two octets of data that were prefixed to the plaintext. This produces C[BS+1] and C[BS+2], the next two octets of ciphertext.
-    C += xor_strings(FRE.substr(0, 2), prefix.substr(BS - 2, 2));
 
 	if (packet == 9){           // resynchronization
+        // 6. The left two octets of FRE get xored with the next two octets of data that were prefixed to the plaintext. This produces C[BS+1] and C[BS+2], the next two octets of ciphertext.
+        C += xor_strings(FRE.substr(0, 2), prefix.substr(BS - 2, 2));
+
 		// 7. (The resynchronization step) FR is loaded with C[3] through C[BS+2].
         FR = C.substr(2, BS);
 
 		// 8. FR is encrypted to produce FRE.
         FRE = crypt -> encrypt(FR);
+
+        // 9. FRE is xored with the first BS octets of the given plaintext, now that we have finished encrypting the BS+2 octets of prefixed data. This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of ciphertext.
+        C += xor_strings(FRE, data.substr(0, BS));
     }
     else if (packet == 18){     // no resynchronization
 		/*
@@ -103,19 +107,18 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
 			special CFB resynchronization is done after encrypting this prefix
 			data.
 		*/
+
+        // Second block of ciphertext is the 2 repeated octets + the first BS - 2 octets of the plaintext
+        C += xor_strings(FRE, prefix.substr(BS - 2, 2) + data.substr(0, BS - 2));
     }
     else{
         throw std::runtime_error("Error: Bad Packet Type");
     }
 
-    // 9. FRE is xored with the first BS octets of the given plaintext, now that we have finished encrypting the BS+2 octets of prefixed data. This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of ciphertext.
-    unsigned int offset = (packet == 9)?2:0;
-    C += xor_strings(FRE, data.substr(2 - offset, BS));
-
-    unsigned int x = BS;
+    unsigned int x = BS - ((packet == 9)?0:2);
     while (x < data.size()){
         // 10. FR is loaded with C[BS+3] to C[BS + (BS+2)] (which is C11-C18 for an 8-octet block).
-        FR = C.substr(x + offset, BS);
+        FR = C.substr(x + 2, BS);
 
         // 11. FR is encrypted to produce FRE.
         FRE = crypt -> encrypt(FR);
