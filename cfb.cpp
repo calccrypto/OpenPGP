@@ -109,12 +109,13 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     }
 
     // 9. FRE is xored with the first BS octets of the given plaintext, now that we have finished encrypting the BS+2 octets of prefixed data. This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of ciphertext.
-    C += xor_strings(FRE, data.substr(0, BS));
+    unsigned int offset = (packet == 9)?2:0;
+    C += xor_strings(FRE, data.substr(2 - offset, BS));
 
     unsigned int x = BS;
     while (x < data.size()){
         // 10. FR is loaded with C[BS+3] to C[BS + (BS+2)] (which is C11-C18 for an 8-octet block).
-        FR = C.substr(x + 2, BS);
+        FR = C.substr(x + offset, BS);
 
         // 11. FR is encrypted to produce FRE.
         FRE = crypt -> encrypt(FR);
@@ -140,7 +141,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     // 3
     std::string prefix = xor_strings(FRE, FR);
     // 5
-    FRE = crypt -> encrypt(FR); // encryption of ciphertext // FRE = E(E(0) ^ data)
+    FRE = crypt -> encrypt(FR); // encryption of ciphertext
     std::string check = xor_strings(FRE.substr(0, 2), data.substr(BS, 2));
     // 6
     if (prefix.substr(BS - 2, 2) != check){
@@ -148,15 +149,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     }
 
     std::string P = "";
-    unsigned int x = 2;
-    if (packet == 18){
-        // decrypt first block
-        std::string substr = data.substr(0, BS);
-        P += xor_strings(FRE, substr);
-        FRE = crypt -> encrypt(substr);
-        x += BS;
-    }
-
+    unsigned int x = (packet == 9)?2:0;
     while ((x + BS) < data.size()){
         std::string substr = data.substr(x, BS);
         P += xor_strings(FRE, substr);
@@ -166,7 +159,7 @@ std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     P += xor_strings(FRE, data.substr(x, BS));
     P = P.substr(BS, P.size() - BS);
 
-    return prefix + prefix.substr(BS - 2, 2) + P;
+    return prefix + ((packet == 9)?prefix.substr(BS - 2, 2):std::string("")) + P;   // only add prefix 2 octets when resyncing - already shows up without resync
 }
 
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix){
