@@ -70,7 +70,7 @@ const std::map <uint8_t, std::string> BTU = {
 
 // Binary, Text or UTF-8
 const std::map <uint8_t, std::string> Compression_Algorithms = {
-                std::make_pair(0, "Uncompressed"),
+                std::make_pair(0, "UNCOMPRESSED"),
                 std::make_pair(1, "ZIP {RFC1951}"),
                 std::make_pair(2, "ZLIB {RFC1950}"),
                 std::make_pair(3, "BZip2 {BZ2}"),
@@ -89,7 +89,7 @@ const std::map <uint8_t, std::string> Compression_Algorithms = {
 
 // Reverse Compression_Algorithms
 const std::map <std::string, uint8_t> Compression_Numbers = {
-                std::make_pair("Uncompressed", 0),
+                std::make_pair("UNCOMPRESSED", 0),
                 std::make_pair("ZIP", 1),
                 std::make_pair("ZLIB", 2),
                 std::make_pair("BZip2", 3),

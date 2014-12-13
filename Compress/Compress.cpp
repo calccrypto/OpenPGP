@@ -18,7 +18,7 @@ std::string PGP_compress(const uint8_t alg, const std::string & src){
             default:
                 {
                     std::stringstream tmp; tmp << static_cast <unsigned int> (alg);
-                    throw std::runtime_error("Error: Unknown Compression Algorithm value: " + tmp.str());
+                    throw std::runtime_error("Error: Unknown or undefined compression algorithm value: " + tmp.str());
                 }
                 break;
         }

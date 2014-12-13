@@ -46,7 +46,7 @@ const std::vector <std::string> commands = {
     // 3
     "list key_file",                                                        // list keys in file, like 'gpg --list-keys'
     // 4
-    "show -p|-c filename [options]\n"                                       // display contents of a key file; -k for general PGP data, -c for cleartext signed data
+    "show -p|-c filename [options]\n"                                       // display contents of a key file; -p for general PGP data, -c for cleartext signed data
     "        options:\n"
     "            -o output file\n",                                         // where to output data
     // 5
@@ -405,13 +405,23 @@ bool parse_command(std::string & input){
             options["-mdc"] = lower(options["-mdc"]);
             options["-sym"] = upper(options["-sym"]);
 
+            // check input
             std::ifstream d(data_file.c_str(), std::ios::binary);
             if (!d){
                 throw std::runtime_error("Error: File '" + data_file + "' not opened.");
             }
+
             std::ifstream k(pub_file.c_str(), std::ios::binary);
             if (!k){
                 throw std::runtime_error("Error: File '" + pub_file + "' not opened.");
+            }
+
+            if (Compression_Numbers.find(options["-c"]) == Compression_Numbers.end()){
+                throw std::runtime_error("Error: Bad Compression Algorithm Number");
+            }
+
+            if (Symmetric_Algorithms_Numbers.find(options["-sym"]) == Symmetric_Algorithms_Numbers.end()){
+                throw std::runtime_error("Error: Bad Symmetric Key Algorithm Number");
             }
 
             PGPSecretKey::Ptr signer = nullptr;
@@ -599,6 +609,10 @@ bool parse_command(std::string & input){
             options["-a"] = lower(options["-a"]);
             options["-h"] = upper(options["-h"]);
 
+            if (Hash_Numbers.find(options["-h"]) == Hash_Numbers.end()){
+                throw std::runtime_error("Error: Bad Hash Algorithm Number");
+            }
+
             PGPSecretKey key(k);
 
             output(sign_cleartext(key, passphrase, text).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
@@ -625,6 +639,10 @@ bool parse_command(std::string & input){
             parse_options(tokens, options);
             options["-a"] = lower(options["-a"]);
             options["-h"] = upper(options["-h"]);
+
+            if (Hash_Numbers.find(options["-h"]) == Hash_Numbers.end()){
+                throw std::runtime_error("Error: Bad Hash Algorithm Number");
+            }
 
             PGPSecretKey key(k);
 
@@ -654,6 +672,14 @@ bool parse_command(std::string & input){
             options["-a"] = lower(options["-a"]);
             options["-c"] = upper(options["-c"]);
             options["-h"] = upper(options["-h"]);
+
+            if (Compression_Numbers.find(options["-c"]) == Compression_Numbers.end()){
+                throw std::runtime_error("Error: Bad Compression Algorithm Number");
+            }
+
+            if (Hash_Numbers.find(options["-h"]) == Hash_Numbers.end()){
+                throw std::runtime_error("Error: Bad Hash Algorithm Number");
+            }
 
             PGPSecretKey key(k);
 

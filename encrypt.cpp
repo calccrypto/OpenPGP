@@ -95,6 +95,14 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         // to_encrypt = sign_message(*signer, sig_passphrase, filename, tag11.write(2), h, c).write(2);
     // }
 
+    if (comp){
+        // Compressed Data Packet (Tag 8)
+        Tag8 tag8;
+        tag8.set_comp(comp);
+        tag8.set_data(to_encrypt); // put source data into compressed packet
+        to_encrypt = tag8.write(2);
+    }
+
     Packet::Ptr encrypted = nullptr;
 
     if (!mdc){
@@ -104,14 +112,6 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         encrypted = std::make_shared<Tag9>(tag9);
     }
     else{
-        if (comp){
-            // Compressed Data Packet (Tag 8)
-            Tag8 tag8;
-            tag8.set_comp(comp);
-            tag8.set_data(to_encrypt); // put source data into compressed packet
-            to_encrypt = tag8.write(2);
-        }
-
         // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
         tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
