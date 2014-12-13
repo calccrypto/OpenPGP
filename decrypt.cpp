@@ -148,48 +148,7 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
     }
     data = data.substr(BS + 2, data.size() - BS - 2);               // get rid of prefix
 
-    // decompress data if necessary
-    if (packet == 9){ // Symmetrically Encrypted Data Packet (Tag 9)
-        // // figure out which compression algorithm was used
-        // // uncompressed literal data packet
-        // if ((data[0] == 'b') || (data[0] == 't') || (data[0] == 'u')){
-            // data = Tag11(data).write(0);                            // add in Tag11 headers to be removed later
-        // }
-        // // BZIP2
-        // else if (data.substr(0, 2) == "BZ"){
-            // data = PGP_decompress(3, data);
-        // }
-        // // ZLIB
-        // else if ((data.substr(0, 2) == "\x78\x01") || (data.substr(0, 2) == "\x78\x9c") || (data.substr(0, 2) == "\x78\xda")){
-            // data = PGP_decompress(2, data);
-        // }
-        // // DEFLATE
-        // else{
-            // data = PGP_decompress(1, data);
-        // }
-    }
-    else if (packet == 18){
-        // expect a compressed or literal data packet
-        bool format;
-        uint8_t partial = 0;
-
-        data = read_packet_header(data, packet, format, partial);
-
-        if (packet == 8){
-            Tag8 tag8(data);
-            data = tag8.get_data();
-        }
-        else if (packet == 11){
-            Tag11 tag11(data);
-            data = tag11.write(0);                                  // add in Tag11 headers to be removed later
-        }
-        else{
-            std::stringstream s; s << Packet_Tags.at(packet) << " (Tag " << static_cast <unsigned int> (packet) << ").";
-            throw std::runtime_error("Error: Got unexpected data: " + s.str());
-        }
-    }
-
-    // parse decrypted data
+    // decompress and parse decrypted data
     return PGPMessage(data);
 }
 
