@@ -36,7 +36,7 @@ the OpenPGP Message Format.
 
 The following are the libraries necessary to build OpenPGP:
 
-- GMP (<https://gmplib.org/>, `sudo apt-get install libdev-gmp`, etc)
+- GMP (<https://gmplib.org/>, `sudo apt-get install libgmp-dev`, etc)
 - bzip2 (<http://www.bzip.org/>, `sudo apt-get install libbz2-dev`, etc)
 - zlib (<http://www.zlib.net/>, `sudo apt-get install zlib1g-dev`, etc)
 

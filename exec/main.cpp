@@ -44,7 +44,7 @@ const std::vector <std::string> commands = {
     // 2
     "test",                                                                 // test some functions
     // 3
-    "list key_file",                                                        // list keys in file, like 'gpg --list-keys'
+    "list key-file",                                                        // list keys in file, like 'gpg --list-keys'
     // 4
     "show -p|-c filename [options]\n"                                       // display contents of a key file; -p for general PGP data, -c for cleartext signed data
     "        options:\n"
@@ -62,83 +62,83 @@ const std::vector <std::string> commands = {
     "            -c comment\n"                                              // string; default ""
     "            -e email",                                                 // string; default ""
     // 6
-    "generate-revoke-cert private_key passphrase [options]\n"               // generate a revocation certificate for later
+    "generate-revoke-cert private-key passphrase [options]\n"               // generate a revocation certificate for later
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
     // 7
-    "encrypt-pka public_key data_file [options]\n"                          // encrypt with a public key
+    "encrypt-pka public-key data-file [options]\n"                          // encrypt with a public key
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c compression algorithm\n"                                // Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2; default ZLIB; see consts.h or RFC 4880 sec 9.3 for details
     "            -d delete original?\n"                                     // t or f; default f
-    "            -mdc use_mdc?\n"                                           // t or f; default t
+    "            -mdc use-mdc?\n"                                           // t or f; default t
     "            -p passphrase for signing key\n"                           // used with "-sign"
     "            -sign private key file\n"                                  // private key filename; option "-p" must also be used
     "            -sym symmetric encryption algorithm",                      // default AES256; see consts.h or RFC 4880 sec 9.2 for details
     // 8
-    "decrypt-pka private_key passphrase data_file [options]\n"              // decrypt with a private key
+    "decrypt-pka private-key passphrase data-file [options]\n"              // decrypt with a private key
     "        options:\n"
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -d delete original?\n"                                     // t or f; default f
     "            -v signing public key\n"                                   // public key file of signer
     "            -w write to file?",                                        // t or f; default t
     // 9
-    "revoke target revocation_certificate [options]\n"                      // revoke a key with a revocation certificate
+    "revoke target revocation-certificate [options]\n"                      // revoke a key with a revocation certificate
     "            -o output file\n"                                          // where to output data
     "            -a armored",                                               // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     // 10
-    "revoke-key private_key passphrase [options]\n"                         // revoke a primary key
+    "revoke-key private-key passphrase [options]\n"                         // revoke a primary key
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
     // 11
-    "revoke-subkey private_key passphrase [options]\n"                      // revoke a subkey
+    "revoke-subkey private-key passphrase [options]\n"                      // revoke a subkey
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c code\n"                                                 // 0, 1, 2, or 3
     "            -r reason",                                                // some string
     // 12
-    "sign-cleartext private_key passphrase data_file [options]\n"           // sign a string in a file
+    "sign-cleartext private-key passphrase data-file [options]\n"           // sign a string in a file
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
     // 13
-    "sign-detach private_key passphrase data_file [options]\n"              // sign a file
+    "sign-detach private-key passphrase data-file [options]\n"              // sign a file
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
     // 14
-    "sign-file private_key passphrase data_file [options]\n"                // sign a file
+    "sign-file private-key passphrase data-file [options]\n"                // sign a file
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c compression algorithm\n"                                // Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2; default ZLIB; see consts.h or RFC 4880 sec 9.3 for details
     "            -h hash algorithm",                                        // default SHA1; see consts.h or RFC 4880 sec for values
     // 15
-    "sign-key signer passphrase data_file\n"                                // sign a key
+    "sign-key signer passphrase data-file\n"                                // sign a key
     "        options:\n"
     "            -o output file\n"                                          // where to output data
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -c certification level",                                   // 0x10 - 0x13; default 0x13 (without "0x")
     // 16
-    "verify-clearsign public_key data_file",                                // verify cleartext signature
+    "verify-clearsign public-key data-file",                                // verify cleartext signature
     // 17
-    "verify-detach public_key data_file signature_file",                    // verify detached signature
+    "verify-detach public-key data-file signature-file",                    // verify detached signature
     // 18
-    "verify-message public_key signature_file",                             // verify detached signature
+    "verify-message public-key signature-file",                             // verify detached signature
     // 19
-    "verify-revoke public_key revocation_certificate",                      // verify a revocation certificate is valid; used after generating the certificate
+    "verify-revoke public-key revocation-certificate",                      // verify a revocation certificate is valid; used after generating the certificate
     // 20
-    "verify-key signer_key_file signee_key_file",                           // verify signature
+    "verify-key signer-key-file signee-key-file",                           // verify signature
 };
 
 // simple stringstream to option + value
@@ -208,6 +208,11 @@ bool parse_command(std::string & input){
     try{
         std::stringstream tokens(input);
         std::string cmd; tokens >> cmd;
+
+        // remove "--" from front of input
+        if (cmd.substr(0, 2) == "--"){
+            cmd = cmd.substr(2, cmd.size() - 2);
+        }
 
         if (cmd == ""){
             return true;
