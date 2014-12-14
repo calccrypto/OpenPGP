@@ -89,6 +89,7 @@
 		<Unit filename="../Hashes/SHA512.cpp" />
 		<Unit filename="../Hashes/SHA512.h" />
 		<Unit filename="../Hashes/SHA512_Const.h" />
+		<Unit filename="../OpenPGP.h" />
 		<Unit filename="../PGP.cpp" />
 		<Unit filename="../PGP.h" />
 		<Unit filename="../PGPCleartextSignature.cpp" />
@@ -109,6 +110,8 @@
 		<Unit filename="../PKA/RSA.h" />
 		<Unit filename="../PKCS1.cpp" />
 		<Unit filename="../PKCS1.h" />
+		<Unit filename="../Packets/Partial.cpp" />
+		<Unit filename="../Packets/Partial.h" />
 		<Unit filename="../Packets/Tag0.cpp" />
 		<Unit filename="../Packets/Tag0.h" />
 		<Unit filename="../Packets/Tag1.cpp" />
@@ -139,6 +142,14 @@
 		<Unit filename="../Packets/Tag5.h" />
 		<Unit filename="../Packets/Tag6.cpp" />
 		<Unit filename="../Packets/Tag6.h" />
+		<Unit filename="../Packets/Tag60.cpp" />
+		<Unit filename="../Packets/Tag60.h" />
+		<Unit filename="../Packets/Tag61.cpp" />
+		<Unit filename="../Packets/Tag61.h" />
+		<Unit filename="../Packets/Tag62.cpp" />
+		<Unit filename="../Packets/Tag62.h" />
+		<Unit filename="../Packets/Tag63.cpp" />
+		<Unit filename="../Packets/Tag63.h" />
 		<Unit filename="../Packets/Tag7.cpp" />
 		<Unit filename="../Packets/Tag7.h" />
 		<Unit filename="../Packets/Tag8.cpp" />
