@@ -167,6 +167,7 @@ std::string upper(const std::string & in){
     return out;
 }
 
+// find all commands that match given input
 std::string find_command(const std::string & input){
     std::stringstream out;
     unsigned int len = input.size();
@@ -204,17 +205,18 @@ void output(const std::string & data, const std::string & filename = ""){
 }
 
 // function to parse commands
-bool parse_command(std::string & input){
+// args: whether or not input was passed from terminal
+bool parse_command(std::string & input, bool args = false){
     try{
         std::stringstream tokens(input);
         std::string cmd; tokens >> cmd;
 
-        // remove "--" from front of input
-        if (cmd.substr(0, 2) == "--"){
+        // remove "--" from front of input, if they came from console
+        if (args && (cmd.substr(0, 2) == "--")){
             cmd = cmd.substr(2, cmd.size() - 2);
         }
 
-        if (cmd == ""){
+        if (!args && (cmd == "")){
             return true;
         }
         else if ((cmd == "exit") || (cmd == "quit")){
@@ -822,7 +824,13 @@ bool parse_command(std::string & input){
             std::cout << "Key in '" << signee_file << "' was" << std::string(verify_key(signerkey, signeekey)?"":" not") << " signed by key " << signerkey << "." << std::endl;
         }
         else{
-            std::cout << find_command(cmd) << std::endl;;
+            if (args){
+                std::stringstream out; out << "Error: Search string \"" + input + "\" does not match any commands.";
+                throw std::runtime_error(out.str());
+            }
+            else {
+                std::cout << find_command(cmd) << std::endl;
+            }
         }
     }
     catch (const std::exception & e){
@@ -837,7 +845,7 @@ int main(int argc, char * argv[]){
     if (argc == 1){
         std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
                   << "Type help or ? for command syntax\n\n" << std::endl;
-        while (parse_command(input)){
+        while (parse_command(input, false)){
             std::cout << "> ";
             getline(std::cin, input);
         }
@@ -847,7 +855,7 @@ int main(int argc, char * argv[]){
         for(int x = 1; x < argc; x++){
             input += std::string(argv[x]) + " ";
         }
-        parse_command(input);
+        parse_command(input, true);
     }
     return 0;
 }

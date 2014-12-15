@@ -1,13 +1,12 @@
 # Tab completion for OpenPGP
 # by Jason Lee @ calccrypto at gmail.compgen
 #
-# copy this into /etc/bash_completetion.d if desired
+# copy this into /etc/bash_completion.d if desired
 
 _OpenPGP(){
-    local cur
-
+    local cur=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
+
     opts="--help --test --list --show --generatekeypair
           --generate-revoke-cert --encrypt-pka
           --decrypt-pka --revoke --revoke-subkey
@@ -16,7 +15,8 @@ _OpenPGP(){
           --verify-message --verify-revoke --verify-key"
 
     # only tab complete if first argument has not been completed
-    if [[ "${COMP_CWORD}" -eq 1 ]] ; then
+    if [[ "${COMP_CWORD}" -eq 1 ]]
+    then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     fi
 
