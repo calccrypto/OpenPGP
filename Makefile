@@ -91,11 +91,11 @@ verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSign
 $(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
 	$(AR) -r $(TARGET) cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common/*.o Compress/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o
 
-install:
-	cp $(TARGET) $(INSTALL)/lib
+#install:
+#	cp $(TARGET) $(INSTALL)/lib
 
-uninstall:
-	rm $(INSTALL)/lib/$(TARGET)
+#uninstall:
+#	rm $(INSTALL)/lib/$(TARGET)
 
 clean:
 	rm -f *.o $(TARGET)

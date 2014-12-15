@@ -21,12 +21,12 @@ $(TARGET): main.cpp ../OpenPGP.h libs
 	$(CXX) $(CXXFLAGS) main.cpp $(LDFLAGS) -o $(TARGET)
 
 install:
-	$(MAKE) -C .. install
+#	$(MAKE) -C .. install
 	cp $(TARGET) $(INSTALL)/bin
 	cp $(TABFILE) $(TABDIR)
 
 uninstall:
-	$(MAKE) -C .. uninstall
+#	$(MAKE) -C .. uninstall
 	rm $(INSTALL)/bin/$(TARGET)
 	rm $(TABDIR)/$(TABFILE)
 
