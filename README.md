@@ -114,4 +114,4 @@ from the directory used as arguments to functions.
 If for some reason the program cannot operate on some data
 properly, an exception will be thrown.
 
-Tab completion for cygwin might not work.
+Tab completion might not work on cygwin
