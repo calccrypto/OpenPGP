@@ -186,7 +186,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
         throw std::runtime_error("Error: Expected Public-Key Encrypted Session Key Packet (Tag 1). Instead got " + s.str());
     }
 
-   // Public-Key Encrypted Session Key Packet (Tag 1)
+    // Public-Key Encrypted Session Key Packet (Tag 1)
     Tag1 tag1(data);
     uint8_t pka = tag1.get_pka();
     std::vector <PGPMPI> session_key_mpi = tag1.get_mpi();
