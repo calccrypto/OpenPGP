@@ -39,6 +39,7 @@ PGP::~PGP(){
 }
 
 void PGP::read(std::string & data){
+    
     std::string ori = data;
 
     // remove extra data and parse unsecured data

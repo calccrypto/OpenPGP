@@ -118,7 +118,7 @@ void PGPMessage::decompress() {
         comp = std::make_shared <Tag8> (raw);               // put data in a Compressed Data Packet
         raw = comp -> get_data();                           // get decompressed data
         comp -> set_data("");                               // free up space taken up by compressed data; also prevents data from showing twice
-        comp -> set_partial(packets[0] -> get_partial());   
+        comp -> set_partial(packets[0] -> get_partial());
         read(raw);                                          // read decompressed data into packets
     }
 }
