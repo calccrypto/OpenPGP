@@ -115,12 +115,12 @@ class PGPMessage : public PGP {
         std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
         std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
 
-        uint8_t get_comp();             // get compression algorithm
+        uint8_t get_comp() const;                                                           // get compression algorithm
 
-        void set_comp(const uint8_t c); // set compression algorithm
+        void set_comp(const uint8_t c);                                                     // set compression algorithm
 
-        const bool match(const Token & t) const; // check if packet composition matches some part of the OpenPGP Message rule
-        bool meaningful() const;                 // whether or not the data is an OpenPGP Message
+        const bool match(const Token & t) const;                                            // check if packet composition matches some part of the OpenPGP Message rule
+        bool meaningful() const;                                                            // whether or not the data is an OpenPGP Message
 
         PGP::Ptr clone() const;
 };

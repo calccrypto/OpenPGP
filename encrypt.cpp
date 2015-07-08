@@ -176,7 +176,7 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
     Packet::Ptr encrypted = encrypt_data(session_key, data, filename, sym_alg, comp, mdc, signer, sig_passphrase);
 
     // write data to output container
-    PGPMessage out;
+    PGPMessage out = PGPMessage();
     out.set_ASCII_Armor(0);
     out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
     out.set_packets({tag1, encrypted});

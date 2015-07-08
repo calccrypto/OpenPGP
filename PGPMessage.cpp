@@ -206,7 +206,7 @@ std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP MESSAGE-----\n";
 }
 
-uint8_t PGPMessage::get_comp(){
+uint8_t PGPMessage::get_comp() const {
     if (comp){
         return comp -> get_comp();
     }
