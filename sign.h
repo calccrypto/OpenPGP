@@ -60,7 +60,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const 
 
 // Creates signatures
 // common code for signing files
-Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data);
+Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash);
 // 0x00: Signature of a binary document.
 PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = 2);
 PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::ifstream & f, const uint8_t hash = 2);
@@ -73,7 +73,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
 PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text, const uint8_t hash = 2);
 
 // 0x02: Standalone signature.
-Tag2::Ptr standalone_signature(const Tag2::Ptr & src, const std::string & passphrase, const Tag5::Ptr & key, const uint8_t hash = 2);
+Tag2::Ptr standalone_signature(const Tag5::Ptr & key, const Tag2::Ptr & src, const std::string & passphrase, const uint8_t hash = 2);
 
 // 0x10: Generic certification of a User ID and Public-Key packet.
 // 0x11: Persona certification of a User ID and Public-Key packet.
