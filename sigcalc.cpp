@@ -3,7 +3,7 @@
 std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
     std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
-        return data + trailer.substr(1, trailer.size() - 1) + unhexlify(makehex(sig -> get_time(), 8)); // remove version from trailer
+        return data + trailer.substr(1, trailer.size() - 1); // remove version from trailer
     }
     else if (sig -> get_version() == 4){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
