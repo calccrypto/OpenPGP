@@ -1,12 +1,13 @@
-# Compression Algorithms Makefile
+# Compression Makefile
 CXX?=g++
-LDFLAGS=
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: compress.o bzip2.o zlib.o
+
+.PHONY: clean
 
 compress.o: Compress.h Compress.cpp pgpbzip2.h pgpzlib.h
 	$(CXX) $(CXXFLAGS) Compress.cpp

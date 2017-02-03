@@ -1,12 +1,13 @@
 # Hashes Makefile
 CXX?=g++
-LDFLAGS=
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: Hash.o Hashes.o MD5.o RIPEMD160.o SHA1.o SHA224.o SHA256.o SHA2_Functions.o SHA384.o SHA512.o
+
+.PHONY: clean
 
 Hash.o: Hash.h Hash.cpp ../common/includes.h
 	$(CXX) $(CXXFLAGS) Hash.cpp

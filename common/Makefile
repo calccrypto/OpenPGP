@@ -1,12 +1,13 @@
 # common Makefile
 CXX?=g++
-LDFLAGS=
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: includes.o integer.o
+
+.PHONY: clean
 
 includes.o: includes.h includes.cpp
 	$(CXX) $(CXXFLAGS) includes.cpp

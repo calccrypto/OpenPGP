@@ -1,12 +1,13 @@
 # Encryptions Makefile
 CXX?=g++
-LDFLAGS=
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: SymAlg.o AES.o Blowfish.o Camellia.o CAST128.o DES.o IDEA.o TDES.o Twofish.o
+
+.PHONY: clean
 
 SymAlg.o: SymAlg.h SymAlg.cpp
 	$(CXX) $(CXXFLAGS) SymAlg.cpp

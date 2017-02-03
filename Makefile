@@ -1,17 +1,15 @@
 # OpenPGP Makefile
 CXX?=g++
-LDFLAGS=
 CXXFLAGS=-std=c++11 -Wall -c
 AR=ar
 TARGET=libOpenPGP.a
-INSTALL=/usr/local
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: $(TARGET)
 
-.PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets
+.PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean
 
 common:
 	$(MAKE) -C common
@@ -91,19 +89,13 @@ verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSign
 $(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
 	$(AR) -r $(TARGET) cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common/*.o Compress/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o
 
-#install:
-#	cp $(TARGET) $(INSTALL)/lib
-
-#uninstall:
-#	rm $(INSTALL)/lib/$(TARGET)
-
 clean:
 	rm -f *.o $(TARGET)
-	$(MAKE) -C common clean
-	$(MAKE) -C Compress clean
-	$(MAKE) -C Encryptions clean
-	$(MAKE) -C Hashes clean
-	$(MAKE) -C Packets clean
-	$(MAKE) -C PKA clean
-	$(MAKE) -C RNG clean
-	$(MAKE) -C Subpackets clean
+	$(MAKE) clean -C common
+	$(MAKE) clean -C Compress
+	$(MAKE) clean -C Encryptions
+	$(MAKE) clean -C Hashes
+	$(MAKE) clean -C Packets
+	$(MAKE) clean -C PKA
+	$(MAKE) clean -C RNG
+	$(MAKE) clean -C Subpackets

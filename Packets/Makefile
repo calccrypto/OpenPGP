@@ -1,12 +1,13 @@
 # Packets Makefile
 CXX?=g++
-LDFLAGS=-lgmp -lgmpxx
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: packet.o packets.o Partial.o s2k.o Tag0.o Tag1.o Tag2.o Tag3.o Tag4.o Tag5.o Tag6.o Tag7.o Tag8.o Tag9.o Tag10.o Tag11.o Tag12.o Tag13.o Tag14.o Tag17.o Tag18.o Tag19.o Tag60.o Tag61.o Tag62.o Tag63.o
+
+.PHONY: clean
 
 packet.o: packet.h packet.cpp ../common/includes.h ../Hashes/Hashes.h ../consts.h ../mpi.h ../pgptime.h
 	$(CXX) $(CXXFLAGS) packet.cpp

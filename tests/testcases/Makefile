@@ -1,9 +1,8 @@
 # OpenPGP testcases Makefile
 CXX?=g++
-LFLAGS=-lgmp -lgmpxx -lpthread
-CFLAGS=-std=c++11 -Wall -c -pthread -I../gtest-1.7.0/include -I../..
+CXXFLAGS=-std=c++11 -Wall -c -pthread -I../gtest-1.7.0/include -I../..
 
-debug: CFLAGS += -g
+debug: CXXFLAGS += -g
 debug: all
 
 all: test_aes128_ecb.o test_aes192_ecb.o test_aes256_ecb.o \
@@ -15,67 +14,67 @@ all: test_aes128_ecb.o test_aes192_ecb.o test_aes256_ecb.o \
      test_compress.o test_pgp.o test_radix64.o
 
 test_aes128_ecb.o:
-	$(CXX) $(CFLAGS) test_aes128_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_aes128_ecb.cpp
 
 test_aes192_ecb.o:
-	$(CXX) $(CFLAGS) test_aes192_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_aes192_ecb.cpp
 
 test_aes256_ecb.o:
-	$(CXX) $(CFLAGS) test_aes256_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_aes256_ecb.cpp
 
 test_blowfish_ecb.o:
-	$(CXX) $(CFLAGS) test_blowfish_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_blowfish_ecb.cpp
 
 test_camellia_ecb.o:
-	$(CXX) $(CFLAGS) test_camellia_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_camellia_ecb.cpp
 
 test_cast128_ecb.o:
-	$(CXX) $(CFLAGS) test_cast128_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_cast128_ecb.cpp
 
 test_idea_ecb.o:
-	$(CXX) $(CFLAGS) test_idea_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_idea_ecb.cpp
 
 test_tripledes_ecb.o:
-	$(CXX) $(CFLAGS) test_tripledes_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_tripledes_ecb.cpp
 
 test_twofish_ecb.o:
-	$(CXX) $(CFLAGS) test_twofish_ecb.cpp
+	$(CXX) $(CXXFLAGS) test_twofish_ecb.cpp
 
 test_md5.o:
-	$(CXX) $(CFLAGS) test_md5.cpp
+	$(CXX) $(CXXFLAGS) test_md5.cpp
 
 test_ripemd160.o:
-	$(CXX) $(CFLAGS) test_ripemd160.cpp
+	$(CXX) $(CXXFLAGS) test_ripemd160.cpp
 
 test_sha1.o:
-	$(CXX) $(CFLAGS) test_sha1.cpp
+	$(CXX) $(CXXFLAGS) test_sha1.cpp
 
 test_sha224.o:
-	$(CXX) $(CFLAGS) test_sha224.cpp
+	$(CXX) $(CXXFLAGS) test_sha224.cpp
 
 test_sha256.o:
-	$(CXX) $(CFLAGS) test_sha256.cpp
+	$(CXX) $(CXXFLAGS) test_sha256.cpp
 
 test_sha384.o:
-	$(CXX) $(CFLAGS) test_sha384.cpp
+	$(CXX) $(CXXFLAGS) test_sha384.cpp
 
 test_sha512.o:
-	$(CXX) $(CFLAGS) test_sha512.cpp
+	$(CXX) $(CXXFLAGS) test_sha512.cpp
 
 test_dsa.o:
-	$(CXX) $(CFLAGS) test_dsa.cpp
+	$(CXX) $(CXXFLAGS) test_dsa.cpp
 
 test_rsa.o:
-	$(CXX) $(CFLAGS) test_rsa.cpp
+	$(CXX) $(CXXFLAGS) test_rsa.cpp
 
 test_compress.o:
-	$(CXX) $(CFLAGS) test_compress.cpp
+	$(CXX) $(CXXFLAGS) test_compress.cpp
 
 test_pgp.o:
-	$(CXX) $(CFLAGS) test_pgp.cpp
+	$(CXX) $(CXXFLAGS) test_pgp.cpp
 
 test_radix64.o:
-	$(CXX) $(CFLAGS) test_radix64.cpp
+	$(CXX) $(CXXFLAGS) test_radix64.cpp
 
 clean:
 	rm -f *.o

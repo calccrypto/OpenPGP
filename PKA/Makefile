@@ -1,12 +1,13 @@
 # PKA Makefile
 CXX?=g++
-LDFLAGS=-lgmp -lgmpxx
 CXXFLAGS=-std=c++11 -Wall -c
 
 debug: CXXFLAGS += -g
 debug: all
 
 all: PKA.o DSA.o ElGamal.o RSA.o
+
+.PHONY: clean
 
 PKA.o: PKA.h PKA.cpp DSA.h ElGamal.h RSA.h
 	$(CXX) $(CXXFLAGS) PKA.cpp
