@@ -17,7 +17,7 @@ Tag17::~Tag17(){
     attributes.clear();
 }
 
-void Tag17::read(std::string & data, const uint8_t part){
+void Tag17::read(std::string & data){
     size = data.size();
     while (data.size()){
         Tag17Subpacket::Ptr temp;

@@ -85,7 +85,7 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     return out.str();
 }
 
-void Tag5::read(std::string & data, const uint8_t part){
+void Tag5::read(std::string & data){
     size = data.size();
     /*
         - A Public-Key or Public-Subkey packet, as described above.

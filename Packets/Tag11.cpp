@@ -14,7 +14,7 @@ Tag11::Tag11(std::string & data):
     read(data);
 }
 
-void Tag11::read(std::string & data, const uint8_t part){
+void Tag11::read(std::string & data){
     size = data.size();
     format = data[0];
     uint8_t len = data[1];

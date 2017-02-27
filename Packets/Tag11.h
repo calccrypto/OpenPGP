@@ -42,7 +42,7 @@ class Tag11 : public Packet{
 
         Tag11();
         Tag11(std::string & data);
-        void read(std::string & data, const uint8_t part = 0);
+        void read(std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 

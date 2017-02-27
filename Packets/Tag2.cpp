@@ -148,7 +148,7 @@ std::vector <Tag2Subpacket::Ptr> Tag2::read_subpackets(std::string & data){
     return out;
 }
 
-void Tag2::read(std::string & data, const uint8_t part){
+void Tag2::read(std::string & data){
     size = data.size();
     tag = 2;
     version = data[0];

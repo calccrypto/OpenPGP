@@ -48,7 +48,7 @@ S2K0::S2K0():
 
 S2K0::~S2K0(){}
 
-void S2K0::read(std::string & data, const uint8_t part){
+void S2K0::read(std::string & data){
     type = data[0];
     hash = data[2];
     data = data.substr(2, data.size() - 2);
@@ -90,7 +90,7 @@ S2K1::S2K1():
 
 S2K1::~S2K1(){}
 
-void S2K1::read(std::string & data, const uint8_t part){
+void S2K1::read(std::string & data){
     type = data[0];
     hash = data[1];
     salt = data.substr(2, 8);
@@ -138,7 +138,7 @@ S2K3::S2K3():
 
 S2K3::~S2K3(){}
 
-void S2K3::read(std::string & data, const uint8_t part){
+void S2K3::read(std::string & data){
     type = data[0];
     hash = data[1];
     salt = data.substr(2, 8);

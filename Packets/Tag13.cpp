@@ -11,7 +11,7 @@ Tag13::Tag13(std::string & data):
     read(data);
 }
 
-void Tag13::read(std::string & data, const uint8_t part){
+void Tag13::read(std::string & data){
     size = data.size();
     contents = data;
     data = "";

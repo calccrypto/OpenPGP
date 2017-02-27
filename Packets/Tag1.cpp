@@ -13,7 +13,7 @@ Tag1::Tag1(std::string & data):
     read(data);
 }
 
-void Tag1::read(std::string & data, const uint8_t part){
+void Tag1::read(std::string & data){
     size = data.size();
     version = data[0];
     keyid = data.substr(1, 8);

@@ -11,7 +11,7 @@ Tag18::Tag18(std::string & data):
     read(data);
 }
 
-void Tag18::read(std::string & data, const uint8_t part){
+void Tag18::read(std::string & data){
     size = data.size();
     version = data[0];
     protected_data = data.substr(1, data.size() - 1);

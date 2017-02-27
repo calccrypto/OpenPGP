@@ -33,7 +33,7 @@ Partial::Partial(const std::string & data):
     stream(data)
 {}
 
-void Partial::read(std::string & data, const uint8_t part){
+void Partial::read(std::string & data){
     stream = data;
 }
 

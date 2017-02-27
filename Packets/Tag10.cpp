@@ -11,7 +11,7 @@ Tag10::Tag10(std::string & data):
     read(data);
 }
 
-void Tag10::read(std::string & data, const uint8_t part){
+void Tag10::read(std::string & data){
     size = data.size();
     if (data != "PGP"){
         throw std::runtime_error("Error: Tag 10 packet did not contain data \x5cPGP\x5c.");

@@ -65,7 +65,7 @@ class Packet{
 
         Packet();
         virtual ~Packet();
-        virtual void read(std::string & data, const uint8_t part = 0) = 0;
+        virtual void read(std::string & data) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
         std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
@@ -114,7 +114,7 @@ class Key : public Packet{
         Key(std::string & data);
         virtual ~Key();
 
-        virtual void read(std::string & data, const uint8_t part = 0);
+        virtual void read(std::string & data);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
 

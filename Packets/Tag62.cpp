@@ -9,7 +9,7 @@ Tag62::Tag62(const std::string & data):
     stream(data)
 {}
 
-void Tag62::read(std::string & data, const uint8_t part){
+void Tag62::read(std::string & data){
     stream = data;
 }
 

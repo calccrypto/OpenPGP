@@ -47,7 +47,7 @@ Tag8::Tag8(std::string & data):
     read(data);
 }
 
-void Tag8::read(std::string & data, const uint8_t part){
+void Tag8::read(std::string & data){
     size = data.size();
     comp = data[0];
     compressed_data = data.substr(1, data.size() - 1);

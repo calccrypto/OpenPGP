@@ -272,7 +272,7 @@ Key::Key(std::string & data):
 
 Key::~Key(){}
 
-void Key::read(std::string & data, const uint8_t part){
+void Key::read(std::string & data){
     read_common(data);
 }
 

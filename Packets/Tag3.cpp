@@ -22,7 +22,7 @@ Tag3::Tag3(std::string & data):
 
 Tag3::~Tag3(){}
 
-void Tag3::read(std::string & data, const uint8_t part){
+void Tag3::read(std::string & data){
     size = data.size();
 	version = data[0];                  // 4
     sym = data[1];

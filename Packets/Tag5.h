@@ -49,7 +49,7 @@ class Tag5 : public Tag6{
         Tag5(const Tag5 & copy);
         Tag5(std::string & data);
         virtual ~Tag5();
-        void read(std::string & data, const uint8_t part = 0);
+        void read(std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
