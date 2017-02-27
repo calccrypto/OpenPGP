@@ -395,13 +395,13 @@ Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std:
                 Key::Ptr signer = nullptr;
                 switch (tag){
                     case 5:
-                        signer = std::make_shared <Tag5> ();
+                        signer = std::make_shared <Tag5>  ();
                         break;
                     case 6:
-                        signer = std::make_shared <Tag6> ();
+                        signer = std::make_shared <Tag6>  ();
                         break;
                     case 7:
-                        signer = std::make_shared <Tag7> ();
+                        signer = std::make_shared <Tag7>  ();
                         break;
                     case 14:
                         signer = std::make_shared <Tag14> ();

@@ -458,7 +458,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
 }
 
 bool verify_key(const PGPSecretKey & signer, const PGPPublicKey & signee){
-    return verify_key(PGPPublicKey(signee), signee);
+    return verify_key(PGPPublicKey(signer), signee);
 }
 
 bool verify_revoke(const Tag6::Ptr & key, const Tag2::Ptr & rev){
