@@ -41,7 +41,7 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     Tag6::Ptr signingkey = find_signing_key(pub, 6, keyid); // search for primary key
 
     if (!signingkey){                                       // if no signing primary key
-        signingkey = find_signing_key(pub, 14, keyid);       // search for subkey
+        signingkey = find_signing_key(pub, 14, keyid);      // search for subkey
     }
 
     if (!signingkey){
@@ -381,7 +381,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     // find signing key
     Tag6::Ptr signingkey = find_signing_key(signer, 6, keyid);
     if (!signingkey){                                        // if no signing primary key
-        signingkey = find_signing_key(signer, 14, keyid);       // search for subkey
+        signingkey = find_signing_key(signer, 14, keyid);    // search for subkey
     }
 
     if (!signingkey){
@@ -435,10 +435,10 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                     std::string with_trailer = addtrailer(k + u, tag2);
                     std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
                     signatureFound = true;
-                    if (hash.substr(0, 2) == tag2 -> get_left16()){// quick signature check
-                        bool result = pka_verify(hash, signingkey, tag2); // proper signature check
-                        allSignaturesValid = result && allSignaturesValid;
-                    } else {
+                    if (hash.substr(0, 2) == tag2 -> get_left16()){                // quick signature check
+                        allSignaturesValid &= pka_verify(hash, signingkey, tag2);  // proper signature check
+                    }
+                    else {
                         allSignaturesValid = false;
                     }
                 }
