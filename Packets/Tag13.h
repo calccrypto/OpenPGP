@@ -28,11 +28,16 @@ THE SOFTWARE.
 
 #include "packet.h"
 
+// 5.11. User ID Packet (Tag 13)
+// A User ID packet consists of UTF-8 text that is intended to represent
+// the name and email address of the key holder. By convention, it
+// includes an RFC 2822 [RFC2822] mail name-addr, but there are no
+// restrictions on its content. The packet length in the header
+// specifies the length of the User ID.
+
 class Tag13 : public ID{
     private:
-        std::string name;
-        std::string comment;
-        std::string email;
+        std::string contents;
 
     public:
         typedef std::shared_ptr <Tag13> Ptr;
@@ -43,13 +48,10 @@ class Tag13 : public ID{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        std::string get_name() const;
-        std::string get_comment() const;
-        std::string get_email() const;
+        std::string get_contents() const;
 
-        void set_name(const std::string & n);
-        void set_comment(const std::string & c);
-        void set_email(const std::string & e);
+        void set_contents(const std::string & c);
+        void set_contents(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
 
         Packet::Ptr clone() const;
 };

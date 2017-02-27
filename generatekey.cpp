@@ -52,9 +52,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     std::string keyid = sec -> get_keyid();
 
     Tag13::Ptr uid = std::make_shared<Tag13>();
-    uid -> set_name(user);
-    uid -> set_comment(comment);
-    uid -> set_email(email);
+    uid -> set_contents(user, comment, email);
 
     Tag2::Ptr sig = std::make_shared<Tag2>();
     sig -> set_version(4);
