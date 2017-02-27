@@ -46,13 +46,11 @@ const std::vector <std::string> commands = {
     // 3
     "list key-file",                                                        // list keys in file, like 'gpg --list-keys'
     // 4
-    "show -p|-c filename [options]\n"                                       // display contents of a key file; -p for general PGP data, -c for cleartext signed data
-    "        options:\n"
-    "            -o output file\n",                                         // where to output data
+    "show -p|-c filename [options]\n",                                      // display contents of a key file; -p for general PGP data, -c for cleartext signed data
     // 5
     "generatekeypair [options]\n"                                           // generate new key pair
     "        options:\n"
-    "            -o output file\n"                                          // where to output data
+    "            -o prefix of output files\n"                               // prefix of .public and .private
     "            -a armored\n"                                              // d (default: "pre-existing internal value"), t, or f; default d; whether or not to armor output
     "            -h\n"                                                      // help, since there is no way to fail token reading
     "            -pks public key size\n"                                    // bits; default 2048
@@ -142,10 +140,10 @@ const std::vector <std::string> commands = {
 };
 
 // simple stringstream to option + value
-void parse_options(std::stringstream & tokens, Options & options){
-    std::string o, v;
-    while (tokens >> o >> v){
-        options[o] = v;
+void parse_options(std::istream & tokens, Options & options){
+    std::string opt, val;
+    while (tokens >> opt >> val){
+        options[opt] = val;
     }
 }
 
@@ -169,19 +167,14 @@ std::string upper(const std::string & in){
 
 // find all commands that match given input
 std::string find_command(const std::string & input){
-    std::stringstream out;
-    unsigned int len = input.size();
-    bool found = false;
-    for(const std::string & c : commands){
-        if (c.substr(0, len) == input){ // only check if front matches
-            out << c << "\n\n";
-            found = true;
+    const std::string::size_type len = input.size();
+    std::string out = "";
+    for(std::string const & command: commands){
+        if (command.substr(0, len) == input){ // only check if front matches
+            out += command + "\n";
         }
     }
-    if (!found){
-        out << "Error: Search string \"" + input + "\" does not match any commands.";
-    }
-    return out.str();
+    return out;
 }
 
 // Output data into a file, or if not possible, to stdout
@@ -205,35 +198,38 @@ void output(const std::string & data, const std::string & filename = ""){
 }
 
 // function to parse commands
-// args: whether or not input was passed from terminal
-bool parse_command(std::string & input, bool args = false){
+bool parse_command(std::string & input){
     try{
         std::stringstream tokens(input);
         std::string cmd; tokens >> cmd;
 
-        // remove "--" from front of input, if they came from console
-        if (args && (cmd.substr(0, 2) == "--")){
-            cmd = cmd.substr(2, cmd.size() - 2);
-        }
-
-        if (!args && (cmd == "")){
+        if (cmd == ""){
             return true;
         }
         else if ((cmd == "exit") || (cmd == "quit")){
             return false;
         }
         else if ((cmd == "help") || (cmd == "?")){
-            std::string which;
-            tokens >> which;
-            if (!which.size()){
+            std::string cmd;
+            tokens >> cmd;
+
+            // show all
+            if (cmd == ""){
                 std::cout << "\nCommands:\n";
                 for(const std::string & c : commands){
                     std::cout << "    " << c << "\n\n";
                 }
                 std::cout << std::endl;
             }
+            // show specific
             else{
-                std::cout << find_command(which) << std::endl;;
+                const std::string found = find_command(cmd);
+                if (found.size()){
+                    std::cout << found << std::endl;
+                }
+                else{
+                    std::cerr << "Error: Search string \"" << input << "\" does not match any commands." << std::endl;
+                }
             }
         }
         else if (cmd == "test"){
@@ -305,20 +301,17 @@ bool parse_command(std::string & input, bool args = false){
                 throw std::runtime_error("Error: File '" + filename + "' not opened.");
             }
 
-            PGPPublicKey k(f);
-            std::cout << k.list_keys() << std::endl;
+            std::cout << PGPPublicKey(f).list_keys() << std::endl;
         }
         else if (cmd == "show"){
             std::string type, filename;
             if (!(tokens >> type >> filename) || (filename == "")){
                 throw std::runtime_error("Syntax: " + commands[4]);
-                return 1;
             }
 
             type = lower(type);
             if (!(type == "-p") && !(type == "-c")){
                 throw std::runtime_error("Syntax: " + commands[4]);
-                return 1;
             }
 
             std::ifstream f(filename.c_str(), std::ios::binary);
@@ -330,13 +323,11 @@ bool parse_command(std::string & input, bool args = false){
             options["-o"] = "";
             parse_options(tokens, options);
 
-            if (type == "-p"){
-                PGPMessage data(f);
-                output(data.show(), options["-o"]);
-            }
-            else if (type == "-c"){
-                PGPCleartextSignature message(f);
-                output(message.show(), options["-o"]);
+             if (type == "-p"){
+                output(PGPMessage(f).show(), options["-o"]);
+             }
+             else if (type == "-c"){
+                output(PGPCleartextSignature(f).show(), options["-o"]);
             }
             else{
                 std::cout << "Syntax: " << commands[4] << std::endl;
@@ -386,9 +377,8 @@ bool parse_command(std::string & input, bool args = false){
             parse_options(tokens, options);
             options["-a"] = lower(options["-a"]);
 
-            PGPSecretKey pri(f);
-
-            output(revoke_primary_key_cert_key(pri, passphrase, options["-c"][0] - '0', options["-r"]).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
+            PGPSecretKey key(f);
+            output(revoke_primary_key_cert_key(key, passphrase, options["-c"][0] - '0', options["-r"]).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
         }
         else if (cmd == "encrypt-pka"){
             std::string pub_file, data_file;
@@ -402,7 +392,7 @@ bool parse_command(std::string & input, bool args = false){
             options["-c"] = "ZLIB";
             options["-d"] = "f";
             options["-mdc"] = "t";
-            // options["-p"] = "";
+            // options["-p"] = ""; // do not set default value
             options["-sign"] = "";
             options["-sym"] = "AES256";
             parse_options(tokens, options);
@@ -470,8 +460,8 @@ bool parse_command(std::string & input, bool args = false){
             if (!k){
                 throw std::runtime_error("Error: File '" + pri + "' not opened.");
             }
-            std::ifstream f(data_file.c_str(), std::ios::binary);
-            if (!f){
+            std::ifstream m(data_file.c_str(), std::ios::binary);
+            if (!m){
                 throw std::runtime_error("Error: File '" + data_file + "' not opened.");
             }
 
@@ -494,10 +484,7 @@ bool parse_command(std::string & input, bool args = false){
                 signer = std::make_shared <PGPPublicKey> (v);
             }
 
-            PGPSecretKey key(k);
-            PGPMessage message(f);
-
-            output(decrypt_pka(key, message, passphrase, (options["-w"] == "t"), signer), "");
+            output(decrypt_pka(PGPSecretKey(k), PGPMessage(m), passphrase, (options["-w"] == "t"), signer), "");
             if (options["-d"] == "t"){
                 remove(data_file.c_str());
             }
@@ -548,7 +535,6 @@ bool parse_command(std::string & input, bool args = false){
             options["-a"] = lower(options["-a"]);
 
             PGPSecretKey key(f);
-
             output(revoke_key(key, passphrase, options["-c"][0] - '0', options["-r"]).write((options["-a"] == "f")?1:(options["-a"] == "t")?2:0), options["-o"]);
         }
         else if (cmd == "revoke-subkey"){
@@ -824,13 +810,7 @@ bool parse_command(std::string & input, bool args = false){
             std::cout << "Key in '" << signee_file << "' was" << std::string(verify_key(signerkey, signeekey)?"":" not") << " signed by key " << signerkey << "." << std::endl;
         }
         else{
-            if (args){
-                std::stringstream out; out << "Error: Search string \"" + input + "\" does not match any commands.";
-                throw std::runtime_error(out.str());
-            }
-            else {
-                std::cout << find_command(cmd) << std::endl;
-            }
+            throw std::runtime_error("Error: Search string \"" + input + "\" does not match any commands.");
         }
     }
     catch (const std::exception & e){
@@ -843,9 +823,10 @@ int main(int argc, char * argv[]){
     std::string input = "";
     // no commandline arguments
     if (argc == 1){
-        std::cout << "An OpenPGP implementation (RFC 4880)\nby Jason Lee @ calccrypto@gmail.com\n\n"
+        std::cout << "An OpenPGP implementation (RFC 4880)\n"
+                  << "by Jason Lee @ calccrypto@gmail.com\n\n"
                   << "Type help or ? for command syntax\n\n" << std::endl;
-        while (parse_command(input, false)){
+        while (parse_command(input)){
             std::cout << "> ";
             getline(std::cin, input);
         }
@@ -855,7 +836,7 @@ int main(int argc, char * argv[]){
         for(int x = 1; x < argc; x++){
             input += std::string(argv[x]) + " ";
         }
-        parse_command(input, true);
+        parse_command(input);
     }
     return 0;
 }
