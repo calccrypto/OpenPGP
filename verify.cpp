@@ -393,7 +393,8 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     std::string u = "";
 
     // set packets to signatures to verify
-    bool out = false;
+    bool allSignaturesValid = true;
+    bool signatureFound = false;
     Tag6::Ptr tag6 = nullptr;
     for(Packet::Ptr const & p : signee.get_packets()){
         std::string data = p -> raw();
@@ -433,10 +434,12 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                     // add hash contexts together and append trailer data
                     std::string with_trailer = addtrailer(k + u, tag2);
                     std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
+                    signatureFound = true;
                     if (hash.substr(0, 2) == tag2 -> get_left16()){// quick signature check
-                        if (pka_verify(hash, signingkey, tag2)){ // proper signature check
-                            out = true;
-                        }
+                        bool result = pka_verify(hash, signingkey, tag2); // proper signature check
+                        allSignaturesValid = result && allSignaturesValid;
+                    } else {
+                        allSignaturesValid = false;
                     }
                 }
                 break;
@@ -447,11 +450,11 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                 }
                 break;
         }
-        if (out){
+        if(!allSignaturesValid){
             break;
         }
     }
-    return out;
+    return signatureFound && allSignaturesValid;
 }
 
 bool verify_key(const PGPSecretKey & signer, const PGPPublicKey & signee){
