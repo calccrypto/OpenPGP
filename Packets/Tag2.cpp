@@ -226,15 +226,39 @@ std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
             << tab << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
 
         if (hashed_subpackets.size()){
+            time_t create_time = 0;
+
             out << "\n" << tab << "    Hashed Sub:";
             for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
-                out << "\n" << s -> show(indents, indent_size);
+                // capture signature creation time to combine with expiration time
+                if (s -> get_type() == 2){
+                    create_time = static_cast <Tag2Sub2 *> (s.get()) -> get_time();
+                }
+
+                if (s -> get_type() == 9){
+                    out << "\n" << static_cast <Tag2Sub9 *> (s.get()) -> show(create_time, indents, indent_size);
+                }
+                else{
+                    out << "\n" << s -> show(indents, indent_size);
+                }
             }
         }
         if (unhashed_subpackets.size()){
+            time_t create_time = 0;
+
             out << "\n" << tab << "    Unhashed Sub:";
             for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
-                out << "\n" << s -> show(indents, indent_size);
+                // capture signature creation time to combine with expiration time
+                if (s -> get_type() == 2){
+                    create_time = static_cast <Tag2Sub2 *> (s.get()) -> get_time();
+                }
+
+                if (s -> get_type() == 9){
+                    out << "\n" << static_cast <Tag2Sub9 *> (s.get()) -> show(create_time, indents, indent_size);
+                }
+                else{
+                    out << "\n" << s -> show(indents, indent_size);
+                }
             }
         }
     }

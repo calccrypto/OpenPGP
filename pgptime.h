@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define __PGPTIME__
 
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 

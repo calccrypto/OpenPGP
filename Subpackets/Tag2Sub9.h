@@ -26,11 +26,13 @@ THE SOFTWARE.
 #ifndef __TAG2SUB9__
 #define __TAG2SUB9__
 
+#include <list>
+
 #include "subpacket.h"
 
 class Tag2Sub9 : public Tag2Subpacket{
     private:
-        time_t time;
+        time_t dt;
 
     public:
         typedef std::shared_ptr <Tag2Sub9> Ptr;
@@ -38,12 +40,13 @@ class Tag2Sub9 : public Tag2Subpacket{
         Tag2Sub9();
         Tag2Sub9(std::string & data);
         void read(std::string & data);
+        std::string show(const time_t create_time, const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        time_t get_time() const;
+        time_t get_dt() const;
 
-        void set_time(const time_t t);
+        void set_dt(const time_t t);
 
         Tag2Subpacket::Ptr clone() const;
 };
