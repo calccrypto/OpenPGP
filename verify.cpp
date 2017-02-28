@@ -389,24 +389,23 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
     }
 
     uint8_t version = 0;
-    std::string k = "";
-    std::string u = "";
+    std::string key_str = "";
+    std::string user_str = "";
 
     // set packets to signatures to verify
-    bool allSignaturesValid = true;
-    bool signatureFound = false;
+    bool signaturefound = false;
     Tag6::Ptr tag6 = nullptr;
     for(Packet::Ptr const & p : signee.get_packets()){
         std::string data = p -> raw();
         switch (p -> get_tag()){
-            case 5: case 6: case 7: case 14:            // key packet
+            case 5: case 6: case 7: case 14:                                    // key packet
                 tag6 = std::make_shared<Tag6>();
                 tag6 -> read(data);
-                k += overkey(tag6);                     // add current key packet to previous ones
+                key_str += overkey(tag6);                                       // add current key packet to previous ones
                 version = tag6 -> get_version();
                 tag6.reset();
                 break;
-            case 13: case 17:                           // User packet
+            case 13: case 17:                                                   // User packet
                 {
                     ID::Ptr id;
                     if (p -> get_tag() == 13){
@@ -416,11 +415,11 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                         id = std::make_shared<Tag17>();
                     }
                     id -> read(data);
-                    u = certification(version, id);     // write over old user information
+                    user_str = certification(version, id);                      // write over old user information
                     id.reset();
                 }
                 break;
-            case 2:                                     // signature packet
+            case 2:                                                             // signature packet
                 {
                     // copy packet data into signature packet
                     Tag2::Ptr tag2(new Tag2(data));
@@ -428,18 +427,14 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                     // if signature is key binding, erase the user information
                     if ((tag2 -> get_type() == 0x18) ||
                         (tag2 -> get_type() == 0x19)){
-                        u = "";
+                        user_str = "";
                     }
 
                     // add hash contexts together and append trailer data
-                    std::string with_trailer = addtrailer(k + u, tag2);
-                    std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
-                    signatureFound = true;
-                    if (hash.substr(0, 2) == tag2 -> get_left16()){                // quick signature check
-                        allSignaturesValid &= pka_verify(hash, signingkey, tag2);  // proper signature check
-                    }
-                    else {
-                        allSignaturesValid = false;
+                    const std::string with_trailer = addtrailer(key_str + user_str, tag2);
+                    const std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
+                    if (hash.substr(0, 2) == tag2 -> get_left16()){             // quick signature check
+                        signaturefound = pka_verify(hash, signingkey, tag2);    // proper signature check
                     }
                 }
                 break;
@@ -450,11 +445,11 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                 }
                 break;
         }
-        if(!allSignaturesValid){
+        if(signaturefound){
             break;
         }
     }
-    return signatureFound && allSignaturesValid;
+    return signaturefound;
 }
 
 bool verify_key(const PGPSecretKey & signer, const PGPPublicKey & signee){

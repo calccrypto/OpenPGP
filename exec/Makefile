@@ -9,12 +9,12 @@ debug: all
 
 all: $(TARGET)
 
-.PHONY: clean clean-all
+.PHONY: lib clean clean-all
 
-../libOpenPGP.a:
+lib:
 	$(MAKE) -C ..
 
-$(TARGET): main.cpp ../OpenPGP.h ../libOpenPGP.a
+$(TARGET): main.cpp ../OpenPGP.h lib
 	$(CXX) $(CXXFLAGS) main.cpp $(LDFLAGS) -o $(TARGET)
 
 clean:
