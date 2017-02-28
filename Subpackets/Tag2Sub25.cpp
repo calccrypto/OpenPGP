@@ -16,8 +16,8 @@ void Tag2Sub25::read(std::string & data){
 }
 
 std::string Tag2Sub25::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
-    return std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + std::string("            Primary: ") + (primary?"True":"False");
+    const std::string tab(indents * indent_size, ' ');
+    return tab + show_title() + "\n" + tab + std::string("            Primary: ") + (primary?"True":"False");
 }
 
 std::string Tag2Sub25::raw() const{

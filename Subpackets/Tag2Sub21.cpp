@@ -17,11 +17,11 @@ void Tag2Sub21::read(std::string & data){
 }
 
 std::string Tag2Sub21::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title();
+    out << tab << show_title();
     for(unsigned int x = 0; x < pha.size(); x++){
-        out << "\n" << std::string(tab, ' ') << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")";
+        out << "\n" << tab << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")";
     }
     return out.str();
 }

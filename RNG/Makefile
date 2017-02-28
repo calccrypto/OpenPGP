@@ -2,15 +2,18 @@
 CXX?=g++
 CXXFLAGS=-std=c++11 -Wall -c
 
+include sources.make
+OBJECTS=$(RNG_SOURCES:.cpp=.o)
+
 debug: CXXFLAGS += -g
 debug: all
 
-all: BBS.o
+all: $(OBJECTS)
 
 .PHONY: clean
 
-BBS.o: BBS.h BBS.cpp ../common/cryptomath.h ../pgptime.h
-	$(CXX) $(CXXFLAGS) BBS.cpp
+%.o : %.cpp %.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f *.o
+	rm -f $(OBJECTS)

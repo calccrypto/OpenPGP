@@ -25,18 +25,18 @@ void Tag1::read(std::string & data){
 }
 
 std::string Tag1::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << std::string(tab, ' ') << "    KeyID: " << hexlify(keyid) << "\n"
-        << std::string(tab, ' ') << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
+    out << tab << show_title() << "\n"
+        << tab << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << tab << "    KeyID: " << hexlify(keyid) << "\n"
+        << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
     if (pka < 4){
-        out << std::string(tab, ' ') << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
+        out << tab << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
     }
     else if (pka == 16){
-        out << std::string(tab, ' ') << "    Elgamal g**k mod p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-            << std::string(tab, ' ') << "    Elgamal m * y**k mod p (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
+        out << tab << "    Elgamal g**k mod p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
+            << tab << "    Elgamal m * y**k mod p (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
     }
     return out.str();
 }

@@ -16,8 +16,8 @@ void Tag2Sub4::read(std::string & data){
 }
 
 std::string Tag2Sub4::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
-    return std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + "            Exportable: " + (exportable?"True":"False");
+    const std::string tab(indents * indent_size, ' ');
+    return tab + show_title() + "\n" + tab + "            Exportable: " + (exportable?"True":"False");
 }
 
 std::string Tag2Sub4::raw() const{

@@ -30,4 +30,3 @@ std::string use_hash(uint8_t flag, const std::string & data){
             break;
     }
 }
-

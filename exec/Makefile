@@ -21,4 +21,4 @@ clean:
 	rm -f $(TARGET)
 
 clean-all: clean
-	$(MAKE) clean -C ..
+	$(MAKE) clean-all -C ..

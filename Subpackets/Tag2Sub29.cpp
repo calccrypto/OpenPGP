@@ -19,12 +19,12 @@ void Tag2Sub29::read(std::string & data){
 }
 
 std::string Tag2Sub29::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "            Reason " << static_cast <unsigned int> (code) << " - " << Revoke.at(code);
+    out << tab << show_title() << "\n"
+        << tab << "            Reason " << static_cast <unsigned int> (code) << " - " << Revoke.at(code);
     if (code){
-        out << "\n" << std::string(tab, ' ') << "            Comment - " << reason;
+        out << "\n" << tab << "            Comment - " << reason;
     }
     return out.str();
 }

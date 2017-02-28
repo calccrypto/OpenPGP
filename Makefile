@@ -4,6 +4,33 @@ CXXFLAGS=-std=c++11 -Wall -c
 AR=ar
 TARGET=libOpenPGP.a
 
+include sources.make
+OPENPGP_OBJECTS=$(OPENPGP_SOURCES:.cpp=.o)
+
+include common/sources.make
+COMMON_OBJECTS=$(addprefix common/, $(COMMON_SOURCES:.cpp=.o))
+
+include Compress/sources.make
+COMPRESS_OBJECTS=$(addprefix Compress/, $(COMPRESS_SOURCES:.cpp=.o))
+
+include Encryptions/sources.make
+ENCRYPTIONS_OBJECTS=$(addprefix Encryptions/, $(ENCRYPTIONS_SOURCES:.cpp=.o))
+
+include Hashes/sources.make
+HASHES_OBJECTS=$(addprefix Hashes/, $(HASHES_SOURCES:.cpp=.o))
+
+include Packets/sources.make
+PACKETS_OBJECTS=$(addprefix Packets/, $(PACKETS_SOURCES:.cpp=.o))
+
+include PKA/sources.make
+PKA_OBJECTS=$(addprefix PKA/, $(PKA_SOURCES:.cpp=.o))
+
+include RNG/sources.make
+RNG_OBJECTS=$(addprefix RNG/, $(RNG_SOURCES:.cpp=.o))
+
+include Subpackets/sources.make
+SUBPACKETS_OBJECTS=$(addprefix Subpackets/, $(SUBPACKETS_SOURCES:.cpp=.o))
+
 debug: CXXFLAGS += -g
 debug: all
 
@@ -86,11 +113,13 @@ sign.o: sign.h sign.cpp common/includes.h Compress/Compress.h Packets/packets.h 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPMessage.h PGPKey.h PKCS1.h sigcalc.h
 	$(CXX) $(CXXFLAGS) verify.cpp
 
-$(TARGET): cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common Compress Encryptions Hashes Packets PKA RNG Subpackets
-	$(AR) -r $(TARGET) cfb.o decrypt.o encrypt.o generatekey.o mpi.o PGP.o PGPCleartextSignature.o PGPDetachedSignature.o PGPKey.o PGPMessage.o pgptime.o PKCS1.o radix64.o revoke.o sign.o sigcalc.o verify.o common/*.o Compress/*.o Encryptions/*.o Hashes/*.o Packets/*.o PKA/*.o RNG/*.o Subpackets/*.o
+$(TARGET): $(OPENPGP_OBJECTS) common Compress Encryptions Hashes Packets PKA RNG Subpackets
+	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(COMMON_OBJECTS) $(COMPRESS_OBJECTS) $(ENCRYPTIONS_OBJECTS) $(HASHES_OBJECTS) $(PACKETS_OBJECTS) $(PKA_OBJECTS) $(RNG_OBJECTS) $(SUBPACKETS_OBJECTS)
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f $(OPENPGP_OBJECTS) $(TARGET)
+
+clean-all: clean
 	$(MAKE) clean -C common
 	$(MAKE) clean -C Compress
 	$(MAKE) clean -C Encryptions

@@ -2,7 +2,7 @@
 Hash.h
 Base class for inheritance
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,11 @@ THE SOFTWARE.
 #define __HASH__
 
 #include <iostream>
-#include <memory>
 
 #include "../common/includes.h"
 
 class Hash{
     public:
-        typedef std::shared_ptr<Hash> Ptr;
-
         Hash();
         virtual ~Hash();
         virtual void update(const std::string & str) = 0;

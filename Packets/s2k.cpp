@@ -55,10 +55,10 @@ void S2K0::read(std::string & data){
 }
 
 std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
+    out << tab << show_title() << "\n"
+        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
     return out.str();
 }
 
@@ -98,11 +98,11 @@ void S2K1::read(std::string & data){
 }
 
 std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-        << std::string(tab, ' ') << "        Salt: " << hexlify(salt);
+    out << tab << show_title() << "\n"
+        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << tab << "        Salt: " << hexlify(salt);
     return out.str();
 }
 
@@ -147,12 +147,12 @@ void S2K3::read(std::string & data){
 }
 
 std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-        << std::string(tab, ' ') << "        Salt: " << hexlify(salt) << "\n"
-        << std::string(tab, ' ') << "        Coded Count: " << coded_count(count) << " (count " << static_cast <unsigned int> (count) << ")";
+    out << tab << show_title() << "\n"
+        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << tab << "        Salt: " << hexlify(salt) << "\n"
+        << tab << "        Coded Count: " << coded_count(count) << " (count " << static_cast <unsigned int> (count) << ")";
     return out.str();
 }
 

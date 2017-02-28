@@ -54,14 +54,14 @@ void Tag8::read(std::string & data){
 }
 
 std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
+    const std::string tab(indents * indent_size, ' ');
     std::string data = get_data();
     PGPMessage decompressed;
     decompressed.read_raw(data); // do this in case decompressed data contains headers
     std::stringstream out;
-    out << std::string(tab, ' ') << show_title() << "\n"
-        << std::string(tab, ' ') << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
-        << std::string(tab, ' ') << "Compressed Data:\n"
+    out << tab << show_title() << "\n"
+        << tab << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
+        << tab << "Compressed Data:\n"
         << decompressed.show(indents + 1, indent_size);
     return out.str();
 }

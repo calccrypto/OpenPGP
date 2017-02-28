@@ -38,8 +38,8 @@ void Tag17::read(std::string & data){
 }
 
 std::string Tag17::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
-    std::string out = std::string(tab, ' ') + show_title();
+    const std::string tab(indents * indent_size, ' ');
+    std::string out = tab + show_title();
     for(Subpacket::Ptr const & a : attributes){
         out += "\n" + a -> show(indents, indent_size);
     }

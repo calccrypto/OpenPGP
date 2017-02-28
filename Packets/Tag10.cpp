@@ -19,8 +19,8 @@ void Tag10::read(std::string & data){
 }
 
 std::string Tag10::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
-    return std::string(tab, ' ') + std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + "    PGP";
+    const std::string tab(indents * indent_size, ' ');
+    return tab + tab + show_title() + "\n" + tab + "    PGP";
 }
 
 std::string Tag10::raw() const{

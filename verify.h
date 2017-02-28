@@ -2,8 +2,8 @@
 verify.c
 Functions to verify data signed by a PGP key
 
-Copyright (c) 2013, 2014 Jason Lee
-
+Copyright (c) 2013 - 2017 Jason Lee
+ @ calccrypto@gmail.com
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights

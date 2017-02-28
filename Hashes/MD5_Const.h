@@ -2,7 +2,7 @@
 MD5_Const.h
 Constants for the MD5 algorithm
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -16,8 +16,8 @@ void Tag2Sub16::read(std::string & data){
 }
 
 std::string Tag2Sub16::show(const uint8_t indents, const uint8_t indent_size) const{
-    unsigned int tab = indents * indent_size;
-    return std::string(tab, ' ') + show_title() + "\n" + std::string(tab, ' ') + "            Key ID: " + hexlify(keyid);
+    const std::string tab(indents * indent_size, ' ');
+    return tab + show_title() + "\n" + tab + "            Key ID: " + hexlify(keyid);
 }
 
 std::string Tag2Sub16::raw() const{
