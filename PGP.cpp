@@ -28,7 +28,7 @@ PGP::PGP(std::string & data):
     read(data);
 }
 
-PGP::PGP(std::ifstream & f):
+PGP::PGP(std::istream & f):
     PGP()
 {
     read(f);
@@ -39,158 +39,95 @@ PGP::~PGP(){
 }
 
 void PGP::read(std::string & data){
-    std::string ori = data;
+    std::stringstream s(data);
+    read(s);
+}
 
-    // remove extra data and parse unsecured data
-    unsigned int x = 0;
+void PGP::read(std::istream & file){
+    // find armor header
+    std::string line;
+    while (std::getline(file, line) && line.substr(0, 15) != "-----BEGIN PGP ");
 
-    // find and remove header
-    while ((x < data.size()) && (data.substr(x, 15) != "-----BEGIN PGP ")){
-        x++;
+    // if no armor header found, assume entire file is key
+    if (!file){
+        armored = false;
+        file.clear();
+        file.seekg(file.beg);
+
+        // parse entire file
+        read_raw(file);
     }
-    data = data.substr(x, data.size() - x);
+    else{
+        armored = true;
 
-    // remove carriage returns
-    x = 0;
-    while (x < data.size()){
-        if (data[x] == '\r'){
-            data.replace(x, 1, "");
-        }
-        else{
-            x++;
-        }
-    }
-
-    // find type of PGP block
-    for(x = 0; x < 7; x++){
-        std::string match = "-----BEGIN PGP " + ASCII_Armor_Header[x] + "-----";
-        if (match == data.substr(0, match.size())){
-            break;
-        }
-    }
-
-    // no ASCII Armor header found
-    if (x > 6){
-        //std::cerr << "Warning: Beginning of Armor Header Line not found. Will attempt to read raw file data." << std::endl;
-        read_raw(ori);
-        return;
-    }
-
-    // Cleartext Signature Framework
-    if (x == 6){
-        throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
-    }
-
-    if (ASCII_Armor != 255){   // if an ASCII Armor header was set (by a child class)
-        if (ASCII_Armor != x){ // check if the parsed data is the same type
-            std::cerr << "Warning: ASCII Armor does not match data type." << std::endl;
-        }
-    }
-
-    ASCII_Armor = x;
-
-    // remove newline after header
-    x = 0;
-    while ((x < data.size()) && (data[x] != '\n')){
-        x++;
-    }
-    if (x == data.size()){
-        throw std::runtime_error("Error: End to Armor Header Line not found.");
-    }
-
-    data = data.substr(x + 1, data.size() - x - 1);
-
-    // find header keys
-    x = 1;
-    if (data[0] != '\n'){
-        while ((x < data.size()) && (data.substr(x, 2) != "\n\n")){
-            x++;
+        // parse armor header
+        uint8_t new_ASCII_Armor;
+        for(new_ASCII_Armor = 0; new_ASCII_Armor < 7; new_ASCII_Armor++){
+            if (("-----BEGIN PGP " + ASCII_Armor_Header[new_ASCII_Armor] + "-----") == line){
+                break;
+            }
         }
 
-        x++; // skip the 2 newlines
-    }
-
-    std::string header_keys = data.substr(0, x);
-
-    // remove header keys + empty line
-    data = data.substr(x, data.size() - x);
-
-    // parse Armor Key
-    while (header_keys.size()){
-        // find end of line
-        x = 0;
-        while ((x < header_keys.size()) && (header_keys[x] != '\n')){
-            x++;
+        // Cleartext Signature Framework
+        if (new_ASCII_Armor == 6){
+            throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
         }
 
-        // find colon ':'
-        unsigned int y = 0;
-        while ((y < x) && (header_keys[y] != ':')) y++;
+        // if ASCII Armor was set before calling read()
+        if (ASCII_Armor != 255){
+            if (ASCII_Armor != new_ASCII_Armor){
+                std::cerr << "Warning: ASCII Armor does not match data type." << std::endl;
+            }
+        }
 
-        // extract value
-        if (y != x){
-            std::string header = header_keys.substr(0, y);
-            Armor_Header.push_back(std::make_pair(header, header_keys.substr(y + 1, x - y - 1)));
+        // read Armor Key(s)
+        while (std::getline(file, line) && line.size()){
+            std::stringstream s(line);
+            std::string key, value;
+
+            if (!(std::getline(s, key, ':') && std::getline(s, value))){
+                std::cerr << "Warning: Discarding bad Armor Header: " << line << std::endl;
+                continue;
+            }
 
             bool found = false;
-            for(unsigned int i = 0; i < 5; i++){
-                if (header == ASCII_Armor_Key[i]){
+            for(std::string const & header_key : ASCII_Armor_Key){
+                if (header_key == key){
                     found = true;
                     break;
                 }
             }
 
             if (!found){
-                std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << header << "\"." << std::endl;
+                std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << key << "\"." << std::endl;
+            }
+
+            Armor_Header.push_back(std::make_pair(key, value));
+        }
+
+        // read up to tail
+        std::string body;
+        while (std::getline(file, line) && (line.substr(0, 13) != "-----END PGP ")){
+            body += line;
+        }
+
+        // check for a checksum
+        if (body[body.size() - 5] == '='){
+            uint32_t checksum = toint(radix642ascii(body.substr(body.size() - 4, 4)), 256);
+            body = radix642ascii(body.substr(0, body.size() - 5));
+            // check if the checksum is correct
+            if (crc24(body) != checksum){
+                std::cerr << "Warning: Given checksum does not match calculated value." << std::endl;
             }
         }
-
-        x++;
-
-        header_keys = header_keys.substr(x, header_keys.size() - x);
-    }
-
-    // remove tail
-    x = 0;
-    while ((x < data.size()) && (data.substr(x, 13) != "-----END PGP ")){
-        x++;
-    }
-    data = data.substr(0, x);
-
-    // remove newlines
-    x = 0;
-    while (x < data.size()){
-        if (data[x] == '\n'){
-            data.replace(x, 1, "");
-        }
         else{
-            x++;
+            body = radix642ascii(body);
+            std::cerr << "Warning: No checksum found." << std::endl;
         }
-    }
 
-    // check for a checksum
-    if (data[data.size() - 5] == '='){
-        uint32_t checksum = toint(radix642ascii(data.substr(data.size() - 4, 4)), 256);
-        data = radix642ascii(data.substr(0, data.size() - 5));
-        // check if the checksum is correct
-        if (crc24(data) != checksum){
-            std::cerr << "Warning: Given checksum does not match calculated value." << std::endl;
-        }
+        // parse data
+        read_raw(body);
     }
-    else{
-        data = radix642ascii(data);
-        std::cerr << "Warning: No checksum found." << std::endl;
-    }
-    // //////////////////////////////////////////////////////////////////////////////////////////
-    read_raw(data);
-    armored = true;
-}
-
-void PGP::read(std::ifstream & file){
-    std::stringstream s;
-    s << file.rdbuf();
-    std::string data = s.str();
-    read(data);
 }
 
 void PGP::read_raw(std::string & data){
@@ -205,7 +142,7 @@ void PGP::read_raw(std::string & data){
     armored = false;
 }
 
-void PGP::read_raw(std::ifstream & file){
+void PGP::read_raw(std::istream & file){
     std::stringstream s;
     s << file.rdbuf();
     std::string data = s.str();

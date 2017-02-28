@@ -152,7 +152,7 @@ PGPMessage::PGPMessage(std::string & data):
     }
 }
 
-PGPMessage::PGPMessage(std::ifstream & f):
+PGPMessage::PGPMessage(std::istream & f):
     PGP(f),
     comp(nullptr)
 {

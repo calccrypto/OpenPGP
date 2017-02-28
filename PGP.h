@@ -56,13 +56,13 @@ class PGP{
         PGP();
         PGP(const PGP & copy);                                  // clone another PGP instance
         PGP(std::string & data);                                // data fed into this constructor will be consumed
-        PGP(std::ifstream & f);                                 // read from file; file not modified
+        PGP(std::istream & f);                                  // read from file; file not modified
         ~PGP();
 
         void read(std::string & data);                          // read base64 key, including ASCII Armor; some data is consumed
-        void read(std::ifstream & file);                        // read base64 key from file; file not modified
+        void read(std::istream & file);                         // read base64 key from file; file not modified
         void read_raw(std::string & data);                      // read binary data; data is consumed; called by read()
-        void read_raw(std::ifstream & file);                    // read binary data from file; file not modified
+        void read_raw(std::istream & file);                     // read binary data from file; file not modified
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
         virtual std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
         virtual std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()

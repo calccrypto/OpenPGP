@@ -106,7 +106,7 @@ bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, cons
     return verify_detachedsig(PGPPublicKey(pri), data, sig);
 }
 
-bool verify_detachedsig(const PGPPublicKey & pub, std::ifstream & f, const PGPDetachedSignature & sig){
+bool verify_detachedsig(const PGPPublicKey & pub, std::istream & f, const PGPDetachedSignature & sig){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }
@@ -117,7 +117,7 @@ bool verify_detachedsig(const PGPPublicKey & pub, std::ifstream & f, const PGPDe
     return verify_detachedsig(pub, data, sig);
 }
 
-bool verify_detachedsig(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig){
+bool verify_detachedsig(const PGPSecretKey & pri, std::istream & f, const PGPDetachedSignature & sig){
     return verify_detachedsig(PGPPublicKey(pri), f, sig);
 }
 

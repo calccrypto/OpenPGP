@@ -67,10 +67,10 @@ class PGPCleartextSignature {
         PGPCleartextSignature();
         PGPCleartextSignature(const PGPCleartextSignature & copy);
         PGPCleartextSignature(std::string & data);
-        PGPCleartextSignature(std::ifstream & f);
+        PGPCleartextSignature(std::istream & f);
 
         void read(std::string & data);
-        void read(std::ifstream & file);
+        void read(std::istream & file);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string write(uint8_t header = 0) const;
 

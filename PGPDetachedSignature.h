@@ -45,7 +45,7 @@ class PGPDetachedSignature : public PGP {
         PGPDetachedSignature();
         PGPDetachedSignature(const PGPDetachedSignature & copy);
         PGPDetachedSignature(std::string & data);
-        PGPDetachedSignature(std::ifstream & f);
+        PGPDetachedSignature(std::istream & f);
         ~PGPDetachedSignature();
 
         bool meaningful() const; // whether or not data matches Detached Signature format

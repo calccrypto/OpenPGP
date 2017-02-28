@@ -137,7 +137,7 @@ PGPKey::PGPKey(std::string & data):
     PGP(data)
 {}
 
-PGPKey::PGPKey(std::ifstream & f):
+PGPKey::PGPKey(std::istream & f):
     PGP(f)
 {}
 
@@ -275,7 +275,7 @@ PGPSecretKey::PGPSecretKey(std::string & data):
     }
 }
 
-PGPSecretKey::PGPSecretKey(std::ifstream & f):
+PGPSecretKey::PGPSecretKey(std::istream & f):
     PGPKey(f)
 {
     if ((ASCII_Armor == 255) && meaningful()){
@@ -324,7 +324,7 @@ PGPPublicKey::PGPPublicKey(std::string & data):
     }
 }
 
-PGPPublicKey::PGPPublicKey(std::ifstream & f):
+PGPPublicKey::PGPPublicKey(std::istream & f):
     PGPKey(f)
 {
     if ((ASCII_Armor == 255) && meaningful()){

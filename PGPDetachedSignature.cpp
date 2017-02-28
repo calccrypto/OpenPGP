@@ -22,7 +22,7 @@ PGPDetachedSignature::PGPDetachedSignature(std::string & data):
     }
 }
 
-PGPDetachedSignature::PGPDetachedSignature(std::ifstream & f):
+PGPDetachedSignature::PGPDetachedSignature(std::istream & f):
     PGP(f)
 {
     if ((ASCII_Armor == 255) && meaningful()){

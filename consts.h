@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <utility>
 
 // ASCII data at beginning and end of OpenPGP packet
-const std::string ASCII_Armor_Header[7] = {
+const std::string ASCII_Armor_Header[] = {
    "MESSAGE",           // Used for signed, encrypted, or compressed files.
    "PUBLIC KEY BLOCK",  // Used for armoring public keys.
    "PRIVATE KEY BLOCK", // Used for armoring private keys.
@@ -43,7 +43,7 @@ const std::string ASCII_Armor_Header[7] = {
 };
 
 // ASCII descriptor of OpenPGP packet
-const std::string ASCII_Armor_Key[5] = {
+const std::string ASCII_Armor_Key[] = {
     "Version",          // which states the OpenPGP implementation and version used to encode the message.
 
     "Comment",          // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.

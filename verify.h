@@ -56,8 +56,8 @@ bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSign
 // verify detached signatures
 bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig);
 bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPPublicKey & pub, std::ifstream & f, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPSecretKey & pri, std::ifstream & f, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPPublicKey & pub, std::istream & f, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPSecretKey & pri, std::istream & f, const PGPDetachedSignature & sig);
 
 // verify OpenPGP Messages: signed, encrypted, or compressed files
 bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m); // called by the other verify_message functions

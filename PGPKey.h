@@ -55,7 +55,7 @@ class PGPKey : public PGP {
         PGPKey();
         PGPKey(const PGPKey & copy);
         PGPKey(std::string & data);
-        PGPKey(std::ifstream & f);
+        PGPKey(std::istream & f);
         ~PGPKey();
 
         std::string keyid()       const; // keyid that is searched for on keyservers
@@ -76,7 +76,7 @@ class PGPSecretKey : public PGPKey {
         PGPSecretKey();
         PGPSecretKey(const PGPSecretKey & copy);
         PGPSecretKey(std::string & data);
-        PGPSecretKey(std::ifstream & f);
+        PGPSecretKey(std::istream & f);
         ~PGPSecretKey();
 
         PGPPublicKey pub() const;
@@ -95,7 +95,7 @@ class PGPPublicKey : public PGPKey {
         PGPPublicKey();
         PGPPublicKey(const PGPPublicKey & copy);
         PGPPublicKey(std::string & data);
-        PGPPublicKey(std::ifstream & f);
+        PGPPublicKey(std::istream & f);
         PGPPublicKey(const PGPSecretKey & sec);
         ~PGPPublicKey();
 

@@ -19,7 +19,7 @@ PGPCleartextSignature::PGPCleartextSignature(std::string & data):
     read(data);
 }
 
-PGPCleartextSignature::PGPCleartextSignature(std::ifstream & f):
+PGPCleartextSignature::PGPCleartextSignature(std::istream & f):
     PGPCleartextSignature()
 {
     read(f);
@@ -109,7 +109,7 @@ void PGPCleartextSignature::read(std::string & data){
     sig.read(data);
 }
 
-void PGPCleartextSignature::read(std::ifstream & file){
+void PGPCleartextSignature::read(std::istream & file){
     std::stringstream s;
     s << file.rdbuf();
     std::string data = s.str();

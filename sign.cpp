@@ -128,7 +128,7 @@ PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & p
     return signature;
 }
 
-PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::ifstream & f, const uint8_t hash){
+PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::istream & f, const uint8_t hash){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }
@@ -220,7 +220,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     return sign_message(pri, passphrase, filename, s.str(), hash);
 }
 
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase,  const std::string & filename, std::ifstream & f, const uint8_t hash, const uint8_t compress){
+PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase,  const std::string & filename, std::istream & f, const uint8_t hash, const uint8_t compress){
     if (!f){
         throw std::runtime_error("Error: Bad file.");
     }

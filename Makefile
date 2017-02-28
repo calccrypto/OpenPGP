@@ -36,7 +36,7 @@ debug: all
 
 all: $(TARGET)
 
-.PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean
+.PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean clean-all
 
 common:
 	$(MAKE) -C common
@@ -117,9 +117,10 @@ $(TARGET): $(OPENPGP_OBJECTS) common Compress Encryptions Hashes Packets PKA RNG
 	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(COMMON_OBJECTS) $(COMPRESS_OBJECTS) $(ENCRYPTIONS_OBJECTS) $(HASHES_OBJECTS) $(PACKETS_OBJECTS) $(PKA_OBJECTS) $(RNG_OBJECTS) $(SUBPACKETS_OBJECTS)
 
 clean:
-	rm -f $(OPENPGP_OBJECTS) $(TARGET)
+	rm -f $(TARGET)
 
 clean-all: clean
+    rm -f $(OPENPGP_OBJECTS)
 	$(MAKE) clean -C common
 	$(MAKE) clean -C Compress
 	$(MAKE) clean -C Encryptions

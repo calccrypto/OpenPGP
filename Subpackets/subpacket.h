@@ -44,7 +44,7 @@ class Subpacket{
 
         // returns first line of show functions (no tab or newline)
         std::string show_title() const;
-        
+
         Subpacket(uint8_t type = 0, unsigned int size = 0);
         Subpacket(const Subpacket & copy);
         Subpacket & operator =(const Subpacket & copy);
@@ -75,7 +75,7 @@ class Tag2Subpacket: public Subpacket {
         typedef std::shared_ptr <Tag2Subpacket> Ptr;
 
         virtual ~Tag2Subpacket();
-        
+
         virtual Ptr clone() const = 0;
 };
 
@@ -89,7 +89,7 @@ class Tag17Subpacket: public Subpacket {
         typedef std::shared_ptr <Tag17Subpacket> Ptr;
 
         virtual ~Tag17Subpacket();
-        
+
         virtual Ptr clone() const = 0;
 
 };

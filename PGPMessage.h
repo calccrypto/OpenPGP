@@ -108,7 +108,7 @@ class PGPMessage : public PGP {
         PGPMessage();
         PGPMessage(const PGPMessage & copy);
         PGPMessage(std::string & data);
-        PGPMessage(std::ifstream & f);
+        PGPMessage(std::istream & f);
         ~PGPMessage();
 
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired

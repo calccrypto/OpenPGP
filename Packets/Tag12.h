@@ -36,7 +36,7 @@ class Tag12 : public Packet{
 
         Tag12();
         Tag12(std::string & data);
-        Tag12(std::ifstream & f);
+        Tag12(std::istream & f);
         void read(std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
