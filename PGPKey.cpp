@@ -3,7 +3,7 @@
 bool PGPKey::meaningful(uint8_t type) const{
     uint8_t key, subkey;
 
-    if (type == 1){ // Public Key
+    if (type == 1){      // Public Key
         key = 6;
         subkey = 14;
     }

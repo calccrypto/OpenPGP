@@ -39,7 +39,6 @@ PGP::~PGP(){
 }
 
 void PGP::read(std::string & data){
-    
     std::string ori = data;
 
     // remove extra data and parse unsecured data
@@ -52,13 +51,13 @@ void PGP::read(std::string & data){
     data = data.substr(x, data.size() - x);
 
     // remove carriage returns
-    unsigned int y = 0;
-    while (y < data.size()){
-        if (data[y] == '\r'){
-            data.replace(y, 1, "");
+    x = 0;
+    while (x < data.size()){
+        if (data[x] == '\r'){
+            data.replace(x, 1, "");
         }
         else{
-            y++;
+            x++;
         }
     }
 
@@ -82,7 +81,7 @@ void PGP::read(std::string & data){
         throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
     }
 
-    if (ASCII_Armor != 255){ // if an ASCII Armor header was set (by a child class)
+    if (ASCII_Armor != 255){   // if an ASCII Armor header was set (by a child class)
         if (ASCII_Armor != x){ // check if the parsed data is the same type
             std::cerr << "Warning: ASCII Armor does not match data type." << std::endl;
         }
@@ -92,7 +91,7 @@ void PGP::read(std::string & data){
 
     // remove newline after header
     x = 0;
-    while ((x < data.size()) && data.substr(x, 1) != "\n"){
+    while ((x < data.size()) && (data[x] != '\n')){
         x++;
     }
     if (x == data.size()){
@@ -102,43 +101,52 @@ void PGP::read(std::string & data){
     data = data.substr(x + 1, data.size() - x - 1);
 
     // find header keys
-    x = 0;
-    while ((x < data.size()) && (data.substr(x, 2) != "\n\n")){
-        x++;
+    x = 1;
+    if (data[0] != '\n'){
+        while ((x < data.size()) && (data.substr(x, 2) != "\n\n")){
+            x++;
+        }
+
+        x++; // skip the 2 newlines
     }
 
-    std::string header_keys = data.substr(0, (++x)++);
+    std::string header_keys = data.substr(0, x);
 
     // remove header keys + empty line
     data = data.substr(x, data.size() - x);
 
     // parse Armor Key
     while (header_keys.size()){
-        x = 6;
+        // find end of line
+        x = 0;
         while ((x < header_keys.size()) && (header_keys[x] != '\n')){
             x++;
         }
 
         // find colon ':'
         unsigned int y = 0;
-        while (header_keys[y] != ':') y++;
-        std::string header = header_keys.substr(0, y);
+        while ((y < x) && (header_keys[y] != ':')) y++;
 
-        Armor_Header.push_back(std::pair <std::string, std::string>(header, header_keys.substr(y + 1, x - y - 1)));
+        // extract value
+        if (y != x){
+            std::string header = header_keys.substr(0, y);
+            Armor_Header.push_back(std::make_pair(header, header_keys.substr(y + 1, x - y - 1)));
 
-        bool found = false;
-        for(unsigned int i = 0; i < 5; i++){
-            if (header == ASCII_Armor_Key[i]){
-                found = true;
-                break;
+            bool found = false;
+            for(unsigned int i = 0; i < 5; i++){
+                if (header == ASCII_Armor_Key[i]){
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found){
+                std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << header << "\"." << std::endl;
             }
         }
 
-        if (!found){
-            std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << header << "\"." << std::endl;
-        }
-
         x++;
+
         header_keys = header_keys.substr(x, header_keys.size() - x);
     }
 
@@ -150,13 +158,13 @@ void PGP::read(std::string & data){
     data = data.substr(0, x);
 
     // remove newlines
-    y = 0;
-    while (y < data.size()){
-        if (data[y] == '\n'){
-            data.replace(y, 1, "");
+    x = 0;
+    while (x < data.size()){
+        if (data[x] == '\n'){
+            data.replace(x, 1, "");
         }
         else{
-            y++;
+            x++;
         }
     }
 
