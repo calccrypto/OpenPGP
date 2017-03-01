@@ -4,25 +4,25 @@ SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key){
     SymAlg::Ptr alg;
     switch(sym_alg){
         case 1:
-            alg = std::make_shared<IDEA>(key);
+            alg = std::make_shared <IDEA> (key);
             break;
         case 2:
-            alg = std::make_shared<TDES>(key.substr(0, 8), TDES_mode1, key.substr(8, 8), TDES_mode2, key.substr(16, 8), TDES_mode3);
+            alg = std::make_shared <TDES> (key.substr(0, 8), TDES_mode1, key.substr(8, 8), TDES_mode2, key.substr(16, 8), TDES_mode3);
             break;
         case 3:
-            alg = std::make_shared<CAST128>(key);
+            alg = std::make_shared <CAST128> (key);
             break;
         case 4:
-            alg = std::make_shared<Blowfish>(key);
+            alg = std::make_shared <Blowfish> (key);
             break;
         case 7: case 8: case 9:
-            alg = std::make_shared<AES>(key);
+            alg = std::make_shared <AES> (key);
             break;
         case 10:
-            alg = std::make_shared<Twofish>(key);
+            alg = std::make_shared <Twofish> (key);
             break;
         case 11: case 12: case 13:
-            alg = std::make_shared<Camellia>(key);
+            alg = std::make_shared <Camellia> (key);
             break;
         default:
             throw std::runtime_error("Error: Unknown Symmetric Key Algorithm value.");
@@ -84,7 +84,6 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
 
     // 5. FR is encrypted to produce FRE, the encryption of the first BS octets of ciphertext.
     FRE = crypt -> encrypt(FR);
-
 
 	if (packet == 9){           // resynchronization
         // 6. The left two octets of FRE get xored with the next two octets of data that were prefixed to the plaintext. This produces C[BS+1] and C[BS+2], the next two octets of ciphertext.

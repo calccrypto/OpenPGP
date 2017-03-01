@@ -1,17 +1,17 @@
 #include "Tag2Sub7.h"
 
-Tag2Sub7::Tag2Sub7():
-    Tag2Subpacket(7, 1),
-    revocable()
+Tag2Sub7::Tag2Sub7()
+    : Tag2Subpacket(7, 1),
+      revocable()
 {}
 
-Tag2Sub7::Tag2Sub7(std::string & data):
-    Tag2Sub7()
+Tag2Sub7::Tag2Sub7(const std::string & data)
+    : Tag2Sub7()
 {
     read(data);
 }
 
-void Tag2Sub7::read(std::string & data){
+void Tag2Sub7::read(const std::string & data){
     revocable = data[0];
 }
 

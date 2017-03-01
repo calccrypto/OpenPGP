@@ -1,30 +1,30 @@
 #include "Tag11.h"
 
-Tag11::Tag11():
-    Packet(11),
-    format(),
-    filename(),
-    time(),
-    literal()
+Tag11::Tag11()
+    : Packet(11),
+      format(),
+      filename(),
+      time(),
+      literal()
 {}
 
-Tag11::Tag11(std::string & data):
-    Tag11()
+Tag11::Tag11(const std::string & data)
+    : Tag11()
 {
     read(data);
 }
 
-void Tag11::read(std::string & data){
-    size = data.size();
-    format = data[0];
+void Tag11::read(const std::string & data){
+    size        = data.size();
+    format      = data[0];
     uint8_t len = data[1];
-    filename = data.substr(2, len);
+    filename    = data.substr(2, len);
 
     if (filename == "_CONSOLE"){
         std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"." << std::endl;
     }
 
-    time = toint(data.substr(2 + len, 4), 256);
+    time    = toint(data.substr(2 + len, 4), 256);
     literal = data.substr(len + 6, data.size() - len - 6);
 }
 

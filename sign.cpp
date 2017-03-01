@@ -40,7 +40,7 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const Tag5::Ptr & tag5
 
 Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID::Ptr & id, const uint8_t hash){
     // Set up signature packet
-    Tag2::Ptr tag2 = std::make_shared<Tag2>();
+    Tag2::Ptr tag2 = std::make_shared <Tag2> ();
     tag2 -> set_version(4);
     tag2 -> set_pka(tag5 -> get_pka());
     tag2 -> set_type(type);
@@ -50,20 +50,20 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
     }
 
     // Set Time
-    Tag2Sub2::Ptr tag2sub2 = std::make_shared<Tag2Sub2>();
+    Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> ();
     tag2sub2 -> set_time(now());
     tag2 -> set_hashed_subpackets({tag2sub2});
 
     if (id){
         // Signer ID
-        Tag2Sub28::Ptr tag2sub28 = std::make_shared<Tag2Sub28>();
+        Tag2Sub28::Ptr tag2sub28 = std::make_shared <Tag2Sub28> ();
         tag2sub28 -> set_signer(id -> raw());
         tag2 -> set_hashed_subpackets({tag2sub2, tag2sub28});
         tag2sub28.reset();
     }
 
     // Set Key ID
-    Tag2Sub16::Ptr tag2sub16 = std::make_shared<Tag2Sub16>();
+    Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> ();
     tag2sub16 -> set_keyid(tag5 -> get_keyid());
     tag2 -> set_unhashed_subpackets({tag2sub16});
 
@@ -128,11 +128,11 @@ PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & p
     return signature;
 }
 
-PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::istream & f, const uint8_t hash){
-    if (!f){
-        throw std::runtime_error("Error: Bad file.");
+PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::istream & stream, const uint8_t hash){
+    if (!stream){
+        throw std::runtime_error("Error: Bad stream.");
     }
-    std::stringstream s; s << f.rdbuf();
+    std::stringstream s; s << stream.rdbuf();
     return sign_detach(pri, passphrase, s.str(), hash);
 }
 
@@ -220,11 +220,11 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     return sign_message(pri, passphrase, filename, s.str(), hash);
 }
 
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase,  const std::string & filename, std::istream & f, const uint8_t hash, const uint8_t compress){
-    if (!f){
-        throw std::runtime_error("Error: Bad file.");
+PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase,  const std::string & filename, std::istream & stream, const uint8_t hash, const uint8_t compress){
+    if (!stream){
+        throw std::runtime_error("Error: Bad stream.");
     }
-    std::stringstream s; s << f.rdbuf();
+    std::stringstream s; s << stream.rdbuf();
     return sign_message(pri, passphrase, filename, s.str(), hash);
 }
 
@@ -253,8 +253,8 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
     // put signature under cleartext
     PGPCleartextSignature message;
-    h = {std::pair <std::string, std::string>("Hash", Hash_Algorithms.at(sig -> get_hash()))};
-    message.set_Armor_Header(h);
+    h = {std::pair <std::string, std::string> ("Hash", Hash_Algorithms.at(sig -> get_hash()))};
+    message.set_Hash_Armor_Header(h);
     message.set_message(text);
     message.set_sig(signature);
 
@@ -324,7 +324,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     for(i = 0; i < signee_packets.size(); i++){
         if (signee_packets[i] -> get_tag() == 6){
             std::string raw = signee_packets[i] -> raw();
-            signee_primary_key = std::make_shared<Tag6>(raw);
+            signee_primary_key = std::make_shared <Tag6> (raw);
             break;
         }
     }
@@ -347,10 +347,10 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     // get signee user id packet
     std::string raw_id = signee_packets[i] -> raw();
     if (signee_packets[i] -> get_tag() == 13){
-        signee_id = std::make_shared<Tag13>(raw_id);
+        signee_id = std::make_shared <Tag13> (raw_id);
     }
     else if (signee_packets[i] -> get_tag() == 17){
-        signee_id = std::make_shared<Tag17>(raw_id);
+        signee_id = std::make_shared <Tag17> (raw_id);
     }
 
     if (!signee_id){

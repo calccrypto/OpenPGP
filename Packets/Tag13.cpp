@@ -1,20 +1,19 @@
 #include "Tag13.h"
 
-Tag13::Tag13():
-    ID(13),
-    contents()
+Tag13::Tag13()
+    : ID(13),
+      contents()
 {}
 
-Tag13::Tag13(std::string & data):
-    Tag13()
+Tag13::Tag13(const std::string & data)
+    : Tag13()
 {
     read(data);
 }
 
-void Tag13::read(std::string & data){
+void Tag13::read(const std::string & data){
     size = data.size();
     contents = data;
-    data = "";
 }
 
 std::string Tag13::show(const uint8_t indents, const uint8_t indent_size) const{

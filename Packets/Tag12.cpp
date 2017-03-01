@@ -1,17 +1,17 @@
 #include "Tag12.h"
 
-Tag12::Tag12():
-    Packet(12),
-    trust()
+Tag12::Tag12()
+    : Packet(12),
+      trust()
 {}
 
-Tag12::Tag12(std::string & data):
-    Tag12()
+Tag12::Tag12(const std::string & data)
+    : Tag12()
 {
     read(data);
 }
 
-void Tag12::read(std::string & data){
+void Tag12::read(const std::string & data){
     size = data.size();
     trust = data;
 }

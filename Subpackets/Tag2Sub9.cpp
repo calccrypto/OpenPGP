@@ -1,17 +1,17 @@
 #include "Tag2Sub9.h"
 
-Tag2Sub9::Tag2Sub9():
-    Tag2Subpacket(9, 4),
-    dt()
+Tag2Sub9::Tag2Sub9()
+    : Tag2Subpacket(9, 4),
+      dt()
 {}
 
-Tag2Sub9::Tag2Sub9(std::string & data):
-    Tag2Sub9()
+Tag2Sub9::Tag2Sub9(const std::string & data)
+    : Tag2Sub9()
 {
     read(data);
 }
 
-void Tag2Sub9::read(std::string & data){
+void Tag2Sub9::read(const std::string & data){
     dt = static_cast <time_t> (toint(data, 256));
 }
 std::string Tag2Sub9::show(const time_t create_time, const uint8_t indents, const uint8_t indent_size) const{

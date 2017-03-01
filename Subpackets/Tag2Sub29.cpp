@@ -1,18 +1,18 @@
 #include "Tag2Sub29.h"
 
-Tag2Sub29::Tag2Sub29():
-    Tag2Subpacket(29),
-    code(),
-    reason()
+Tag2Sub29::Tag2Sub29()
+    : Tag2Subpacket(29),
+      code(),
+      reason()
 {}
 
-Tag2Sub29::Tag2Sub29(std::string & data):
-    Tag2Sub29()
+Tag2Sub29::Tag2Sub29(const std::string & data)
+    : Tag2Sub29()
 {
     read(data);
 }
 
-void Tag2Sub29::read(std::string & data){
+void Tag2Sub29::read(const std::string & data){
     code = data[0];
     reason = data.substr(1, data.size() - 1);
     size = data.size();

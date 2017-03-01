@@ -1,27 +1,25 @@
 #include "Tag2Sub20.h"
 
-Tag2Sub20::Tag2Sub20():
-    Tag2Subpacket(20),
-    flags(),
-    mlen(), nlen(),
-    m(), n()
+Tag2Sub20::Tag2Sub20()
+    : Tag2Subpacket(20),
+      flags(),
+      mlen(), nlen(),
+      m(), n()
 {}
 
-Tag2Sub20::Tag2Sub20(std::string & data):
-    Tag2Sub20()
+Tag2Sub20::Tag2Sub20(const std::string & data)
+    : Tag2Sub20()
 {
     read(data);
 }
 
-void Tag2Sub20::read(std::string & data){
+void Tag2Sub20::read(const std::string & data){
     flags = data.substr(0, 4);
-    mlen = toint(data.substr(4, 2), 256);
+    mlen  = toint(data.substr(4, 2), 256);
     nlen  = toint(data.substr(6, 2), 256);
-    data = data.substr(8, data.size() - 8);
-    m = data.substr(0, mlen);
-    data = data.substr(mlen, data.size() - mlen);
-    n = data.substr(0, nlen);
-    size = mlen + nlen + 4;
+    m     = data.substr(8, mlen);
+    n     = data.substr(8 + mlen, nlen);
+    size  = 4 + mlen + nlen;
 }
 
 std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) const{

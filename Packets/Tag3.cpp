@@ -1,45 +1,54 @@
 #include "Tag3.h"
 
-Tag3::Tag3():
-    Packet(3, 4),
-    sym(),
-    s2k(),
-    esk(nullptr)
+Tag3::Tag3()
+    : Packet(3, 4),
+      sym(),
+      s2k(),
+      esk(nullptr)
 {}
 
-Tag3::Tag3(const Tag3 & copy):
-    Packet(copy),
-    sym(copy.sym),
-    s2k(copy.s2k -> clone()),
-    esk(copy.get_esk_clone())
+Tag3::Tag3(const Tag3 & copy)
+    : Packet(copy),
+      sym(copy.sym),
+      s2k(copy.s2k -> clone()),
+      esk(copy.get_esk_clone())
 {}
 
-Tag3::Tag3(std::string & data):
-    Tag3()
+Tag3::Tag3(const std::string & data)
+    : Tag3()
 {
     read(data);
 }
 
 Tag3::~Tag3(){}
 
-void Tag3::read(std::string & data){
+void Tag3::read(const std::string & data){
     size = data.size();
 	version = data[0];                  // 4
     sym = data[1];
-    data = data.substr(2, data.size() - 2);
-    if (data[0] == 0){
-        s2k = std::make_shared<S2K0>();
+    switch (data[2]){
+        case 0:
+            s2k = std::make_shared <S2K0> ();
+            break;
+        case 1:
+            s2k = std::make_shared <S2K1> ();
+            break;
+        case 2:
+            throw std::runtime_error("S2K with ID 2 is reserved.");
+            break;
+        case 3:
+            s2k = std::make_shared <S2K3> ();
+            break;
+        default:
+            throw std::runtime_error("Unknown S2K ID encountered: " + std::to_string(data[0]));
+            break;
     }
-    if (data[0] == 1){
-        s2k = std::make_shared<S2K1>();
-    }
-    if (data[0] == 3){
-        s2k = std::make_shared<S2K3>();
-    }
-    s2k -> read(data);
 
-    if (data.size()){
-        esk = std::make_shared<std::string>(data);
+    std::string::size_type pos = 2; // include S2K type
+    s2k -> read(data, pos);
+
+    if (pos < data.size()){
+        esk = std::make_shared <std::string> (data.substr(pos, data.size() - pos));
     }
 }
 
@@ -51,7 +60,7 @@ std::string Tag3::show(const uint8_t indents, const uint8_t indent_size) const{
         << tab << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
         << s2k -> show(indents + 1, indent_size);
     if (esk){
-        out << tab << "    Encrypted Session Key: " << hexlify(*esk);
+        out << tab << "\n    Encrypted Session Key: " << hexlify(*esk);
     }
     return out.str();
 }
@@ -77,7 +86,7 @@ std::shared_ptr<std::string> Tag3::get_esk() const{
 }
 
 std::shared_ptr<std::string> Tag3::get_esk_clone() const{
-    return std::make_shared<std::string>(*esk);
+    return std::make_shared <std::string> (*esk);
 }
 
 std::string Tag3::get_key(const std::string & pass) const{
@@ -110,7 +119,7 @@ void Tag3::set_esk(std::string * s){
     set_esk(*s);
 }
 void Tag3::set_esk(const std::string & s){
-    esk = std::make_shared<std::string>(s);
+    esk = std::make_shared <std::string> (s);
     size = raw().size();
 }
 
@@ -119,7 +128,7 @@ void Tag3::set_key(const std::string & pass, const std::string & sk){
     std::cerr << "Warning: Tag3::set_key is untested. Potentially incorrect" << std::endl;
     esk.reset();
     if (!sk.size()){
-        esk = std::make_shared<std::string>(use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sk[0])), 0)));
+        esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sk[0])), 0)));
     }
     size = raw().size();
 }
@@ -128,14 +137,14 @@ Packet::Ptr Tag3::clone() const{
     Ptr out = std::make_shared <Tag3> (*this);
     out -> sym = sym;
     out -> s2k = s2k -> clone();
-    out -> esk = std::make_shared<std::string>(*esk);
+    out -> esk = std::make_shared <std::string> (*esk);
     return out;
 }
 
 Tag3 & Tag3::operator=(const Tag3 & copy){
-    Packet::operator =(copy);
+    Packet::operator=(copy);
     sym = copy.sym;
     s2k = copy.s2k -> clone();
-    esk = std::make_shared<std::string>(*copy.esk);
+    esk = std::make_shared <std::string> (*copy.esk);
     return *this;
 }

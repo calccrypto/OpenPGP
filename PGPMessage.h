@@ -2,8 +2,8 @@
 PGPMessage.h
 OpenPGP Message data structure (RFC 4880 sec 11.3)
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -107,8 +107,8 @@ class PGPMessage : public PGP {
 
         PGPMessage();
         PGPMessage(const PGPMessage & copy);
-        PGPMessage(std::string & data);
-        PGPMessage(std::istream & f);
+        PGPMessage(const std::string & data);
+        PGPMessage(std::istream & stream);
         ~PGPMessage();
 
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
@@ -124,5 +124,4 @@ class PGPMessage : public PGP {
 
         PGP::Ptr clone() const;
 };
-
 #endif

@@ -26,7 +26,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     uint8_t hash_alg = (DSA_bits == 1024)?2:8;
 
     // Secret Key Packet
-    Tag5::Ptr sec = std::make_shared<Tag5>();
+    Tag5::Ptr sec = std::make_shared <Tag5> ();
     sec -> set_version(4);
     sec -> set_time(time);
     sec -> set_pka(17);// DSA
@@ -35,7 +35,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     sec -> set_sym(9);// AES256
 
     // Secret Key Packet S2K
-    S2K3::Ptr sec_s2k3 = std::make_shared<S2K3>();
+    S2K3::Ptr sec_s2k3 = std::make_shared <S2K3> ();
     sec_s2k3 -> set_hash(2);
     sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
     sec_s2k3 -> set_count(96);
@@ -51,24 +51,24 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
 
     std::string keyid = sec -> get_keyid();
 
-    Tag13::Ptr uid = std::make_shared<Tag13>();
+    Tag13::Ptr uid = std::make_shared <Tag13> ();
     uid -> set_contents(user, comment, email);
 
-    Tag2::Ptr sig = std::make_shared<Tag2>();
+    Tag2::Ptr sig = std::make_shared <Tag2> ();
     sig -> set_version(4);
     sig -> set_type(0x13);
     sig -> set_pka(17);
     sig -> set_hash(hash_alg);
-    Tag2Sub2::Ptr tag2sub2 = std::make_shared<Tag2Sub2>(); tag2sub2 -> set_time(time);
+    Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> (); tag2sub2 -> set_time(time);
     sig -> set_hashed_subpackets({tag2sub2});
-    Tag2Sub16::Ptr tag2sub16 = std::make_shared<Tag2Sub16>(); tag2sub16 -> set_keyid(keyid);
+    Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> (); tag2sub16 -> set_keyid(keyid);
     sig -> set_unhashed_subpackets({tag2sub16});
     std::string sig_hash = to_sign_13(sec, uid, sig);
     sig -> set_left16(sig_hash.substr(0, 2));
     sig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
 
     // Secret Subkey Packet
-    Tag7::Ptr ssb = std::make_shared<Tag7>();
+    Tag7::Ptr ssb = std::make_shared <Tag7> ();
     ssb -> set_version(4);
     ssb -> set_time(time);
     ssb -> set_pka(16);// ElGamal
@@ -77,7 +77,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     ssb -> set_sym(9);// AES256
 
     // Secret Subkey S2K
-    S2K3::Ptr ssb_s2k3 = std::make_shared<S2K3>();
+    S2K3::Ptr ssb_s2k3 = std::make_shared <S2K3> ();
     ssb_s2k3 -> set_hash(2);
     ssb_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
     ssb_s2k3 -> set_count(96);
@@ -89,7 +89,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     ssb -> set_secret(use_normal_CFB_encrypt(9, secret + use_hash(2, secret), key, ssb -> get_IV()));
 
     // Subkey Binding Signature
-    Tag2::Ptr subsig = std::make_shared<Tag2>();
+    Tag2::Ptr subsig = std::make_shared <Tag2> ();
     subsig -> set_version(4);
     subsig -> set_type(0x18);
     subsig -> set_pka(17);
@@ -128,8 +128,8 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
     Tag5::Ptr prikey;
     Tag7::Ptr prisubkey;
-    Tag13::Ptr uid = std::make_shared<Tag13>();
-    Tag17::Ptr attr  = std::make_shared<Tag17>();
+    Tag13::Ptr uid = std::make_shared <Tag13> ();
+    Tag17::Ptr attr  = std::make_shared <Tag17> ();
     bool id = false;            // default UID came first
     bool key = false;           // default main key came first
 
@@ -137,7 +137,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
     for(Packet::Ptr & p : packets){
         std::string data = p -> raw();
         if (p -> get_tag() == 5){     // Secret Key Packet
-            prikey  = std::make_shared<Tag5>(data);
+            prikey  = std::make_shared <Tag5> (data);
 
             // Generate keypair
             std::vector <unsigned int> param;
@@ -230,7 +230,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
                 std::vector <Tag2Subpacket::Ptr> subpackets = sig -> get_hashed_subpackets();
                 for(Tag2Subpacket::Ptr & s : subpackets){
                     if (s -> get_type() == 16){
-                        Tag2Sub16::Ptr t = std::make_shared<Tag2Sub16>();
+                        Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
                         t -> set_keyid(keyid);
                         s = t;
                         break;
@@ -242,7 +242,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
                 subpackets = sig -> get_unhashed_subpackets();
                 for(Tag2Subpacket::Ptr & s : subpackets){
                     if (s -> get_type() == 16){
-                        Tag2Sub16::Ptr t = std::make_shared<Tag2Sub16>();
+                        Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
                         t -> set_keyid(keyid);
                         s = t;
                         found = true;
@@ -252,7 +252,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
                 // add a new unhashed subpacket
                 if (!found){
-                    Tag2Sub16::Ptr t = std::make_shared<Tag2Sub16>();
+                    Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
                     t -> set_keyid(keyid);
                     subpackets.push_back(t);
                 }
@@ -302,7 +302,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             p = sig;
         }
         else if (p -> get_tag() == 7){     // Secret Subkey Packet
-            prisubkey = std::make_shared<Tag7>(data);
+            prisubkey = std::make_shared <Tag7> (data);
 
             // Generate keypair
             std::vector <unsigned int> param;

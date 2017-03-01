@@ -2,8 +2,8 @@
 verify.c
 Functions to verify data signed by a PGP key
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -56,8 +56,8 @@ bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSign
 // verify detached signatures
 bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig);
 bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPPublicKey & pub, std::istream & f, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPSecretKey & pri, std::istream & f, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPPublicKey & pub, std::istream & stream, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPSecretKey & pri, std::istream & stream, const PGPDetachedSignature & sig);
 
 // verify OpenPGP Messages: signed, encrypted, or compressed files
 bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m); // called by the other verify_message functions

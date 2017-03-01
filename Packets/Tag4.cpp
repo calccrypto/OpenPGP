@@ -1,14 +1,14 @@
 #include "Tag4.h"
 
-Tag4::Tag4():
-    Packet(4, 3),
-    type(), hash(), pka(),
-    keyid(),
-    nested(1)
+Tag4::Tag4()
+    : Packet(4, 3),
+      type(), hash(), pka(),
+      keyid(),
+      nested(1)
 {}
 
-Tag4::Tag4(const Tag4 & copy):
-    Tag4()
+Tag4::Tag4(const Tag4 & copy)
+    : Tag4()
 {
     version = copy.version;
     type = copy.type;
@@ -18,21 +18,20 @@ Tag4::Tag4(const Tag4 & copy):
     nested = copy.nested;
 }
 
-Tag4::Tag4(std::string & data):
-    Tag4()
+Tag4::Tag4(const std::string & data)
+    : Tag4()
 {
     read(data);
 }
 
-void Tag4::read(std::string & data){
-    size = data.size();
+void Tag4::read(const std::string & data){
+    size    = data.size();
     version = data[0];                  // 3
-    type = data[1];
-    hash = data[2];
-    pka = data[3];
-    keyid = data.substr(4, 8);
-    nested = data[12];
-    data = data.substr(12, data.size() - 12);
+    type    = data[1];
+    hash    = data[2];
+    pka     = data[3];
+    keyid   = data.substr(4, 8);
+    nested  = data[12];
 }
 
 std::string Tag4::show(const uint8_t indents, const uint8_t indent_size) const{

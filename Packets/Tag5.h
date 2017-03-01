@@ -2,8 +2,8 @@
 Tag5.h
 Secret-Key Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -26,6 +26,8 @@ THE SOFTWARE.
 #ifndef __TAG5__
 #define __TAG5__
 
+#include <string>
+
 #include "Tag6.h"
 #include "s2k.h"
 
@@ -37,7 +39,7 @@ class Tag5 : public Tag6{
         std::string IV;
         std::string secret;
 
-        void read_s2k(std::string & data);
+        void read_s2k(const std::string & data, std::string::size_type & pos);
         std::string show_private(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
 
         Tag5(uint8_t tag);
@@ -47,9 +49,9 @@ class Tag5 : public Tag6{
 
         Tag5();
         Tag5(const Tag5 & copy);
-        Tag5(std::string & data);
+        Tag5(const std::string & data);
         virtual ~Tag5();
-        void read(std::string & data);
+        void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
@@ -70,6 +72,6 @@ class Tag5 : public Tag6{
         void set_secret(const std::string & s);
 
         Packet::Ptr clone() const;
-        Tag5 & operator =(const Tag5 & copy);
+        Tag5 & operator=(const Tag5 & copy);
 };
 #endif

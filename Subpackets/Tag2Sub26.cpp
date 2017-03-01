@@ -1,17 +1,17 @@
 #include "Tag2Sub26.h"
 
-Tag2Sub26::Tag2Sub26():
-    Tag2Subpacket(26),
-    uri()
+Tag2Sub26::Tag2Sub26()
+    : Tag2Subpacket(26),
+      uri()
 {}
 
-Tag2Sub26::Tag2Sub26(std::string & data):
-    Tag2Sub26()
+Tag2Sub26::Tag2Sub26(const std::string & data)
+    : Tag2Sub26()
 {
     read(data);
 }
 
-void Tag2Sub26::read(std::string & data){
+void Tag2Sub26::read(const std::string & data){
     uri = data;
     size = data.size();
 }

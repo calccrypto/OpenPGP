@@ -1,18 +1,18 @@
 #include "Tag6.h"
-Tag6::Tag6(uint8_t tag):
-    Key(tag)
+Tag6::Tag6(uint8_t tag)
+    : Key(tag)
 {}
 
-Tag6::Tag6():
-    Tag6(6)
+Tag6::Tag6()
+    : Tag6(6)
 {}
 
-Tag6::Tag6(const Tag6 & copy):
-    Key(copy)
+Tag6::Tag6(const Tag6 & copy)
+    : Key(copy)
 {}
 
-Tag6::Tag6(std::string & data):
-    Tag6(6)
+Tag6::Tag6(const std::string & data)
+    : Tag6(6)
 {
     read(data);
 }

@@ -2,8 +2,8 @@
 PGPCleartextSignature.h
 OpenPGP Cleartext Signature Framework data structure (RFC 4880 sec 7)
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -43,22 +43,22 @@ class PGPCleartextSignature {
     The cleartext signed message consists of:
 
         - The cleartext header ’-----BEGIN PGP SIGNED MESSAGE-----’ on a
-        single line,
-        
+          single line,
+
         - One or more "Hash" Armor Headers,
-        
+
         - Exactly one empty line not included into the message digest,
-        
+
         - The dash-escaped cleartext that is included into the message
-        digest,
-        
+          digest,
+
         - The ASCII armored signature(s) including the ’-----BEGIN PGP
-        SIGNATURE-----’ Armor Header and Armor Tail Lines.
+          SIGNATURE-----’ Armor Header and Armor Tail Lines.
     */
 
     private:
-        std::vector <std::pair <std::string, std::string> > Armor_Header;
-        std::string message;
+        std::vector <std::pair <std::string, std::string> > Hash_Armor_Header;
+        std::vector <std::string> message;
         PGPDetachedSignature sig;
 
     public:
@@ -66,19 +66,21 @@ class PGPCleartextSignature {
 
         PGPCleartextSignature();
         PGPCleartextSignature(const PGPCleartextSignature & copy);
-        PGPCleartextSignature(std::string & data);
-        PGPCleartextSignature(std::istream & f);
+        PGPCleartextSignature(const std::string & data);
+        PGPCleartextSignature(std::istream & stream);
 
-        void read(std::string & data);
-        void read(std::istream & file);
+        void read(const std::string & data);
+        void read(std::istream & stream);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string write(uint8_t header = 0) const;
 
-        std::vector <std::pair <std::string, std::string> > get_Armor_Header() const;
-        std::string get_message() const;
+        std::vector <std::pair <std::string, std::string> > get_Hash_Armor_Header() const;
+        std::vector <std::string> get_message() const;
+        std::string get_canonical_message() const;
         PGPDetachedSignature get_sig() const;
 
-        void set_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);
+        void set_Hash_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);
+        void set_message(const std::vector <std::string> & data);
         void set_message(const std::string & data);
         void set_sig(const PGPDetachedSignature & s);
 

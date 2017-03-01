@@ -1,17 +1,17 @@
 #include "Tag2Sub4.h"
 
-Tag2Sub4::Tag2Sub4():
-    Tag2Subpacket(4, 1),
-    exportable()
+Tag2Sub4::Tag2Sub4()
+    : Tag2Subpacket(4, 1),
+      exportable()
 {}
 
-Tag2Sub4::Tag2Sub4(std::string & data):
-    Tag2Sub4()
+Tag2Sub4::Tag2Sub4(const std::string & data)
+    : Tag2Sub4()
 {
     read(data);
 }
 
-void Tag2Sub4::read(std::string & data){
+void Tag2Sub4::read(const std::string & data){
     exportable = data[0];
 }
 

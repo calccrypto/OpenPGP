@@ -1,17 +1,17 @@
 #include "Tag2Sub24.h"
 
-Tag2Sub24::Tag2Sub24():
-    Tag2Subpacket(24),
-    pks()
+Tag2Sub24::Tag2Sub24()
+    : Tag2Subpacket(24),
+      pks()
 {}
 
-Tag2Sub24::Tag2Sub24(std::string & data):
-    Tag2Sub24()
+Tag2Sub24::Tag2Sub24(const std::string & data)
+    : Tag2Sub24()
 {
     read(data);
 }
 
-void Tag2Sub24::read(std::string & data){
+void Tag2Sub24::read(const std::string & data){
     pks = data;
     size = data.size();
 }

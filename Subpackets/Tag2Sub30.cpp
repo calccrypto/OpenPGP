@@ -1,17 +1,17 @@
 #include "Tag2Sub30.h"
 
-Tag2Sub30::Tag2Sub30():
-    Tag2Subpacket(30),
-    flags()
+Tag2Sub30::Tag2Sub30()
+    : Tag2Subpacket(30),
+      flags()
 {}
 
-Tag2Sub30::Tag2Sub30(std::string & data):
-    Tag2Sub30()
+Tag2Sub30::Tag2Sub30(const std::string & data)
+    : Tag2Sub30()
 {
     read(data);
 }
 
-void Tag2Sub30::read(std::string & data){
+void Tag2Sub30::read(const std::string & data){
     flags = data[0];
     size = data.size();
 }

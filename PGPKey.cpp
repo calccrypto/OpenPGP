@@ -125,20 +125,20 @@ bool PGPKey::meaningful(uint8_t type) const{
     return true; // no subkeys
 }
 
-PGPKey::PGPKey():
-   PGP()
+PGPKey::PGPKey()
+    : PGP()
 {}
 
-PGPKey::PGPKey(const PGPKey & copy):
-    PGP(copy)
+PGPKey::PGPKey(const PGPKey & copy)
+    : PGP(copy)
 {}
 
-PGPKey::PGPKey(std::string & data):
-    PGP(data)
+PGPKey::PGPKey(const std::string & data)
+    : PGP(data)
 {}
 
-PGPKey::PGPKey(std::istream & f):
-    PGP(f)
+PGPKey::PGPKey(std::istream & stream)
+    : PGP(stream)
 {}
 
 PGPKey::~PGPKey(){}
@@ -253,30 +253,30 @@ std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
     return stream;
 }
 
-PGPSecretKey::PGPSecretKey():
-   PGPKey()
+PGPSecretKey::PGPSecretKey()
+    : PGPKey()
 {
     ASCII_Armor = 2;
 }
 
-PGPSecretKey::PGPSecretKey(const PGPSecretKey & copy):
-    PGPKey(copy)
+PGPSecretKey::PGPSecretKey(const PGPSecretKey & copy)
+    : PGPKey(copy)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 2;
     }
 }
 
-PGPSecretKey::PGPSecretKey(std::string & data):
-    PGPKey(data)
+PGPSecretKey::PGPSecretKey(const std::string & data)
+    : PGPKey(data)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 2;
     }
 }
 
-PGPSecretKey::PGPSecretKey(std::istream & f):
-    PGPKey(f)
+PGPSecretKey::PGPSecretKey(std::istream & stream)
+    : PGPKey(stream)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 2;
@@ -302,38 +302,38 @@ std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
     return stream;
 }
 
-PGPPublicKey::PGPPublicKey():
-   PGPKey()
+PGPPublicKey::PGPPublicKey()
+    : PGPKey()
 {
     ASCII_Armor = 1;
 }
 
-PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy):
-    PGPKey(copy)
+PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy)
+    : PGPKey(copy)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 1;
     }
 }
 
-PGPPublicKey::PGPPublicKey(std::string & data):
-    PGPKey(data)
+PGPPublicKey::PGPPublicKey(const std::string & data)
+    : PGPKey(data)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 1;
     }
 }
 
-PGPPublicKey::PGPPublicKey(std::istream & f):
-    PGPKey(f)
+PGPPublicKey::PGPPublicKey(std::istream & stream)
+    : PGPKey(stream)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 1;
     }
 }
 
-PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec):
-    PGPPublicKey(Secret2PublicKey(sec))
+PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
+    : PGPPublicKey(Secret2PublicKey(sec))
 {}
 
 PGPPublicKey::~PGPPublicKey(){}

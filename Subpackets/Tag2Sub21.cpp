@@ -1,17 +1,17 @@
 #include "Tag2Sub21.h"
 
-Tag2Sub21::Tag2Sub21():
-    Tag2Subpacket(21),
-    pha()
+Tag2Sub21::Tag2Sub21()
+    : Tag2Subpacket(21),
+      pha()
 {}
 
-Tag2Sub21::Tag2Sub21(std::string & data):
-    Tag2Sub21()
+Tag2Sub21::Tag2Sub21(const std::string & data)
+    : Tag2Sub21()
 {
     read(data);
 }
 
-void Tag2Sub21::read(std::string & data){
+void Tag2Sub21::read(const std::string & data){
     pha = data;
     size = data.size();
 }

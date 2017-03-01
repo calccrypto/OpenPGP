@@ -24,16 +24,16 @@ std::string Partial::show_title() const{
     return out.str();
 }
 
-Partial::Partial():
-    Partial(std::string())
+Partial::Partial()
+    : Partial(std::string())
 {}
 
-Partial::Partial(const std::string & data):
-    Packet(),
-    stream(data)
+Partial::Partial(const std::string & data)
+    : Packet(),
+      stream(data)
 {}
 
-void Partial::read(std::string & data){
+void Partial::read(const std::string & data){
     stream = data;
 }
 

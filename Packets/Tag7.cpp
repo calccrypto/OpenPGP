@@ -1,15 +1,15 @@
 #include "Tag7.h"
 
-Tag7::Tag7():
-    Tag5(7)
+Tag7::Tag7()
+    : Tag5(7)
 {}
 
-Tag7::Tag7(const Tag7 & copy):
-    Tag5(copy)
+Tag7::Tag7(const Tag7 & copy)
+    : Tag5(copy)
 {}
 
-Tag7::Tag7(std::string & data):
-    Tag7()
+Tag7::Tag7(const std::string & data)
+    : Tag7()
 {
     read(data);
 }
@@ -37,6 +37,6 @@ Packet::Ptr Tag7::clone() const{
 }
 
 Tag7 & Tag7::operator=(const Tag7 & copy){
-    Tag5::operator =(copy);
+    Tag5::operator=(copy);
     return *this;
 }

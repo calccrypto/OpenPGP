@@ -11,9 +11,9 @@ std::string S2K::show_title() const{
     return out.str();
 }
 
-S2K::S2K(uint8_t type):
-    type(type),
-    hash()
+S2K::S2K(uint8_t type)
+    : type(type),
+      hash()
 {}
 
 S2K::~S2K(){}
@@ -38,20 +38,20 @@ void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
-S2K0::S2K0(uint8_t type):
-    S2K(type)
+S2K0::S2K0(uint8_t type)
+    : S2K(type)
 {}
 
-S2K0::S2K0():
-    S2K0(0)
+S2K0::S2K0()
+    : S2K0(0)
 {}
 
 S2K0::~S2K0(){}
 
-void S2K0::read(std::string & data){
-    type = data[0];
-    hash = data[2];
-    data = data.substr(2, data.size() - 2);
+void S2K0::read(const std::string & data, std::string::size_type & pos){
+    type = data[pos];
+    hash = data[pos + 1];
+    pos += 2;
 }
 
 std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
@@ -79,22 +79,22 @@ S2K::Ptr S2K0::clone() const{
     return std::make_shared <S2K0> (*this);
 }
 
-S2K1::S2K1(uint8_t type):
-    S2K0(type),
-    salt()
+S2K1::S2K1(uint8_t type)
+    : S2K0(type),
+      salt()
 {}
 
-S2K1::S2K1():
-    S2K1(1)
+S2K1::S2K1()
+    : S2K1(1)
 {}
 
 S2K1::~S2K1(){}
 
-void S2K1::read(std::string & data){
-    type = data[0];
-    hash = data[1];
-    salt = data.substr(2, 8);
-    data = data.substr(10, data.size() - 10);
+void S2K1::read(const std::string & data, std::string::size_type & pos){
+    type = data[pos];
+    hash = data[pos + 1];
+    salt = data.substr(pos + 2, 8);
+    pos += 10;
 }
 
 std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
@@ -131,19 +131,19 @@ S2K::Ptr S2K1::clone() const{
     return std::make_shared <S2K1> (*this);
 }
 
-S2K3::S2K3():
-    S2K1(3),
-    count()
+S2K3::S2K3()
+    : S2K1(3),
+      count()
 {}
 
 S2K3::~S2K3(){}
 
-void S2K3::read(std::string & data){
-    type = data[0];
-    hash = data[1];
-    salt = data.substr(2, 8);
-    count = data[10];
-    data = data.substr(11, data.size() - 11);
+void S2K3::read(const std::string & data, std::string::size_type & pos){
+    type  = data[pos];
+    hash  = data[pos + 1];
+    salt  = data.substr(pos + 2, 8);
+    count = data[pos + 10];
+    pos += 11;
 }
 
 std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{

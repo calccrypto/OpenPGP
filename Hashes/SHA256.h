@@ -62,5 +62,4 @@ class SHA256 : public Hash{
         virtual unsigned int blocksize() const;
         virtual unsigned int digestsize() const;
 };
-
 #endif

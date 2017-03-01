@@ -87,14 +87,18 @@ std::string write_MPI(const PGPMPI & data){
 }
 
 // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
-PGPMPI read_MPI(std::string & data){
-    uint16_t size = (static_cast <uint8_t> (data[0]) << 8) + static_cast <uint8_t> (data[1]); // get bits
+PGPMPI read_MPI(const std::string & data, std::string::size_type & pos){
+    uint16_t size = (static_cast <uint8_t> (data[pos]) << 8) |
+                     static_cast <uint8_t> (data[pos + 1]); // get number of bits
+    pos += 2;                                               // update position
+
     while (size & 7){
-        size++;                                                                     // pad to nearest octet
+        size++;                                             // pad to nearest 8 bits
     }
-    size >>= 3;                                                                     // get number of octets
-    PGPMPI out = rawtompi(data.substr(2, size));                                    // turn to mpz_class
-    data = data.substr(2 + size, data.size() - 2 - size);                           // remove mpi from data
+
+    size >>= 3;                                             // get number of octets
+    PGPMPI out = rawtompi(data.substr(pos, size));          // turn to mpz_class
+    pos += size;
     return out;
 }
 

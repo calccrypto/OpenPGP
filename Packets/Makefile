@@ -2,13 +2,12 @@
 CXX?=g++
 CXXFLAGS=-std=c++11 -Wall -c
 
-include sources.make
-OBJECTS=$(PACKETS_SOURCES:.cpp=.o)
+include objects.mk
 
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(OBJECTS)
+all: $(PACKETS_OBJECTS)
 
 .PHONY: clean
 
@@ -16,5 +15,5 @@ all: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
+	rm -f $(PACKETS_OBJECTS)
 

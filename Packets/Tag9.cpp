@@ -1,17 +1,17 @@
 #include "Tag9.h"
 
-Tag9::Tag9():
-    Packet(9),
-    encrypted_data()
+Tag9::Tag9()
+    : Packet(9),
+      encrypted_data()
 {}
 
-Tag9::Tag9(std::string & data):
-    Tag9()
+Tag9::Tag9(const std::string & data)
+    : Tag9()
 {
     read(data);
 }
 
-void Tag9::read(std::string & data){
+void Tag9::read(const std::string & data){
     size = data.size();
     encrypted_data = data;
 }

@@ -2,8 +2,8 @@
 mpi.h
 Multiprecision integer (MPI) reader as defined by RFC4880 sec 3.2
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -57,7 +57,7 @@ PGPMPI invert(const PGPMPI & a, const PGPMPI & b);
 
 PGPMPI random(unsigned int bits);
 
-std::string write_MPI(const PGPMPI & data);  // given some value, return the formatted mpi
-PGPMPI read_MPI(std::string & data);         // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
+std::string write_MPI(const PGPMPI & data);                                 // given some value, return the formatted mpi
+PGPMPI read_MPI(const std::string & data, std::string::size_type & pos);    // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
 
 #endif

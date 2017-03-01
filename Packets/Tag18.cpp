@@ -1,17 +1,17 @@
 #include "Tag18.h"
 
-Tag18::Tag18():
-    Packet(18, 1),
-    protected_data()
+Tag18::Tag18()
+    : Packet(18, 1),
+      protected_data()
 {}
 
-Tag18::Tag18(std::string & data):
-    Tag18()
+Tag18::Tag18(const std::string & data)
+    : Tag18()
 {
     read(data);
 }
 
-void Tag18::read(std::string & data){
+void Tag18::read(const std::string & data){
     size = data.size();
     version = data[0];
     protected_data = data.substr(1, data.size() - 1);

@@ -2,8 +2,8 @@
 encrypt.h
 Function to encrypt data with a PGP public key
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "Compress/Compress.h"
@@ -41,6 +42,7 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "revoke.h"
 
+// used internally
 Tag6::Ptr find_encrypting_key(const PGP & k);
 std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub);
 std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <PGPMPI> & pub);

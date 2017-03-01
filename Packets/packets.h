@@ -2,8 +2,8 @@
 packets.h
 Main packets and related functions include file
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -57,13 +57,14 @@ THE SOFTWARE.
 // calculates the length of a partial body
 unsigned int partialBodyLen(uint8_t first_octet);
 
-// reads and removes packet header, returning the raw packet data. Input data is shortened
-std::string read_packet_header(std::string & data, uint8_t & tag, bool & format, uint8_t & partial);
+// figures out where packet data starts and updates pos arguments
+// length, tag, format and partial arguments also filled
+uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, std::string::size_type & length, uint8_t & tag, bool & format, uint8_t & partial);
 
 // parses raw packet data
-Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, std::string & packet_data);
+Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
 
 // parse packet with header; wrapper for read_packet_header and read_packet_raw
 // partial should be initialized with 0
-Packet::Ptr read_packet(std::string & data, uint8_t & partial);
+Packet::Ptr read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial);
 #endif

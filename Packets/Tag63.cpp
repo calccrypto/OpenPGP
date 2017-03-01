@@ -1,15 +1,15 @@
 #include "Tag63.h"
 
-Tag63::Tag63():
-    Tag63(std::string())
+Tag63::Tag63()
+    : Tag63(std::string())
 {}
 
-Tag63::Tag63(const std::string & data):
-    Packet(),
+Tag63::Tag63(const std::string & data)
+    : Packet(),
     stream(data)
 {}
 
-void Tag63::read(std::string & data){
+void Tag63::read(const std::string & data){
     stream = data;
 }
 

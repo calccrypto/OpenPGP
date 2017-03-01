@@ -33,4 +33,4 @@ clean:
 	$(MAKE) clean -C testcases
 
 clean-all: clean
-	$(MAKE) clean -C ..
+	$(MAKE) clean-all -C ..

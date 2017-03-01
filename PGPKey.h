@@ -2,8 +2,8 @@
 PGPKey.h
 OpenPGP Transferable key data structure (RFC 4880 sec 11.1 and 11.2)
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -54,8 +54,8 @@ class PGPKey : public PGP {
 
         PGPKey();
         PGPKey(const PGPKey & copy);
-        PGPKey(std::string & data);
-        PGPKey(std::istream & f);
+        PGPKey(const std::string & data);
+        PGPKey(std::istream & stream);
         ~PGPKey();
 
         std::string keyid()       const; // keyid that is searched for on keyservers
@@ -75,8 +75,8 @@ class PGPSecretKey : public PGPKey {
 
         PGPSecretKey();
         PGPSecretKey(const PGPSecretKey & copy);
-        PGPSecretKey(std::string & data);
-        PGPSecretKey(std::istream & f);
+        PGPSecretKey(const std::string & data);
+        PGPSecretKey(std::istream & stream);
         ~PGPSecretKey();
 
         PGPPublicKey pub() const;
@@ -94,8 +94,8 @@ class PGPPublicKey : public PGPKey {
 
         PGPPublicKey();
         PGPPublicKey(const PGPPublicKey & copy);
-        PGPPublicKey(std::string & data);
-        PGPPublicKey(std::istream & f);
+        PGPPublicKey(const std::string & data);
+        PGPPublicKey(std::istream & stream);
         PGPPublicKey(const PGPSecretKey & sec);
         ~PGPPublicKey();
 

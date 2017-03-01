@@ -1,17 +1,17 @@
 #include "Tag2Sub3.h"
 
-Tag2Sub3::Tag2Sub3():
-    Tag2Subpacket(3, 4),
-    time(0)
+Tag2Sub3::Tag2Sub3()
+    : Tag2Subpacket(3, 4),
+      time(0)
 {}
 
-Tag2Sub3::Tag2Sub3(std::string & data):
-    Tag2Sub3()
+Tag2Sub3::Tag2Sub3(const std::string & data)
+    : Tag2Sub3()
 {
     read(data);
 }
 
-void Tag2Sub3::read(std::string & data){
+void Tag2Sub3::read(const std::string & data){
     time = toint(data, 256);
 }
 

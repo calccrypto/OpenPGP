@@ -56,7 +56,7 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
+    Tag2Sub29::Ptr revoke = std::make_shared <Tag2Sub29> ();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -104,7 +104,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
-            key = std::make_shared<Tag7>(data);
+            key = std::make_shared <Tag7> (data);
             break;
         }
     }
@@ -117,7 +117,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
+    Tag2Sub29::Ptr revoke = std::make_shared <Tag2Sub29> ();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -169,7 +169,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
             std::string data = p -> raw();
-            key = std::make_shared<Tag7>(data);
+            key = std::make_shared <Tag7> (data);
             break;
         }
     }
@@ -187,7 +187,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
-    Tag2Sub29::Ptr revoke = std::make_shared<Tag2Sub29>();
+    Tag2Sub29::Ptr revoke = std::make_shared <Tag2Sub29> ();
     revoke -> set_code(code);
     revoke -> set_reason(reason);
     hashed_subpackets.push_back(revoke);
@@ -237,7 +237,7 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
     Tag2::Ptr rev = revoke_primary_key_cert(pri, passphrase, code, reason);
 
     std::string raw = packets[0] -> raw();
-    Tag6::Ptr primary = std::make_shared<Tag6>(raw);
+    Tag6::Ptr primary = std::make_shared <Tag6> (raw);
 
     // assume first packet is primary key, and add a revocation signature as the next packet
     std::vector <Packet::Ptr> new_packets = {primary, rev};
@@ -315,7 +315,7 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     }
 
     std::string raw = revoke.get_packets()[0] -> raw();
-    Tag2::Ptr tag2 = std::make_shared<Tag2>(raw);
+    Tag2::Ptr tag2 = std::make_shared <Tag2> (raw);
 
     if ((tag2 -> get_type() != 0x20) && (tag2 -> get_type() != 0x28)){
         std::stringstream s; s << static_cast <unsigned int> (tag2->get_type());

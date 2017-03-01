@@ -2,8 +2,8 @@
 subpacket.h
 Base class for OpenPGP subpackets to inherit from
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -47,13 +47,13 @@ class Subpacket{
 
         Subpacket(uint8_t type = 0, unsigned int size = 0);
         Subpacket(const Subpacket & copy);
-        Subpacket & operator =(const Subpacket & copy);
+        Subpacket & operator=(const Subpacket & copy);
 
     public:
         typedef std::shared_ptr <Subpacket> Ptr;
 
         virtual ~Subpacket();
-        virtual void read(std::string & data) = 0;
+        virtual void read(const std::string & data) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0; // returns raw subpacket data, with no header
         std::string write() const;
@@ -69,7 +69,7 @@ class Tag2Subpacket: public Subpacket {
     protected:
         using Subpacket::Subpacket;
 
-        Tag2Subpacket & operator =(const Tag2Subpacket & copy);
+        Tag2Subpacket & operator=(const Tag2Subpacket & copy);
 
     public:
         typedef std::shared_ptr <Tag2Subpacket> Ptr;
@@ -83,7 +83,7 @@ class Tag17Subpacket: public Subpacket {
     protected:
         using Subpacket::Subpacket;
 
-        Tag17Subpacket & operator =(const Tag17Subpacket & copy);
+        Tag17Subpacket & operator=(const Tag17Subpacket & copy);
 
     public:
         typedef std::shared_ptr <Tag17Subpacket> Ptr;

@@ -1,29 +1,29 @@
 #include "PGPDetachedSignature.h"
 
-PGPDetachedSignature::PGPDetachedSignature():
-    PGP()
+PGPDetachedSignature::PGPDetachedSignature()
+    : PGP()
 {
     ASCII_Armor = 5;
 }
 
-PGPDetachedSignature::PGPDetachedSignature(const PGPDetachedSignature & copy):
-    PGP(copy)
+PGPDetachedSignature::PGPDetachedSignature(const PGPDetachedSignature & copy)
+    : PGP(copy)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 5;
     }
 }
 
-PGPDetachedSignature::PGPDetachedSignature(std::string & data):
-    PGP(data)
+PGPDetachedSignature::PGPDetachedSignature(const std::string & data)
+    : PGP(data)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 5;
     }
 }
 
-PGPDetachedSignature::PGPDetachedSignature(std::istream & f):
-    PGP(f)
+PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
+    : PGP(stream)
 {
     if ((ASCII_Armor == 255) && meaningful()){
         ASCII_Armor = 5;

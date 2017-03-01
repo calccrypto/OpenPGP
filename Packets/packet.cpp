@@ -1,6 +1,7 @@
 #include "packet.h"
-std::string Packet::write_old_length(std::string data) const{
-    unsigned int length = data.size();
+
+std::string Packet::write_old_length(const std::string & data) const{
+    std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
     if (partial){
         out[0] |= 3;                                        // partial
@@ -23,9 +24,9 @@ std::string Packet::write_old_length(std::string data) const{
 }
 
 // returns formatted length string
-std::string Packet::write_new_length(std::string data) const{
+std::string Packet::write_new_length(const std::string & data) const{
+    std::string::size_type length = data.size();
     std::string out(1, 0b11000000 | tag);
-    unsigned int length = data.size();
     if (partial){                                           // partial
         uint8_t bits = 0;
         while (length > (1u << bits)){
@@ -79,20 +80,20 @@ std::string Packet::show_title() const{
     return out.str();
 }
 
-Packet::Packet(uint8_t tag, uint8_t version):
-    tag(tag),
-    version(version),
-    format(true),
-    size(0),
-    partial(0)
+Packet::Packet(uint8_t tag, uint8_t version)
+    : tag(tag),
+      version(version),
+      format(true),
+      size(0),
+      partial(0)
 {}
 
-Packet::Packet(uint8_t tag):
-    Packet(tag, 0)
+Packet::Packet(uint8_t tag)
+    : Packet(tag, 0)
 {}
 
-Packet::Packet():
-    Packet(0)
+Packet::Packet()
+    : Packet(0)
 {}
 
 Packet::~Packet(){}
@@ -146,12 +147,12 @@ void Packet::set_partial(const uint8_t p){
     partial = p;
 }
 
-Packet::Packet(const Packet &copy):
-    tag(copy.tag),
-    version(copy.version),
-    format(copy.format),
-    size(copy.size),
-    partial(copy.partial)
+Packet::Packet(const Packet &copy)
+    : tag(copy.tag),
+      version(copy.version),
+      format(copy.format),
+      size(copy.size),
+      partial(copy.partial)
 {}
 
 Packet & Packet::operator=(const Packet & copy)
@@ -164,33 +165,34 @@ Packet & Packet::operator=(const Packet & copy)
     return *this;
 }
 
-void Key::read_common(std::string & data){
+void Key::read_common(const std::string & data, std::string::size_type & pos){
     size = data.size();
-    version = data[0];
-    time = toint(data.substr(1, 4), 256);
+    version = data[pos];
+    time = toint(data.substr(pos + 1, 4), 256);
+
     if (version < 4){
-        expire = (data[5] << 8) + data[6];
-        pka = data[7];
-        data = data.substr(8, data.size() - 8);
-        mpi.push_back(read_MPI(data));              // RSA n
-        mpi.push_back(read_MPI(data));              // RSA e
+        expire = (data[pos + 5] << 8) + data[pos + 6];
+        pka = data[pos + 7];
+        pos += 8;
+        mpi.push_back(read_MPI(data, pos));     // RSA n
+        mpi.push_back(read_MPI(data, pos));     // RSA e
     }
     else if (version == 4){
-        pka = data[5];
-        data = data.substr(6, data.size() - 6);
+        pka = data[pos + 5];
+        pos += 6;
 
         // at minimum RSA
-        mpi.push_back(read_MPI(data));             // RSA n, DSA p, ElGamal p
-        mpi.push_back(read_MPI(data));             // RSA e, DSA q, ElGamal g
+        mpi.push_back(read_MPI(data, pos));     // RSA n, DSA p, ElGamal p
+        mpi.push_back(read_MPI(data, pos));     // RSA e, DSA q, ElGamal g
 
         // DSA
         if (pka == 17){
-            mpi.push_back(read_MPI(data));         // DSA g
-            mpi.push_back(read_MPI(data));         // DSA y
+            mpi.push_back(read_MPI(data, pos)); // DSA g
+            mpi.push_back(read_MPI(data, pos)); // DSA y
         }
         // Elgamal
         else if (pka == 16)
-            mpi.push_back(read_MPI(data));         // ElGamal y
+            mpi.push_back(read_MPI(data, pos)); // ElGamal y
     }
 }
 
@@ -244,36 +246,37 @@ std::string Key::raw_common() const{
     return out;
 }
 
-Key::Key(uint8_t tag):
-    Packet(tag),
-    time(),
-    pka(),
-    mpi(),
-    expire()
+Key::Key(uint8_t tag)
+    : Packet(tag),
+      time(),
+      pka(),
+      mpi(),
+      expire()
 {}
 
-Key::Key():
-    Key(0)
+Key::Key()
+    : Key(0)
 {}
 
-Key::Key(const Key & copy):
-    Packet(copy),
-    time(copy.time),
-    pka(copy.pka),
-    mpi(copy.mpi),
-    expire(copy.expire)
+Key::Key(const Key & copy)
+    : Packet(copy),
+      time(copy.time),
+      pka(copy.pka),
+      mpi(copy.mpi),
+      expire(copy.expire)
 {}
 
-Key::Key(std::string & data):
-    Key()
+Key::Key(const std::string & data)
+    : Key()
 {
     read(data);
 }
 
 Key::~Key(){}
 
-void Key::read(std::string & data){
-    read_common(data);
+void Key::read(const std::string & data){
+    std::string::size_type pos = 0;
+    read_common(data, pos);
 }
 
 std::string Key::show(const uint8_t indents, const uint8_t indent_size) const{

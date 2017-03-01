@@ -1,17 +1,17 @@
 #include "Tag2Sub16.h"
 
-Tag2Sub16::Tag2Sub16():
-    Tag2Subpacket(16, 8),
-    keyid()
+Tag2Sub16::Tag2Sub16()
+    : Tag2Subpacket(16, 8),
+      keyid()
 {}
 
-Tag2Sub16::Tag2Sub16(std::string & data):
-    Tag2Sub16()
+Tag2Sub16::Tag2Sub16(const std::string & data)
+    : Tag2Sub16()
 {
     read(data);
 }
 
-void Tag2Sub16::read(std::string & data){
+void Tag2Sub16::read(const std::string & data){
     keyid = data;
 }
 

@@ -35,22 +35,22 @@ std::string Tag8::show_title() const{
     return out.str();
 }
 
-Tag8::Tag8():
-    Packet(8, 3),
-    comp(0),
-    compressed_data()
+Tag8::Tag8()
+    : Packet(8, 3),
+      comp(0),
+      compressed_data()
 {}
 
-Tag8::Tag8(std::string & data):
-    Tag8()
+Tag8::Tag8(const std::string & data)
+    : Tag8()
 {
     read(data);
 }
 
-void Tag8::read(std::string & data){
+void Tag8::read(const std::string & data){
     size = data.size();
     comp = data[0];
-    compressed_data = data.substr(1, data.size() - 1);
+    compressed_data = data.substr(1, size - 1);
 }
 
 std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{

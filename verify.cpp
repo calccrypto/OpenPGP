@@ -23,10 +23,10 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
 
     // Find key id from signature to match with public key
     std::string temp = message.get_sig().get_packets()[0] -> raw();
-    Tag2::Ptr signature = std::make_shared<Tag2>(); signature -> read(temp);
+    Tag2::Ptr signature = std::make_shared <Tag2> (); signature -> read(temp);
 
     // check left 16 bits
-    std::string digest = to_sign_01(message.get_message(), signature);
+    std::string digest = to_sign_01(message.get_canonical_message(), signature);
     if (digest.substr(0, 2) != signature -> get_left16()){
         throw std::runtime_error("Error: Hash digest and given left 16 bits of hash do not match.");
     }
@@ -106,19 +106,19 @@ bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, cons
     return verify_detachedsig(PGPPublicKey(pri), data, sig);
 }
 
-bool verify_detachedsig(const PGPPublicKey & pub, std::istream & f, const PGPDetachedSignature & sig){
-    if (!f){
-        throw std::runtime_error("Error: Bad file.");
+bool verify_detachedsig(const PGPPublicKey & pub, std::istream & stream, const PGPDetachedSignature & sig){
+    if (!stream){
+        throw std::runtime_error("Error: Bad stream.");
     }
     std::stringstream s;
-    s << f.rdbuf();
+    s << stream.rdbuf();
     std::string data = s.str();
 
     return verify_detachedsig(pub, data, sig);
 }
 
-bool verify_detachedsig(const PGPSecretKey & pri, std::istream & f, const PGPDetachedSignature & sig){
-    return verify_detachedsig(PGPPublicKey(pri), f, sig);
+bool verify_detachedsig(const PGPSecretKey & pri, std::istream & stream, const PGPDetachedSignature & sig){
+    return verify_detachedsig(PGPPublicKey(pri), stream, sig);
 }
 
 bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m){
@@ -399,7 +399,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
         std::string data = p -> raw();
         switch (p -> get_tag()){
             case 5: case 6: case 7: case 14:                                    // key packet
-                tag6 = std::make_shared<Tag6>();
+                tag6 = std::make_shared <Tag6> ();
                 tag6 -> read(data);
                 key_str += overkey(tag6);                                       // add current key packet to previous ones
                 version = tag6 -> get_version();
@@ -409,10 +409,10 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee){
                 {
                     ID::Ptr id;
                     if (p -> get_tag() == 13){
-                        id = std::make_shared<Tag13>();
+                        id = std::make_shared <Tag13> ();
                     }
                     if (p -> get_tag() == 17){
-                        id = std::make_shared<Tag17>();
+                        id = std::make_shared <Tag17> ();
                     }
                     id -> read(data);
                     user_str = certification(version, id);                      // write over old user information
@@ -476,7 +476,7 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
 
     // get revocation key; assume only 1 packet
     std::string rev_str = rev_pointers[0] -> raw();
-    Tag2::Ptr revoke = std::make_shared<Tag2>(rev_str);
+    Tag2::Ptr revoke = std::make_shared <Tag2> (rev_str);
 
     // for each key packet
     for(Packet::Ptr const & p : keys){
@@ -488,7 +488,7 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev){
 
             // copy the key into Tag 6
             std::string raw = p -> raw();
-            Tag6::Ptr tag6 = std::make_shared<Tag6>(raw);
+            Tag6::Ptr tag6 = std::make_shared <Tag6> (raw);
 
             // check if it was revoked
             if (verify_revoke(tag6, revoke)){

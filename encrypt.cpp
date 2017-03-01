@@ -27,8 +27,7 @@ std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vect
         return ElGamal_encrypt(data, pub);
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (pka);
-        throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
+        throw std::runtime_error("Error: PKA number " + std::to_string(static_cast <unsigned int> (pka)) + " not allowed or unknown.");
     }
     return {}; // should never reach here; mainly just to remove compiler warnings
 }
@@ -109,7 +108,7 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
         tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, to_encrypt, session_key, prefix));
-        encrypted = std::make_shared<Tag9>(tag9);
+        encrypted = std::make_shared <Tag9> (tag9);
     }
     else{
         // Modification Detection Code Packet (Tag 19)
@@ -120,7 +119,7 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         Tag18 tag18;
         // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
         tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, to_encrypt + tag19.write(), session_key, prefix));
-        encrypted = std::make_shared<Tag18>(tag18);
+        encrypted = std::make_shared <Tag18> (tag18);
     }
 
     return encrypted;
@@ -146,7 +145,7 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
     }
 
     std::vector <PGPMPI> mpi = public_key -> get_mpi();
-    Tag1::Ptr tag1 = std::make_shared<Tag1>();
+    Tag1::Ptr tag1 = std::make_shared <Tag1> ();
     tag1 -> set_keyid(public_key -> get_keyid());
     tag1 -> set_pka(public_key -> get_pka());
 
@@ -154,8 +153,10 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
 
     // generate session key
     uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
+
     // get hex version of session key
     std::string session_key = mpitohex(bintompi(BBS().rand(key_len)));
+
     // unhexlify session key
     session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
 

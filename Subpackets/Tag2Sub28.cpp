@@ -1,17 +1,17 @@
 #include "Tag2Sub28.h"
 
-Tag2Sub28::Tag2Sub28():
-    Tag2Subpacket(28, 0),
-    signer()
+Tag2Sub28::Tag2Sub28()
+    : Tag2Subpacket(28, 0),
+      signer()
 {}
 
-Tag2Sub28::Tag2Sub28(std::string & data):
-    Tag2Sub28()
+Tag2Sub28::Tag2Sub28(const std::string & data)
+    : Tag2Sub28()
 {
     read(data);
 }
 
-void Tag2Sub28::read(std::string & data){
+void Tag2Sub28::read(const std::string & data){
     signer = data;
     size = data.size();
 }

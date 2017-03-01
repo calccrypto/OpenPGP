@@ -1,18 +1,18 @@
 #include "Tag2Sub5.h"
 
-Tag2Sub5::Tag2Sub5():
-    Tag2Subpacket(5, 2),
-    level(),
-    amount()
+Tag2Sub5::Tag2Sub5()
+    : Tag2Subpacket(5, 2),
+      level(),
+      amount()
 {}
 
-Tag2Sub5::Tag2Sub5(std::string & data):
-    Tag2Sub5()
+Tag2Sub5::Tag2Sub5(const std::string & data)
+    : Tag2Sub5()
 {
     read(data);
 }
 
-void Tag2Sub5::read(std::string & data){
+void Tag2Sub5::read(const std::string & data){
     level = data[0];
     amount = data[1];
 }

@@ -1,18 +1,18 @@
 #include "Tag2Sub31.h"
 
-Tag2Sub31::Tag2Sub31():
-    Tag2Subpacket(31),
-    pka(), ha(),
-    hash()
+Tag2Sub31::Tag2Sub31()
+    : Tag2Subpacket(31),
+      pka(), ha(),
+      hash()
 {}
 
-Tag2Sub31::Tag2Sub31(std::string & data):
-    Tag2Sub31()
+Tag2Sub31::Tag2Sub31(const std::string & data)
+    : Tag2Sub31()
 {
     read(data);
 }
 
-void Tag2Sub31::read(std::string & data){
+void Tag2Sub31::read(const std::string & data){
     pka = data[0];
     ha = data[1];
     hash = data.substr(2, data.size() - 2);

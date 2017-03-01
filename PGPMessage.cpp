@@ -123,16 +123,16 @@ void PGPMessage::decompress() {
     }
 }
 
-PGPMessage::PGPMessage():
-    PGP(),
-    comp(nullptr)
+PGPMessage::PGPMessage()
+    : PGP(),
+      comp(nullptr)
 {
     ASCII_Armor = 0;
 }
 
-PGPMessage::PGPMessage(const PGPMessage & copy):
-    PGP(copy),
-    comp(nullptr)
+PGPMessage::PGPMessage(const PGPMessage & copy)
+    : PGP(copy),
+      comp(nullptr)
 {
     decompress();
 
@@ -141,9 +141,9 @@ PGPMessage::PGPMessage(const PGPMessage & copy):
     }
 }
 
-PGPMessage::PGPMessage(std::string & data):
-    PGP(data),
-    comp(nullptr)
+PGPMessage::PGPMessage(const std::string & data)
+    : PGP(data),
+      comp(nullptr)
 {
     decompress();
 
@@ -152,9 +152,9 @@ PGPMessage::PGPMessage(std::string & data):
     }
 }
 
-PGPMessage::PGPMessage(std::istream & f):
-    PGP(f),
-    comp(nullptr)
+PGPMessage::PGPMessage(std::istream & stream)
+    : PGP(stream),
+      comp(nullptr)
 {
     decompress();
 

@@ -1,20 +1,20 @@
 #include "Tag10.h"
 
-Tag10::Tag10():
-    Packet(10),
-    pgp("PGP")
+Tag10::Tag10()
+    : Packet(10),
+      pgp("PGP")
 {}
 
-Tag10::Tag10(std::string & data):
-    Tag10()
+Tag10::Tag10(const std::string & data)
+    : Tag10()
 {
     read(data);
 }
 
-void Tag10::read(std::string & data){
+void Tag10::read(const std::string & data){
     size = data.size();
     if (data != "PGP"){
-        throw std::runtime_error("Error: Tag 10 packet did not contain data \x5cPGP\x5c.");
+        throw std::runtime_error("Error: Tag 10 packet did not contain data \"PGP\".");
     }
 }
 

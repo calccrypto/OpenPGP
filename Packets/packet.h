@@ -2,8 +2,8 @@
 packet.h
 Base class for OpenPGP packet types to inherit from
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -48,10 +48,10 @@ class Packet{
         uint8_t partial;    // 0-3; 0 = not partial, 1 = partial begin, 2 = partial continue, 3 = partial end
 
         // returns packet data with old format packet length
-        std::string write_old_length(std::string data) const;
+        std::string write_old_length(const std::string & data) const;
 
         // returns packet data with new format packet length
-        std::string write_new_length(std::string data) const;
+        std::string write_new_length(const std::string & data) const;
 
         // returns first line of show functions (no tab or newline)
         virtual std::string show_title() const; // virtual to allow for overriding for special cases
@@ -65,7 +65,7 @@ class Packet{
 
         Packet();
         virtual ~Packet();
-        virtual void read(std::string & data) = 0;
+        virtual void read(const std::string & data) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
         std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
@@ -100,7 +100,7 @@ class Key : public Packet{
         // version 3
         uint32_t expire;
 
-        void read_common(std::string & data);
+        void read_common(const std::string & data, std::string::size_type & pos);
         std::string show_common(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw_common() const;
 
@@ -111,10 +111,10 @@ class Key : public Packet{
 
         Key();
         Key(const Key & copy);
-        Key(std::string & data);
+        Key(const std::string & data);
         virtual ~Key();
 
-        virtual void read(std::string & data);
+        virtual void read(const std::string & data);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
 
@@ -142,7 +142,7 @@ class ID : public Packet{
     public:
         typedef std::shared_ptr <ID> Ptr;
 
-        ID & operator =(const ID & copy);
+        ID & operator=(const ID & copy);
 
         virtual ~ID();
 };

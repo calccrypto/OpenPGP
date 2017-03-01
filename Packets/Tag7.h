@@ -2,8 +2,8 @@
 Tag7.h
 Secret-Subkey Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -35,7 +35,7 @@ class Tag7 : public Tag5{
 
         Tag7();
         Tag7(const Tag7 & copy);
-        Tag7(std::string & data);
+        Tag7(const std::string & data);
         ~Tag7();
 
         Tag14 get_public_obj() const;      // extract public subkey from private key

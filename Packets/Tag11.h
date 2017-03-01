@@ -2,8 +2,8 @@
 Tag11.h
 Literal Data Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -41,8 +41,8 @@ class Tag11 : public Packet{
         typedef std::shared_ptr <Tag11> Ptr;
 
         Tag11();
-        Tag11(std::string & data);
-        void read(std::string & data);
+        Tag11(const std::string & data);
+        void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
@@ -50,7 +50,7 @@ class Tag11 : public Packet{
         std::string get_filename() const;
         uint32_t get_time() const;
         std::string get_literal() const;
-        std::string out(const bool writefile = true); // send data to 
+        std::string out(const bool writefile = true); // send data to
 
         void set_format(const uint8_t f);
         void set_filename(const std::string & f);

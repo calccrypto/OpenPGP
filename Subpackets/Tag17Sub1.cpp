@@ -2,21 +2,21 @@
 
 unsigned int Tag17Sub1::count = 0;
 
-Tag17Sub1::Tag17Sub1():
-    Tag17Subpacket(1),
-    version(),
-    encoding(),
-    image(),
-    current(++count)
+Tag17Sub1::Tag17Sub1()
+    : Tag17Subpacket(1),
+      version(),
+      encoding(),
+      image(),
+      current(++count)
 {}
 
-Tag17Sub1::Tag17Sub1(std::string & data):
-    Tag17Sub1()
+Tag17Sub1::Tag17Sub1(const std::string & data)
+    : Tag17Sub1()
 {
     read(data);
 }
 
-void Tag17Sub1::read(std::string & data){
+void Tag17Sub1::read(const std::string & data){
     version = data[2];
     encoding = data[3];
     image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's

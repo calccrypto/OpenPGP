@@ -19,9 +19,9 @@ std::string Subpacket::show_title() const{
     return out.str();
 }
 
-Subpacket::Subpacket(uint8_t type, unsigned int size):
-    type(type),
-    size(size)
+Subpacket::Subpacket(uint8_t type, unsigned int size)
+    : type(type),
+      size(size)
 {}
 
 Subpacket::~Subpacket(){}
@@ -46,12 +46,12 @@ void Subpacket::set_size(unsigned int s){
     size = s;
 }
 
-Subpacket::Subpacket(const Subpacket & copy):
-    type(copy.type),
-    size(copy.size)
+Subpacket::Subpacket(const Subpacket & copy)
+    : type(copy.type),
+      size(copy.size)
 {}
 
-Subpacket & Subpacket::operator =(const Subpacket & copy){
+Subpacket & Subpacket::operator=(const Subpacket & copy){
     type = copy.type;
     size = copy.size;
     return *this;
@@ -61,12 +61,12 @@ Tag2Subpacket::~Tag2Subpacket(){}
 
 Tag17Subpacket::~Tag17Subpacket(){}
 
-Tag2Subpacket & Tag2Subpacket::operator =(const Tag2Subpacket & copy){
-    Subpacket::operator =(copy);
+Tag2Subpacket & Tag2Subpacket::operator=(const Tag2Subpacket & copy){
+    Subpacket::operator=(copy);
     return *this;
 }
 
-Tag17Subpacket & Tag17Subpacket::operator =(const Tag17Subpacket & copy){
-    Subpacket::operator =(copy);
+Tag17Subpacket & Tag17Subpacket::operator=(const Tag17Subpacket & copy){
+    Subpacket::operator=(copy);
     return *this;
 }

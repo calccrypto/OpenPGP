@@ -2,8 +2,8 @@
 Tag3.h
 Symmetric-Key Encrypted Session Key Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -26,6 +26,8 @@ THE SOFTWARE.
 #ifndef __TAG3__
 #define __TAG3__
 
+#include <string>
+
 #include "../cfb.h"
 #include "packet.h"
 #include "s2k.h"
@@ -41,9 +43,9 @@ class Tag3 : public Packet{
 
         Tag3();
         Tag3(const Tag3 & copy);
-        Tag3(std::string & data);
+        Tag3(const std::string & data);
         ~Tag3();
-        void read(std::string & data);
+        void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
@@ -58,7 +60,7 @@ class Tag3 : public Packet{
         void set_s2k(const S2K::Ptr & s);
         void set_esk(std::string * s);
         void set_esk(const std::string & s);
-        void set_key(const std::string & pass, const std::string & sk = "");    // passing in empty sk will erase esk                
+        void set_key(const std::string & pass, const std::string & sk = "");    // passing in empty sk will erase esk
 
         Packet::Ptr clone() const;
         Tag3 & operator=(const Tag3 & tag3);

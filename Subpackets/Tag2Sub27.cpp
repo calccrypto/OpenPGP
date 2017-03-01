@@ -1,17 +1,17 @@
 #include "Tag2Sub27.h"
 
-Tag2Sub27::Tag2Sub27():
-    Tag2Subpacket(27),
-    flags()
+Tag2Sub27::Tag2Sub27()
+    : Tag2Subpacket(27),
+      flags()
 {}
 
-Tag2Sub27::Tag2Sub27(std::string & data):
-    Tag2Sub27()
+Tag2Sub27::Tag2Sub27(const std::string & data)
+    : Tag2Sub27()
 {
     read(data);
 }
 
-void Tag2Sub27::read(std::string & data){
+void Tag2Sub27::read(const std::string & data){
     flags = data[0];
     size = data.size();
 }

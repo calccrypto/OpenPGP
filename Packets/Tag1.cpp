@@ -1,26 +1,26 @@
 #include "Tag1.h"
 
-Tag1::Tag1():
-    Packet(1, 3),
-    keyid(),
-    pka(),
-    mpi()
+Tag1::Tag1()
+    : Packet(1, 3),
+      keyid(),
+      pka(),
+      mpi()
 {}
 
-Tag1::Tag1(std::string & data):
-    Tag1()
+Tag1::Tag1(const std::string & data)
+    : Tag1()
 {
     read(data);
 }
 
-void Tag1::read(std::string & data){
+void Tag1::read(const std::string & data){
     size = data.size();
     version = data[0];
     keyid = data.substr(1, 8);
     pka = data[9];
-    data = data.substr(10, data.size() - 10);
-    while (data.size()){
-        mpi.push_back(read_MPI(data));
+    std::string::size_type pos = 10;
+    while (pos < data.size()){
+        mpi.push_back(read_MPI(data, pos));
     }
 }
 

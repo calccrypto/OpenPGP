@@ -2,8 +2,8 @@
 main.cpp
 OpenPGP commandline source
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -48,11 +48,11 @@ const std::vector <std::string> commands = {
     // 4
     "show-key filename [options]\n"                                 // display contents of a key file
     "    options:\n"
-    "        -o output file\n",                                     // where to output data
+    "        -o output file",                                       // where to output data
     // 5
     "show-clearsigned-data filename [options]\n"                    // display contents of a cleartext signed data file
     "    options:\n"
-    "        -o output file\n",                                     // where to output data
+    "        -o output file",                                       // where to output data
     // 6
     "generatekeypair [options]\n"                                   // generate new key pair
     "    options:\n"
@@ -295,7 +295,7 @@ bool parse_command(std::string & input){
             revoke_uid(pub, pri, passphrase, 32, "Test Key");
             std::cout << "Passed" << std::endl;
 
-            std::cout << "Test took " << std::chrono::duration_cast<std::chrono::duration<double> >(std::chrono::high_resolution_clock::now() - start).count() << " seconds." << std::endl;
+            std::cout << "Test took " << std::chrono::duration_cast<std::chrono::duration<double> > (std::chrono::high_resolution_clock::now() - start).count() << " seconds." << std::endl;
         }
         else if (cmd == "list"){
             std::string filename;

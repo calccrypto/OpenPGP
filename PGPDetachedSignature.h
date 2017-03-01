@@ -2,8 +2,8 @@
 PGPDetachedSignature.h
 OpenPGP Detached Signature data structure (RFC 4880 sec 11.2)
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -44,12 +44,12 @@ class PGPDetachedSignature : public PGP {
 
         PGPDetachedSignature();
         PGPDetachedSignature(const PGPDetachedSignature & copy);
-        PGPDetachedSignature(std::string & data);
-        PGPDetachedSignature(std::istream & f);
+        PGPDetachedSignature(const std::string & data);
+        PGPDetachedSignature(std::istream & stream);
         ~PGPDetachedSignature();
 
         bool meaningful() const; // whether or not data matches Detached Signature format
-        
+
         PGP::Ptr clone() const;
 };
 #endif

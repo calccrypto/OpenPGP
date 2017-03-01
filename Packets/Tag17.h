@@ -2,8 +2,8 @@
 Tag17.h
 User Attribute Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -30,29 +30,32 @@ THE SOFTWARE.
 #include "packet.h"
 
 class Tag17 : public ID{
+    public:
+        typedef std::vector <Tag17Subpacket::Ptr> Attributes_T;
+    
     private:
         uint64_t length;
         uint8_t type;
 
         // only defined subpacket is 1
-        std::vector <Tag17Subpacket::Ptr> attributes;
+        Attributes_T attributes;
 
-        std::string read_subpacket(std::string & data);
+        void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
         std::string write_subpacket(uint8_t s_type, std::string data) const;
 
     public:
         typedef std::shared_ptr <Tag17> Ptr;
 
         Tag17();
-        Tag17(std::string & data);
+        Tag17(const std::string & data);
         ~Tag17();
-        void read(std::string & data);
+        void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        std::vector <Tag17Subpacket::Ptr> get_attributes() const;
-        std::vector <Tag17Subpacket::Ptr> get_attributes_clone() const;
-        void set_attributes(const std::vector <Tag17Subpacket::Ptr> & a);
+        Attributes_T get_attributes() const;
+        Attributes_T get_attributes_clone() const;
+        void set_attributes(const Attributes_T & a);
 
         Packet::Ptr clone() const;
 };

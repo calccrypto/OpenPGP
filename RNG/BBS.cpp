@@ -61,16 +61,16 @@ bool BBS::parity(const std::string & par) const{
     }
 }
 
-BBS::BBS(...):
-    par()
+BBS::BBS(...)
+    : par()
 {
     if (!seeded){
         throw std::runtime_error("Error: BBS must be seeded first.");
     }
 }
 
-BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q):
-    par()
+BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q)
+    : par()
 {
     init(SEED, bits, p, q);
 }

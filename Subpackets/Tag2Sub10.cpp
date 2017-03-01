@@ -1,17 +1,17 @@
 #include "Tag2Sub10.h"
 
-Tag2Sub10::Tag2Sub10():
-    Tag2Subpacket(10),
-    stuff()
+Tag2Sub10::Tag2Sub10()
+    : Tag2Subpacket(10),
+      stuff()
 {}
 
-Tag2Sub10::Tag2Sub10(std::string & data):
-    Tag2Sub10()
+Tag2Sub10::Tag2Sub10(const std::string & data)
+    : Tag2Sub10()
 {
     read(data);
 }
 
-void Tag2Sub10::read(std::string & data){
+void Tag2Sub10::read(const std::string & data){
     stuff = data;
     size = data.size();
 }

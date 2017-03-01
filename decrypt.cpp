@@ -4,7 +4,7 @@ Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid)
     for(Packet::Ptr const & p : k.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
             std::string raw = p -> raw();
-            Tag5::Ptr key = std::make_shared<Tag5>(raw);
+            Tag5::Ptr key = std::make_shared <Tag5> (raw);
             if (key -> get_public_ptr() -> get_keyid() != keyid ){
                 key.reset();
                 continue;
@@ -29,8 +29,7 @@ std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const st
         return ElGamal_decrypt(data, pri, pub);
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (pka);
-        throw std::runtime_error("Error: PKA number " + s.str() + " not allowed or unknown.");
+        throw std::runtime_error("Error: PKA number " + std::to_string(static_cast <unsigned int> (pka)) + " not allowed or unknown.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -69,8 +68,9 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
     }
 
     // extract MPI values
-    while (secret_key.size()){
-        out.push_back(read_MPI(secret_key));
+    std::string::size_type pos = 0;
+    while (pos < secret_key.size()){
+        out.push_back(read_MPI(secret_key, pos));
     }
 
     s2k.reset();

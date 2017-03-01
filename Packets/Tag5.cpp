@@ -1,53 +1,57 @@
 #include "Tag5.h"
 
-Tag5::Tag5(uint8_t tag):
-    Tag6(tag),
-    s2k_con(0),
-    sym(0),
-    s2k(),
-    IV(),
-    secret()
+Tag5::Tag5(uint8_t tag)
+    : Tag6(tag),
+      s2k_con(0),
+      sym(0),
+      s2k(),
+      IV(),
+      secret()
 {}
 
-Tag5::Tag5():
-    Tag5(5)
+Tag5::Tag5()
+    : Tag5(5)
 {}
 
-Tag5::Tag5(const Tag5 & copy):
-    Tag6(copy),
-    s2k_con(copy.s2k_con),
-    sym(copy.sym),
-    s2k(copy.s2k),
-    IV(copy.IV),
-    secret(copy.secret)
+Tag5::Tag5(const Tag5 & copy)
+    : Tag6(copy),
+      s2k_con(copy.s2k_con),
+      sym(copy.sym),
+      s2k(copy.s2k),
+      IV(copy.IV),
+      secret(copy.secret)
 {}
 
-Tag5::Tag5(std::string & data):
-    Tag5(5)
+Tag5::Tag5(const std::string & data)
+    : Tag5(5)
 {
     read(data);
 }
 
 Tag5::~Tag5(){}
 
-void Tag5::read_s2k(std::string & data){
+void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
     s2k.reset();
-    uint8_t length = 0;
-    if (data[0] == 0){
-        s2k = std::make_shared<S2K0>();
-        length = 2;
+
+    switch (data[pos]){ // S2K type
+        case 0:
+            s2k = std::make_shared <S2K0> ();
+            break;
+        case 1:
+            s2k = std::make_shared <S2K1> ();
+            break;
+        case 2:
+            throw std::runtime_error("S2K with ID 2 is reserved.");
+            break;
+        case 3:
+            s2k = std::make_shared <S2K3> ();
+            break;
+        default:
+            throw std::runtime_error("Unknown S2K ID encountered: " + std::to_string(data[0]));
+            break;
     }
-    else if (data[0] == 1){
-        s2k = std::make_shared<S2K1>();
-        length = 10;
-    }
-    else if (data[0] == 3){
-        s2k = std::make_shared<S2K3>();
-        length = 11;
-    }
-    std::string s2k_str = data.substr(0, length);
-    data = data.substr(length, data.size() - length);
-    s2k -> read(s2k_str);
+
+    s2k -> read(data, pos);
 }
 
 std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size) const{
@@ -85,12 +89,13 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     return out.str();
 }
 
-void Tag5::read(std::string & data){
+void Tag5::read(const std::string & data){
     size = data.size();
     /*
         - A Public-Key or Public-Subkey packet, as described above.
     */
-    read_common(data);
+    std::string::size_type pos = 0;
+    read_common(data, pos);
 
     /*
         - One octet indicating string-to-key usage conventions. Zero
@@ -98,23 +103,21 @@ void Tag5::read(std::string & data){
         indicates that a string-to-key specifier is being given. Any
         other value is a symmetric-key encryption algorithm identifier.
     */
-    s2k_con = data[0];
-    data = data.substr(1, data.size() - 1);
+    s2k_con = data[pos++];
 
     if (s2k_con > 253){
         /*
             - [Optional] If string-to-key usage octet was 255 or 254, a oneoctet
             symmetric encryption algorithm.
         */
-        sym = data[0];
-        data = data.substr(1, data.size() - 1);
+        sym = data[pos++];
 
         /*
             - [Optional] If string-to-key usage octet was 255 or 254, a
             string-to-key specifier. The length of the string-to-key
             specifier is implied by its type, as described above.
         */
-        read_s2k(data);
+        read_s2k(data, pos);
     }
 
     if (s2k_con){
@@ -123,7 +126,7 @@ void Tag5::read(std::string & data){
             not zero), an Initial Vector (IV) of the same length as the
             cipher’s block size.
         */
-        IV = data.substr(0, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
+        IV = data.substr(pos, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
 
         /*
             - Plain or encrypted multiprecision integers comprising the secret
@@ -139,10 +142,10 @@ void Tag5::read(std::string & data){
             usage octet is not zero). Note that for all other values, a
             two-octet checksum is required.
         */
-        data = data.substr(Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3, data.size() - (Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3));
+        pos += IV.size();
     }
 
-    secret = data;
+    secret = data.substr(pos, data.size() - pos);
 }
 
 std::string Tag5::show(const uint8_t indents, const uint8_t indent_size) const{
@@ -226,13 +229,13 @@ void Tag5::set_sym(const uint8_t s){
 
 void Tag5::set_s2k(const S2K::Ptr & s){
     if (s -> get_type() == 0){
-        s2k = std::make_shared<S2K0>();
+        s2k = std::make_shared <S2K0> ();
     }
     else if (s -> get_type() == 1){
-        s2k = std::make_shared<S2K1>();
+        s2k = std::make_shared <S2K1> ();
     }
     else if (s -> get_type() == 3){
-        s2k = std::make_shared<S2K3>();
+        s2k = std::make_shared <S2K3> ();
     }
     s2k = s -> clone();
     size = raw_common().size() + 1;
@@ -275,8 +278,8 @@ Packet::Ptr Tag5::clone() const{
     return out;
 }
 
-Tag5 & Tag5::operator =(const Tag5 & copy){
-    Key::operator =(copy);
+Tag5 & Tag5::operator=(const Tag5 & copy){
+    Key::operator=(copy);
     s2k_con = copy.s2k_con;
     sym = copy.sym;
     s2k = copy.s2k -> clone();

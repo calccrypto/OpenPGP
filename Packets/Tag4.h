@@ -2,8 +2,8 @@
 Tag4.h
 One-Pass Signature Packet
 
-Copyright (c) 2013 - 2017 Jason Lee
- @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -41,8 +41,8 @@ class Tag4 : public Packet{
 
         Tag4();
         Tag4(const Tag4 & copy);
-        Tag4(std::string & data);
-        void read(std::string & data);
+        Tag4(const std::string & data);
+        void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
@@ -57,7 +57,7 @@ class Tag4 : public Packet{
         void set_pka(const uint8_t p);
         void set_keyid(const std::string & k);
         void set_nested(const uint8_t n);
-    
+
         Packet::Ptr clone() const;
 };
 #endif

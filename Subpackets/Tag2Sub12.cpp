@@ -1,19 +1,19 @@
 #include "Tag2Sub12.h"
 
-Tag2Sub12::Tag2Sub12():
-    Tag2Subpacket(12),
-    _class(),
-    pka(),
-    fingerprint()
+Tag2Sub12::Tag2Sub12()
+    : Tag2Subpacket(12),
+      _class(),
+      pka(),
+      fingerprint()
 {}
 
-Tag2Sub12::Tag2Sub12(std::string & data):
-    Tag2Sub12()
+Tag2Sub12::Tag2Sub12(const std::string & data)
+    : Tag2Sub12()
 {
     read(data);
 }
 
-void Tag2Sub12::read(std::string & data){
+void Tag2Sub12::read(const std::string & data){
     _class = data[0];
     pka = data[1];
     fingerprint = data.substr(2, 20);
