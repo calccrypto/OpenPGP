@@ -7,7 +7,7 @@ include objects.mk
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(ENCRYPTION_OBJECTS)
+all: $(ENCRYPTIONS_OBJECTS)
 
 .PHONY: clean
 
@@ -15,4 +15,4 @@ all: $(ENCRYPTION_OBJECTS)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f $(ENCRYPTION_OBJECTS)
+	rm -f $(ENCRYPTIONS_OBJECTS)
