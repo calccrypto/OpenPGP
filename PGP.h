@@ -43,13 +43,27 @@ THE SOFTWARE.
 class PGP{
     public:
         typedef std::vector <std::pair <std::string, std::string> > Armor_Header_T;
-        typedef std::vector <Packet::Ptr> Packet_T;
+        typedef std::vector <Packet::Ptr> Packets_T;
 
     protected:
         bool armored;                               // default true
         uint8_t ASCII_Armor;                        // what type of key is this
         Armor_Header_T Armor_Header;                // messages in the header
-        Packet_T packets;                           // main data
+        Packets_T packets;                           // main data
+
+        // calculates the length of a partial body
+        unsigned int partialBodyLen(uint8_t first_octet) const;
+
+        // figures out where packet data starts and updates pos arguments
+        // length, tag, format and partial arguments also filled
+        uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, std::string::size_type & length, uint8_t & tag, bool & format, uint8_t & partial) const;
+
+        // parses raw packet data
+        Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const;
+
+        // parse packet with header; wrapper for read_packet_header and read_packet_raw
+        // partial should be initialized with 0
+        Packet::Ptr read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const;
 
         // modifies output string so each line is no longer than MAX_LINE_SIZE long
         std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
@@ -59,14 +73,18 @@ class PGP{
 
         PGP();
         PGP(const PGP & copy);                      // clone another PGP instance
-        PGP(const std::string & data);              // data fed into this constructor will be consumed
-        PGP(std::istream & stream);                 // read from file; file not modified
+        PGP(const std::string & data);
+        PGP(std::istream & stream);
         ~PGP();
 
-        void read(const std::string & data);        // read base64 key, including ASCII Armor; some data is consumed
-        void read(std::istream & stream);           // read base64 key from file; file not modified
-        void read_raw(const std::string & data);    // read binary data; data is consumed; called by read()
-        void read_raw(std::istream & stream);       // read binary data from file; file not modified
+        // Read ASCII Header + Base64 data
+        void read(const std::string & data);
+        void read(std::istream & stream);
+
+        // Read Binary data
+        void read_raw(const std::string & data);
+        void read_raw(std::istream & stream);
+
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
         virtual std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
         virtual std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
@@ -75,14 +93,14 @@ class PGP{
         bool get_armored() const;
         uint8_t get_ASCII_Armor() const;
         Armor_Header_T get_Armor_Header() const;
-        Packet_T get_packets() const;               // get copy of all packet pointers (for looping through packets)
-        Packet_T get_packets_clone() const;         // clone all packets (for modifying packets)
+        Packets_T get_packets() const;               // get copy of all packet pointers (for looping through packets)
+        Packets_T get_packets_clone() const;         // clone all packets (for modifying packets)
 
         // Modifiers
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
         void set_Armor_Header(const Armor_Header_T & header);
-        void set_packets(const Packet_T & p);       // clones the input packets
+        void set_packets(const Packets_T & p);       // clones the input packets
 
         virtual bool meaningful() const = 0;        // check if packet sequence is meaningful and correct
 

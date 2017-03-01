@@ -52,19 +52,4 @@ THE SOFTWARE.
 #include "Tag62.h"
 #include "Tag63.h"
 
-// Functions that are needed globally and cannot be placed inside Packet class
-
-// calculates the length of a partial body
-unsigned int partialBodyLen(uint8_t first_octet);
-
-// figures out where packet data starts and updates pos arguments
-// length, tag, format and partial arguments also filled
-uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, std::string::size_type & length, uint8_t & tag, bool & format, uint8_t & partial);
-
-// parses raw packet data
-Packet::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
-
-// parse packet with header; wrapper for read_packet_header and read_packet_raw
-// partial should be initialized with 0
-Packet::Ptr read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial);
 #endif
