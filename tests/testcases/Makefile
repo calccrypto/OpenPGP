@@ -1,6 +1,6 @@
 # OpenPGP testcases Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -pthread -I../gtest-1.7.0/include -I../..
+CXXFLAGS=-std=c++11 -Wall -c -I../googletest/googletest/include -I../..
 
 debug: CXXFLAGS += -g
 debug: all

@@ -1,4 +1,3 @@
-Fix command line to take in empty strings
 Fix signing
 Fix virifying
 Find PGP keys with formats/packets I have never seen before

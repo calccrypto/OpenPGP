@@ -23,12 +23,27 @@ before_install:
   - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
   - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
 
+  # for OpenPGP
   - sudo apt-get install libgmp-dev
   - sudo apt-get install libbz2-dev
   - sudo apt-get install zlib1g-dev
   - sudo apt-get install libzip-dev
+  
+  # for Google Test
+  - sudo apt-get install git cmake
 
 before_script:
-  - cd tests && make
+  - cd tests
 
-script: ./tests
+  # not much better than git submodules, but there was never a need/want for the repo in this repo
+  - git clone https://github.com/google/googletest.git
+  - cd googletest
+  - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
+  - cmake CMakeLists.txt
+  - make
+
+  - cd ..
+  - make
+
+script:
+  - make run
