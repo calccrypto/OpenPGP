@@ -50,26 +50,26 @@ bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2:
 // /////////////////
 
 // verify cleartext signature
-bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message);
-bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message);
+bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message, std::string * error = nullptr);
+bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message, std::string * error = nullptr);
 
 // verify detached signatures
-bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPPublicKey & pub, std::istream & stream, const PGPDetachedSignature & sig);
-bool verify_detachedsig(const PGPSecretKey & pri, std::istream & stream, const PGPDetachedSignature & sig);
+bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig, std::string * error = nullptr);
+bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data, const PGPDetachedSignature & sig, std::string * error = nullptr);
+bool verify_detachedsig(const PGPPublicKey & pub, std::istream & stream, const PGPDetachedSignature & sig, std::string * error = nullptr);
+bool verify_detachedsig(const PGPSecretKey & pri, std::istream & stream, const PGPDetachedSignature & sig, std::string * error = nullptr);
 
 // verify OpenPGP Messages: signed, encrypted, or compressed files
-bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m); // called by the other verify_message functions
-bool verify_message(const PGPPublicKey & pub, const PGPMessage & m);
-bool verify_message(const PGPSecretKey & pri, const PGPMessage & m);
+bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m);   // called by the other verify_message functions
+bool verify_message(const PGPPublicKey & pub, const PGPMessage & m, std::string * error = nullptr);
+bool verify_message(const PGPSecretKey & pri, const PGPMessage & m, std::string * error = nullptr);
 
 // verify signature on key
-bool verify_key(const PGPPublicKey & pub, const PGPPublicKey & sig);
-bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig);
+bool verify_key(const PGPPublicKey & pub, const PGPPublicKey & sig, std::string * error = nullptr);
+bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig, std::string * error = nullptr);
 
 // verify revocation certificate
-bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);
-bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev);
-bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev);
+bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);           // called by the other verify_revoke functions
+bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev, std::string * error = nullptr);
+bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev, std::string * error = nullptr);
 #endif

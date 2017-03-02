@@ -3,19 +3,17 @@
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid){
     for(Packet::Ptr const & p : k.get_packets()){
         if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
-            std::string raw = p -> raw();
-            Tag5::Ptr key = std::make_shared <Tag5> (raw);
+            Tag5::Ptr key = std::make_shared <Tag5> (p -> raw());
             if (key -> get_public_ptr() -> get_keyid() != keyid ){
-                key.reset();
                 continue;
             }
+
             // make sure key has encrypting keys
             if ((key -> get_pka() == 1) || // RSA
                 (key -> get_pka() == 2) || // RSA
                 (key -> get_pka() == 16)){ // ElGamal
                     return key;
             }
-            key.reset();
         }
     }
     return nullptr;
@@ -73,14 +71,12 @@ std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string
         out.push_back(read_MPI(secret_key, pos));
     }
 
-    s2k.reset();
-
     return out;
 }
 
 PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile, const PGPPublicKey::Ptr & verify){
     // currently packet tag being operated on
-    uint8_t packet;
+    uint8_t tag;
 
     // get blocksize of symmetric key algorithm
     unsigned int BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3;
@@ -97,16 +93,12 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 
     // copy initial data to string
     if (packets[i] -> get_tag() == 9){
-        data = packets[i] -> raw();
-        Tag9 tag9(data);
-        data = tag9.get_encrypted_data();
-        packet = 9;
+        data = Tag9(packets[i] -> raw()).get_encrypted_data();
+        tag = 9;
     }
     else if (packets[i] -> get_tag() == 18){
-        data = packets[i] -> raw();
-        Tag18 tag18(data);
-        data = tag18.get_protected_data();
-        packet = 18;
+        data = Tag18(packets[i] -> raw()).get_protected_data();
+        tag = 18;
     }
     else{
         throw std::runtime_error("Error: No encrypted data found.");
@@ -135,10 +127,10 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
     }
 
     // decrypt data
-    data = use_OpenPGP_CFB_decrypt(sym, packet, data, session_key);
+    data = use_OpenPGP_CFB_decrypt(sym, tag, data, session_key);
 
     // strip extra data
-    if (packet == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
+    if (tag == 18){ // Symmetrically Encrypted Integrity Protected Data Packet (Tag 18)
         std::string checksum = data.substr(data.size() - 20, 20);   // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);                    // remove SHA1 checksum
         if (use_hash(2, data) != checksum){                         // check SHA1 checksum
@@ -162,7 +154,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
     }
 
     // reused variables
-    uint8_t packet;                             // currently used packet tag
+    uint8_t tag;                                // currently used packet tag
     std::string data;                           // temp stuff
     std::string session_key;                    // session key
     uint8_t sym;                                // symmetric key algorithm used to encrypt original data
@@ -171,18 +163,18 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
     for(Packet::Ptr const & p : m.get_packets()){
         if ((p -> get_tag() == 1) || (p -> get_tag() == 3)){
             data = p -> raw();
-            packet = p -> get_tag();
+            tag = p -> get_tag();
             break;
         }
     }
 
-    if (packet == 1){}
+    if (tag == 1){}
     // return symmetrically-encrypted-key decrypted data
-    else if (packet == 3){
+    else if (tag == 3){
         return decrypt_sym(m, passphrase);
     }
     else{
-        std::stringstream s; s << Packet_Tags.at(packet) << " (Tag " << static_cast <unsigned int> (packet) << ").";
+        std::stringstream s; s << Packet_Tags.at(tag) << " (Tag " << static_cast <unsigned int> (tag) << ").";
         throw std::runtime_error("Error: Expected Public-Key Encrypted Session Key Packet (Tag 1). Instead got " + s.str());
     }
 
@@ -214,8 +206,6 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
         throw std::runtime_error("Error: Calculated session key checksum does not match given checksum.");
     }
 
-    sec.reset();
-
     // decrypt the data with the extracted key
     PGPMessage decrypted = decrypt_data(sym, m, session_key, writefile, verify);
 
@@ -228,9 +218,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
     // extract data
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == 11){
-            std::string raw = p -> raw();
-            Tag11 tag11(raw);
-            out += tag11.out(writefile);
+            out += Tag11(p -> raw()).out(writefile);
         }
     }
 
@@ -265,8 +253,7 @@ std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, co
         throw std::runtime_error("Error: Expected Symmetric-Key Encrypted Session Key Packet (Tag 3). Instead got " + s.str());
     }
 
-    Tag3 tag3(data);
-    data = tag3.get_key(passphrase);
+    data = Tag3(data).get_key(passphrase);
 
     PGPMessage decrypted = decrypt_data(data[0], m, data.substr(1, data.size() - 1), writefile, nullptr);
 
@@ -274,9 +261,7 @@ std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, co
     // extract data
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == 11){
-            std::string raw = p -> raw();
-            Tag11 tag11(raw);
-            out += tag11.out(writefile);
+            out += Tag11(p -> raw()).out(writefile);
         }
     }
     return out;

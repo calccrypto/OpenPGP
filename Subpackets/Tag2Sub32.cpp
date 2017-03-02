@@ -19,8 +19,7 @@ Tag2Sub32::Tag2Sub32(const std::string & data)
 Tag2Sub32::~Tag2Sub32(){}
 
 void Tag2Sub32::read(const std::string & data){
-    embedded = std::make_shared <Tag2> ();
-    embedded -> read(data);
+    embedded = std::make_shared <Tag2> (data);
     size = data.size();
 }
 

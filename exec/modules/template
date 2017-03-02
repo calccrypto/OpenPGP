@@ -1,0 +1,32 @@
+#ifndef __COMMAND_
+#define __COMMAND_
+
+#include "../../OpenPGP.h"
+#include "command.h"
+
+namespace command {
+
+const Command (
+    // name
+    "",
+
+    // positional arguments
+    {
+
+    },
+
+    // optional arugments
+    {
+        std::make_pair("", std::make_pair("", "")),
+    },
+
+    // function to run
+    [](std::map <std::string, std::string> & args) -> int {
+
+        return 0;
+    }
+);
+
+}
+
+#endif

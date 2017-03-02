@@ -3,14 +3,11 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
     for(Packet::Ptr const & p: packets){
         // if a signature packet
         if (p -> get_tag() == 2){
-            std::string raw = p -> raw();
-            Tag2 tag2(raw);
+            Tag2 tag2(p -> raw());
             for(Subpacket::Ptr const & s: tag2.get_unhashed_subpackets()){
                 if (s -> get_type() == 16){
-                    raw = s -> raw();
-                    Tag2Sub16 tag2sub16(raw);
                     // check that this signature packet is for the public key
-                    if (tag2sub16.get_keyid() == keyid){
+                    if (Tag2Sub16(s -> raw()).get_keyid() == keyid){
                         if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                             return true;
                         }
@@ -19,10 +16,8 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
             }
             for(Subpacket::Ptr const & s: tag2.get_hashed_subpackets()){
                 if (s -> get_type() == 16){
-                    raw = s -> raw();
-                    Tag2Sub16 tag2sub16(raw);
                     // check that this signature packet is for the public key
-                    if (tag2sub16.get_keyid() == keyid){
+                    if (Tag2Sub16(s -> raw()).get_keyid() == keyid){
                         if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                             return true;
                         }
@@ -67,9 +62,6 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, key, passphrase, sig -> get_hash()));
 
-    key.reset();
-    revoke.reset();
-
     return sig;
 }
 
@@ -83,8 +75,6 @@ PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string &
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
 
-    sig.reset();
-    
     return signature;
 }
 
@@ -103,8 +93,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
     std::vector <Packet::Ptr> packets = pri.get_packets();
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
-            std::string data = p -> raw();
-            key = std::make_shared <Tag7> (data);
+            key = std::make_shared <Tag7> (p -> raw());
             break;
         }
     }
@@ -128,10 +117,6 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
     sig -> set_left16(hashed_data.substr(0, 2));
     sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
 
-    signer.reset();
-    key.reset();
-    revoke.reset();
-
     return sig;
 }
 
@@ -144,8 +129,6 @@ PGPPublicKey revoke_subkey_cert_key(PGPSecretKey & pri, const std::string & pass
                                                              std::make_pair("Comment", "Revocation Certificate")};
     signature.set_Armor_Header(h);
     signature.set_packets({sig});
-
-    sig.reset();
 
     return signature;
 }
@@ -168,8 +151,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
     std::vector <Packet::Ptr> packets = pri.get_packets();
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 7){
-            std::string data = p -> raw();
-            key = std::make_shared <Tag7> (data);
+            key = std::make_shared <Tag7> (p -> raw());
             break;
         }
     }
@@ -219,11 +201,6 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
     }
     revoked.set_packets(new_packets);
 
-    signer.reset();
-    key.reset();
-    uid.reset();
-    sig.reset();
-
     return revoked;
 }
 
@@ -235,9 +212,7 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
     std::vector <Packet::Ptr> packets = pri.get_packets();
 
     Tag2::Ptr rev = revoke_primary_key_cert(pri, passphrase, code, reason);
-
-    std::string raw = packets[0] -> raw();
-    Tag6::Ptr primary = std::make_shared <Tag6> (raw);
+    Tag6::Ptr primary = std::make_shared <Tag6> (packets[0] -> raw());
 
     // assume first packet is primary key, and add a revocation signature as the next packet
     std::vector <Packet::Ptr> new_packets = {primary, rev};
@@ -250,9 +225,6 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
     revoked.set_ASCII_Armor(1); // public key
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
-
-    primary.reset();
-    new_packets.clear();
 
     return revoked;
 }
@@ -289,7 +261,7 @@ PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, c
     revoked.set_Armor_Header(pri.get_Armor_Header());
     revoked.set_packets(new_packets);
 
-    new_packets.clear();
+    // new_packets.clear();
 
     return revoked;
 }
@@ -314,11 +286,10 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
         throw std::runtime_error("Error: Packet is not a signature packet");
     }
 
-    std::string raw = revoke.get_packets()[0] -> raw();
-    Tag2::Ptr tag2 = std::make_shared <Tag2> (raw);
+    Tag2::Ptr tag2 = std::make_shared <Tag2> (revoke.get_packets()[0] -> raw());
 
     if ((tag2 -> get_type() != 0x20) && (tag2 -> get_type() != 0x28)){
-        std::stringstream s; s << static_cast <unsigned int> (tag2->get_type());
+        std::stringstream s; s << static_cast <unsigned int> (tag2 -> get_type());
         throw std::runtime_error("Error: Invalid signature type found: " + s.str());
     }
 
@@ -335,9 +306,7 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
     // find key with key id
     for(Packet::Ptr const & p: pub.get_packets()){
         if (p -> get_tag() == which){
-            raw = p -> raw();
-            Tag6 tag6(raw);
-            k_keyid = tag6.get_keyid();
+            k_keyid = Tag6(p -> raw()).get_keyid();
             break;
         }
     }
@@ -364,16 +333,13 @@ PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke){
 
     // append revocation signature to key
     new_packets.push_back(tag2);
+
     // append rest of packets
     while (i < old_packets.size()){
         new_packets.push_back(old_packets[i++]);
     }
-    revoked.set_packets(new_packets);
 
-    // clear out data
-    tag2.reset();
-    old_packets.clear();
-    new_packets.clear();
+    revoked.set_packets(new_packets);
 
     return revoked;
 }

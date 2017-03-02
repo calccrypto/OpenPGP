@@ -110,16 +110,15 @@ const bool PGPMessage::SignedMessage(std::list <Token>::iterator it, std::list <
 }
 
 void PGPMessage::decompress() {
-    comp = nullptr;
+    comp.reset();
     // check if compressed
     if ((packets.size() == 1) && (packets[0] -> get_tag() == 8)){
-        std::string raw = packets[0] -> raw();
-        packets.clear();                                    // free up pointer to compressed packet
-        comp = std::make_shared <Tag8> (raw);               // put data in a Compressed Data Packet
-        raw = comp -> get_data();                           // get decompressed data
-        comp -> set_data("");                               // free up space taken up by compressed data; also prevents data from showing twice
+        comp = std::make_shared <Tag8> (packets[0] -> raw());
+        const std::string compressed = comp -> get_data();
+        comp -> set_data("");
         comp -> set_partial(packets[0] -> get_partial());
-        read(raw);                                          // read decompressed data into packets
+        packets.clear();
+        read(compressed);
     }
 }
 
@@ -163,9 +162,7 @@ PGPMessage::PGPMessage(std::istream & stream)
     }
 }
 
-PGPMessage::~PGPMessage(){
-    comp.reset();
-}
+PGPMessage::~PGPMessage(){}
 
 std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) const{
     std::stringstream out;
@@ -206,7 +203,7 @@ std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP MESSAGE-----\n";
 }
 
-uint8_t PGPMessage::get_comp() const {
+uint8_t PGPMessage::get_comp() const{
     if (comp){
         return comp -> get_comp();
     }
@@ -288,7 +285,7 @@ const bool PGPMessage::match(const Token & t) const{
     return true;
 }
 
-bool PGPMessage::meaningful() const {
+bool PGPMessage::meaningful() const{
     return match(OPENPGPMESSAGE);
 }
 

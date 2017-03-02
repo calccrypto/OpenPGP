@@ -1,5 +1,4 @@
 PACKETS_OBJECTS=packet.o  \
-                packets.o \
                 Partial.o \
                 s2k.o     \
                 Tag0.o    \

@@ -4,12 +4,10 @@
 ID::Ptr find_user_id(const PGPSecretKey & k){
     for(Packet::Ptr const & p : k.get_packets()){
         if (p -> get_tag() == 13){
-            std::string raw = p -> raw();
-            return std::make_shared <Tag13> (raw);
+            return std::make_shared <Tag13> (p -> raw());
         }
         if (p -> get_tag() == 17){
-            std::string raw = p -> raw();
-            return std::make_shared <Tag17> (raw);
+            return std::make_shared <Tag17> (p -> raw());
         }
     }
     return nullptr;
@@ -59,16 +57,12 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const Tag5::Ptr & tag5, const ID
         Tag2Sub28::Ptr tag2sub28 = std::make_shared <Tag2Sub28> ();
         tag2sub28 -> set_signer(id -> raw());
         tag2 -> set_hashed_subpackets({tag2sub2, tag2sub28});
-        tag2sub28.reset();
     }
 
     // Set Key ID
     Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> ();
     tag2sub16 -> set_keyid(tag5 -> get_keyid());
     tag2 -> set_unhashed_subpackets({tag2sub16});
-
-    tag2sub2.reset();
-    tag2sub16.reset();
 
     return tag2;
 }
@@ -84,12 +78,7 @@ Tag2::Ptr create_sig_packet(const uint8_t type, const PGPSecretKey & pri, const 
         throw std::runtime_error("Error: No ID packet found.");
     }
 
-    Tag2::Ptr out = create_sig_packet(type, tag5, id, hash);
-
-    tag5.reset();
-    id.reset();
-
-    return out;
+    return create_sig_packet(type, tag5, id, hash);
 }
 
 Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash){
@@ -112,8 +101,6 @@ Tag2::Ptr sign_00(const PGPSecretKey & pri, const std::string & passphrase, cons
     std::string digest = to_sign_00(data, sig);
     sig -> set_left16(digest.substr(0, 2));
     sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
-
-    signer.reset();
 
     return sig;
 }
@@ -147,8 +134,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     Tag2::Ptr keysig = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 2){
-            std::string data = p -> raw();
-            Tag2 * temp = new Tag2(data);
+            Tag2 * temp = new Tag2(p -> raw());
             if (temp -> get_keyid() == tag5 -> get_keyid()){
                 keysig = std::shared_ptr <Tag2> (temp);
                 break;
@@ -169,7 +155,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     }
 
     // create One-Pass Signature Packet
-    Tag4::Ptr tag4(new Tag4);
+    Tag4::Ptr tag4 = std::make_shared <Tag4> ();
     tag4 -> set_type(0);
     tag4 -> set_hash(hash);
     tag4 -> set_pka(tag5 -> get_pka());
@@ -177,7 +163,7 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     tag4 -> set_nested(1); // 1 for no nesting
 
     // put source data into Literal Data Packet
-    Tag11::Ptr tag11(new Tag11);
+    Tag11::Ptr tag11 = std::make_shared <Tag11> ();
     tag11 -> set_format('b');
     tag11 -> set_filename(filename);
     tag11 -> set_time(now());
@@ -203,10 +189,6 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
         std::string raw = tag8.write(2);
         signature = PGPMessage(raw);
     }
-
-    tag4.reset();
-    tag11.reset();
-    tag2.reset();
 
     return signature;
 }
@@ -257,9 +239,6 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
     message.set_Hash_Armor_Header(h);
     message.set_message(text);
     message.set_sig(signature);
-
-    signer.reset();
-    sig.reset();
 
     return message;
 }
@@ -323,8 +302,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     unsigned int i = 0;
     for(i = 0; i < signee_packets.size(); i++){
         if (signee_packets[i] -> get_tag() == 6){
-            std::string raw = signee_packets[i] -> raw();
-            signee_primary_key = std::make_shared <Tag6> (raw);
+            signee_primary_key = std::make_shared <Tag6> (signee_packets[i] -> raw());
             break;
         }
     }
@@ -371,9 +349,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
         // search unhashed subpackets first (key id is usually in there)
         for(Subpacket::Ptr const & s : tag2.get_unhashed_subpackets()){
             if (s -> get_type() == 16){
-                raw = s -> raw();
-                Tag2Sub16 tag2sub16(raw);
-                if (tag2sub16.get_keyid() == signer_signing_key -> get_keyid()){
+                if (Tag2Sub16(s -> raw()).get_keyid() == signer_signing_key -> get_keyid()){
                     std::cerr << "Warning: Key " << signee << " has already been signed by this key " << signer << ". Nothing done. " << std::endl;
                     return signee;
                 }
@@ -383,9 +359,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
         // search hashed subpackets
         for(Subpacket::Ptr const & s : tag2.get_hashed_subpackets()){
             if (s -> get_type() == 16){
-                raw = s -> raw();
-                Tag2Sub16 tag2sub16(raw);
-                if (tag2sub16.get_keyid() == signer_signing_key -> get_keyid()){
+                if (Tag2Sub16(s -> raw()).get_keyid() == signer_signing_key -> get_keyid()){
                     std::cerr << "Warning: Key " << signee << " has already been signed by this key " << signer << std::endl;
                     return signee;
                 }
@@ -433,11 +407,6 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
     }
     out.set_packets(out_packets);
 
-    signer_signing_key.reset();
-    for(Packet::Ptr & p : out_packets){
-        p.reset();
-    }
-
     return out;
 }
 
@@ -471,45 +440,32 @@ Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string &
     }
 
     // move subkey data into subkey packet
-    std::string raw = subkey -> raw();
-    subkey.reset();
-    Tag7::Ptr signer_subkey(new Tag7(raw));
+    Tag7::Ptr signer_subkey = std::make_shared <Tag7> (subkey -> raw());
 
     // get signee primary and subkey
     Tag6::Ptr signee_primary = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 6){
-            std::string raw = p -> raw();
-            signee_primary = std::make_shared <Tag6> (raw);
+            signee_primary = std::make_shared <Tag6> (p -> raw());
             break;
         }
     }
 
     if (!signee_primary){
-        signer_subkey.reset();
         throw std::runtime_error("Error: Signee Primary Key not found.");
     }
 
     Tag14::Ptr signee_subkey = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
         if (p -> get_tag() == 14){
-            std::string raw = p -> raw();
-            signee_subkey = std::make_shared <Tag14> (raw);
+            signee_subkey = std::make_shared <Tag14> (p -> raw());
             break;
         }
     }
 
     if (!signee_subkey){
-        signer_subkey.reset();
-        signee_primary.reset();
         throw std::runtime_error("Error: Singee Subkey not found.");
     }
 
-    Tag2::Ptr sig = sign_primary_key_binding(signer_subkey, passphrase, signee_primary, signee_subkey, hash);
-
-    signer_subkey.reset();
-    signee_primary.reset();
-    signee_subkey.reset();
-
-    return sig;
+    return sign_primary_key_binding(signer_subkey, passphrase, signee_primary, signee_subkey, hash);
 }

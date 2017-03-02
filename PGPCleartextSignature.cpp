@@ -191,7 +191,7 @@ void PGPCleartextSignature::set_message(const std::string & data){
     std::stringstream s(data);
     std::string line;
     while (std::getline(s, line)){
-        message.push_back(data);
+        message.push_back(line);
     }
 }
 
@@ -201,7 +201,7 @@ void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
 }
 
 PGPCleartextSignature::Ptr PGPCleartextSignature::clone() const{
-    PGPCleartextSignature::Ptr out(new PGPCleartextSignature);
+    PGPCleartextSignature::Ptr out = std::make_shared <PGPCleartextSignature> ();
     out -> Hash_Armor_Header = Hash_Armor_Header;
     out -> message = message;
     out -> sig = sig;

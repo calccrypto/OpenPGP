@@ -4,15 +4,13 @@ Tag6::Ptr find_encrypting_key(const PGP & k){
     if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
         for(Packet::Ptr const & p : k.get_packets()){
             if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
-                std::string data = p -> raw();
-                Tag6::Ptr key(new Tag6(data));
+                Tag6::Ptr key = std::make_shared <Tag6> (p -> raw());
                 // make sure key has encrypting keys
                 if ((key -> get_pka() == 1) || // RSA
                     (key -> get_pka() == 2) || // RSA
                     (key -> get_pka() == 16)){ // ElGamal
                         return key;
                 }
-                key.reset();
             }
         }
     }
@@ -58,14 +56,12 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         // // find signing key id
         // Tag5::Ptr tag5 = find_signing_key(*signer, 5);
         // std::string keyid = tag5 -> get_keyid();
-        // tag5.reset();
 
         // // find signature packet of signing key
         // Tag2::Ptr tag2 = nullptr;
         // for(Packet::Ptr const & p : signer -> get_packets()){
             // if (p -> get_tag() == 2){
-                // std::string raw = p -> raw();
-                // Tag2 sig(raw);
+                // Tag2 sig(p -> raw());
 
                 // if (sig.get_keyid() == keyid){
                     // tag2 = std::make_shared <Tag2> (sig);
@@ -79,7 +75,7 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
         // // if a signature packet was found
         // if (tag2){
             // // check for preferred hash algorithms
-            // std::string raw = tag2 -> find_subpacket(21);
+            // const std::string raw = tag2 -> find_subpacket(21);
             // if (raw.size()){
                 // Tag2Sub21 tag2sub21(raw);
                 // h = tag2sub21.get_pha()[0]; // use first preferred hash algorithm
@@ -182,14 +178,6 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
     out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
     out.set_packets({tag1, encrypted});
 
-    // clear data
-    packets.clear();
-    public_key.reset();
-    tag1.reset();
-    m = 0;
-    session_key = "";
-    encrypted.reset();
-
     return out;
 }
 
@@ -228,13 +216,6 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
     out.set_ASCII_Armor(0);
     out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
     out.set_packets({tag3, encrypted});
-
-    // clear data
-    s2k.reset();
-    tag3.reset();
-    session_key = "";
-    encrypted_session_key = "";
-    encrypted.reset();
 
     return out;
 }

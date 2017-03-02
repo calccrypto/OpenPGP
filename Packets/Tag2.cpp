@@ -38,14 +38,12 @@ Tag2::~Tag2(){
 }
 
 // Extracts Subpacket data for figuring which subpacket type to create
-// Some data is consumed in the process
 void Tag2::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
     length = 0;
 
     uint8_t first_octet = static_cast <unsigned char> (data[pos]);
     if (first_octet < 192){
         length = first_octet;
-        // data = data.substr(1, data.size() - 1);
         pos += 1;
     }
     else if ((192 <= first_octet) && (first_octet < 255)){
@@ -320,9 +318,7 @@ uint32_t Tag2::get_time() const{
     else if (version == 4){
         for(Subpacket::Ptr const & s : hashed_subpackets){
             if (s -> get_type() == 2){
-                std::string data = s -> raw();
-                Tag2Sub2 sub2(data);
-                return sub2.get_time();
+                return Tag2Sub2(s -> raw()).get_time();
             }
         }
     }
@@ -337,17 +333,13 @@ std::string Tag2::get_keyid() const{
         // usually found in unhashed subpackets
         for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
             if (s -> get_type() == 16){
-                std::string data = s -> raw();
-                Tag2Sub16 sub16(data);
-                return sub16.get_keyid();
+                return Tag2Sub16(s -> raw()).get_keyid();
             }
         }
         // search hashed subpackets if necessary
         for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             if (s -> get_type() == 16){
-                std::string data = s -> raw();
-                Tag2Sub16 sub16(data);
-                return sub16.get_keyid();
+                return Tag2Sub16(s -> raw()).get_keyid();
             }
         }
     }

@@ -49,7 +49,7 @@ class PGP{
         bool armored;                               // default true
         uint8_t ASCII_Armor;                        // what type of key is this
         Armor_Header_T Armor_Header;                // messages in the header
-        Packets_T packets;                           // main data
+        Packets_T packets;                          // main data
 
         // calculates the length of a partial body
         unsigned int partialBodyLen(uint8_t first_octet) const;
@@ -100,7 +100,7 @@ class PGP{
         void set_armored(const bool a);
         void set_ASCII_Armor(const uint8_t armor);
         void set_Armor_Header(const Armor_Header_T & header);
-        void set_packets(const Packets_T & p);       // clones the input packets
+        void set_packets(const Packets_T & p);      // clones the input packets
 
         virtual bool meaningful() const = 0;        // check if packet sequence is meaningful and correct
 

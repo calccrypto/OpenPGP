@@ -147,18 +147,14 @@ std::string PGPKey::keyid() const{
     for(Packet::Ptr const & p : packets){
         // find primary key
         if ((p -> get_tag() == 5) || (p -> get_tag() == 6)){
-            std::string data = p -> raw();
-            Tag6 tag6(data);
-            return tag6.get_keyid();
+            return Tag6(p -> raw()).get_keyid();
         }
     }
     // if no primary key is found
     for(Packet::Ptr const & p : packets){
         // find subkey
         if ((p -> get_tag() == 7) || (p -> get_tag() == 14)){
-            std::string data = p -> raw();
-            Tag6 tag6(data);
-            return tag6.get_keyid();
+            return Tag6(p -> raw()).get_keyid();
         }
     }
     throw std::runtime_error("Error: PGP block type is incorrect.");
@@ -171,24 +167,19 @@ std::string PGPKey::list_keys() const{
     std::map <std::string, std::string> revoked;
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == 2){
-            std::string data = p -> raw();
-            Tag2 tag2(data);
+            Tag2 tag2(p -> raw());
             if ((tag2.get_type() == 0x20) || (tag2.get_type() == 0x28)){
                 bool found = false;
                 for(Tag2Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
                     if (s -> get_type() == 16){
-                        data = s -> raw();
-                        Tag2Sub16 tag2sub16(data);
-                        revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                        revoked[Tag2Sub16(s -> raw()).get_keyid()] = show_date(tag2.get_time());
                         found = true;
                     }
                 }
                 if (!found){
                     for(Tag2Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
                         if (s -> get_type() == 16){
-                            data = s -> raw();
-                            Tag2Sub16 tag2sub16(data);
-                            revoked[tag2sub16.get_keyid()] = show_date(tag2.get_time());
+                            revoked[Tag2Sub16(s -> raw()).get_keyid()] = show_date(tag2.get_time());
                             found = true;
                         }
                     }
@@ -199,11 +190,10 @@ std::string PGPKey::list_keys() const{
 
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
-        std::string data = p -> raw();
         switch (p -> get_tag()){
             case 5: case 6: case 7: case 14:
                 {
-                    Tag6 tag6(data);
+                    Tag6 tag6(p -> raw());
                     std::map <std::string, std::string>::iterator r = revoked.find(tag6.get_keyid());
                     std::stringstream s;
                     s << bitsize(tag6.get_mpi()[0]);
@@ -217,19 +207,17 @@ std::string PGPKey::list_keys() const{
                 break;
             case 13:
                 {
-                    Tag13 tag13(data);
+                    Tag13 tag13(p -> raw());
                     out << "uid                   " << tag13.raw() << "\n";
                 }
                 break;
             case 17:
                 {
-                    Tag17 tag17(data);
+                    Tag17 tag17(p -> raw());
                     std::vector <Tag17Subpacket::Ptr> subpackets = tag17.get_attributes();
                     for(Tag17Subpacket::Ptr s : subpackets){
                         // since only subpacket type 1 is defined
-                        data = s -> raw();
-                        Tag17Sub1 sub1(data);
-                        out << "att                   [jpeg image of size " << sub1.get_image().size() << "]\n";
+                        out << "att                   [jpeg image of size " << Tag17Sub1(s -> raw()).get_image().size() << "]\n";
                     }
                 }
                 break;
@@ -285,7 +273,7 @@ PGPSecretKey::PGPSecretKey(std::istream & stream)
 
 PGPSecretKey::~PGPSecretKey(){}
 
-PGPPublicKey PGPSecretKey::pub() const {
+PGPPublicKey PGPSecretKey::pub() const{
     return Secret2PublicKey(*this);
 }
 
@@ -338,7 +326,7 @@ PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
 
 PGPPublicKey::~PGPPublicKey(){}
 
-bool PGPPublicKey::meaningful() const {
+bool PGPPublicKey::meaningful() const{
     return PGPKey::meaningful(1);
 }
 
@@ -358,19 +346,17 @@ PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
     pub.set_Armor_Header(pri.get_Armor_Header());
 
     // clone packets; convert secret packets into public ones
-    std::vector <Packet::Ptr> packets;
+    PGP::Packets_T packets;
     for(Packet::Ptr const & p : pri.get_packets()){
         switch (p -> get_tag()){
             case 5:
             {
-                std::string data = p -> raw();
-                packets.push_back(Tag5(data).get_public_ptr());
+                packets.push_back(Tag5(p -> raw()).get_public_ptr());
                 break;
             }
             case 7:
             {
-                std::string data = p -> raw();
-                packets.push_back(Tag7(data).get_public_ptr());
+                packets.push_back(Tag7(p -> raw()).get_public_ptr());
                 break;
             }
             default:
@@ -379,10 +365,6 @@ PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
         }
     }
     pub.set_packets(packets);
-
-    for(Packet::Ptr & p : packets){
-        p.reset();
-    }
 
     return pub;
 }
@@ -411,8 +393,7 @@ Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std:
                         break;
                 }
 
-                std::string data = p -> raw();
-                signer -> read(data);
+                signer -> read(p -> raw());
 
                 // make sure key has signing material
                 if ((signer -> get_pka() == 1) || // RSA (Encrypt or Sign)
@@ -425,13 +406,11 @@ Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std:
                         if (signer -> get_keyid() == keyid){
                             return signer;
                         }
-                        signer.reset();
                     }
                     else{
                         return signer;
                     }
                 }
-                signer.reset();
             }
         }
     }
@@ -443,8 +422,7 @@ Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const st
     if (!found){
         return nullptr;
     }
-    std::string data = found -> raw();
-    return std::make_shared <Tag6> (data);
+    return std::make_shared <Tag6> (found -> raw());
 }
 
 Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid){
@@ -452,6 +430,5 @@ Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const st
     if (!found){
         return nullptr;
     }
-    std::string data = found -> raw();
-    return std::make_shared <Tag5> (data);
+    return std::make_shared <Tag5> (found -> raw());
 }

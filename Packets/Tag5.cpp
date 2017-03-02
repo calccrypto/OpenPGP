@@ -192,15 +192,11 @@ std::string Tag5::get_secret() const{
 }
 
 Tag6 Tag5::get_public_obj() const{
-    std::string data = raw();
-    Tag6 out(data);
-    return out;
+    return Tag6(raw());
 }
 
 Tag6::Ptr Tag5::get_public_ptr() const{
-    std::string data = raw();
-    Tag6::Ptr out(new Tag6(data));
-    return out;
+    return std::make_shared <Tag6> (raw());
 }
 
 void Tag5::set_s2k_con(const uint8_t c){

@@ -24,8 +24,7 @@ Tag14 Tag7::get_public_obj() const{
 }
 
 Tag14::Ptr Tag7::get_public_ptr() const{
-    std::string data = raw();
-    Tag14::Ptr out(new Tag14(data));
+    Tag14::Ptr out = std::make_shared <Tag14> (raw());
     out -> set_tag(14);
     return out;
 }

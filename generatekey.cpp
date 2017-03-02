@@ -105,16 +105,6 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     private_key.set_packets({sec, uid, sig, ssb, subsig});
 
     public_key = PGPPublicKey(private_key);
-
-    sec.reset();
-    sec_s2k3.reset();
-    uid.reset();
-    sig.reset();
-    tag2sub2.reset();
-    tag2sub16.reset();
-    ssb.reset();
-    ssb_s2k3.reset();
-    subsig.reset();
 }
 
 void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
@@ -135,9 +125,8 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
     std::vector <Packet::Ptr> packets = private_key.get_packets();
     for(Packet::Ptr & p : packets){
-        std::string data = p -> raw();
         if (p -> get_tag() == 5){     // Secret Key Packet
-            prikey  = std::make_shared <Tag5> (data);
+            prikey = std::make_shared <Tag5> (p -> raw());
 
             // Generate keypair
             std::vector <unsigned int> param;
@@ -206,15 +195,15 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             key = false;
         }
         else if (p -> get_tag() == 13){    // User ID packet
-            uid -> read(data);
+            uid -> read(p -> raw());
             id = false;
         }
         else if (p -> get_tag() == 17){    // User Attribute Packet
-            attr -> read(data);
+            attr -> read(p -> raw());
             id = true;
         }
         else if (p -> get_tag() == 2){     // Signature Packet
-            Tag2::Ptr sig(new Tag2(data));
+            Tag2::Ptr sig = std::make_shared <Tag2> (p -> raw());
 
             // check that there is a key to be signed
             if (!prikey){
@@ -302,7 +291,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             p = sig;
         }
         else if (p -> get_tag() == 7){     // Secret Subkey Packet
-            prisubkey = std::make_shared <Tag7> (data);
+            prisubkey = std::make_shared <Tag7> (p -> raw());
 
             // Generate keypair
             std::vector <unsigned int> param;
@@ -380,13 +369,12 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
     // write changes to public key
     std::vector <Packet::Ptr> pub_packets;
     for(Packet::Ptr const & p : packets){
-        std::string data = p -> raw();
         if (p -> get_tag() == 5){ // Secret Key packet
-            Tag6::Ptr tag6(new Tag6(data));
+            Tag6::Ptr tag6 = std::make_shared <Tag6> (p -> raw());
             pub_packets.push_back(tag6);
         }
         else if (p -> get_tag() == 7){ // Secret Subkey packet
-            Tag14::Ptr tag14(new Tag14(data));
+            Tag14::Ptr tag14 = std::make_shared <Tag14> (p -> raw());
             pub_packets.push_back(tag14);
         }
         else if ((p -> get_tag() == 2) || (p -> get_tag() == 13) || (p -> get_tag() == 17)){
