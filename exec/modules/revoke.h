@@ -41,16 +41,21 @@ const Module revoke(
         "revocation-certificate",
     },
 
-    // optional arugments
+    // optional arguments
     {
         std::make_pair("o", std::make_pair("output file", "")),
-        std::make_pair("a", std::make_pair("armored",    "t")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("a", std::make_pair("armored",   true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream t(args.at("target"), std::ios::binary);
-        if (!t){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream target(args.at("target"), std::ios::binary);
+        if (!target){
             std::cerr << "IOError: File '" + args.at("target") + "' not opened." << std::endl;
             return -1;
         }
@@ -60,13 +65,10 @@ const Module revoke(
             std::cerr << "IOError: File '" + args.at("revocation-certificate") + "' not opened." << std::endl;
             return -1;
         }
-
-        args["-a"] = lower(args.at("a"));
-
-        PGPSecretKey pri(t);
+        PGPSecretKey pri(target);
         PGPPublicKey rev(cert);
 
-        output(::revoke_with_cert(pri, rev).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::revoke_with_cert(pri, rev).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
         return 0;
     }

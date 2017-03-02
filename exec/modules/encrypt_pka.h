@@ -41,58 +41,57 @@ const Module encrypt_pka(
         "file",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o",    std::make_pair("output file",                                                   "")),
-        std::make_pair("a",    std::make_pair("armored",                                                      "t")),
-        std::make_pair("c",    std::make_pair("compression (Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2)",    "ZLIB")),
-        std::make_pair("d",    std::make_pair("delete original",                                              "f")),
-        std::make_pair("mdc",  std::make_pair("use mdc?",                                                     "t")),
-        std::make_pair("p",    std::make_pair("passphrase for signing key",                                    "")),
-        std::make_pair("sign", std::make_pair("private key file",                                              "")),
-        std::make_pair("sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),
+        std::make_pair("-o",    std::make_pair("output file",                                                   "")),
+        std::make_pair("-c",    std::make_pair("compression (Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2)",    "ZLIB")),
+        std::make_pair("-p",    std::make_pair("passphrase for signing key",                                    "")),
+        std::make_pair("-sign", std::make_pair("private key file",                                              "")),
+        std::make_pair("-sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("-a",    std::make_pair("armored",                                                     true)),
+        std::make_pair("-d",    std::make_pair("delete original",                                            false)),
+        std::make_pair("-mdc",  std::make_pair("use mdc?",                                                    true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("public-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("public-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: File '" + args.at("public-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream d(args.at("file"), std::ios::binary);
-        if (!d){
+        std::ifstream file(args.at("file"), std::ios::binary);
+        if (!file){
             std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-        args["-c"] = upper(args.at("c"));
-        args["-d"] = lower(args.at("d"));
-        args["-mdc"] = lower(args.at("mdc"));
-        args["-sym"] = upper(args.at("sym"));
-
-        if (Compression_Numbers.find(args.at("c")) == Compression_Numbers.end()){
-            std::cerr << "Error: Bad Compression Algorithm Number" << std::endl;
+        if (Compression_Numbers.find(args.at("-c")) == Compression_Numbers.end()){
+            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Symmetric_Algorithms_Numbers.find(args.at("sym")) == Symmetric_Algorithms_Numbers.end()){
-            std::cerr << "Error: Bad Symmetric Key Algorithm Number" << std::endl;
+        if (Symmetric_Algorithms_Numbers.find(args.at("-sym")) == Symmetric_Algorithms_Numbers.end()){
+            std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("-sym") << std::endl;
             return -1;
         }
 
         PGPSecretKey::Ptr signer = nullptr;
-        if (args.at("sign").size()){
-            if (args.find("-p") == args.end()){ // need to check whether or not "-p" was used, not whether or not the passphrase is an empty string
+        if (args.at("-sign").size()){
+            if (args.find("p") == args.end()){ // need to check whether or not "-p" was used, not whether or not the passphrase is an empty string
                 std::cerr << "Error: Option \"-p\" and singer passphrase needed." << std::endl;
                 return -1;
             }
 
-            std::ifstream signing(args.at("sign"), std::ios::binary);
+            std::ifstream signing(args.at("-sign"), std::ios::binary);
             if (!signing){
-                std::cerr << "Error: File '" + args.at("sign") + "' not opened." << std::endl;
+                std::cerr << "Error: File '" + args.at("-sign") + "' not opened." << std::endl;
                 return -1;
             }
 
@@ -105,13 +104,13 @@ const Module encrypt_pka(
         }
 
         std::stringstream s;
-        s << d.rdbuf();
+        s << file.rdbuf();
 
-        PGPPublicKey pub(k);
+        PGPPublicKey pub(key);
 
-        output(::encrypt_pka(pub, s.str(), args.at("file"), Symmetric_Algorithms_Numbers.at(args.at("sym")), Compression_Numbers.at(args.at("c")), (args.at("mdc") == "t"),  signer, args.at("p")).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::encrypt_pka(pub, s.str(), args.at("file"), Symmetric_Algorithms_Numbers.at(args.at("-sym")), Compression_Numbers.at(args.at("-c")), flags.at("-mdc"),  signer, args.at("-p")).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
-        if (((args.at("f") == "t") || (args.at("f") == "b")) && (args.at("d") == "t")){
+        if (flags.at("-d")){
             remove(args.at("file").c_str());
         }
 

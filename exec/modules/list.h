@@ -40,11 +40,19 @@ const Module list(
         "key",
     },
 
-    // optional arugments
-    {},
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
+    {
+
+    },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
         std::ifstream f(args.at("key"), std::ios::binary);
         if (!f){
             std::cerr << "Error: File '" << args.at("key") << "' not opened." << std::endl;

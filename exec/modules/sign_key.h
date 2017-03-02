@@ -42,15 +42,20 @@ const Module sign_key(
         "signee-key",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file",                                      "")),
-        std::make_pair("a", std::make_pair("armored",                                         "t")),
-        std::make_pair("c", std::make_pair("certification level (0x10 - 0x13 without '0x')", "13")),
+        std::make_pair("-o", std::make_pair("output file",                                      "")),
+        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')", "13")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("-a", std::make_pair("armored",                                        true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
         std::ifstream signer_file(args.at("signer-key"), std::ios::binary);
         if (!signer_file){
             std::cerr << "IOError: File '" + args.at("signer-key") + "' not opened." << std::endl;
@@ -63,12 +68,10 @@ const Module sign_key(
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-
         PGPSecretKey signer(signer_file);
         PGPPublicKey signee(signee_file);
 
-        output(::sign_primary_key(signer, args.at("passphrase"), signee, mpitoulong(hextompi(args.at("c")))).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::sign_primary_key(signer, args.at("passphrase"), signee, mpitoulong(hextompi(args.at("-c")))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
         return 0;
     }

@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "list.h"
 #include "show.h"
-#include "show_clearsign.h"
+#include "show_cleartext_signature.h"
 #include "encrypt_pka.h"
 #include "decrypt_pka.h"
 #include "generate_key_pair.h"
@@ -55,7 +55,7 @@ namespace module {
 const std::vector <Module> ordered = {
     list,
     show,
-    show_clearsign,
+    show_cleartext_signature,
     encrypt_pka,
     decrypt_pka,
     generate_key_pair,

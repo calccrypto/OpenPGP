@@ -42,35 +42,41 @@ const Module verify_detachedsig(
         "signature",
     },
 
-    // optional arugments
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
     {
 
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("public-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("public-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: Public key file '" + args.at("public-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream f(args.at("file"), std::ios::binary);
-        if (!f){
+        std::ifstream file(args.at("file"), std::ios::binary);
+        if (!file){
             std::cerr << "Error: Data file '" + args.at("file") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream s(args.at("signature"), std::ios::binary);
-        if (!s){
+        std::ifstream sig(args.at("signature"), std::ios::binary);
+        if (!sig){
             std::cerr << "Error: Signature file '" + args.at("signature") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPPublicKey key(k);
-        PGPDetachedSignature sig(s);
+        PGPPublicKey pub(key);
+        PGPDetachedSignature signature(sig);
 
-        std::cout << "File '" << args.at("file") << "' was" << (::verify_detachedsig(key, f, sig)?"":" not") << " signed by key " << key << "." << std::endl;
+        std::cout << "File '" << args.at("file") << "' was" << (::verify_detachedsig(pub, file, signature)?"":" not") << " signed by key " << pub << "." << std::endl;
 
         return 0;
     }

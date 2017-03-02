@@ -42,49 +42,49 @@ const Module decrypt_pka(
         "file",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("a", std::make_pair("armored",            "t")),
-        std::make_pair("d", std::make_pair("delete original?",   "f")),
-        std::make_pair("v", std::make_pair("signing public key",  "")),
-        std::make_pair("w", std::make_pair("write to file?",     "t")),
+        std::make_pair("-v", std::make_pair("signing public key",  "")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("-d", std::make_pair("delete original?", false)),
+        std::make_pair("-w", std::make_pair("write to file?",    true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("private-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("private-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: File '" + args.at("private-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream m(args.at("file"), std::ios::binary);
-        if (!m){
+        std::ifstream msg(args.at("file"), std::ios::binary);
+        if (!msg){
             std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-        args["-d"] = lower(args.at("d"));
-        args["-w"] = lower(args.at("w"));
-
         PGPPublicKey::Ptr signer = nullptr;
-        if (args.at("v").size()){
-            std::ifstream v(args.at("v"), std::ios::binary);
+        if (args.at("-v").size()){
+            std::ifstream v(args.at("-v"), std::ios::binary);
             if (!v){
-                std::cerr << "Error: File '" + args.at("v") + "' not opened." << std::endl;
+                std::cerr << "Error: File '" + args.at("-v") + "' not opened." << std::endl;
                 return -1;
             }
 
             signer = std::make_shared <PGPPublicKey> (v);
         }
 
-        PGPSecretKey pri(k);
-        PGPMessage msg(m);
+        PGPSecretKey pri(key);
+        PGPMessage message(msg);
 
-        output(::decrypt_pka(pri, msg, args.at("passphrase"), (args.at("w") == "t"), signer), "");
+        output(::decrypt_pka(pri, message, args.at("passphrase"), flags.at("-w"), signer), "");
 
-        if (args.at("d") == "t"){
+        if (flags.at("-d")){
             remove(args.at("file").c_str());
         }
 

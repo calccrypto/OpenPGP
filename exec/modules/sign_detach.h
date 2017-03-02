@@ -42,38 +42,41 @@ const Module sign_detach(
         "file",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file",                                      "")),
-        std::make_pair("a", std::make_pair("armored",                                         "t")),
-        std::make_pair("c", std::make_pair("certification level (0x10 - 0x13 without '0x')", "13")),
+        std::make_pair("-o", std::make_pair("output file",                                        "")),
+        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
+        std::make_pair("-h", std::make_pair("hash_algorithm",                                 "SHA1")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("-a", std::make_pair("armored",                                          true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("private-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("private-key"), std::ios::binary);
+        if (!key){
             std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream f(args.at("file"), std::ios::binary);
-        if (!f){
+        std::ifstream file(args.at("file"), std::ios::binary);
+        if (!file){
             std::cerr << "IOError: file '" + args.at("file") + "' could not be opened." << std::endl;
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-        args["-h"] = upper(args.at("h"));
-
-        if (Hash_Numbers.find(args.at("h")) == Hash_Numbers.end()){
+        if (Hash_Numbers.find(args.at("-h")) == Hash_Numbers.end()){
             std::cerr << "Error: Bad Hash Algorithm Number" << std::endl;
             return -1;
         }
 
-        PGPSecretKey pri(k);
+        PGPSecretKey pri(key);
 
-        output(::sign_detach(pri, args.at("passphrase"), f, Hash_Numbers.at(args.at("h"))).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::sign_detach(pri, args.at("passphrase"), file, Hash_Numbers.at(args.at("-h"))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
         return 0;
     }

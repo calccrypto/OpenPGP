@@ -41,29 +41,35 @@ const Module verify_revoke(
         "revocation-certificate",
     },
 
-    // optional arugments
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
     {
 
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("public-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("public-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: Public key file '" + args.at("public-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream c(args.at("revocation-certificate"), std::ios::binary);
-        if (!c){
+        std::ifstream cert(args.at("revocation-certificate"), std::ios::binary);
+        if (!cert){
             std::cerr << "Error: Revocation certificate file '" + args.at("revocation-certificate") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPPublicKey pub(k);
-        PGPPublicKey cert(c);
+        PGPPublicKey pub(key);
+        PGPPublicKey rev(cert);
 
-        std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << (::verify_revoke(pub, cert)?std::string("revokes"):std::string("does not revoke")) << " key " << pub << std::endl;
+        std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << (::verify_revoke(pub, rev)?std::string("revokes"):std::string("does not revoke")) << " key " << pub << std::endl;
 
         return 0;
     }

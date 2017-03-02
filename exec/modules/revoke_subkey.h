@@ -41,26 +41,31 @@ const Module revoke_subkey(
         "passphrase",
     },
 
-    // optional arugments
+    // optional arguments
     {
         std::make_pair("o", std::make_pair("output file",   "")),
-        std::make_pair("a", std::make_pair("armored",      "t")),
         std::make_pair("c", std::make_pair("code (0-3)",   "0")),
         std::make_pair("r", std::make_pair("reason",        "")),
     },
 
+    // optional flags
+    {
+        std::make_pair("a", std::make_pair("armored",     true)),
+    },
+
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream f(args.at("private-key"), std::ios::binary);
-        if (!f){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream file(args.at("private-key"), std::ios::binary);
+        if (!file){
             std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
-            return 1;
+            return -1;
         }
 
-        PGPSecretKey key(f);
+        PGPSecretKey pri(file);
 
         // find private subkey
-        std::vector <Packet::Ptr> packets = key.get_packets();
+        std::vector <Packet::Ptr> packets = pri.get_packets();
         bool found = false;
         for(Packet::Ptr const & p : packets){
             if (p -> get_tag() == 7){
@@ -74,9 +79,7 @@ const Module revoke_subkey(
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-
-        output(::revoke_subkey(key, args.at("passphrase"), args.at("c")[0] - '0', args.at("r")).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::revoke_subkey(pri, args.at("passphrase"), args.at("-c")[0] - '0', args.at("-r")).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
         return 0;
     }

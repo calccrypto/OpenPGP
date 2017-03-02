@@ -20,8 +20,15 @@ const Command (
         std::make_pair("", std::make_pair("", "")),
     },
 
+    // optional flags
+    {
+        std::make_pair("", std::make_pair("", true)),
+
+    },
+
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
 
         return 0;
     }

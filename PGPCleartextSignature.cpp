@@ -116,15 +116,17 @@ void PGPCleartextSignature::read(std::istream & stream){
 }
 
 std::string PGPCleartextSignature::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::string out = tab + "Message:\n";
+    std::string out = std::string(indents * indent_size, ' ') + "Message:\n";
+
+    // dash escaped text
     for(std::string const & line : message){
         if (line[0] == '-'){
-            out += "- ";
+           out += "- ";
         }
-        out += line;
+        out += line + "\n";
     }
-    return out + "\n\n" + tab + sig.show(indents, indent_size);
+
+    return out + "Signature:\n" + sig.show(indents + 1, indent_size);
 }
 
 std::string PGPCleartextSignature::write(uint8_t header) const{

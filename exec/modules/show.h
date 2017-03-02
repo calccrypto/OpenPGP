@@ -37,25 +37,31 @@ const Module show(
 
     // positional arguments
     {
-        "file",
+        "key",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file", "")),
+        std::make_pair("-o", std::make_pair("output file", "")),
+    },
+
+    // optional flags
+    {
+
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream f(args.at("file"), std::ios::binary);
-        if (!f){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("key"), std::ios::binary);
+        if (!key){
+            std::cerr << "Error: File '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPKey key(f);
+        PGPKey pub(key);
 
-        output(key.show(), args.at("o"));
+        output(pub.show(), args.at("-o"));
 
         return 0;
     }

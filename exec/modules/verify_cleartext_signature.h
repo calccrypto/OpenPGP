@@ -38,32 +38,38 @@ const Module verify_cleartext_signature(
     // positional arguments
     {
         "public-key",
-        "file",
+        "signature",
     },
 
-    // optional arugments
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
     {
 
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("public-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("public-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: File '" + args.at("public-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream m(args.at("file"), std::ios::binary);
-        if (!m){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
+        std::ifstream sig(args.at("signature"), std::ios::binary);
+        if (!sig){
+            std::cerr << "Error: File '" + args.at("signature") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPPublicKey pub(k);
-        PGPCleartextSignature sig(m);
+        PGPPublicKey pub(key);
+        PGPCleartextSignature signature(sig);
 
-        std::cout << "This message was" << (::verify_cleartext_signature(pub, sig)?"":" not") << " signed by this key." << std::endl;
+        std::cout << "This message was" << (::verify_cleartext_signature(pub, signature)?"":" not") << " signed by this key." << std::endl;
 
         return 0;
     }

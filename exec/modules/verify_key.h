@@ -41,13 +41,19 @@ const Module verify_key(
         "signee-key",
     },
 
-    // optional arugments
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
     {
 
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
         std::ifstream signer(args.at("signer-key"), std::ios::binary);
         if (!signer){
             std::cerr << "Error: Key file '" + args.at("signer-key") + "' not opened." << std::endl;

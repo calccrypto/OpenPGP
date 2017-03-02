@@ -41,28 +41,34 @@ const Module verify_message(
         "message",
     },
 
-    // optional arugments
+    // optional arguments
+    {
+
+    },
+
+    // optional flags
     {
 
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("public-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("public-key"), std::ios::binary);
+        if (!key){
             std::cerr << "Error: Key file '" + args.at("public-key") + "' not opened." << std::endl;
             return -1;
         }
-        std::ifstream m(args.at("message"), std::ios::binary);
-        if (!m){
+        std::ifstream msg(args.at("message"), std::ios::binary);
+        if (!msg){
             std::cerr << "Error: Message file '" + args.at("message") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPPublicKey pub(k);
-        PGPMessage msg(m);
+        PGPPublicKey pub(key);
+        PGPMessage message(msg);
 
-        std::cout << "The data in '" << args.at("message") << "' was" << (::verify_message(pub, msg)?"": " not") << " signed by the key " << pub << std::endl;
+        std::cout << "The data in '" << args.at("message") << "' was" << (::verify_message(pub, message)?"": " not") << " signed by the key " << pub << std::endl;
 
         return 0;
     }

@@ -42,45 +42,46 @@ const Module sign_file(
         "file",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file", "")),
-        std::make_pair("a", std::make_pair("armored", "")),
-        std::make_pair("c", std::make_pair("compression algorithm", "Z")),
-        std::make_pair("h", std::make_pair("hash algorithm", "SHA1")),
+        std::make_pair("-o", std::make_pair("output file",               "")),
+        std::make_pair("-c", std::make_pair("compression algorithm", "ZLIB")),
+        std::make_pair("-h", std::make_pair("hash algorithm",        "SHA1")),
+    },
+
+    // optional flags
+    {
+        std::make_pair("-a", std::make_pair("armored",                 true)),
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream k(args.at("private-key"), std::ios::binary);
-        if (!k){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream key(args.at("private-key"), std::ios::binary);
+        if (!key){
             std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream f(args.at("file"), std::ios::binary);
-        if (!f){
+        std::ifstream file(args.at("file"), std::ios::binary);
+        if (!file){
             std::cerr << "IOError: file '" + args.at("file") + "' could not be opened." << std::endl;
             return -1;
         }
 
-        args["-a"] = lower(args.at("a"));
-        args["-c"] = upper(args.at("c"));
-        args["-h"] = upper(args.at("h"));
-
-        if (Compression_Numbers.find(args.at("c")) == Compression_Numbers.end()){
-            std::cerr << "Error: Bad Compression Algorithm Number" << std::endl;
+        if (Compression_Numbers.find(args.at("-c")) == Compression_Numbers.end()){
+            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Hash_Numbers.find(args.at("h")) == Hash_Numbers.end()){
-            std::cerr << "Error: Bad Hash Algorithm Number" << std::endl;
+        if (Hash_Numbers.find(args.at("-h")) == Hash_Numbers.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        PGPSecretKey pri(k);
+        PGPSecretKey pri(key);
 
-        output(::sign_message(pri, args.at("passphrase"), args.at("file"), f, Hash_Numbers.at(args.at("h")), Compression_Numbers.at(args.at("c"))).write((args.at("a") == "f")?1:(args.at("a") == "t")?2:0), args.at("o"));
+        output(::sign_message(pri, args.at("passphrase"), args.at("file"), file, Hash_Numbers.at(args.at("-h")), Compression_Numbers.at(args.at("-c"))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
 
         return 0;
     }

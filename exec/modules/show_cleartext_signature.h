@@ -23,39 +23,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SHOW_CLEARSIGN__
-#define __COMMAND_SHOW_CLEARSIGN__
+#ifndef __COMMAND_SHOW_CLEARTEXT_SIGNATURE__
+#define __COMMAND_SHOW_CLEARTEXT_SIGNATURE__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module show_clearsign(
+const Module show_cleartext_signature(
     // name
-    "show-clearsign",
+    "show-cleartext-signature",
 
     // positional arguments
     {
         "file",
     },
 
-    // optional arugments
+    // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file", "")),
+        std::make_pair("-o", std::make_pair("output file", "")),
+    },
+
+    // optional flags
+    {
+
     },
 
     // function to run
-    [](std::map <std::string, std::string> & args) -> int {
-        std::ifstream f(args.at("file"), std::ios::binary);
-        if (!f){
+    [](const std::map <std::string, std::string> & args,
+       const std::map <std::string, bool>        & flags) -> int {
+        std::ifstream file(args.at("file"), std::ios::binary);
+        if (!file){
             std::cerr << "Error: File '" + args.at("filename") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPMessage msg(f);
+        PGPCleartextSignature message(file);
 
-        output(msg.show(), args.at("o"));
+        output(message.show(), args.at("-o"));
 
         return 0;
     }
