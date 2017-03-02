@@ -54,7 +54,7 @@ class Module{
         Module(const std::string & n,
                const std::vector <std::string> & pos,
                const std::map <std::string, std::pair <std::string, std::string> >  & opt,
-               std::function <int(std::map <std::string, std::string> &)> & func);
+               const std::function <int(std::map <std::string, std::string> &)> & func);
 
         Module & operator=(const Module & cmd);
         Module & operator=(Module && cmd);

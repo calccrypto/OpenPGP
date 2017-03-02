@@ -47,7 +47,7 @@ Module::Module(Module && cmd)
 Module::Module(const std::string & n,
                const std::vector <std::string> & pos,
                const std::map <std::string, std::pair <std::string, std::string> >  & opt,
-               std::function <int(std::map <std::string, std::string> &)> & func)
+               const std::function <int(std::map <std::string, std::string> &)> & func)
     : name(),
       positional(),
       optional(),
@@ -63,7 +63,7 @@ Module::Module(const std::string & n,
     // make sure there aren't duplicate positional arguements
     std::vector <std::string> pos_cp = positional;
     std::sort(pos_cp.begin(), pos_cp.end());
-    for(std::size_t i = 1; i < pos_cp.size(); i++){
+    for(std::string::size_type i = 1; i < pos_cp.size(); i++){
         if (pos_cp[i - 1] == pos_cp[i]){
             throw std::runtime_error("Error: Duplicate postional arguments found: " + pos_cp[i]);
         }

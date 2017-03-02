@@ -11,7 +11,7 @@ all: $(MODULES_OBJECTS)
 
 .PHONY: clean
 
-%.o : %.cpp %.h
+%.o : %.cpp %.h modules.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:

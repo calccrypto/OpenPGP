@@ -1,5 +1,3 @@
-Fix signing
-Fix virifying
 Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable? (currently everything throws exceptions)
 add encrypt/decrypt with passphrase
@@ -7,6 +5,5 @@ encrypt+sign stuff
 deal with partial packets properly
 finish sign functions
 find packets properly (check if uid is associated with key, etc)
-use Parameter Objects to reduce argument count for functions
 encrypt for multiple recipients
 sign with multiple keys

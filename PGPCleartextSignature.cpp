@@ -160,14 +160,14 @@ std::vector <std::string> PGPCleartextSignature::get_message() const{
 std::string PGPCleartextSignature::get_canonical_message() const{
     std::string out = "";
     for(std::string const & line : message){
-        out += line;
-
-        // add <CR><LF>
-        if (line[line.size() - 1] != '\r'){
-            out += '\r';
+        // find trailing whitespace
+        std::string::size_type i = line.size();
+        while ((i > 0) && std::isspace(line[i - 1])){
+            i--;
         }
 
-        out += '\n';
+        // remove trailing whitespace and append <CR><LF>
+        out += line.substr(0, i) + "\r\n";
     }
 
     return out.substr(0, out.size() - 2);   // remove extra trailing <CR><LF>

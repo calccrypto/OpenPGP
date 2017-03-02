@@ -46,4 +46,4 @@ before_script:
   - make
 
 script:
-  - make run
+  - ./tests

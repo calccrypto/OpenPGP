@@ -30,18 +30,18 @@ THE SOFTWARE.
 
 #include "modules/modules.h"
 
-std::size_t help(const std::string & match = "", const bool show_header = false, std::ostream & stream = std::cout){
-    std::string indent = "";
-
+std::string::size_type help(const std::string & match = "",
+                            const bool show_header    = false,
+                            std::ostream & stream     = std::cout,
+                            std::string indent        = ""){
     if (show_header){
-        stream << "An OpenPGP implementation (RFC 4880)\n"
-               << "by Jason Lee @ calccrypto at gmail.com\n\n"
-               << "    help - print all options\n\n" << std::endl;
-
-        indent = "    ";
+        stream << indent << "An OpenPGP implementation (RFC 4880)\n"
+               << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
+               << indent << "    help - print all modules\n" << std::endl;
+        indent += "    ";
     }
 
-    std::size_t found = 0;
+    std::string::size_type found = 0;
     for(module::Module const & cmd : module::ordered){
         if (cmd.get_name().substr(0, match.size()) == match){
             stream << cmd.help(indent) << std::endl;
@@ -81,7 +81,7 @@ int main(int argc, char * argv[]){
     if (it == mapping.end()){
         std::cerr << "Error: Function " << argv[1] << " not found." << std::endl;
         std::stringstream s;
-        if (help(argv[1], false, s)){
+        if (help(argv[1], false, s, "    ")){
             std::cout << "Possible matches:\n" << s.str() << std::endl;
         }
         return -1;
