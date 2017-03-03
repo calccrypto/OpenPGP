@@ -69,7 +69,7 @@ void PGPCleartextSignature::read(std::istream & stream){
     while (std::getline(stream, line) && (line.substr(0, 29) != "-----BEGIN PGP SIGNATURE-----")){
         message += line + "\n";
     }
-    message = reverse_dash_escape(message);
+    message = reverse_dash_escape(message.substr(0, message.size() - 1));
 
     // read signature into string
     //     - The ASCII armored signature(s) including the ’-----BEGIN PGP
@@ -172,7 +172,7 @@ std::string PGPCleartextSignature::dash_escape(const std::string & text){
         out += line + "\n";
     }
 
-    return out;
+    return out.substr(0, out.size() - 1);
 }
 
 std::string PGPCleartextSignature::reverse_dash_escape(const std::string & text){
@@ -190,13 +190,17 @@ std::string PGPCleartextSignature::reverse_dash_escape(const std::string & text)
         out += "\n";
     }
 
-    return out;
+    return out.substr(0, out.size() - 1);
 }
 
 std::string PGPCleartextSignature::data_to_text() const{
+    return data_to_text(message);
+}
+
+std::string PGPCleartextSignature::data_to_text(const std::string & text){
     std::string out = "";
 
-    std::stringstream s(message);
+    std::stringstream s(text);
     std::string line;
     while (std::getline(s, line)){
         // remove trailing whitespace

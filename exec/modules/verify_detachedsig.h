@@ -76,7 +76,13 @@ const Module verify_detachedsig(
         PGPPublicKey pub(key);
         PGPDetachedSignature signature(sig);
 
-        std::cout << "File '" << args.at("file") << "' was" << (::verify_detachedsig(pub, file, signature)?"":" not") << " signed by key " << pub << "." << std::endl;
+        std::string reason;
+        const bool verified = ::verify_detachedsig(pub, file, sig, &reason);
+        std::cout << "File '" << args.at("file") << "' was" << (verified?"":" not") << " signed by key " << pub << "." << std::endl;
+
+        if (!verified){
+            std::cerr << reason << std::endl;
+        }
 
         return 0;
     }

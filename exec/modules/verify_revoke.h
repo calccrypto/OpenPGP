@@ -69,7 +69,13 @@ const Module verify_revoke(
         PGPPublicKey pub(key);
         PGPPublicKey rev(cert);
 
-        std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << (::verify_revoke(pub, rev)?std::string("revokes"):std::string("does not revoke")) << " key " << pub << std::endl;
+        std::string err;
+        const bool verified = ::verify_revoke(pub, rev, &err);
+        std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << (verified?std::string("revokes"):std::string("does not revoke")) << " key " << pub << std::endl;
+
+        if (!verified){
+            std::cerr << err << std::endl;
+        }
 
         return 0;
     }

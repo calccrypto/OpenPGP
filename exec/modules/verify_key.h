@@ -68,7 +68,13 @@ const Module verify_key(
 
         PGPPublicKey signerkey(signer), signeekey(signee);
 
-        std::cout << "Key in '" << args.at("signee-key") << "' was" << std::string(::verify_key(signerkey, signeekey)?"":" not") << " signed by key " << args.at("signer-key") << "." << std::endl;
+        std::string err;
+        const bool verified = ::verify_key(signerkey, signeekey, &err);
+        std::cout << "Key in '" << args.at("signee-key") << "' was" << (verified?"":" not") << " signed by key " << args.at("signer-key") << "." << std::endl;
+
+        if (!verified){
+            std::cerr << err << std::endl;
+        }
 
         return 0;
     }

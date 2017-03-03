@@ -85,7 +85,8 @@ class PGPCleartextSignature {
 
         static std::string dash_escape(const std::string & text);
         static std::string reverse_dash_escape(const std::string & text);
-        std::string data_to_text() const;   // remove trailing whitespace
+        std::string data_to_text() const;                            // remove trailing whitespace
+        static std::string data_to_text(const std::string & text);   // remove trailing whitespace
 
         PGPCleartextSignature & operator=(const PGPCleartextSignature & copy);
         PGPCleartextSignature::Ptr clone() const;

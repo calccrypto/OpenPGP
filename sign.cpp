@@ -226,10 +226,9 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
     // create signature
     Tag2::Ptr sig = create_sig_packet(0x01, signer, nullptr, hash);
-    const std::string canonical = text_to_canonical(text);
-    const std::string digest = to_sign_01(canonical.substr(0, canonical.size() - 2), sig);
+    const std::string digest = to_sign_01(PGPCleartextSignature::data_to_text(text), sig);
     sig -> set_left16(digest.substr(0, 2));
-    sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
+    sig -> set_mpi(pka_sign(digest, signer, passphrase, hash));
 
     // put signature into Detached Signature
     PGPDetachedSignature signature;
@@ -240,7 +239,7 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
     // put signature under cleartext
     PGPCleartextSignature message;
-    h = {std::pair <std::string, std::string> ("Hash", Hash_Algorithms.at(sig -> get_hash()))};
+    h = {std::pair <std::string, std::string> ("Hash", Hash_Algorithms.at(hash))};
     message.set_Hash_Armor_Header(h);
     message.set_message(text);
     message.set_sig(signature);

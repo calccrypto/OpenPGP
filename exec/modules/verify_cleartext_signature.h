@@ -69,7 +69,13 @@ const Module verify_cleartext_signature(
         PGPPublicKey pub(key);
         PGPCleartextSignature signature(sig);
 
-        std::cout << "This message was" << (::verify_cleartext_signature(pub, signature)?"":" not") << " signed by this key." << std::endl;
+        std::string err;
+        const bool verified = ::verify_cleartext_signature(pub, signature, &err);
+        std::cout << "This message was" << (verified?"":" not") << " signed by this key." << std::endl;
+
+        if (!verified){
+            std::cerr << err << std::endl;
+        }
 
         return 0;
     }

@@ -68,7 +68,13 @@ const Module verify_message(
         PGPPublicKey pub(key);
         PGPMessage message(msg);
 
-        std::cout << "The data in '" << args.at("message") << "' was" << (::verify_message(pub, message)?"": " not") << " signed by the key " << pub << std::endl;
+        std::string err;
+        const bool verified = ::verify_message(pub, message, &err);
+        std::cout << "The data in '" << args.at("message") << "' was" << (verified?"": " not") << " signed by the key " << pub << std::endl;
+
+        if (!verified){
+            std::cerr << err << std::endl;
+        }
 
         return 0;
     }
