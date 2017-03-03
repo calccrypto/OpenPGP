@@ -65,6 +65,7 @@ void PGPCleartextSignature::read(std::istream & stream){
     //     - The dash-escaped cleartext that is included into the message
     //       digest,
     //
+    message = "";
     while (std::getline(stream, line) && (line.substr(0, 29) != "-----BEGIN PGP SIGNATURE-----")){
         message += line + "\n";
     }
@@ -168,7 +169,7 @@ std::string PGPCleartextSignature::dash_escape(const std::string & text){
         if (line.size() && line[0] == '-'){
             out += "- ";
         }
-        out += line;
+        out += line + "\n";
     }
 
     return out;
@@ -186,25 +187,27 @@ std::string PGPCleartextSignature::reverse_dash_escape(const std::string & text)
         else{
             out += line;
         }
+        out += "\n";
     }
 
     return out;
 }
 
-std::string PGPCleartextSignature::prepare_for_hashing() const{
+std::string PGPCleartextSignature::data_to_text() const{
     std::string out = "";
 
     std::stringstream s(message);
     std::string line;
     while (std::getline(s, line)){
-        std::string::size_type i = line.size() - 1;
-        while (i && std::isspace(line[i])){
+        // remove trailing whitespace
+        std::string::size_type i = line.size();
+        while (i && std::isspace(line[i - 1])){
             i--;
         }
         out += line.substr(0, i) + "\n";
     }
 
-    return out;
+    return out.substr(0, out.size() - 1);
 }
 
 PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){

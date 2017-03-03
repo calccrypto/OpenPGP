@@ -62,14 +62,19 @@ std::string text_to_canonical(const std::string & data){
     std::stringstream s(data);
     std::string line;
     while (std::getline(s, line)){
-        out += line + "\r\n";               // append <CR><LF>
+        out += line;
+        if (!line.size() || (line[line.size() - 1] != '\r')){
+            out += "\r";    // append <CR>
+        }
+        out += "\n";        // append <LF>
     }
 
     return out;
 }
 
 std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
-    return use_hash(tag2 -> get_hash(), addtrailer(text_to_canonical(data), tag2));
+    const std::string canonical = text_to_canonical(data); // still has trailing <CR><LF>
+    return use_hash(tag2 -> get_hash(), addtrailer(canonical.substr(0, canonical.size() - 2), tag2));
 }
 
 std::string to_sign_02(const Tag2::Ptr & tag2){

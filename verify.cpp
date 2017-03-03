@@ -26,11 +26,12 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     }
 
     // Find key id from signature to match with public key
-    std::string temp = message.get_sig().get_packets()[0] -> raw();
-    Tag2::Ptr signature = std::make_shared <Tag2> (); signature -> read(temp);
+    Tag2::Ptr signature = std::make_shared <Tag2> (message.get_sig().get_packets()[0] -> raw());
+
+    // calculate the digest of the cleartext data (whitespace removed)
+    const std::string digest = to_sign_01(message.data_to_text(), signature);
 
     // check left 16 bits
-    std::string digest = to_sign_01(text_to_canonical(message.prepare_for_hashing()), signature);
     if (digest.substr(0, 2) != signature -> get_left16()){
         if (error){
             *error = "Error: Hash digest and given left 16 bits of hash do not match.";
