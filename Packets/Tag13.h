@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG13__
 #define __TAG13__
 
-#include "packet.h"
+#include "ID.h"
 
 // 5.11. User ID Packet (Tag 13)
 // A User ID packet consists of UTF-8 text that is intended to represent

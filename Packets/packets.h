@@ -27,8 +27,11 @@ THE SOFTWARE.
 #define __PACKETS__
 
 #include "packet.h"
-
 #include "Partial.h"
+
+#include "Key.h"
+#include "ID.h"
+
 #include "Tag0.h"
 #include "Tag1.h"
 #include "Tag2.h"

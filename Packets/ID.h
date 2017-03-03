@@ -1,6 +1,6 @@
 /*
-Tag17.h
-User Attribute Packet
+ID.h
+Base class for OpenPGP ID packet types to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
 
@@ -23,40 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG17__
-#define __TAG17__
+#ifndef __PACKET_ID__
+#define __PACKET_ID__
 
-#include "../Subpackets/subpackets.h"
-#include "ID.h"
+#include "packet.h"
 
-class Tag17 : public ID{
-    public:
-        typedef std::vector <Tag17Subpacket::Ptr> Attributes_T;
-    
-    private:
-        uint64_t length;
-        uint8_t type;
-
-        // only defined subpacket is 1
-        Attributes_T attributes;
-
-        void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
-        std::string write_subpacket(uint8_t s_type, std::string data) const;
+// For Tags 13 and 17
+class ID : public Packet{
+    protected:
+        using Packet::Packet;
 
     public:
-        typedef std::shared_ptr <Tag17> Ptr;
+        typedef std::shared_ptr <ID> Ptr;
 
-        Tag17();
-        Tag17(const std::string & data);
-        ~Tag17();
-        void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
-        std::string raw() const;
+        virtual ~ID();
 
-        Attributes_T get_attributes() const;
-        Attributes_T get_attributes_clone() const;
-        void set_attributes(const Attributes_T & a);
-
-        Packet::Ptr clone() const;
+        ID & operator=(const ID & copy);
 };
+
 #endif

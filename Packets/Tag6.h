@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG6__
 #define __TAG6__
 
-#include "packet.h"
+#include "Key.h"
 
 class Tag6: public Key {
     protected:

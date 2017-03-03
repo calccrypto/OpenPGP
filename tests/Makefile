@@ -10,7 +10,7 @@ debug: all
 
 all: $(TARGET)
 
-.PHONY: libs testcases gtest run clean clean-all
+.PHONY: libs testcases run clean clean-all
 
 libs:
 	$(MAKE) -C ..
@@ -25,8 +25,8 @@ run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm -f $(TARGET) *.o *.a
-	$(MAKE) clean -C testcases
+	rm -f $(TARGET)
 
 clean-all: clean
+	$(MAKE) clean -C testcases
 	$(MAKE) clean-all -C ..
