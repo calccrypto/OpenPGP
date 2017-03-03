@@ -47,7 +47,6 @@ THE SOFTWARE.
 // used internally
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid);
 std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub = {});
-std::vector <PGPMPI> decrypt_secret_key(const Tag5::Ptr & pri, const std::string & passphrase);
 
 // decrypt data once session key is known
 PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);

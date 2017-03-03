@@ -31,7 +31,7 @@ Tag14::Ptr Tag7::get_public_ptr() const{
 
 Packet::Ptr Tag7::clone() const{
     Ptr out = std::make_shared <Tag7> (*this);
-    out -> s2k = s2k -> clone();
+    out -> s2k = s2k?s2k -> clone():nullptr;
     return out;
 }
 

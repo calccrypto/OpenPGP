@@ -31,8 +31,12 @@ std::vector <PGPMPI> pka_sign(const std::string & digest, const uint8_t pka, con
 }
 
 std::vector <PGPMPI> pka_sign(const std::string & digest, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t h){
+    if (!tag5){
+        throw std::runtime_error("Error: No secret key packet provided.");
+    }
+
     std::vector <PGPMPI> pub = tag5 -> get_mpi();
-    std::vector <PGPMPI> pri = decrypt_secret_key(tag5, passphrase);
+    std::vector <PGPMPI> pri = tag5 -> decrypt_secret_keys(passphrase);
     return pka_sign(digest, tag5 -> get_pka(), pub, pri, h);
 }
 

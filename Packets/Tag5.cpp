@@ -91,60 +91,34 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
 
 void Tag5::read(const std::string & data){
     size = data.size();
-    /*
-        - A Public-Key or Public-Subkey packet, as described above.
-    */
     std::string::size_type pos = 0;
+
+    // public data
     read_common(data, pos);
 
-    /*
-        - One octet indicating string-to-key usage conventions. Zero
-        indicates that the secret-key data is not encrypted. 255 or 254
-        indicates that a string-to-key specifier is being given. Any
-        other value is a symmetric-key encryption algorithm identifier.
-    */
+    // S2K usage octet
     s2k_con = data[pos++];
+    if ((s2k_con != 0) && (s2k_con != 254) && (s2k_con != 255)){
+        sym = s2k_con;
+    }
 
-    if (s2k_con > 253){
-        /*
-            - [Optional] If string-to-key usage octet was 255 or 254, a oneoctet
-            symmetric encryption algorithm.
-        */
+    // one octet symmetric key encryption algorithm
+    if ((s2k_con == 254) || (s2k_con == 255)){
         sym = data[pos++];
+    }
 
-        /*
-            - [Optional] If string-to-key usage octet was 255 or 254, a
-            string-to-key specifier. The length of the string-to-key
-            specifier is implied by its type, as described above.
-        */
+    // S2K specifier
+    if ((s2k_con == 254) || (s2k_con == 255)){
         read_s2k(data, pos);
     }
 
+    // IV
     if (s2k_con){
-        /*
-            - [Optional] If secret data is encrypted (string-to-key usage octet
-            not zero), an Initial Vector (IV) of the same length as the
-            cipher’s block size.
-        */
         IV = data.substr(pos, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
-
-        /*
-            - Plain or encrypted multiprecision integers comprising the secret
-            key data. These algorithm-specific fields are as described
-            below.
-
-            - If the string-to-key usage octet is zero or 255, then a two-octet
-            checksum of the plaintext of the algorithm-specific portion (sum
-            of all octets, mod 65536). If the string-to-key usage octet was
-            254, then a 20-octet SHA-1 hash of the plaintext of the
-            algorithm-specific portion. This checksum or hash is encrypted
-            together with the algorithm-specific fields (if string-to-key
-            usage octet is not zero). Note that for all other values, a
-            two-octet checksum is required.
-        */
         pos += IV.size();
     }
 
+    // plaintex or encrypted data
     secret = data.substr(pos, data.size() - pos);
 }
 
@@ -154,16 +128,26 @@ std::string Tag5::show(const uint8_t indents, const uint8_t indent_size) const{
 }
 
 std::string Tag5::raw() const{
-    std::string out = raw_common() + std::string(1, s2k_con);
-    if (s2k_con > 253){
+    std::string out = raw_common() +            // public data
+                      std::string(1, s2k_con);  // S2K usage octet
+    if ((s2k_con == 254) || (s2k_con == 255)){
         if (!s2k){
             throw std::runtime_error("Error: S2K has not been set.");
         }
-        out += std::string(1, sym) + s2k -> write();
+        out += std::string(1, sym);             // one octet symmetric key encryption algorithm
     }
+
+    if ((s2k_con == 254) || (s2k_con == 255)){
+        if (!s2k){
+            throw std::runtime_error("Error: S2K has not been set.");
+        }
+        out += s2k -> write();                  // S2K specifier
+    }
+
     if (s2k_con){
-        out += IV;
+        out += IV;                              // IV
     }
+
     return out + secret;
 }
 
@@ -268,8 +252,64 @@ void Tag5::set_secret(const std::string & s){
     size += secret.size();
 }
 
+const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys) const {
+    return secret;
+}
+
+std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) const {
+    std::string key;
+
+    // calculate key used in encryption algorithm
+    if (s2k_con == 0){                                  // No S2K
+        key = MD5(passphrase).digest();
+    }
+    else if ((s2k_con == 254) || (s2k_con == 255)){     // S2K exists
+        if (!s2k){
+            throw std::runtime_error("Error: S2K has not been set.");
+        }
+
+        key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
+    }
+
+    // decrypt secret key
+    const unsigned int hash_size = (s2k_con == 254)?20:2;
+    std::string secret_keys = use_normal_CFB_decrypt(sym, secret, key, IV);
+
+    // remove checksum from secret keys
+    const std::string given_checksum = secret_keys.substr(secret_keys.size() - hash_size, hash_size);
+    secret_keys = secret_keys.substr(0, secret_keys.size() - hash_size);
+    std::string calculated_checksum;
+
+    // calculate and check checksum
+    if(s2k_con == 254){
+        calculated_checksum = use_hash(s2k -> get_hash(), secret_keys);
+    }
+    else{
+        uint16_t sum = 0;
+        for(char const & c : secret_keys){
+            sum += static_cast <unsigned char> (c);
+        }
+
+        calculated_checksum = unhexlify(makehex(sum, 4));
+    }
+
+    if (calculated_checksum != given_checksum){
+        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match. " + passphrase);
+    }
+
+    // extract MPI values
+    std::vector <PGPMPI> keys;
+    std::string::size_type pos = 0;
+    while (pos < secret_keys.size()){
+        keys.push_back(read_MPI(secret_keys, pos));
+    }
+
+    return keys;
+}
+
 Packet::Ptr Tag5::clone() const{
     Ptr out = std::make_shared <Tag5> (*this);
+    // out -> s2k = s2k?s2k -> clone():nullptr;
     out -> s2k = s2k -> clone();
     return out;
 }
@@ -278,7 +318,7 @@ Tag5 & Tag5::operator=(const Tag5 & copy){
     Key::operator=(copy);
     s2k_con = copy.s2k_con;
     sym = copy.sym;
-    s2k = copy.s2k -> clone();
+    s2k = copy.s2k?copy.s2k -> clone():nullptr;
     IV = copy.IV;
     secret = copy.secret;
     return *this;
