@@ -39,9 +39,9 @@ void Module::check_duplicate(const Args & arg, const Flags & flag) const{
 void  Module::check_run(const std::function <int(std::map <std::string, std::string> &)> & func) const{}
 
 // unknown arguments are ignored
-char * Module::parse(int argc, char * argv[],
-                     std::map <std::string, std::string> & parsed_args,
-                     std::map <std::string, bool>        & parsed_flags) const{
+const char * Module::parse(int argc, char * argv[],
+                           std::map <std::string, std::string> & parsed_args,
+                           std::map <std::string, bool>        & parsed_flags) const{
     std::vector <std::string>::size_type pos = 0;
     for(int i = 0; i < argc; i++){
         // if the first character of the argument is a dash
@@ -80,6 +80,10 @@ char * Module::parse(int argc, char * argv[],
                 }
             }
         }
+    }
+
+    if (pos < positional.size()){
+        return positional[pos].c_str();
     }
 
     return nullptr;

@@ -71,9 +71,9 @@ class Module{
         void check_run(const std::function <int(std::map <std::string, std::string> &)> & func) const;
 
         // unknown arguments are ignored
-        char * parse(int argc, char * argv[],
-                     std::map <std::string, std::string> & parsed_args,
-                     std::map <std::string, bool>        & parsed_flags) const;
+        const char * parse(int argc, char * argv[],
+                           std::map <std::string, std::string> & parsed_args,
+                           std::map <std::string, bool>        & parsed_flags) const;
 
     public:
         Module() = default;                                                   // no default constructor
