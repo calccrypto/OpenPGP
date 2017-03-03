@@ -43,14 +43,14 @@ const Module revoke_subkey(
 
     // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file",   "")),
-        std::make_pair("c", std::make_pair("code (0-3)",   "0")),
-        std::make_pair("r", std::make_pair("reason",        "")),
+        std::make_pair("-o", std::make_pair("output file",   "")),
+        std::make_pair("-c", std::make_pair("code (0-3)",   "0")),
+        std::make_pair("-r", std::make_pair("reason",        "")),
     },
 
     // optional flags
     {
-        std::make_pair("a", std::make_pair("armored",     true)),
+        std::make_pair("-a", "armored"),
     },
 
     // function to run

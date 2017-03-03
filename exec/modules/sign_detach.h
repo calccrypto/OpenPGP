@@ -51,7 +51,7 @@ const Module sign_detach(
 
     // optional flags
     {
-        std::make_pair("-a", std::make_pair("armored",                                          true)),
+        std::make_pair("-a", "armored"),
     },
 
     // function to run

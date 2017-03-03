@@ -23,7 +23,7 @@ void Module::check_positional(const std::vector <std::string> & pos) const{
 }
 
 void Module::check_duplicate(const Args & arg, const Flags & flag) const{
-    for(std::pair <const std::string, std::pair <std::string, bool> > const & f : flag){
+    for(std::pair <const std::string, std::string> const & f : flag){
         if (arg.find(f.first) != args.end()){
             throw std::runtime_error("Error: Duplicate option " + f.first + " found.");
         }
@@ -63,7 +63,7 @@ const char * Module::parse(int argc, char * argv[],
             // check if option is in flags
             Flags::const_iterator flags_it = flags.find(argv[i]);
             if (flags_it != flags.end()){
-                parsed_flags[flags_it -> first] = !flags_it -> second.second;
+                parsed_flags[flags_it -> first] = true;
                 continue;
             }
 
@@ -171,17 +171,20 @@ std::string Module::help(const std::string & indent) const{
         if (args.size()){
             help_str += indent + "    Optional Arguments:\n";
             for(std::pair <const std::string, std::pair <std::string, std::string> > const & arg : args){
-                help_str += indent + indent + "        " + arg.first + " " + arg.second.first + "; default value: \"" + arg.second.second + "\"\n";
+                help_str += indent + "        " + arg.first + " " + arg.second.first + "; default value: \"" + arg.second.second + "\"\n";
             }
         }
 
         // add optional flags
         if (flags.size()){
-            help_str += indent + "    Optional Flags:\n";
-            for(std::pair <const std::string, std::pair <std::string, bool> > const & flag :flags){
-                help_str += indent + indent + "        " + flag.first + " " + flag.second.first + "; default value: " + (flag.second.second?"true":"false") + "\n";
+            help_str += "\n" + indent + "    Optional Flags:\n";
+            for(std::pair <const std::string, std::string> const & flag :flags){
+                help_str += indent + "        " + flag.first + " " + flag.second + "\n";
             }
         }
+    }
+    else{
+        help_str += "\n";
     }
 
     return help_str;
@@ -190,14 +193,14 @@ std::string Module::help(const std::string & indent) const{
 int Module::operator()(int argc, char * argv[]) const{
     // fill arguments with optional argument default values
     std::map <std::string, std::string> parsed_args;
-    for(std::pair <const std::string, std::pair <std::string, std::string> > const & kv : args){
-        parsed_args[kv.first] = kv.second.second;
+    for(std::pair <const std::string, std::pair <std::string, std::string> > const & arg : args){
+        parsed_args[arg.first] = arg.second.second;
     }
 
-    // fill arguments with optional flag default values
+    // fill arguments with optional flag default values (false)
     std::map <std::string, bool> parsed_flags;
-    for(std::pair <const std::string, std::pair <std::string, bool> > const & kv : flags){
-        parsed_flags[kv.first] = kv.second.second?"t":"f";
+    for(std::pair <const std::string, std::string> const & flag : flags){
+        parsed_flags[flag.first] = false;
     }
 
     // parse input arguments

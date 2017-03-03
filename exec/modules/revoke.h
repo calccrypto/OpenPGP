@@ -43,12 +43,12 @@ const Module revoke(
 
     // optional arguments
     {
-        std::make_pair("o", std::make_pair("output file", "")),
+        std::make_pair("-o", std::make_pair("output file", "")),
     },
 
     // optional flags
     {
-        std::make_pair("a", std::make_pair("armored",   true)),
+        std::make_pair("-a", "armored"),
     },
 
     // function to run

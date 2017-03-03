@@ -49,8 +49,8 @@ const Module decrypt_pka(
 
     // optional flags
     {
-        std::make_pair("-d", std::make_pair("delete original?", false)),
-        std::make_pair("-w", std::make_pair("write to file?",    true)),
+        std::make_pair("-d", "delete original?"),
+        std::make_pair("-w", "write to file?"),
     },
 
     // function to run

@@ -42,18 +42,18 @@ const Module generate_key_pair(
 
     // optional arguments
     {
-        std::make_pair("-o",   std::make_pair("prefix of output file",       "")),
-        std::make_pair("-pks", std::make_pair("public key size in bits", "2048")),
-        std::make_pair("-sks", std::make_pair("subkey size in bits",     "2048")),
-        std::make_pair("-pw",  std::make_pair("passphase",                   "")),
-        std::make_pair("-u",   std::make_pair("username",                    "")),
-        std::make_pair("-c",   std::make_pair("comment",                     "")),
-        std::make_pair("-e",   std::make_pair("email",                       "")),
+        std::make_pair("-o",    std::make_pair("prefix of output file",       "")),
+        std::make_pair("-p",    std::make_pair("passphase",                   "")),
+        std::make_pair("-u",    std::make_pair("username",                    "")),
+        std::make_pair("-c",    std::make_pair("comment",                     "")),
+        std::make_pair("-e",    std::make_pair("email",                       "")),
+        std::make_pair("--pks", std::make_pair("public key size in bits", "2048")),
+        std::make_pair("--sks", std::make_pair("subkey size in bits",     "2048")),
     },
 
     // optional flags
     {
-        std::make_pair("-a", std::make_pair("armored",                     true)),
+        std::make_pair("-a", "armored"),
     },
 
     // function to run
@@ -62,7 +62,7 @@ const Module generate_key_pair(
         PGPPublicKey pub;
         PGPSecretKey pri;
 
-        ::generate_keys(pub, pri, args.at("-pw"), args.at("-u"), args.at("-c"), args.at("-e"), mpitoulong(dectompi(args.at("-pks"))), mpitoulong(dectompi(args.at("-sks"))));
+        ::generate_keys(pub, pri, args.at("-p"), args.at("-u"), args.at("-c"), args.at("-e"), mpitoulong(dectompi(args.at("--pks"))), mpitoulong(dectompi(args.at("--sks"))));
 
         output(pub.write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o") + ".public");
         output(pri.write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o") + ".private");

@@ -37,7 +37,9 @@ std::string::size_type help(const std::string & match = "",
     if (show_header){
         stream << indent << "An OpenPGP implementation (RFC 4880)\n"
                << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
-               << indent << "    help - print all modules\n" << std::endl;
+               << indent << "All optional flags default to false\n\n"
+               << indent << "    help - print all modules\n"
+               << std::endl;
         indent += "    ";
     }
 

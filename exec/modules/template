@@ -22,8 +22,7 @@ const Command (
 
     // optional flags
     {
-        std::make_pair("", std::make_pair("", true)),
-
+        std::make_pair("", ""),
     },
 
     // function to run
