@@ -35,7 +35,7 @@ THE SOFTWARE.
 #include "Packets/packets.h"
 #include "PKA/PKA.h"
 #include "RNG/RNG.h"
-#include "Subpackets/subpackets.h"
+#include "Subpackets/Subpackets.h"
 #include "cfb.h"
 #include "mpi.h"
 #include "pgptime.h"
