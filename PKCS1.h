@@ -2,7 +2,7 @@
 PKCS1.h
 PKCS#1 as decrypted in RFC 4880 sec 13.1
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,4 +43,5 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m);
 
 // RFC 4880 13.1.3
 std::string EMSA_PKCS1_v1_5(const uint8_t & h, const std::string & hashed_data, const unsigned int & keylength);
+
 #endif

@@ -2,7 +2,7 @@
 PGPKey.h
 OpenPGP Transferable key data structure (RFC 4880 sec 11.1 and 11.2)
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -114,4 +114,5 @@ PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri);
 Key::Ptr  find_signing_key(const PGPKey::Ptr  & key, const uint8_t tag, const std::string & keyid = "");
 Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const std::string & keyid = "");
 Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid = "");
+
 #endif

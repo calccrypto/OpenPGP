@@ -2,7 +2,7 @@
 commands.h
 Collection of modules for the OpenPGP executable
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "revoke.h"
 #include "revoke_key.h"
 #include "revoke_subkey.h"
-#include "sign_cleartext.h"
+#include "sign_cleartext_signature.h"
 #include "sign_detach.h"
 #include "sign_file.h"
 #include "sign_key.h"
@@ -63,7 +63,7 @@ const std::vector <Module> ordered = {
     revoke,
     revoke_key,
     revoke_subkey,
-    sign_cleartext,
+    sign_cleartext_signature,
     sign_detach,
     sign_file,
     sign_key,

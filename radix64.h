@@ -2,7 +2,7 @@
 radix64.h
 Radix-64 converter, as defined by OpenPGP in RFC 4880 sec 6
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,4 +42,5 @@ std::string radix642ascii(std::string str, char char62 = '\x2b', char char63 = '
 
 // RFC 4880 sec 6.1
 uint32_t crc24(const std::string & str);
+
 #endif

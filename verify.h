@@ -2,7 +2,7 @@
 verify.c
 Functions to verify data signed by a PGP key
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -72,4 +72,5 @@ bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig, std::string 
 bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);           // called by the other verify_revoke functions
 bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev, std::string * error = nullptr);
 bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev, std::string * error = nullptr);
+
 #endif

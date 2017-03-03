@@ -2,7 +2,7 @@
 DSA.h
 Digital Signature Algorithm
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,4 +50,5 @@ std::vector <PGPMPI> DSA_sign(const std::string & data, const std::vector <PGPMP
 // Verify signature on hash
 bool DSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub);
 bool DSA_verify(const std::string & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub);
+
 #endif

@@ -2,7 +2,7 @@
 decrypt.h
 Functions for decrypting PGP encrypted data
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -57,4 +57,5 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);
 // session key encrypted with symmetric algorithm
 std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);
+
 #endif

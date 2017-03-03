@@ -2,7 +2,7 @@
 Tag60.h
 Private or Experimental Values
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,4 +47,5 @@ class Tag60 : public Packet{
 
         Packet::Ptr clone() const;
 };
+
 #endif

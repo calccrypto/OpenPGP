@@ -2,7 +2,7 @@
 ElGamal.h
 ElGamal encryption algorithm
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,4 +38,5 @@ std::vector <PGPMPI> ElGamal_keygen(unsigned int bits = 2048);
 std::vector <PGPMPI> ElGamal_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub);
 std::vector <PGPMPI> ElGamal_encrypt(const std::string & data, const std::vector <PGPMPI> & pub);
 std::string ElGamal_decrypt(std::vector <PGPMPI> & c, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub);
+
 #endif

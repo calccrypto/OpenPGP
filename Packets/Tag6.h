@@ -2,7 +2,7 @@
 Tag6.h
 Public-Key Packet
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,4 +43,5 @@ class Tag6: public Key {
         virtual Packet::Ptr clone() const;
         Tag6 & operator=(const Tag6 & copy);
 };
+
 #endif

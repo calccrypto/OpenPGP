@@ -2,7 +2,7 @@
 RSA.h
 RSA algorithm
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,4 +54,5 @@ PGPMPI RSA_sign(const std::string & data, const std::vector <PGPMPI> & pri, cons
 // Verify signature
 bool RSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & signature, const std::vector <PGPMPI> & pub);
 bool RSA_verify(const std::string & data, const std::vector <PGPMPI> & signature, const std::vector <PGPMPI> & pub);
+
 #endif

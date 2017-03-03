@@ -129,4 +129,5 @@ class S2K3 : public S2K1{
 
         S2K::Ptr clone() const;
 };
+
 #endif

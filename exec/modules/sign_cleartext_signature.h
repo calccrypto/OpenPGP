@@ -1,8 +1,8 @@
 /*
-sign_cleartext.h
+sign_cleartext_signature.h
 OpenPGP exectuable module
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SIGN_CLEARTEXT__
-#define __COMMAND_SIGN_CLEARTEXT__
+#ifndef __COMMAND_SIGN_CLEARTEXT_SIGNATURE__
+#define __COMMAND_SIGN_CLEARTEXT_SIGNATURE__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module sign_cleartext(
+const Module sign_cleartext_signature(
     // name
-    "sign-cleartext",
+    "sign-cleartext-signature",
 
     // positional arguments
     {
@@ -51,7 +51,7 @@ const Module sign_cleartext(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+
     },
 
     // function to run
@@ -77,7 +77,7 @@ const Module sign_cleartext(
 
         PGPSecretKey pri(key);
 
-        output(::sign_cleartext(pri, args.at("passphrase"), text).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::sign_cleartext(pri, args.at("passphrase"), text).write(2), args.at("-o"));
 
         return 0;
     }

@@ -2,7 +2,7 @@
 BBS.h
 Blum Blum Shub by Lenore Blum, Manuel Blum and Michael Shub
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -55,4 +55,5 @@ class BBS{
         BBS(const PGPMPI & SEED, const unsigned int & bits = 1024, PGPMPI p = 0, PGPMPI q = 0);
         std::string rand(const unsigned int & bits = 1, const std::string & par = "even");
 };
+
 #endif

@@ -2,7 +2,7 @@
 PGPMessage.h
 OpenPGP Message data structure (RFC 4880 sec 11.3)
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -124,4 +124,5 @@ class PGPMessage : public PGP {
 
         PGP::Ptr clone() const;
 };
+
 #endif

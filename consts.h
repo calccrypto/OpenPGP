@@ -2,7 +2,7 @@
 consts.h
 OpenPGP Global Values - Defined in RFC4880 and referred RFCs and a few of my own definitions
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -437,4 +437,5 @@ const std::map <uint8_t, std::string> User_Attributes = {
     std::make_pair(109, "Reserved for private/experimental use"),
     std::make_pair(110, "Reserved for private/experimental use"),
 };
+
 #endif

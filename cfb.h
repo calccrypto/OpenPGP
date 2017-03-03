@@ -2,7 +2,7 @@
 cfn.h
 OpenPGP CFB mode - RFC 4880 sec 13.9
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,4 +53,5 @@ std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, const std::string & data, st
 // Helper functions
 std::string use_normal_CFB_encrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV);
 std::string use_normal_CFB_decrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV);
+
 #endif

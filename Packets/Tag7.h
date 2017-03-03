@@ -2,7 +2,7 @@
 Tag7.h
 Secret-Subkey Packet
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,4 +44,5 @@ class Tag7 : public Tag5{
         Packet::Ptr clone() const;
         Tag7 & operator=(const Tag7 & copy);
 };
+
 #endif

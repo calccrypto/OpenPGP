@@ -2,7 +2,7 @@
 encrypt.h
 Function to encrypt data with a PGP public key
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -57,4 +57,5 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
 //
 PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const std::string & filename = "", const uint8_t sym_alg = 9, const uint8_t comp = 2, const bool mdc = true, const PGPSecretKey::Ptr & signer = nullptr, const std::string & sig_passphrase = "");
 PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data, const std::string & filename = "", const uint8_t sym_alg = 9, const uint8_t comp = 2, const bool mdc = true, const PGPSecretKey::Ptr & signer = nullptr, const std::string & sig_passphrase = "");
+
 #endif

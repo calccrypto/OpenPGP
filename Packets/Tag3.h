@@ -2,7 +2,7 @@
 Tag3.h
 Symmetric-Key Encrypted Session Key Packet
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -65,4 +65,5 @@ class Tag3 : public Packet{
         Packet::Ptr clone() const;
         Tag3 & operator=(const Tag3 & tag3);
 };
+
 #endif

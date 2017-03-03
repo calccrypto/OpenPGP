@@ -2,7 +2,7 @@
 Tag17.h
 User Attribute Packet
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -59,4 +59,5 @@ class Tag17 : public ID{
 
         Packet::Ptr clone() const;
 };
+
 #endif

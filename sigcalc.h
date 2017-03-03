@@ -2,7 +2,7 @@
 sigcalc.h
 Calculates signature data as described in RFC 4880 sec 5.2.1 and 5.2.4
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -201,4 +201,5 @@ std::string to_sign_40(const Tag2::Ptr & tag2);
 // the unhashed subpacket data length value is set to zero.
 
 std::string to_sign_50(const Tag2 & sig, const Tag2::Ptr & tag2);
+
 #endif
