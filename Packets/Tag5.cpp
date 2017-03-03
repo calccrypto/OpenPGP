@@ -252,16 +252,11 @@ void Tag5::set_secret(const std::string & s){
     size += secret.size();
 }
 
-const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys) const {
-    return secret;
-}
-
-std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) const {
+std::string Tag5::calculate_key(const std::string & passphrase) const {
     std::string key;
 
-    // calculate key used in encryption algorithm
     if (s2k_con == 0){                                  // No S2K
-        key = MD5(passphrase).digest();
+        // not encrypted
     }
     else if ((s2k_con == 254) || (s2k_con == 255)){     // S2K exists
         if (!s2k){
@@ -270,23 +265,73 @@ std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) c
 
         key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
     }
+    else{
+        key = MD5(passphrase).digest();                 // simple MD5 for all other values
+    }
 
-    // decrypt secret key
+    return key;
+}
+
+const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys){
+    secret = "";
+
+    // convert keys into string
+    for(PGPMPI const & mpi : keys){
+        secret += write_MPI(mpi);
+    }
+
+    // calculate checksum
+    if(s2k_con == 254){
+        secret += use_hash(s2k -> get_hash(), secret); // SHA1
+    }
+    else{
+        uint16_t sum = 0;
+        for(char const & c : secret){
+            sum += static_cast <unsigned char> (c);
+        }
+
+        secret += unhexlify(makehex(sum, 4));
+    }
+
+    if (s2k_con){   // secret needs to be encrypted
+        // calculate key to encrypt
+        const std::string key = calculate_key(passphrase);
+
+        // encrypt
+        secret = use_normal_CFB_encrypt(sym, secret, key, IV);
+    }
+
+    return secret;
+}
+
+std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) const {
+    std::string keys;
+
+    // S2k != 0 -> secret keys are encrypted
+    if (s2k_con){
+        // calculate key to decrypt
+        const std::string key = calculate_key(passphrase);
+
+        // decrypt
+        keys = use_normal_CFB_decrypt(sym, secret, key, IV);
+    }
+    else{
+        keys = secret;
+    }
+
+    // remove checksum from cleartext key string
     const unsigned int hash_size = (s2k_con == 254)?20:2;
-    std::string secret_keys = use_normal_CFB_decrypt(sym, secret, key, IV);
-
-    // remove checksum from secret keys
-    const std::string given_checksum = secret_keys.substr(secret_keys.size() - hash_size, hash_size);
-    secret_keys = secret_keys.substr(0, secret_keys.size() - hash_size);
+    const std::string given_checksum = keys.substr(keys.size() - hash_size, hash_size);
+    keys = keys.substr(0, keys.size() - hash_size);
     std::string calculated_checksum;
 
     // calculate and check checksum
     if(s2k_con == 254){
-        calculated_checksum = use_hash(s2k -> get_hash(), secret_keys);
+        calculated_checksum = use_hash(s2k -> get_hash(), keys); // SHA1
     }
     else{
         uint16_t sum = 0;
-        for(char const & c : secret_keys){
+        for(char const & c : keys){
             sum += static_cast <unsigned char> (c);
         }
 
@@ -294,17 +339,17 @@ std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) c
     }
 
     if (calculated_checksum != given_checksum){
-        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match. " + passphrase);
+        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match. ");
     }
 
     // extract MPI values
-    std::vector <PGPMPI> keys;
+    std::vector <PGPMPI> out;
     std::string::size_type pos = 0;
-    while (pos < secret_keys.size()){
-        keys.push_back(read_MPI(secret_keys, pos));
+    while (pos < keys.size()){
+        out.push_back(read_MPI(keys, pos));
     }
 
-    return keys;
+    return out;
 }
 
 Packet::Ptr Tag5::clone() const{

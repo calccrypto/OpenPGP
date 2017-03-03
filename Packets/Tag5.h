@@ -62,6 +62,7 @@ THE SOFTWARE.
         - Plain or encrypted multiprecision integers comprising the secret
           key data. These algorithm-specific fields are as described
           below.
+
         - If the string-to-key usage octet is zero or 255, then a two-octet
           checksum of the plaintext of the algorithm-specific portion (sum
           of all octets, mod 65536). If the string-to-key usage octet was
@@ -162,8 +163,11 @@ class Tag5 : public Tag6{
         void set_IV(const std::string & iv);
         void set_secret(const std::string & s); // directly set the secret keys
 
+        // calculate the key used to encrypt the secret
+        std::string calculate_key(const std::string & passphrase) const;
+
         // encrypt and set the secret keys
-        const std::string & encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys) const;
+        const std::string & encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys);
 
         // decrypt the secret keys
         std::vector <PGPMPI> decrypt_secret_keys(const std::string & passphrase) const;
