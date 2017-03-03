@@ -1,6 +1,6 @@
 /*
-Tag2Sub6.h
-Regular Expression
+Tag2Subpackets.h
+List of Tag 2 subpacket headers
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
 
@@ -23,29 +23,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG2_SUB6__
-#define __TAG2_SUB6__
+#ifndef __TAG2_SUBPACKETS__
+#define __TAG2_SUBPACKETS__
 
-#include "Tag2Subpacket.h"
-
-class Tag2Sub6 : public Tag2Subpacket{
-    private:
-        std::string regex;
-
-    public:
-        typedef std::shared_ptr <Tag2Sub6> Ptr;
-
-        Tag2Sub6();
-        Tag2Sub6(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
-        std::string raw() const;
-
-        std::string get_regex() const;
-
-        void set_regex(const std::string & r);
-
-        Tag2Subpacket::Ptr clone() const;
-};
+#include "Tag2Sub0.h"
+#include "Tag2Sub1.h"
+#include "Tag2Sub2.h"
+#include "Tag2Sub3.h"
+#include "Tag2Sub4.h"
+#include "Tag2Sub5.h"
+#include "Tag2Sub6.h"
+#include "Tag2Sub7.h"
+#include "Tag2Sub8.h"
+#include "Tag2Sub9.h"
+#include "Tag2Sub10.h"
+#include "Tag2Sub11.h"
+#include "Tag2Sub12.h"
+#include "Tag2Sub13.h"
+#include "Tag2Sub14.h"
+#include "Tag2Sub15.h"
+#include "Tag2Sub16.h"
+#include "Tag2Sub17.h"
+#include "Tag2Sub18.h"
+#include "Tag2Sub19.h"
+#include "Tag2Sub20.h"
+#include "Tag2Sub21.h"
+#include "Tag2Sub22.h"
+#include "Tag2Sub23.h"
+#include "Tag2Sub24.h"
+#include "Tag2Sub25.h"
+#include "Tag2Sub26.h"
+#include "Tag2Sub27.h"
+#include "Tag2Sub28.h"
+#include "Tag2Sub29.h"
+#include "Tag2Sub30.h"
+#include "Tag2Sub31.h"
+#include "Tag2Sub32.h"
 
 #endif

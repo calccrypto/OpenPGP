@@ -60,4 +60,5 @@ class SHA512 : public Hash{
         virtual unsigned int blocksize() const;
         virtual unsigned int digestsize() const;
 };
+
 #endif

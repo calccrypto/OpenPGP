@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG17SUB1__
-#define __TAG17SUB1__
+#ifndef __TAG17_SUB1__
+#define __TAG17_SUB1__
 
-#include "subpacket.h"
+#include "Tag17Subpacket.h"
 
 class Tag17Sub1 : public Tag17Subpacket{
     private:

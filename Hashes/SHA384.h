@@ -39,4 +39,5 @@ class SHA384 : public SHA512{
         unsigned int blocksize() const;
         unsigned int digestsize() const;
 };
+
 #endif

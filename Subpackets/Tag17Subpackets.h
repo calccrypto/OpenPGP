@@ -1,6 +1,6 @@
 /*
-Tag2Sub6.h
-Regular Expression
+Tag17Subpackets.h
+List of Tag 17 subpacket headers
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto@gmail.com
 
@@ -23,29 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG2_SUB6__
-#define __TAG2_SUB6__
+#ifndef __TAG17_SUBPACKETS__
+#define __TAG17_SUBPACKETS__
 
-#include "Tag2Subpacket.h"
-
-class Tag2Sub6 : public Tag2Subpacket{
-    private:
-        std::string regex;
-
-    public:
-        typedef std::shared_ptr <Tag2Sub6> Ptr;
-
-        Tag2Sub6();
-        Tag2Sub6(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
-        std::string raw() const;
-
-        std::string get_regex() const;
-
-        void set_regex(const std::string & r);
-
-        Tag2Subpacket::Ptr clone() const;
-};
+#include "Tag17Sub1.h"
 
 #endif

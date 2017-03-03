@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG2SUB29__
-#define __TAG2SUB29__
+#ifndef __TAG2_SUB29__
+#define __TAG2_SUB29__
 
-#include "subpacket.h"
+#include "Tag2Subpacket.h"
 
 class Tag2Sub29 : public Tag2Subpacket{
     private:
@@ -50,4 +50,5 @@ class Tag2Sub29 : public Tag2Subpacket{
 
         Tag2Subpacket::Ptr clone() const;
 };
+
 #endif

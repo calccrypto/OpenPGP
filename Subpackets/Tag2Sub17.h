@@ -23,13 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __TAG2SUB17__
-#define __TAG2SUB17__
+#ifndef __TAG2_SUB17__
+#define __TAG2_SUB17__
 
-#include "subpacket.h"
+#include "Tag2Subpacket.h"
 
 class Tag2Sub17 : public Tag2Subpacket{
     public:
         Tag2Sub17(...);
 };
+
 #endif

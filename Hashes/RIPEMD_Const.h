@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __RIPEMD_CONST__
 #define __RIPEMD_CONST__
 
-#include <iostream>
-
 const uint32_t RIPEMD_H0 = 0x67452301;
 const uint32_t RIPEMD_H1 = 0xEFCDAB89;
 const uint32_t RIPEMD_H2 = 0x98BADCFE;
@@ -57,4 +55,5 @@ const uint8_t RIPEMD_R[80] = {5, 14, 7, 0, 9, 2, 11, 4, 13, 6, 15, 8, 1, 10, 3, 
                               15, 5, 1, 3, 7, 14, 6, 9, 11, 8, 12, 2, 10, 0, 4, 13,
                               8, 6, 4, 1, 3, 11, 15, 0, 5, 12, 2, 13, 9, 7, 10, 14,
                               12, 15, 10, 4, 1, 5, 8, 7, 6, 2, 13, 14, 0, 3, 9, 11};
+
 #endif

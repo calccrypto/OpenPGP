@@ -59,4 +59,5 @@ class SHA1 : public Hash {
         unsigned int blocksize() const;
         unsigned int digestsize() const;
 };
+
 #endif

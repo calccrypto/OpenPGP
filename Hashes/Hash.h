@@ -44,4 +44,5 @@ class Hash{
         std::string stack;
         uint64_t clen;
 };
+
 #endif
