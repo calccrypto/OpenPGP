@@ -83,6 +83,7 @@ std::string certification(uint8_t version, const ID::Ptr & id);
 //
 // For binary document signatures (type 0x00), the document data is
 // hashed directly.
+const std::string & binary_to_canonical(const std::string & data);
 std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2);
 
 // 0x01: Signature of a canonical text document.
@@ -93,6 +94,7 @@ std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2);
 // For text document signatures (type 0x01), the
 // document is canonicalized by converting line endings to <CR><LF>,
 // and the resulting data is hashed.
+std::string text_to_canonical(const std::string & data);
 std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2);
 
 // 0x02: Standalone signature.

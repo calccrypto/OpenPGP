@@ -226,11 +226,12 @@ PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string
 
     // create signature
     Tag2::Ptr sig = create_sig_packet(0x01, signer, nullptr, hash);
-    std::string digest = to_sign_01(text, sig);
+    const std::string canonical = text_to_canonical(text);
+    const std::string digest = to_sign_01(canonical.substr(0, canonical.size() - 2), sig);
     sig -> set_left16(digest.substr(0, 2));
     sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
 
-    // put signature into Deatched Signature
+    // put signature into Detached Signature
     PGPDetachedSignature signature;
     signature.set_ASCII_Armor(5);
     std::vector <std::pair <std::string, std::string> > h = {std::pair <std::string, std::string> ("Version", "cc")};

@@ -30,7 +30,7 @@ bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSign
     Tag2::Ptr signature = std::make_shared <Tag2> (); signature -> read(temp);
 
     // check left 16 bits
-    std::string digest = to_sign_01(message.get_canonical_message(), signature);
+    std::string digest = to_sign_01(text_to_canonical(message.prepare_for_hashing()), signature);
     if (digest.substr(0, 2) != signature -> get_left16()){
         if (error){
             *error = "Error: Hash digest and given left 16 bits of hash do not match.";

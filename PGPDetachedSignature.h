@@ -50,6 +50,7 @@ class PGPDetachedSignature : public PGP {
 
         bool meaningful() const; // whether or not data matches Detached Signature format
 
+        using PGP::operator=;
         PGP::Ptr clone() const;
 };
 

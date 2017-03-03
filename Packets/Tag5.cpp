@@ -354,8 +354,7 @@ std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) c
 
 Packet::Ptr Tag5::clone() const{
     Ptr out = std::make_shared <Tag5> (*this);
-    // out -> s2k = s2k?s2k -> clone():nullptr;
-    out -> s2k = s2k -> clone();
+    out -> s2k = s2k?s2k -> clone():nullptr;
     return out;
 }
 

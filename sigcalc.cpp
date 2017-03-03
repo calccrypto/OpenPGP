@@ -43,24 +43,33 @@ std::string certification(uint8_t version, const ID::Ptr & id){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
+const std::string & binary_to_canonical(const std::string & data){
+    return data;
+}
+
 std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2){
     return use_hash(tag2 -> get_hash(), addtrailer(data, tag2));
 }
 
-std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
-    std::string out;
+std::string text_to_canonical(const std::string & data){
     // convert line endings to <CR><LF>
-    if (data[0] == '\n'){
-        out = "\r";
+    if (!data.size()){
+        return "";
     }
-    out += std::string(1, data[0]);
-    for(unsigned int x = 1; x < data.size(); x++){
-        if ((data[x] == '\n') && (data[x - 1] != '\r')){  // check to make sure lines aren't already <CR><LF>
-            out += "\r";
-        }
-        out += std::string(1, data[x]);
+
+    std::string out = "";
+
+    std::stringstream s(data);
+    std::string line;
+    while (std::getline(s, line)){
+        out += line + "\r\n";               // append <CR><LF>
     }
-    return use_hash(tag2 -> get_hash(), addtrailer(out, tag2));
+
+    return out;
+}
+
+std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
+    return use_hash(tag2 -> get_hash(), addtrailer(text_to_canonical(data), tag2));
 }
 
 std::string to_sign_02(const Tag2::Ptr & tag2){

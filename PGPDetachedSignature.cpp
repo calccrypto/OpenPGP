@@ -32,10 +32,10 @@ PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
 
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
-PGP::Ptr PGPDetachedSignature::clone() const{
-    return std::make_shared <PGPDetachedSignature> (*this);
-}
-
 bool PGPDetachedSignature::meaningful() const{
     return ((packets.size() == 1) && (packets[0] -> get_tag() == 2));
+}
+
+PGP::Ptr PGPDetachedSignature::clone() const{
+    return std::make_shared <PGPDetachedSignature> (*this);
 }

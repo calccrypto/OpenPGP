@@ -698,7 +698,7 @@ TEST(PGPTest, test_gpg_clearsign) {
     std::string in = GPG_CLEARSIGN_ALICE;
     PGPCleartextSignature pgp(in);
 
-    EXPECT_EQ(pgp.get_canonical_message(), "The magic words are squeamish ossifrage");
+    EXPECT_EQ(pgp.get_message(), "The magic words are squeamish ossifrage");
 
     auto key = pgp.get_sig();
     auto packets = key.get_packets();

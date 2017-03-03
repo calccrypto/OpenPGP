@@ -58,7 +58,7 @@ class PGPCleartextSignature {
 
     private:
         std::vector <std::pair <std::string, std::string> > Hash_Armor_Header;
-        std::vector <std::string> message;
+        std::string message;
         PGPDetachedSignature sig;
 
     public:
@@ -75,17 +75,19 @@ class PGPCleartextSignature {
         std::string write(uint8_t header = 0) const;
 
         std::vector <std::pair <std::string, std::string> > get_Hash_Armor_Header() const;
-        std::vector <std::string> get_message() const;
-        std::string get_canonical_message() const;
+        std::string get_message() const;
         PGPDetachedSignature get_sig() const;
 
         void set_Hash_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);
-        void set_message(const std::vector <std::string> & data);
         void set_message(const std::string & data);
         void set_sig(const PGPDetachedSignature & s);
 
-        PGPCleartextSignature::Ptr clone() const;
+        static std::string dash_escape(const std::string & text);
+        static std::string reverse_dash_escape(const std::string & text);
+        std::string prepare_for_hashing() const;
+
         PGPCleartextSignature & operator=(const PGPCleartextSignature & copy);
+        PGPCleartextSignature::Ptr clone() const;
 };
 
 #endif

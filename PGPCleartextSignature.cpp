@@ -1,4 +1,5 @@
 #include "PGPCleartextSignature.h"
+
 PGPCleartextSignature::PGPCleartextSignature()
     : Hash_Armor_Header(),
       message(),
@@ -64,43 +65,10 @@ void PGPCleartextSignature::read(std::istream & stream){
     //     - The dash-escaped cleartext that is included into the message
     //       digest,
     //
-    // 7.1. Dash-Escaped Text
-    //     The cleartext content of the message must also be dash-escaped.
-    //
-    //     Dash-escaped cleartext is the ordinary cleartext where every line
-    //     starting with a dash ’-’ (0x2D) is prefixed by the sequence dash ’-’
-    //     (0x2D) and space ’ ’ (0x20). This prevents the parser from
-    //     recognizing armor headers of the cleartext itself. An implementation
-    //     MAY dash-escape any line, SHOULD dash-escape lines commencing "From"
-    //     followed by a space, and MUST dash-escape any line commencing in a
-    //     dash. The message digest is computed using the cleartext itself, not
-    //     the dash-escaped form.
-    //
-    //     As with binary signatures on text documents, a cleartext signature is
-    //     calculated on the text using canonical <CR><LF> line endings. The
-    //     line ending (i.e., the <CR><LF>) before the ’-----BEGIN PGP
-    //     SIGNATURE-----’ line that terminates the signed text is not
-    //     considered part of the signed text.
-    //
-    //     When reversing dash-escaping, an implementation MUST strip the string
-    //     "- " if it occurs at the beginning of a line, and SHOULD warn on "-"
-    //     and any character other than a space at the beginning of a line.
-    //     Also, any trailing whitespace -- spaces (0x20) and tabs (0x09) -- at
-    //     the end of any line is removed when the cleartext signature is
-    //     generated.
-    //
     while (std::getline(stream, line) && (line.substr(0, 29) != "-----BEGIN PGP SIGNATURE-----")){
-        if (line[0] == '-'){
-            if (line[1] == ' '){
-                line = line.substr(2, line.size() - 2);
-            }
-            else{
-                std::cerr << "Warning: \"-" << line[1] << "\" found at the beginning of a line." << std::endl;
-            }
-        }
-
-        message.push_back(line);
+        message += line + "\n";
     }
+    message = reverse_dash_escape(message);
 
     // read signature into string
     //     - The ASCII armored signature(s) including the ’-----BEGIN PGP
@@ -116,17 +84,11 @@ void PGPCleartextSignature::read(std::istream & stream){
 }
 
 std::string PGPCleartextSignature::show(const uint8_t indents, const uint8_t indent_size) const{
-    std::string out = std::string(indents * indent_size, ' ') + "Message:\n";
-
-    // dash escaped text
-    for(std::string const & line : message){
-        if (line[0] == '-'){
-           out += "- ";
-        }
-        out += line + "\n";
-    }
-
-    return out + "Signature:\n" + sig.show(indents + 1, indent_size);
+    return std::string(indents * indent_size, ' ') +
+           "Message:\n"                            +
+           dash_escape(message)                    +
+           "Signature:\n"                          +
+           sig.show(indents + 1, indent_size);
 }
 
 std::string PGPCleartextSignature::write(uint8_t header) const{
@@ -140,13 +102,8 @@ std::string PGPCleartextSignature::write(uint8_t header) const{
     // one empty line
     out += "\n";
 
-    // dash escaped text
-    for(std::string const & line : message){
-        if (line[0] == '-'){
-           out += "- ";
-        }
-        out += line + "\n";
-    }
+    // only add "- " to front of message
+    out += dash_escape(message);
 
     return out + "\n" + sig.write(header);
 }
@@ -155,24 +112,8 @@ std::vector <std::pair <std::string, std::string> > PGPCleartextSignature::get_H
     return Hash_Armor_Header;
 }
 
-std::vector <std::string> PGPCleartextSignature::get_message() const{
+std::string PGPCleartextSignature::get_message() const{
     return message;
-}
-
-std::string PGPCleartextSignature::get_canonical_message() const{
-    std::string out = "";
-    for(std::string const & line : message){
-        // find trailing whitespace
-        std::string::size_type i = line.size();
-        while ((i > 0) && std::isspace(line[i - 1])){
-            i--;
-        }
-
-        // remove trailing whitespace and append <CR><LF>
-        out += line.substr(0, i) + "\r\n";
-    }
-
-    return out.substr(0, out.size() - 2);   // remove extra trailing <CR><LF>
 }
 
 PGPDetachedSignature PGPCleartextSignature::get_sig() const{
@@ -183,18 +124,8 @@ void PGPCleartextSignature::set_Hash_Armor_Header(const std::vector <std::pair <
     Hash_Armor_Header = a;
 }
 
-void PGPCleartextSignature::set_message(const std::vector <std::string> & data){
-    message = data;
-}
-
 void PGPCleartextSignature::set_message(const std::string & data){
-    message.clear();
-
-    std::stringstream s(data);
-    std::string line;
-    while (std::getline(s, line)){
-        message.push_back(line);
-    }
+    message = data;
 }
 
 void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
@@ -202,11 +133,77 @@ void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
     sig.set_armored(true);
 }
 
-PGPCleartextSignature::Ptr PGPCleartextSignature::clone() const{
-    PGPCleartextSignature::Ptr out = std::make_shared <PGPCleartextSignature> ();
-    out -> Hash_Armor_Header = Hash_Armor_Header;
-    out -> message = message;
-    out -> sig = sig;
+// 7.1. Dash-Escaped Text
+//     The cleartext content of the message must also be dash-escaped.
+//
+//     Dash-escaped cleartext is the ordinary cleartext where every line
+//     starting with a dash ’-’ (0x2D) is prefixed by the sequence dash ’-’
+//     (0x2D) and space ’ ’ (0x20). This prevents the parser from
+//     recognizing armor headers of the cleartext itself. An implementation
+//     MAY dash-escape any line, SHOULD dash-escape lines commencing "From"
+//     followed by a space, and MUST dash-escape any line commencing in a
+//     dash. The message digest is computed using the cleartext itself, not
+//     the dash-escaped form.
+//
+//     As with binary signatures on text documents, a cleartext signature is
+//     calculated on the text using canonical <CR><LF> line endings. The
+//     line ending (i.e., the <CR><LF>) before the ’-----BEGIN PGP
+//     SIGNATURE-----’ line that terminates the signed text is not
+//     considered part of the signed text.
+//
+//     When reversing dash-escaping, an implementation MUST strip the string
+//     "- " if it occurs at the beginning of a line, and SHOULD warn on "-"
+//     and any character other than a space at the beginning of a line.
+//     Also, any trailing whitespace -- spaces (0x20) and tabs (0x09) -- at
+//     the end of any line is removed when the cleartext signature is
+//     generated.
+//
+
+std::string PGPCleartextSignature::dash_escape(const std::string & text){
+    std::string out = "";
+
+    std::stringstream s(text);
+    std::string line;
+    while (std::getline(s, line)){
+        if (line.size() && line[0] == '-'){
+            out += "- ";
+        }
+        out += line;
+    }
+
+    return out;
+}
+
+std::string PGPCleartextSignature::reverse_dash_escape(const std::string & text){
+    std::string out = "";
+
+    std::stringstream s(text);
+    std::string line;
+    while (std::getline(s, line)){
+        if (line.substr(0, 2) == "- "){
+            out += line.substr(2, line.size() - 2);
+        }
+        else{
+            out += line;
+        }
+    }
+
+    return out;
+}
+
+std::string PGPCleartextSignature::prepare_for_hashing() const{
+    std::string out = "";
+
+    std::stringstream s(message);
+    std::string line;
+    while (std::getline(s, line)){
+        std::string::size_type i = line.size() - 1;
+        while (i && std::isspace(line[i])){
+            i--;
+        }
+        out += line.substr(0, i) + "\n";
+    }
+
     return out;
 }
 
@@ -215,4 +212,12 @@ PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSigna
     message = copy.message;
     sig = copy.sig;
     return *this;
+}
+
+PGPCleartextSignature::Ptr PGPCleartextSignature::clone() const{
+    PGPCleartextSignature::Ptr out = std::make_shared <PGPCleartextSignature> ();
+    out -> Hash_Armor_Header = Hash_Armor_Header;
+    out -> message = message;
+    out -> sig = sig;
+    return out;
 }
