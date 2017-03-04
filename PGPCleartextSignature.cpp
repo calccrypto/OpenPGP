@@ -205,7 +205,7 @@ std::string PGPCleartextSignature::data_to_text(const std::string & text){
     while (std::getline(s, line)){
         // remove trailing whitespace
         std::string::size_type i = line.size();
-        while (i && std::isspace(line[i - 1])){
+        while (i && ((line[i - 1] == ' ') || (line[i - 1] == '\t'))){
             i--;
         }
         out += line.substr(0, i) + "\n";
