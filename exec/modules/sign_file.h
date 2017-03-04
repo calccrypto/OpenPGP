@@ -33,7 +33,7 @@ namespace module {
 
 const Module sign_file(
     // name
-    "",
+    "sign-file",
 
     // positional arguments
     {

@@ -42,25 +42,27 @@ bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string 
 bool check_revoked(const PGPPublicKey & pub, const std::string & keyid);
 bool check_revoked(const PGPSecretKey & pri, const std::string & keyid);
 
+// 0x20: Key revocation signature
 // main function to revoke a primary key
-Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 // packages certification into a key
-PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
+// 0x28: Subkey revocation signature
 // main function to revoke a subkey
-Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 // packages certification into a key
-PGPPublicKey revoke_subkey_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+PGPPublicKey revoke_subkey_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
-// 0x30
-PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::string passphrase, const uint8_t code, const std::string & reason = "");
+// 0x30: Certification revocation signature
+PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::string passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
 // Directly Revoke Something
-PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
-PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "");
+PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
+PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
 // Revoke with certificate
-PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke);
-PGPPublicKey revoke_with_cert(const PGPSecretKey & pri, PGPPublicKey & revoke);
+PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke, const uint8_t version = 4);
+PGPPublicKey revoke_with_cert(const PGPSecretKey & pri, PGPPublicKey & revoke, const uint8_t version = 4);
 
 #endif
