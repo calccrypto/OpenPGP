@@ -59,7 +59,7 @@ Tag2::Ptr create_sig_packet(const Tag5::Ptr & tag5, const uint8_t type, const ui
 Tag2::Ptr create_sig_packet(const PGPSecretKey & pri, const uint8_t type, const uint8_t version = 4);
 // //////////////////////////////////////
 
-// sign detached signatures (not a standalone signature)
+// detached signatures (not a standalone signature)
 PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = 2);
 PGPDetachedSignature sign_detach(const PGPSecretKey & pri, const std::string & passphrase, std::istream & stream, const uint8_t hash = 2);
 

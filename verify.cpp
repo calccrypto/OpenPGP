@@ -15,60 +15,6 @@ bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2:
     return pka_verify(digest, signature -> get_hash(), signature -> get_pka(), signing -> get_mpi(), signature -> get_mpi());
 }
 
-// Signature type 0x00 and 0x01
-bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message, std::string * error){
-    if (error){
-        error -> clear();
-    }
-
-    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
-        throw std::runtime_error("Error: A PGP key is required.");
-    }
-
-    // Find key id from signature to match with public key
-    Tag2::Ptr signature = std::make_shared <Tag2> (message.get_sig().get_packets()[0] -> raw());
-
-    // calculate the digest of the cleartext data (whitespace removed)
-    const std::string digest = to_sign_01(message.data_to_text(), signature);
-
-    // check left 16 bits
-    if (digest.substr(0, 2) != signature -> get_left16()){
-        if (error){
-            *error = "Error: Hash digest and given left 16 bits of hash do not match.";
-        }
-        return false;
-    }
-
-    // find key id in signature
-    std::string keyid = signature -> get_keyid();
-    if (!keyid.size()){
-        throw std::runtime_error("Error: No Key ID subpacket found.");
-    }
-
-    // find matching public key packet and get the mpi
-    Tag6::Ptr signingkey = find_signing_key(pub, 6, keyid); // search for primary key
-
-    if (!signingkey){                                       // if no signing primary key
-        signingkey = find_signing_key(pub, 14, keyid);      // search for subkey
-    }
-
-    if (!signingkey){
-        throw std::runtime_error("Error: No signing key found.");
-    }
-
-    bool verify = pka_verify(digest, signingkey, signature);
-
-    if (error){
-        *error = verify?std::string("Success"):std::string("PKA calculations dont match.");
-    }
-
-    return verify;
-}
-
-bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message, std::string * error){
-    return verify_cleartext_signature(PGPPublicKey(pri), message, error);
-}
-
 bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data, const PGPDetachedSignature & sig, std::string * error){
     if (error){
         error -> clear();
@@ -142,6 +88,7 @@ bool verify_detachedsig(const PGPSecretKey & pri, std::istream & stream, const P
     return verify_detachedsig(PGPPublicKey(pri), stream, sig);
 }
 
+// 0x00: Signature of a binary document.
 bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m, std::string * error){
     // most of the time OpenPGP Message data is compressed
     // then it is encrypted
@@ -376,7 +323,70 @@ bool verify_message(const PGPSecretKey & pri, const PGPMessage & m, std::string 
     return verify_message(PGPPublicKey(pri), m, error);
 }
 
-// Signature Type 0x10 - 0x13
+// Signature type 0x01
+bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message, std::string * error){
+    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
+        throw std::runtime_error("Error: A PGP key is required.");
+    }
+
+    // find key id from signature to match with public key
+    Tag2::Ptr signature = std::make_shared <Tag2> (message.get_sig().get_packets()[0] -> raw());
+
+    if (!signature){
+        throw std::runtime_error("Error: No signature found.");
+    }
+
+    // find key id in signature
+    std::string keyid = signature -> get_keyid();
+    if (!keyid.size()){
+        throw std::runtime_error("Error: No Key ID subpacket found");
+    }
+
+    // find matching public key packet and get the mpi
+    Tag6::Ptr signingkey = find_signing_key(pub, 6, keyid); // search for primary key
+
+    if (!signingkey){                                       // if no signing primary key
+        signingkey = find_signing_key(pub, 14, keyid);      // search for subkey
+    }
+
+    if (!signingkey){
+        throw std::runtime_error("Error: No signing key found.");
+    }
+
+    if (error){
+        error -> clear();
+    }
+
+    // calculate the digest of the cleartext data (whitespace removed)
+    const std::string digest = to_sign_01(message.data_to_text(), signature);
+
+    // check left 16 bits
+    if (digest.substr(0, 2) != signature -> get_left16()){
+        if (error){
+            *error = "Hash digest and given left 16 bits of hash do not match.";
+        }
+        return false;
+    }
+
+    bool verify = pka_verify(digest, signingkey, signature);
+
+    if (error){
+        *error = verify?std::string("Success"):std::string("PKA calculations dont match.");
+    }
+
+    return verify;
+}
+
+bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message, std::string * error){
+    return verify_cleartext_signature(Secret2PublicKey(pri), message, error);
+}
+
+// 0x02: Standalone signature.
+
+// 0x10: Generic certification of a User ID and Public-Key packet.
+// 0x11: Persona certification of a User ID and Public-Key packet.
+// 0x12: Casual certification of a User ID and Public-Key packet.
+// 0x13: Positive certification of a User ID and Public-Key packet.
 bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee, std::string * error){
     if ((signer.get_ASCII_Armor() != 1) && (signer.get_ASCII_Armor() != 2)){
         throw std::runtime_error("Error: A PGP key is required.");
@@ -482,6 +492,15 @@ bool verify_key(const PGPSecretKey & signer, const PGPPublicKey & signee, std::s
     return verify_key(PGPPublicKey(signer), signee, error);
 }
 
+// 0x18: Subkey Binding Signature
+
+// 0x19: Primary Key Binding Signature
+
+// 0x1F: Signature directly on a key
+
+// 0x20: Key revocation signature
+// 0x28: Subkey revocation signature
+// 0x30: Certification revocation signature
 bool verify_revoke(const Tag6::Ptr & key, const Tag2::Ptr & rev){
     return pka_verify(use_hash(rev -> get_hash(), addtrailer(overkey(key), rev)), key, rev);
 }
@@ -536,3 +555,7 @@ bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev, std::stri
 bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev, std::string * error){
     return verify_revoke(PGPPublicKey(pri), rev, error);
 }
+
+// 0x40: Timestamp signature.
+
+// 0x50: Third-Party Confirmation signature.

@@ -114,7 +114,7 @@ Tag2::Ptr sign_binary(const PGPSecretKey & pri, const std::string & passphrase, 
 
     // create Signature Packet
     Tag2::Ptr sig = create_sig_packet(0x00, signer -> get_pka(), hash, signer -> get_keyid(), version);
-    std::string digest = to_sign_00(data, sig);
+    std::string digest = to_sign_00(binary_to_canonical(data), sig);
     sig -> set_left16(digest.substr(0, 2));
     sig -> set_mpi(pka_sign(digest, signer, passphrase, sig -> get_hash()));
 
