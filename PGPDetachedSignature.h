@@ -28,17 +28,14 @@ THE SOFTWARE.
 
 #include "PGP.h"
 
+// 11.4. Detached Signatures
+//
+//    Some OpenPGP applications use so-called "detached signatures". For
+//    example, a program bundle may contain a file, and with it a second
+//    file that is a detached signature of the first file. These detached
+//    signatures are simply a Signature packet stored separately from the
+//    data for which they are a signature.
 class PGPDetachedSignature : public PGP {
-    /*
-    11.4. Detached Signatures
-
-        Some OpenPGP applications use so-called "detached signatures". For
-        example, a program bundle may contain a file, and with it a second
-        file that is a detached signature of the first file. These detached
-        signatures are simply a Signature packet stored separately from the
-        data for which they are a signature.
-    */
-
     public:
         typedef std::shared_ptr <PGPDetachedSignature> Ptr;
 
@@ -48,7 +45,9 @@ class PGPDetachedSignature : public PGP {
         PGPDetachedSignature(std::istream & stream);
         ~PGPDetachedSignature();
 
-        bool meaningful() const; // whether or not data matches Detached Signature format
+        // whether or not data matches Detached Signature format
+        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         using PGP::operator=;
         PGP::Ptr clone() const;

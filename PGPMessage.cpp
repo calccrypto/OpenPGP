@@ -135,7 +135,11 @@ PGPMessage::PGPMessage(const PGPMessage & copy)
 {
     decompress();
 
-    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
+    else{
         type = PGP::Type::MESSAGE;
     }
 }
@@ -146,7 +150,11 @@ PGPMessage::PGPMessage(const std::string & data)
 {
     decompress();
 
-    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
+    else{
         type = PGP::Type::MESSAGE;
     }
 }
@@ -157,7 +165,11 @@ PGPMessage::PGPMessage(std::istream & stream)
 {
     decompress();
 
-    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
+    else{
         type = PGP::Type::MESSAGE;
     }
 }
@@ -218,16 +230,19 @@ void PGPMessage::set_comp(const uint8_t c){
     }
 }
 
-const bool PGPMessage::match(const Token & t) const{
+const bool PGPMessage::match(const Token & token, std::string & error) const{
     if (!packets.size()){
+        error = "Error: No packets found";
         return false;
     }
 
-    if ((t != OPENPGPMESSAGE) && (t != ENCRYPTEDMESSAGE)  &&
-        (t != SIGNEDMESSAGE)  && (t != COMPRESSEDMESSAGE) &&
-        (t != LITERALMESSAGE)){
-        throw std::runtime_error("Error: Invalid token to match.");
-        // return false;
+    if ((token != OPENPGPMESSAGE)    &&
+        (token != ENCRYPTEDMESSAGE)  &&
+        (token != SIGNEDMESSAGE)     &&
+        (token != COMPRESSEDMESSAGE) &&
+        (token != LITERALMESSAGE)){
+        error = "Error: Invalid Token to match.";
+        return false;
     }
 
     // get list of packets and convert them to Token
@@ -260,33 +275,51 @@ const bool PGPMessage::match(const Token & t) const{
                 push = SP;
                 break;
             default:
-                throw std::runtime_error("Error: Non-Message packet found.");
-                // return false;
+                error = "Error: Non-Message packet found.";
+                return false;
                 break;
         }
         s.push_back(push);
     }
 
-    while ((*(s.begin()) != t) || (s.size() != 1)){ // while the sentence has not been fully parsed, or has been fully parse but not correctly
+    while ((*(s.begin()) != token) || (s.size() != 1)){ // while the sentence has not been fully parsed, or has been fully parse but not correctly
         bool reduced = false;
         for(std::list <Token>::iterator it = s.begin(); it != s.end(); it++){ // for each token
             // make sure the sentence continues to fit at least one of the rules at least once per loop over the sentence
-            if (OpenPGPMessage(it, s) || CompressedMessage(it, s) || LiteralMessage(it, s) ||
-                EncryptedSessionKey(it, s) || ESKSequence(it, s) || EncryptedData(it, s) ||
-                EncryptedMessage(it, s) || OnePassSignedMessage(it, s) || SignedMessage(it, s)){
+            if (OpenPGPMessage(it, s)       ||
+                CompressedMessage(it, s)    ||
+                LiteralMessage(it, s)       ||
+                EncryptedSessionKey(it, s)  ||
+                ESKSequence(it, s)          ||
+                EncryptedData(it, s)        ||
+                EncryptedMessage(it, s)     ||
+                OnePassSignedMessage(it, s) ||
+                SignedMessage(it, s)){
                 reduced = true;
                 break;
             }
         }
         if (!reduced){
+            error = "Error: Failed to reduce tokens.";
             return false;
         }
     }
+
     return true;
 }
 
+const bool PGPMessage::match(const Token & token) const{
+    std::string error;
+    return match(token, error);
+}
+
 bool PGPMessage::meaningful() const{
-    return match(OPENPGPMESSAGE);
+    std::string error;
+    return match(OPENPGPMESSAGE, error);
+}
+
+bool PGPMessage::meaningful(std::string & error) const{
+    return match(OPENPGPMESSAGE, error);
 }
 
 PGP::Ptr PGPMessage::clone() const{

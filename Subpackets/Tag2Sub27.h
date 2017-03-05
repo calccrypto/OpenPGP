@@ -75,7 +75,6 @@ THE SOFTWARE.
 //    signature.  They SHOULD be placed only on a direct-key signature
 //    (type 0x1F) or a subkey signature (type 0x18), one that refers to the
 //    key the flag applies to.
-//
 
 namespace Key_Flags{
     typedef uint8_t type;

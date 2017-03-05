@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <fstream>
 #include <sstream>
 
-#include "../pgptime.h"
+#include "../time.h"
 #include "packet.h"
 
 // 5.9. Literal Data Packet (Tag 11)
@@ -75,16 +75,13 @@ THE SOFTWARE.
 //    Text data is stored with <CR><LF> text endings (i.e., network-
 //    normal line endings). These should be converted to native line
 //    endings by the receiving software.
-//
 
 namespace Literal {
-    typedef uint8_t type;
+    const uint8_t Binary    = 'b';     // should be equal to 0x62
+    const uint8_t Text      = 't';     // should be equal to 0x74
+    const uint8_t UTF8_Text = 'u';     // should be equal to 0x75
 
-    const type Binary    = 'b';     // should be equal to 0x62
-    const type Text      = 't';     // should be equal to 0x74
-    const type UTF8_Text = 'u';     // should be equal to 0x75
-
-    const std::map <type, std::string> Name = {
+    const std::map <uint8_t, std::string> Name = {
         std::make_pair(Binary,    "Binary"),
         std::make_pair(Text,      "Text"),
         std::make_pair(UTF8_Text, "UTF-8 Text"),
@@ -93,7 +90,7 @@ namespace Literal {
 
 class Tag11 : public Packet{
     private:
-        Literal::type format;
+        uint8_t format;
         std::string filename;
         uint32_t time;
         std::string literal;    // source data; no line ending conversion
@@ -108,13 +105,13 @@ class Tag11 : public Packet{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        Literal::type get_format() const;
+        uint8_t get_format() const;
         std::string get_filename() const;
         uint32_t get_time() const;
         std::string get_literal() const;
         std::string out(const bool writefile = true); // send data to
 
-        void set_format(const Literal::type f);
+        void set_format(const uint8_t f);
         void set_filename(const std::string & f);
         void set_time(const uint32_t t);
         void set_literal(const std::string & l);

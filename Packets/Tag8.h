@@ -56,7 +56,7 @@ THE SOFTWARE.
 //
 //    BZip2-compressed packets are compressed using the BZip2 [BZ2]
 //    algorithm.
-//
+
 class Tag8 : public Packet{
     private:
         uint8_t comp;

@@ -44,7 +44,7 @@ THE SOFTWARE.
 //    The N octets of hash data MUST be the size of the hash of the
 //    signature. For example, a target signature with a SHA-1 hash MUST
 //    have 20 octets of hash data.
-//
+
 class Tag2Sub31 : public Tag2Subpacket{
     private:
         uint8_t pka;

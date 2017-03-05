@@ -65,7 +65,6 @@ Packet::Ptr encrypt_data(const std::string & session_key,
 //      Symmetric Key Algorithm: AES256
 //      Compression Algorithm: ZLIB
 //      Use Modification Detection Packet: true
-//
 PGPMessage encrypt_pka(const PGPPublicKey & pub,
                        const std::string & data,
                        const std::string & filename = "",

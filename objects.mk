@@ -8,10 +8,10 @@ OPENPGP_OBJECTS=cfb.o                   \
                 PGPDetachedSignature.o  \
                 PGPKey.o                \
                 PGPMessage.o            \
-                pgptime.o               \
                 PKCS1.o                 \
                 radix64.o               \
                 revoke.o                \
                 sigcalc.o               \
                 sign.o                  \
+                time.o                  \
                 verify.o

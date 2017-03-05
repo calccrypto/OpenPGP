@@ -40,7 +40,7 @@ THE SOFTWARE.
 //
 //    This subpacket is not appropriate to use to refer to a User Attribute
 //    packet.
-//
+
 class Tag2Sub28 : public Tag2Subpacket{
     private:
         std::string signer;

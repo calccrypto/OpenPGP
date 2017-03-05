@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <list>
 
-#include "../pgptime.h"
+#include "../time.h"
 #include "Tag2Subpacket.h"
 
 // 5.2.3.6. Key Expiration Time
@@ -39,7 +39,7 @@ THE SOFTWARE.
 //    the key creation time that the key expires. If this is not present
 //    or has a value of zero, the key never expires. This is found only on
 //   a self-signature.
-//
+
 class Tag2Sub9 : public Tag2Subpacket{
     private:
         time_t dt;

@@ -36,7 +36,7 @@ THE SOFTWARE.
 //    This subpacket contains a complete Signature packet body as
 //    specified in Section 5.2 above.  It is useful when one signature
 //    needs to refer to, or be incorporated in, another signature.
-//
+
 class Tag2Sub32 : public Tag2Subpacket{
     private:
         Tag2::Ptr embedded;

@@ -252,8 +252,7 @@ Tag2::Ptr standalone_signature(const Tag5::Ptr & pri, const Tag2::Ptr & src, con
 // 0x13: Positive certification of a User ID and Public-Key packet.
 // mainly used for key generation
 Tag2::Ptr sign_primary_key(const Tag5::Ptr & pri, const ID::Ptr & id, const std::string & passphrase, const uint8_t cert, const uint8_t hash, const uint8_t version){
-    if ((cert < Signature_Type::ID::Generic_certification_of_a_User_ID_and_Public_Key_packet) ||
-        (cert > Signature_Type::ID::Positive_certification_of_a_User_ID_and_Public_Key_packet)){
+    if (!Signature_Type::is_certification(cert)){
         throw std::runtime_error("Error: Invalid Certification Value: " + std::to_string(cert));
     }
 
@@ -288,8 +287,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
         throw std::runtime_error("Error: Signer key should be private.");
     }
 
-    if ((cert < Signature_Type::ID::Generic_certification_of_a_User_ID_and_Public_Key_packet) ||
-        (cert > Signature_Type::ID::Positive_certification_of_a_User_ID_and_Public_Key_packet)){
+    if (!Signature_Type::is_certification(cert)){
         throw std::runtime_error("Error: Invalid Certification Value: " + std::to_string(cert));
     }
 

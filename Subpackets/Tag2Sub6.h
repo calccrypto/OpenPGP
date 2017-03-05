@@ -39,7 +39,7 @@ THE SOFTWARE.
 //    The regular expression uses the same syntax as the Henry Spencer’s
 //    "almost public domain" regular expression [REGEX] package. A
 //    description of the syntax is found in Section 8 below.
-//
+
 class Tag2Sub6 : public Tag2Subpacket{
     private:
         std::string regex;

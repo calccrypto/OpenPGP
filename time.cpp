@@ -1,4 +1,4 @@
-#include "pgptime.h"
+#include "time.h"
 
 // get current time since epoch
 time_t now(){

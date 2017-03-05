@@ -258,6 +258,8 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
                 if (!i){
                     throw std::runtime_error("Error: No User ID or Attribute packet to be signed.");
                 }
+
+                // really not necessary since they all call to_sign_10
                 if (sig -> get_type() == Signature_Type::ID::Generic_certification_of_a_User_ID_and_Public_Key_packet){
                     sig_hash = to_sign_10(prikey, i, sig);
                 }
@@ -372,7 +374,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             Tag14::Ptr tag14 = std::make_shared <Tag14> (p -> raw());
             pub_packets.push_back(tag14);
         }
-        else if ((p -> get_tag() == Packet::ID::Signature)  || 
+        else if ((p -> get_tag() == Packet::ID::Signature)  ||
                  (p -> get_tag() == Packet::ID::User_ID)    ||
                  (p -> get_tag() == Packet::ID::User_Attribute)){
             pub_packets.push_back(p -> clone());

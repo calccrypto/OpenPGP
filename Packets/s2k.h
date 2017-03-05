@@ -54,7 +54,7 @@ THE SOFTWARE.
 //        100 to 110  Private/Experimental S2K
 //
 //    These are described in Sections 3.7.1.1 - 3.7.1.3.
-//
+
 class S2K{
     public:
         class ID{
@@ -63,6 +63,7 @@ class S2K{
                 static const uint8_t Salted_S2K;
                 static const uint8_t Iterated_and_Salted_S2K;
         };
+
         static const std::map <uint8_t, std::string> Name;
 
     protected:
@@ -120,7 +121,7 @@ class S2K{
 //    hashed, the output data from the multiple hashes is concatenated,
 //    first hash leftmost, to produce the key data, with any excess octets
 //    on the right discarded.
-//
+
 class S2K0: public S2K{
     protected:
         S2K0(uint8_t t);
@@ -150,7 +151,7 @@ class S2K0: public S2K{
 //    Salted S2K is exactly like Simple S2K, except that the input to the
 //    hash function(s) consists of the 8 octets of salt from the S2K
 //    specifier, followed by the passphrase.
-//
+
 class S2K1 : public S2K0{
     protected:
         std::string salt;   // 8 octets
@@ -209,7 +210,7 @@ class S2K1 : public S2K0{
 //    will be hashed even though that is greater than the octet count.
 //    After the hashing is done, the data is unloaded from the hash
 //    context(s) as with the other S2K algorithms.
-//
+
  class S2K3 : public S2K1{
     private:
         static const uint32_t EXPBIAS = 6;
@@ -240,6 +241,5 @@ class S2K1 : public S2K0{
 //    Implementations SHOULD use salted or iterated-and-salted S2K
 //    specifiers, as simple S2K specifiers are more vulnerable to
 //    dictionary attacks.
-//
 
 #endif

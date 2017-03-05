@@ -88,7 +88,7 @@ THE SOFTWARE.
 //    implement some of the preferences, it is required to behave in a
 //    polite manner to respect the wishes of those users who do implement
 //    these preferences.
-//
+
 class Subpacket{
     protected:
         uint8_t type;

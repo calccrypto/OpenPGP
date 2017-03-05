@@ -44,7 +44,6 @@ THE SOFTWARE.
 //       21         - Reserved for Diffie-Hellman (X9.42,
 //                    as defined for IETF-S/MIME)
 //       100 to 110 - Private/Experimental algorithm
-//
 
 #include "PKA.h"
 

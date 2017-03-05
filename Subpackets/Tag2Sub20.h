@@ -70,7 +70,6 @@ THE SOFTWARE.
 //
 //    If there is a critical notation, the criticality applies to that
 //    specific notation and not to notations in general.
-//
 
 namespace Notation{
     typedef uint8_t type;

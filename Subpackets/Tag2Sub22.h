@@ -40,7 +40,7 @@ THE SOFTWARE.
 //    uncompressed data is preferred; the key holder’s software might have
 //    no compression software in that implementation. This is only found
 //    on a self-signature.
-//
+
 class Tag2Sub22 : public Tag2Subpacket{
     private:
         std::string pca;

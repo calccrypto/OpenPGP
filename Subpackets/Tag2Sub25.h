@@ -47,7 +47,7 @@ THE SOFTWARE.
 //    only to User Attribute packets. That is to say, there are two
 //    different and independent "primaries" -- one for User IDs, and one
 //    for User Attributes.
-//
+
 class Tag2Sub25 : public Tag2Subpacket{
     private:
         bool primary;

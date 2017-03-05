@@ -33,7 +33,7 @@ THE SOFTWARE.
 //    (8-octet Key ID)
 //
 //    The OpenPGP Key ID of the key issuing the signature.
-//
+
 class Tag2Sub16 : public Tag2Subpacket{
     private:
         std::string keyid; // 8 octets

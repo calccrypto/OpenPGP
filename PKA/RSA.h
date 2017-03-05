@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "../common/includes.h"
 #include "../RNG/RNGs.h"
-#include "../pgptime.h"
+#include "../time.h"
 #include "../mpi.h"
 #include "PKA.h"
 

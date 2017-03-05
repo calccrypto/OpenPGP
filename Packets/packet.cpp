@@ -18,6 +18,7 @@ const uint8_t Packet::ID::Public_Subkey                                = 14;
 const uint8_t Packet::ID::User_Attribute                               = 17;
 const uint8_t Packet::ID::Sym_Encrypted_Integrity_Protected_Data       = 18;
 const uint8_t Packet::ID::Modification_Detection_Code                  = 19;
+const uint8_t Packet::ID::UNKNOWN                                      = 255;
 
 const std::map <uint8_t, std::string> Packet::Name = {
     std::make_pair(Packet::ID::Reserved,                               "Reserved - a packet tag MUST NOT have this value"),
@@ -50,7 +51,7 @@ std::string Packet::write_old_length(const std::string & data) const{
     if (partial){
         out[0] |= 3;                                        // partial
     }
-    else {
+    else{
         if (length < 256){
             out[0] |= 0;                                    // 1 octet
             out += std::string(1, length);

@@ -60,7 +60,6 @@ THE SOFTWARE.
 //       18       -- Sym. Encrypted and Integrity Protected Data Packet
 //       19       -- Modification Detection Code Packet
 //       60 to 63 -- Private or Experimental Values
-//
 
 class Packet{
     public:
@@ -84,6 +83,9 @@ class Packet{
                 static const uint8_t User_Attribute;
                 static const uint8_t Sym_Encrypted_Integrity_Protected_Data;
                 static const uint8_t Modification_Detection_Code;
+
+                // not part of standard
+                static const uint8_t UNKNOWN;
         };
 
         static const std::map <uint8_t, std::string> Name;

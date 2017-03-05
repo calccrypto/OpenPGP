@@ -158,8 +158,6 @@ void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
 //     Also, any trailing whitespace -- spaces (0x20) and tabs (0x09) -- at
 //     the end of any line is removed when the cleartext signature is
 //     generated.
-//
-
 std::string PGPCleartextSignature::dash_escape(const std::string & text){
     std::string out = "";
 

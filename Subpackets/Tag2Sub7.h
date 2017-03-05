@@ -37,7 +37,7 @@ THE SOFTWARE.
 //    represent a commitment by the signer that he cannot revoke his
 //    signature for the life of his key. If this packet is not present,
 //    the signature is revocable.
-//
+
 class Tag2Sub7 : public Tag2Subpacket{
     private:
         bool revocable;

@@ -97,7 +97,7 @@ const Module encrypt_pka(
 
             signer = std::make_shared <PGPSecretKey> (signing);
         }
-        else {
+        else{
             if (args.find("-p") != args.end()){
                 std::cerr << "Warning: Passphrase provided without a Signing Key. Ignored." << std::endl;
             }

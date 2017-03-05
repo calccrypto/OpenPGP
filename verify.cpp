@@ -407,8 +407,7 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee, std::s
             std::string temp = p -> raw();
             Tag2::Ptr tag2 = std::make_shared <Tag2> (temp);
             // if this signature packet is a certification signature packet
-            if ((Signature_Type::ID::Generic_certification_of_a_User_ID_and_Public_Key_packet <= tag2 -> get_type()) &&
-                (tag2 -> get_type() <= Signature_Type::ID::Positive_certification_of_a_User_ID_and_Public_Key_packet)){
+            if (Signature_Type::is_certification(tag2 -> get_type())){
                 keyid = tag2 -> get_keyid();
                 break;
             }

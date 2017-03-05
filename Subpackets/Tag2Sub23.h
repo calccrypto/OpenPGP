@@ -41,7 +41,6 @@ THE SOFTWARE.
 //        by the key holder or an administrator of the key server.
 //
 //    This is found only on a self-signature.
-//
 
 namespace Key_Server_Preferences{
     typedef uint8_t type;

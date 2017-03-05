@@ -43,6 +43,7 @@ THE SOFTWARE.
 
 // used internally
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid);
+
 std::string pka_decrypt(const uint8_t pka,
                         PKA::Values & data,
                         const PKA::Values & pri,

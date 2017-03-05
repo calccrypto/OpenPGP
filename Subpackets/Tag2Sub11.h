@@ -39,7 +39,7 @@ THE SOFTWARE.
 //    algorithms listed are supported by the recipient’s software.
 //    Algorithm numbers are in Section 9. This is only found on a self-
 //    signature.
-//
+
 class Tag2Sub11 : public Tag2Subpacket{
     private:
         std::string psa;

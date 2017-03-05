@@ -37,16 +37,16 @@ THE SOFTWARE.
 //
 //    The value of the subpacket type octet may be:
 //
-//             0 = Reserved
-//             1 = Reserved
-//             2 = Signature Creation Time
-//             3 = Signature Expiration Time
-//             4 = Exportable Certification
-//             5 = Trust Signature
-//             6 = Regular Expression
-//             7 = Revocable
-//             8 = Reserved
-//             9 = Key Expiration Time
+//              0 = Reserved
+//              1 = Reserved
+//              2 = Signature Creation Time
+//              3 = Signature Expiration Time
+//              4 = Exportable Certification
+//              5 = Trust Signature
+//              6 = Regular Expression
+//              7 = Revocable
+//              8 = Reserved
+//              9 = Key Expiration Time
 //             10 = Placeholder for backward compatibility
 //             11 = Preferred Symmetric Algorithms
 //             12 = Revocation Key
@@ -71,7 +71,6 @@ THE SOFTWARE.
 //             31 = Signature Target
 //             32 = Embedded Signature
 //     100 To 110 = Private or experimental
-//
 
 class Tag2Subpacket: public Subpacket {
     public:

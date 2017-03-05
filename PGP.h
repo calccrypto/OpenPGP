@@ -26,16 +26,16 @@ THE SOFTWARE.
 #ifndef __PGP_BASE__
 #define __PGP_BASE__
 
-#include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include <utility>
 
 #include "common/includes.h"
 #include "Packets/packets.h"
-#include "pgptime.h"
+#include "time.h"
 #include "radix64.h"
 
 class PGP{
@@ -118,7 +118,9 @@ class PGP{
         void set_keys(const Armor_Keys & keys);
         void set_packets(const Packets & p);        // clones the input packets
 
-        virtual bool meaningful() const = 0;        // check if packet sequence is meaningful and correct
+        // check if packet sequence is meaningful and correct
+        virtual bool meaningful(std::string & error) const = 0;
+        virtual bool meaningful() const = 0;
 
         PGP & operator=(const PGP & copy);          // get deep copy object
         virtual Ptr clone() const = 0;              // get deep copy pointer

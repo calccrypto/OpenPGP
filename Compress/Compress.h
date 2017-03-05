@@ -43,7 +43,6 @@ THE SOFTWARE.
 //    Implementations MUST implement uncompressed data. Implementations
 //    SHOULD implement ZIP. Implementations MAY implement any other
 //    algorithm.
-//
 
 #include "pgpbzip2.h"
 #include "pgpzlib.h"
@@ -74,7 +73,6 @@ namespace Compression{
         std::make_pair(110,                     "Private/Experimental algorithm"),
     };
 
-    // Reverse Compression_Algorithms
     const std::map <std::string, uint8_t> Number = {
         std::make_pair("UNCOMPRESSED",  Algorithm::UNCOMPRESSED),
         std::make_pair("ZIP",           Algorithm::ZIP),

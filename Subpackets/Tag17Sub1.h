@@ -60,7 +60,7 @@ THE SOFTWARE.
 //    examination of the image data if it is unable to handle a particular
 //    version of the image header or if a specified encoding format value
 //    is not recognized.
-//
+
 namespace Image_Attributes{
     typedef uint8_t type;
 

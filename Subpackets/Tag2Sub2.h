@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB2__
 #define __TAG2_SUB2__
 
-#include "../pgptime.h"
+#include "../time.h"
 #include "Tag2Subpacket.h"
 
 // 5.2.3.4. Signature Creation Time
@@ -36,7 +36,7 @@ THE SOFTWARE.
 //    The time the signature was made.
 //
 //    MUST be present in the hashed area.
-//
+
 class Tag2Sub2 : public Tag2Subpacket{
     private:
         time_t time;

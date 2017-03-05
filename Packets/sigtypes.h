@@ -136,7 +136,6 @@ THE SOFTWARE.
 //        mean SHOULD. There are plausible uses for this (such as a blind
 //        party that only sees the signature, not the key or source
 //        document) that cannot include a target subpacket.
-//
 
 namespace Signature_Type{
     namespace ID{
@@ -155,6 +154,9 @@ namespace Signature_Type{
         const uint8_t Certification_revocation_signature                                = 0x30;
         const uint8_t Timestamp_signature                                               = 0x40;
         const uint8_t Third_Party_Confirmation_signature                                = 0x50;
+
+        // not part of standard
+        const uint8_t UNKNOWN                                                           = 0xff;
     }
 
     const std::map <uint8_t, std::string> Name = {
@@ -174,6 +176,8 @@ namespace Signature_Type{
         std::make_pair(ID::Timestamp_signature,                                         "Timestamp signature"),
         std::make_pair(ID::Third_Party_Confirmation_signature,                          "Third-Party Confirmation signature"),
     };
+
+    bool is_certification(const uint8_t sig);
 }
 
 #endif

@@ -52,7 +52,7 @@ std::string Tag11::raw() const{
     return std::string(1, format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
 }
 
-Literal::type Tag11::get_format() const{
+uint8_t Tag11::get_format() const{
     return format;
 }
 
@@ -100,7 +100,7 @@ std::string Tag11::out(const bool writefile){
     return "Data written to file '" + filename + "'.";
 }
 
-void Tag11::set_format(const Literal::type f){
+void Tag11::set_format(const uint8_t f){
     format = f;
     size = raw().size();
 }

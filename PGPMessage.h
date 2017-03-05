@@ -30,38 +30,36 @@ THE SOFTWARE.
 
 #include "PGP.h"
 
+// 11.3. OpenPGP Messages
+//
+//     An OpenPGP message is a packet or sequence of packets that
+//     corresponds to the following grammatical rules (comma represents
+//     sequential composition, and vertical bar separates alternatives):
+//
+//         OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
+//
+//         Compressed Message :- Compressed Data Packet.
+//
+//         Literal Message :- Literal Data Packet.
+//
+//         ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
+//
+//         ESK Sequence :- ESK | ESK Sequence, ESK.
+//
+//         Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
+//
+//         Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
+//
+//         One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
+//
+//         Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
+//
+//     In addition, decrypting a Symmetrically Encrypted Data packet or a
+//     Symmetrically Encrypted Integrity Protected Data packet as well as
+//     decompressing a Compressed Data packet must yield a valid OpenPGP
+//     Message.
+
 class PGPMessage : public PGP {
-        /*
-        11.3. OpenPGP Messages
-
-            An OpenPGP message is a packet or sequence of packets that
-            corresponds to the following grammatical rules (comma represents
-            sequential composition, and vertical bar separates alternatives):
-
-                OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
-
-                Compressed Message :- Compressed Data Packet.
-
-                Literal Message :- Literal Data Packet.
-
-                ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
-
-                ESK Sequence :- ESK | ESK Sequence, ESK.
-
-                Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
-
-                Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
-
-                One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
-
-                Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
-
-            In addition, decrypting a Symmetrically Encrypted Data packet or a
-            Symmetrically Encrypted Integrity Protected Data packet as well as
-            decompressing a Compressed Data packet must yield a valid OpenPGP
-            Message.
-        */
-
     public:
         enum Token { // Rules
                      OPENPGPMESSAGE,
@@ -99,8 +97,9 @@ class PGPMessage : public PGP {
         const bool OnePassSignedMessage (std::list <Token>::iterator it, std::list <Token> & s) const;
         const bool SignedMessage        (std::list <Token>::iterator it, std::list <Token> & s) const;
 
-        Tag8::Ptr comp;         // store tag8 data, if it exists
-        void decompress();      // check if the input data is compressed
+        Tag8::Ptr comp;                                                                     // store tag8 data, if it exists
+
+        void decompress();                                                                  // check if the input data is compressed
 
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;
@@ -119,8 +118,13 @@ class PGPMessage : public PGP {
 
         void set_comp(const uint8_t c);                                                     // set compression algorithm
 
-        const bool match(const Token & t) const;                                            // check if packet composition matches some part of the OpenPGP Message rule
-        bool meaningful() const;                                                            // whether or not the data is an OpenPGP Message
+        // check if packet composition matches some part of the specified OpenPGP Message rule
+        const bool match(const Token & token, std::string & error) const;
+        const bool match(const Token & token) const;
+
+        // wether or not the data in here is an OPENPGPMESSAGE
+        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

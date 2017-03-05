@@ -42,7 +42,7 @@ THE SOFTWARE.
 #include "PGPDetachedSignature.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
-#include "pgptime.h"
+#include "time.h"
 #include "revoke.h"
 #include "sigcalc.h"
 

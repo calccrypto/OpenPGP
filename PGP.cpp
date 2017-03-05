@@ -277,7 +277,6 @@ void PGP::read(std::istream & stream){
     //     MUST NOT have text other than whitespace following them on the same
     //     line. These line endings are considered a part of the Armor Header
     //     Line for the purposes of determining the content they delimit.
-    //
     std::string line;
     while (std::getline(stream, line) && line.substr(0, 15) != "-----BEGIN PGP ");
 

@@ -49,7 +49,7 @@ THE SOFTWARE.
 //    signature from that revoker. Note that it may be appropriate to
 //    isolate this subpacket within a separate signature so that it is not
 //    combined with other subpackets that need to be exported.
-//
+
 class Tag2Sub12 : public Tag2Subpacket{
     private:
         uint8_t _class;

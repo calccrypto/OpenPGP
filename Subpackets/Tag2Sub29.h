@@ -67,7 +67,6 @@ THE SOFTWARE.
 //    certification signature, such as the case where the keyholder leaves
 //    the employ of a business with an email address.  A revoked
 //    certification is no longer a part of validity calculations.
-//
 
 namespace Revoke{
     typedef uint8_t type;

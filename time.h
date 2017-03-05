@@ -1,5 +1,5 @@
 /*
-pgptime.h
+time.h
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __PGPTIME__
-#define __PGPTIME__
+#ifndef __PGP_TIME__
+#define __PGP_TIME__
 
 #include <ctime>
 #include <iomanip>

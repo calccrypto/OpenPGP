@@ -56,7 +56,6 @@ THE SOFTWARE.
 //    (for example, a key server). Such implementations always trim local
 //    certifications from any key they handle.
 
-
 class Tag2Sub4 : public Tag2Subpacket{
     private:
         bool exportable;

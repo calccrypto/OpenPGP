@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "Hashes/Hashes.h"
 #include "RNG/RNGs.h"
 #include "mpi.h"
-#include "pgptime.h"
+#include "time.h"
 
 // RFC 4880 13.1.1
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k);

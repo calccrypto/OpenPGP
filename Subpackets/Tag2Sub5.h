@@ -44,7 +44,7 @@ THE SOFTWARE.
 //    values less than 120 indicate partial trust and values of 120 or
 //    greater indicate complete trust. Implementations SHOULD emit values
 //   of 60 for partial trust and 120 for complete trust.
-//
+
 class Tag2Sub5 : public Tag2Subpacket{
     private:
         uint8_t level;

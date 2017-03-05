@@ -36,7 +36,7 @@ THE SOFTWARE.
 #include "cfb.h"
 #include "mpi.h"
 #include "PGPKey.h"
-#include "pgptime.h"
+#include "time.h"
 #include "PKCS1.h"
 #include "sign.h"
 #include "sigcalc.h"

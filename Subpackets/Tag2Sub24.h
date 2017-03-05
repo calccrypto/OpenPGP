@@ -37,7 +37,7 @@ THE SOFTWARE.
 //    key server for each User ID. Note also that since this is a URI, the
 //    key server can actually be a copy of the key retrieved by ftp, http,
 //    finger, etc.
-//
+
 class Tag2Sub24 : public Tag2Subpacket{
     private:
         std::string pks;

@@ -55,7 +55,6 @@ THE SOFTWARE.
 //
 //    An implementation may freely infer features from other suitable
 //    implementation-dependent mechanisms.
-//
 
 namespace Features_Flags{
     typedef uint8_t type;
