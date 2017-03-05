@@ -1,13 +1,13 @@
 #include "PGP.h"
 
-const PGP::Type_t PGP::Type::UNKNOWN           = 0;
-const PGP::Type_t PGP::Type::MESSAGE           = 1;
-const PGP::Type_t PGP::Type::PUBLIC_KEY_BLOCK  = 2;
-const PGP::Type_t PGP::Type::PRIVATE_KEY_BLOCK = 3;
-const PGP::Type_t PGP::Type::MESSAGE_PART_XY   = 4;
-const PGP::Type_t PGP::Type::MESSAGE_PART_X    = 5;
-const PGP::Type_t PGP::Type::SIGNATURE         = 6;
-const PGP::Type_t PGP::Type::SIGNED_MESSAGE    = 7;
+const PGP::Type_t PGP::Type::UNKNOWN           = 0; // default value
+const PGP::Type_t PGP::Type::MESSAGE           = 1; // Used for signed, encrypted, or compressed files.
+const PGP::Type_t PGP::Type::PUBLIC_KEY_BLOCK  = 2; // Used for armoring public keys.
+const PGP::Type_t PGP::Type::PRIVATE_KEY_BLOCK = 3; // Used for armoring private keys.
+const PGP::Type_t PGP::Type::MESSAGE_PART_XY   = 4; // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+const PGP::Type_t PGP::Type::MESSAGE_PART_X    = 5; // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+const PGP::Type_t PGP::Type::SIGNATURE         = 6; // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+const PGP::Type_t PGP::Type::SIGNED_MESSAGE    = 7; // Used for cleartext signatures; header not really part of RFC 4880.
 
 const std::string PGP::ASCII_Armor_Header[] = {
    "",                  // unknown type

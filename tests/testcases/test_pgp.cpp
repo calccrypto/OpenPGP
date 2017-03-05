@@ -1,3 +1,7 @@
+#include <iostream>
+#include <ctime>
+#include <sstream>
+
 #include <gtest/gtest.h>
 
 #include "PGP.h"

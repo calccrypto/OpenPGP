@@ -437,54 +437,46 @@ bool verify_key(const PGPPublicKey & signer, const PGPPublicKey & signee, std::s
     bool signaturefound = false;
     Tag6::Ptr tag6 = nullptr;
     for(Packet::Ptr const & p : signee.get_packets()){
-        switch (p -> get_tag()){
-            case Packet::ID::Secret_Key:
-            case Packet::ID::Public_Key:
-            case Packet::ID::Secret_Subkey:
-            case Packet::ID::Public_Subkey:
-                tag6 = std::make_shared <Tag6> (p -> raw());
-                key_str += overkey(tag6);                                           // add current key packet to previous ones
-                version = tag6 -> get_version();
-                tag6.reset();
-                break;
-            case Packet::ID::User_ID:
-            case Packet::ID::User_Attribute:
-                {
-                    ID::Ptr id;
-                    if (p -> get_tag() == Packet::ID::User_ID){
-                        id = std::make_shared <Tag13> ();
-                    }
-                    if (p -> get_tag() == Packet::ID::User_Attribute){
-                        id = std::make_shared <Tag17> ();
-                    }
-                    id -> read(p -> raw());
-                    user_str = certification(version, id);                          // write over old user information
-                }
-                break;
-            case 2:
-                {
-                    // copy packet data into signature packet
-                    Tag2::Ptr tag2 = std::make_shared <Tag2> (p -> raw());
+        if ((p -> get_tag() == Packet::ID::Secret_Key)    ||
+            (p -> get_tag() == Packet::ID::Public_Key)    ||
+            (p -> get_tag() == Packet::ID::Secret_Subkey) ||
+            (p -> get_tag() == Packet::ID::Public_Subkey)){
+            tag6 = std::make_shared <Tag6> (p -> raw());
+            key_str += overkey(tag6);                                               // add current key packet to previous ones
+            version = tag6 -> get_version();
+            tag6.reset();
+        }
+        else if ((p -> get_tag() == Packet::ID::User_ID)        ||
+                 (p -> get_tag() == Packet::ID::User_Attribute)){
+            ID::Ptr id;
+            if (p -> get_tag() == Packet::ID::User_ID){
+                id = std::make_shared <Tag13> ();
+            }
+            if (p -> get_tag() == Packet::ID::User_Attribute){
+                id = std::make_shared <Tag17> ();
+            }
+            id -> read(p -> raw());
+            user_str = certification(version, id);                                  // write over old user information
+        }
+        else if (p -> get_tag() == Packet::ID::Signature){
+            // copy packet data into signature packet
+            Tag2::Ptr tag2 = std::make_shared <Tag2> (p -> raw());
 
-                    // if signature is key binding, erase the user information
-                    if ((tag2 -> get_type() == Signature_Type::ID::Subkey_Binding_Signature) ||
-                        (tag2 -> get_type() == Signature_Type::ID::Primary_Key_Binding_Signature)){
-                        user_str = "";
-                    }
+            // if signature is key binding, erase the user information
+            if ((tag2 -> get_type() == Signature_Type::ID::Subkey_Binding_Signature) ||
+                (tag2 -> get_type() == Signature_Type::ID::Primary_Key_Binding_Signature)){
+                user_str = "";
+            }
 
-                    // add hash contexts together and append trailer data
-                    const std::string with_trailer = addtrailer(key_str + user_str, tag2);
-                    const std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
-                    if (hash.substr(0, 2) == tag2 -> get_left16()){             // quick signature check
-                        signaturefound = pka_verify(hash, signingkey, tag2);    // proper signature check
-                    }
-                }
-                break;
-            default:
-                {
-                    throw std::runtime_error("Error: Incorrect packet type found: " + std::to_string(p -> get_tag()));
-                }
-                break;
+            // add hash contexts together and append trailer data
+            const std::string with_trailer = addtrailer(key_str + user_str, tag2);
+            const std::string hash = use_hash(tag2 -> get_hash(), with_trailer);
+            if (hash.substr(0, 2) == tag2 -> get_left16()){                         // quick signature check
+                signaturefound = pka_verify(hash, signingkey, tag2);                // proper signature check
+            }
+        }
+        else{
+            throw std::runtime_error("Error: Incorrect packet type found: " + std::to_string(p -> get_tag()));
         }
 
         if(signaturefound){

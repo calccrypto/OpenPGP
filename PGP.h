@@ -44,28 +44,28 @@ class PGP{
 
         class Type{
             public:
-                static const Type_t UNKNOWN;           // default value
-                static const Type_t MESSAGE;           // Used for signed, encrypted, or compressed files.
-                static const Type_t PUBLIC_KEY_BLOCK;  // Used for armoring public keys.
-                static const Type_t PRIVATE_KEY_BLOCK; // Used for armoring private keys.
-                static const Type_t MESSAGE_PART_XY;   // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-                static const Type_t MESSAGE_PART_X;    // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
-                static const Type_t SIGNATURE;         // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-                static const Type_t SIGNED_MESSAGE;    // Used for cleartext signatures; header not really part of RFC 4880.
+                static const Type_t UNKNOWN;            // default value
+                static const Type_t MESSAGE;            // Used for signed, encrypted, or compressed files.
+                static const Type_t PUBLIC_KEY_BLOCK;   // Used for armoring public keys.
+                static const Type_t PRIVATE_KEY_BLOCK;  // Used for armoring private keys.
+                static const Type_t MESSAGE_PART_XY;    // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+                static const Type_t MESSAGE_PART_X;     // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+                static const Type_t SIGNATURE;          // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+                static const Type_t SIGNED_MESSAGE;     // Used for cleartext signatures; header not really part of RFC 4880.
         };
 
-        static const std::string ASCII_Armor_Header[]; // ASCII data at beginning and end of OpenPGP packet
-        static const std::string ASCII_Armor_Key[];    // ASCII descriptor of OpenPGP packet
+        static const std::string ASCII_Armor_Header[];  // ASCII data at beginning and end of OpenPGP packet
+        static const std::string ASCII_Armor_Key[];     // ASCII descriptor of OpenPGP packet
 
         typedef std::pair <std::string, std::string> Armor_Key;
         typedef std::vector <Armor_Key> Armor_Keys;
         typedef std::vector <Packet::Ptr> Packets;
 
     protected:
-        bool armored;                 // default true
-        Type_t type;                  // what type of key is this
-        Armor_Keys keys;              // key-value pairs in the header
-        Packets packets;              // main data
+        bool armored;                                   // default true
+        Type_t type;                                    // what type of key is this
+        Armor_Keys keys;                                // key-value pairs in the ASCII header
+        Packets packets;                                // main data
 
         // calculates the length of a partial body
         unsigned int partialBodyLen(uint8_t first_octet) const;
@@ -88,7 +88,7 @@ class PGP{
         typedef std::shared_ptr <PGP> Ptr;
 
         PGP();
-        PGP(const PGP & copy);                      // clone another PGP instance
+        PGP(const PGP & copy);                          // clone another PGP instance
         PGP(const std::string & data);
         PGP(std::istream & stream);
         ~PGP();

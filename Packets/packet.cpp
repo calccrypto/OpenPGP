@@ -121,6 +121,10 @@ std::string Packet::show_title() const{
     return out.str();
 }
 
+Packet::Packet(uint8_t tag)
+    : Packet(tag, 0)
+{}
+
 Packet::Packet(uint8_t tag, uint8_t version)
     : tag(tag),
       version(version),
@@ -129,8 +133,12 @@ Packet::Packet(uint8_t tag, uint8_t version)
       partial(0)
 {}
 
-Packet::Packet(uint8_t tag)
-    : Packet(tag, 0)
+Packet::Packet(const Packet & copy)
+    : tag(copy.tag),
+      version(copy.version),
+      format(copy.version),
+      size(copy.size),
+      partial(copy.partial)
 {}
 
 Packet::Packet()
@@ -187,14 +195,6 @@ void Packet::set_size(const unsigned int s){
 void Packet::set_partial(const uint8_t p){
     partial = p;
 }
-
-Packet::Packet(const Packet &copy)
-    : tag(copy.tag),
-      version(copy.version),
-      format(copy.format),
-      size(copy.size),
-      partial(copy.partial)
-{}
 
 Packet & Packet::operator=(const Packet & copy)
 {
