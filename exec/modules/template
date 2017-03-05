@@ -2,11 +2,11 @@
 #define __COMMAND_
 
 #include "../../OpenPGP.h"
-#include "command.h"
+#include "module.h"
 
-namespace command {
+namespace module {
 
-const Command (
+const Module module_name (
     // name
     "",
 

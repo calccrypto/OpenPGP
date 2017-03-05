@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "list.h"
 #include "show.h"
 #include "show_cleartext_signature.h"
+#include "extract_public.h"
 #include "encrypt_pka.h"
 #include "decrypt_pka.h"
 #include "generate_keypair.h"
@@ -56,6 +57,7 @@ const std::vector <Module> ordered = {
     list,
     show,
     show_cleartext_signature,
+    extract_public,
     encrypt_pka,
     decrypt_pka,
     generate_keypair,
