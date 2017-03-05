@@ -1,7 +1,11 @@
 #include "Tag14.h"
 
 Tag14::Tag14()
-    : Tag6(14)
+    : Tag6(Packet::ID::Public_Subkey)
+{}
+
+Tag14::Tag14(const Tag14 & copy)
+    : Tag6(copy)
 {}
 
 Tag14::Tag14(const std::string & data){

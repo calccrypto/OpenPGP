@@ -28,6 +28,13 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.20.  Policy URI
+//
+//    (String)
+//
+//    This subpacket contains a URI of a document that describes the policy
+//    under which the signature was issued.
+//
 class Tag2Sub26 : public Tag2Subpacket{
     private:
         std::string uri;

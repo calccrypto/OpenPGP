@@ -28,6 +28,16 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.18. Preferred Key Server
+//
+//    (String)
+//
+//    This is a URI of a key server that the key holder prefers be used for
+//    updates. Note that keys with multiple User IDs can have a preferred
+//    key server for each User ID. Note also that since this is a URI, the
+//    key server can actually be a copy of the key retrieved by ftp, http,
+//    finger, etc.
+//
 class Tag2Sub24 : public Tag2Subpacket{
     private:
         std::string pks;

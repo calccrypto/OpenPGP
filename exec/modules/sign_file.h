@@ -69,19 +69,22 @@ const Module sign_file(
             return -1;
         }
 
-        if (Compression_Numbers.find(args.at("-c")) == Compression_Numbers.end()){
+        if (Compression::Number.find(args.at("-c")) == Compression::Number.end()){
             std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Hash_Numbers.find(args.at("-h")) == Hash_Numbers.end()){
+        if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
             std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        PGPSecretKey pri(key);
-
-        output(::sign_message(pri, args.at("passphrase"), args.at("file"), file, Hash_Numbers.at(args.at("-h")), Compression_Numbers.at(args.at("-c"))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::sign_message(PGPSecretKey(key),
+                              args.at("passphrase"),
+                              args.at("file"),
+                              file,
+                              Hash::Number.at(args.at("-h")),
+                              Compression::Number.at(args.at("-c"))).write(flags.at("-a")), args.at("-o"));
 
         return 0;
     }

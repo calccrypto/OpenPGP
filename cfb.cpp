@@ -1,36 +1,5 @@
 #include "cfb.h"
 
-SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key){
-    SymAlg::Ptr alg;
-    switch(sym_alg){
-        case 1:
-            alg = std::make_shared <IDEA> (key);
-            break;
-        case 2:
-            alg = std::make_shared <TDES> (key.substr(0, 8), TDES_mode1, key.substr(8, 8), TDES_mode2, key.substr(16, 8), TDES_mode3);
-            break;
-        case 3:
-            alg = std::make_shared <CAST128> (key);
-            break;
-        case 4:
-            alg = std::make_shared <Blowfish> (key);
-            break;
-        case 7: case 8: case 9:
-            alg = std::make_shared <AES> (key);
-            break;
-        case 10:
-            alg = std::make_shared <Twofish> (key);
-            break;
-        case 11: case 12: case 13:
-            alg = std::make_shared <Camellia> (key);
-            break;
-        default:
-            throw std::runtime_error("Error: Unknown Symmetric Key Algorithm value.");
-            break;
-    }
-    return alg;
-}
-
 std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
@@ -168,7 +137,7 @@ std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet,
     if (!sym_alg){
         return data;
     }
-    SymAlg::Ptr alg = use_sym_alg(sym_alg, key);
+    SymAlg::Ptr alg = setup_Sym(sym_alg, key);
     return OpenPGP_CFB_encrypt(alg, packet, data, prefix);
 }
 
@@ -176,7 +145,7 @@ std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet,
     if (!sym_alg){
         return data;
     }
-    SymAlg::Ptr alg = use_sym_alg(sym_alg, key);
+    SymAlg::Ptr alg = setup_Sym(sym_alg, key);
     return OpenPGP_CFB_decrypt(alg, packet, data);
 }
 
@@ -208,7 +177,7 @@ std::string use_normal_CFB_encrypt(const uint8_t sym_alg, const std::string & da
     if (!sym_alg){
         return data;
     }
-    SymAlg::Ptr alg = use_sym_alg(sym_alg, key);
+    SymAlg::Ptr alg = setup_Sym(sym_alg, key);
     return normal_CFB_encrypt(alg, data, IV);
 }
 
@@ -216,6 +185,6 @@ std::string use_normal_CFB_decrypt(const uint8_t sym_alg, const std::string & da
     if (!sym_alg){
         return data;
     }
-    SymAlg::Ptr alg = use_sym_alg(sym_alg, key);
+    SymAlg::Ptr alg = setup_Sym(sym_alg, key);
     return normal_CFB_decrypt(alg, data, IV);
 }

@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <vector>
 
 #include "Hashes/Hashes.h"
-#include "PKA/PKA.h"
+#include "PKA/PKAs.h"
 #include "cfb.h"
 #include "mpi.h"
 #include "PGPKey.h"

@@ -28,6 +28,23 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.13. Trust Signature
+//
+//    (1 octet "level" (depth), 1 octet of trust amount)
+//
+//    Signer asserts that the key is not only valid but also trustworthy at
+//    the specified level. Level 0 has the same meaning as an ordinary
+//    validity signature. Level 1 means that the signed key is asserted to
+//    be a valid trusted introducer, with the 2nd octet of the body
+//    specifying the degree of trust. Level 2 means that the signed key is
+//    asserted to be trusted to issue level 1 trust signatures, i.e., that
+//    it is a "meta introducer". Generally, a level n trust signature
+//    asserts that a key is trusted to issue level n-1 trust signatures.
+//    The trust amount is in a range from 0-255, interpreted such that
+//    values less than 120 indicate partial trust and values of 120 or
+//    greater indicate complete trust. Implementations SHOULD emit values
+//   of 60 for partial trust and 120 for complete trust.
+//
 class Tag2Sub5 : public Tag2Subpacket{
     private:
         uint8_t level;

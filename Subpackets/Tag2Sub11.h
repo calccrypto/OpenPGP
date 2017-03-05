@@ -26,8 +26,20 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB11__
 #define __TAG2_SUB11__
 
+#include "../Encryptions/Encryptions.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.7. Preferred Symmetric Algorithms
+//
+//    (array of one-octet values)
+//
+//    Symmetric algorithm numbers that indicate which algorithms the key
+//    holder prefers to use. The subpacket body is an ordered list of
+//    octets with the most preferred listed first. It is assumed that only
+//    algorithms listed are supported by the recipient’s software.
+//    Algorithm numbers are in Section 9. This is only found on a self-
+//    signature.
+//
 class Tag2Sub11 : public Tag2Subpacket{
     private:
         std::string psa;

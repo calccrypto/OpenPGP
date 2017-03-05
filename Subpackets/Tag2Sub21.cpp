@@ -21,7 +21,7 @@ std::string Tag2Sub21::show(const uint8_t indents, const uint8_t indent_size) co
     std::stringstream out;
     out << tab << show_title();
     for(unsigned int x = 0; x < pha.size(); x++){
-        out << "\n" << tab << "            hash alg - " << Hash_Algorithms.at(pha[x]) << " (hash " << static_cast <unsigned int> (pha[x]) << ")";
+        out << "\n" << tab << "            hash alg - " << Hash::Name.at(pha[x]) << " (hash " << std::to_string(pha[x]) << ")";
     }
     return out.str();
 }

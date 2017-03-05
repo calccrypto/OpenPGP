@@ -26,8 +26,17 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB3__
 #define __TAG2_SUB3__
 
+#include "../pgptime.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.10. Signature Expiration Time
+//
+//    (4-octet time field)
+//
+//    The validity period of the signature. This is the number of seconds
+//    after the signature creation time that the signature expires. If
+//    this is not present or has a value of zero, it never expires.
+//
 class Tag2Sub3 : public Tag2Subpacket{
     private:
         time_t time;

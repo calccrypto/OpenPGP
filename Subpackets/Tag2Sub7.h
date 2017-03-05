@@ -27,7 +27,17 @@ THE SOFTWARE.
 #define __TAG2_SUB7__
 
 #include "Tag2Subpacket.h"
-
+// 5.2.3.12. Revocable
+//
+//    (1 octet of revocability, 0 for not, 1 for revocable)
+//
+//    Signature’s revocability status. The packet body contains a Boolean
+//    flag indicating whether the signature is revocable. Signatures that
+//    are not revocable have any later revocation signatures ignored. They
+//    represent a commitment by the signer that he cannot revoke his
+//    signature for the life of his key. If this packet is not present,
+//    the signature is revocable.
+//
 class Tag2Sub7 : public Tag2Subpacket{
     private:
         bool revocable;

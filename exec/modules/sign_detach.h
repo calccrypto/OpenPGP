@@ -69,14 +69,17 @@ const Module sign_detach(
             return -1;
         }
 
-        if (Hash_Numbers.find(args.at("-h")) == Hash_Numbers.end()){
-            std::cerr << "Error: Bad Hash Algorithm Number" << std::endl;
+        if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
             return -1;
         }
 
         PGPSecretKey pri(key);
 
-        output(::sign_detach(pri, args.at("passphrase"), file, Hash_Numbers.at(args.at("-h"))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::sign_detach(pri,
+                             args.at("passphrase"),
+                             file,
+                             Hash::Number.at(args.at("-h"))).write(flags.at("-a")), args.at("-o"));
 
         return 0;
     }

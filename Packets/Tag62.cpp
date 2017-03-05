@@ -4,8 +4,13 @@ Tag62::Tag62()
     : Tag62(std::string())
 {}
 
+Tag62::Tag62(const Tag62 & copy)
+    : Packet(copy),
+      stream(copy.stream)
+{}
+
 Tag62::Tag62(const std::string & data)
-    : Packet(),
+    : Packet(62),
       stream(data)
 {}
 

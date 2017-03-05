@@ -1,18 +1,33 @@
 #include "s2k.h"
 
-// RFC 4880 sec 3.7.1.3
-uint32_t coded_count(unsigned int c){
-    return (16 + (c & 15)) << ((c >> 4) + EXPBIAS);
-}
+const uint8_t S2K::ID::Simple_S2K              = 0;
+const uint8_t S2K::ID::Salted_S2K              = 1;
+const uint8_t S2K::ID::Iterated_and_Salted_S2K = 3;
+
+const std::map <uint8_t, std::string> S2K::Name = {
+            std::make_pair(ID::Simple_S2K,              "Simple S2K"),
+            std::make_pair(ID::Salted_S2K,              "Salted S2K"),
+            std::make_pair(2,                           "Reserved value"),
+            std::make_pair(ID::Iterated_and_Salted_S2K, "Iterated and Salted S2K"),
+            std::make_pair(100,                         "Private/Experimental S2K"),
+            std::make_pair(101,                         "Private/Experimental S2K"),
+            std::make_pair(102,                         "Private/Experimental S2K"),
+            std::make_pair(103,                         "Private/Experimental S2K"),
+            std::make_pair(104,                         "Private/Experimental S2K"),
+            std::make_pair(105,                         "Private/Experimental S2K"),
+            std::make_pair(106,                         "Private/Experimental S2K"),
+            std::make_pair(107,                         "Private/Experimental S2K"),
+            std::make_pair(108,                         "Private/Experimental S2K"),
+            std::make_pair(109,                         "Private/Experimental S2K"),
+            std::make_pair(110,                         "Private/Experimental S2K"),
+};
 
 std::string S2K::show_title() const{
-    std::stringstream out;
-    out << "    " << String2Key_Specifiers.at(type) << " (s2k " << static_cast <unsigned int> (type) << "):";
-    return out.str();
+    return "    " + S2K::Name.at(type) + " (s2k " + std::to_string(type) + "):";
 }
 
-S2K::S2K(uint8_t type)
-    : type(type),
+S2K::S2K(uint8_t t)
+    : type(t),
       hash()
 {}
 
@@ -38,8 +53,8 @@ void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
-S2K0::S2K0(uint8_t type)
-    : S2K(type)
+S2K0::S2K0(uint8_t t)
+    : S2K(t)
 {}
 
 S2K0::S2K0()
@@ -58,7 +73,7 @@ std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
+        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")";
     return out.str();
 }
 
@@ -79,8 +94,8 @@ S2K::Ptr S2K0::clone() const{
     return std::make_shared <S2K0> (*this);
 }
 
-S2K1::S2K1(uint8_t type)
-    : S2K0(type),
+S2K1::S2K1(uint8_t t)
+    : S2K0(t),
       salt()
 {}
 
@@ -101,7 +116,7 @@ std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")"
         << tab << "        Salt: " << hexlify(salt);
     return out.str();
 }
@@ -131,6 +146,10 @@ S2K::Ptr S2K1::clone() const{
     return std::make_shared <S2K1> (*this);
 }
 
+uint32_t S2K3::coded_count(const uint8_t c){
+    return (16 + (c & 15)) << ((c >> 4) + S2K3::EXPBIAS);
+}
+
 S2K3::S2K3()
     : S2K1(3),
       count()
@@ -150,9 +169,9 @@ std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
+        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")"
         << tab << "        Salt: " << hexlify(salt) << "\n"
-        << tab << "        Coded Count: " << coded_count(count) << " (count " << static_cast <unsigned int> (count) << ")";
+        << tab << "        Coded Count: " << S2K3::coded_count(count) << " (count " << std::to_string(count) << ")";
     return out.str();
 }
 
@@ -163,10 +182,10 @@ std::string S2K3::raw() const{
 std::string S2K3::run(const std::string & pass, unsigned int sym_key_len) const{
     // get string to hash
     std::string to_hash = "";
-    while (to_hash.size() < coded_count(count)){// coded count is count of octets, not iterations
+    while (to_hash.size() < S2K3::coded_count(count)){// coded count is count of octets, not iterations
         to_hash += salt + pass;
     }
-    to_hash = to_hash.substr(0, coded_count(count));
+    to_hash = to_hash.substr(0, S2K3::coded_count(count));
     // hash string
     std::string out = "";
     unsigned int context = 0;

@@ -21,7 +21,7 @@ std::string Tag2Sub22::show(const uint8_t indents, const uint8_t indent_size) co
     std::stringstream out;
     out << tab << show_title();
     for(unsigned int x = 0; x < pca.size(); x++){
-        out << "\n" << tab << "            comp alg - " << Compression_Algorithms.at(pca[x]) << " (comp " << static_cast <unsigned int> (pca[x]) << ")";
+        out << "\n" << tab << "            comp alg - " << Compression::Name.at(pca[x]) << " (comp " << std::to_string(pca[x]) << ")";
     }
     return out.str();
 }

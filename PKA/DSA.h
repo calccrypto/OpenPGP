@@ -23,32 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
 #ifndef __DSA__
 #define __DSA__
 
-#include <vector>
-#include <iostream>
-
-#include "../mpi.h"
-
-#include "../common/cryptomath.h"
 #include "../common/includes.h"
-#include "../RNG/RNG.h"
+#include "../RNG/RNGs.h"
 #include "../pgptime.h"
+#include "../mpi.h"
+#include "PKA.h"
 
 // Generate new set of parameters
-std::vector <PGPMPI> new_DSA_public(const uint32_t & L = 2048, const uint32_t & N = 256);
+PKA::Values new_DSA_public(const uint32_t & L = 2048, const uint32_t & N = 256);
 
 // Generate new keypair with parameters
-std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub);
+PKA::Values DSA_keygen(PKA::Values & pub);
 
 // Sign hash of data
-std::vector <PGPMPI> DSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub, PGPMPI k = 0);
-std::vector <PGPMPI> DSA_sign(const std::string & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub, PGPMPI k = 0);
+PKA::Values DSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k = 0);
+PKA::Values DSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k = 0);
 
 // Verify signature on hash
-bool DSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub);
-bool DSA_verify(const std::string & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub);
+bool DSA_verify(const PGPMPI & data, const PKA::Values & sig, const PKA::Values & pub);
+bool DSA_verify(const std::string & data, const PKA::Values & sig, const PKA::Values & pub);
 
 #endif

@@ -28,6 +28,12 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.5. Issuer
+//
+//    (8-octet Key ID)
+//
+//    The OpenPGP Key ID of the key issuing the signature.
+//
 class Tag2Sub16 : public Tag2Subpacket{
     private:
         std::string keyid; // 8 octets

@@ -68,10 +68,10 @@ const Module sign_key(
             return -1;
         }
 
-        PGPSecretKey signer(signer_file);
-        PGPPublicKey signee(signee_file);
-
-        output(::sign_primary_key(signer, args.at("passphrase"), signee, mpitoulong(hextompi(args.at("-c")))).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::sign_primary_key(PGPSecretKey(signer_file),
+                                  args.at("passphrase"),
+                                  PGPPublicKey(signee_file),
+                                  mpitoulong(hextompi(args.at("-c")))).write(flags.at("-a")), args.at("-o"));
 
         return 0;
     }

@@ -4,7 +4,7 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
     if (!sig){
         throw std::runtime_error("Error: No signature packet");
     }
-    
+
     std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
         return data + trailer.substr(1, trailer.size() - 1); // remove version from trailer
@@ -13,7 +13,6 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
         return data + trailer + "\x04\xff" + unhexlify(makehex(trailer.size(), 8));
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (sig -> get_version());
         throw std::runtime_error("Error: addtrailer for version " + std::to_string(sig -> get_version()) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
@@ -41,8 +40,7 @@ std::string certification(uint8_t version, const ID::Ptr & id){
         }
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (version);
-        throw std::runtime_error("Error: Certification for version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Certification for version " + std::to_string(version) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }

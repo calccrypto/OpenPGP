@@ -28,9 +28,48 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.24.  Features
+//
+//    (N octets of flags)
+//
+//    The Features subpacket denotes which advanced OpenPGP features a
+//    user's implementation supports.  This is so that as features are
+//    added to OpenPGP that cannot be backwards-compatible, a user can
+//    state that they can use that feature.  The flags are single bits that
+//    indicate that a given feature is supported.
+//
+//    This subpacket is similar to a preferences subpacket, and only
+//    appears in a self-signature.
+//
+//    An implementation SHOULD NOT use a feature listed when sending to a
+//    user who does not state that they can use it.
+//
+//    Defined features are as follows:
+//
+//        First octet:
+//
+//        0x01 - Modification Detection (packets 18 and 19)
+//
+//    If an implementation implements any of the defined features, it
+//    SHOULD implement the Features subpacket, too.
+//
+//    An implementation may freely infer features from other suitable
+//    implementation-dependent mechanisms.
+//
+
+namespace Features_Flags{
+    typedef uint8_t type;
+
+    const type Modification_Detection = 0x01;
+
+    const std::map <uint8_t, std::string> Name = {
+        std::make_pair(Modification_Detection, "Modification Detection (packets 18 and 19)"),
+    };
+}
+
 class Tag2Sub30 : public Tag2Subpacket{
     private:
-        char flags;
+        std::string flags;
 
     public:
         typedef std::shared_ptr <Tag2Sub30> Ptr;
@@ -41,9 +80,9 @@ class Tag2Sub30 : public Tag2Subpacket{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        char get_flags() const;
+        std::string get_flags() const;
 
-        void set_flags(const char f);
+        void set_flags(const std::string & f);
 
         Tag2Subpacket::Ptr clone() const;
 };

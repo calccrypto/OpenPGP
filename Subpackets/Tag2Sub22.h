@@ -26,8 +26,21 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB22__
 #define __TAG2_SUB22__
 
+#include "../Compress/Compress.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.9. Preferred Compression Algorithms
+//
+//    (array of one-octet values)
+//
+//    Compression algorithm numbers that indicate which algorithms the key
+//    holder prefers to use. Like the preferred symmetric algorithms, the
+//    list is ordered. Algorithm numbers are in Section 9. If this
+//    subpacket is not included, ZIP is preferred. A zero denotes that
+//    uncompressed data is preferred; the key holder’s software might have
+//    no compression software in that implementation. This is only found
+//    on a self-signature.
+//
 class Tag2Sub22 : public Tag2Subpacket{
     private:
         std::string pca;

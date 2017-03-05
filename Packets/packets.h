@@ -29,11 +29,11 @@ THE SOFTWARE.
 #include "packet.h"
 #include "Partial.h"
 
-#include "Key.h"
-#include "ID.h"
+#include "Key.h"    // for Tags 5, 6, 7, and 14
+#include "ID.h"     // for Tags 13 and 17
 
-#include "Tag0.h"
-#include "Tag1.h"
+#include "Tag0.h"   // Reserved - a packet tag MUST NOT have this value
+#include "Tag1.h"   
 #include "Tag2.h"
 #include "Tag3.h"
 #include "Tag4.h"
@@ -50,9 +50,9 @@ THE SOFTWARE.
 #include "Tag17.h"
 #include "Tag18.h"
 #include "Tag19.h"
-#include "Tag60.h"
-#include "Tag61.h"
-#include "Tag62.h"
-#include "Tag63.h"
+#include "Tag60.h"  // Private or Experimental Values
+#include "Tag61.h"  // Private or Experimental Values
+#include "Tag62.h"  // Private or Experimental Values
+#include "Tag63.h"  // Private or Experimental Values
 
 #endif

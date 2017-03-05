@@ -1,13 +1,13 @@
 #include "PGPCleartextSignature.h"
 
 PGPCleartextSignature::PGPCleartextSignature()
-    : Hash_Armor_Header(),
+    : hash_armor_header(),
       message(),
       sig()
 {}
 
 PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy)
-    : Hash_Armor_Header(copy.Hash_Armor_Header),
+    : hash_armor_header(copy.hash_armor_header),
       message(copy.message),
       sig(copy.sig)
 {
@@ -58,7 +58,7 @@ void PGPCleartextSignature::read(std::istream & stream){
             std::cerr << "Warning: Hash Armor Header Key is not \"HASH\": \"" << key << "\"." << std::endl;
         }
 
-        Hash_Armor_Header.push_back(std::make_pair(key, value));
+        hash_armor_header.push_back(PGP::Armor_Key(key, value));
     }
 
     // read message
@@ -96,7 +96,7 @@ std::string PGPCleartextSignature::write(uint8_t header) const{
     std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
 
     // write Armor Header
-    for(std::pair <std::string, std::string> const & k : Hash_Armor_Header){
+    for(std::pair <std::string, std::string> const & k : hash_armor_header){
         out += k.first + ": " + k.second + "\n";
     }
 
@@ -109,8 +109,8 @@ std::string PGPCleartextSignature::write(uint8_t header) const{
     return out + "\n" + sig.write(header);
 }
 
-std::vector <std::pair <std::string, std::string> > PGPCleartextSignature::get_Hash_Armor_Header() const{
-    return Hash_Armor_Header;
+PGP::Armor_Keys PGPCleartextSignature::get_hash_armor_header() const{
+    return hash_armor_header;
 }
 
 std::string PGPCleartextSignature::get_message() const{
@@ -121,8 +121,8 @@ PGPDetachedSignature PGPCleartextSignature::get_sig() const{
     return sig;
 }
 
-void PGPCleartextSignature::set_Hash_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a){
-    Hash_Armor_Header = a;
+void PGPCleartextSignature::set_hash_armor_header(const PGP::Armor_Keys & keys){
+    hash_armor_header = keys;
 }
 
 void PGPCleartextSignature::set_message(const std::string & data){
@@ -215,7 +215,7 @@ std::string PGPCleartextSignature::data_to_text(const std::string & text){
 }
 
 PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){
-    Hash_Armor_Header = copy.Hash_Armor_Header;
+    hash_armor_header = copy.hash_armor_header;
     message = copy.message;
     sig = copy.sig;
     return *this;
@@ -223,7 +223,7 @@ PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSigna
 
 PGPCleartextSignature::Ptr PGPCleartextSignature::clone() const{
     PGPCleartextSignature::Ptr out = std::make_shared <PGPCleartextSignature> ();
-    out -> Hash_Armor_Header = Hash_Armor_Header;
+    out -> hash_armor_header = hash_armor_header;
     out -> message = message;
     out -> sig = sig;
     return out;

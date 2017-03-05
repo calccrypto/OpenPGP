@@ -35,7 +35,7 @@ THE SOFTWARE.
 #include "show_cleartext_signature.h"
 #include "encrypt_pka.h"
 #include "decrypt_pka.h"
-#include "generate_key_pair.h"
+#include "generate_keypair.h"
 #include "generate_revoke_cert.h"
 #include "revoke.h"
 #include "revoke_key.h"
@@ -58,7 +58,7 @@ const std::vector <Module> ordered = {
     show_cleartext_signature,
     encrypt_pka,
     decrypt_pka,
-    generate_key_pair,
+    generate_keypair,
     generate_revoke_cert,
     revoke,
     revoke_key,

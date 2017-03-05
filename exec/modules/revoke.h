@@ -68,7 +68,7 @@ const Module revoke(
         PGPSecretKey pri(target);
         PGPPublicKey rev(cert);
 
-        output(::revoke_with_cert(pri, rev).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::revoke_with_cert(pri, rev).write(flags.at("-a")), args.at("-o"));
 
         return 0;
     }

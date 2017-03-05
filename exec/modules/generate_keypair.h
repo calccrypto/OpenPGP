@@ -31,9 +31,9 @@ THE SOFTWARE.
 
 namespace module {
 
-const Module generate_key_pair(
+const Module generate_keypair(
     // name
-    "generatekeypair",
+    "generate-keypair",
 
     // positional arguments
     {
@@ -42,7 +42,7 @@ const Module generate_key_pair(
 
     // optional arguments
     {
-        std::make_pair("-o",    std::make_pair("prefix of output file",       "")),
+        std::make_pair("-o",    std::make_pair("prefix of output files",   "key")),
         std::make_pair("-p",    std::make_pair("passphase",                   "")),
         std::make_pair("-u",    std::make_pair("username",                    "")),
         std::make_pair("-c",    std::make_pair("comment",                     "")),
@@ -62,10 +62,17 @@ const Module generate_key_pair(
         PGPPublicKey pub;
         PGPSecretKey pri;
 
-        ::generate_keys(pub, pri, args.at("-p"), args.at("-u"), args.at("-c"), args.at("-e"), mpitoulong(dectompi(args.at("--pks"))), mpitoulong(dectompi(args.at("--sks"))));
+        ::generate_keys(pub,
+                        pri,
+                        args.at("-p"),
+                        args.at("-u"),
+                        args.at("-c"),
+                        args.at("-e"),
+                        mpitoulong(dectompi(args.at("--pks"))),
+                        mpitoulong(dectompi(args.at("--sks"))));
 
-        output(pub.write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o") + ".public");
-        output(pri.write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o") + ".private");
+        output(pub.write(flags.at("-a")), args.at("-o") + ".public");
+        output(pri.write(flags.at("-a")), args.at("-o") + ".private");
 
         return 0;
     }

@@ -25,7 +25,7 @@ void Tag17Sub1::read(const std::string & data){
 std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream filename;
-    filename << "image" << current << "." << User_Attributes.at(encoding);
+    filename << "image" << current << "." << Image_Attributes::Name.at(encoding);
     std::ofstream f(filename.str().c_str(), std::ios::binary);
     std::stringstream out;
     out << tab << show_title() << "\n"
@@ -46,8 +46,16 @@ std::string Tag17Sub1::raw() const{
     return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
+Image_Attributes::type Tag17Sub1::get_encoding() const{
+    return encoding;
+}
+
 std::string Tag17Sub1::get_image() const{
     return image;
+}
+
+void Tag17Sub1::set_encoding(const Image_Attributes::type & enc){
+    encoding = enc;
 }
 
 void Tag17Sub1::set_image(const std::string & i){

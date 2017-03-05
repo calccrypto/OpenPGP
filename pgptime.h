@@ -27,10 +27,11 @@ THE SOFTWARE.
 
 #include <ctime>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
+#include <string>
 
-#include "consts.h"
+const std::string dayofweek[7] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
+const std::string month[12]    = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 
 // get current time since epoch
 time_t now();

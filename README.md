@@ -81,7 +81,7 @@ will cause problems when used.
 PGPCleartextSignature does not inherit from PGP and cannot
 read non-Cleartext Signature data.
 
-The `exec/main.cpp` file provides a simple command line interface,
+The `exec/main.cpp` file provides a simple command line tool,
 which can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG. Build
 the command line program with make.

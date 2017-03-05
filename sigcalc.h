@@ -26,9 +26,9 @@ THE SOFTWARE.
 #ifndef __SIGNATURE__
 #define __SIGNATURE__
 
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 
 #include "Hashes/Hashes.h"
 #include "Packets/packets.h"

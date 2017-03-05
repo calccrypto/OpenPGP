@@ -82,7 +82,11 @@ const Module decrypt_pka(
         PGPSecretKey pri(key);
         PGPMessage message(msg);
 
-        output(::decrypt_pka(pri, message, args.at("passphrase"), flags.at("-w"), signer), "");
+        output(::decrypt_pka(pri, 
+                             message, 
+                             args.at("passphrase"), 
+                             flags.at("-w"), 
+                             signer), "");
 
         if (flags.at("-d")){
             remove(args.at("file").c_str());

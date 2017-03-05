@@ -55,7 +55,7 @@ void SHA512::calc(const std::string & data, context & state) const{
 }
 
 SHA512::SHA512() :
-    Hash(),
+    HashAlg(),
     ctx()
 {
     original_h();

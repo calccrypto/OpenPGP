@@ -4,7 +4,7 @@ Tag6::Tag6(uint8_t tag)
 {}
 
 Tag6::Tag6()
-    : Tag6(6)
+    : Tag6(Packet::ID::Public_Key)
 {}
 
 Tag6::Tag6(const Tag6 & copy)
@@ -12,7 +12,7 @@ Tag6::Tag6(const Tag6 & copy)
 {}
 
 Tag6::Tag6(const std::string & data)
-    : Tag6(6)
+    : Tag6(Packet::ID::Public_Key)
 {
     read(data);
 }

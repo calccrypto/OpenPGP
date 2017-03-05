@@ -1,7 +1,7 @@
 #include "Tag7.h"
 
 Tag7::Tag7()
-    : Tag5(7)
+    : Tag5(Packet::ID::Secret_Subkey)
 {}
 
 Tag7::Tag7(const Tag7 & copy)

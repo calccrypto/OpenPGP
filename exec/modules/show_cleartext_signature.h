@@ -59,9 +59,7 @@ const Module show_cleartext_signature(
             return -1;
         }
 
-        PGPCleartextSignature message(file);
-
-        output(message.show(), args.at("-o"));
+        output(PGPCleartextSignature(file).show(), args.at("-o"));
 
         return 0;
     }

@@ -36,6 +36,7 @@ class Tag62 : public Packet{
         typedef std::shared_ptr <Tag62> Ptr;
 
         Tag62();
+        Tag62(const Tag62 & copy);
         Tag62(const std::string & data);
         void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;

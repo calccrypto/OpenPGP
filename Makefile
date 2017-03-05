@@ -45,10 +45,10 @@ RNG:
 Subpackets:
 	$(MAKE) -C Subpackets
 
-cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNG.h consts.h
+cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNGs.h
 	$(CXX) $(CXXFLAGS) cfb.cpp
 
-decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h consts.h PGPKey.h PGPMessage.h PKCS1.h verify.h
+decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h verify.h
 	$(CXX) $(CXXFLAGS) decrypt.cpp
 
 encrypt.o: encrypt.h encrypt.cpp Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h revoke.h
@@ -60,7 +60,7 @@ generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGP
 mpi.o: mpi.h mpi.cpp common/includes.h
 	$(CXX) $(CXXFLAGS) mpi.cpp
 
-PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h consts.h pgptime.h radix64.h
+PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h pgptime.h radix64.h
 	$(CXX) $(CXXFLAGS) PGP.cpp
 
 PGPCleartextSignature.o: PGPCleartextSignature.h PGPCleartextSignature.cpp PGP.h PGPDetachedSignature.h
@@ -75,10 +75,10 @@ PGPKey.o: PGPKey.h PGPKey.cpp Packets/packets.h PGP.h
 PGPMessage.o: PGPMessage.h PGPMessage.cpp PGP.h
 	$(CXX) $(CXXFLAGS) PGPMessage.cpp
 
-pgptime.o: pgptime.h pgptime.cpp consts.h
+pgptime.o: pgptime.h pgptime.cpp
 	$(CXX) $(CXXFLAGS) pgptime.cpp
 
-PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNG.h consts.h pgptime.h
+PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNGs.h pgptime.h
 	$(CXX) $(CXXFLAGS) PKCS1.cpp
 
 radix64.o: radix64.h radix64.cpp common/includes.h

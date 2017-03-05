@@ -1,7 +1,7 @@
 #include "Tag2.h"
 
 Tag2::Tag2()
-    : Packet(2),
+    : Packet(Packet::ID::Signature),
       type(0),
       pka(0),
       hash(0),
@@ -207,19 +207,19 @@ std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "    Version: " << static_cast <unsigned int> (version) << "\n";
+        << tab << "    Version: " << std::to_string(version) << "\n";
     if (version < 4){
         out << tab << "    Hashed Material:\n"
-            << tab << "        Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
+            << tab << "        Signature Type: " << Signature_Type::Name.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
             << tab << "        Creation Time: " << show_time(time) << "\n"
             << tab << "    Signer's Key ID: " << hexlify(keyid) << "\n"
-            << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-            << tab << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n";
+            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
+            << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")\n";
     }
     if (version == 4){
-        out << tab << "    Signature Type: " << Signature_Types.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
-            << tab << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")";
+        out << tab << "    Signature Type: " << Signature_Type::Name.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
+            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
+            << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")";
 
         if (hashed_subpackets.size()){
             time_t create_time = 0;
@@ -307,7 +307,7 @@ std::string Tag2::get_left16() const{
     return left16;
 }
 
-std::vector <PGPMPI> Tag2::get_mpi() const{
+PKA::Values Tag2::get_mpi() const{
     return mpi;
 }
 
@@ -316,7 +316,7 @@ uint32_t Tag2::get_time() const{
         return time;
     }
     else if (version == 4){
-        for(Subpacket::Ptr const & s : hashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             if (s -> get_type() == 2){
                 return Tag2Sub2(s -> raw()).get_time();
             }
@@ -344,8 +344,7 @@ std::string Tag2::get_keyid() const{
         }
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (version);
-        throw std::runtime_error("Error: Signature Packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Signature Packet version " + std::to_string(version) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -380,14 +379,13 @@ std::string Tag2::get_up_to_hashed() const{
     }
     else if (version == 4){
         std::string hashed = "";
-        for(Subpacket::Ptr const & s : hashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             hashed += s -> write();
         }
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (version);
-        throw std::runtime_error("Error: Signature packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Signature packet version " + std::to_string(version) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -399,7 +397,7 @@ std::string Tag2::get_without_unhashed() const{
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Subpacket::Ptr const & s : hashed_subpackets){
+        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + zero + zero + left16;
@@ -430,7 +428,7 @@ void Tag2::set_left16(const std::string & l){
     size = raw().size();
 }
 
-void Tag2::set_mpi(const std::vector <PGPMPI> & m){
+void Tag2::set_mpi(const PKA::Values & m){
     mpi = m;
     size = raw().size();
 }

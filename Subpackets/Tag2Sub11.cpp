@@ -21,7 +21,7 @@ std::string Tag2Sub11::show(const uint8_t indents, const uint8_t indent_size) co
     std::stringstream out;
     out << tab << show_title();
     for(char const & c : psa){
-        out << "\n" << tab << "            sym alg - " << Symmetric_Algorithms.at(c) << " (sym " << static_cast <unsigned int> (c) << ")";
+        out << "\n" << tab << "            sym alg - " << Sym::Name.at(c) << " (sym " << std::to_string(c) << ")";
     }
     return out.str();
 }

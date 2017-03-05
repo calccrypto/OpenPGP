@@ -1,5 +1,49 @@
 #include "packet.h"
 
+const uint8_t Packet::ID::Reserved                                     = 0;
+const uint8_t Packet::ID::Public_Key_Encrypted_Session_Key             = 1;
+const uint8_t Packet::ID::Signature                                    = 2;
+const uint8_t Packet::ID::Symmetric_Key_Encrypted_Session_Key          = 3;
+const uint8_t Packet::ID::One_Pass_Signature                           = 4;
+const uint8_t Packet::ID::Secret_Key                                   = 5;
+const uint8_t Packet::ID::Public_Key                                   = 6;
+const uint8_t Packet::ID::Secret_Subkey                                = 7;
+const uint8_t Packet::ID::Compressed_Data                              = 8;
+const uint8_t Packet::ID::Symmetrically_Encrypted_Data                 = 9;
+const uint8_t Packet::ID::Marker_Packet                                = 10;
+const uint8_t Packet::ID::Literal_Data                                 = 11;
+const uint8_t Packet::ID::Trust                                        = 12;
+const uint8_t Packet::ID::User_ID                                      = 13;
+const uint8_t Packet::ID::Public_Subkey                                = 14;
+const uint8_t Packet::ID::User_Attribute                               = 17;
+const uint8_t Packet::ID::Sym_Encrypted_Integrity_Protected_Data       = 18;
+const uint8_t Packet::ID::Modification_Detection_Code                  = 19;
+
+const std::map <uint8_t, std::string> Packet::Name = {
+    std::make_pair(Packet::ID::Reserved,                               "Reserved - a packet tag MUST NOT have this value"),
+    std::make_pair(Packet::ID::Public_Key_Encrypted_Session_Key,       "Public-Key Encrypted Session Key"),
+    std::make_pair(Packet::ID::Signature,                              "Signature"),
+    std::make_pair(Packet::ID::Symmetric_Key_Encrypted_Session_Key,    "Symmetric-Key Encrypted Session Key"),
+    std::make_pair(Packet::ID::One_Pass_Signature,                     "One-Pass Signature"),
+    std::make_pair(Packet::ID::Secret_Key,                             "Secret-Key"),
+    std::make_pair(Packet::ID::Public_Key,                             "Public-Key"),
+    std::make_pair(Packet::ID::Secret_Subkey,                          "Secret-Subkey"),
+    std::make_pair(Packet::ID::Compressed_Data,                        "Compressed Data"),
+    std::make_pair(Packet::ID::Symmetrically_Encrypted_Data,           "Symmetrically (Conventional) Encrypted Data"),
+    std::make_pair(Packet::ID::Marker_Packet,                          "Marker Packet (Obsolete Literal Packet)"),
+    std::make_pair(Packet::ID::Literal_Data,                           "Literal Data"),
+    std::make_pair(Packet::ID::Trust,                                  "(Keyring) Trust"),
+    std::make_pair(Packet::ID::User_ID,                                "User ID"),
+    std::make_pair(Packet::ID::Public_Subkey,                          "Public-Subkey (Obsolete Comment Packet)"),
+    std::make_pair(Packet::ID::User_Attribute,                         "User Attribute"),
+    std::make_pair(Packet::ID::Sym_Encrypted_Integrity_Protected_Data, "Sym. Encrypted Integrity Protected Data"),
+    std::make_pair(Packet::ID::Modification_Detection_Code,            "Modification Detection Code"),
+    std::make_pair(60,                                                 "Private or Experimental Values"),
+    std::make_pair(61,                                                 "Private or Experimental Values"),
+    std::make_pair(62,                                                 "Private or Experimental Values"),
+    std::make_pair(63,                                                 "Private or Experimental Values"),
+};
+
 std::string Packet::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
@@ -56,7 +100,7 @@ std::string Packet::write_new_length(const std::string & data) const{
 
 std::string Packet::show_title() const{
     std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet_Tags.at(tag) << " (Tag " << static_cast <unsigned int> (tag) << ")";
+    out << (format?"New":"Old") << ": " << Packet::Name.at(tag) << " (Tag " << std::to_string(tag) << ")";
 
     switch (partial){
         case 0:
@@ -71,10 +115,7 @@ std::string Packet::show_title() const{
             out << " (partial end)";
             break;
         default:
-            {
-                std::stringstream s; s << static_cast <unsigned int> (partial);
-                throw std::runtime_error("Error: Unknown partial type: " + s.str());
-            }
+            throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
             break;
     }
     return out.str();

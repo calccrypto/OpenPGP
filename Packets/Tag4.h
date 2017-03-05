@@ -26,7 +26,12 @@ THE SOFTWARE.
 #ifndef __TAG4__
 #define __TAG4__
 
+#include <string>
+
+#include "../Hashes/Hashes.h"
+#include "../PKA/PKAs.h"
 #include "packet.h"
+#include "sigtypes.h"
 
 class Tag4 : public Packet{
     private:

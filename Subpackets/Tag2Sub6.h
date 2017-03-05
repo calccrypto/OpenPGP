@@ -28,6 +28,18 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.14. Regular Expression
+//
+//    (null-terminated regular expression)
+//
+//    Used in conjunction with trust Signature packets (of level > 0) to
+//    limit the scope of trust that is extended. Only signatures by the
+//    target key on User IDs that match the regular expression in the body
+//    of this packet have trust extended by the trust Signature subpacket.
+//    The regular expression uses the same syntax as the Henry Spencer’s
+//    "almost public domain" regular expression [REGEX] package. A
+//    description of the syntax is found in Section 8 below.
+//
 class Tag2Sub6 : public Tag2Subpacket{
     private:
         std::string regex;

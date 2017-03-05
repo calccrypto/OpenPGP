@@ -1,4 +1,4 @@
-PKA_OBJECTS=PKA.o     \
+PKA_OBJECTS=PKAs.o    \
             DSA.o     \
             ElGamal.o \
             RSA.o

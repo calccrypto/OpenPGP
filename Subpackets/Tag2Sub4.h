@@ -28,6 +28,35 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.11. Exportable Certification
+//
+//    (1 octet of exportability, 0 for not, 1 for exportable)
+//
+//    This subpacket denotes whether a certification signature is
+//    "exportable", to be used by other users than the signature’s issuer.
+//    The packet body contains a Boolean flag indicating whether the
+//    signature is exportable. If this packet is not present, the
+//    certification is exportable; it is equivalent to a flag containing a
+//    1.
+//
+//    Non-exportable, or "local", certifications are signatures made by a
+//    user to mark a key as valid within that user’s implementation only.
+//    Thus, when an implementation prepares a user’s copy of a key for
+//    transport to another user (this is the process of "exporting" the
+//    key), any local certification signatures are deleted from the key.
+//
+//    The receiver of a transported key "imports" it, and likewise trims
+//    any local certifications. In normal operation, there won’t be any,
+//    assuming the import is performed on an exported key. However, there
+//    are instances where this can reasonably happen. For example, if an
+//    implementation allows keys to be imported from a key database in
+//    addition to an exported key, then this situation can arise.
+//
+//    Some implementations do not represent the interest of a single user
+//    (for example, a key server). Such implementations always trim local
+//    certifications from any key they handle.
+
+
 class Tag2Sub4 : public Tag2Subpacket{
     private:
         bool exportable;

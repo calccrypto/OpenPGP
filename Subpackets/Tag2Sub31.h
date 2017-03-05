@@ -26,12 +26,29 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB31__
 #define __TAG2_SUB31__
 
+#include "../Hashes/Hashes.h"
+#include "../PKA/PKAs.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.25. Signature Target
+//
+//    (1 octet public-key algorithm, 1 octet hash algorithm, N octets hash)
+//
+//    This subpacket identifies a specific target signature to which a
+//    signature refers. For revocation signatures, this subpacket
+//    provides explicit designation of which signature is being revoked.
+//    For a third-party or timestamp signature, this designates what
+//    signature is signed. All arguments are an identifier of that target
+//    signature.
+//
+//    The N octets of hash data MUST be the size of the hash of the
+//    signature. For example, a target signature with a SHA-1 hash MUST
+//    have 20 octets of hash data.
+//
 class Tag2Sub31 : public Tag2Subpacket{
     private:
         uint8_t pka;
-        uint8_t ha;
+        uint8_t hash_alg;
         std::string hash;
 
     public:
@@ -44,11 +61,11 @@ class Tag2Sub31 : public Tag2Subpacket{
         std::string raw() const;
 
         uint8_t get_pka() const;
-        uint8_t get_ha() const;
+        uint8_t get_hash_alg() const;
         std::string get_hash() const;
 
         void set_pka(const uint8_t p);
-        void set_ha(const uint8_t h);
+        void set_hash_alg(const uint8_t h);
         void set_hash(const std::string & h);
 
         Tag2Subpacket::Ptr clone() const;

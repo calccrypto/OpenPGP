@@ -167,10 +167,10 @@ class Tag5 : public Tag6{
         std::string calculate_key(const std::string & passphrase) const;
 
         // encrypt and set the secret keys
-        const std::string & encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys);
+        const std::string & encrypt_secret_keys(const std::string & passphrase, const PKA::Values & keys);
 
         // decrypt the secret keys
-        std::vector <PGPMPI> decrypt_secret_keys(const std::string & passphrase) const;
+        PKA::Values decrypt_secret_keys(const std::string & passphrase) const;
 
         Packet::Ptr clone() const;
         Tag5 & operator=(const Tag5 & copy);

@@ -35,6 +35,7 @@ class Tag12 : public Packet{
         typedef std::shared_ptr <Tag12> Ptr;
 
         Tag12();
+        Tag12(const Tag12 & copy);
         Tag12(const std::string & data);
         Tag12(std::istream & stream);
         void read(const std::string & data);

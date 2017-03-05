@@ -27,7 +27,7 @@ std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) co
     std::stringstream out;
     out << tab << show_title();
     for(char const & c : flags){
-        out << "\n" << tab << "            Flag - " << Notation.at(c) << " (not " << static_cast <unsigned int> (c) << ")";
+        out << "\n" << tab << "            Flag - " << Notation::Name.at(c) << " (not " << std::to_string(c) << ")";
     }
     out << "\n"
         << tab << "            Name: " << m << "\n"

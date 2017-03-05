@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 class SymAlg{
     protected:

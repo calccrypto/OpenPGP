@@ -1,8 +1,13 @@
 #include "Tag18.h"
 
 Tag18::Tag18()
-    : Packet(18, 1),
+    : Packet(Packet::ID::Sym_Encrypted_Integrity_Protected_Data, 1),
       protected_data()
+{}
+
+Tag18::Tag18(const Tag18 & copy)
+    : Packet(copy),
+      protected_data(copy.protected_data)
 {}
 
 Tag18::Tag18(const std::string & data)
@@ -21,7 +26,7 @@ std::string Tag18::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << tab << "    Version: " << std::to_string(version) << "\n"
         << tab << "    Encrypted Data (" << protected_data.size() << " octets): " << hexlify(protected_data);
     return out.str();
 }

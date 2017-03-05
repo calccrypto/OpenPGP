@@ -26,17 +26,71 @@ THE SOFTWARE.
 #ifndef __TAG17_SUB1__
 #define __TAG17_SUB1__
 
+#include <fstream>
+
 #include "Tag17Subpacket.h"
+
+// 5.12.1. The Image Attribute Subpacket
+//    The Image Attribute subpacket is used to encode an image, presumably
+//    (but not required to be) that of the key owner.
+//
+//    The Image Attribute subpacket begins with an image header. The first
+//    two octets of the image header contain the length of the image
+//    header. Note that unlike other multi-octet numerical values in this
+//    document, due to a historical accident this value is encoded as a
+//    little-endian number. The image header length is followed by a
+//    single octet for the image header version. The only currently
+//    defined version of the image header is 1, which is a 16-octet image
+//    header. The first three octets of a version 1 image header are thus
+//    0x10, 0x00, 0x01.
+//
+//    The fourth octet of a version 1 image header designates the encoding
+//    format of the image. The only currently defined encoding format is
+//    the value 1 to indicate JPEG. Image format types 100 through 110 are
+//    reserved for private or experimental use. The rest of the version 1
+//    image header is made up of 12 reserved octets, all of which MUST be
+//    set to 0.
+//
+//    The rest of the image subpacket contains the image itself. As the
+//    only currently defined image type is JPEG, the image is encoded in
+//    the JPEG File Interchange Format (JFIF), a standard file format for
+//    JPEG images [JFIF].
+//
+//    An implementation MAY try to determine the type of an image by
+//    examination of the image data if it is unable to handle a particular
+//    version of the image header or if a specified encoding format value
+//    is not recognized.
+//
+namespace Image_Attributes{
+    typedef uint8_t type;
+
+    const type JPEG = 1;
+
+    const std::map <type, std::string> Name = {
+        std::make_pair(JPEG, "JPEG"),
+        std::make_pair(100,  "Reserved for private/experimental use"),
+        std::make_pair(101,  "Reserved for private/experimental use"),
+        std::make_pair(102,  "Reserved for private/experimental use"),
+        std::make_pair(103,  "Reserved for private/experimental use"),
+        std::make_pair(104,  "Reserved for private/experimental use"),
+        std::make_pair(105,  "Reserved for private/experimental use"),
+        std::make_pair(106,  "Reserved for private/experimental use"),
+        std::make_pair(107,  "Reserved for private/experimental use"),
+        std::make_pair(108,  "Reserved for private/experimental use"),
+        std::make_pair(109,  "Reserved for private/experimental use"),
+        std::make_pair(110,  "Reserved for private/experimental use"),
+    };
+}
 
 class Tag17Sub1 : public Tag17Subpacket{
     private:
         uint8_t version;
-        uint8_t encoding;
+        Image_Attributes::type encoding;
         std::string image;
 
         static unsigned int count;  // count of all images found; incremented by creating new instances of Tag17Sub1
         unsigned int current;       // which image this instance is
-        
+
     public:
         typedef std::shared_ptr <Tag17Sub1> Ptr;
 
@@ -46,8 +100,10 @@ class Tag17Sub1 : public Tag17Subpacket{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
+        Image_Attributes::type get_encoding() const;
         std::string get_image() const;
 
+        void set_encoding(const Image_Attributes::type & enc);
         void set_image(const std::string & i);
 
         Tag17Subpacket::Ptr clone() const;

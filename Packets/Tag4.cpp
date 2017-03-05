@@ -1,16 +1,15 @@
 #include "Tag4.h"
 
 Tag4::Tag4()
-    : Packet(4, 3),
+    : Packet(Packet::ID::One_Pass_Signature, 3),
       type(), hash(), pka(),
       keyid(),
       nested(1)
 {}
 
 Tag4::Tag4(const Tag4 & copy)
-    : Tag4()
+    : Packet(copy)
 {
-    version = copy.version;
     type = copy.type;
     hash = copy.hash;
     pka = copy.pka;
@@ -38,10 +37,10 @@ std::string Tag4::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "    Version: " << static_cast <unsigned int> (version) << "\n"
-        << tab << "    Signature Type: " << Signature_Types.at(type) << " (sig " << static_cast <unsigned int> (type) << ")\n"
-        << tab << "    Hash Algorithm: " << Hash_Algorithms.at(hash) << " (hash " << static_cast <unsigned int> (hash) << ")\n"
-        << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << tab << "    Version: " << std::to_string(version) << "\n"
+        << tab << "    Signature Type: " << Signature_Type::Name.at(type) << " (sig " << std::to_string(type) << ")\n"
+        << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")\n"
+        << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
         << tab << "    KeyID: " << hexlify(keyid) << "\n"
         << tab << "    Nested: " << static_cast <bool> (nested);
     return out.str();

@@ -72,12 +72,12 @@ const Module encrypt_pka(
             return -1;
         }
 
-        if (Compression_Numbers.find(args.at("-c")) == Compression_Numbers.end()){
+        if (Compression::Number.find(args.at("-c")) == Compression::Number.end()){
             std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Symmetric_Algorithms_Numbers.find(args.at("--sym")) == Symmetric_Algorithms_Numbers.end()){
+        if (Sym::Number.find(args.at("--sym")) == Sym::Number.end()){
             std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
             return -1;
         }
@@ -103,12 +103,14 @@ const Module encrypt_pka(
             }
         }
 
-        std::stringstream s;
-        s << file.rdbuf();
-
-        PGPPublicKey pub(key);
-
-        output(::encrypt_pka(pub, s.str(), args.at("file"), Symmetric_Algorithms_Numbers.at(args.at("-sym")), Compression_Numbers.at(args.at("-c")), flags.at("--mdc"),  signer, args.at("-p")).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::encrypt_pka(PGPPublicKey(key),
+                             std::string(std::istreambuf_iterator <char> (file), {}),
+                             args.at("file"),
+                             Sym::Number.at(args.at("-sym")),
+                             Compression::Number.at(args.at("-c")),
+                             flags.at("--mdc"),
+                             signer,
+                             args.at("-p")).write(flags.at("-a")), args.at("-o"));
 
         if (flags.at("-d")){
             remove(args.at("file").c_str());

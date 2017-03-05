@@ -23,18 +23,65 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __OpenPGP_COMPRESS__
-#define __OpenPGP_COMPRESS__
+#ifndef __OPENPGP_COMPRESS__
+#define __OPENPGP_COMPRESS__
 
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <map>
 #include <stdexcept>
+#include <string>
+
+// 9.3. Compression Algorithms
+//
+//       ID           Algorithm
+//       --           ---------
+//       0          - Uncompressed
+//       1          - ZIP [RFC1951]
+//       2          - ZLIB [RFC1950]
+//       3          - BZip2 [BZ2]
+//       100 to 110 - Private/Experimental algorithm
+//
+//    Implementations MUST implement uncompressed data. Implementations
+//    SHOULD implement ZIP. Implementations MAY implement any other
+//    algorithm.
+//
 
 #include "pgpbzip2.h"
 #include "pgpzlib.h"
+
+namespace Compression{
+    namespace Algorithm{
+        const uint8_t UNCOMPRESSED = 0;
+        const uint8_t ZIP          = 1;
+        const uint8_t ZLIB         = 2;
+        const uint8_t BZIP2        = 3;
+    }
+
+    const std::map <uint8_t, std::string> Name = {
+        std::make_pair(Algorithm::UNCOMPRESSED, "UNCOMPRESSED"),
+        std::make_pair(Algorithm::ZIP,          "ZIP {RFC1951}"),
+        std::make_pair(Algorithm::ZLIB,         "ZLIB {RFC1950}"),
+        std::make_pair(Algorithm::BZIP2,        "BZip2 {BZ2}"),
+        std::make_pair(100,                     "Private/Experimental algorithm"),
+        std::make_pair(101,                     "Private/Experimental algorithm"),
+        std::make_pair(102,                     "Private/Experimental algorithm"),
+        std::make_pair(103,                     "Private/Experimental algorithm"),
+        std::make_pair(104,                     "Private/Experimental algorithm"),
+        std::make_pair(105,                     "Private/Experimental algorithm"),
+        std::make_pair(106,                     "Private/Experimental algorithm"),
+        std::make_pair(107,                     "Private/Experimental algorithm"),
+        std::make_pair(108,                     "Private/Experimental algorithm"),
+        std::make_pair(109,                     "Private/Experimental algorithm"),
+        std::make_pair(110,                     "Private/Experimental algorithm"),
+    };
+
+    // Reverse Compression_Algorithms
+    const std::map <std::string, uint8_t> Number = {
+        std::make_pair("UNCOMPRESSED",  Algorithm::UNCOMPRESSED),
+        std::make_pair("ZIP",           Algorithm::ZIP),
+        std::make_pair("ZLIB",          Algorithm::ZLIB),
+        std::make_pair("BZip2",         Algorithm::BZIP2),
+    };
+}
 
 std::string PGP_compress(const uint8_t alg, const std::string & data);
 std::string PGP_decompress(const uint8_t alg, const std::string & data);

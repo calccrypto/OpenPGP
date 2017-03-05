@@ -1,8 +1,13 @@
 #include "Tag10.h"
 
 Tag10::Tag10()
-    : Packet(10),
+    : Packet(Packet::ID::Marker_Packet),
       pgp("PGP")
+{}
+
+Tag10::Tag10(const Tag10 & copy)
+    : Packet(copy),
+      pgp(copy.pgp)
 {}
 
 Tag10::Tag10(const std::string & data)

@@ -10,7 +10,7 @@ Tag5::Tag5(uint8_t tag)
 {}
 
 Tag5::Tag5()
-    : Tag5(5)
+    : Tag5(Packet::ID::Secret_Key)
 {}
 
 Tag5::Tag5(const Tag5 & copy)
@@ -23,7 +23,7 @@ Tag5::Tag5(const Tag5 & copy)
 {}
 
 Tag5::Tag5(const std::string & data)
-    : Tag5(5)
+    : Tag5(Packet::ID::Secret_Key)
 {
     read(data);
 }
@@ -59,8 +59,8 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     std::stringstream out;
     out << "\n";
     if (s2k_con > 253){
-        out << tab << "    String-to-Key Usage Conventions: " << static_cast <unsigned int> (s2k_con) << "\n"
-            << tab << "    Symmetric Key Algorithm: " << Symmetric_Algorithms.at(sym) << " (sym " << static_cast <unsigned int> (sym) << ")\n"
+        out << tab << "    String-to-Key Usage Conventions: " << std::to_string(s2k_con) << "\n"
+            << tab << "    Symmetric Key Algorithm: " << Sym::Name.at(sym) << " (sym " << std::to_string(sym) << ")\n"
             << tab << s2k -> show(indents) << "\n";
         if (s2k -> get_type()){
             out << tab << "    IV: " << hexlify(IV) << "\n";
@@ -114,7 +114,7 @@ void Tag5::read(const std::string & data){
 
     // IV
     if (s2k_con){
-        IV = data.substr(pos, Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
+        IV = data.substr(pos, Sym::Block_Length.at(sym) >> 3);
         pos += IV.size();
     }
 
@@ -263,7 +263,7 @@ std::string Tag5::calculate_key(const std::string & passphrase) const {
             throw std::runtime_error("Error: S2K has not been set.");
         }
 
-        key = s2k -> run(passphrase, Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym)) >> 3);
+        key = s2k -> run(passphrase, Sym::Key_Length.at(sym) >> 3);
     }
     else{
         key = MD5(passphrase).digest();                 // simple MD5 for all other values
@@ -272,7 +272,7 @@ std::string Tag5::calculate_key(const std::string & passphrase) const {
     return key;
 }
 
-const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, const std::vector <PGPMPI> & keys){
+const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, const PKA::Values & keys){
     secret = "";
 
     // convert keys into string
@@ -304,7 +304,7 @@ const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, co
     return secret;
 }
 
-std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) const {
+PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     std::string keys;
 
     // S2k != 0 -> secret keys are encrypted
@@ -343,7 +343,7 @@ std::vector <PGPMPI> Tag5::decrypt_secret_keys(const std::string & passphrase) c
     }
 
     // extract MPI values
-    std::vector <PGPMPI> out;
+    PKA::Values out;
     std::string::size_type pos = 0;
     while (pos < keys.size()){
         out.push_back(read_MPI(keys, pos));

@@ -26,17 +26,15 @@ THE SOFTWARE.
 #ifndef __ELGAMAL__
 #define __ELGAMAL__
 
-#include <vector>
-
-#include "../mpi.h"
-
 #include "../common/includes.h"
-#include "../RNG/RNG.h"
+#include "../RNG/RNGs.h"
 #include "../pgptime.h"
+#include "../mpi.h"
+#include "PKA.h"
 
-std::vector <PGPMPI> ElGamal_keygen(unsigned int bits = 2048);
-std::vector <PGPMPI> ElGamal_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub);
-std::vector <PGPMPI> ElGamal_encrypt(const std::string & data, const std::vector <PGPMPI> & pub);
-std::string ElGamal_decrypt(std::vector <PGPMPI> & c, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub);
+PKA::Values ElGamal_keygen(unsigned int bits = 2048);
+PKA::Values ElGamal_encrypt(const PGPMPI & data, const PKA::Values & pub);
+PKA::Values ElGamal_encrypt(const std::string & data, const PKA::Values & pub);
+std::string ElGamal_decrypt(PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub);
 
 #endif

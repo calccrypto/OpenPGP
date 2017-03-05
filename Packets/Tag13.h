@@ -43,6 +43,7 @@ class Tag13 : public ID{
         typedef std::shared_ptr <Tag13> Ptr;
 
         Tag13();
+        Tag13(const Tag13 & copy);
         Tag13(const std::string & data);
         void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;

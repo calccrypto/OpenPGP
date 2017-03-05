@@ -38,7 +38,7 @@ THE SOFTWARE.
 #include "verify.h"
 
 // check if a key has been revoked
-bool check_revoked(const std::vector <Packet::Ptr> & packets, const std::string & keyid);
+bool check_revoked(const PGP::Packets & packets, const std::string & keyid);
 bool check_revoked(const PGPPublicKey & pub, const std::string & keyid);
 bool check_revoked(const PGPSecretKey & pri, const std::string & keyid);
 

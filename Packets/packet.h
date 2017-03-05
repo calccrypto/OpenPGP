@@ -26,20 +26,68 @@ THE SOFTWARE.
 #ifndef __PACKET__
 #define __PACKET__
 
-#include <cstdlib>
-#include <iostream>
+#include <map>
 #include <memory>
-#include <sstream>
 #include <stdexcept>
-#include <vector>
+#include <sstream>
+#include <string>
 
 #include "../common/includes.h"
-#include "../Hashes/Hashes.h"
-#include "../consts.h"
-#include "../mpi.h"
-#include "../pgptime.h"
+
+// 4.3. Packet Tags
+//
+//   The packet tag denotes what type of packet the body holds. Note that
+//   old format headers can only have tags less than 16, whereas new
+//   format headers can have tags as great as 63. The defined tags (in
+//   decimal) are as follows:
+//
+//       0        -- Reserved - a packet tag MUST NOT have this value
+//       1        -- Public-Key Encrypted Session Key Packet
+//       2        -- Signature Packet
+//       3        -- Symmetric-Key Encrypted Session Key Packet
+//       4        -- One-Pass Signature Packet
+//       5        -- Secret-Key Packet
+//       6        -- Public-Key Packet
+//       7        -- Secret-Subkey Packet
+//       8        -- Compressed Data Packet
+//       9        -- Symmetrically Encrypted Data Packet
+//       10       -- Marker Packet
+//       11       -- Literal Data Packet
+//       12       -- Trust Packet
+//       13       -- User ID Packet
+//       14       -- Public-Subkey Packet
+//       17       -- User Attribute Packet
+//       18       -- Sym. Encrypted and Integrity Protected Data Packet
+//       19       -- Modification Detection Code Packet
+//       60 to 63 -- Private or Experimental Values
+//
 
 class Packet{
+    public:
+        class ID{
+            public:
+                static const uint8_t Reserved;
+                static const uint8_t Public_Key_Encrypted_Session_Key;
+                static const uint8_t Signature;
+                static const uint8_t Symmetric_Key_Encrypted_Session_Key;
+                static const uint8_t One_Pass_Signature;
+                static const uint8_t Secret_Key;
+                static const uint8_t Public_Key;
+                static const uint8_t Secret_Subkey;
+                static const uint8_t Compressed_Data;
+                static const uint8_t Symmetrically_Encrypted_Data;
+                static const uint8_t Marker_Packet;
+                static const uint8_t Literal_Data;
+                static const uint8_t Trust;
+                static const uint8_t User_ID;
+                static const uint8_t Public_Subkey;
+                static const uint8_t User_Attribute;
+                static const uint8_t Sym_Encrypted_Integrity_Protected_Data;
+                static const uint8_t Modification_Detection_Code;
+        };
+
+        static const std::map <uint8_t, std::string> Name;
+
     protected:
         uint8_t tag;        // RFC 4880 sec 4.3
         uint8_t version;

@@ -23,26 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// common files
-#include "common/cryptomath.h"
-#include "common/includes.h"
-#include "common/integer.h"
-
-// Required Files
-#include "Compress/Compress.h"
-#include "Encryptions/Encryptions.h"
-#include "Hashes/Hashes.h"
-#include "Packets/packets.h"
-#include "PKA/PKA.h"
-#include "RNG/RNG.h"
-#include "Subpackets/Subpackets.h"
-#include "cfb.h"
-#include "mpi.h"
-#include "pgptime.h"
-#include "PKCS1.h"
-#include "radix64.h"
-#include "sigcalc.h"
-
 // OpenPGP Types
 #include "PGP.h"                     // abstract base class
 #include "PGPCleartextSignature.h"   // Cleartext Signatures

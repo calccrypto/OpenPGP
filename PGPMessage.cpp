@@ -126,7 +126,7 @@ PGPMessage::PGPMessage()
     : PGP(),
       comp(nullptr)
 {
-    ASCII_Armor = 0;
+    type = PGP::Type::MESSAGE;
 }
 
 PGPMessage::PGPMessage(const PGPMessage & copy)
@@ -135,8 +135,8 @@ PGPMessage::PGPMessage(const PGPMessage & copy)
 {
     decompress();
 
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 0;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::MESSAGE;
     }
 }
 
@@ -146,8 +146,8 @@ PGPMessage::PGPMessage(const std::string & data)
 {
     decompress();
 
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 0;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::MESSAGE;
     }
 }
 
@@ -157,8 +157,8 @@ PGPMessage::PGPMessage(std::istream & stream)
 {
     decompress();
 
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 0;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::MESSAGE;
     }
 }
 
@@ -196,7 +196,7 @@ std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
         return packet_string;                  // return raw data
     }
     std::string out = "-----BEGIN PGP MESSAGE-----\n";
-    for(std::pair <std::string, std::string> const & key : Armor_Header){
+    for(PGP::Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
     out += "\n";

@@ -35,11 +35,22 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data) const{
 }
 
 Tag17::Tag17()
-    : ID(17),
+    : ID(Packet::ID::User_Attribute),
       length(),
       type(),
       attributes()
 {}
+
+Tag17::Tag17(const Tag17 & copy)
+    : ID(copy),
+      length(copy.length),
+      type(copy.type),
+      attributes(copy.attributes)
+{
+    for(Tag17Subpacket::Ptr & s : attributes){
+        s = s -> clone();
+    }
+}
 
 Tag17::Tag17(const std::string & data)
     : Tag17()
@@ -81,7 +92,7 @@ void Tag17::read(const std::string & data){
 std::string Tag17::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::string out = tab + show_title();
-    for(Subpacket::Ptr const & a : attributes){
+    for(Tag17Subpacket::Ptr const & a : attributes){
         out += "\n" + a -> show(indents, indent_size);
     }
     return out;
@@ -89,7 +100,7 @@ std::string Tag17::show(const uint8_t indents, const uint8_t indent_size) const{
 
 std::string Tag17::raw() const{
     std::string out = "";
-    for(Subpacket::Ptr const & a : attributes){
+    for(Tag17Subpacket::Ptr const & a : attributes){
         out += a -> write();
     }
     return out;

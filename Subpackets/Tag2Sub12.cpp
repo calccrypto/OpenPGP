@@ -24,8 +24,8 @@ std::string Tag2Sub12::show(const uint8_t indents, const uint8_t indent_size) co
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "            Class: " << static_cast <unsigned int> (_class) << "\n"
-        << tab << "            Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+        << tab << "            Class: " << std::to_string(_class) << "\n"
+        << tab << "            Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
         << tab << "            Fingerprint: " << fingerprint;
     return out.str();
 }

@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __VERIFY__
 #define __VERIFY__
 
-#include <fstream>
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -34,7 +33,7 @@ THE SOFTWARE.
 #include <vector>
 
 #include "Packets/packets.h"
-#include "PKA/PKA.h"
+#include "PKA/PKAs.h"
 #include "mpi.h"
 #include "PGPKey.h"
 #include "PGPCleartextSignature.h"
@@ -44,7 +43,7 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // pka_verify with variables only
-bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const std::vector <PGPMPI> & signing, const std::vector <PGPMPI> & signature);
+bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signing, const PKA::Values & signature);
 
 // pka_verify with packets
 bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2::Ptr & signature);

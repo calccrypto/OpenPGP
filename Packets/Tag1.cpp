@@ -1,10 +1,17 @@
 #include "Tag1.h"
 
 Tag1::Tag1()
-    : Packet(1, 3),
+    : Packet(Packet::ID::Public_Key_Encrypted_Session_Key, 3),
       keyid(),
       pka(),
       mpi()
+{}
+
+Tag1::Tag1(const Tag1 & copy)
+    : Packet(copy),
+      keyid(copy.keyid),
+      pka(copy.pka),
+      mpi(copy.mpi)
 {}
 
 Tag1::Tag1(const std::string & data)
@@ -28,9 +35,9 @@ std::string Tag1::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "    Version: " << static_cast <unsigned int> (version) << "\n"
+        << tab << "    Version: " << std::to_string(version) << "\n"
         << tab << "    KeyID: " << hexlify(keyid) << "\n"
-        << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
+        << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n";
     if (pka < 4){
         out << tab << "    RSA m**e mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
     }
@@ -57,7 +64,7 @@ uint8_t Tag1::get_pka() const{
     return pka;
 }
 
-std::vector <PGPMPI> Tag1::get_mpi() const{
+PKA::Values Tag1::get_mpi() const{
     return mpi;
 }
 
@@ -74,7 +81,7 @@ void Tag1::set_pka(const uint8_t p){
     size = raw().size();
 }
 
-void Tag1::set_mpi(const std::vector <PGPMPI> & m){
+void Tag1::set_mpi(const PKA::Values & m){
     mpi = m;
     size = raw().size();
 }

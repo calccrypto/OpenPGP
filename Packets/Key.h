@@ -26,6 +26,9 @@ THE SOFTWARE.
 #ifndef __PACKET_KEY__
 #define __PACKET_KEY__
 
+#include "../Hashes/Hashes.h"
+#include "../PKA/PKAs.h"
+#include "../mpi.h"
 #include "packet.h"
 
 // For Tags 5, 6, 7, and 14
@@ -34,7 +37,7 @@ class Key : public Packet{
     protected:
         time_t time;
         uint8_t pka;
-        std::vector <PGPMPI> mpi;
+        PKA::Values mpi;
 
         // version 3
         uint32_t expire;
@@ -59,14 +62,14 @@ class Key : public Packet{
 
         time_t get_time() const;
         uint8_t get_pka() const;
-        std::vector <PGPMPI> get_mpi() const;
+        PKA::Values get_mpi() const;
 
         void set_time(const time_t t);
         void set_pka(const uint8_t p);
-        void set_mpi(const std::vector <PGPMPI> & m);
+        void set_mpi(const PKA::Values & m);
 
-        std::string get_fingerprint() const;                      // binary
-        std::string get_keyid() const;                            // binary
+        std::string get_fingerprint() const;    // binary
+        std::string get_keyid() const;          // binary
 
         virtual Packet::Ptr clone() const;
 

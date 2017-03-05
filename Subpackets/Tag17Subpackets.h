@@ -26,6 +26,8 @@ THE SOFTWARE.
 #ifndef __TAG17_SUBPACKETS__
 #define __TAG17_SUBPACKETS__
 
-#include "Tag17Sub1.h"
+#include "Tag17Subpacket.h" // Base Type
+
+#include "Tag17Sub1.h"      // Image Attribute
 
 #endif

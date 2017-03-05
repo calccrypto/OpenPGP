@@ -51,7 +51,7 @@ void RIPEMD160::calc(const std::string &data, context &state) const{
 }
 
 RIPEMD160::RIPEMD160() :
-    Hash(),
+    HashAlg(),
     ctx(RIPEMD_H0, RIPEMD_H1, RIPEMD_H2, RIPEMD_H3, RIPEMD_H4)
 {}
 

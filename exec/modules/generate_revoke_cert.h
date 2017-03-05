@@ -64,7 +64,10 @@ const Module generate_revoke_cert(
 
         PGPSecretKey pri(key);
 
-        output(::revoke_primary_key_cert_key(pri, args.at("passphrase"), args.at("-c")[0] - '0', args.at("-r")).write((!flags.at("-a"))?1:flags.at("-a")?2:0), args.at("-o"));
+        output(::revoke_primary_key_cert_key(pri,
+                                             args.at("passphrase"),
+                                             args.at("-c")[0] - '0',
+                                             args.at("-r")).write(flags.at("-a")), args.at("-o"));
 
         return 0;
     }

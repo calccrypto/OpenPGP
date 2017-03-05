@@ -59,9 +59,7 @@ const Module list(
             return -1;
         }
 
-        PGPKey key(f);
-
-        std::cout << key.list_keys() << std::endl;
+        std::cout << PGPKey(f).list_keys() << std::endl;
 
         return 0;
     }

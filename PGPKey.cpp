@@ -3,11 +3,11 @@
 bool PGPKey::meaningful(uint8_t type) const{
     uint8_t key, subkey;
 
-    if (type == 1){      // Public Key
+    if (type == PGP::Type::PUBLIC_KEY_BLOCK){   
         key = 6;
         subkey = 14;
     }
-    else if (type == 2){ // Private Key
+    else if (type == PGP::Type::PRIVATE_KEY_BLOCK){
         key = 5;
         subkey = 7;
     }
@@ -198,7 +198,7 @@ std::string PGPKey::list_keys() const{
                     std::stringstream s;
                     s << bitsize(tag6.get_mpi()[0]);
                     out << Public_Key_Type.at(p -> get_tag()) << "    " << zfill(s.str(), 4, ' ')
-                        << Public_Key_Algorithm_Short.at(tag6.get_pka()) << "/"
+                        << PKA::Short.at(tag6.get_pka()) << "/"
                         << hexlify(tag6.get_keyid().substr(4, 4)) << " "
                         << show_date(tag6.get_time())
                         << ((r == revoked.end())?std::string(""):(std::string(" [revoked: ") + revoked[tag6.get_keyid()] + std::string("]")))
@@ -229,7 +229,7 @@ std::string PGPKey::list_keys() const{
 }
 
 bool PGPKey::meaningful() const{
-    return meaningful(ASCII_Armor);
+    return meaningful(type);
 }
 
 PGP::Ptr PGPKey::clone() const{
@@ -244,41 +244,68 @@ std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
 PGPSecretKey::PGPSecretKey()
     : PGPKey()
 {
-    ASCII_Armor = 2;
+    type = PGP::Type::PRIVATE_KEY_BLOCK;
 }
 
 PGPSecretKey::PGPSecretKey(const PGPSecretKey & copy)
     : PGPKey(copy)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 2;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PRIVATE_KEY_BLOCK;
     }
 }
 
 PGPSecretKey::PGPSecretKey(const std::string & data)
     : PGPKey(data)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 2;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PRIVATE_KEY_BLOCK;
     }
 }
 
 PGPSecretKey::PGPSecretKey(std::istream & stream)
     : PGPKey(stream)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 2;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PRIVATE_KEY_BLOCK;
     }
 }
 
 PGPSecretKey::~PGPSecretKey(){}
 
-PGPPublicKey PGPSecretKey::pub() const{
-    return Secret2PublicKey(*this);
+PGPPublicKey PGPSecretKey::get_public() const{
+    PGPPublicKey pub;
+    pub.set_armored(armored);
+    pub.set_type(PGP::Type::PUBLIC_KEY_BLOCK);
+    pub.set_keys(keys);
+
+    // clone packets; convert secret packets into public ones
+    PGP::Packets pub_packets;
+    for(Packet::Ptr const & p : packets){
+        switch (p -> get_tag()){
+            case 5:
+            {
+                pub_packets.push_back(Tag5(p -> raw()).get_public_ptr());
+                break;
+            }
+            case 7:
+            {
+                pub_packets.push_back(Tag7(p -> raw()).get_public_ptr());
+                break;
+            }
+            default:
+                pub_packets.push_back(p -> clone());
+                break;
+        }
+    }
+
+    pub.set_packets(pub_packets);
+
+    return pub;
 }
 
 bool PGPSecretKey::meaningful() const{
-    return PGPKey::meaningful(2);
+    return PGPKey::meaningful(PGP::Type::PRIVATE_KEY_BLOCK);
 }
 
 PGP::Ptr PGPSecretKey::clone() const{
@@ -293,41 +320,58 @@ std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
 PGPPublicKey::PGPPublicKey()
     : PGPKey()
 {
-    ASCII_Armor = 1;
+    type = PGP::Type::PUBLIC_KEY_BLOCK;
 }
 
 PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy)
     : PGPKey(copy)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 1;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PUBLIC_KEY_BLOCK;
     }
 }
 
 PGPPublicKey::PGPPublicKey(const std::string & data)
     : PGPKey(data)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 1;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PUBLIC_KEY_BLOCK;
     }
 }
 
 PGPPublicKey::PGPPublicKey(std::istream & stream)
     : PGPKey(stream)
 {
-    if ((ASCII_Armor == 255) && meaningful()){
-        ASCII_Armor = 1;
+    if ((type == PGP::Type::UNKNOWN) && meaningful()){
+        type = PGP::Type::PUBLIC_KEY_BLOCK;
     }
 }
 
 PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
-    : PGPPublicKey(Secret2PublicKey(sec))
+    : PGPPublicKey(sec.get_public())
 {}
 
 PGPPublicKey::~PGPPublicKey(){}
 
 bool PGPPublicKey::meaningful() const{
-    return PGPKey::meaningful(1);
+    return PGPKey::meaningful(PGP::Type::PUBLIC_KEY_BLOCK);
+}
+
+PGPPublicKey & PGPPublicKey::operator=(const PGPPublicKey & pub){
+    armored = pub.armored;
+    type = pub.type;
+    keys = pub.keys;
+    packets = pub.packets;
+
+    for(Packet::Ptr & p : packets){
+        p = p -> clone();
+    }
+
+    return *this;
+}
+
+PGPPublicKey & PGPPublicKey::operator=(const PGPSecretKey & pri){
+    return *this = pri.get_public();
 }
 
 PGP::Ptr PGPPublicKey::clone() const{
@@ -339,38 +383,9 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
     return stream;
 }
 
-PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri){
-    PGPPublicKey pub;
-    pub.set_armored(pri.get_armored());
-    pub.set_ASCII_Armor(1); // public key ASCII Armor Header value
-    pub.set_Armor_Header(pri.get_Armor_Header());
-
-    // clone packets; convert secret packets into public ones
-    PGP::Packets_T packets;
-    for(Packet::Ptr const & p : pri.get_packets()){
-        switch (p -> get_tag()){
-            case 5:
-            {
-                packets.push_back(Tag5(p -> raw()).get_public_ptr());
-                break;
-            }
-            case 7:
-            {
-                packets.push_back(Tag7(p -> raw()).get_public_ptr());
-                break;
-            }
-            default:
-                packets.push_back(p -> clone());
-                break;
-        }
-    }
-    pub.set_packets(packets);
-
-    return pub;
-}
-
 Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std::string & keyid){
-    if ((key -> get_ASCII_Armor() == 1) || (key -> get_ASCII_Armor() == 2)){
+    if ((key -> get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
+        (key -> get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
         std::vector <Packet::Ptr> packets = key -> get_packets();
         for(Packet::Ptr const & p : packets){
             if (p -> get_tag() == tag){

@@ -1,5 +1,6 @@
 #include "DSA.h"
-std::vector <PGPMPI> new_DSA_public(const uint32_t & L, const uint32_t & N){
+
+PKA::Values new_DSA_public(const uint32_t & L, const uint32_t & N){
 //    L = 1024, N = 160
 //    L = 2048, N = 224
 //    L = 2048, N = 256
@@ -28,10 +29,11 @@ std::vector <PGPMPI> new_DSA_public(const uint32_t & L, const uint32_t & N){
         h++;
         g = powm(h, exp, p);
     }
+
     return {p, q, g};
 }
 
-std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub){
+PKA::Values DSA_keygen(PKA::Values & pub){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI x = 0;
@@ -52,7 +54,7 @@ std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub){
         pub.push_back(y);
 
         // check that this key works
-        std::vector <PGPMPI> rs = DSA_sign(test, {x}, pub);
+        PKA::Values rs = DSA_sign(test, {x}, pub);
 
         // if it works, break
         if (DSA_verify(test, rs, pub)){
@@ -60,10 +62,11 @@ std::vector <PGPMPI> DSA_keygen(std::vector <PGPMPI> & pub){
         }
         pub.pop_back();
     }
+
     return {x};
 }
 
-std::vector <PGPMPI> DSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub, PGPMPI k){
+PKA::Values DSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bool set_k = (k == 0);
@@ -80,7 +83,7 @@ std::vector <PGPMPI> DSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & 
         r = powm(pub[2], k, pub[0]);
         r %= pub[1];
 
-        // if r == 0, dont bother calculating s
+        // if r == 0, don't bother calculating s
         if (r == 0){
             continue;
         }
@@ -90,15 +93,16 @@ std::vector <PGPMPI> DSA_sign(const PGPMPI & data, const std::vector <PGPMPI> & 
         s *= data + pri[0] * r;
         s %= pub[1];
     }
+
     return {r, s};
 }
 
-std::vector <PGPMPI> DSA_sign(const std::string & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub, PGPMPI k){
+PKA::Values DSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k){
     PGPMPI m(hexlify(data), 16);
     return DSA_sign(rawtompi(data), pri, pub, k);
 }
 
-bool DSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub){
+bool DSA_verify(const PGPMPI & data, const PKA::Values & sig, const PKA::Values & pub){
     // 0 < r < q or 0 < s < q
     if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))){
         return false;
@@ -121,6 +125,6 @@ bool DSA_verify(const PGPMPI & data, const std::vector <PGPMPI> & sig, const std
     return ((((g * y) % pub[0]) % pub[1]) == sig[0]);
 }
 
-bool DSA_verify(const std::string & data, const std::vector <PGPMPI> & sig, const std::vector <PGPMPI> & pub){
+bool DSA_verify(const std::string & data, const PKA::Values & sig, const PKA::Values & pub){
     return DSA_verify(rawtompi(data), sig, pub);
 }

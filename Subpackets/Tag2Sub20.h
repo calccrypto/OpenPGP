@@ -28,8 +28,65 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.16. Notation Data
+//
+//    (4 octets of flags, 2 octets of name length (M),
+//                        2 octets of value length (N),
+//                        M octets of name data,
+//                        N octets of value data)
+//
+//    This subpacket describes a "notation" on the signature that the
+//    issuer wishes to make. The notation has a name and a value, each of
+//    which are strings of octets. There may be more than one notation in
+//    a signature. Notations can be used for any extension the issuer of
+//    the signature cares to make. The "flags" field holds four octets of
+//    flags.
+//
+//    All undefined flags MUST be zero. Defined flags are as follows:
+//
+//        First octet: 0x80 = human-readable. This note value is text.
+//        Other octets: none.
+//
+//    Notation names are arbitrary strings encoded in UTF-8. They reside
+//    in two namespaces: The IETF namespace and the user namespace.
+//
+//    The IETF namespace is registered with IANA. These names MUST NOT
+//    contain the "@" character (0x40). This is a tag for the user namespace.
+//
+//    Names in the user namespace consist of a UTF-8 string tag followed by
+//    "@" followed by a DNS domain name. Note that the tag MUST NOT
+//    contain an "@" character. For example, the "sample" tag used by
+//    Example Corporation could be "sample@example.com".
+//
+//    Names in a user space are owned and controlled by the owners of that
+//    domain. Obviously, it’s bad form to create a new name in a DNS space
+//    that you don’t own.
+//
+//    Since the user namespace is in the form of an email address,
+//    implementers MAY wish to arrange for that address to reach a person
+//    who can be consulted about the use of the named tag. Note that due
+//    to UTF-8 encoding, not all valid user space name tags are valid email
+//    addresses.
+//
+//    If there is a critical notation, the criticality applies to that
+//    specific notation and not to notations in general.
+//
+
+namespace Notation{
+    typedef uint8_t type;
+
+    const type Undefined      = 0x00;
+    const type Human_Readable = 0x80;
+
+    // Notation on signature issuer wishes to make
+    const std::map <type, std::string> Name = {
+        std::make_pair(Human_Readable, "Human-Readable"),
+    };
+}
+
 class Tag2Sub20 : public Tag2Subpacket{
     private:
+
         std::string flags;  // 4 octets
         uint16_t mlen;
         uint16_t nlen;

@@ -26,17 +26,20 @@ THE SOFTWARE.
 #ifndef __TAG1__
 #define __TAG1__
 
+#include "../PKA/PKAs.h"
 #include "packet.h"
+
 class Tag1 : public Packet{
     private:
-        std::string keyid;                // 8 octets
+        std::string keyid;      // 8 octets
         uint8_t pka;
-        std::vector <PGPMPI> mpi;         // algorithm specific fields
+        PKA::Values mpi;        // algorithm specific fields
 
     public:
         typedef std::shared_ptr <Tag1> Ptr;
 
         Tag1();
+        Tag1(const Tag1 & copy);
         Tag1(const std::string & data);
         void read(const std::string & data);
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
@@ -44,11 +47,11 @@ class Tag1 : public Packet{
 
         std::string get_keyid() const;
         uint8_t get_pka() const;
-        std::vector <PGPMPI> get_mpi() const;
+        PKA::Values get_mpi() const;
 
         void set_keyid(const std::string & k);
         void set_pka(const uint8_t p);
-        void set_mpi(const std::vector <PGPMPI> & m);
+        void set_mpi(const PKA::Values & m);
 
         Packet::Ptr clone() const;
 };

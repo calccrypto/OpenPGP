@@ -11,7 +11,7 @@ std::string Tag8::decompress(const std::string & data){
 
 std::string Tag8::show_title() const{
     std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet_Tags.at(8) << " (Tag 8)";   // display packet name and tag number
+    out << (format?"New":"Old") << ": " << Packet::Name.at(8) << " (Tag 8)";   // display packet name and tag number
 
     switch (partial){
         case 0:
@@ -26,19 +26,22 @@ std::string Tag8::show_title() const{
             out << " (partial end)";
             break;
         default:
-            {
-                std::stringstream s; s << static_cast <unsigned int> (partial);
-                throw std::runtime_error("Error: Unknown partial type: " + s.str());
-            }
+            throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
             break;
     }
     return out.str();
 }
 
 Tag8::Tag8()
-    : Packet(8, 3),
-      comp(0),
+    : Packet(Packet::ID::Compressed_Data, 3),
+      comp(Compression::Algorithm::UNCOMPRESSED),
       compressed_data()
+{}
+
+Tag8::Tag8(const Tag8 & copy)
+    : Packet(copy),
+      comp(copy.comp),
+      compressed_data(copy.compressed_data)
 {}
 
 Tag8::Tag8(const std::string & data)
@@ -59,7 +62,7 @@ std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
     decompressed.read_raw(get_data()); // do this in case decompressed data contains headers
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "    Compression algorithm: " << Compression_Algorithms.at(comp) << "(compress " << static_cast <unsigned int> (comp) << ")\n"
+        << tab << "    Compression algorithm: " << Compression::Name.at(comp) << "(compress " << std::to_string(comp) << ")\n"
         << tab << "Compressed Data:\n"
         << decompressed.show(indents + 1, indent_size);
     return out.str();
@@ -81,15 +84,15 @@ std::string Tag8::get_data() const{
     return PGP_decompress(comp, compressed_data);
 }
 
-void Tag8::set_comp(const uint8_t c){
+void Tag8::set_comp(const uint8_t alg){
     // recompress data
     if (compressed_data.size()){
         const std::string data = get_data();// decompress data
-        comp = c;                           // set new compression algorithm
+        comp = alg;                         // set new compression algorithm
         set_data(data);                     // compress data with new algorithm
     }
 
-    comp = c;
+    comp = alg;
 
     size = raw().size();
 }

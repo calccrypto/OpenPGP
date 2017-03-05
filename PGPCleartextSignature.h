@@ -58,7 +58,7 @@ class PGPCleartextSignature {
     */
 
     private:
-        std::vector <std::pair <std::string, std::string> > Hash_Armor_Header;
+        PGP::Armor_Keys hash_armor_header;
         std::string message;
         PGPDetachedSignature sig;
 
@@ -75,11 +75,11 @@ class PGPCleartextSignature {
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string write(uint8_t header = 0) const;
 
-        std::vector <std::pair <std::string, std::string> > get_Hash_Armor_Header() const;
+        PGP::Armor_Keys get_hash_armor_header() const;
         std::string get_message() const;
         PGPDetachedSignature get_sig() const;
 
-        void set_Hash_Armor_Header(const std::vector <std::pair <std::string, std::string> > & a);
+        void set_hash_armor_header(const PGP::Armor_Keys & keys);
         void set_message(const std::string & data);
         void set_sig(const PGPDetachedSignature & s);
 

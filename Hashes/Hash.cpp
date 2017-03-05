@@ -1,15 +1,15 @@
 #include "./Hash.h"
 
-Hash::Hash() :
+HashAlg::HashAlg() :
     stack(),
     clen(0)
 {}
 
-Hash::~Hash(){
+HashAlg::~HashAlg(){
     stack.clear();
     clen = 0;
 }
 
-std::string Hash::digest(){
+std::string HashAlg::digest(){
     return unhexlify(hexdigest());
 }

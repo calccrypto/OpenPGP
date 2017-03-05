@@ -1,5 +1,5 @@
 /*
-RNG.h
+RNGs.h
 List of Random Number Generator headers
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com

@@ -34,7 +34,7 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
 std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
-    out << tab << "    Version: " << static_cast <unsigned int> (version) << " - " << ((version < 4)?"Old":"New") << "\n"
+    out << tab << "    Version: " << std::to_string(version) << " - " << ((version < 4)?"Old":"New") << "\n"
         << tab << "    Creation Time: " << show_time(time);
     if (version < 4){
         out << "\n"
@@ -43,13 +43,13 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
             out << " (Never)";
         }
         out << "\n"
-            << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n"
+            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
             << tab << "    RSA n: " << mpitohex(mpi[0]) << "(" << bitsize(mpi[0]) << " bits)\n"
             << tab << "    RSA e: " << mpitohex(mpi[1]);
     }
     else if (version == 4){
         out << "\n"
-            << tab << "    Public Key Algorithm: " << Public_Key_Algorithms.at(pka) << " (pka " << static_cast <unsigned int> (pka) << ")\n";
+            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n";
         if (pka < 4){
             out << tab << "    RSA n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
                 << tab << "    RSA e (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
@@ -131,7 +131,7 @@ uint8_t Key::get_pka() const{
     return pka;
 }
 
-std::vector <PGPMPI> Key::get_mpi() const{
+PKA::Values Key::get_mpi() const{
     return mpi;
 }
 
@@ -143,7 +143,7 @@ void Key::set_pka(uint8_t p){
     pka = p;
 }
 
-void Key::set_mpi(const std::vector <PGPMPI> & m){
+void Key::set_mpi(const PKA::Values & m){
     mpi = m;
     size = raw().size();
 }
@@ -162,8 +162,7 @@ std::string Key::get_fingerprint() const{
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (version);
-        throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Key packet version " + std::to_string(version) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
@@ -177,8 +176,7 @@ std::string Key::get_keyid() const{
         return get_fingerprint().substr(12, 8);
     }
     else{
-        std::stringstream s; s << static_cast <unsigned int> (version);
-        throw std::runtime_error("Error: Key packet version " + s.str() + " not defined.");
+        throw std::runtime_error("Error: Key packet version " + std::to_string(version) + " not defined.");
     }
     return ""; // should never reach here; mainly just to remove compiler warnings
 }

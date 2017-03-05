@@ -26,11 +26,24 @@ THE SOFTWARE.
 #ifndef __TAG17_SUBPACKET__
 #define __TAG17_SUBPACKET__
 
+#include <map>
+#include <string>
+
 #include "Subpacket.h"
 
 class Tag17Subpacket: public Subpacket {
+    public:
+        class ID{
+            public:
+                static const uint8_t Image_Attribute;
+        };
+
+        static const std::map <uint8_t, std::string> Name;
+
     protected:
         using Subpacket::Subpacket;
+
+        std::string show_title() const;
 
         Tag17Subpacket & operator=(const Tag17Subpacket & copy);
 

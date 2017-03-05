@@ -59,9 +59,7 @@ const Module show(
             return -1;
         }
 
-        PGPKey pub(key);
-
-        output(pub.show(), args.at("-o"));
+        output(PGPKey(key).show(), args.at("-o"));
 
         return 0;
     }

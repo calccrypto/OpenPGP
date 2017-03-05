@@ -1,8 +1,13 @@
 #include "Tag9.h"
 
 Tag9::Tag9()
-    : Packet(9),
+    : Packet(Packet::ID::Symmetrically_Encrypted_Data),
       encrypted_data()
+{}
+
+Tag9::Tag9(const Tag9 & copy)
+    : Packet(copy),
+      encrypted_data(copy.encrypted_data)
 {}
 
 Tag9::Tag9(const std::string & data)

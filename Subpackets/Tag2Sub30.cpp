@@ -12,7 +12,7 @@ Tag2Sub30::Tag2Sub30(const std::string & data)
 }
 
 void Tag2Sub30::read(const std::string & data){
-    flags = data[0];
+    flags = data;
     size = data.size();
 }
 
@@ -20,23 +20,25 @@ std::string Tag2Sub30::show(const uint8_t indents, const uint8_t indent_size) co
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title();
-    for(uint8_t bit = 0; bit < 8; bit++){
-        if (flags & (1 << bit)){
-            out << "\n" << tab << "            Flag - " << Features.at(1 << bit) << " (feat " << static_cast <unsigned int> (1 << bit) << ")";
+    for(char const octet : flags){
+        for(uint8_t bit = 0; bit < 8; bit++){
+            if (octet & (1 << bit)){
+                out << "\n" << tab << "            Flag - " << Features_Flags::Name.at(1 << bit) << " (feat " << std::to_string(1 << bit) << ")";
+            }
         }
     }
     return out.str();
 }
 
 std::string Tag2Sub30::raw() const{
-    return std::string(1, flags);
-}
-
-char Tag2Sub30::get_flags() const{
     return flags;
 }
 
-void Tag2Sub30::set_flags(const char f){
+std::string Tag2Sub30::get_flags() const{
+    return flags;
+}
+
+void Tag2Sub30::set_flags(const std::string & f){
     flags = f;
 }
 

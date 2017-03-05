@@ -26,6 +26,9 @@ THE SOFTWARE.
 #ifndef __TAG17__
 #define __TAG17__
 
+#include <vector>
+
+#include "../common/includes.h"
 #include "../Subpackets/Tag17Subpackets.h"
 #include "ID.h"
 
@@ -47,6 +50,7 @@ class Tag17 : public ID{
         typedef std::shared_ptr <Tag17> Ptr;
 
         Tag17();
+        Tag17(const Tag17 & copy);
         Tag17(const std::string & data);
         ~Tag17();
         void read(const std::string & data);

@@ -26,8 +26,18 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB21__
 #define __TAG2_SUB21__
 
+#include "../Hashes/Hashes.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.8. Preferred Hash Algorithms
+//
+//    (array of one-octet values)
+//
+//    Message digest algorithm numbers that indicate which algorithms the
+//    key holder prefers to receive. Like the preferred symmetric
+//    algorithms, the list is ordered. Algorithm numbers are in Section 9.
+//   This is only found on a self-signature.
+//
 class Tag2Sub21 : public Tag2Subpacket{
     private:
         std::string pha;

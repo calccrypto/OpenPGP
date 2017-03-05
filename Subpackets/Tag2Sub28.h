@@ -28,6 +28,19 @@ THE SOFTWARE.
 
 #include "Tag2Subpacket.h"
 
+// 5.2.3.22.  Signer's User ID
+//
+//    (String)
+//
+//    This subpacket allows a keyholder to state which User ID is
+//    responsible for the signing.  Many keyholders use a single key for
+//    different purposes, such as business communications as well as
+//    personal communications.  This subpacket allows such a keyholder to
+//    state which of their roles is making a signature.
+//
+//    This subpacket is not appropriate to use to refer to a User Attribute
+//    packet.
+//
 class Tag2Sub28 : public Tag2Subpacket{
     private:
         std::string signer;

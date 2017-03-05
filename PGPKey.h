@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __PGP_KEY__
 
 #include "Packets/packets.h"
+#include "PKA/PKAs.h"
 #include "PGP.h"
 
 class PGPKey : public PGP {
@@ -45,6 +46,13 @@ class PGPKey : public PGP {
             - Zero or more Subkey packets
             - After each Subkey packet, one Signature packet, plus optionally a revocation
     */
+    private:
+        const std::map <uint8_t, std::string> Public_Key_Type = {
+            std::make_pair( 5, "sec"),
+            std::make_pair( 6, "pub"),
+            std::make_pair( 7, "ssb"),
+            std::make_pair(14, "sub"),
+        };
 
     protected:
         bool meaningful(uint8_t tag) const;
@@ -79,7 +87,7 @@ class PGPSecretKey : public PGPKey {
         PGPSecretKey(std::istream & stream);
         ~PGPSecretKey();
 
-        PGPPublicKey pub() const;
+        PGPPublicKey get_public() const;    // Extract Public Key data from a Secret Key
 
         bool meaningful()  const;
 
@@ -101,13 +109,12 @@ class PGPPublicKey : public PGPKey {
 
         bool meaningful() const;
 
+        PGPPublicKey & operator=(const PGPPublicKey & pub);
+        PGPPublicKey & operator=(const PGPSecretKey & pri);
         PGP::Ptr clone()  const;
 };
 
 std::ostream & operator <<(std::ostream & stream, const PGPPublicKey & pgp);
-
-// Extract Public Key data from a Secret Key
-PGPPublicKey Secret2PublicKey(const PGPSecretKey & pri);
 
 // Search PGP keys for signing keys
 // leave keyid empty to find the signing key without matching the key id

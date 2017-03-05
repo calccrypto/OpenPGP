@@ -1,14 +1,18 @@
 #include "encrypt.h"
 
 Tag6::Ptr find_encrypting_key(const PGP & k){
-    if ((k.get_ASCII_Armor() == 1) || (k.get_ASCII_Armor() == 2)){
+    if ((k.get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
+        (k.get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
         for(Packet::Ptr const & p : k.get_packets()){
-            if ((p -> get_tag() == 5) || (p -> get_tag() == 6) || (p -> get_tag() == 7) || (p -> get_tag() == 14)){
+            if ((p -> get_tag() == Packet::ID::Secret_Key)    ||
+                (p -> get_tag() == Packet::ID::Public_Key)    ||
+                (p -> get_tag() == Packet::ID::Secret_Subkey) ||
+                (p -> get_tag() == Packet::ID::Public_Subkey)){
                 Tag6::Ptr key = std::make_shared <Tag6> (p -> raw());
                 // make sure key has encrypting keys
-                if ((key -> get_pka() == 1) || // RSA
-                    (key -> get_pka() == 2) || // RSA
-                    (key -> get_pka() == 16)){ // ElGamal
+                if ((key -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
+                    (key -> get_pka() == PKA::ID::RSA_Encrypt_Only)    ||
+                    (key -> get_pka() == PKA::ID::ElGamal)){
                         return key;
                 }
             }
@@ -17,26 +21,39 @@ Tag6::Ptr find_encrypting_key(const PGP & k){
     return nullptr;
 }
 
-std::vector <PGPMPI> pka_encrypt(const uint8_t pka, PGPMPI data, const std::vector <PGPMPI> & pub){
-    if (pka < 3){   // RSA
+PKA::Values pka_encrypt(const uint8_t pka,
+                        const PGPMPI & data,
+                        const PKA::Values & pub){
+    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
+        (pka == PKA::ID::RSA_Encrypt_Only)){
         return {RSA_encrypt(data, pub)};
     }
-    if (pka == 16){ // ElGamal
+    if (pka == PKA::ID::ElGamal){
         return ElGamal_encrypt(data, pub);
     }
     else{
-        throw std::runtime_error("Error: PKA number " + std::to_string(static_cast <unsigned int> (pka)) + " not allowed or unknown.");
+        throw std::runtime_error("Error: PKA number " + std::to_string(pka) + " not allowed or unknown.");
     }
     return {}; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::vector <PGPMPI> pka_encrypt(const uint8_t pka, const std::string & data, const std::vector <PGPMPI> & pub){
+PKA::Values pka_encrypt(const uint8_t pka,
+                        const std::string & data,
+                        const PKA::Values & pub){
     return pka_encrypt(pka, rawtompi(data), pub);
 }
 
-Packet::Ptr encrypt_data(const std::string & session_key, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc, const PGPSecretKey::Ptr & signer, const std::string & sig_passphrase){
+Packet::Ptr encrypt_data(const std::string & session_key,
+                         const std::string & data,
+                         const std::string & filename,
+                         const uint8_t sym_alg,
+                         const uint8_t comp,
+                         const bool mdc,
+                         const PGPSecretKey::Ptr & signer,
+                         const std::string & sig_passphrase){
+
     // generate prefix
-    uint16_t BS = Symmetric_Algorithm_Block_Length.at(Symmetric_Algorithms.at(sym_alg)) >> 3;
+    std::size_t BS = Sym::Block_Length.at(sym_alg) >> 3;
     std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1, '0'));
 
     std::string to_encrypt;
@@ -103,13 +120,13 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     if (!mdc){
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
-        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, 9, to_encrypt, session_key, prefix));
+        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, Sym::ID::AES256, to_encrypt, session_key, prefix));
         encrypted = std::make_shared <Tag9> (tag9);
     }
     else{
         // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
-        tag19.set_hash(use_hash(2, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
+        tag19.set_hash(use_hash(Hash::ID::SHA1, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
 
         // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
         Tag18 tag18;
@@ -121,10 +138,19 @@ Packet::Ptr encrypt_data(const std::string & session_key, const std::string & da
     return encrypted;
 }
 
-PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const std::string & filename, const uint8_t sym_alg, const uint8_t comp, const bool mdc, const PGPSecretKey::Ptr & signer, const std::string & sig_passphrase){
+PGPMessage encrypt_pka(const PGPPublicKey & pub,
+                       const std::string & data,
+                       const std::string & filename,
+                       const uint8_t sym_alg,
+                       const uint8_t comp,
+                       const bool mdc,
+                       const PGPSecretKey::Ptr & signer,
+                       const std::string & sig_passphrase){
+
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if ((pub.get_ASCII_Armor() != 1) && (pub.get_ASCII_Armor() != 2)){
+    if ((pub.get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
+        (pub.get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
@@ -140,7 +166,7 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
         throw std::runtime_error("Error: Key " + hexlify(public_key -> get_keyid()) + " has been revoked. Nothing done.");
     }
 
-    std::vector <PGPMPI> mpi = public_key -> get_mpi();
+    PKA::Values mpi = public_key -> get_mpi();
     Tag1::Ptr tag1 = std::make_shared <Tag1> ();
     tag1 -> set_keyid(public_key -> get_keyid());
     tag1 -> set_pka(public_key -> get_pka());
@@ -148,7 +174,7 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
     // do calculations
 
     // generate session key
-    uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
+    std::size_t key_len = Sym::Key_Length.at(sym_alg);
 
     // get hex version of session key
     std::string session_key = mpitohex(bintompi(BBS().rand(key_len)));
@@ -174,8 +200,8 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub, const std::string & data, const
 
     // write data to output container
     PGPMessage out = PGPMessage();
-    out.set_ASCII_Armor(0);
-    out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
+    out.set_type(PGP::Type::MESSAGE);
+    out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag1, encrypted});
 
     return out;
@@ -185,11 +211,11 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
     std::cerr << "Warning: encrypt_sym is untested. Potentially incorrect" << std::endl;
 
     // generate Symmetric-Key Encrypted Session Key Packets (Tag 3)
-    uint16_t key_len = Symmetric_Algorithm_Key_Length.at(Symmetric_Algorithms.at(sym_alg));
+    size_t key_len = Sym::Key_Length.at(sym_alg);
 
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
-    s2k -> set_type(3);
-    s2k -> set_hash(2); // SHA1
+    s2k -> set_type(S2K::ID::Iterated_and_Salted_S2K);
+    s2k -> set_hash(Hash::ID::SHA1);
     s2k -> set_salt(unhexlify(mpitohex(bintompi(BBS().rand(key_len)))));
     s2k -> set_count(96);
 
@@ -213,8 +239,8 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
 
     // write to output container
     PGPMessage out;
-    out.set_ASCII_Armor(0);
-    out.set_Armor_Header(std::vector <std::pair <std::string, std::string> > ({std::pair <std::string, std::string> ("Version", "cc")}));
+    out.set_type(PGP::Type::MESSAGE);
+    out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag3, encrypted});
 
     return out;

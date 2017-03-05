@@ -33,6 +33,7 @@ class Tag14 : public Tag6{
         typedef std::shared_ptr <Tag14> Ptr;
 
         Tag14();
+        Tag14(const Tag14 & copy);
         Tag14(const std::string & data);
         Packet::Ptr clone() const;
 };

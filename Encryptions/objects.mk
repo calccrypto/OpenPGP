@@ -1,4 +1,5 @@
 ENCRYPTIONS_OBJECTS=SymAlg.o      \
+                    Encryptions.o \
                     AES.o         \
                     Blowfish.o    \
                     Camellia.o    \

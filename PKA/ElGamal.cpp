@@ -1,5 +1,6 @@
 #include "ElGamal.h"
-std::vector <PGPMPI> ElGamal_keygen(unsigned int bits){
+
+PKA::Values ElGamal_keygen(unsigned int bits){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bits /= 5;
@@ -41,7 +42,7 @@ std::vector <PGPMPI> ElGamal_keygen(unsigned int bits){
     return {p, g, y, x};
 }
 
-std::vector <PGPMPI> ElGamal_encrypt(const PGPMPI & data, const std::vector <PGPMPI> & pub){
+PKA::Values ElGamal_encrypt(const PGPMPI & data, const PKA::Values & pub){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
     PGPMPI k = bintompi(BBS().rand(bitsize(pub[0])));
     k %= pub[0];
@@ -51,11 +52,11 @@ std::vector <PGPMPI> ElGamal_encrypt(const PGPMPI & data, const std::vector <PGP
     return {r, (data * s) % pub[0]};
 }
 
-std::vector <PGPMPI> ElGamal_encrypt(const std::string & data, const std::vector <PGPMPI> & pub){
+PKA::Values ElGamal_encrypt(const std::string & data, const PKA::Values & pub){
     return ElGamal_encrypt(rawtompi(data), pub);
 }
 
-std::string ElGamal_decrypt(std::vector <PGPMPI> & c, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub){
+std::string ElGamal_decrypt(PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub){
     PGPMPI s, m;
     s = powm(c[0], pri[0], pub[0]);
     m = invert(s, pub[0]);

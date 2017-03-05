@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __DECRYPT__
 #define __DECRYPT__
 
-#include <iostream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -35,9 +33,8 @@ THE SOFTWARE.
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
 #include "Packets/packets.h"
-#include "PKA/PKA.h"
+#include "PKA/PKAs.h"
 #include "cfb.h"
-#include "consts.h"
 #include "mpi.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
@@ -46,15 +43,30 @@ THE SOFTWARE.
 
 // used internally
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid);
-std::string pka_decrypt(const uint8_t pka, std::vector <PGPMPI> & data, const std::vector <PGPMPI> & pri, const std::vector <PGPMPI> & pub = {});
+std::string pka_decrypt(const uint8_t pka,
+                        PKA::Values & data,
+                        const PKA::Values & pri,
+                        const PKA::Values & pub = {});
 
 // decrypt data once session key is known
-PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::string & session_key, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);
+PGPMessage decrypt_data(const uint8_t sym,
+                        const PGPMessage & m,
+                        const std::string & session_key,
+                        const bool writefile = true,
+                        const PGPPublicKey::Ptr & verify = nullptr);
 
 // called from outside
 // session key encrypted with public key algorithm; will call decrypt_sym if tag3 is found
-std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const std::string & passphrase, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);
+std::string decrypt_pka(const PGPSecretKey & pri,
+                        const PGPMessage & m,
+                        const std::string & passphrase,
+                        const bool writefile = true,
+                        const PGPPublicKey::Ptr & verify = nullptr);
+
 // session key encrypted with symmetric algorithm
-std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, const bool writefile = true, const PGPPublicKey::Ptr & verify = nullptr);
+std::string decrypt_sym(const PGPMessage & m,
+                        const std::string & passphrase,
+                        const bool writefile = true,
+                        const PGPPublicKey::Ptr & verify = nullptr);
 
 #endif

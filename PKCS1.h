@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include <stdexcept>
 
 #include "common/includes.h"
-#include "RNG/RNG.h"
-#include "consts.h"
+#include "Hashes/Hashes.h"
+#include "RNG/RNGs.h"
 #include "mpi.h"
 #include "pgptime.h"
 

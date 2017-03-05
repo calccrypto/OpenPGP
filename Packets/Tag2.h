@@ -28,7 +28,10 @@ THE SOFTWARE.
 #ifndef __TAG2__
 #define __TAG2__
 
+#include "../Hashes/Hashes.h"
+#include "../PKA/PKAs.h"
 #include "packet.h"
+#include "sigtypes.h"
 
 class Tag2 : public Packet{
     public:
@@ -39,7 +42,7 @@ class Tag2 : public Packet{
         uint8_t type;
         uint8_t pka;
         uint8_t hash;
-        std::vector <PGPMPI> mpi;
+        PKA::Values mpi;
         std::string left16;        // 2 octets
 
         // version 3 stuff
@@ -71,7 +74,7 @@ class Tag2 : public Packet{
         uint8_t get_pka()  const;
         uint8_t get_hash() const;
         std::string get_left16() const;                         // whatever is stored, not calculated
-        std::vector <PGPMPI> get_mpi() const;
+        PKA::Values get_mpi() const;
 
         // special functions: works differently depending on version
         uint32_t get_time()     const;
@@ -88,7 +91,7 @@ class Tag2 : public Packet{
         void set_type(const uint8_t t);
         void set_hash(const uint8_t h);
         void set_left16(const std::string & l);
-        void set_mpi(const std::vector <PGPMPI> & m);
+        void set_mpi(const PKA::Values & m);
 
         // special functions: works differently depending on version
         void set_time(const uint32_t t);

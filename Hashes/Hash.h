@@ -30,10 +30,10 @@ THE SOFTWARE.
 
 #include "../common/includes.h"
 
-class Hash{
+class HashAlg{
     public:
-        Hash();
-        virtual ~Hash();
+        HashAlg();
+        virtual ~HashAlg();
         virtual void update(const std::string & str) = 0;
         virtual std::string hexdigest() = 0;
         std::string digest();

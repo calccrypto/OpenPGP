@@ -26,8 +26,30 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB12__
 #define __TAG2_SUB12__
 
+#include "../PKA/PKAs.h"
 #include "Tag2Subpacket.h"
 
+// 5.2.3.15. Revocation Key
+//
+//    (1 octet of class, 1 octet of public-key algorithm ID, 20 octets of
+//    fingerprint)
+//
+//    Authorizes the specified key to issue revocation signatures for this
+//    key. Class octet must have bit 0x80 set. If the bit 0x40 is set,
+//    then this means that the revocation information is sensitive. Other
+//    bits are for future expansion to other kinds of authorizations. This
+//    is found on a self-signature.
+//
+//    If the "sensitive" flag is set, the keyholder feels this subpacket
+//    contains private trust information that describes a real-world
+//    sensitive relationship. If this flag is set, implementations SHOULD
+//    NOT export this signature to other users except in cases where the
+//    data needs to be available: when the signature is being sent to the
+//    designated revoker, or when it is accompanied by a revocation
+//    signature from that revoker. Note that it may be appropriate to
+//    isolate this subpacket within a separate signature so that it is not
+//    combined with other subpackets that need to be exported.
+//
 class Tag2Sub12 : public Tag2Subpacket{
     private:
         uint8_t _class;

@@ -15,10 +15,7 @@ std::string Partial::show_title() const{
             out << " (partial end)";
             break;
         default:
-            {
-                std::stringstream s; s << static_cast <unsigned int> (partial);
-                throw std::runtime_error("Error: Unknown partial type: " + s.str());
-            }
+            throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
             break;
     }
     return out.str();

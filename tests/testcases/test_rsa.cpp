@@ -30,9 +30,9 @@ TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
 }
 
 TEST(RSATest, test_rsa_keygen) {
-    std::vector <PGPMPI> key = RSA_keygen(512);
-    std::vector <PGPMPI> pub = {key[0], key[1]};
-    std::vector <PGPMPI> pri = {key[2]};
+    PKA::Values key = RSA_keygen(512);
+    PKA::Values pub = {key[0], key[1]};
+    PKA::Values pri = {key[2]};
 
     PGPMPI message = rawtompi("The magic words are squeamish ossifrage\n");
 

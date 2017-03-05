@@ -1,5 +1,43 @@
 #include "PGP.h"
 
+const PGP::Type_t PGP::Type::UNKNOWN           = 0;
+const PGP::Type_t PGP::Type::MESSAGE           = 1;
+const PGP::Type_t PGP::Type::PUBLIC_KEY_BLOCK  = 2;
+const PGP::Type_t PGP::Type::PRIVATE_KEY_BLOCK = 3;
+const PGP::Type_t PGP::Type::MESSAGE_PART_XY   = 4;
+const PGP::Type_t PGP::Type::MESSAGE_PART_X    = 5;
+const PGP::Type_t PGP::Type::SIGNATURE         = 6;
+const PGP::Type_t PGP::Type::SIGNED_MESSAGE    = 7;
+
+const std::string PGP::ASCII_Armor_Header[] = {
+   "",                  // unknown type
+   "MESSAGE",           // Used for signed, encrypted, or compressed files.
+   "PUBLIC KEY BLOCK",  // Used for armoring public keys.
+   "PRIVATE KEY BLOCK", // Used for armoring private keys.
+   "MESSAGE, PART X/Y", // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+   "MESSAGE, PART X",   // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+   "SIGNATURE",         // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+   "SIGNED MESSAGE",    // Used for cleartext signatures; header not really part of RFC 4880.
+};
+
+// ASCII descriptor of OpenPGP packet
+const std::string PGP::ASCII_Armor_Key[] = {
+    "Version",          // which states the OpenPGP implementation and version used to encode the message.
+
+    "Comment",          // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.
+                        // Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
+
+    "MessageID",        // a 32-character string of printable characters. The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header. MessageID strings should be
+                        // unique enough that the recipient of the mail can associate all the parts of a message with each other. A good checksum or cryptographic hash function is sufficient.
+                        // The MessageID SHOULD NOT appear unless it is in a multi-part message. If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic
+                        // fashion, rather than contain a purely random value. This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key
+                        // information.
+
+    "Hash",             // a comma-separated list of hash algorithms used in this message. This is used only in cleartext signed messages.
+
+    "Charset",          // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
+};
+
 unsigned int PGP::partialBodyLen(uint8_t first_octet) const{
     return 1 << (first_octet & 0x1f);
 }
@@ -194,15 +232,15 @@ std::string PGP::format_string(std::string data, uint8_t line_length) const{
 
 PGP::PGP()
     : armored(true),
-      ASCII_Armor(static_cast <uint8_t> (-1)),
-      Armor_Header(),
+      type(PGP::Type::UNKNOWN),
+      keys(),
       packets()
 {}
 
 PGP::PGP(const PGP & copy)
     : armored(copy.armored),
-      ASCII_Armor(copy.ASCII_Armor),
-      Armor_Header(copy.Armor_Header),
+      type(copy.type),
+      keys(copy.keys),
       packets(copy.get_packets_clone())
 {}
 
@@ -255,22 +293,22 @@ void PGP::read(std::istream & stream){
     }
     else{
         // parse armor header
-        uint8_t new_ASCII_Armor;
-        for(new_ASCII_Armor = 0; new_ASCII_Armor < 7; new_ASCII_Armor++){
-            if (("-----BEGIN PGP " + ASCII_Armor_Header[new_ASCII_Armor] + "-----") == line){
+        Type_t new_type;
+        for(new_type = PGP::Type::MESSAGE; new_type != PGP::Type::SIGNED_MESSAGE; new_type++){
+            if (("-----BEGIN PGP " + ASCII_Armor_Header[new_type] + "-----") == line){
                 break;
             }
         }
 
         // Cleartext Signature Framework
-        if (new_ASCII_Armor == 6){
+        if (new_type == PGP::Type::SIGNED_MESSAGE){
             throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
         }
 
         // if ASCII Armor was set before calling read()
-        if (ASCII_Armor != static_cast <uint8_t> (-1)){
-            if (ASCII_Armor != new_ASCII_Armor){
-                std::cerr << "Warning: ASCII Armor does not match data type: " << (int) new_ASCII_Armor << std::endl;
+        if (type != PGP::Type::UNKNOWN){
+            if (type != new_type){
+                std::cerr << "Warning: ASCII Armor does not match data type: " << std::to_string(new_type) << std::endl;
             }
         }
 
@@ -296,7 +334,7 @@ void PGP::read(std::istream & stream){
                 std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << key << "\"." << std::endl;
             }
 
-            Armor_Header.push_back(std::make_pair(key, value));
+            keys.push_back(Armor_Key(key, value));
         }
 
         // read up to tail
@@ -371,31 +409,31 @@ std::string PGP::write(const uint8_t armor, const uint8_t header) const{
     if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
         return packet_string;                  // return raw data
     }
-    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
-    for(std::pair <std::string, std::string> const & key : Armor_Header){
+    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[type] + "-----\n";
+    for(PGP::Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
     out += "\n";
-    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[ASCII_Armor] + "-----\n";
+    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[type] + "-----\n";
 }
 
 bool PGP::get_armored() const{
     return armored;
 }
 
-uint8_t PGP::get_ASCII_Armor() const{
-    return ASCII_Armor;
+PGP::Type_t PGP::get_type() const{
+    return type;
 }
 
-PGP::Armor_Header_T PGP::get_Armor_Header() const{
-    return Armor_Header;
+PGP::Armor_Keys PGP::get_keys() const{
+    return keys;
 }
 
-PGP::Packets_T PGP::get_packets() const{
+PGP::Packets PGP::get_packets() const{
     return packets;
 }
 
-PGP::Packets_T PGP::get_packets_clone() const{
+PGP::Packets PGP::get_packets_clone() const{
     std::vector <Packet::Ptr> out;
     for(Packet::Ptr const & p : packets){
         out.push_back(p -> clone());
@@ -407,16 +445,15 @@ void PGP::set_armored(const bool a){
     armored = a;
 }
 
-void PGP::set_ASCII_Armor(const uint8_t armor){
-    ASCII_Armor = armor;
-    armored = true;
+void PGP::set_type(const PGP::Type_t header){
+    type = header;
 }
 
-void PGP::set_Armor_Header(const PGP::Armor_Header_T & header){
-    Armor_Header = header;
+void PGP::set_keys(const PGP::Armor_Keys & k){
+    keys = k;
 }
 
-void PGP::set_packets(const PGP::Packets_T & p){
+void PGP::set_packets(const PGP::Packets & p){
     packets.clear();
     for(Packet::Ptr const & t : p){
         packets.push_back(t -> clone());
@@ -425,8 +462,8 @@ void PGP::set_packets(const PGP::Packets_T & p){
 
 PGP & PGP::operator=(const PGP & copy){
     armored = copy.armored;
-    ASCII_Armor = copy.ASCII_Armor;
-    Armor_Header = copy.Armor_Header;
+    type = copy.type;
+    keys = copy.keys;
     packets = copy.get_packets_clone();
     return *this;
 }

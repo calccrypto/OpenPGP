@@ -21,8 +21,8 @@ std::string Tag2Sub5::show(const uint8_t indents, const uint8_t indent_size) con
     const std::string tab(indents * indent_size, ' ');
     std::stringstream out;
     out << tab << show_title() << "\n"
-        << tab << "            Trust Level: " << static_cast <unsigned int> (level) << "\n"
-        << tab << "            Trust Amount: " << static_cast <unsigned int> (amount);
+        << tab << "            Trust Level: " << std::to_string(level) << "\n"
+        << tab << "            Trust Amount: " << std::to_string(amount);
     return out.str();
 }
 

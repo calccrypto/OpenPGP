@@ -26,18 +26,9 @@ THE SOFTWARE.
 #ifndef __OPENPGP_CFB__
 #define __OPENPGP_CFB__
 
-#include <iostream>
 #include <stdexcept>
 
 #include "Encryptions/Encryptions.h"
-#include "RNG/RNG.h"
-#include "consts.h"
-
-const std::string TDES_mode1 = "e";
-const std::string TDES_mode2 = "d";
-const std::string TDES_mode3 = "e";
-
-SymAlg::Ptr use_sym_alg(const uint8_t sym_alg, const std::string & key);
 
 // OpenPGP CFB as described in RFC 4880 section 13.9
 std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix = "");
