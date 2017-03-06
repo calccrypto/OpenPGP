@@ -89,7 +89,7 @@ int verify_detached_signature(const PGPKey & key, std::istream & stream, const P
 }
 
 // 0x00: Signature of a binary document.
-int verify_message(const Keey::Ptr & signing_key, const PGPMessage & m, std::string & error){
+int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::string & error){
     // most of the time OpenPGP Message data is compressed
     // then it is encrypted
 
