@@ -95,11 +95,11 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m, std::st
         error -> clear();
     }
 
-    if (m.match(PGPMessage::ENCRYPTEDMESSAGE)){
+    if (m.match(PGP::Message::ENCRYPTEDMESSAGE)){
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         throw std::runtime_error("Error: Use decrypt to verify message.");
     }
-    else if (m.match(PGPMessage::SIGNEDMESSAGE)){
+    else if (m.match(PGP::Message::SIGNEDMESSAGE)){
         // // Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
         // // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
@@ -203,29 +203,28 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m, std::st
 
                         // get hashed data
                         std::string digest;
-                        switch ((*(OPSP.rbegin())) -> get_type()){
-                            case 0:
-                                digest = to_sign_00(binary, *(SP.begin()));
-                                break;
-                            case 1:
+                        if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::ID::Signature_of_a_binary_document){
+                            digest = to_sign_00(binary, *(SP.begin()));
+                        }
+                        else if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::ID::Signature_of_a_canonical_text_document){
                                 digest = to_sign_01(text, *(SP.begin()));
-                                break;
-
-                            // don't know if other signature types can be here
-
-                            // certifications
-                            case 0x10: case 0x11:
-                            case 0x12: case 0x13:
-                            default:
-                                {
-                                    std::cerr << "Warning: Bad signature type: " << std::to_string((*(OPSP.rbegin())) -> get_type()) << std::endl;
-                                    verify = false;
-                                }
-                                break;
                         }
 
-                        // check if the key matches this signature
-                        verify = pka_verify(digest, signing_key, *(SP.begin()));
+                        // don't know if other signature types can be here
+                        // else if (Signature_Type::is_cert((*(OPSP.rbegin())) -> get_type())){
+                            // std::cerr << "Warning: Bad signature type: " << std::to_string((*(OPSP.rbegin())) -> get_type()) << std::endl;
+                            // verify = false;
+                        // }
+                        else{
+                            std::cerr << "Warning: Bad signature type: " << std::to_string((*(OPSP.rbegin())) -> get_type()) << std::endl;
+                            verify = false;
+                            break;
+                        }
+
+                        if (verify){
+                            // check if the key matches this signature
+                            verify = pka_verify(digest, signing_key, *(SP.begin()));
+                        }
                     }
                 // }
             // }
@@ -248,7 +247,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m, std::st
 
         return verify;
     }
-    else if (m.match(PGPMessage::COMPRESSEDMESSAGE)){
+    else if (m.match(PGP::Message::COMPRESSEDMESSAGE)){
         // Compressed Message :- Compressed Data Packet.
 
         // only one compressed data packet
@@ -260,7 +259,7 @@ bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m, std::st
 
         return verify_message(signing_key, PGPMessage(message), error);
     }
-    else if (m.match(PGPMessage::LITERALMESSAGE)){
+    else if (m.match(PGP::Message::LITERALMESSAGE)){
         // Literal Message :- Literal Data Packet.
 
         // only one literal data packet

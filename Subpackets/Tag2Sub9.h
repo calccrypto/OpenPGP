@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <list>
 
-#include "../time.h"
+#include "../pgptime.h"
 #include "Tag2Subpacket.h"
 
 // 5.2.3.6. Key Expiration Time

@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "Hashes/Hashes.h"
 #include "Packets/packets.h"
-#include "time.h"
+#include "pgptime.h"
 
 // Modify data for signature version 3 or 4
 //

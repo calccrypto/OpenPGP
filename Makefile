@@ -54,13 +54,13 @@ decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/pac
 encrypt.o: encrypt.h encrypt.cpp Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h revoke.h
 	$(CXX) $(CXXFLAGS) encrypt.cpp
 
-generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h time.h PKCS1.h sign.h sigcalc.h
+generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h pgptime.h PKCS1.h sign.h sigcalc.h
 	$(CXX) $(CXXFLAGS) generatekey.cpp
 
 mpi.o: mpi.h mpi.cpp common/includes.h
 	$(CXX) $(CXXFLAGS) mpi.cpp
 
-PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h time.h radix64.h
+PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h pgptime.h radix64.h
 	$(CXX) $(CXXFLAGS) PGP.cpp
 
 PGPCleartextSignature.o: PGPCleartextSignature.h PGPCleartextSignature.cpp PGP.h PGPDetachedSignature.h
@@ -75,10 +75,10 @@ PGPKey.o: PGPKey.h PGPKey.cpp Packets/packets.h PGP.h
 PGPMessage.o: PGPMessage.h PGPMessage.cpp PGP.h
 	$(CXX) $(CXXFLAGS) PGPMessage.cpp
 
-pgptime.o: time.h pgptime.cpp
+pgptime.o: pgptime.h pgptime.cpp
 	$(CXX) $(CXXFLAGS) pgptime.cpp
 
-PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNGs.h time.h
+PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNGs.h pgptime.h
 	$(CXX) $(CXXFLAGS) PKCS1.cpp
 
 radix64.o: radix64.h radix64.cpp common/includes.h
@@ -87,10 +87,10 @@ radix64.o: radix64.h radix64.cpp common/includes.h
 revoke.o: revoke.h revoke.cpp PGPKey.h PKCS1.h mpi.h PGPKey.h PKCS1.h sign.h verify.h
 	$(CXX) $(CXXFLAGS) revoke.cpp
 
-sigcalc.o: sigcalc.h sigcalc.cpp Hashes/Hashes.h Packets/packets.h time.h
+sigcalc.o: sigcalc.h sigcalc.cpp Hashes/Hashes.h Packets/packets.h pgptime.h
 	$(CXX) $(CXXFLAGS) sigcalc.cpp
 
-sign.o: sign.h sign.cpp common/includes.h Compress/Compress.h Packets/packets.h PKA/PKA.h decrypt.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h time.h revoke.h sigcalc.h
+sign.o: sign.h sign.cpp common/includes.h Compress/Compress.h Packets/packets.h PKA/PKA.h decrypt.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h pgptime.h revoke.h sigcalc.h
 	$(CXX) $(CXXFLAGS) sign.cpp
 
 verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPMessage.h PGPKey.h PKCS1.h sigcalc.h
