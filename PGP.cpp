@@ -820,6 +820,7 @@ bool PGP::meaningful_KEY_BLOCK(const PGP::Type_t & t, std::string & error) const
     }
 
     // the index should be at the end of the packets
+
     return (i == packets.size());
 }
 
