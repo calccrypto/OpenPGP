@@ -9,9 +9,9 @@ OPENPGP_OBJECTS=cfb.o                   \
                 PGPKey.o                \
                 PGPMessage.o            \
                 PKCS1.o                 \
+                pgptime.o               \
                 radix64.o               \
                 revoke.o                \
                 sigcalc.o               \
                 sign.o                  \
-                time.o                  \
                 verify.o

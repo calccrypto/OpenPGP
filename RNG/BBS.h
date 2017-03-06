@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "../common/cryptomath.h"
 #include "../mpi.h"
-#include "../time.h"
+#include "../pgptime.h"
 
 class BBS{
     private:

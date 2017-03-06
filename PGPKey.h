@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 class PGPKey : public PGP {
     private:
+        // for listing keys
         const std::map <uint8_t, std::string> Public_Key_Type = {
             std::make_pair( 5, "sec"),
             std::make_pair( 6, "pub"),
@@ -39,13 +40,11 @@ class PGPKey : public PGP {
             std::make_pair(14, "sub"),
         };
 
-    protected:
-        bool match(uint8_t tag, std::string & error) const;
-
     public:
         typedef std::shared_ptr <PGPKey> Ptr;
 
         PGPKey();
+        PGPKey(const PGP & copy);
         PGPKey(const PGPKey & copy);
         PGPKey(const std::string & data);
         PGPKey(std::istream & stream);
@@ -56,9 +55,8 @@ class PGPKey : public PGP {
 
         // whether or not data matches a Key format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
-        virtual PGP::Ptr clone()  const;
+        virtual PGP::Ptr clone() const;
 };
 
 std::ostream & operator <<(std::ostream & stream, const PGPKey & pgp);
@@ -135,6 +133,7 @@ class PGPPublicKey : public PGPKey {
         typedef std::shared_ptr <PGPPublicKey> Ptr;
 
         PGPPublicKey();
+        PGPPublicKey(const PGPKey & copy);
         PGPPublicKey(const PGPPublicKey & copy);
         PGPPublicKey(const std::string & data);
         PGPPublicKey(std::istream & stream);
@@ -143,11 +142,11 @@ class PGPPublicKey : public PGPKey {
 
         // whether or not data matches the Public Key format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
         PGPPublicKey & operator=(const PGPPublicKey & pub);
         PGPPublicKey & operator=(const PGPSecretKey & pri);
-        PGP::Ptr clone()  const;
+
+        PGP::Ptr clone() const;
 };
 
 std::ostream & operator <<(std::ostream & stream, const PGPPublicKey & pgp);
@@ -169,6 +168,7 @@ class PGPSecretKey : public PGPKey {
         typedef std::shared_ptr <PGPSecretKey> Ptr;
 
         PGPSecretKey();
+        PGPSecretKey(const PGPKey & copy);
         PGPSecretKey(const PGPSecretKey & copy);
         PGPSecretKey(const std::string & data);
         PGPSecretKey(std::istream & stream);
@@ -179,9 +179,8 @@ class PGPSecretKey : public PGPKey {
 
         // whether or not data matches Secret Key format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
-        PGP::Ptr clone()   const;
+        PGP::Ptr clone() const;
 };
 
 std::ostream & operator <<(std::ostream & stream, const PGPSecretKey & pgp);

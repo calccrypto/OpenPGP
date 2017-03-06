@@ -40,6 +40,7 @@ class PGPDetachedSignature : public PGP {
         typedef std::shared_ptr <PGPDetachedSignature> Ptr;
 
         PGPDetachedSignature();
+        PGPDetachedSignature(const PGP & copy);
         PGPDetachedSignature(const PGPDetachedSignature & copy);
         PGPDetachedSignature(const std::string & data);
         PGPDetachedSignature(std::istream & stream);
@@ -47,9 +48,7 @@ class PGPDetachedSignature : public PGP {
 
         // whether or not data matches Detached Signature format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
-        using PGP::operator=;
         PGP::Ptr clone() const;
 };
 

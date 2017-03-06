@@ -1,5 +1,5 @@
 /*
-time.h
+pgptime.h
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
