@@ -30,9 +30,40 @@ THE SOFTWARE.
 
 #include "../common/includes.h"
 #include "../Subpackets/Tag17Subpackets.h"
-#include "ID.h"
+#include "User.h"
 
-class Tag17 : public ID{
+// 5.12. User Attribute Packet (Tag 17)
+//
+//    The User Attribute packet is a variation of the User ID packet. It
+//    is capable of storing more types of data than the User ID packet,
+//    which is limited to text. Like the User ID packet, a User Attribute
+//    packet may be certified by the key owner ("self-signed") or any other
+//    key owner who cares to certify it. Except as noted, a User Attribute
+//    packet may be used anywhere that a User ID packet may be used.
+//
+//    While User Attribute packets are not a required part of the OpenPGP
+//    standard, implementations SHOULD provide at least enough
+//    compatibility to properly handle a certification signature on the
+//    User Attribute packet. A simple way to do this is by treating the
+//    User Attribute packet as a User ID packet with opaque contents, but
+//    an implementation may use any method desired.
+//
+//    The User Attribute packet is made up of one or more attribute
+//    subpackets. Each subpacket consists of a subpacket header and a
+//    body. The header consists of:
+//
+//      - the subpacket length (1, 2, or 5 octets)
+//
+//      - the subpacket type (1 octet)
+//
+//    and is followed by the subpacket specific data.
+//
+//    The only currently defined subpacket type is 1, signifying an image.
+//    An implementation SHOULD ignore any subpacket of a type that it does
+//    not recognize. Subpacket types 100 through 110 are reserved for
+//    private or experimental use.
+
+class Tag17 : public User{
     public:
         typedef std::vector <Tag17Subpacket::Ptr> Attributes_T;
 

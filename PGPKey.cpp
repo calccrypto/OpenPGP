@@ -75,10 +75,7 @@ std::string PGPKey::list_keys() const{
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
         // if the packet is a key
-        if ((p -> get_tag() == Packet::ID::Secret_Key)    ||
-            (p -> get_tag() == Packet::ID::Public_Key)    ||
-            (p -> get_tag() == Packet::ID::Secret_Subkey) ||
-            (p -> get_tag() == Packet::ID::Public_Subkey)){
+        if (Packet::is_key_packet(p -> get_tag())){
             Tag6 tag6(p -> raw());
             std::map <std::string, std::string>::iterator r = revoked.find(tag6.get_keyid());
             std::stringstream s;
@@ -145,14 +142,7 @@ PGPPublicKey::PGPPublicKey(const std::string & data)
 
 PGPPublicKey::PGPPublicKey(std::istream & stream)
     : PGPKey(stream)
-{
-    type = PGP::Type::PUBLIC_KEY_BLOCK;
-
-    std::string error;
-    if (!meaningful(error)){
-        std::cerr << error << std::endl;
-    }
-}
+{}
 
 PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
     : PGPPublicKey(sec.get_public())
@@ -252,65 +242,27 @@ std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
     return stream;
 }
 
-Key::Ptr find_signing_key(const PGPKey::Ptr & key, const uint8_t tag, const std::string & keyid){
-    if ((key -> get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
-        (key -> get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
-        std::vector <Packet::Ptr> packets = key -> get_packets();
-        for(Packet::Ptr const & p : packets){
-            if (p -> get_tag() == tag){
-                Key::Ptr signer = nullptr;
-                if (tag == Packet::ID::Secret_Key){
-                    signer = std::make_shared <Tag5>  ();
-                }
-                else if (tag == Packet::ID::Public_Key){
-                    signer = std::make_shared <Tag6>  ();
-                }
-                else if (tag == Packet::ID::Secret_Subkey){
-                    signer = std::make_shared <Tag7>  ();
-                }
-                else if (tag == Packet::ID::Public_Subkey){
-                    signer = std::make_shared <Tag14> ();
-                }
-                else{
-                    throw std::runtime_error("Error: Not a key tag.");
-                }
+Key::Ptr find_signing_key(const PGPKey & key, const uint8_t tag){
+    // if the key is not actually a key
+    if (!key.meaningful()){
+        return nullptr;
+    }
 
-                signer -> read(p -> raw());
+    // if the requested tag is not a key
+    if (!Packet::is_key_packet(tag)){
+        return nullptr;
+    }
 
-                // make sure key has signing material
-                if ((signer -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
-                    (signer -> get_pka() == PKA::ID::RSA_Sign_Only)       ||
-                    (signer -> get_pka() == PKA::ID::DSA)){
+    for(Packet::Ptr const & p : key.get_packets()){
+        if (p -> get_tag() == tag){
+            Key::Ptr signer = std::static_pointer_cast <Key> (p);
 
-                    // make sure the keyid matches the given one
-                    // expects only full matches
-                    if (keyid.size()){
-                        if (signer -> get_keyid() == keyid){
-                            return signer;
-                        }
-                    }
-                    else{
-                        return signer;
-                    }
-                }
+            // make sure key has signing material
+            if (PKA::can_sign(signer -> get_pka())){
+                return signer;
             }
         }
     }
+
     return nullptr;
-}
-
-Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const std::string & keyid){
-    Key::Ptr found = find_signing_key(std::make_shared <PGPKey> (key), tag);
-    if (!found){
-        return nullptr;
-    }
-    return std::make_shared <Tag6> (found -> raw());
-}
-
-Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid){
-    Key::Ptr found = find_signing_key(std::make_shared <PGPKey> (key), tag);
-    if (!found){
-        return nullptr;
-    }
-    return std::make_shared <Tag5> (found -> raw());
 }

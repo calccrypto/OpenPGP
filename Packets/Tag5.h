@@ -32,96 +32,103 @@ THE SOFTWARE.
 #include "../mpi.h"
 #include "Tag6.h"
 #include "s2k.h"
-/*
-5.5.3. Secret-Key Packet Formats
 
-    The Secret-Key and Secret-Subkey packets contain all the data of the
-    Public-Key and Public-Subkey packets, with additional algorithm-
-    specific secret-key data appended, usually in encrypted form.
-
-    The packet contains:
-
-        - A Public-Key or Public-Subkey packet, as described above.
-
-        - One octet indicating string-to-key usage conventions. Zero
-          indicates that the secret-key data is not encrypted. 255 or 254
-          indicates that a string-to-key specifier is being given. Any
-          other value is a symmetric-key encryption algorithm identifier.
-
-        - [Optional] If string-to-key usage octet was 255 or 254, a one-
-          octet symmetric encryption algorithm.
-
-        - [Optional] If string-to-key usage octet was 255 or 254, a
-          string-to-key specifier. The length of the string-to-key
-          specifier is implied by its type, as described above.
-
-        - [Optional] If secret data is encrypted (string-to-key usage octet
-          not zero), an Initial Vector (IV) of the same length as the
-          cipher’s block size.
-
-        - Plain or encrypted multiprecision integers comprising the secret
-          key data. These algorithm-specific fields are as described
-          below.
-
-        - If the string-to-key usage octet is zero or 255, then a two-octet
-          checksum of the plaintext of the algorithm-specific portion (sum
-          of all octets, mod 65536). If the string-to-key usage octet was
-          254, then a 20-octet SHA-1 hash of the plaintext of the
-          algorithm-specific portion. This checksum or hash is encrypted
-          together with the algorithm-specific fields (if string-to-key
-          usage octet is not zero). Note that for all other values, a
-          two-octet checksum is required.
-
-          Algorithm-Specific Fields for RSA secret keys:
-
-          - multiprecision integer (MPI) of RSA secret exponent d.
-
-          - MPI of RSA secret prime value p.
-
-          - MPI of RSA secret prime value q (p < q).
-
-          - MPI of u, the multiplicative inverse of p, mod q.
-
-          Algorithm-Specific Fields for DSA secret keys:
-
-          - MPI of DSA secret exponent x.
-
-          Algorithm-Specific Fields for Elgamal secret keys:
-
-          - MPI of Elgamal secret exponent x.
-
-    Secret MPI values can be encrypted using a passphrase. If a string-
-    to-key specifier is given, that describes the algorithm for
-    converting the passphrase to a key, else a simple MD5 hash of the
-    passphrase is used. Implementations MUST use a string-to-key
-    specifier; the simple hash is for backward compatibility and is
-    deprecated, though implementations MAY continue to use existing
-    private keys in the old format. The cipher for encrypting the MPIs
-    is specified in the Secret-Key packet.
-
-    Encryption/decryption of the secret data is done in CFB mode using
-    the key created from the passphrase and the Initial Vector from the
-    packet. A different mode is used with V3 keys (which are only RSA)
-    than with other key formats. With V3 keys, the MPI bit count prefix
-    (i.e., the first two octets) is not encrypted. Only the MPI non-
-    prefix data is encrypted. Furthermore, the CFB state is
-    resynchronized at the beginning of each new MPI value, so that the
-    CFB block boundary is aligned with the start of the MPI data.
-
-    With V4 keys, a simpler method is used. All secret MPI values are
-    encrypted in CFB mode, including the MPI bitcount prefix.
-
-    The two-octet checksum that follows the algorithm-specific portion is
-    the algebraic sum, mod 65536, of the plaintext of all the algorithm-
-    specific octets (including MPI prefix and data). With V3 keys, the
-    checksum is stored in the clear. With V4 keys, the checksum is
-    encrypted like the algorithm-specific data. This value is used to
-    check that the passphrase was correct. However, this checksum is
-    deprecated; an implementation SHOULD NOT use it, but should rather
-    use the SHA-1 hash denoted with a usage octet of 254. The reason for
-    this is that there are some attacks that involve undetectably
-    modifying the secret key.
-*/
+// 5.5.1.3.  Secret-Key Packet (Tag 5)
+//
+//    A Secret-Key packet contains all the information that is found in a
+//    Public-Key packet, including the public-key material, but also
+//    includes the secret-key material after all the public-key fields.
+//
+// ...
+//
+// 5.5.3.  Secret-Key Packet Formats
+//
+//    The Secret-Key and Secret-Subkey packets contain all the data of the
+//    Public-Key and Public-Subkey packets, with additional algorithm-
+//    specific secret-key data appended, usually in encrypted form.
+//
+//    The packet contains:
+//
+//      - A Public-Key or Public-Subkey packet, as described above.
+//
+//      - One octet indicating string-to-key usage conventions.  Zero
+//        indicates that the secret-key data is not encrypted.  255 or 254
+//        indicates that a string-to-key specifier is being given.  Any
+//        other value is a symmetric-key encryption algorithm identifier.
+//
+//      - [Optional] If string-to-key usage octet was 255 or 254, a one-
+//        octet symmetric encryption algorithm.
+//
+//      - [Optional] If string-to-key usage octet was 255 or 254, a
+//        string-to-key specifier.  The length of the string-to-key
+//        specifier is implied by its type, as described above.
+//
+//      - [Optional] If secret data is encrypted (string-to-key usage octet
+//        not zero), an Initial Vector (IV) of the same length as the
+//        cipher's block size.
+//
+//      - Plain or encrypted multiprecision integers comprising the secret
+//        key data.  These algorithm-specific fields are as described
+//        below.
+//
+//      - If the string-to-key usage octet is zero or 255, then a two-octet
+//        checksum of the plaintext of the algorithm-specific portion (sum
+//        of all octets, mod 65536).  If the string-to-key usage octet was
+//        254, then a 20-octet SHA-1 hash of the plaintext of the
+//        algorithm-specific portion.  This checksum or hash is encrypted
+//        together with the algorithm-specific fields (if string-to-key
+//        usage octet is not zero).  Note that for all other values, a
+//        two-octet checksum is required.
+//
+//        Algorithm-Specific Fields for RSA secret keys:
+//
+//        - multiprecision integer (MPI) of RSA secret exponent d.
+//
+//        - MPI of RSA secret prime value p.
+//
+//        - MPI of RSA secret prime value q (p < q).
+//
+//        - MPI of u, the multiplicative inverse of p, mod q.
+//
+//        Algorithm-Specific Fields for DSA secret keys:
+//
+//        - MPI of DSA secret exponent x.
+//
+//        Algorithm-Specific Fields for Elgamal secret keys:
+//
+//        - MPI of Elgamal secret exponent x.
+//
+//    Secret MPI values can be encrypted using a passphrase.  If a string-
+//    to-key specifier is given, that describes the algorithm for
+//    converting the passphrase to a key, else a simple MD5 hash of the
+//    passphrase is used.  Implementations MUST use a string-to-key
+//    specifier; the simple hash is for backward compatibility and is
+//    deprecated, though implementations MAY continue to use existing
+//    private keys in the old format.  The cipher for encrypting the MPIs
+//    is specified in the Secret-Key packet.
+//
+//    Encryption/decryption of the secret data is done in CFB mode using
+//    the key created from the passphrase and the Initial Vector from the
+//    packet.  A different mode is used with V3 keys (which are only RSA)
+//    than with other key formats.  With V3 keys, the MPI bit count prefix
+//    (i.e., the first two octets) is not encrypted.  Only the MPI non-
+//    prefix data is encrypted.  Furthermore, the CFB state is
+//    resynchronized at the beginning of each new MPI value, so that the
+//    CFB block boundary is aligned with the start of the MPI data.
+//
+//    With V4 keys, a simpler method is used.  All secret MPI values are
+//    encrypted in CFB mode, including the MPI bitcount prefix.
+//
+//    The two-octet checksum that follows the algorithm-specific portion is
+//    the algebraic sum, mod 65536, of the plaintext of all the algorithm-
+//    specific octets (including MPI prefix and data).  With V3 keys, the
+//    checksum is stored in the clear.  With V4 keys, the checksum is
+//    encrypted like the algorithm-specific data.  This value is used to
+//    check that the passphrase was correct.  However, this checksum is
+//    deprecated; an implementation SHOULD NOT use it, but should rather
+//    use the SHA-1 hash denoted with a usage octet of 254.  The reason for
+//    this is that there are some attacks that involve undetectably
+//    modifying the secret key.
 
 class Tag5 : public Tag6{
     protected:

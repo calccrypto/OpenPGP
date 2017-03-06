@@ -30,33 +30,44 @@ THE SOFTWARE.
 #include "PGPDetachedSignature.h"
 #include "sigcalc.h"
 
+// 7. Cleartext Signature Framework
+//
+//   It is desirable to be able to sign a textual octet stream without
+//   ASCII armoring the stream itself, so the signed text is still
+//   readable without special software. In order to bind a signature to
+//   such a cleartext, this framework is used. (Note that this framework
+//   is not intended to be reversible. RFC 3156 [RFC3156] defines another
+//   way to sign cleartext messages for environments that support MIME.)
+//
+//   The cleartext signed message consists of:
+//
+//     - The cleartext header ’-----BEGIN PGP SIGNED MESSAGE-----’ on a
+//       single line,
+//
+//     - One or more "Hash" Armor Headers,
+//
+//     - Exactly one empty line not included into the message digest,
+//
+//     - The dash-escaped cleartext that is included into the message
+//       digest,
+//
+//     - The ASCII armored signature(s) including the ’-----BEGIN PGP
+//       SIGNATURE-----’ Armor Header and Armor Tail Lines.
+//
+//   If the "Hash" Armor Header is given, the specified message digest
+//   algorithm(s) are used for the signature. If there are no such
+//   headers, MD5 is used. If MD5 is the only hash used, then an
+//   implementation MAY omit this header for improved V2.x compatibility.
+//   If more than one message digest is used in the signature, the "Hash"
+//   armor header contains a comma-delimited list of used message digests.
+//   Current message digest names are described below with the algorithm
+//   IDs.
+//
+//   An implementation SHOULD add a line break after the cleartext, but
+//   MAY omit it if the cleartext ends with a line break. This is for
+//   visual clarity.
+
 class PGPCleartextSignature {
-    /*
-    7. Cleartext Signature Framework
-
-    It is desirable to be able to sign a textual octet stream without
-    ASCII armoring the stream itself, so the signed text is still
-    readable without special software. In order to bind a signature to
-    such a cleartext, this framework is used. (Note that this framework
-    is not intended to be reversible. RFC 3156 [RFC3156] defines another
-    way to sign cleartext messages for environments that support MIME.)
-
-    The cleartext signed message consists of:
-
-        - The cleartext header ’-----BEGIN PGP SIGNED MESSAGE-----’ on a
-          single line,
-
-        - One or more "Hash" Armor Headers,
-
-        - Exactly one empty line not included into the message digest,
-
-        - The dash-escaped cleartext that is included into the message
-          digest,
-
-        - The ASCII armored signature(s) including the ’-----BEGIN PGP
-          SIGNATURE-----’ Armor Header and Armor Tail Lines.
-    */
-
     private:
         PGP::Armor_Keys hash_armor_header;
         std::string message;
@@ -87,6 +98,8 @@ class PGPCleartextSignature {
         static std::string reverse_dash_escape(const std::string & text);
         std::string data_to_text() const;                            // remove trailing whitespace
         static std::string data_to_text(const std::string & text);   // remove trailing whitespace
+
+        bool meaningful() const;
 
         PGPCleartextSignature & operator=(const PGPCleartextSignature & copy);
         PGPCleartextSignature::Ptr clone() const;

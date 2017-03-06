@@ -1,12 +1,12 @@
 #include "Tag13.h"
 
 Tag13::Tag13()
-    : ID(Packet::ID::User_ID),
+    : User(Packet::ID::User_ID),
       contents()
 {}
 
 Tag13::Tag13(const Tag13 & copy)
-    : ID(copy),
+    : User(copy),
       contents(copy.contents)
 {}
 

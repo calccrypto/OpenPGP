@@ -1,6 +1,6 @@
 #include "PGP.h"
 
-const PGP::Type_t PGP::Type::UNKNOWN           = 0; // default value
+const PGP::Type_t PGP::Type::UNKNOWN           = 0; // Default value
 const PGP::Type_t PGP::Type::MESSAGE           = 1; // Used for signed, encrypted, or compressed files.
 const PGP::Type_t PGP::Type::PUBLIC_KEY_BLOCK  = 2; // Used for armoring public keys.
 const PGP::Type_t PGP::Type::PRIVATE_KEY_BLOCK = 3; // Used for armoring private keys.
@@ -8,6 +8,7 @@ const PGP::Type_t PGP::Type::MESSAGE_PART_XY   = 4; // Used for multi-part messa
 const PGP::Type_t PGP::Type::MESSAGE_PART_X    = 5; // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
 const PGP::Type_t PGP::Type::SIGNATURE         = 6; // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
 const PGP::Type_t PGP::Type::SIGNED_MESSAGE    = 7; // Used for cleartext signatures; header not really part of RFC 4880.
+const PGP::Type_t PGP::Type::KEY_BLOCK         = 8; // Used to check if type is PUBLIC_KEY_BLOCK or PRIVATE_KEY_BLOCK
 
 const std::string PGP::ASCII_Armor_Header[] = {
    "",                  // unknown type
@@ -433,11 +434,11 @@ PGP::Type_t PGP::get_type() const{
     return type;
 }
 
-PGP::Armor_Keys PGP::get_keys() const{
+const PGP::Armor_Keys & PGP::get_keys() const{
     return keys;
 }
 
-PGP::Packets PGP::get_packets() const{
+const PGP::Packets & PGP::get_packets() const{
     return packets;
 }
 
@@ -673,13 +674,13 @@ bool PGP::meaningful_KEY_BLOCK(const PGP::Type_t & t, std::string & error) const
 
     // revocation certificates are placed in PUBLIC KEY BLOCKs
     // and have only one signature packet???
-    if ((packets.size() == 1)                                                                   &&
-        (packets[0] -> get_tag() == Packet::ID::Signature)                                      &&
+    if ((packets.size() == 1)                                                                 &&
+        (packets[0] -> get_tag() == Packet::ID::Signature)                                    &&
         (Tag2(packets[0] -> raw()).get_type() == Signature_Type::ID::Key_revocation_signature)){
         return true;
     }
     // minimum 2 packets: Primary Key + User ID
-    else if (packets.size() < 3){
+    else if (packets.size() < 2){
         error = "Error: Not enough packets (minimum 2).";
         return false;
     }
@@ -748,30 +749,26 @@ bool PGP::meaningful_KEY_BLOCK(const PGP::Type_t & t, std::string & error) const
         // Attribute packet is followed by zero or more Signature packets
         // calculated on the immediately preceding User Attribute packet and the
         // initial Public-Key packet.
-        if ((i >= packets.size()) ||
-            (packets[i] -> get_tag() != Packet::ID::Signature)){
-            break;
+        while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::ID::Signature)){
+            // make sure the signature type is a certification
+            if (!Signature_Type::is_certification(Tag2(packets[i] -> raw()).get_type())){
+                error = "Error: Signature type is not a certification packet.";
+                return false;
+            }
+
+            // TODO: make sure signature matches the User packet
+            if (packets[i - 1] -> get_tag() == Packet::ID::User_ID){
+
+            }
+            else if (packets[i - 1] -> get_tag() == Packet::ID::User_Attribute){
+
+            }
+            // else{}
+
+            i++;
         }
-
-        // make sure the signature type is a certification
-        if (!Signature_Type::is_certification(Tag2(packets[i] -> raw()).get_type())){
-            error = "Error: Signature type is not a certification packet.";
-            return false;
-        }
-
-        // TODO: make sure signature matches the User packet
-        if (packets[i - 1] -> get_tag() == Packet::ID::User_ID){
-
-        }
-        else if (packets[i - 1] -> get_tag() == Packet::ID::User_Attribute){
-
-        }
-        // else{}
-
-        i++;
-    } while ((i < packets.size())                                    &&
-             ((packets[i] -> get_tag() == Packet::ID::User_ID)       ||
-              (packets[i] -> get_tag() == Packet::ID::User_Attribute)));
+    } while ((i < packets.size()) &&
+             (Packet::is_user(packets[i] -> get_tag())));
 
     // need at least one User ID packet
     if (!user_id_count){
@@ -822,6 +819,7 @@ bool PGP::meaningful_KEY_BLOCK(const PGP::Type_t & t, std::string & error) const
         }
     }
 
+    // the index should be at the end of the packets
     return (i == packets.size());
 }
 
@@ -866,6 +864,9 @@ bool PGP::meaningful(const PGP::Type_t & t, std::string & error) const{
             break;
         case PGP::Type::PRIVATE_KEY_BLOCK:
             rc = meaningful_PRIVATE_KEY_BLOCK(error);
+            break;
+        case PGP::Type::KEY_BLOCK:
+            rc = meaningful_PUBLIC_KEY_BLOCK(error) || meaningful_PRIVATE_KEY_BLOCK(error);
             break;
         case PGP::Type::MESSAGE_PART_XY:
             rc = meaningful_MESSAGE_PART_XY(error);

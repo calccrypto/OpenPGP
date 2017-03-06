@@ -33,6 +33,41 @@ THE SOFTWARE.
 #include "packet.h"
 #include "sigtypes.h"
 
+// 5.4.  One-Pass Signature Packets (Tag 4)
+//
+//    The One-Pass Signature packet precedes the signed data and contains
+//    enough information to allow the receiver to begin calculating any
+//    hashes needed to verify the signature.  It allows the Signature
+//    packet to be placed at the end of the message, so that the signer
+//    can compute the entire signed message in one pass.
+//
+//    A One-Pass Signature does not interoperate with PGP 2.6.x or
+//    earlier.
+//
+//    The body of this packet consists of:
+//
+//      - A one-octet version number.  The current version is 3.
+//
+//      - A one-octet signature type.  Signature types are described in
+//        Section 5.2.1.
+//
+//      - A one-octet number describing the hash algorithm used.
+//
+//      - A one-octet number describing the public-key algorithm used.
+//
+//      - An eight-octet number holding the Key ID of the signing key.
+//
+//      - A one-octet number holding a flag showing whether the signature
+//        is nested.  A zero value indicates that the next packet is
+//        another One-Pass Signature packet that describes another
+//        signature to be applied to the same message data.
+//
+//    Note that if a message contains more than one one-pass signature,
+//    then the Signature packets bracket the message; that is, the first
+//    Signature packet after the message corresponds to the last one-pass
+//    packet and the final Signature packet corresponds to the first
+//    one-pass packet.
+
 class Tag4 : public Packet{
     private:
         uint8_t type;

@@ -35,6 +35,7 @@ THE SOFTWARE.
 //    file that is a detached signature of the first file. These detached
 //    signatures are simply a Signature packet stored separately from the
 //    data for which they are a signature.
+
 class PGPDetachedSignature : public PGP {
     public:
         typedef std::shared_ptr <PGPDetachedSignature> Ptr;
@@ -48,6 +49,7 @@ class PGPDetachedSignature : public PGP {
 
         // whether or not data matches Detached Signature format
         bool meaningful(std::string & error) const;
+        using PGP::meaningful;
 
         PGP::Ptr clone() const;
 };

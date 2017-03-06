@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __REVOKE__
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>

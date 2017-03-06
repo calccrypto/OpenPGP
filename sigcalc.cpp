@@ -19,23 +19,28 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
 }
 
 std::string overkey(const Key::Ptr & key){
-    std::string key_str = key -> raw();
-    // remove private data by copying over to Tag 6
-    Tag6 tag6(key_str);
-    key_str = tag6.raw();
-    return "\x99" + unhexlify(makehex(key_str.size(), 4)) + key_str;
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    std::string str = key -> raw_common();
+    return "\x99" + unhexlify(makehex(str.size(), 4)) + str;
 }
 
-std::string certification(uint8_t version, const ID::Ptr & id){
+std::string certification(uint8_t version, const User::Ptr & id){
+    if (!id){
+        throw std::runtime_error("Error: No ID packet.");
+    }
+
     if (version == 3){
         return id -> raw();
     }
     else if (version == 4){
         std::string data = id -> raw();
-        if (id -> get_tag() == 13){     // User ID packet
+        if (id -> get_tag() == Packet::ID::User_ID){
             return "\xb4" + unhexlify(makehex(data.size(), 8)) + data;
         }
-        else if (id -> get_tag() == 17){// User Attribute packet
+        else if (id -> get_tag() == Packet::ID::User_Attribute){
             return "\xd1" + unhexlify(makehex(data.size(), 8)) + data;
         }
     }
@@ -50,6 +55,10 @@ const std::string & binary_to_canonical(const std::string & data){
 }
 
 std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(data, tag2));
 }
 
@@ -75,61 +84,97 @@ std::string text_to_canonical(const std::string & data){
 }
 
 std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     const std::string canonical = text_to_canonical(data); // still has trailing <CR><LF>
     return use_hash(tag2 -> get_hash(), addtrailer(canonical.substr(0, canonical.size() - 2), tag2));
 }
 
 std::string to_sign_02(const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     if (tag2 -> get_version() == 3){
         throw std::runtime_error("Error: It does not make sense to have a V3 standalone signature.");
     }
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
-std::string to_sign_10(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_11(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
     return to_sign_10(key, id, tag2);
 }
 
-std::string to_sign_12(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
     return to_sign_10(key, id, tag2);
 }
 
-std::string to_sign_13(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
     return to_sign_10(key, id, tag2);
 }
 
 std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
 }
 
 std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & subkey, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(subkey), tag2));
 }
 
 std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){
     throw std::runtime_error("Error: Signature directly on a key has not implemented.");
+    // if (!tag2){
+        // throw std::runtime_error("Error: No signature packet");
+    // }
+
     //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
 }
 
 std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
 std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
-std::string to_sign_30(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
     return to_sign_10(key, id, tag2);
 }
 
 std::string to_sign_40(const Tag2::Ptr & /*tag2*/){
     throw std::runtime_error("Error: Signature directly on a key has not implemented.");
+    // if (!tag2){
+        // throw std::runtime_error("Error: No signature packet");
+    // }
+
     //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
     return "";
 }

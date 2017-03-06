@@ -37,7 +37,7 @@ const Module verify_message(
 
     // positional arguments
     {
-        "public-key",
+        "key",
         "message",
     },
 
@@ -54,9 +54,9 @@ const Module verify_message(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("public-key"), std::ios::binary);
+        std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Key file '" + args.at("public-key") + "' not opened." << std::endl;
+            std::cerr << "Error: Key file '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
         std::ifstream msg(args.at("message"), std::ios::binary);
@@ -65,15 +65,17 @@ const Module verify_message(
             return -1;
         }
 
-        PGPPublicKey pub(key);
+        PGPKey signer(key);
         PGPMessage message(msg);
 
         std::string err;
-        const bool verified = ::verify_message(pub, message, &err);
-        std::cout << "The data in '" << args.at("message") << "' was" << (verified?"": " not") << " signed by the key " << pub << std::endl;
+        const int verified = ::verify_message(signer, message, err);
 
-        if (!verified){
+        if (verified == -1){
             std::cerr << err << std::endl;
+        }
+        else{
+            std::cout << "The data in '" << args.at("message") << "' was" << ((verified == 1)?"": " not") << " signed by the key " << signer << std::endl;
         }
 
         return 0;

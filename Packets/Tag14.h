@@ -28,6 +28,21 @@ THE SOFTWARE.
 
 #include "Tag6.h"
 
+// 5.5.1.2.  Public-Subkey Packet (Tag 14)
+//
+//    A Public-Subkey packet (tag 14) has exactly the same format as a
+//    Public-Key packet, but denotes a subkey.  One or more subkeys may be
+//    associated with a top-level key.  By convention, the top-level key
+//    provides signature services, and the subkeys provide encryption
+//    services.
+//
+//    Note: in PGP 2.6.x, tag 14 was intended to indicate a comment
+//    packet.  This tag was selected for reuse because no previous version
+//    of PGP ever emitted comment packets but they did properly ignore
+//    them.  Public-Subkey packets are ignored by PGP 2.6.x and do not
+//    cause it to fail, providing a limited degree of backward
+//    compatibility.
+
 class Tag14 : public Tag6{
     public:
         typedef std::shared_ptr <Tag14> Ptr;
@@ -35,6 +50,8 @@ class Tag14 : public Tag6{
         Tag14();
         Tag14(const Tag14 & copy);
         Tag14(const std::string & data);
+        ~Tag14();
+
         Packet::Ptr clone() const;
 };
 

@@ -33,12 +33,12 @@ uint64_t toint(const std::string & s, const int & base){
 
 std::string little_end(const std::string & str, const unsigned int & base){
     // Changes a string to its little endian form
-	int s = 8 * (base == 2) + 2 * (base == 16) + (base == 256);
-	std::string t = "";
-	for (uint32_t x = 0; x < str.size() / s; x++){
-		t = str.substr(s * x, s)+ t;
+    int s = 8 * (base == 2) + 2 * (base == 16) + (base == 256);
+    std::string t = "";
+    for (uint32_t x = 0; x < str.size() / s; x++){
+        t = str.substr(s * x, s)+ t;
     }
-	return t;
+    return t;
 }
 
 // Changes a binary string to its hexadecimal equivalent
@@ -123,12 +123,12 @@ std::string hexlify(const char in, bool caps){
 }
 
 std::string unhexlify(const std::string & in){
-	// Reverse hexlify
-	if (in.size() & 1){
-		throw std::runtime_error("Error: input string of odd length.");
+    // Reverse hexlify
+    if (in.size() & 1){
+        throw std::runtime_error("Error: input string of odd length.");
     }
     std::string out(in.size() >> 1, 0);
-	for(unsigned int x = 0; x < in.size(); x += 2){
+    for(unsigned int x = 0; x < in.size(); x += 2){
         if (('0' <= in[x]) && (in[x] <= '9')){
             out[x >> 1] = static_cast <uint8_t> ((in[x] - '0') << 4);
         }
@@ -154,23 +154,23 @@ std::string unhexlify(const std::string & in){
             throw std::runtime_error("Error: Invalid character found: " + std::string(1, in[x + 1]));
         }
     }
-	return out;
+    return out;
 }
 
 std::string pkcs5(const std::string & data, const unsigned int & blocksize){
     // Adds PKCS5 Padding
-	int pad = ((blocksize - data.size()) % blocksize) % blocksize;
+    int pad = ((blocksize - data.size()) % blocksize) % blocksize;
     std::string padding(pad, static_cast <char> (pad));
-	return data + padding;
+    return data + padding;
 }
 
 std::string remove_padding(std::string data){
-	// Removes PKCS Padding
+    // Removes PKCS Padding
     uint8_t pad = static_cast <uint8_t> (data[data.size() - 1]);
     std::string padding(pad, static_cast <char> (pad));
-	if ((pad < data.size()) && (padding == data.substr(data.size() - pad, pad)))
-		data = data.substr(0, data.size() - pad);
-	return data;
+    if ((pad < data.size()) && (padding == data.substr(data.size() - pad, pad)))
+        data = data.substr(0, data.size() - pad);
+    return data;
 }
 
 // adds characters to the front of the string

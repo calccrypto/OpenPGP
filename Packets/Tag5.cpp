@@ -33,22 +33,17 @@ Tag5::~Tag5(){}
 void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
     s2k.reset();
 
-    switch (data[pos]){ // S2K type
-        case 0:
-            s2k = std::make_shared <S2K0> ();
-            break;
-        case 1:
-            s2k = std::make_shared <S2K1> ();
-            break;
-        case 2:
-            throw std::runtime_error("S2K with ID 2 is reserved.");
-            break;
-        case 3:
-            s2k = std::make_shared <S2K3> ();
-            break;
-        default:
-            throw std::runtime_error("Unknown S2K ID encountered: " + std::to_string(data[0]));
-            break;
+    if (data[pos] == S2K::ID::Simple_S2K){
+        s2k = std::make_shared <S2K0> ();
+    }
+    else if (data[pos] == S2K::ID::Salted_S2K){
+        s2k = std::make_shared <S2K1> ();
+    }
+    else if (data[pos] == S2K::ID::Iterated_and_Salted_S2K){
+        s2k = std::make_shared <S2K3> ();
+    }
+    else{
+        throw std::runtime_error("Error: Bad S2K ID encountered: " + std::to_string(data[0]));
     }
 
     s2k -> read(data, pos);
@@ -68,13 +63,15 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     }
 
     out << tab << "    Encrypted Data (" << secret.size() << " octets):\n        ";
-    if (pka < 4){
+    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
+        (pka == PKA::ID::RSA_Encrypt_Only)    ||
+        (pka == PKA::ID::RSA_Sign_Only)){
         out << tab << "RSA d, p, q, u";
     }
-    else if (pka == 16){
+    else if (pka == PKA::ID::ElGamal){
         out << tab << "Elgamal x";
     }
-    else if (pka == 17){
+    else if (pka == PKA::ID::DSA){
         out << tab << "DSA x";
     }
     out << tab << " + ";
@@ -176,7 +173,9 @@ std::string Tag5::get_secret() const{
 }
 
 Tag6 Tag5::get_public_obj() const{
-    return Tag6(raw());
+    Tag6 out(raw());
+    out.set_tag(Packet::ID::Public_Key);
+    return out;
 }
 
 Tag6::Ptr Tag5::get_public_ptr() const{
@@ -208,13 +207,13 @@ void Tag5::set_sym(const uint8_t s){
 }
 
 void Tag5::set_s2k(const S2K::Ptr & s){
-    if (s -> get_type() == 0){
+    if (s -> get_type() == S2K::ID::Simple_S2K){
         s2k = std::make_shared <S2K0> ();
     }
-    else if (s -> get_type() == 1){
+    else if (s -> get_type() == S2K::ID::Salted_S2K){
         s2k = std::make_shared <S2K1> ();
     }
-    else if (s -> get_type() == 3){
+    else if (s -> get_type() == S2K::ID::Iterated_and_Salted_S2K){
         s2k = std::make_shared <S2K3> ();
     }
     s2k = s -> clone();

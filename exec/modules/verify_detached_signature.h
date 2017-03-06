@@ -1,5 +1,5 @@
 /*
-sign_detach.h
+verify_detachedsig.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,63 +23,68 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SIGN_DETACH__
-#define __COMMAND_SIGN_DETACH__
+#ifndef __COMMAND_VERIFY_DETACHEDSIG__
+#define __COMMAND_VERIFY_DETACHEDSIG__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module sign_detach(
+const Module verify_detached_signature(
     // name
-    "sign-detach",
+    "verify-detached-signature",
 
     // positional arguments
     {
-        "private-key",
-        "passphrase",
+        "key",
         "file",
+        "signature",
     },
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",                                        "")),
-        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
-        std::make_pair("-h", std::make_pair("hash_algorithm",                                 "SHA1")),
+
     },
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+
     },
 
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("private-key"), std::ios::binary);
+        std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
+            std::cerr << "Error: Public key file '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "IOError: file '" + args.at("file") + "' could not be opened." << std::endl;
+            std::cerr << "Error: Data file '" + args.at("file") + "' not opened." << std::endl;
             return -1;
         }
 
-        if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
+        std::ifstream sig(args.at("signature"), std::ios::binary);
+        if (!sig){
+            std::cerr << "Error: Signature file '" + args.at("signature") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPSecretKey pri(key);
+        PGPKey signer(key);
+        PGPDetachedSignature signature(sig);
 
-        output(::sign_detach(pri,
-                             args.at("passphrase"),
-                             file,
-                             Hash::Number.at(args.at("-h"))).write(flags.at("-a")), args.at("-o"));
+        std::string err;
+        const int verified = ::verify_detached_signature(signer, file, signature, err);
+
+        if (verified == -1){
+            std::cerr << err << std::endl;
+        }
+        else{
+            std::cout << "File '" << args.at("file") << "' was" << ((verified == 1)?"":" not") << " signed by key " << signer << "." << std::endl;
+        }
 
         return 0;
     }

@@ -46,7 +46,7 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri, Packet::ID::Secret_Key);
+    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::ID::Secret_Key));
     if (!signer){
         throw std::runtime_error("Error: No Secret Key packet found.");
     }
@@ -87,7 +87,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri, Packet::ID::Secret_Key);
+    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::ID::Secret_Key));
     if (!signer){
         throw std::runtime_error("Error: Private signing key not found");
     }
@@ -144,7 +144,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5::Ptr signer = find_signing_key(pri, Packet::ID::Secret_Subkey);
+    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::ID::Secret_Subkey));
     if (!signer){
         throw std::runtime_error("Error: Private signing key not found");
     }
@@ -163,7 +163,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    ID::Ptr uid = find_user_id(pri);
+    User::Ptr uid = find_user_id(pri);
     if (!uid){
         throw std::runtime_error("Error: No User ID packet found.");
     }

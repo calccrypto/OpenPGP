@@ -26,11 +26,10 @@ THE SOFTWARE.
 #ifndef __VERIFY__
 #define __VERIFY__
 
-#include <iostream>
 #include <list>
 #include <sstream>
 #include <stdexcept>
-#include <vector>
+#include <string>
 
 #include "Packets/packets.h"
 #include "PKA/PKAs.h"
@@ -43,26 +42,26 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // pka_verify with variables only
-bool pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signing, const PKA::Values & signature);
+int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee);
 
 // pka_verify with packets
-bool pka_verify(const std::string & digest, const Tag6::Ptr signing, const Tag2::Ptr & signature);
+int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::Ptr & signee);
 // /////////////////
 
 // detached signatures (not a standalone signature)
-bool verify_detachedsig(const PGPPublicKey & pub, const std::string & data,    const PGPDetachedSignature & sig, std::string * error = nullptr);
-bool verify_detachedsig(const PGPSecretKey & pri, const std::string & data,    const PGPDetachedSignature & sig, std::string * error = nullptr);
-bool verify_detachedsig(const PGPPublicKey & pub,       std::istream & stream, const PGPDetachedSignature & sig, std::string * error = nullptr);
-bool verify_detachedsig(const PGPSecretKey & pri,       std::istream & stream, const PGPDetachedSignature & sig, std::string * error = nullptr);
+int verify_detached_signature(const PGPKey & key, const std::string  & data,   const PGPDetachedSignature & sig, std::string & error);
+int verify_detached_signature(const PGPKey & key, const std::string  & data,   const PGPDetachedSignature & sig);
+int verify_detached_signature(const PGPKey & key,       std::istream & stream, const PGPDetachedSignature & sig, std::string & error);
+int verify_detached_signature(const PGPKey & key,       std::istream & stream, const PGPDetachedSignature & sig);
 
 // 0x00: Signature of a binary document.
-bool verify_message(const Tag6::Ptr & signing_key, const PGPMessage & m);   // called by the other verify_message functions
-bool verify_message(const PGPPublicKey & pub,      const PGPMessage & m, std::string * error = nullptr);
-bool verify_message(const PGPSecretKey & pri,      const PGPMessage & m, std::string * error = nullptr);
+int verify_message(const Key::Ptr & signing_key, const PGPMessage & m);   // called by the other verify_message functions
+int verify_message(const PGPKey & key, const PGPMessage & message, std::string & error);
+int verify_message(const PGPKey & key, const PGPMessage & message);
 
 // 0x01: Signature of a canonical text document.
-bool verify_cleartext_signature(const PGPPublicKey & pub, const PGPCleartextSignature & message, std::string * error = nullptr);
-bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSignature & message, std::string * error = nullptr);
+int verify_cleartext_signature(const PGPKey & pub, const PGPCleartextSignature & message, std::string & error);
+int verify_cleartext_signature(const PGPKey & pub, const PGPCleartextSignature & message);
 
 // 0x02: Standalone signature.
 
@@ -70,8 +69,8 @@ bool verify_cleartext_signature(const PGPSecretKey & pri, const PGPCleartextSign
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-bool verify_key(const PGPPublicKey & pub, const PGPPublicKey & sig, std::string * error = nullptr);
-bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig, std::string * error = nullptr);
+int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error);
+int verify_key(const PGPKey & signer, const PGPKey & signee);
 
 // 0x18: Subkey Binding Signature
 
@@ -82,9 +81,8 @@ bool verify_key(const PGPSecretKey & pri, const PGPPublicKey & sig, std::string 
 // 0x20: Key revocation signature
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
-bool verify_revoke(const Tag6::Ptr & pub, const Tag2::Ptr & rev);           // called by the other verify_revoke functions
-bool verify_revoke(const PGPPublicKey & pub, const PGPPublicKey & rev, std::string * error = nullptr);
-bool verify_revoke(const PGPSecretKey & pri, const PGPPublicKey & rev, std::string * error = nullptr);
+int verify_revoke(const PGPKey & pub, const PGPPublicKey & rev, std::string & error);
+int verify_revoke(const PGPKey & pub, const PGPPublicKey & rev);
 
 // 0x40: Timestamp signature.
 

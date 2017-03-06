@@ -96,7 +96,7 @@ uint8_t PGPMessage::get_comp() const{
     if (comp){
         return comp -> get_comp();
     }
-    return 0;
+    return Compression::Algorithm::UNCOMPRESSED;
 }
 
 void PGPMessage::set_comp(const uint8_t c){

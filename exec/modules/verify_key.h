@@ -66,14 +66,16 @@ const Module verify_key(
             return -1;
         }
 
-        PGPPublicKey signerkey(signer), signeekey(signee);
+        PGPKey signerkey(signer), signeekey(signee);
 
         std::string err;
-        const bool verified = ::verify_key(signerkey, signeekey, &err);
-        std::cout << "Key in '" << args.at("signee-key") << "' was" << (verified?"":" not") << " signed by key " << args.at("signer-key") << "." << std::endl;
+        const int verified = ::verify_key(signerkey, signeekey, err);
 
-        if (!verified){
+        if (verified == -1){
             std::cerr << err << std::endl;
+        }
+        else{
+            std::cout << "Key in '" << args.at("signee-key") << "' was" << ((verified == 1)?"":" not") << " signed by key " << args.at("signer-key") << "." << std::endl;
         }
 
         return 0;

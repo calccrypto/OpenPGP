@@ -1,5 +1,23 @@
 #include "PKAs.h"
 
+bool PKA::can_encrypt(const uint8_t alg){
+    return ((alg == PKA::ID::RSA_Encrypt_or_Sign) ||
+            (alg == PKA::ID::RSA_Encrypt_Only)    ||
+            (alg == PKA::ID::ElGamal));
+}
+
+bool PKA::can_sign(const uint8_t alg){
+    return ((alg == PKA::ID::RSA_Encrypt_or_Sign) ||
+            (alg == PKA::ID::RSA_Sign_Only)       ||
+            (alg == PKA::ID::DSA));
+}
+
+bool is_RSA(const uint8_t alg){
+    return ((alg == PKA::ID::RSA_Encrypt_or_Sign) ||
+            (alg == PKA::ID::RSA_Encrypt_Only)    ||
+            (alg == PKA::ID::RSA_Sign_Only));
+}
+
 void generate_key_pair(const uint8_t pka, const PKA::Params & params, PKA::Values & pub, PKA::Values & pri){
     switch (pka){
         case PKA::ID::RSA_Encrypt_or_Sign:

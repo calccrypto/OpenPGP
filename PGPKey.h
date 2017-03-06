@@ -55,6 +55,7 @@ class PGPKey : public PGP {
 
         // whether or not data matches a Key format
         bool meaningful(std::string & error) const;
+        using PGP::meaningful;
 
         virtual PGP::Ptr clone() const;
 };
@@ -142,6 +143,7 @@ class PGPPublicKey : public PGPKey {
 
         // whether or not data matches the Public Key format
         bool meaningful(std::string & error) const;
+        using PGPKey::meaningful;
 
         PGPPublicKey & operator=(const PGPPublicKey & pub);
         PGPPublicKey & operator=(const PGPSecretKey & pri);
@@ -179,6 +181,7 @@ class PGPSecretKey : public PGPKey {
 
         // whether or not data matches Secret Key format
         bool meaningful(std::string & error) const;
+        using PGPKey::meaningful;
 
         PGP::Ptr clone() const;
 };
@@ -186,9 +189,6 @@ class PGPSecretKey : public PGPKey {
 std::ostream & operator <<(std::ostream & stream, const PGPSecretKey & pgp);
 
 // Search PGP keys for signing keys
-// leave keyid empty to find the signing key without matching the key id
-Key::Ptr  find_signing_key(const PGPKey::Ptr  & key, const uint8_t tag, const std::string & keyid = "");
-Tag6::Ptr find_signing_key(const PGPPublicKey & key, const uint8_t tag, const std::string & keyid = "");
-Tag5::Ptr find_signing_key(const PGPSecretKey & key, const uint8_t tag, const std::string & keyid = "");
+Key::Ptr find_signing_key(const PGPKey & key, const uint8_t tag);
 
 #endif

@@ -33,9 +33,8 @@ THE SOFTWARE.
 
 class Tag17Subpacket: public Subpacket {
     public:
-        class ID{
-            public:
-                static const uint8_t Image_Attribute;
+        struct ID{
+            static const uint8_t Image_Attribute;
         };
 
         static const std::map <uint8_t, std::string> Name;

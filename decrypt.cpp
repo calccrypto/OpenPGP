@@ -2,17 +2,16 @@
 
 Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid){
     for(Packet::Ptr const & p : k.get_packets()){
-        if ((p -> get_tag() == 5) || (p -> get_tag() == 7)){
-            Tag5::Ptr key = std::make_shared <Tag5> (p -> raw());
+        if ((p -> get_tag() == Packet::ID::Secret_Key)   ||
+            (p -> get_tag() == Packet::ID::Secret_Subkey)){
+            Tag5::Ptr key = std::static_pointer_cast <Tag5> (p);
             if (key -> get_public_ptr() -> get_keyid() != keyid ){
                 continue;
             }
 
             // make sure key has encrypting keys
-            if ((key -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
-                (key -> get_pka() == PKA::ID::RSA_Encrypt_Only) ||
-                (key -> get_pka() == PKA::ID::ElGamal)){
-                    return key;
+            if (PKA::can_sign(key -> get_pka())){
+                return key;
             }
         }
     }
@@ -20,9 +19,8 @@ Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid)
 }
 
 std::string pka_decrypt(const uint8_t pka, PKA::Values & data, const PKA::Values & pri, const PKA::Values & pub){
-    if ((pka == PKA::ID::RSA_Encrypt_or_Sign)   ||
-        (pka == PKA::ID::RSA_Encrypt_Only)      ||
-        (pka == PKA::ID::RSA_Sign_Only)){
+    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
+        (pka == PKA::ID::RSA_Encrypt_Only)){
         return mpitoraw(RSA_decrypt(data[0], pri, pub));
     }
     else if (pka == PKA::ID::ElGamal){

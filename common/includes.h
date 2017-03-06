@@ -115,13 +115,13 @@ std::string xor_strings(const std::string & str1, const std::string & str2);
 // http://stackoverflow.com/questions/6240950/platform-independent-dev-null-in-c
 template<typename Ch, typename Traits = std::char_traits<Ch> >
 struct basic_nullbuf : std::basic_streambuf<Ch, Traits> {
-	typedef std::basic_streambuf<Ch, Traits> base_type;
-	typedef typename base_type::int_type int_type;
-	typedef typename base_type::traits_type traits_type;
+    typedef std::basic_streambuf<Ch, Traits> base_type;
+    typedef typename base_type::int_type int_type;
+    typedef typename base_type::traits_type traits_type;
 
-	virtual int_type overflow(int_type c) {
-		return traits_type::not_eof(c);
-	}
+    virtual int_type overflow(int_type c) {
+        return traits_type::not_eof(c);
+    }
 };
 
 // convenient typedefs

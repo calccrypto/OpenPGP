@@ -90,6 +90,10 @@ namespace PKA{
         std::make_pair(ID::ElGamal,             'g'),
         std::make_pair(ID::DSA,                 'D'),
     };
+
+    bool can_encrypt(const uint8_t alg);
+    bool can_sign(const uint8_t alg);
+    bool is_RSA(const uint8_t alg);
 }
 
 /*

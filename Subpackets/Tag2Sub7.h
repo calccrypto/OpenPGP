@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __TAG2_SUB7__
 
 #include "Tag2Subpacket.h"
+
 // 5.2.3.12. Revocable
 //
 //    (1 octet of revocability, 0 for not, 1 for revocable)

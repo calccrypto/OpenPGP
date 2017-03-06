@@ -69,8 +69,6 @@ const Module sign_cleartext_signature(
             return -1;
         }
 
-        const std::string text(std::istreambuf_iterator<char>(file), {});
-
         if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
             std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
             return -1;
@@ -78,7 +76,7 @@ const Module sign_cleartext_signature(
 
         output(::sign_cleartext(PGPSecretKey(key),
                                 args.at("passphrase"),
-                                text).write(), args.at("-o"));
+                                std::string(std::istreambuf_iterator<char>(file), {})).write(), args.at("-o"));
 
         return 0;
     }

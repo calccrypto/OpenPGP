@@ -30,10 +30,10 @@ THE SOFTWARE.
 #include "Partial.h"
 
 #include "Key.h"    // for Tags 5, 6, 7, and 14
-#include "ID.h"     // for Tags 13 and 17
+#include "User.h"   // for Tags 13 and 17
 
 #include "Tag0.h"   // Reserved - a packet tag MUST NOT have this value
-#include "Tag1.h"   
+#include "Tag1.h"
 #include "Tag2.h"
 #include "Tag3.h"
 #include "Tag4.h"

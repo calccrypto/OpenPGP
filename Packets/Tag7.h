@@ -29,6 +29,11 @@ THE SOFTWARE.
 #include "Tag5.h"
 #include "Tag14.h"
 
+// 5.5.1.4.  Secret-Subkey Packet (Tag 7)
+//
+//    A Secret-Subkey packet (tag 7) is the subkey analog of the Secret
+//    Key packet and has exactly the same format.
+
 class Tag7 : public Tag5{
     public:
         typedef std::shared_ptr <Tag7> Ptr;
@@ -38,8 +43,8 @@ class Tag7 : public Tag5{
         Tag7(const std::string & data);
         ~Tag7();
 
-        Tag14 get_public_obj() const;      // extract public subkey from private key
-        Tag14::Ptr get_public_ptr() const; // extract public subkey from private key into a pointer
+        Tag14 get_public_obj() const;       // extract public subkey from private key
+        Tag14::Ptr get_public_ptr() const;  // extract public subkey from private key into a pointer
 
         Packet::Ptr clone() const;
         Tag7 & operator=(const Tag7 & copy);

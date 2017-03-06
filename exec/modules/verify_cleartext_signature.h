@@ -37,7 +37,7 @@ const Module verify_cleartext_signature(
 
     // positional arguments
     {
-        "public-key",
+        "key",
         "signature",
     },
 
@@ -54,9 +54,9 @@ const Module verify_cleartext_signature(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("public-key"), std::ios::binary);
+        std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File '" + args.at("public-key") + "' not opened." << std::endl;
+            std::cerr << "Error: File '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
 
@@ -66,15 +66,17 @@ const Module verify_cleartext_signature(
             return -1;
         }
 
-        PGPPublicKey pub(key);
+        PGPKey signer(key);
         PGPCleartextSignature signature(sig);
 
         std::string err;
-        const bool verified = ::verify_cleartext_signature(pub, signature, &err);
-        std::cout << "This message was" << (verified?"":" not") << " signed by this key." << std::endl;
+        const int verified = ::verify_cleartext_signature(signer, signature, err);
 
-        if (!verified){
+        if (verified == -1){
             std::cerr << err << std::endl;
+        }
+        else{
+            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by this key." << std::endl;
         }
 
         return 0;

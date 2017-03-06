@@ -116,24 +116,23 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
     PKA::Values pub_subkey;
     PKA::Values pri_subkey;
 
-    Tag5::Ptr prikey;
-    Tag7::Ptr prisubkey;
+    Tag5::Ptr prikey = nullptr;
+    Tag7::Ptr prisubkey = nullptr;
     Tag13::Ptr uid = std::make_shared <Tag13> ();
     Tag17::Ptr attr  = std::make_shared <Tag17> ();
     bool id = false;                    // default UID came first
     bool key = false;                   // default main key came first
 
-    std::vector <Packet::Ptr> packets = private_key.get_packets();
+    PGP::Packets packets = private_key.get_packets();
     for(Packet::Ptr & p : packets){
         if (p -> get_tag() == 5){       // Secret Key Packet
-            prikey = std::make_shared <Tag5> (p -> raw());
+            prikey = std::static_pointer_cast <Tag5> (p);
 
             // Generate keypair
             PKA::Params params;
 
             if ((prikey -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
-                (prikey -> get_pka() == PKA::ID::RSA_Encrypt_Only) // ||
-             /* (prikey -> get_pka() == PKA::ID::RSA_Sign_Only)*/){
+                (prikey -> get_pka() == PKA::ID::RSA_Encrypt_Only)){
                 params = {pri_key_size};
             }
             else if (prikey -> get_pka() == PKA::ID::ElGamal){
@@ -251,7 +250,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             std::string sig_hash;
             if (!key){  // if the key is a primary key
                 // get the user id/attribute packet
-                ID::Ptr i = uid;
+                User::Ptr i = uid;
                 if (id){
                     i = attr;
                 }
@@ -297,8 +296,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             PKA::Params params;
 
             if ((prisubkey -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
-                (prisubkey -> get_pka() == PKA::ID::RSA_Encrypt_Only) // ||
-             /* (prisubkey -> get_pka() == PKA::ID::RSA_Sign_Only)*/){
+                (prisubkey -> get_pka() == PKA::ID::RSA_Encrypt_Only)){
                 params = {subkey_size};
             }
             else if (prisubkey -> get_pka() == PKA::ID::ElGamal){

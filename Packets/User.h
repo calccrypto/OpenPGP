@@ -1,6 +1,6 @@
 /*
-ID.h
-Base class for OpenPGP ID packet types to inherit from
+User.h
+Base class for OpenPGP User packet types to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -23,22 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __PACKET_ID__
-#define __PACKET_ID__
+#ifndef __PACKET_USER__
+#define __PACKET_USER__
 
 #include "packet.h"
 
 // For Tags 13 and 17
-class ID : public Packet{
+class User : public Packet{
     protected:
         using Packet::Packet;
 
     public:
-        typedef std::shared_ptr <ID> Ptr;
+        typedef std::shared_ptr <User> Ptr;
 
-        virtual ~ID();
+        virtual ~User();
 
-        ID & operator=(const ID & copy);
+        User & operator=(const User & copy);
 };
 
 #endif

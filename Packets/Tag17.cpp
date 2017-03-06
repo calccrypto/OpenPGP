@@ -35,14 +35,14 @@ std::string Tag17::write_subpacket(uint8_t s_type, std::string data) const{
 }
 
 Tag17::Tag17()
-    : ID(Packet::ID::User_Attribute),
+    : User(Packet::ID::User_Attribute),
       length(),
       type(),
       attributes()
 {}
 
 Tag17::Tag17(const Tag17 & copy)
-    : ID(copy),
+    : User(copy),
       length(copy.length),
       type(copy.type),
       attributes(copy.attributes)

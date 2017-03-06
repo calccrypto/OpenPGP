@@ -37,7 +37,7 @@ const Module verify_revoke(
 
     // positional arguments
     {
-        "public-key",
+        "key",
         "revocation-certificate",
     },
 
@@ -54,9 +54,9 @@ const Module verify_revoke(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("public-key"), std::ios::binary);
+        std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Public key file '" + args.at("public-key") + "' not opened." << std::endl;
+            std::cerr << "Error: Public key file '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
 
@@ -66,15 +66,17 @@ const Module verify_revoke(
             return -1;
         }
 
-        PGPPublicKey pub(key);
+        PGPKey signer(key);
         PGPPublicKey rev(cert);
 
         std::string err;
-        const bool verified = ::verify_revoke(pub, rev, &err);
-        std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << (verified?std::string("revokes"):std::string("does not revoke")) << " key " << pub << std::endl;
+        const int verified = ::verify_revoke(signer, rev, err);
 
-        if (!verified){
+        if (verified == -1){
             std::cerr << err << std::endl;
+        }
+        else{
+            std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << ((verified == 1)?std::string("revokes"):std::string("does not revoke")) << " key " << signer << std::endl;
         }
 
         return 0;

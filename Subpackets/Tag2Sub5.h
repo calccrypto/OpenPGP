@@ -43,7 +43,7 @@ THE SOFTWARE.
 //    The trust amount is in a range from 0-255, interpreted such that
 //    values less than 120 indicate partial trust and values of 120 or
 //    greater indicate complete trust. Implementations SHOULD emit values
-//   of 60 for partial trust and 120 for complete trust.
+//    of 60 for partial trust and 120 for complete trust.
 
 class Tag2Sub5 : public Tag2Subpacket{
     private:

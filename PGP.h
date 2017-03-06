@@ -44,14 +44,16 @@ class PGP{
         typedef uint8_t Type_t;
 
         struct Type{
-            static const Type_t UNKNOWN;                // default value
+            static const Type_t UNKNOWN;                // Default value
             static const Type_t MESSAGE;                // Used for signed, encrypted, or compressed files.
             static const Type_t PUBLIC_KEY_BLOCK;       // Used for armoring public keys.
             static const Type_t PRIVATE_KEY_BLOCK;      // Used for armoring private keys.
             static const Type_t MESSAGE_PART_XY;        // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
             static const Type_t MESSAGE_PART_X;         // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
             static const Type_t SIGNATURE;              // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+
             static const Type_t SIGNED_MESSAGE;         // Used for cleartext signatures; header not really part of RFC 4880.
+            static const Type_t KEY_BLOCK;              // Used to check if type is PUBLIC_KEY_BLOCK or PRIVATE_KEY_BLOCK
         };
 
         static const std::string ASCII_Armor_Header[];  // ASCII data at beginning and end of OpenPGP packet
@@ -106,11 +108,11 @@ class PGP{
         virtual std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
 
         // Accessors
-        bool get_armored()          const;
-        Type_t get_type()           const;
-        Armor_Keys get_keys()       const;
-        Packets get_packets()       const;      // get copy of all packet pointers (for looping through packets)
-        Packets get_packets_clone() const;      // clone all packets (for modifying packets)
+        bool get_armored()            const;
+        Type_t get_type()             const;
+        const Armor_Keys & get_keys() const;
+        const Packets & get_packets() const;    // get copy of all packet pointers (for looping through packets)
+        Packets get_packets_clone()   const;    // clone all packets (for modifying packets)
 
         // Modifiers
         void set_armored(const bool a);
@@ -171,6 +173,8 @@ class PGP{
                          NONE        // garbage value
                     };
 
+            typedef Token Type;
+
             // Reverse Rules (Reduce)
             static bool OpenPGPMessage       (std::list <Token>::iterator it, std::list <Token> & s);
             static bool CompressedMessage    (std::list <Token>::iterator it, std::list <Token> & s);
@@ -190,9 +194,7 @@ class PGP{
         bool meaningful_MESSAGE_PART_XY(std::string & error)                       const;
         bool meaningful_MESSAGE_PART_X(std::string & error)                        const;
         bool meaningful_SIGNATURE(std::string & error)                             const;
-        bool meaningful_(std::string & error)                                      const;
 
-    public:
         // check if packet sequence is meaningful and correct for a given type
         bool meaningful(const Type_t & t, std::string & error)                     const;
         bool meaningful(const Type_t & t)                                          const;

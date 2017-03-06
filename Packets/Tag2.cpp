@@ -500,16 +500,14 @@ void Tag2::set_unhashed_subpackets(const Tag2::Subpackets_T & u){
 }
 
 std::string Tag2::find_subpacket(const uint8_t sub) const{
-    /*
-    5.2.4.1. Subpacket Hints
-
-        It is certainly possible for a signature to contain conflicting
-        information in subpackets. For example, a signature may contain
-        multiple copies of a preference or multiple expiration times. In
-        most cases, an implementation SHOULD use the last subpacket in the
-        signature, but MAY use any conflict resolution scheme that makes
-        more sense.
-    */
+    // 5.2.4.1. Subpacket Hints
+    //
+    //   It is certainly possible for a signature to contain conflicting
+    //   information in subpackets. For example, a signature may contain
+    //   multiple copies of a preference or multiple expiration times. In
+    //   most cases, an implementation SHOULD use the last subpacket in the
+    //   signature, but MAY use any conflict resolution scheme that makes
+    //   more sense.
 
     std::string out;
     for(Tag2Subpacket::Ptr const & s : hashed_subpackets){

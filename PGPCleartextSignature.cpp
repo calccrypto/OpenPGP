@@ -212,6 +212,10 @@ std::string PGPCleartextSignature::data_to_text(const std::string & text){
     return out.substr(0, out.size() - 1);
 }
 
+bool PGPCleartextSignature::meaningful() const{
+    return sig.meaningful();
+}
+
 PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){
     hash_armor_header = copy.hash_armor_header;
     message = copy.message;

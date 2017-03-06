@@ -3,21 +3,23 @@
 Tag6::Ptr find_encrypting_key(const PGP & k){
     if ((k.get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
         (k.get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
+
         for(Packet::Ptr const & p : k.get_packets()){
             if ((p -> get_tag() == Packet::ID::Secret_Key)    ||
                 (p -> get_tag() == Packet::ID::Public_Key)    ||
                 (p -> get_tag() == Packet::ID::Secret_Subkey) ||
                 (p -> get_tag() == Packet::ID::Public_Subkey)){
-                Tag6::Ptr key = std::make_shared <Tag6> (p -> raw());
+
+                Tag6::Ptr key = std::static_pointer_cast <Tag6> (p);
+
                 // make sure key has encrypting keys
-                if ((key -> get_pka() == PKA::ID::RSA_Encrypt_or_Sign) ||
-                    (key -> get_pka() == PKA::ID::RSA_Encrypt_Only)    ||
-                    (key -> get_pka() == PKA::ID::ElGamal)){
-                        return key;
+                if (PKA::can_encrypt(key -> get_pka())){
+                    return key;
                 }
             }
         }
     }
+
     return nullptr;
 }
 
@@ -131,7 +133,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
         // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
         Tag18 tag18;
         // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
-        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, 18, to_encrypt + tag19.write(), session_key, prefix));
+        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, Packet::ID::Sym_Encrypted_Integrity_Protected_Data, to_encrypt + tag19.write(), session_key, prefix));
         encrypted = std::make_shared <Tag18> (tag18);
     }
 

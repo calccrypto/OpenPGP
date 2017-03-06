@@ -17,15 +17,14 @@ Tag7::Tag7(const std::string & data)
 Tag7::~Tag7(){}
 
 Tag14 Tag7::get_public_obj() const{
-    std::string data = raw();
-    Tag14 out(data);
-    out.set_tag(14);
+    Tag14 out(raw());
+    out.set_tag(Packet::ID::Public_Subkey);
     return out;
 }
 
 Tag14::Ptr Tag7::get_public_ptr() const{
     Tag14::Ptr out = std::make_shared <Tag14> (raw());
-    out -> set_tag(14);
+    out -> set_tag(Packet::ID::Public_Subkey);
     return out;
 }
 

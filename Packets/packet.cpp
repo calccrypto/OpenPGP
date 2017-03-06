@@ -45,6 +45,40 @@ const std::map <uint8_t, std::string> Packet::Name = {
     std::make_pair(63,                                                 "Private or Experimental Values"),
 };
 
+bool Packet::is_key_packet(const uint8_t t){
+    return (Packet::is_primary_key(t) || Packet::is_subkey(t));
+}
+
+bool Packet::is_primary_key(const uint8_t t){
+    return ((t == Packet::ID::Secret_Key) ||
+            (t == Packet::ID::Public_Key));
+}
+
+bool Packet::is_subkey(const uint8_t t){
+    return ((t == Packet::ID::Secret_Subkey) ||
+            (t == Packet::ID::Public_Subkey));
+}
+
+bool Packet::is_public(const uint8_t t){
+    return ((t == Packet::ID::Public_Key) ||
+            (t == Packet::ID::Public_Subkey));
+}
+
+bool Packet::is_secret(const uint8_t t){
+    return ((t == Packet::ID::Secret_Key) ||
+            (t == Packet::ID::Secret_Subkey));
+}
+
+bool Packet::is_user(const uint8_t t){
+    return ((t == Packet::ID::User_ID) ||
+            (t == Packet::ID::User_Attribute));
+}
+
+bool Packet::is_session_key  (const uint8_t t){
+    return ((t == Packet::ID::Public_Key_Encrypted_Session_Key) ||
+            (t == Packet::ID::Symmetric_Key_Encrypted_Session_Key));
+}
+
 std::string Packet::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));

@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__
 
-#include <iostream>
-#include <sstream>
 #include <stdexcept>
 #include <vector>
 

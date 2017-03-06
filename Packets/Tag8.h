@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include "../Compress/Compress.h"
 #include "packet.h"
 
-// 5.6. Compressed Data Packet (Tag 8)
+// 5.6.  Compressed Data Packet (Tag 8)
 //
-//    The Compressed Data packet contains compressed data. Typically, this
+//    The Compressed Data packet contains compressed data.  Typically, this
 //    packet is found as the contents of an encrypted packet, or following
 //    a Signature or One-Pass Signature packet, and contains a literal data
 //    packet.
@@ -42,12 +42,12 @@ THE SOFTWARE.
 //
 //      - Compressed data, which makes up the remainder of the packet.
 //
-//    A Compressed Data Packet’s body contains an block that compresses
-//    some set of packets. See section "Packet Composition" for details on
+//    A Compressed Data Packet's body contains an block that compresses
+//    some set of packets.  See section "Packet Composition" for details on
 //    how messages are formed.
 //
 //    ZIP-compressed packets are compressed with raw RFC 1951 [RFC1951]
-//    DEFLATE blocks. Note that PGP V2.6 uses 13 bits of compression. If
+//    DEFLATE blocks.  Note that PGP V2.6 uses 13 bits of compression.  If
 //    an implementation uses more bits of compression, PGP V2.6 cannot
 //    decompress it.
 //

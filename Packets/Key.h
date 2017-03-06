@@ -42,10 +42,6 @@ class Key : public Packet{
         // version 3
         uint32_t expire;
 
-        void read_common(const std::string & data, std::string::size_type & pos);
-        std::string show_common(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
-        std::string raw_common() const;
-
         Key(uint8_t tag);
 
     public:
@@ -59,6 +55,12 @@ class Key : public Packet{
         virtual void read(const std::string & data);
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         virtual std::string raw() const;
+
+        // read, show, and raw functions common to all keys tags
+        // can't overload normal versions because the inherited versions are needed
+        void read_common(const std::string & data, std::string::size_type & pos);
+        std::string show_common(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string raw_common() const;
 
         time_t get_time() const;
         uint8_t get_pka() const;

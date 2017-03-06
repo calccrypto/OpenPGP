@@ -75,7 +75,7 @@ std::string overkey(const Key::Ptr & key);
 //    0xD1 for User Attribute certifications, followed by a four-octet
 //    number giving the length of the User ID or User Attribute data, and
 //    then the User ID or User Attribute data.
-std::string certification(uint8_t version, const ID::Ptr & id);
+std::string certification(uint8_t version, const User::Ptr & id);
 
 // 0x00: Signature of a binary document.
 //
@@ -112,19 +112,19 @@ std::string to_sign_02(const Tag2::Ptr & tag2);
 //    The issuer of this certification does not make any particular
 //    assertion as to how well the certifier has checked that the owner
 //    of the key is in fact the person described by the User ID.
-std::string to_sign_10(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2);
+std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2);
 
 // 0x11: Persona certification of a User ID and Public-Key packet.
 //
 //    The issuer of this certification has not done any verification of
 //    the claim that the owner of this key is the User ID specified.
-std::string to_sign_11(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2);
+std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2);
 
 // 0x12: Casual certification of a User ID and Public-Key packet.
 //
 //    The issuer of this certification has done some casual
 //    verification of the claim of identity.
-std::string to_sign_12(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2);
+std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2);
 
 // 0x13: Positive certification of a User ID and Public-Key packet.
 //
@@ -134,7 +134,7 @@ std::string to_sign_12(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr
 //    Most OpenPGP implementations make their "key signatures" as 0x10
 //    certifications. Some implementations can issue 0x11-0x13
 //    certifications, but few differentiate between the types.
-std::string to_sign_13(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2);
+std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2);
 
 // 0x18: Subkey Binding Signature
 //
@@ -192,7 +192,7 @@ std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2);
 //    is computed over the same data as the certificate that it
 //    revokes, and should have a later creation date than that
 //    certificate.
-std::string to_sign_30(const Key::Ptr & key, const ID::Ptr & id, const Tag2::Ptr & tag2);
+std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2);
 
 // 0x40: Timestamp signature.
 //

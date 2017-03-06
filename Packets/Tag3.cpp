@@ -24,7 +24,7 @@ Tag3::~Tag3(){}
 
 void Tag3::read(const std::string & data){
     size = data.size();
-	version = data[0];                  // 4
+    version = data[0];                  // 4
     sym = data[1];
     switch (data[2]){
         case 0:

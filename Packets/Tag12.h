@@ -27,6 +27,19 @@ THE SOFTWARE.
 
 #include "packet.h"
 
+// 5.10. Trust Packet (Tag 12)
+//
+//    The Trust packet is used only within keyrings and is not normally
+//    exported. Trust packets contain data that record the user’s
+//    specifications of which key holders are trustworthy introducers,
+//    along with other information that implementing software uses for
+//    trust information. The format of Trust packets is defined by a given
+//    implementation.
+//
+//    Trust packets SHOULD NOT be emitted to output streams that are
+//    transferred to other users, and they SHOULD be ignored on any input
+//    other than local keyring files.
+
 class Tag12 : public Packet{
     private:
         std::string trust;

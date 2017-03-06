@@ -58,6 +58,7 @@ THE SOFTWARE.
 //     Message.
 
 class PGPMessage : public PGP {
+    private:
         Tag8::Ptr comp;                                                                     // store tag8 data, if it exists
 
         void decompress();                                                                  // decompress packet
@@ -86,6 +87,7 @@ class PGPMessage : public PGP {
 
         // check if packet sequence is a meaningful and correct OpenPGP Message
         bool meaningful(std::string & error)                               const;
+        using PGP::meaningful;
 
         PGP::Ptr clone() const;
 };
