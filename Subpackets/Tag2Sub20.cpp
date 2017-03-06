@@ -1,7 +1,7 @@
 #include "Tag2Sub20.h"
 
 Tag2Sub20::Tag2Sub20()
-    : Tag2Subpacket(20),
+    : Tag2Subpacket(Tag2Subpacket::ID::Notation_Data),
       flags(),
       mlen(), nlen(),
       m(), n()
@@ -23,17 +23,19 @@ void Tag2Sub20::read(const std::string & data){
 }
 
 std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title();
-    for(char const & c : flags){
-        out << "\n" << tab << "            Flag - " << Notation::Name.at(c) << " (not " << std::to_string(c) << ")";
+    const std::string tab(3 * indent_size, ' ');
+    const std::string indent(indents * indent_size, ' ');
+
+    std::string out = indent + show_title();
+    for(char const & f : flags){
+        out += "\n" + indent + tab + "Flag - " + Notation::Name.at(f) + " (not " + std::to_string(f) + ")";
     }
-    out << "\n"
-        << tab << "            Name: " << m << "\n"
-        << tab << "            Value: " << n;
-    return out.str();
+
+    return out + "\n" +
+                 indent + tab + "Name: " + m + "\n" +
+                 indent + tab + "Value: " + n;
 }
+
 std::string Tag2Sub20::raw() const{
     return flags + unhexlify(makehex(m.size(), 4)) + unhexlify(makehex(n.size(), 4)) + m + n;
 }

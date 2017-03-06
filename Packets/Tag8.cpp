@@ -10,26 +10,26 @@ std::string Tag8::decompress(const std::string & data){
 }
 
 std::string Tag8::show_title() const{
-    std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet::Name.at(8) << " (Tag 8)";   // display packet name and tag number
+    std::string out = std::string(format?"New":"Old") + ": " + Packet::Name.at(8) + " (Tag 8)";   // display packet name and tag number
 
     switch (partial){
         case 0:
             break;
         case 1:
-            out << " (partial start)";
+            out += " (partial start)";
             break;
         case 2:
-            out << " (partial continue)";
+            out += " (partial continue)";
             break;
         case 3:
-            out << " (partial end)";
+            out += " (partial end)";
             break;
         default:
             throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
             break;
     }
-    return out.str();
+
+    return out;
 }
 
 Tag8::Tag8()
@@ -57,15 +57,16 @@ void Tag8::read(const std::string & data){
 }
 
 std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
     PGPMessage decompressed;
     decompressed.read_raw(get_data()); // do this in case decompressed data contains headers
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "    Compression algorithm: " << Compression::Name.at(comp) << "(compress " << std::to_string(comp) << ")\n"
-        << tab << "Compressed Data:\n"
-        << decompressed.show(indents + 1, indent_size);
-    return out.str();
+
+    return indent + show_title() + "\n" +
+           indent + tab + "Compression Algorithm: " + Compression::Name.at(comp) + " (compress " + std::to_string(comp) + ")\n" +
+           indent + tab + "Compressed Data:\n" +
+           decompressed.show(indents + 1, indent_size);
 }
 
 std::string Tag8::raw() const{

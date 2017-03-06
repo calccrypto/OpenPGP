@@ -7,7 +7,7 @@ const std::map <uint8_t, std::string> Tag17Subpacket::Name = {
 };
 
 std::string Tag17Subpacket::show_title() const{
-    return "        " + Tag17Subpacket::Name.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
+    return Tag17Subpacket::Name.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
 }
 
 Tag17Subpacket::~Tag17Subpacket(){}

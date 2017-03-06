@@ -53,16 +53,16 @@ void Tag3::read(const std::string & data){
 }
 
 std::string Tag3::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "    Version: " << std::to_string(version) << "\n"
-        << tab << "    Symmetric Key Algorithm: " << Sym::Name.at(sym) << " (sym " << std::to_string(sym) << ")\n"
-        << s2k -> show(indents + 1, indent_size);
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab + "Version: " + std::to_string(version) + "\n" +
+                      indent + tab + "Symmetric Key Algorithm: " + Sym::Name.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+                      s2k -> show(indents + 1, indent_size);
     if (esk){
-        out << tab << "\n    Encrypted Session Key: " << hexlify(*esk);
+        out += "\n" + indent + tab + "Encrypted Session Key: " + hexlify(*esk);
     }
-    return out.str();
+    return out;
 }
 
 std::string Tag3::raw() const{

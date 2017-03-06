@@ -1,7 +1,7 @@
 #include "Tag2Sub31.h"
 
 Tag2Sub31::Tag2Sub31()
-    : Tag2Subpacket(31),
+    : Tag2Subpacket(Tag2Subpacket::ID::Signature_Target),
       pka(), hash_alg(),
       hash()
 {}
@@ -20,13 +20,12 @@ void Tag2Sub31::read(const std::string & data){
 }
 
 std::string Tag2Sub31::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-        << tab << "            Hash Algorithm: " << Hash::Name.at(hash_alg) << " (hash " << std::to_string(hash_alg) << ")\n"
-        << tab << "            Hash: " << hexlify(hash);
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Hash Algorithm: " + Hash::Name.at(hash_alg) + " (hash " + std::to_string(hash_alg) + ")\n" +
+           indent + tab + "Hash: " + hexlify(hash);
 }
 
 std::string Tag2Sub31::raw() const{

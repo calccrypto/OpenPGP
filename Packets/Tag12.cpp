@@ -22,8 +22,10 @@ void Tag12::read(const std::string & data){
 }
 
 std::string Tag12::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + "    Data (" + std::to_string(trust.size()) + " octets): " + trust;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Data (" + std::to_string(trust.size()) + " octets): " + trust;
 }
 
 std::string Tag12::raw() const{

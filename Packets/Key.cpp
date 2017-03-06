@@ -75,45 +75,46 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
 }
 
 std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << "    Version: " << std::to_string(version) << " - " << ((version < 4)?"Old":"New") << "\n"
-        << tab << "    Creation Time: " << show_time(time);
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + tab + "Version: " + std::to_string(version) + " - " + ((version < 4)?"Old":"New") + "\n" +
+                      indent + tab + "Creation Time: " + show_time(time);
 
     if (version < 4){
-        out << "\n"
-            << tab << "    Expiration Time (Days): " << expire;
+        out += "\n" +
+               indent + tab + "Expiration Time (Days): " + std::to_string(expire);
         if (!expire){
-            out << " (Never)";
+            out += " (Never)";
         }
-        out << "\n"
-            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-            << tab << "    RSA n: " << mpitohex(mpi[0]) << "(" << bitsize(mpi[0]) << " bits)\n"
-            << tab << "    RSA e: " << mpitohex(mpi[1]);
+        out += "\n" +
+               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)\n" +
+               indent + tab + "RSA e: " + mpitohex(mpi[1]);
     }
     else if (version == 4){
-        out << "\n"
-            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n";
+        out += "\n" +
+               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n";
         if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
             (pka == PKA::ID::RSA_Encrypt_Only)    ||
             (pka == PKA::ID::RSA_Sign_Only)){
-            out << tab << "    RSA n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-                << tab << "    RSA e (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
+            out += indent + tab + "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
+                   indent + tab + "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
         }
         else if (pka == PKA::ID::ElGamal){
-            out << tab << "    Elgamal p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-                << tab << "    Elgamal g (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
-                << tab << "    Elgamal y (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]);
+            out += indent + tab + "Elgamal p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
+                   indent + tab + "Elgamal g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
+                   indent + tab + "Elgamal y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
         }
         else if (pka == PKA::ID::DSA){
-            out << tab << "    DSA p (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]) << "\n"
-                << tab << "    DSA q (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]) << "\n"
-                << tab << "    DSA g (" << bitsize(mpi[2]) << " bits): " << mpitohex(mpi[2]) << "\n"
-                << tab << "    DSA y (" << bitsize(mpi[3]) << " bits): " << mpitohex(mpi[3]);
+            out += indent + tab + "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
+                   indent + tab + "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
+                   indent + tab + "DSA g (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]) + "\n" +
+                   indent + tab + "DSA y (" + std::to_string(bitsize(mpi[3])) + " bits): " + mpitohex(mpi[3]);
         }
     }
 
-    return out.str();
+    return out;
 }
 
 std::string Key::raw_common() const{

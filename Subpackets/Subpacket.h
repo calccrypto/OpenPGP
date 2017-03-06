@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define __SUBPACKET__
 
 #include <memory>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 

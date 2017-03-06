@@ -398,11 +398,11 @@ void PGP::read_raw(std::istream & stream){
 }
 
 std::string PGP::show(const uint8_t indents, const uint8_t indent_size) const{
-    std::stringstream out;
+    std::string out;
     for(Packet::Ptr const & p : packets){
-        out << p -> show(indents, indent_size) << "\n";
+        out += p -> show(indents, indent_size) + "\n";
     }
-    return out.str();
+    return out;
 }
 
 std::string PGP::raw(const uint8_t header) const{
@@ -422,8 +422,7 @@ std::string PGP::write(const uint8_t armor, const uint8_t header) const{
     for(PGP::Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
-    out += "\n";
-    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[type] + "-----\n";
+    return out + "\n" + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[type] + "-----\n";
 }
 
 bool PGP::get_armored() const{

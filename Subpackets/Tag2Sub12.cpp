@@ -1,7 +1,7 @@
 #include "Tag2Sub12.h"
 
 Tag2Sub12::Tag2Sub12()
-    : Tag2Subpacket(12),
+    : Tag2Subpacket(Tag2Subpacket::ID::Revocation_Key),
       _class(),
       pka(),
       fingerprint()
@@ -21,13 +21,12 @@ void Tag2Sub12::read(const std::string & data){
 }
 
 std::string Tag2Sub12::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Class: " << std::to_string(_class) << "\n"
-        << tab << "            Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-        << tab << "            Fingerprint: " << fingerprint;
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Class: " + std::to_string(_class) + "\n" +
+           indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Fingerprint: " + fingerprint;
 }
 
 std::string Tag2Sub12::raw() const{

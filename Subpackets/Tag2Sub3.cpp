@@ -1,7 +1,7 @@
 #include "Tag2Sub3.h"
 
 Tag2Sub3::Tag2Sub3()
-    : Tag2Subpacket(3, 4),
+    : Tag2Subpacket(Tag2Subpacket::ID::Signature_Expiration_Time, 4),
       time(0)
 {}
 
@@ -16,17 +16,10 @@ void Tag2Sub3::read(const std::string & data){
 }
 
 std::string Tag2Sub3::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Signature Expiration Time (Days): ";
-    if (time == 0){
-        out << tab << "Never";
-    }
-    else{
-        out << tab << show_time(time);
-    }
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Signature Expiration Time (Days): " + (time?show_time(time):"Never");
 }
 
 std::string Tag2Sub3::raw() const{

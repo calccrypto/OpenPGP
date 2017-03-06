@@ -1,7 +1,7 @@
 #include "Tag2Sub24.h"
 
 Tag2Sub24::Tag2Sub24()
-    : Tag2Subpacket(24),
+    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Key_Server),
       pks()
 {}
 
@@ -17,8 +17,10 @@ void Tag2Sub24::read(const std::string & data){
 }
 
 std::string Tag2Sub24::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + "            URI - " + pks;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "URI - " + pks;
 }
 
 std::string Tag2Sub24::raw() const{

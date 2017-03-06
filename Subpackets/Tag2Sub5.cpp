@@ -1,7 +1,7 @@
 #include "Tag2Sub5.h"
 
 Tag2Sub5::Tag2Sub5()
-    : Tag2Subpacket(5, 2),
+    : Tag2Subpacket(Tag2Subpacket::ID::Trust_Signature, 2),
       level(),
       amount()
 {}
@@ -18,12 +18,11 @@ void Tag2Sub5::read(const std::string & data){
 }
 
 std::string Tag2Sub5::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Trust Level: " << std::to_string(level) << "\n"
-        << tab << "            Trust Amount: " << std::to_string(amount);
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Trust Level: " + std::to_string(level) + "\n" +
+           indent + tab + "Trust Amount: " + std::to_string(amount);
 }
 
 std::string Tag2Sub5::raw() const{

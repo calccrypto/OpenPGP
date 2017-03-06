@@ -50,40 +50,43 @@ void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
 }
 
 std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << "\n";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    std::string out;
     if (s2k_con > 253){
-        out << tab << "    String-to-Key Usage Conventions: " << std::to_string(s2k_con) << "\n"
-            << tab << "    Symmetric Key Algorithm: " << Sym::Name.at(sym) << " (sym " << std::to_string(sym) << ")\n"
-            << tab << s2k -> show(indents) << "\n";
+        out += indent + tab + "String-to-Key Usage Conventions: " + std::to_string(s2k_con) + "\n" +
+               indent + tab + "Symmetric Key Algorithm: " + Sym::Name.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+               tab + s2k -> show(indents) + "\n";
         if (s2k -> get_type()){
-            out << tab << "    IV: " << hexlify(IV) << "\n";
+            out += indent + tab + "IV: " + hexlify(IV) + "\n";
         }
     }
 
-    out << tab << "    Encrypted Data (" << secret.size() << " octets):\n        ";
+    out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
+           indent + tab + tab;
+
     if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
         (pka == PKA::ID::RSA_Encrypt_Only)    ||
         (pka == PKA::ID::RSA_Sign_Only)){
-        out << tab << "RSA d, p, q, u";
+        out += "RSA d, p, q, u";
     }
     else if (pka == PKA::ID::ElGamal){
-        out << tab << "Elgamal x";
+        out += "Elgamal x";
     }
     else if (pka == PKA::ID::DSA){
-        out << tab << "DSA x";
+        out += "DSA x";
     }
-    out << tab << " + ";
+    out += " + ";
 
     if (s2k_con == 254){
-        out << tab << "SHA1 hash\n";
+        out += "SHA1 hash";
     }
     else{
-        out << tab << "2 Octet Checksum\n";
+        out += "2 Octet Checksum";
     }
-    out << tab << "        " << hexlify(secret);
-    return out.str();
+
+    out += ": " + hexlify(secret);
+    return out;
 }
 
 void Tag5::read(const std::string & data){
@@ -120,8 +123,11 @@ void Tag5::read(const std::string & data){
 }
 
 std::string Tag5::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + show_common(indents, indent_size) + show_private(indents, indent_size);
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           show_common(indents, indent_size) + "\n" +
+           show_private(indents, indent_size);
 }
 
 std::string Tag5::raw() const{

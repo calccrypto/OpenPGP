@@ -24,8 +24,10 @@ void Tag19::read(const std::string & data){
 }
 
 std::string Tag19::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + "    SHA - 1 Hash of previous packet: " + hash;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "SHA - 1 Hash of previous packet: " + hash;
 }
 
 std::string Tag19::raw() const{

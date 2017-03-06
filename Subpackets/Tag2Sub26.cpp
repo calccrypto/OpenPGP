@@ -1,7 +1,7 @@
 #include "Tag2Sub26.h"
 
 Tag2Sub26::Tag2Sub26()
-    : Tag2Subpacket(26),
+    : Tag2Subpacket(Tag2Subpacket::ID::Policy_URI),
       uri()
 {}
 
@@ -17,8 +17,10 @@ void Tag2Sub26::read(const std::string & data){
 }
 
 std::string Tag2Sub26::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + "            Policy - " + uri;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" + 
+           indent + tab + "Policy - " + uri;
 }
 
 std::string Tag2Sub26::raw() const{

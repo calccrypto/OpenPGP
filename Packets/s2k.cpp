@@ -23,7 +23,7 @@ const std::map <uint8_t, std::string> S2K::Name = {
 };
 
 std::string S2K::show_title() const{
-    return "    " + S2K::Name.at(type) + " (s2k " + std::to_string(type) + "):";
+    return S2K::Name.at(type) + " (s2k " + std::to_string(type) + "):";
 }
 
 S2K::S2K(uint8_t t)
@@ -70,11 +70,10 @@ void S2K0::read(const std::string & data, std::string::size_type & pos){
 }
 
 std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")";
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + tab + show_title() + "\n" +
+           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")";
 }
 
 std::string S2K0::raw() const{
@@ -113,12 +112,11 @@ void S2K1::read(const std::string & data, std::string::size_type & pos){
 }
 
 std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")"
-        << tab << "        Salt: " << hexlify(salt);
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + tab + show_title() + "\n" +
+           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")" +
+           indent + tab + tab + "Salt: " + hexlify(salt);
 }
 
 std::string S2K1::raw() const{
@@ -166,13 +164,12 @@ void S2K3::read(const std::string & data, std::string::size_type & pos){
 }
 
 std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "        Hash: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")"
-        << tab << "        Salt: " << hexlify(salt) << "\n"
-        << tab << "        Coded Count: " << S2K3::coded_count(count) << " (count " << std::to_string(count) << ")";
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + tab + show_title() + "\n" +
+           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")" +
+           indent + tab + tab + "Salt: " + hexlify(salt) + "\n" +
+           indent + tab + tab + "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
 }
 
 std::string S2K3::raw() const{

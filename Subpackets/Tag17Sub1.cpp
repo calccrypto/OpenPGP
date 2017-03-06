@@ -3,7 +3,7 @@
 unsigned int Tag17Sub1::count = 0;
 
 Tag17Sub1::Tag17Sub1()
-    : Tag17Subpacket(1),
+    : Tag17Subpacket(Tag17Subpacket::ID::Image_Attribute),
       version(),
       encoding(),
       image(),
@@ -23,23 +23,24 @@ void Tag17Sub1::read(const std::string & data){
 }
 
 std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream filename;
-    filename << "image" << current << "." << Image_Attributes::Name.at(encoding);
-    std::ofstream f(filename.str().c_str(), std::ios::binary);
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + tab + show_title() + "\n" +
+                      indent;
+
+    const std::string filename = "image" + std::to_string(current) + "." + Image_Attributes::Name.at(encoding);
+    std::ofstream f(filename, std::ios::binary);
     if (f){
         f << image;
         f.close();
-        out << "    Check working directory for '";
+        out += tab + "Check working directory for";
     }
     else{
-        out << "    Error writing to '";
+        out += tab + "Error writing to";
     }
-    out << filename.str() << "' (" << image.size() << " octets).";
-    return out.str();
+
+    return out + " '" + filename + "' (" + std::to_string(image.size()) + " octets).";
 }
 
 std::string Tag17Sub1::raw() const{

@@ -1,7 +1,7 @@
 #include "Tag2Sub16.h"
 
 Tag2Sub16::Tag2Sub16()
-    : Tag2Subpacket(16, 8),
+    : Tag2Subpacket(Tag2Subpacket::ID::Issuer, 8),
       keyid()
 {}
 
@@ -16,8 +16,10 @@ void Tag2Sub16::read(const std::string & data){
 }
 
 std::string Tag2Sub16::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + "            Key ID: " + hexlify(keyid);
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" + 
+           indent + tab + "Key ID: " + hexlify(keyid);
 }
 
 std::string Tag2Sub16::raw() const{

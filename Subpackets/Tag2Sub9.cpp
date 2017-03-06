@@ -1,7 +1,7 @@
 #include "Tag2Sub9.h"
 
 Tag2Sub9::Tag2Sub9()
-    : Tag2Subpacket(9, 4),
+    : Tag2Subpacket(Tag2Subpacket::ID::Key_Expiration_Time, 4),
       dt()
 {}
 
@@ -15,26 +15,30 @@ void Tag2Sub9::read(const std::string & data){
     dt = static_cast <time_t> (toint(data, 256));
 }
 std::string Tag2Sub9::show(const time_t create_time, const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Key Expiration Time: ";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab + "Key Expiration Time: ";
     if (dt == 0){
-        out << "Never";
+        out += "Never";
     }
     else{
-        out << show_time(create_time + dt);
+        out += show_time(create_time + dt);
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2Sub9::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Key Expiration Time: ";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab + "Key Expiration Time: ";
+
     if (dt == 0){
-        out << "Never";
+        out += "Never";
     }
     else{
         const time_t years   = (dt / 31536000);
@@ -44,28 +48,29 @@ std::string Tag2Sub9::show(const uint8_t indents, const uint8_t indent_size) con
         const time_t seconds =  dt     % 60;
 
         if (years){
-            out << years << " years";
+            out += std::to_string(years) + " years";
         }
 
         if (days){
-            out << days << " days";
+            out += std::to_string(days) + " days";
         }
 
         if (hours){
-            out << hours << " hours";
+            out += std::to_string(hours) + " hours";
         }
 
         if (minutes){
-            out << minutes << " minutes";
+            out += std::to_string(minutes) + " minutes";
         }
 
         if (seconds){
-            out << seconds << " seconds";
+            out += std::to_string(seconds) + " seconds";
         }
 
-        out << " after key creation";
+        out += " after key creation";
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2Sub9::raw() const{

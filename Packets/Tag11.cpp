@@ -37,15 +37,14 @@ void Tag11::read(const std::string & data){
 }
 
 std::string Tag11::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "    Format: " << Literal::Name.at(format) << "\n"
-        << tab << "    Data (" << (1 + filename.size() + 4 + literal.size()) << " octets):\n"
-        << tab << "        Filename: " << filename << "\n"
-        << tab << "        Creation Date: " << show_time(time) << "\n"
-        << tab << "        Data: " << literal;
-    return out.str();
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Format: " + Literal::Name.at(format) + "\n" +
+           indent + tab + "Data (" + std::to_string(1 + filename.size() + 4 + literal.size()) + " octets):\n" +
+           indent + tab + tab + "Filename: " + filename + "\n" +
+           indent + tab + tab + "Creation Date: " + show_time(time) + "\n" +
+           indent + tab + tab + "Data: " + literal;
 }
 
 std::string Tag11::raw() const{

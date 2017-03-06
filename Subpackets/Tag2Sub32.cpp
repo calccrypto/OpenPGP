@@ -1,7 +1,7 @@
 #include "Tag2Sub32.h"
 
 Tag2Sub32::Tag2Sub32()
-    : Tag2Subpacket(32),
+    : Tag2Subpacket(Tag2Subpacket::ID::Embedded_Signature),
       embedded()
 {}
 
@@ -24,8 +24,10 @@ void Tag2Sub32::read(const std::string & data){
 }
 
 std::string Tag2Sub32::show(const uint8_t indents, const uint8_t indent_size) const{
+    const std::string indent(indent_size, ' ');
     const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + embedded -> show(indents, indent_size);
+    return tab + show_title() + "\n" + 
+           tab + embedded -> show(indents, indent_size);
 }
 
 std::string Tag2Sub32::raw() const{

@@ -134,26 +134,25 @@ std::string Packet::write_new_length(const std::string & data) const{
 }
 
 std::string Packet::show_title() const{
-    std::stringstream out;
-    out << (format?"New":"Old") << ": " << Packet::Name.at(tag) << " (Tag " << std::to_string(tag) << ")";
+    std::string out = std::string(format?"New":"Old") + ": " + Packet::Name.at(tag) + " (Tag " + std::to_string(tag) + ")";
 
     switch (partial){
         case 0:
             break;
         case 1:
-            out << " (partial start)";
+            out += " (partial start)";
             break;
         case 2:
-            out << " (partial continue)";
+            out += " (partial continue)";
             break;
         case 3:
-            out << " (partial end)";
+            out += " (partial end)";
             break;
         default:
             throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
             break;
     }
-    return out.str();
+    return out;
 }
 
 Packet::Packet(uint8_t tag)

@@ -1,7 +1,7 @@
 #include "Tag2Sub21.h"
 
 Tag2Sub21::Tag2Sub21()
-    : Tag2Subpacket(21),
+    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Hash_Algorithms),
       pha()
 {}
 
@@ -17,13 +17,15 @@ void Tag2Sub21::read(const std::string & data){
 }
 
 std::string Tag2Sub21::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title();
-    for(unsigned int x = 0; x < pha.size(); x++){
-        out << "\n" << tab << "            hash alg - " << Hash::Name.at(pha[x]) << " (hash " << std::to_string(pha[x]) << ")";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + show_title();
+    for(char const & alg : pha){
+        out += "\n" + indent + tab + "hash alg - " + Hash::Name.at(alg) + " (hash " + std::to_string(alg) + ")";
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2Sub21::raw() const{

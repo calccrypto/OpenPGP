@@ -204,69 +204,74 @@ void Tag2::read(const std::string & data){
 }
 
 std::string Tag2::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "    Version: " << std::to_string(version) << "\n";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab + "Version: " + std::to_string(version) + "\n";
     if (version < 4){
-        out << tab << "    Hashed Material:\n"
-            << tab << "        Signature Type: " << Signature_Type::Name.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << tab << "        Creation Time: " << show_time(time) << "\n"
-            << tab << "    Signer's Key ID: " << hexlify(keyid) << "\n"
-            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-            << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")\n";
+        out += indent + tab + "Hashed Material:\n" +
+               indent + tab + tab + "Signature Type: " + Signature_Type::Name.at(type) + " (type 0x" + makehex(type, 2) + ")\n" +
+               indent + tab + tab + "Creation Time: " + show_time(time) + "\n" +
+               indent + tab + "Signer's Key ID: " + hexlify(keyid) + "\n" +
+               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "Hash Algorithm: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")\n";
     }
-    if (version == 4){
-        out << tab << "    Signature Type: " << Signature_Type::Name.at(type) << " (type 0x" << makehex(type, 2) << ")\n"
-            << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-            << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")";
+    else if (version == 4){
+        out += indent + tab + "Signature Type: " + Signature_Type::Name.at(type) + " (type 0x" + makehex(type, 2) + ")\n" +
+               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "Hash Algorithm: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")";
 
         if (hashed_subpackets.size()){
             time_t create_time = 0;
 
-            out << "\n" << tab << "    Hashed Sub:";
+            out += "\n" + indent + tab + "Hashed Sub:";
             for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
                 // capture signature creation time to combine with expiration time
-                if (s -> get_type() == 2){
-                    create_time = static_cast <Tag2Sub2 *> (s.get()) -> get_time();
+                if (s -> get_type() == Tag2Subpacket::ID::Signature_Creation_Time){
+                    create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
                 }
 
-                if (s -> get_type() == 9){
-                    out << "\n" << static_cast <Tag2Sub9 *> (s.get()) -> show(create_time, indents, indent_size);
+                if (s -> get_type() == Tag2Subpacket::ID::Key_Expiration_Time){
+                    out += "\n" + std::static_pointer_cast <Tag2Sub9> (s) -> show(create_time, indents + 2, indent_size);
                 }
                 else{
-                    out << "\n" << s -> show(indents, indent_size);
+                    out += "\n" + s -> show(indents + 2, indent_size);
                 }
             }
         }
+
         if (unhashed_subpackets.size()){
             time_t create_time = 0;
 
-            out << "\n" << tab << "    Unhashed Sub:";
+            out += "\n" + indent + tab + "Unhashed Sub:";
             for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
                 // capture signature creation time to combine with expiration time
-                if (s -> get_type() == 2){
-                    create_time = static_cast <Tag2Sub2 *> (s.get()) -> get_time();
+                if (s -> get_type() == Tag2Subpacket::ID::Signature_Creation_Time){
+                    create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
                 }
 
-                if (s -> get_type() == 9){
-                    out << "\n" << static_cast <Tag2Sub9 *> (s.get()) -> show(create_time, indents, indent_size);
+                if (s -> get_type() == Tag2Subpacket::ID::Key_Expiration_Time){
+                    out += "\n" + std::static_pointer_cast <Tag2Sub9> (s) -> show(create_time, indents + 2, indent_size);
                 }
                 else{
-                    out << "\n" << s -> show(indents, indent_size);
+                    out += "\n" + s -> show(indents + 2, indent_size);
                 }
             }
         }
     }
-    out << "\n" << tab << "    Hash Left 16 Bits: " << hexlify(left16);
+
+    out += "\n" + indent + tab + "Hash Left 16 Bits: " + hexlify(left16);
+
     if (pka < 4){
-        out << "\n" << tab << "    RSA m**d mod n (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0]);
+        out += "\n" + indent + tab + "RSA m**d mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
     }
     else if (pka == 17){
-        out << "\n" << tab << "    DSA r (" << bitsize(mpi[0]) << " bits): " << mpitohex(mpi[0])
-            << "\n" << tab << "    DSA s (" << bitsize(mpi[1]) << " bits): " << mpitohex(mpi[1]);
+        out += "\n" + indent + tab + "DSA r (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
+            += "\n" + indent + tab + "DSA s (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2::raw() const{

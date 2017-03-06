@@ -1,7 +1,7 @@
 #include "Tag2Sub29.h"
 
 Tag2Sub29::Tag2Sub29()
-    : Tag2Subpacket(29),
+    : Tag2Subpacket(Tag2Subpacket::ID::Reason_for_Revocation),
       code(),
       reason()
 {}
@@ -19,14 +19,16 @@ void Tag2Sub29::read(const std::string & data){
 }
 
 std::string Tag2Sub29::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "            Reason " << std::to_string(code) << " - " << Revoke::Name.at(code);
+    const std::string tab(3 * indent_size, ' ');
+    const std::string indent(indents * indent_size, ' ');
+
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab + "Reason " + std::to_string(code) + " - " + Revoke::Name.at(code);
     if (code){
-        out << "\n" << tab << "            Comment - " << reason;
+        out += "\n" + indent + tab + "Comment - " + reason;
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2Sub29::raw() const{

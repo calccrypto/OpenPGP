@@ -19,8 +19,10 @@ void Tag63::read(const std::string & data){
 }
 
 std::string Tag63::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + tab + show_title() + "\n" + std::string((indents  + 1) * indent_size, ' ') + hexlify(stream);
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" + 
+           indent + tab + hexlify(stream);
 }
 
 std::string Tag63::raw() const{

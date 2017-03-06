@@ -1,7 +1,7 @@
 #include "Tag2Sub10.h"
 
 Tag2Sub10::Tag2Sub10()
-    : Tag2Subpacket(10),
+    : Tag2Subpacket(Tag2Subpacket::ID::Placeholder_for_Backward_Compatibility),
       stuff()
 {}
 
@@ -17,8 +17,10 @@ void Tag2Sub10::read(const std::string & data){
 }
 
 std::string Tag2Sub10::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + tab + stuff;
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + stuff;
 }
 
 std::string Tag2Sub10::raw() const{

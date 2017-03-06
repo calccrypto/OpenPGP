@@ -1,7 +1,7 @@
 #include "Tag2Sub22.h"
 
 Tag2Sub22::Tag2Sub22()
-    : Tag2Subpacket(22),
+    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Compression_Algorithms),
       pca()
 {}
 
@@ -17,13 +17,15 @@ void Tag2Sub22::read(const std::string & data){
 }
 
 std::string Tag2Sub22::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title();
-    for(unsigned int x = 0; x < pca.size(); x++){
-        out << "\n" << tab << "            comp alg - " << Compression::Name.at(pca[x]) << " (comp " << std::to_string(pca[x]) << ")";
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+
+    std::string out = indent + show_title();
+    for(char const & alg : pca){
+        out += "\n" + indent + tab + "comp alg - " + Compression::Name.at(alg) + " (comp " + std::to_string(alg) + ")";
     }
-    return out.str();
+
+    return out;
 }
 
 std::string Tag2Sub22::raw() const{

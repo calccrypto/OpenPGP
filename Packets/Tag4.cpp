@@ -34,17 +34,16 @@ void Tag4::read(const std::string & data){
 }
 
 std::string Tag4::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    std::stringstream out;
-    out << tab << show_title() << "\n"
-        << tab << "    Version: " << std::to_string(version) << "\n"
-        << tab << "    Signature Type: " << Signature_Type::Name.at(type) << " (sig " << std::to_string(type) << ")\n"
-        << tab << "    Hash Algorithm: " << Hash::Name.at(hash) << " (hash " << std::to_string(hash) << ")\n"
-        << tab << "    Public Key Algorithm: " << PKA::Name.at(pka) << " (pka " << std::to_string(pka) << ")\n"
-        << tab << "    KeyID: " << hexlify(keyid) << "\n"
-        << tab << "    Nested: " << static_cast <bool> (nested);
-    return out.str();
-}
+    const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
+    return indent + show_title() + "\n" +
+           indent + tab + "Version: " + std::to_string(version) + "\n" +
+           indent + tab + "Signature Type: " + Signature_Type::Name.at(type) + " (sig " + std::to_string(type) + ")\n" +
+           indent + tab + "Hash Algorithm: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
+           indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "KeyID: " + hexlify(keyid) + "\n" +
+           indent + tab + "Nested: " + std::to_string(nested);
+    }
 
 std::string Tag4::raw() const{
     return "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, nested);
