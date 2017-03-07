@@ -75,19 +75,6 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
     return verify_detached_signature(key, data, sig, error);
 }
 
-int verify_detached_signature(const PGPKey & key, std::istream & stream, const PGPDetachedSignature & sig, std::string & error){
-    if (!stream){
-        error = "Error: Bad stream.";
-        return -1;
-    }
-    return verify_detached_signature(key, std::string(std::istreambuf_iterator <char> (stream), {}), sig, error);
-}
-
-int verify_detached_signature(const PGPKey & key, std::istream & stream, const PGPDetachedSignature & sig){
-    std::string error;
-    return verify_detached_signature(key, stream, sig, error);
-}
-
 // 0x00: Signature of a binary document.
 int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::string & error){
     // most of the time OpenPGP Message data is compressed

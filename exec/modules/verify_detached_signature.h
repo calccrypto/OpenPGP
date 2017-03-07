@@ -77,7 +77,7 @@ const Module verify_detached_signature(
         PGPDetachedSignature signature(sig);
 
         std::string err;
-        const int verified = ::verify_detached_signature(signer, file, signature, err);
+        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, err);
 
         if (verified == -1){
             std::cerr << err << std::endl;

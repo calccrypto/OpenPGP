@@ -49,10 +49,8 @@ int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::
 // /////////////////
 
 // detached signatures (not a standalone signature)
-int verify_detached_signature(const PGPKey & key, const std::string  & data,   const PGPDetachedSignature & sig, std::string & error);
-int verify_detached_signature(const PGPKey & key, const std::string  & data,   const PGPDetachedSignature & sig);
-int verify_detached_signature(const PGPKey & key,       std::istream & stream, const PGPDetachedSignature & sig, std::string & error);
-int verify_detached_signature(const PGPKey & key,       std::istream & stream, const PGPDetachedSignature & sig);
+int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig, std::string & error);
+int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig);
 
 // 0x00: Signature of a binary document.
 int verify_message(const Key::Ptr & signing_key, const PGPMessage & m);   // called by the other verify_message functions
