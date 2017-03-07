@@ -48,7 +48,7 @@ THE SOFTWARE.
 #include "PKA.h"
 
 #include "DSA.h"
-#include "ELGAMAL.h"
+#include "ElGamal.h"
 #include "RSA.h"
 
 namespace PKA{
