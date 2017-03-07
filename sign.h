@@ -26,10 +26,9 @@ THE SOFTWARE.
 #ifndef __SIGN__
 #define __SIGN__
 
-#include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <vector>
+#include <string>
 
 #include "common/includes.h"
 #include "Compress/Compress.h"
@@ -61,14 +60,11 @@ Tag2::Ptr create_sig_packet(const PGPSecretKey & pri, const uint8_t type, const 
 
 // detached signatures (not a standalone signature)
 PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::ID::SHA1);
-PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, std::istream & stream, const uint8_t hash = Hash::ID::SHA1);
 
 // 0x00: Signature of a binary document.
 Tag2::Ptr sign_binary(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
 // includes signed file
 PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const std::string & data, const uint8_t hash = Hash::ID::SHA1, const uint8_t compress = Compression::Algorithm::ZLIB, const uint8_t version = 4);
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename,                           const uint8_t hash = Hash::ID::SHA1, const uint8_t compress = Compression::Algorithm::ZLIB, const uint8_t version = 4);
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, std::istream & stream,    const uint8_t hash = Hash::ID::SHA1, const uint8_t compress = Compression::Algorithm::ZLIB, const uint8_t version = 4);
 
 // 0x01: Signature of a canonical text document.
 PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);

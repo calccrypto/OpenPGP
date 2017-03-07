@@ -79,16 +79,9 @@ PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std
     PGPDetachedSignature signature;
     signature.set_type(PGP::Type::SIGNATURE);
     signature.set_keys({std::make_pair("Version", "cc")});
-    signature.set_packets({sign_binary(pri, passphrase, data, hash)});
+    signature.set_packets({sign_binary(pri, passphrase, binary_to_canonical(data), hash)});
 
     return signature;
-}
-
-PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, std::istream & stream, const uint8_t hash){
-    if (!stream){
-        throw std::runtime_error("Error: Bad stream.");
-    }
-    return sign_detached_signature(pri, passphrase, std::string(std::istreambuf_iterator <char> (stream), {}), hash);
 }
 
 // 0x00: Signature of a binary document.
@@ -185,21 +178,6 @@ PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase
     return signature;
 }
 
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const uint8_t hash, const uint8_t compress, const uint8_t version){
-    std::ifstream f(filename.c_str(), std::ios::binary);
-    if (!f){
-        throw std::runtime_error("Error: Unable to open file '" + filename + "'.");
-    }
-    return sign_message(pri, passphrase, filename, std::string(std::istreambuf_iterator <char> (f), {}), hash, compress, version);
-}
-
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, std::istream & stream, const uint8_t hash, const uint8_t compress, const uint8_t version){
-    if (!stream){
-        throw std::runtime_error("Error: Bad stream.");
-    }
-    return sign_message(pri, passphrase, filename, std::string(std::istreambuf_iterator <char> (stream), {}), hash, compress, version);
-}
-
 // 0x01: Signature of a canonical text document.
 PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text, const uint8_t hash, const uint8_t version){
     if (pri.get_type() != PGP::Type::PRIVATE_KEY_BLOCK){
@@ -287,15 +265,15 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
         throw std::runtime_error("Error: Invalid Certification Value: " + std::to_string(cert));
     }
 
-    Tag6::Ptr signee_primary_key = nullptr;
+    Key::Ptr signee_primary_key = nullptr;
     User::Ptr signee_id = nullptr;
 
     // find primary key; generally packet[0]
-    std::vector <Packet::Ptr> signee_packets = signee.get_packets_clone();
+    PGP::Packets signee_packets = signee.get_packets_clone();
     unsigned int i = 0;
     for(i = 0; i < signee_packets.size(); i++){
         if (signee_packets[i] -> get_tag() == Packet::ID::Public_Key){
-            signee_primary_key = std::make_shared <Tag6> (signee_packets[i] -> raw());
+            signee_primary_key = std::make_shared <Key> (signee_packets[i] -> raw());
             break;
         }
     }
@@ -383,7 +361,7 @@ PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & p
 
     // Create output key
     PGPPublicKey out(signee);
-    std::vector <Packet::Ptr> out_packets;
+    PGP::Packets out_packets;
 
     j = 0;
     // push all packets up to and including out packet into new packets
