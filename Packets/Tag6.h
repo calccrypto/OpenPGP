@@ -109,13 +109,13 @@ THE SOFTWARE.
 //          - MPI of DSA public-key value y (= g**x mod p where x
 //            is secret).
 //
-//        Algorithm-Specific Fields for Elgamal public keys:
+//        Algorithm-Specific Fields for ELGAMAL public keys:
 //
-//          - MPI of Elgamal prime p;
+//          - MPI of ELGAMAL prime p;
 //
-//          - MPI of Elgamal group generator g;
+//          - MPI of ELGAMAL group generator g;
 //
-//          - MPI of Elgamal public key value y (= g**x mod p where x
+//          - MPI of ELGAMAL public key value y (= g**x mod p where x
 //            is secret).
 
 class Tag6: public Key {

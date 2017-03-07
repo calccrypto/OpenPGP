@@ -1,7 +1,7 @@
 #include "Tag2Sub29.h"
 
 Tag2Sub29::Tag2Sub29()
-    : Tag2Subpacket(Tag2Subpacket::ID::Reason_for_Revocation),
+    : Tag2Subpacket(Tag2Subpacket::REASON_FOR_REVOCATION),
       code(),
       reason()
 {}

@@ -1,6 +1,6 @@
 /*
 PKA.h
-List of Public Key Algorithm headers
+Typedefs used by all PKA functions
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 

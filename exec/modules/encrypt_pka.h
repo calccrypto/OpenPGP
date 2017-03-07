@@ -77,7 +77,7 @@ const Module encrypt_pka(
             return -1;
         }
 
-        if (Sym::Number.find(args.at("--sym")) == Sym::Number.end()){
+        if (Sym::NUMBER.find(args.at("--sym")) == Sym::NUMBER.end()){
             std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
             return -1;
         }
@@ -106,7 +106,7 @@ const Module encrypt_pka(
         output(::encrypt_pka(PGPPublicKey(key),
                              std::string(std::istreambuf_iterator <char> (file), {}),
                              args.at("file"),
-                             Sym::Number.at(args.at("-sym")),
+                             Sym::NUMBER.at(args.at("-sym")),
                              Compression::Number.at(args.at("-c")),
                              flags.at("--mdc"),
                              signer,

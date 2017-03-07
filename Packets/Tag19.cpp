@@ -1,7 +1,7 @@
 #include "Tag19.h"
 
 Tag19::Tag19()
-    : Packet(Packet::ID::Modification_Detection_Code),
+    : Packet(Packet::MODIFICATION_DETECTION_CODE),
       hash()
 {
     size = 20;

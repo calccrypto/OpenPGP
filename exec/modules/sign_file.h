@@ -74,7 +74,7 @@ const Module sign_file(
             return -1;
         }
 
-        if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
             std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
@@ -83,7 +83,7 @@ const Module sign_file(
                               args.at("passphrase"),
                               args.at("file"),
                               std::string(std::istreambuf_iterator <char> (file), {}),
-                              Hash::Number.at(args.at("-h")),
+                              Hash::NUMBER.at(args.at("-h")),
                               Compression::Number.at(args.at("-c"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;

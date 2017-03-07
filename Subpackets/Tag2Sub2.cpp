@@ -1,7 +1,7 @@
 #include "Tag2Sub2.h"
 
 Tag2Sub2::Tag2Sub2()
-    : Tag2Subpacket(Tag2Subpacket::ID::Signature_Creation_Time, 4),
+    : Tag2Subpacket(Tag2Subpacket::SIGNATURE_CREATION_TIME, 4),
       time()
 {}
 

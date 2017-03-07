@@ -138,43 +138,41 @@ THE SOFTWARE.
 //        document) that cannot include a target subpacket.
 
 namespace Signature_Type{
-    namespace ID{
-        const uint8_t Signature_of_a_binary_document                                    = 0x00;
-        const uint8_t Signature_of_a_canonical_text_document                            = 0x01;
-        const uint8_t Standalone_signature                                              = 0x02;
-        const uint8_t Generic_certification_of_a_User_ID_and_Public_Key_packet          = 0x10;
-        const uint8_t Persona_certification_of_a_User_ID_and_Public_Key_packet          = 0x11;
-        const uint8_t Casual_certification_of_a_User_ID_and_Public_Key_packet           = 0x12;
-        const uint8_t Positive_certification_of_a_User_ID_and_Public_Key_packet         = 0x13;
-        const uint8_t Subkey_Binding_Signature                                          = 0x18;
-        const uint8_t Primary_Key_Binding_Signature                                     = 0x19;
-        const uint8_t Signature_directly_on_a_key                                       = 0x1f;
-        const uint8_t Key_revocation_signature                                          = 0x20;
-        const uint8_t Subkey_revocation_signature                                       = 0x28;
-        const uint8_t Certification_revocation_signature                                = 0x30;
-        const uint8_t Timestamp_signature                                               = 0x40;
-        const uint8_t Third_Party_Confirmation_signature                                = 0x50;
+    const uint8_t SIGNATURE_OF_A_BINARY_DOCUMENT                                    = 0X00;
+    const uint8_t SIGNATURE_OF_A_CANONICAL_TEXT_DOCUMENT                            = 0X01;
+    const uint8_t STANDALONE_SIGNATURE                                              = 0X02;
+    const uint8_t GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET          = 0X10;
+    const uint8_t PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET          = 0X11;
+    const uint8_t CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET           = 0X12;
+    const uint8_t POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET         = 0X13;
+    const uint8_t SUBKEY_BINDING_SIGNATURE                                          = 0X18;
+    const uint8_t PRIMARY_KEY_BINDING_SIGNATURE                                     = 0X19;
+    const uint8_t SIGNATURE_DIRECTLY_ON_A_KEY                                       = 0X1F;
+    const uint8_t KEY_REVOCATION_SIGNATURE                                          = 0X20;
+    const uint8_t SUBKEY_REVOCATION_SIGNATURE                                       = 0X28;
+    const uint8_t CERTIFICATION_REVOCATION_SIGNATURE                                = 0X30;
+    const uint8_t TIMESTAMP_SIGNATURE                                               = 0X40;
+    const uint8_t THIRD_PARTY_CONFIRMATION_SIGNATURE                                = 0X50;
 
-        // not part of standard
-        const uint8_t UNKNOWN                                                           = 0xff;
-    }
+    // NOT PART OF STANDARD
+    const uint8_t UNKNOWN                                                           = 0XFF;
 
-    const std::map <uint8_t, std::string> Name = {
-        std::make_pair(ID::Signature_of_a_binary_document,                              "Signature of a binary document."),
-        std::make_pair(ID::Signature_of_a_canonical_text_document,                      "Signature of a canonical text document"),
-        std::make_pair(ID::Standalone_signature,                                        "Standalone signature"),
-        std::make_pair(ID::Generic_certification_of_a_User_ID_and_Public_Key_packet,    "Generic certification of a User ID and Public-Key packet"),
-        std::make_pair(ID::Persona_certification_of_a_User_ID_and_Public_Key_packet,    "Persona certification of a User ID and Public-Key packet"),
-        std::make_pair(ID::Casual_certification_of_a_User_ID_and_Public_Key_packet,     "Casual certification of a User ID and Public-Key packet"),
-        std::make_pair(ID::Positive_certification_of_a_User_ID_and_Public_Key_packet,   "Positive certification of a User ID and Public-Key packet"),
-        std::make_pair(ID::Subkey_Binding_Signature,                                    "Subkey Binding Signature"),
-        std::make_pair(ID::Primary_Key_Binding_Signature,                               "Primary Key Binding Signature"),
-        std::make_pair(ID::Signature_directly_on_a_key,                                 "Signature directly on a key"),
-        std::make_pair(ID::Key_revocation_signature,                                    "Key revocation signature"),
-        std::make_pair(ID::Subkey_revocation_signature,                                 "Subkey revocation signature"),
-        std::make_pair(ID::Certification_revocation_signature,                          "Certification revocation signature"),
-        std::make_pair(ID::Timestamp_signature,                                         "Timestamp signature"),
-        std::make_pair(ID::Third_Party_Confirmation_signature,                          "Third-Party Confirmation signature"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(SIGNATURE_OF_A_BINARY_DOCUMENT,                              "Signature of a binary document."),
+        std::make_pair(SIGNATURE_OF_A_CANONICAL_TEXT_DOCUMENT,                      "Signature of a canonical text document"),
+        std::make_pair(STANDALONE_SIGNATURE,                                        "Standalone signature"),
+        std::make_pair(GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET,    "Generic certification of a User ID and Public-Key packet"),
+        std::make_pair(PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET,    "Persona certification of a User ID and Public-Key packet"),
+        std::make_pair(CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET,     "Casual certification of a User ID and Public-Key packet"),
+        std::make_pair(POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET,   "Positive certification of a User ID and Public-Key packet"),
+        std::make_pair(SUBKEY_BINDING_SIGNATURE,                                    "Subkey Binding Signature"),
+        std::make_pair(PRIMARY_KEY_BINDING_SIGNATURE,                               "Primary Key Binding Signature"),
+        std::make_pair(SIGNATURE_DIRECTLY_ON_A_KEY,                                 "Signature directly on a key"),
+        std::make_pair(KEY_REVOCATION_SIGNATURE,                                    "Key revocation signature"),
+        std::make_pair(SUBKEY_REVOCATION_SIGNATURE,                                 "Subkey revocation signature"),
+        std::make_pair(CERTIFICATION_REVOCATION_SIGNATURE,                          "Certification revocation signature"),
+        std::make_pair(TIMESTAMP_SIGNATURE,                                         "Timestamp signature"),
+        std::make_pair(THIRD_PARTY_CONFIRMATION_SIGNATURE,                          "Third-Party Confirmation signature"),
     };
 
     bool is_certification(const uint8_t sig);

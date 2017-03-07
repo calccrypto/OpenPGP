@@ -59,17 +59,17 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
         pos += 6;
 
         // at minimum RSA
-        mpi.push_back(read_MPI(data, pos));     // RSA n, DSA p, ElGamal p
-        mpi.push_back(read_MPI(data, pos));     // RSA e, DSA q, ElGamal g
+        mpi.push_back(read_MPI(data, pos));     // RSA n, DSA p, ELGAMAL p
+        mpi.push_back(read_MPI(data, pos));     // RSA e, DSA q, ELGAMAL g
 
         // DSA
-        if (pka == PKA::ID::DSA){
+        if (pka == PKA::DSA){
             mpi.push_back(read_MPI(data, pos)); //        DSA g
             mpi.push_back(read_MPI(data, pos)); //        DSA y
         }
-        // Elgamal
-        else if (pka == PKA::ID::ElGamal){
-            mpi.push_back(read_MPI(data, pos)); //               ElGamal y
+        // ELGAMAL
+        else if (pka == PKA::ELGAMAL){
+            mpi.push_back(read_MPI(data, pos)); //               ELGAMAL y
         }
     }
 }
@@ -88,25 +88,25 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
             out += " (Never)";
         }
         out += "\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
                indent + tab + "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)\n" +
                indent + tab + "RSA e: " + mpitohex(mpi[1]);
     }
     else if (version == 4){
         out += "\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n";
-        if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
-            (pka == PKA::ID::RSA_Encrypt_Only)    ||
-            (pka == PKA::ID::RSA_Sign_Only)){
+               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
+        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
+            (pka == PKA::RSA_SIGN_ONLY)){
             out += indent + tab + "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
         }
-        else if (pka == PKA::ID::ElGamal){
-            out += indent + tab + "Elgamal p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
-                   indent + tab + "Elgamal g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
-                   indent + tab + "Elgamal y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
+        else if (pka == PKA::ELGAMAL){
+            out += indent + tab + "ELGAMAL p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
+                   indent + tab + "ELGAMAL g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
+                   indent + tab + "ELGAMAL y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
         }
-        else if (pka == PKA::ID::DSA){
+        else if (pka == PKA::DSA){
             out += indent + tab + "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
                    indent + tab + "DSA g (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]) + "\n" +

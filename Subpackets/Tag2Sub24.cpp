@@ -1,7 +1,7 @@
 #include "Tag2Sub24.h"
 
 Tag2Sub24::Tag2Sub24()
-    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Key_Server),
+    : Tag2Subpacket(Tag2Subpacket::PREFERRED_KEY_SERVER),
       pks()
 {}
 

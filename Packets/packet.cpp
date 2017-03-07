@@ -1,48 +1,48 @@
 #include "packet.h"
 
-const uint8_t Packet::ID::Reserved                                     = 0;
-const uint8_t Packet::ID::Public_Key_Encrypted_Session_Key             = 1;
-const uint8_t Packet::ID::Signature                                    = 2;
-const uint8_t Packet::ID::Symmetric_Key_Encrypted_Session_Key          = 3;
-const uint8_t Packet::ID::One_Pass_Signature                           = 4;
-const uint8_t Packet::ID::Secret_Key                                   = 5;
-const uint8_t Packet::ID::Public_Key                                   = 6;
-const uint8_t Packet::ID::Secret_Subkey                                = 7;
-const uint8_t Packet::ID::Compressed_Data                              = 8;
-const uint8_t Packet::ID::Symmetrically_Encrypted_Data                 = 9;
-const uint8_t Packet::ID::Marker_Packet                                = 10;
-const uint8_t Packet::ID::Literal_Data                                 = 11;
-const uint8_t Packet::ID::Trust                                        = 12;
-const uint8_t Packet::ID::User_ID                                      = 13;
-const uint8_t Packet::ID::Public_Subkey                                = 14;
-const uint8_t Packet::ID::User_Attribute                               = 17;
-const uint8_t Packet::ID::Sym_Encrypted_Integrity_Protected_Data       = 18;
-const uint8_t Packet::ID::Modification_Detection_Code                  = 19;
-const uint8_t Packet::ID::UNKNOWN                                      = 255;
+const uint8_t Packet::RESERVED                                     = 0;
+const uint8_t Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY             = 1;
+const uint8_t Packet::SIGNATURE                                    = 2;
+const uint8_t Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY          = 3;
+const uint8_t Packet::ONE_PASS_SIGNATURE                           = 4;
+const uint8_t Packet::SECRET_KEY                                   = 5;
+const uint8_t Packet::PUBLIC_KEY                                   = 6;
+const uint8_t Packet::SECRET_SUBKEY                                = 7;
+const uint8_t Packet::COMPRESSED_DATA                              = 8;
+const uint8_t Packet::SYMMETRICALLY_ENCRYPTED_DATA                 = 9;
+const uint8_t Packet::MARKER_PACKET                                = 10;
+const uint8_t Packet::LITERAL_DATA                                 = 11;
+const uint8_t Packet::TRUST                                        = 12;
+const uint8_t Packet::USER_ID                                      = 13;
+const uint8_t Packet::PUBLIC_SUBKEY                                = 14;
+const uint8_t Packet::USER_ATTRIBUTE                               = 17;
+const uint8_t Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA       = 18;
+const uint8_t Packet::MODIFICATION_DETECTION_CODE                  = 19;
+const uint8_t Packet::UNKNOWN                                      = 255;
 
-const std::map <uint8_t, std::string> Packet::Name = {
-    std::make_pair(Packet::ID::Reserved,                               "Reserved - a packet tag MUST NOT have this value"),
-    std::make_pair(Packet::ID::Public_Key_Encrypted_Session_Key,       "Public-Key Encrypted Session Key"),
-    std::make_pair(Packet::ID::Signature,                              "Signature"),
-    std::make_pair(Packet::ID::Symmetric_Key_Encrypted_Session_Key,    "Symmetric-Key Encrypted Session Key"),
-    std::make_pair(Packet::ID::One_Pass_Signature,                     "One-Pass Signature"),
-    std::make_pair(Packet::ID::Secret_Key,                             "Secret-Key"),
-    std::make_pair(Packet::ID::Public_Key,                             "Public-Key"),
-    std::make_pair(Packet::ID::Secret_Subkey,                          "Secret-Subkey"),
-    std::make_pair(Packet::ID::Compressed_Data,                        "Compressed Data"),
-    std::make_pair(Packet::ID::Symmetrically_Encrypted_Data,           "Symmetrically (Conventional) Encrypted Data"),
-    std::make_pair(Packet::ID::Marker_Packet,                          "Marker Packet (Obsolete Literal Packet)"),
-    std::make_pair(Packet::ID::Literal_Data,                           "Literal Data"),
-    std::make_pair(Packet::ID::Trust,                                  "(Keyring) Trust"),
-    std::make_pair(Packet::ID::User_ID,                                "User ID"),
-    std::make_pair(Packet::ID::Public_Subkey,                          "Public-Subkey (Obsolete Comment Packet)"),
-    std::make_pair(Packet::ID::User_Attribute,                         "User Attribute"),
-    std::make_pair(Packet::ID::Sym_Encrypted_Integrity_Protected_Data, "Sym. Encrypted Integrity Protected Data"),
-    std::make_pair(Packet::ID::Modification_Detection_Code,            "Modification Detection Code"),
-    std::make_pair(60,                                                 "Private or Experimental Values"),
-    std::make_pair(61,                                                 "Private or Experimental Values"),
-    std::make_pair(62,                                                 "Private or Experimental Values"),
-    std::make_pair(63,                                                 "Private or Experimental Values"),
+const std::map <uint8_t, std::string> Packet::NAME = {
+    std::make_pair(Packet::RESERVED,                               "Reserved - a packet tag MUST NOT have this value"),
+    std::make_pair(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY,       "Public-Key Encrypted Session Key"),
+    std::make_pair(Packet::SIGNATURE,                              "Signature"),
+    std::make_pair(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY,    "Symmetric-Key Encrypted Session Key"),
+    std::make_pair(Packet::ONE_PASS_SIGNATURE,                     "One-Pass Signature"),
+    std::make_pair(Packet::SECRET_KEY,                             "Secret-Key"),
+    std::make_pair(Packet::PUBLIC_KEY,                             "Public-Key"),
+    std::make_pair(Packet::SECRET_SUBKEY,                          "Secret-Subkey"),
+    std::make_pair(Packet::COMPRESSED_DATA,                        "Compressed Data"),
+    std::make_pair(Packet::SYMMETRICALLY_ENCRYPTED_DATA,           "Symmetrically (Conventional) Encrypted Data"),
+    std::make_pair(Packet::MARKER_PACKET,                          "Marker Packet (Obsolete Literal Packet)"),
+    std::make_pair(Packet::LITERAL_DATA,                           "Literal Data"),
+    std::make_pair(Packet::TRUST,                                  "(Keyring) Trust"),
+    std::make_pair(Packet::USER_ID,                                "User ID"),
+    std::make_pair(Packet::PUBLIC_SUBKEY,                          "Public-Subkey (Obsolete Comment Packet)"),
+    std::make_pair(Packet::USER_ATTRIBUTE,                         "User Attribute"),
+    std::make_pair(Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, "Sym. Encrypted Integrity Protected Data"),
+    std::make_pair(Packet::MODIFICATION_DETECTION_CODE,            "Modification Detection Code"),
+    std::make_pair(60,                                             "Private or Experimental Values"),
+    std::make_pair(61,                                             "Private or Experimental Values"),
+    std::make_pair(62,                                             "Private or Experimental Values"),
+    std::make_pair(63,                                             "Private or Experimental Values"),
 };
 
 bool Packet::is_key_packet(const uint8_t t){
@@ -50,33 +50,33 @@ bool Packet::is_key_packet(const uint8_t t){
 }
 
 bool Packet::is_primary_key(const uint8_t t){
-    return ((t == Packet::ID::Secret_Key) ||
-            (t == Packet::ID::Public_Key));
+    return ((t == Packet::SECRET_KEY) ||
+            (t == Packet::PUBLIC_KEY));
 }
 
 bool Packet::is_subkey(const uint8_t t){
-    return ((t == Packet::ID::Secret_Subkey) ||
-            (t == Packet::ID::Public_Subkey));
+    return ((t == Packet::SECRET_SUBKEY) ||
+            (t == Packet::PUBLIC_SUBKEY));
 }
 
 bool Packet::is_public(const uint8_t t){
-    return ((t == Packet::ID::Public_Key) ||
-            (t == Packet::ID::Public_Subkey));
+    return ((t == Packet::PUBLIC_KEY) ||
+            (t == Packet::PUBLIC_SUBKEY));
 }
 
 bool Packet::is_secret(const uint8_t t){
-    return ((t == Packet::ID::Secret_Key) ||
-            (t == Packet::ID::Secret_Subkey));
+    return ((t == Packet::SECRET_KEY) ||
+            (t == Packet::SECRET_SUBKEY));
 }
 
 bool Packet::is_user(const uint8_t t){
-    return ((t == Packet::ID::User_ID) ||
-            (t == Packet::ID::User_Attribute));
+    return ((t == Packet::USER_ID) ||
+            (t == Packet::USER_ATTRIBUTE));
 }
 
-bool Packet::is_session_key  (const uint8_t t){
-    return ((t == Packet::ID::Public_Key_Encrypted_Session_Key) ||
-            (t == Packet::ID::Symmetric_Key_Encrypted_Session_Key));
+bool Packet::is_session_key(const uint8_t t){
+    return ((t == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) ||
+            (t == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY));
 }
 
 std::string Packet::write_old_length(const std::string & data) const{
@@ -134,7 +134,7 @@ std::string Packet::write_new_length(const std::string & data) const{
 }
 
 std::string Packet::show_title() const{
-    std::string out = std::string(format?"New":"Old") + ": " + Packet::Name.at(tag) + " (Tag " + std::to_string(tag) + ")";
+    std::string out = std::string(format?"New":"Old") + ": " + Packet::NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 
     switch (partial){
         case 0:

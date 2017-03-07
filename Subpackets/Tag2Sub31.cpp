@@ -1,7 +1,7 @@
 #include "Tag2Sub31.h"
 
 Tag2Sub31::Tag2Sub31()
-    : Tag2Subpacket(Tag2Subpacket::ID::Signature_Target),
+    : Tag2Subpacket(Tag2Subpacket::SIGNATURE_TARGET),
       pka(), hash_alg(),
       hash()
 {}
@@ -23,8 +23,8 @@ std::string Tag2Sub31::show(const uint8_t indents, const uint8_t indent_size) co
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + show_title() + "\n" +
-           indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
-           indent + tab + "Hash Algorithm: " + Hash::Name.at(hash_alg) + " (hash " + std::to_string(hash_alg) + ")\n" +
+           indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Hash Algorithm: " + Hash::NAME.at(hash_alg) + " (hash " + std::to_string(hash_alg) + ")\n" +
            indent + tab + "Hash: " + hexlify(hash);
 }
 

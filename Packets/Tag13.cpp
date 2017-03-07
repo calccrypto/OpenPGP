@@ -1,7 +1,7 @@
 #include "Tag13.h"
 
 Tag13::Tag13()
-    : User(Packet::ID::User_ID),
+    : User(Packet::USER_ID),
       contents()
 {}
 

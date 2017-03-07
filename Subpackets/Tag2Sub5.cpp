@@ -1,7 +1,7 @@
 #include "Tag2Sub5.h"
 
 Tag2Sub5::Tag2Sub5()
-    : Tag2Subpacket(Tag2Subpacket::ID::Trust_Signature, 2),
+    : Tag2Subpacket(Tag2Subpacket::TRUST_SIGNATURE, 2),
       level(),
       amount()
 {}

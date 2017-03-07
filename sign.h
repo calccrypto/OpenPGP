@@ -49,45 +49,45 @@ THE SOFTWARE.
 // possibly returns wrong ID when multiple ID packets are present
 User::Ptr find_user_id(const PGPSecretKey & k);
 
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pub, const PKA::Values & pri, const uint8_t hash = Hash::ID::SHA1);
-PKA::Values pka_sign(const std::string & digest, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t hash = Hash::ID::SHA1);
+PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pub, const PKA::Values & pri, const uint8_t hash = Hash::SHA1);
+PKA::Values pka_sign(const std::string & digest, const Tag5::Ptr & tag5, const std::string & passphrase, const uint8_t hash = Hash::SHA1);
 
 // Generates new default signature packet without PKA values
 Tag2::Ptr create_sig_packet(const uint8_t type, const uint8_t pka, const uint8_t hash, const std::string & keyid, const uint8_t version = 4);
-Tag2::Ptr create_sig_packet(const Tag5::Ptr & tag5, const uint8_t type, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr create_sig_packet(const Tag5::Ptr & tag5, const uint8_t type, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 Tag2::Ptr create_sig_packet(const PGPSecretKey & pri, const uint8_t type, const uint8_t version = 4);
 // //////////////////////////////////////
 
 // detached signatures (not a standalone signature)
-PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::ID::SHA1);
+PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::SHA1);
 
 // 0x00: Signature of a binary document.
-Tag2::Ptr sign_binary(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_binary(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 // includes signed file
-PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const std::string & data, const uint8_t hash = Hash::ID::SHA1, const uint8_t compress = Compression::Algorithm::ZLIB, const uint8_t version = 4);
+PGPMessage sign_message(const PGPSecretKey & pri, const std::string & passphrase, const std::string & filename, const std::string & data, const uint8_t hash = Hash::SHA1, const uint8_t compress = Compression::Algorithm::ZLIB, const uint8_t version = 4);
 
 // 0x01: Signature of a canonical text document.
-PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+PGPCleartextSignature sign_cleartext(const PGPSecretKey & pri, const std::string & passphrase, const std::string & text, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 
 // 0x02: Standalone signature.
-Tag2::Ptr standalone_signature(const Tag5::Ptr & key, const Tag2::Ptr & src, const std::string & passphrase, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr STANDALONE_SIGNATURE(const Tag5::Ptr & key, const Tag2::Ptr & src, const std::string & passphrase, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 
 // 0x10: Generic certification of a User ID and Public-Key packet.
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
 // mainly used for key generation
-Tag2::Ptr sign_primary_key(const Tag5::Ptr & key, const User::Ptr & id, const std::string & passphrase, const uint8_t cert = 0x13, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_primary_key(const Tag5::Ptr & key, const User::Ptr & id, const std::string & passphrase, const uint8_t cert = 0x13, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 // sign someone else's key; can be used for key generation
-PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t cert = 0x13, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+PGPPublicKey sign_primary_key(const PGPSecretKey & signer, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t cert = 0x13, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 
 // 0x18: Subkey Binding Signature
 // mainly used for key generation
-Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 
 // 0x19: Primary Key Binding Signature
-Tag2::Ptr sign_primary_key_binding(const Tag7::Ptr & subpri, const std::string & passphrase, const Tag6::Ptr & primary, const Tag14::Ptr & subkey, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
-Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t hash = Hash::ID::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_primary_key_binding(const Tag7::Ptr & subpri, const std::string & passphrase, const Tag6::Ptr & primary, const Tag14::Ptr & subkey, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_primary_key_binding(const PGPSecretKey & pri, const std::string & passphrase, const PGPPublicKey & signee, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
 
 // 0x1F: Signature directly on a key
 

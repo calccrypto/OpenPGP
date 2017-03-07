@@ -1,7 +1,7 @@
 #include "Tag2Sub4.h"
 
 Tag2Sub4::Tag2Sub4()
-    : Tag2Subpacket(Tag2Subpacket::ID::Exportable_Certification, 1),
+    : Tag2Subpacket(Tag2Subpacket::EXPORTABLE_CERTIFICATION, 1),
       exportable()
 {}
 

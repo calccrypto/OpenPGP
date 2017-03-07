@@ -1,7 +1,7 @@
 #include "Tag18.h"
 
 Tag18::Tag18()
-    : Packet(Packet::ID::Sym_Encrypted_Integrity_Protected_Data, 1),
+    : Packet(Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, 1),
       protected_data()
 {}
 

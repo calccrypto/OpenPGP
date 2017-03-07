@@ -1,13 +1,13 @@
 #include "verify.h"
 
 int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee){
-    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
-        (pka == PKA::ID::RSA_Sign_Only)){
+    if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+        (pka == PKA::RSA_SIGN_ONLY)){
         // RFC 4880 sec 5.2.2
         // If RSA, hash value is encoded using EMSA-PKCS1-v1_5
         return RSA_verify(EMSA_PKCS1_v1_5(hash, digest, bitsize(signer[0]) >> 3), signee, signer);
     }
-    else if (pka == PKA::ID::DSA){
+    else if (pka == PKA::DSA){
         return DSA_verify(digest, signee, signer);
     }
     return -1;
@@ -102,7 +102,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         unsigned int i = 0;
         std::list <Tag4::Ptr> OPSP;                                         // treat as stack
-        while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::ID::One_Pass_Signature)){
+        while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::ONE_PASS_SIGNATURE)){
             OPSP.push_front(std::make_shared <Tag4> (packets[i] -> raw())); // put next Tag4 onto stack
             i++;
 
@@ -187,10 +187,10 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
                         // get hashed data
                         std::string digest;
-                        if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::ID::Signature_of_a_binary_document){
+                        if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT){
                             digest = to_sign_00(binary, *(SP.begin()));
                         }
-                        else if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::ID::Signature_of_a_canonical_text_document){
+                        else if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::SIGNATURE_OF_A_CANONICAL_TEXT_DOCUMENT){
                                 digest = to_sign_01(text, *(SP.begin()));
                         }
 
@@ -263,7 +263,7 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     Tag6::Ptr signing_key = nullptr;
     for(Packet::Ptr const & p : key.get_packets()){
         // if its a public key packet
-        if ((p -> get_tag() == Packet::ID::Public_Key) || (p -> get_tag() == Packet::ID::Public_Subkey)){
+        if ((p -> get_tag() == Packet::PUBLIC_KEY) || (p -> get_tag() == Packet::PUBLIC_SUBKEY)){
             Tag6::Ptr tag6 = std::static_pointer_cast <Tag6> (p);
 
             // if its a signing key packet
@@ -382,7 +382,7 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
         else if (Packet::is_user(signee_packet -> get_tag())){
             signee_id = std::static_pointer_cast <User> (signee_packet);
         }
-        else if (signee_packet -> get_tag() == Packet::ID::Signature){
+        else if (signee_packet -> get_tag() == Packet::SIGNATURE){
             // TODO differentiate between certification and revocation
 
             const uint8_t signee_key_version = signee_key -> get_version();
@@ -445,8 +445,8 @@ int verify_revoke(const PGPKey & key, const PGPPublicKey & rev, std::string & er
         return -1;
     }
 
-    if (rev.get_packets()[0] -> get_tag() != Packet::ID::Signature){
-        error = "Error: Revocation certificate should contain one " + Packet::Name.at(Packet::ID::Signature) + ".";
+    if (rev.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
+        error = "Error: Revocation certificate should contain one " + Packet::NAME.at(Packet::SIGNATURE) + ".";
         return -1;
     }
 

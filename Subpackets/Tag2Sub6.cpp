@@ -1,7 +1,7 @@
 #include "Tag2Sub6.h"
 
 Tag2Sub6::Tag2Sub6()
-    : Tag2Subpacket(Tag2Subpacket::ID::Regular_Expression),
+    : Tag2Subpacket(Tag2Subpacket::REGULAR_EXPRESSION),
       regex()
 {}
 

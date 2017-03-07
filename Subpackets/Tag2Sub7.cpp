@@ -1,7 +1,7 @@
 #include "Tag2Sub7.h"
 
 Tag2Sub7::Tag2Sub7()
-    : Tag2Subpacket(Tag2Subpacket::ID::Revocable, 1),
+    : Tag2Subpacket(Tag2Subpacket::REVOCABLE, 1),
       revocable()
 {}
 

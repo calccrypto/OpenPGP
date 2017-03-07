@@ -37,8 +37,8 @@ PGPKey::~PGPKey(){}
 std::string PGPKey::keyid() const{
     for(Packet::Ptr const & p : packets){
         // find primary key
-        if ((p -> get_tag() == Packet::ID::Secret_Key) ||
-            (p -> get_tag() == Packet::ID::Public_Key)){
+        if ((p -> get_tag() == Packet::SECRET_KEY) ||
+            (p -> get_tag() == Packet::PUBLIC_KEY)){
             return Tag6(p -> raw()).get_keyid();
         }
     }
@@ -46,8 +46,8 @@ std::string PGPKey::keyid() const{
     // if no primary key is found
     for(Packet::Ptr const & p : packets){
         // find subkey
-        if ((p -> get_tag() == Packet::ID::Secret_Subkey) ||
-            (p -> get_tag() == Packet::ID::Public_Subkey)){
+        if ((p -> get_tag() == Packet::SECRET_SUBKEY) ||
+            (p -> get_tag() == Packet::PUBLIC_SUBKEY)){
             return Tag6(p -> raw()).get_keyid();
         }
     }
@@ -61,20 +61,20 @@ std::string PGPKey::list_keys() const{
     // scan for revoked keys
     std::map <std::string, std::string> revoked;
     for(Packet::Ptr const & p : packets){
-        if (p -> get_tag() == Packet::ID::Signature){
+        if (p -> get_tag() == Packet::SIGNATURE){
             Tag2 tag2(p -> raw());
-            if ((tag2.get_type() == Signature_Type::ID::Key_revocation_signature) ||
-                (tag2.get_type() == Signature_Type::ID::Subkey_revocation_signature)){
+            if ((tag2.get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE) ||
+                (tag2.get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE)){
                 bool found = false;
                 for(Tag2Subpacket::Ptr & s : tag2.get_unhashed_subpackets()){
-                    if (s -> get_type() == Tag2Subpacket::ID::Issuer){
+                    if (s -> get_type() == Tag2Subpacket::ISSUER){
                         revoked[Tag2Sub16(s -> raw()).get_keyid()] = show_date(tag2.get_time());
                         found = true;
                     }
                 }
                 if (!found){
                     for(Tag2Subpacket::Ptr & s : tag2.get_hashed_subpackets()){
-                        if (s -> get_type() == Tag2Subpacket::ID::Issuer){
+                        if (s -> get_type() == Tag2Subpacket::ISSUER){
                             revoked[Tag2Sub16(s -> raw()).get_keyid()] = show_date(tag2.get_time());
                             found = true;
                         }
@@ -100,12 +100,12 @@ std::string PGPKey::list_keys() const{
                 << "\n";
         }
         // if the packet is a User ID
-        else if (p -> get_tag() == Packet::ID::User_ID){
+        else if (p -> get_tag() == Packet::USER_ID){
             Tag13 tag13(p -> raw());
             out << "uid                   " << tag13.raw() << "\n";
         }
         // if the packet is a User Attribute
-        else if (p -> get_tag() == Packet::ID::User_Attribute){
+        else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
             Tag17 tag17(p -> raw());
             std::vector <Tag17Subpacket::Ptr> subpackets = tag17.get_attributes();
             for(Tag17Subpacket::Ptr s : subpackets){
@@ -114,7 +114,7 @@ std::string PGPKey::list_keys() const{
             }
         }
         // if the packet is a signature, do nothing
-        // else if (p -> get_tag() == Packet::ID::Signature){}
+        // else if (p -> get_tag() == Packet::SIGNATURE){}
         else{}
     }
     return out.str();
@@ -123,13 +123,13 @@ std::string PGPKey::list_keys() const{
 bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     // public or private key packets to look for
     uint8_t key, subkey;
-    if (pgp.get_type() == Type::PUBLIC_KEY_BLOCK){
-           key = Packet::ID::Public_Key;
-        subkey = Packet::ID::Public_Subkey;
+    if (pgp.get_type() == PUBLIC_KEY_BLOCK){
+           key = Packet::PUBLIC_KEY;
+        subkey = Packet::PUBLIC_SUBKEY;
     }
-    else if (pgp.get_type() == Type::PRIVATE_KEY_BLOCK){
-           key = Packet::ID::Secret_Key;
-        subkey = Packet::ID::Secret_Subkey;
+    else if (pgp.get_type() == PRIVATE_KEY_BLOCK){
+           key = Packet::SECRET_KEY;
+        subkey = Packet::SECRET_SUBKEY;
     }
     else{
         error = "Error: Bad key type.";
@@ -141,8 +141,8 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     // revocation certificates are placed in PUBLIC KEY BLOCKs
     // and have only one signature packet???
     if ((pkts.size() == 1)                                                                 &&
-        (pkts[0] -> get_tag() == Packet::ID::Signature)                                    &&
-        (Tag2(pkts[0] -> raw()).get_type() == Signature_Type::ID::Key_revocation_signature)){
+        (pkts[0] -> get_tag() == Packet::SIGNATURE)                                    &&
+        (Tag2(pkts[0] -> raw()).get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE)){
         return true;
     }
     // minimum 2 packets: Primary Key + User ID
@@ -153,7 +153,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
     //   - One Public/Secret-Key packet
     if (pkts[0] -> get_tag() != key){
-        error = "Error: First packet is not a " + Packet::Name.at(key) + ".";
+        error = "Error: First packet is not a " + Packet::NAME.at(key) + ".";
         return false;
     }
 
@@ -162,12 +162,12 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
     //   - Zero or more revocation signatures
     unsigned int i = 1;
-    while ((i < pkts.size()) && (pkts[i] -> get_tag() == Packet::ID::Signature)){
-        if (Tag2(pkts[i] -> raw()).get_type() == Signature_Type::ID::Key_revocation_signature){
+    while ((i < pkts.size()) && (pkts[i] -> get_tag() == Packet::SIGNATURE)){
+        if (Tag2(pkts[i] -> raw()).get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
             i++;
         }
         else{
-            error = "Error: Packet " + std::to_string(i) + " following " + Packet::Name.at(key) + " is not a key revocation signature.";
+            error = "Error: Packet " + std::to_string(i) + " following " + Packet::NAME.at(key) + " is not a key revocation signature.";
             return false;
         }
     }
@@ -190,14 +190,14 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     std::size_t user_id_count = 0;
     do{
         // make sure there is a User packet
-        if ((pkts[i] -> get_tag() != Packet::ID::User_ID) &&
-            (pkts[i] -> get_tag() != Packet::ID::User_Attribute)){
+        if ((pkts[i] -> get_tag() != Packet::USER_ID) &&
+            (pkts[i] -> get_tag() != Packet::USER_ATTRIBUTE)){
             error = "Error: Packet is not a User ID or User Attribute Packet.";
             return false;
         }
 
         // need at least one User ID packet
-        user_id_count += (pkts[i] -> get_tag() == Packet::ID::User_ID);
+        user_id_count += (pkts[i] -> get_tag() == Packet::USER_ID);
 
         // go to next packet
         i++;
@@ -215,7 +215,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         // Attribute packet is followed by zero or more Signature packets
         // calculated on the immediately preceding User Attribute packet and the
         // initial Public-Key packet.
-        while ((i < pkts.size()) && (pkts[i] -> get_tag() == Packet::ID::Signature)){
+        while ((i < pkts.size()) && (pkts[i] -> get_tag() == Packet::SIGNATURE)){
             // make sure the signature type is a certification
             if (!Signature_Type::is_certification(Tag2(pkts[i] -> raw()).get_type())){
                 error = "Error: Signature type is not a certification packet.";
@@ -223,10 +223,10 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
             }
 
             // TODO: make sure signature matches the User packet
-            if (pkts[i - 1] -> get_tag() == Packet::ID::User_ID){
+            if (pkts[i - 1] -> get_tag() == Packet::USER_ID){
 
             }
-            else if (pkts[i - 1] -> get_tag() == Packet::ID::User_Attribute){
+            else if (pkts[i - 1] -> get_tag() == Packet::USER_ATTRIBUTE){
 
             }
             // else{}
@@ -238,7 +238,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
     // need at least one User ID packet
     if (!user_id_count){
-        error = "Error: Need at least one " + Packet::Name.at(Packet::ID::User_ID) + ".";
+        error = "Error: Need at least one " + Packet::NAME.at(Packet::USER_ID) + ".";
         return false;
     }
 
@@ -253,14 +253,14 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
         //    - After each Subkey packet, one Signature packet, plus optionally a revocation
         if ((i >= pkts.size())                             ||
-            (pkts[i] -> get_tag() != Packet::ID::Signature)){
+            (pkts[i] -> get_tag() != Packet::SIGNATURE)){
             error = "Error: Signature packet not following subkey packet.";
             return false;
         }
 
         // check that the Signature packet is a Subkey binding signature
-        if (Tag2(pkts[i] -> raw()).get_type() != Signature_Type::ID::Subkey_Binding_Signature){
-            error = "Error: Signature packet following subpacket is not of type " + Signature_Type::Name.at(Signature_Type::ID::Subkey_Binding_Signature) + ".";
+        if (Tag2(pkts[i] -> raw()).get_type() != Signature_Type::SUBKEY_BINDING_SIGNATURE){
+            error = "Error: Signature packet following subpacket is not of type " + Signature_Type::NAME.at(Signature_Type::SUBKEY_BINDING_SIGNATURE) + ".";
             return false;
         }
 
@@ -274,12 +274,12 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         }
 
         // optionally a revocation
-        if (pkts[i] -> get_tag() == Packet::ID::Signature){
-            if (Tag2(pkts[i] -> raw()).get_type() == Signature_Type::ID::Key_revocation_signature){
+        if (pkts[i] -> get_tag() == Packet::SIGNATURE){
+            if (Tag2(pkts[i] -> raw()).get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
                 i++;
             }
             else{
-                error = "Error: Signature packet following subkey signature is not a " + Signature_Type::Name.at(Signature_Type::ID::Key_revocation_signature) + ".";
+                error = "Error: Signature packet following subkey signature is not a " + Signature_Type::NAME.at(Signature_Type::KEY_REVOCATION_SIGNATURE) + ".";
                 return false;
             }
         }
@@ -315,7 +315,7 @@ std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
 PGPPublicKey::PGPPublicKey()
     : PGPKey()
 {
-    type = Type::PUBLIC_KEY_BLOCK;
+    type = PUBLIC_KEY_BLOCK;
 }
 
 PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy)
@@ -341,7 +341,7 @@ PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
 PGPPublicKey::~PGPPublicKey(){}
 
 bool PGPPublicKey::meaningful(std::string & error) const{
-    return ((type == Type::PUBLIC_KEY_BLOCK) && PGPKey::meaningful(*this, error));
+    return ((type == PUBLIC_KEY_BLOCK) && PGPKey::meaningful(*this, error));
 }
 
 PGPPublicKey & PGPPublicKey::operator=(const PGPPublicKey & pub){
@@ -373,7 +373,7 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
 PGPSecretKey::PGPSecretKey()
     : PGPKey()
 {
-    type = Type::PRIVATE_KEY_BLOCK;
+    type = PRIVATE_KEY_BLOCK;
 }
 
 PGPSecretKey::PGPSecretKey(const PGPKey & copy)
@@ -397,16 +397,16 @@ PGPSecretKey::~PGPSecretKey(){}
 PGPPublicKey PGPSecretKey::get_public() const{
     PGPPublicKey pub;
     pub.set_armored(armored);
-    pub.set_type(Type::PRIVATE_KEY_BLOCK);
+    pub.set_type(PRIVATE_KEY_BLOCK);
     pub.set_keys(keys);
 
     // clone packets; convert secret packets into public ones
     Packets pub_packets;
     for(Packet::Ptr const & p : packets){
-        if (p -> get_tag() == Packet::ID::Secret_Key){
+        if (p -> get_tag() == Packet::SECRET_KEY){
             pub_packets.push_back(Tag5(p -> raw()).get_public_ptr());
         }
-        else if (p -> get_tag() == Packet::ID::Secret_Subkey){
+        else if (p -> get_tag() == Packet::SECRET_SUBKEY){
             pub_packets.push_back(Tag7(p -> raw()).get_public_ptr());
         }
         else{
@@ -420,7 +420,7 @@ PGPPublicKey PGPSecretKey::get_public() const{
 }
 
 bool PGPSecretKey::meaningful(std::string & error) const{
-    return ((type == Type::PRIVATE_KEY_BLOCK) && PGPKey::meaningful(*this, error));
+    return ((type == PRIVATE_KEY_BLOCK) && PGPKey::meaningful(*this, error));
 }
 
 PGP::Ptr PGPSecretKey::clone() const{

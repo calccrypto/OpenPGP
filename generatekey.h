@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // Fills in provided empty keys
-void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);
+void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ELGAMAL_bits = 2048);
 
 // Given a private key with its packets filled with non PKA data, will try
 // to fill in the following fields of both the public key and private key:

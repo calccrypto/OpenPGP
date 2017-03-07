@@ -42,29 +42,23 @@ THE SOFTWARE.
 class PGP{
     public:
         typedef uint8_t Type_t;
-
-        struct Type{
-            static const Type_t UNKNOWN;                // Default value
-            static const Type_t MESSAGE;                // Used for signed, encrypted, or compressed files.
-            static const Type_t PUBLIC_KEY_BLOCK;       // Used for armoring public keys.
-            static const Type_t PRIVATE_KEY_BLOCK;      // Used for armoring private keys.
-            static const Type_t MESSAGE_PART_XY;        // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-            static const Type_t MESSAGE_PART_X;         // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
-            static const Type_t SIGNATURE;              // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-
-            static const Type_t SIGNED_MESSAGE;         // Used for cleartext signatures; header not really part of RFC 4880.
-            static const Type_t KEY_BLOCK;              // Used to check if type is PUBLIC_KEY_BLOCK or PRIVATE_KEY_BLOCK
-        };
+        static const Type_t UNKNOWN;                    // Default value
+        static const Type_t MESSAGE;                    // Used for signed, encrypted, or compressed files.
+        static const Type_t PUBLIC_KEY_BLOCK;           // Used for armoring public keys.
+        static const Type_t PRIVATE_KEY_BLOCK;          // Used for armoring private keys.
+        static const Type_t MESSAGE_PART_XY;            // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+        static const Type_t MESSAGE_PART_X;             // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+        static const Type_t SIGNATURE;                  // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+        static const Type_t SIGNED_MESSAGE;             // Used for cleartext signatures; Bad PGP type.
 
         static const std::string ASCII_Armor_Header[];  // ASCII data at beginning and end of OpenPGP packet
         static const std::string ASCII_Armor_Key[];     // ASCII descriptor of OpenPGP packet
 
-        struct Armored{
-            enum Type{
-                DEFAULT,
-                YES,
-                NO,
-            };
+        // used for write function
+        enum Armored{
+            DEFAULT,                                    // use value stored in PGP::armored
+            YES,                                        // write ASCII version
+            NO,                                         // write binary version
         };
 
         typedef std::pair <std::string, std::string> Armor_Key;
@@ -72,7 +66,7 @@ class PGP{
         typedef std::vector <Packet::Ptr> Packets;
 
     protected:
-        Armored::Type armored;                          // default true
+        bool armored;                                   // default true
         Type_t type;                                    // what type of key is this
         Armor_Keys keys;                                // key-value pairs in the ASCII header
         Packets packets;                                // main data
@@ -98,7 +92,7 @@ class PGP{
         typedef std::shared_ptr <PGP> Ptr;
 
         PGP();
-        PGP(const PGP & copy);                  // clone another PGP instance
+        PGP(const PGP & copy);                          // clone another PGP instance
         PGP(const std::string & data);
         PGP(std::istream & stream);
         ~PGP();
@@ -113,23 +107,23 @@ class PGP{
 
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
         virtual std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        virtual std::string write(const Armored::Type armor = Armored::DEFAULT, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
+        virtual std::string write(const Armored armor = DEFAULT, const uint8_t header = 0) const;
 
         // Accessors
-        Armored::Type get_armored()   const;
+        bool get_armored()   const;
         Type_t get_type()             const;
         const Armor_Keys & get_keys() const;
-        const Packets & get_packets() const;    // get copy of all packet pointers (for looping through packets)
-        Packets get_packets_clone()   const;    // clone all packets (for modifying packets)
+        const Packets & get_packets() const;            // get copy of all packet pointers (for looping through packets)
+        Packets get_packets_clone()   const;            // clone all packets (for modifying packets)
 
         // Modifiers
-        void set_armored(const Armored::Type a);
+        void set_armored(const bool a);
         void set_type(const Type_t header);
         void set_keys(const Armor_Keys & keys);
-        void set_packets(const Packets & p);    // clones the input packets
+        void set_packets(const Packets & p);            // clones the input packets
 
-        PGP & operator=(const PGP & copy);          // get deep copy object
-        virtual Ptr clone() const;                  // get deep copy pointer
+        PGP & operator=(const PGP & copy);              // get deep copy object
+        virtual Ptr clone() const;                      // get deep copy pointer
 };
 
 #endif

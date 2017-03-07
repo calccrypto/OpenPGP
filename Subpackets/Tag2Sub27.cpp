@@ -1,7 +1,7 @@
 #include "Tag2Sub27.h"
 
 Tag2Sub27::Tag2Sub27()
-    : Tag2Subpacket(Tag2Subpacket::ID::Key_Flags),
+    : Tag2Subpacket(Tag2Subpacket::KEY_FLAGS),
       flags()
 {}
 

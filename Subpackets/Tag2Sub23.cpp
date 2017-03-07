@@ -1,7 +1,7 @@
 #include "Tag2Sub23.h"
 
 Tag2Sub23::Tag2Sub23()
-    : Tag2Subpacket(Tag2Subpacket::ID::Key_Server_Preferences),
+    : Tag2Subpacket(Tag2Subpacket::KEY_SERVER_PREFERENCES),
       flags()
 {}
 

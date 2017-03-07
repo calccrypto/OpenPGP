@@ -1,7 +1,7 @@
 #include "Tag10.h"
 
 Tag10::Tag10()
-    : Packet(Packet::ID::Marker_Packet),
+    : Packet(Packet::MARKER_PACKET),
       pgp("PGP")
 {}
 

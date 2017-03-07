@@ -3,29 +3,29 @@
 SymAlg::Ptr setup_Sym(const uint8_t sym_alg, const std::string & key){
     SymAlg::Ptr alg;
     switch(sym_alg){
-        case Sym::ID::IDEA:
+        case Sym::IDEA:
             alg = std::make_shared <IDEA> (key);
             break;
-        case Sym::ID::TRIPLEDES:
+        case Sym::TRIPLEDES:
             alg = std::make_shared <TDES> (key.substr(0, 8), TDES_mode1, key.substr(8, 8), TDES_mode2, key.substr(16, 8), TDES_mode3);
             break;
-        case Sym::ID::CAST5:
+        case Sym::CAST5:
             alg = std::make_shared <CAST128> (key);
             break;
-        case Sym::ID::BLOWFISH:
+        case Sym::BLOWFISH:
             alg = std::make_shared <Blowfish> (key);
             break;
-        case Sym::ID::AES128:
-        case Sym::ID::AES192:
-        case Sym::ID::AES256:
+        case Sym::AES128:
+        case Sym::AES192:
+        case Sym::AES256:
             alg = std::make_shared <AES> (key);
             break;
-        case Sym::ID::TWOFISH256:
+        case Sym::TWOFISH256:
             alg = std::make_shared <Twofish> (key);
             break;
-        case Sym::ID::CAMELLIA128:
-        case Sym::ID::CAMELLIA192:
-        case Sym::ID::CAMELLIA256:
+        case Sym::CAMELLIA128:
+        case Sym::CAMELLIA192:
+        case Sym::CAMELLIA256:
             alg = std::make_shared <Camellia> (key);
             break;
         default:

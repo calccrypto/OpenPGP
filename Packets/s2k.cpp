@@ -1,29 +1,29 @@
 #include "s2k.h"
 
-const uint8_t S2K::ID::Simple_S2K              = 0;
-const uint8_t S2K::ID::Salted_S2K              = 1;
-const uint8_t S2K::ID::Iterated_and_Salted_S2K = 3;
+const uint8_t S2K::SIMPLE_S2K              = 0;
+const uint8_t S2K::SALTED_S2K              = 1;
+const uint8_t S2K::ITERATED_AND_SALTED_S2K = 3;
 
-const std::map <uint8_t, std::string> S2K::Name = {
-            std::make_pair(ID::Simple_S2K,              "Simple S2K"),
-            std::make_pair(ID::Salted_S2K,              "Salted S2K"),
-            std::make_pair(2,                           "Reserved value"),
-            std::make_pair(ID::Iterated_and_Salted_S2K, "Iterated and Salted S2K"),
-            std::make_pair(100,                         "Private/Experimental S2K"),
-            std::make_pair(101,                         "Private/Experimental S2K"),
-            std::make_pair(102,                         "Private/Experimental S2K"),
-            std::make_pair(103,                         "Private/Experimental S2K"),
-            std::make_pair(104,                         "Private/Experimental S2K"),
-            std::make_pair(105,                         "Private/Experimental S2K"),
-            std::make_pair(106,                         "Private/Experimental S2K"),
-            std::make_pair(107,                         "Private/Experimental S2K"),
-            std::make_pair(108,                         "Private/Experimental S2K"),
-            std::make_pair(109,                         "Private/Experimental S2K"),
-            std::make_pair(110,                         "Private/Experimental S2K"),
+const std::map <uint8_t, std::string> S2K::NAME = {
+            std::make_pair(SIMPLE_S2K,              "Simple S2K"),
+            std::make_pair(SALTED_S2K,              "Salted S2K"),
+            std::make_pair(2,                       "Reserved value"),
+            std::make_pair(ITERATED_AND_SALTED_S2K, "Iterated and Salted S2K"),
+            std::make_pair(100,                     "Private/Experimental S2K"),
+            std::make_pair(101,                     "Private/Experimental S2K"),
+            std::make_pair(102,                     "Private/Experimental S2K"),
+            std::make_pair(103,                     "Private/Experimental S2K"),
+            std::make_pair(104,                     "Private/Experimental S2K"),
+            std::make_pair(105,                     "Private/Experimental S2K"),
+            std::make_pair(106,                     "Private/Experimental S2K"),
+            std::make_pair(107,                     "Private/Experimental S2K"),
+            std::make_pair(108,                     "Private/Experimental S2K"),
+            std::make_pair(109,                     "Private/Experimental S2K"),
+            std::make_pair(110,                     "Private/Experimental S2K"),
 };
 
 std::string S2K::show_title() const{
-    return S2K::Name.at(type) + " (s2k " + std::to_string(type) + "):";
+    return S2K::NAME.at(type) + " (s2k " + std::to_string(type) + "):";
 }
 
 S2K::S2K(uint8_t t)
@@ -73,7 +73,7 @@ std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")";
+           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")";
 }
 
 std::string S2K0::raw() const{
@@ -115,7 +115,7 @@ std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")" +
+           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")" +
            indent + tab + tab + "Salt: " + hexlify(salt);
 }
 
@@ -167,7 +167,7 @@ std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")" +
+           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")" +
            indent + tab + tab + "Salt: " + hexlify(salt) + "\n" +
            indent + tab + tab + "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
 }

@@ -69,7 +69,7 @@ const Module sign_detached_signature(
             return -1;
         }
 
-        if (Hash::Number.find(args.at("-h")) == Hash::Number.end()){
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
             std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
             return -1;
         }
@@ -79,7 +79,7 @@ const Module sign_detached_signature(
         output(::sign_detached_signature(pri,
                                          args.at("passphrase"),
                                          std::string(std::istreambuf_iterator <char> (file), {}),
-                                         Hash::Number.at(args.at("-h"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+                                         Hash::NUMBER.at(args.at("-h"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

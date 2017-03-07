@@ -37,10 +37,10 @@ std::string certification(uint8_t version, const User::Ptr & id){
     }
     else if (version == 4){
         std::string data = id -> raw();
-        if (id -> get_tag() == Packet::ID::User_ID){
+        if (id -> get_tag() == Packet::USER_ID){
             return "\xb4" + unhexlify(makehex(data.size(), 8)) + data;
         }
-        else if (id -> get_tag() == Packet::ID::User_Attribute){
+        else if (id -> get_tag() == Packet::USER_ATTRIBUTE){
             return "\xd1" + unhexlify(makehex(data.size(), 8)) + data;
         }
     }

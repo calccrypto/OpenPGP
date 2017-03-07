@@ -1,7 +1,7 @@
 #include "Tag2Sub32.h"
 
 Tag2Sub32::Tag2Sub32()
-    : Tag2Subpacket(Tag2Subpacket::ID::Embedded_Signature),
+    : Tag2Subpacket(Tag2Subpacket::EMBEDDED_SIGNATURE),
       embedded()
 {}
 

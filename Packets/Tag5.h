@@ -94,9 +94,9 @@ THE SOFTWARE.
 //
 //        - MPI of DSA secret exponent x.
 //
-//        Algorithm-Specific Fields for Elgamal secret keys:
+//        Algorithm-Specific Fields for ELGAMAL secret keys:
 //
-//        - MPI of Elgamal secret exponent x.
+//        - MPI of ELGAMAL secret exponent x.
 //
 //    Secret MPI values can be encrypted using a passphrase.  If a string-
 //    to-key specifier is given, that describes the algorithm for

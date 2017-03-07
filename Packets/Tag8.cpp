@@ -10,7 +10,7 @@ std::string Tag8::decompress(const std::string & data){
 }
 
 std::string Tag8::show_title() const{
-    std::string out = std::string(format?"New":"Old") + ": " + Packet::Name.at(8) + " (Tag 8)";   // display packet name and tag number
+    std::string out = std::string(format?"New":"Old") + ": " + Packet::NAME.at(8) + " (Tag 8)";   // display packet name and tag number
 
     switch (partial){
         case 0:
@@ -33,7 +33,7 @@ std::string Tag8::show_title() const{
 }
 
 Tag8::Tag8()
-    : Packet(Packet::ID::Compressed_Data, 3),
+    : Packet(Packet::COMPRESSED_DATA, 3),
       comp(Compression::Algorithm::UNCOMPRESSED),
       compressed_data()
 {}

@@ -20,12 +20,12 @@ Tag6::Ptr find_encrypting_key(const PGPKey & key){
 PKA::Values pka_encrypt(const uint8_t pka,
                         const PGPMPI & data,
                         const PKA::Values & pub){
-    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
-        (pka == PKA::ID::RSA_Encrypt_Only)){
+    if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+        (pka == PKA::RSA_ENCRYPT_ONLY)){
         return {RSA_encrypt(data, pub)};
     }
-    if (pka == PKA::ID::ElGamal){
-        return ElGamal_encrypt(data, pub);
+    if (pka == PKA::ELGAMAL){
+        return ELGAMAL_encrypt(data, pub);
     }
     else{
         throw std::runtime_error("Error: PKA number " + std::to_string(pka) + " not allowed or unknown.");
@@ -49,7 +49,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
                          const std::string & sig_passphrase){
 
     // generate prefix
-    std::size_t BS = Sym::Block_Length.at(sym_alg) >> 3;
+    std::size_t BS = Sym::BLOCK_LENGTH.at(sym_alg) >> 3;
     std::string prefix = unhexlify(zfill(bintohex(BBS().rand(BS << 3)), BS << 1, '0'));
 
     std::string to_encrypt;
@@ -116,18 +116,18 @@ Packet::Ptr encrypt_data(const std::string & session_key,
     if (!mdc){
         // Symmetrically Encrypted Data Packet (Tag 9)
         Tag9 tag9;
-        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, Sym::ID::AES256, to_encrypt, session_key, prefix));
+        tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(sym_alg, Sym::AES256, to_encrypt, session_key, prefix));
         encrypted = std::make_shared <Tag9> (tag9);
     }
     else{
         // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
-        tag19.set_hash(use_hash(Hash::ID::SHA1, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
+        tag19.set_hash(use_hash(Hash::SHA1, prefix + prefix.substr(BS - 2, 2) + to_encrypt + "\xd3\x14"));
 
         // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
         Tag18 tag18;
         // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
-        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, Packet::ID::Sym_Encrypted_Integrity_Protected_Data, to_encrypt + tag19.write(), session_key, prefix));
+        tag18.set_protected_data(use_OpenPGP_CFB_encrypt(sym_alg, Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, to_encrypt + tag19.write(), session_key, prefix));
         encrypted = std::make_shared <Tag18> (tag18);
     }
 
@@ -169,7 +169,7 @@ PGPMessage encrypt_pka(const PGPKey & key,
     // do calculations
 
     // generate session key
-    std::size_t key_len = Sym::Key_Length.at(sym_alg);
+    std::size_t key_len = Sym::KEY_LENGTH.at(sym_alg);
 
     // get hex version of session key
     std::string session_key = mpitohex(bintompi(BBS().rand(key_len)));
@@ -195,7 +195,7 @@ PGPMessage encrypt_pka(const PGPKey & key,
 
     // write data to output container
     PGPMessage out = PGPMessage();
-    out.set_type(PGP::Type::MESSAGE);
+    out.set_type(PGP::MESSAGE);
     out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag1, encrypted});
 
@@ -206,11 +206,11 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
     std::cerr << "Warning: encrypt_sym is untested. Potentially incorrect" << std::endl;
 
     // generate Symmetric-Key Encrypted Session Key Packets (Tag 3)
-    size_t key_len = Sym::Key_Length.at(sym_alg);
+    size_t key_len = Sym::KEY_LENGTH.at(sym_alg);
 
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
-    s2k -> set_type(S2K::ID::Iterated_and_Salted_S2K);
-    s2k -> set_hash(Hash::ID::SHA1);
+    s2k -> set_type(S2K::ITERATED_AND_SALTED_S2K);
+    s2k -> set_hash(Hash::SHA1);
     s2k -> set_salt(unhexlify(mpitohex(bintompi(BBS().rand(key_len)))));
     s2k -> set_count(96);
 
@@ -234,7 +234,7 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
 
     // write to output container
     PGPMessage out;
-    out.set_type(PGP::Type::MESSAGE);
+    out.set_type(PGP::MESSAGE);
     out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag3, encrypted});
 

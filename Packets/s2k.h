@@ -57,13 +57,11 @@ THE SOFTWARE.
 
 class S2K{
     public:
-        struct ID{
-            static const uint8_t Simple_S2K;
-            static const uint8_t Salted_S2K;
-            static const uint8_t Iterated_and_Salted_S2K;
-        };
+        static const uint8_t SIMPLE_S2K;
+        static const uint8_t SALTED_S2K;
+        static const uint8_t ITERATED_AND_SALTED_S2K;
 
-        static const std::map <uint8_t, std::string> Name;
+        static const std::map <uint8_t, std::string> NAME;
 
     protected:
         uint8_t type; // octet 0

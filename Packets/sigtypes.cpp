@@ -1,8 +1,8 @@
 #include "sigtypes.h"
 
 bool Signature_Type::is_certification(const uint8_t sig){
-    return ((sig == Signature_Type::ID::Generic_certification_of_a_User_ID_and_Public_Key_packet)   ||
-            (sig == Signature_Type::ID::Persona_certification_of_a_User_ID_and_Public_Key_packet)   ||
-            (sig == Signature_Type::ID::Casual_certification_of_a_User_ID_and_Public_Key_packet)    ||
-            (sig == Signature_Type::ID::Positive_certification_of_a_User_ID_and_Public_Key_packet));
+    return ((sig == Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET)   ||
+            (sig == Signature_Type::PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET)   ||
+            (sig == Signature_Type::CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET)    ||
+            (sig == Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET));
 }

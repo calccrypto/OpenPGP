@@ -35,7 +35,7 @@ PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
 bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
-    if (pgp.get_type() != Type::SIGNATURE){
+    if (pgp.get_type() != SIGNATURE){
         error = "Error: ASCII Armor type is not Signature.";
         return false;
     }
@@ -45,13 +45,13 @@ bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
         return false;
     }
 
-    if (pgp.get_packets()[0] -> get_tag() != Packet::ID::Signature){
+    if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
         error = "Error: Packet is not a signature packet.";
         return false;
     }
 
-    if (std::static_pointer_cast <Tag2> (pgp.get_packets()[0]) -> get_type() != Signature_Type::ID::Signature_of_a_binary_document){
-        error = "Error: Signature type is not " + Signature_Type::Name.at(Signature_Type::ID::Signature_of_a_binary_document);
+    if (std::static_pointer_cast <Tag2> (pgp.get_packets()[0]) -> get_type() != Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT){
+        error = "Error: Signature type is not " + Signature_Type::NAME.at(Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT);
         return false;
     }
 

@@ -1,7 +1,7 @@
 #include "Tag3.h"
 
 Tag3::Tag3()
-    : Packet(Packet::ID::Symmetric_Key_Encrypted_Session_Key, 4),
+    : Packet(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
       sym(),
       s2k(),
       esk(nullptr)
@@ -57,7 +57,7 @@ std::string Tag3::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indent_size, ' ');
     std::string out = indent + show_title() + "\n" +
                       indent + tab + "Version: " + std::to_string(version) + "\n" +
-                      indent + tab + "Symmetric Key Algorithm: " + Sym::Name.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+                      indent + tab + "Symmetric Key Algorithm: " + Sym::NAME.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
                       s2k -> show(indents + 1, indent_size);
     if (esk){
         out += "\n" + indent + tab + "Encrypted Session Key: " + hexlify(*esk);
@@ -91,9 +91,9 @@ std::shared_ptr<std::string> Tag3::get_esk_clone() const{
 
 std::string Tag3::get_key(const std::string & pass) const{
     std::cerr << "Warning: Tag3::get_key is untested. Potentially incorrect" << std::endl;
-    std::string out = s2k -> run(pass, Sym::Block_Length.at(sym) >> 3);
+    std::string out = s2k -> run(pass, Sym::BLOCK_LENGTH.at(sym) >> 3);
     if (esk){
-        out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Sym::Block_Length.at(sym) >> 3, 0));
+        out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0));
     }
     else{
         out = std::string(1, sym) + out;
@@ -128,7 +128,7 @@ void Tag3::set_key(const std::string & pass, const std::string & sk){
     std::cerr << "Warning: Tag3::set_key is untested. Potentially incorrect" << std::endl;
     esk.reset();
     if (!sk.size()){
-        esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Sym::Block_Length.at(sk[0]), 0)));
+        esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sk[0], sk.substr(1, sk.size() - 1), pass, std::string(Sym::BLOCK_LENGTH.at(sk[0]), 0)));
     }
     size = raw().size();
 }

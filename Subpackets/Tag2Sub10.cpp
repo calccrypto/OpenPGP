@@ -1,7 +1,7 @@
 #include "Tag2Sub10.h"
 
 Tag2Sub10::Tag2Sub10()
-    : Tag2Subpacket(Tag2Subpacket::ID::Placeholder_for_Backward_Compatibility),
+    : Tag2Subpacket(Tag2Subpacket::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY),
       stuff()
 {}
 

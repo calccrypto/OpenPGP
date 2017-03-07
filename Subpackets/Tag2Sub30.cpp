@@ -1,7 +1,7 @@
 #include "Tag2Sub30.h"
 
 Tag2Sub30::Tag2Sub30()
-    : Tag2Subpacket(Tag2Subpacket::ID::Features),
+    : Tag2Subpacket(Tag2Subpacket::FEATURES),
       flags()
 {}
 

@@ -113,7 +113,7 @@ void PGPMessage::decompress() {
     comp.reset();
 
     // check if compressed
-    if ((packets.size() == 1) && (packets[0] -> get_tag() == Packet::ID::Compressed_Data)){
+    if ((packets.size() == 1) && (packets[0] -> get_tag() == Packet::COMPRESSED_DATA)){
         comp = std::make_shared <Tag8> (packets[0] -> raw());
         const std::string compressed = comp -> get_data();
         comp -> set_data("");
@@ -179,7 +179,7 @@ std::string PGPMessage::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGPMessage::write(const PGP::Armored::Type armor, const uint8_t header) const{
+std::string PGPMessage::write(const PGP::Armored armor, const uint8_t header) const{
     std::string packet_string = raw(header);
 
     // put data into a Compressed Data Packet if compression is used
@@ -188,8 +188,8 @@ std::string PGPMessage::write(const PGP::Armored::Type armor, const uint8_t head
         packet_string = comp -> write(header);
     }
 
-    if ((armor == Armored::NO)                                   || // no armor
-        ((armor == Armored::DEFAULT) && (armored == Armored::NO))){ // or use stored value, and stored value is no
+    if ((armor == Armored::NO)                   || // no armor
+        ((armor == Armored::DEFAULT) && !armored)){ // or use stored value, and stored value is no
         return packet_string;
     }
 
@@ -217,7 +217,7 @@ void PGPMessage::set_comp(const uint8_t c){
 }
 
 bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::string & error){
-    if (pgp.get_type() != PGP::Type::MESSAGE){
+    if (pgp.get_type() != PGP::MESSAGE){
         error = "Error: PGP Type is set to " + ASCII_Armor_Header[pgp.get_type()];
         return false;
     }

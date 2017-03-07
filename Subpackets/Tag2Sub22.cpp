@@ -1,7 +1,7 @@
 #include "Tag2Sub22.h"
 
 Tag2Sub22::Tag2Sub22()
-    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Compression_Algorithms),
+    : Tag2Subpacket(Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS),
       pca()
 {}
 

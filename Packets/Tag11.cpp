@@ -1,7 +1,7 @@
 #include "Tag11.h"
 
 Tag11::Tag11()
-    : Packet(Packet::ID::Literal_Data),
+    : Packet(Packet::LITERAL_DATA),
       format(),
       filename(),
       time(),

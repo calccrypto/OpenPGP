@@ -1,7 +1,7 @@
 #include "Tag4.h"
 
 Tag4::Tag4()
-    : Packet(Packet::ID::One_Pass_Signature, 3),
+    : Packet(Packet::ONE_PASS_SIGNATURE, 3),
       type(), hash(), pka(),
       keyid(),
       nested(1)
@@ -38,9 +38,9 @@ std::string Tag4::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string tab(indent_size, ' ');
     return indent + show_title() + "\n" +
            indent + tab + "Version: " + std::to_string(version) + "\n" +
-           indent + tab + "Signature Type: " + Signature_Type::Name.at(type) + " (sig " + std::to_string(type) + ")\n" +
-           indent + tab + "Hash Algorithm: " + Hash::Name.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
-           indent + tab + "Public Key Algorithm: " + PKA::Name.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Signature Type: " + Signature_Type::NAME.at(type) + " (sig " + std::to_string(type) + ")\n" +
+           indent + tab + "Hash Algorithm: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
+           indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
            indent + tab + "KeyID: " + hexlify(keyid) + "\n" +
            indent + tab + "Nested: " + std::to_string(nested);
     }

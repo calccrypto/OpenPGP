@@ -1,7 +1,7 @@
 #include "Tag2Sub11.h"
 
 Tag2Sub11::Tag2Sub11()
-    : Tag2Subpacket(Tag2Subpacket::ID::Preferred_Symmetric_Algorithms),
+    : Tag2Subpacket(Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS),
       psa()
 {}
 
@@ -22,7 +22,7 @@ std::string Tag2Sub11::show(const uint8_t indents, const uint8_t indent_size) co
 
     std::string out = indent + show_title();
     for(char const & c : psa){
-        out += "\n" + indent + tab + "sym alg - " + Sym::Name.at(c) + " (sym " + std::to_string(c) + ")";
+        out += "\n" + indent + tab + "sym alg - " + Sym::NAME.at(c) + " (sym " + std::to_string(c) + ")";
     }
 
     return out;

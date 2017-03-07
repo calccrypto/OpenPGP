@@ -4,25 +4,25 @@ std::string use_hash(const uint8_t alg, const std::string & data){
     switch (alg){
         // case 0: // don't hash; not defined in standard
             // return data;
-        case Hash::ID::MD5:
+        case Hash::MD5:
             return MD5(data).digest();
             break;
-        case Hash::ID::SHA1:
+        case Hash::SHA1:
             return SHA1(data).digest();
             break;
-        case Hash::ID::RIPEMD160:
+        case Hash::RIPEMD160:
             return RIPEMD160(data).digest();
             break;
-        case Hash::ID::SHA256:
+        case Hash::SHA256:
             return SHA256(data).digest();
             break;
-        case Hash::ID::SHA384:
+        case Hash::SHA384:
             return SHA384(data).digest();
             break;
-        case Hash::ID::SHA512:
+        case Hash::SHA512:
             return SHA512(data).digest();
             break;
-        case Hash::ID::SHA224:
+        case Hash::SHA224:
             return SHA224(data).digest();
             break;
         default:

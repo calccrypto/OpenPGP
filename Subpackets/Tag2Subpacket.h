@@ -74,34 +74,32 @@ THE SOFTWARE.
 
 class Tag2Subpacket: public Subpacket {
     public:
-        struct ID{
-            static const uint8_t Signature_Creation_Time;
-            static const uint8_t Signature_Expiration_Time;
-            static const uint8_t Exportable_Certification;
-            static const uint8_t Trust_Signature;
-            static const uint8_t Regular_Expression;
-            static const uint8_t Revocable;
-            static const uint8_t Key_Expiration_Time;
-            static const uint8_t Placeholder_for_Backward_Compatibility;
-            static const uint8_t Preferred_Symmetric_Algorithms;
-            static const uint8_t Revocation_Key;
-            static const uint8_t Issuer;
-            static const uint8_t Notation_Data;
-            static const uint8_t Preferred_Hash_Algorithms;
-            static const uint8_t Preferred_Compression_Algorithms;
-            static const uint8_t Key_Server_Preferences;
-            static const uint8_t Preferred_Key_Server;
-            static const uint8_t Primary_User_ID;
-            static const uint8_t Policy_URI;
-            static const uint8_t Key_Flags;
-            static const uint8_t Signers_User_ID;
-            static const uint8_t Reason_for_Revocation;
-            static const uint8_t Features;
-            static const uint8_t Signature_Target;
-            static const uint8_t Embedded_Signature;
-        };
+        static const uint8_t SIGNATURE_CREATION_TIME;
+        static const uint8_t SIGNATURE_EXPIRATION_TIME;
+        static const uint8_t EXPORTABLE_CERTIFICATION;
+        static const uint8_t TRUST_SIGNATURE;
+        static const uint8_t REGULAR_EXPRESSION;
+        static const uint8_t REVOCABLE;
+        static const uint8_t KEY_EXPIRATION_TIME;
+        static const uint8_t PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY;
+        static const uint8_t PREFERRED_SYMMETRIC_ALGORITHMS;
+        static const uint8_t REVOCATION_KEY;
+        static const uint8_t ISSUER;
+        static const uint8_t NOTATION_DATA;
+        static const uint8_t PREFERRED_HASH_ALGORITHMS;
+        static const uint8_t PREFERRED_COMPRESSION_ALGORITHMS;
+        static const uint8_t KEY_SERVER_PREFERENCES;
+        static const uint8_t PREFERRED_KEY_SERVER;
+        static const uint8_t PRIMARY_USER_ID;
+        static const uint8_t POLICY_URI;
+        static const uint8_t KEY_FLAGS;
+        static const uint8_t SIGNERS_USER_ID;
+        static const uint8_t REASON_FOR_REVOCATION;
+        static const uint8_t FEATURES;
+        static const uint8_t SIGNATURE_TARGET;
+        static const uint8_t EMBEDDED_SIGNATURE;
 
-        static const std::map <uint8_t, std::string> Name;
+        static const std::map <uint8_t, std::string> NAME;
 
     protected:
         using Subpacket::Subpacket;

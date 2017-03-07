@@ -1,7 +1,7 @@
 #include "Tag2Sub28.h"
 
 Tag2Sub28::Tag2Sub28()
-    : Tag2Subpacket(Tag2Subpacket::ID::Signers_User_ID, 0),
+    : Tag2Subpacket(Tag2Subpacket::SIGNERS_USER_ID, 0),
       signer()
 {}
 

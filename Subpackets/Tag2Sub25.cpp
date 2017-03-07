@@ -1,7 +1,7 @@
 #include "Tag2Sub25.h"
 
 Tag2Sub25::Tag2Sub25()
-    : Tag2Subpacket(Tag2Subpacket::ID::Primary_User_ID, 1),
+    : Tag2Subpacket(Tag2Subpacket::PRIMARY_USER_ID, 1),
       primary()
 {}
 

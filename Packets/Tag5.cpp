@@ -10,7 +10,7 @@ Tag5::Tag5(uint8_t tag)
 {}
 
 Tag5::Tag5()
-    : Tag5(Packet::ID::Secret_Key)
+    : Tag5(Packet::SECRET_KEY)
 {}
 
 Tag5::Tag5(const Tag5 & copy)
@@ -23,7 +23,7 @@ Tag5::Tag5(const Tag5 & copy)
 {}
 
 Tag5::Tag5(const std::string & data)
-    : Tag5(Packet::ID::Secret_Key)
+    : Tag5(Packet::SECRET_KEY)
 {
     read(data);
 }
@@ -33,13 +33,13 @@ Tag5::~Tag5(){}
 void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
     s2k.reset();
 
-    if (data[pos] == S2K::ID::Simple_S2K){
+    if (data[pos] == S2K::SIMPLE_S2K){
         s2k = std::make_shared <S2K0> ();
     }
-    else if (data[pos] == S2K::ID::Salted_S2K){
+    else if (data[pos] == S2K::SALTED_S2K){
         s2k = std::make_shared <S2K1> ();
     }
-    else if (data[pos] == S2K::ID::Iterated_and_Salted_S2K){
+    else if (data[pos] == S2K::ITERATED_AND_SALTED_S2K){
         s2k = std::make_shared <S2K3> ();
     }
     else{
@@ -55,7 +55,7 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     std::string out;
     if (s2k_con > 253){
         out += indent + tab + "String-to-Key Usage Conventions: " + std::to_string(s2k_con) + "\n" +
-               indent + tab + "Symmetric Key Algorithm: " + Sym::Name.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+               indent + tab + "Symmetric Key Algorithm: " + Sym::NAME.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
                tab + s2k -> show(indents) + "\n";
         if (s2k -> get_type()){
             out += indent + tab + "IV: " + hexlify(IV) + "\n";
@@ -65,15 +65,15 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
            indent + tab + tab;
 
-    if ((pka == PKA::ID::RSA_Encrypt_or_Sign) ||
-        (pka == PKA::ID::RSA_Encrypt_Only)    ||
-        (pka == PKA::ID::RSA_Sign_Only)){
+    if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+        (pka == PKA::RSA_ENCRYPT_ONLY)    ||
+        (pka == PKA::RSA_SIGN_ONLY)){
         out += "RSA d, p, q, u";
     }
-    else if (pka == PKA::ID::ElGamal){
-        out += "Elgamal x";
+    else if (pka == PKA::ELGAMAL){
+        out += "ELGAMAL x";
     }
-    else if (pka == PKA::ID::DSA){
+    else if (pka == PKA::DSA){
         out += "DSA x";
     }
     out += " + ";
@@ -114,7 +114,7 @@ void Tag5::read(const std::string & data){
 
     // IV
     if (s2k_con){
-        IV = data.substr(pos, Sym::Block_Length.at(sym) >> 3);
+        IV = data.substr(pos, Sym::BLOCK_LENGTH.at(sym) >> 3);
         pos += IV.size();
     }
 
@@ -180,7 +180,7 @@ std::string Tag5::get_secret() const{
 
 Tag6 Tag5::get_public_obj() const{
     Tag6 out(raw());
-    out.set_tag(Packet::ID::Public_Key);
+    out.set_tag(Packet::PUBLIC_KEY);
     return out;
 }
 
@@ -213,13 +213,13 @@ void Tag5::set_sym(const uint8_t s){
 }
 
 void Tag5::set_s2k(const S2K::Ptr & s){
-    if (s -> get_type() == S2K::ID::Simple_S2K){
+    if (s -> get_type() == S2K::SIMPLE_S2K){
         s2k = std::make_shared <S2K0> ();
     }
-    else if (s -> get_type() == S2K::ID::Salted_S2K){
+    else if (s -> get_type() == S2K::SALTED_S2K){
         s2k = std::make_shared <S2K1> ();
     }
-    else if (s -> get_type() == S2K::ID::Iterated_and_Salted_S2K){
+    else if (s -> get_type() == S2K::ITERATED_AND_SALTED_S2K){
         s2k = std::make_shared <S2K3> ();
     }
     s2k = s -> clone();
@@ -268,7 +268,7 @@ std::string Tag5::calculate_key(const std::string & passphrase) const {
             throw std::runtime_error("Error: S2K has not been set.");
         }
 
-        key = s2k -> run(passphrase, Sym::Key_Length.at(sym) >> 3);
+        key = s2k -> run(passphrase, Sym::KEY_LENGTH.at(sym) >> 3);
     }
     else{
         key = MD5(passphrase).digest();                 // simple MD5 for all other values

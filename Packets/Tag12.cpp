@@ -1,7 +1,7 @@
 #include "Tag12.h"
 
 Tag12::Tag12()
-    : Packet(Packet::ID::Trust),
+    : Packet(Packet::TRUST),
       trust()
 {}
 

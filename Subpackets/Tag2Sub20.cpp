@@ -1,7 +1,7 @@
 #include "Tag2Sub20.h"
 
 Tag2Sub20::Tag2Sub20()
-    : Tag2Subpacket(Tag2Subpacket::ID::Notation_Data),
+    : Tag2Subpacket(Tag2Subpacket::NOTATION_DATA),
       flags(),
       mlen(), nlen(),
       m(), n()

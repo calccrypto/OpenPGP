@@ -1,7 +1,7 @@
 #include "Tag2Sub9.h"
 
 Tag2Sub9::Tag2Sub9()
-    : Tag2Subpacket(Tag2Subpacket::ID::Key_Expiration_Time, 4),
+    : Tag2Subpacket(Tag2Subpacket::KEY_EXPIRATION_TIME, 4),
       dt()
 {}
 

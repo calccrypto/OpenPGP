@@ -1,7 +1,7 @@
 #include "Tag2Sub3.h"
 
 Tag2Sub3::Tag2Sub3()
-    : Tag2Subpacket(Tag2Subpacket::ID::Signature_Expiration_Time, 4),
+    : Tag2Subpacket(Tag2Subpacket::SIGNATURE_EXPIRATION_TIME, 4),
       time(0)
 {}
 

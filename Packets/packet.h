@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include <map>
 #include <memory>
 #include <stdexcept>
-#include <sstream>
 #include <string>
 
 #include "../common/includes.h"
@@ -63,31 +62,27 @@ THE SOFTWARE.
 
 class Packet{
     public:
-        struct ID{
-            static const uint8_t Reserved;
-            static const uint8_t Public_Key_Encrypted_Session_Key;
-            static const uint8_t Signature;
-            static const uint8_t Symmetric_Key_Encrypted_Session_Key;
-            static const uint8_t One_Pass_Signature;
-            static const uint8_t Secret_Key;
-            static const uint8_t Public_Key;
-            static const uint8_t Secret_Subkey;
-            static const uint8_t Compressed_Data;
-            static const uint8_t Symmetrically_Encrypted_Data;
-            static const uint8_t Marker_Packet;
-            static const uint8_t Literal_Data;
-            static const uint8_t Trust;
-            static const uint8_t User_ID;
-            static const uint8_t Public_Subkey;
-            static const uint8_t User_Attribute;
-            static const uint8_t Sym_Encrypted_Integrity_Protected_Data;
-            static const uint8_t Modification_Detection_Code;
+        static const uint8_t RESERVED;
+        static const uint8_t PUBLIC_KEY_ENCRYPTED_SESSION_KEY;
+        static const uint8_t SIGNATURE;
+        static const uint8_t SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY;
+        static const uint8_t ONE_PASS_SIGNATURE;
+        static const uint8_t SECRET_KEY;
+        static const uint8_t PUBLIC_KEY;
+        static const uint8_t SECRET_SUBKEY;
+        static const uint8_t COMPRESSED_DATA;
+        static const uint8_t SYMMETRICALLY_ENCRYPTED_DATA;
+        static const uint8_t MARKER_PACKET;
+        static const uint8_t LITERAL_DATA;
+        static const uint8_t TRUST;
+        static const uint8_t USER_ID;
+        static const uint8_t PUBLIC_SUBKEY;
+        static const uint8_t USER_ATTRIBUTE;
+        static const uint8_t SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA;
+        static const uint8_t MODIFICATION_DETECTION_CODE;
+        static const uint8_t UNKNOWN;   // not part of standard
 
-            // not part of standard
-            static const uint8_t UNKNOWN;
-        };
-
-        static const std::map <uint8_t, std::string> Name;
+        static const std::map <uint8_t, std::string> NAME;
 
         // check packets for attributes
         static bool is_key_packet   (const uint8_t t);

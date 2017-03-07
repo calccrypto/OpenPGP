@@ -1,7 +1,7 @@
 #include "Tag9.h"
 
 Tag9::Tag9()
-    : Packet(Packet::ID::Symmetrically_Encrypted_Data),
+    : Packet(Packet::SYMMETRICALLY_ENCRYPTED_DATA),
       encrypted_data()
 {}
 
