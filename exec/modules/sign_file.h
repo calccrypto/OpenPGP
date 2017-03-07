@@ -84,7 +84,7 @@ const Module sign_file(
                               args.at("file"),
                               std::string(std::istreambuf_iterator <char> (file), {}),
                               Hash::Number.at(args.at("-h")),
-                              Compression::Number.at(args.at("-c"))).write(flags.at("-a")), args.at("-o"));
+                              Compression::Number.at(args.at("-c"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

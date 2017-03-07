@@ -82,7 +82,7 @@ const Module revoke_subkey(
         output(::revoke_subkey(pri,
                                args.at("passphrase"),
                                args.at("-c")[0] - '0',
-                               args.at("-r")).write(flags.at("-a")), args.at("-o"));
+                               args.at("-r")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

@@ -71,8 +71,8 @@ const Module generate_keypair(
                         mpitoulong(dectompi(args.at("--pks"))),
                         mpitoulong(dectompi(args.at("--sks"))));
 
-        output(pub.write(flags.at("-a")), args.at("-o") + ".public");
-        output(pri.write(flags.at("-a")), args.at("-o") + ".private");
+        output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".public");
+        output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".private");
 
         return 0;
     }

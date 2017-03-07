@@ -123,11 +123,11 @@ std::string PGPKey::list_keys() const{
 bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     // public or private key packets to look for
     uint8_t key, subkey;
-    if (pgp.get_type() == PGP::Type::PUBLIC_KEY_BLOCK){
+    if (pgp.get_type() == Type::PUBLIC_KEY_BLOCK){
            key = Packet::ID::Public_Key;
         subkey = Packet::ID::Public_Subkey;
     }
-    else if (pgp.get_type() == PGP::Type::PRIVATE_KEY_BLOCK){
+    else if (pgp.get_type() == Type::PRIVATE_KEY_BLOCK){
            key = Packet::ID::Secret_Key;
         subkey = Packet::ID::Secret_Subkey;
     }
@@ -136,7 +136,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         return false;
     }
 
-    const PGP::Packets & pkts = pgp.get_packets();
+    const Packets & pkts = pgp.get_packets();
 
     // revocation certificates are placed in PUBLIC KEY BLOCKs
     // and have only one signature packet???
@@ -315,7 +315,7 @@ std::ostream & operator<<(std::ostream & stream, const PGPKey & pgp){
 PGPPublicKey::PGPPublicKey()
     : PGPKey()
 {
-    type = PGP::Type::PUBLIC_KEY_BLOCK;
+    type = Type::PUBLIC_KEY_BLOCK;
 }
 
 PGPPublicKey::PGPPublicKey(const PGPPublicKey & copy)
@@ -341,7 +341,7 @@ PGPPublicKey::PGPPublicKey(const PGPSecretKey & sec)
 PGPPublicKey::~PGPPublicKey(){}
 
 bool PGPPublicKey::meaningful(std::string & error) const{
-    return ((type == PGP::Type::PUBLIC_KEY_BLOCK) && PGPKey::meaningful(*this, error));
+    return ((type == Type::PUBLIC_KEY_BLOCK) && PGPKey::meaningful(*this, error));
 }
 
 PGPPublicKey & PGPPublicKey::operator=(const PGPPublicKey & pub){
@@ -373,7 +373,7 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
 PGPSecretKey::PGPSecretKey()
     : PGPKey()
 {
-    type = PGP::Type::PRIVATE_KEY_BLOCK;
+    type = Type::PRIVATE_KEY_BLOCK;
 }
 
 PGPSecretKey::PGPSecretKey(const PGPKey & copy)
@@ -397,11 +397,11 @@ PGPSecretKey::~PGPSecretKey(){}
 PGPPublicKey PGPSecretKey::get_public() const{
     PGPPublicKey pub;
     pub.set_armored(armored);
-    pub.set_type(PGP::Type::PUBLIC_KEY_BLOCK);
+    pub.set_type(Type::PRIVATE_KEY_BLOCK);
     pub.set_keys(keys);
 
     // clone packets; convert secret packets into public ones
-    PGP::Packets pub_packets;
+    Packets pub_packets;
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == Packet::ID::Secret_Key){
             pub_packets.push_back(Tag5(p -> raw()).get_public_ptr());
@@ -420,7 +420,7 @@ PGPPublicKey PGPSecretKey::get_public() const{
 }
 
 bool PGPSecretKey::meaningful(std::string & error) const{
-    return ((type == PGP::Type::PRIVATE_KEY_BLOCK) && PGPKey::meaningful(*this, error));
+    return ((type == Type::PRIVATE_KEY_BLOCK) && PGPKey::meaningful(*this, error));
 }
 
 PGP::Ptr PGPSecretKey::clone() const{

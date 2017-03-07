@@ -2,9 +2,7 @@
 
 PGPDetachedSignature::PGPDetachedSignature()
     : PGP()
-{
-    type = PGP::Type::SIGNATURE;
-}
+{}
 
 PGPDetachedSignature::PGPDetachedSignature(const PGP & copy)
     : PGP(copy)
@@ -37,7 +35,7 @@ PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
 bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
-    if (pgp.get_type() != PGP::Type::SIGNATURE){
+    if (pgp.get_type() != Type::SIGNATURE){
         error = "Error: ASCII Armor type is not Signature.";
         return false;
     }

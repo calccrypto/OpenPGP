@@ -81,9 +81,7 @@ class PGPMessage : public PGP {
                      SP,         // Signature Packet (Tag 2)
 
                      NONE        // garbage value
-                };
-
-        typedef Token Type;
+        };
 
     private:
         // Reverse Rules (Reduce)
@@ -113,7 +111,7 @@ class PGPMessage : public PGP {
 
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
         std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        std::string write(const uint8_t armor = 0, const uint8_t header = 0) const;         // armor: use default = 0, no armor = 1, armored = 2; header: same as raw()
+        std::string write(const Armored::Type armor = Armored::DEFAULT, const uint8_t header = 0) const;
 
         uint8_t get_comp() const;                                                           // get compression algorithm
 

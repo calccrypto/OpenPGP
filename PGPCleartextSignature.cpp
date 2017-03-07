@@ -11,7 +11,7 @@ PGPCleartextSignature::PGPCleartextSignature(const PGPCleartextSignature & copy)
       message(copy.message),
       sig(copy.sig)
 {
-    sig.set_armored(true);
+    sig.set_armored(PGP::Armored::YES);
 }
 
 PGPCleartextSignature::PGPCleartextSignature(const std::string & data)
@@ -96,7 +96,7 @@ std::string PGPCleartextSignature::write(uint8_t header) const{
     std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
 
     // write Armor Header
-    for(std::pair <std::string, std::string> const & k : hash_armor_header){
+    for(PGP::Armor_Key const & k : hash_armor_header){
         out += k.first + ": " + k.second + "\n";
     }
 
@@ -106,7 +106,7 @@ std::string PGPCleartextSignature::write(uint8_t header) const{
     // only add "- " to front of message
     out += dash_escape(message);
 
-    return out + "\n" + sig.write(header);
+    return out + "\n" + sig.write(PGP::Armored::YES, header);
 }
 
 PGP::Armor_Keys PGPCleartextSignature::get_hash_armor_header() const{
@@ -131,7 +131,7 @@ void PGPCleartextSignature::set_message(const std::string & data){
 
 void PGPCleartextSignature::set_sig(const PGPDetachedSignature & s){
     sig = s;
-    sig.set_armored(true);
+    sig.set_armored(PGP::Armored::YES);
 }
 
 // 7.1. Dash-Escaped Text

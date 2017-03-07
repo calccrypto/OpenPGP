@@ -105,8 +105,8 @@ class Tag2 : public Packet{
         std::string get_up_to_hashed()               const;     // used for signature trailer
         std::string get_without_unhashed()           const;     // used for signature type 0x50
 
-        void set_pka (const uint8_t p);
         void set_type(const uint8_t t);
+        void set_pka (const uint8_t p);
         void set_hash(const uint8_t h);
         void set_left16(const std::string & l);
         void set_mpi(const PKA::Values & m);

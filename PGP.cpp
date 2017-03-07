@@ -232,8 +232,8 @@ std::string PGP::format_string(std::string data, uint8_t line_length) const{
 }
 
 PGP::PGP()
-    : armored(true),
-      type(PGP::Type::UNKNOWN),
+    : armored(Armored::YES),
+      type(Type::UNKNOWN),
       keys(),
       packets()
 {}
@@ -289,25 +289,25 @@ void PGP::read(std::istream & stream){
         // parse entire stream
         read_raw(stream);
 
-        armored = false;
-        type = PGP::Type::UNKNOWN;
+        armored = Armored::NO;
+        type = Type::UNKNOWN;
     }
     else{
         // parse armor header
         Type_t new_type;
-        for(new_type = PGP::Type::MESSAGE; new_type != PGP::Type::SIGNED_MESSAGE; new_type++){
+        for(new_type = Type::MESSAGE; new_type != Type::SIGNED_MESSAGE; new_type++){
             if (("-----BEGIN PGP " + ASCII_Armor_Header[new_type] + "-----") == line){
                 break;
             }
         }
 
         // Cleartext Signature Framework
-        if (new_type == PGP::Type::SIGNED_MESSAGE){
+        if (new_type == Type::SIGNED_MESSAGE){
             throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
         }
 
         // if ASCII Armor was set before calling read()
-        if (type != PGP::Type::UNKNOWN){
+        if (type != Type::UNKNOWN){
             if (type != new_type){
                 std::cerr << "Warning: ASCII Armor does not match data type: " << std::to_string(new_type) << std::endl;
             }
@@ -363,7 +363,7 @@ void PGP::read(std::istream & stream){
         // parse data
         read_raw(body);
 
-        armored = true;
+        armored = Armored::YES;
     }
 }
 
@@ -384,7 +384,7 @@ void PGP::read_raw(const std::string & data){
         }
     }
 
-    armored = false;                          // assume data was not armored, since it was submitted through this function
+    armored = Armored::NO;               // assume data was not armored, since it was submitted through this function
 }
 
 void PGP::read_raw(std::istream & stream){
@@ -407,19 +407,23 @@ std::string PGP::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGP::write(const uint8_t armor, const uint8_t header) const{
-    std::string packet_string = raw(header);   // raw PGP data = binary, no ASCII headers
-    if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
-        return packet_string;                  // return raw data
+std::string PGP::write(const PGP::Armored::Type armor, const uint8_t header) const{
+    const std::string packet_string = raw(header);                  // raw PGP data = binary, no ASCII headers
+
+    if ((armor == Armored::NO)                                   || // no armor
+        ((armor == Armored::DEFAULT) && (armored == Armored::NO))){ // or use stored value, and stored value is no
+        return packet_string;
     }
+
     std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[type] + "-----\n";
-    for(PGP::Armor_Key const & key : keys){
+    for(Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
+
     return out + "\n" + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[type] + "-----\n";
 }
 
-bool PGP::get_armored() const{
+PGP::Armored::Type PGP::get_armored() const{
     return armored;
 }
 
@@ -436,14 +440,14 @@ const PGP::Packets & PGP::get_packets() const{
 }
 
 PGP::Packets PGP::get_packets_clone() const{
-    std::vector <Packet::Ptr> out;
-    for(Packet::Ptr const & p : packets){
-        out.push_back(p -> clone());
+    Packets out = packets;
+    for(Packet::Ptr & p : out){
+        p = p -> clone();
     }
     return out;
 }
 
-void PGP::set_armored(const bool a){
+void PGP::set_armored(const Armored::Type a){
     armored = a;
 }
 
@@ -456,9 +460,9 @@ void PGP::set_keys(const PGP::Armor_Keys & k){
 }
 
 void PGP::set_packets(const PGP::Packets & p){
-    packets.clear();
-    for(Packet::Ptr const & t : p){
-        packets.push_back(t -> clone());
+    packets = p;
+    for(Packet::Ptr & p : packets){
+        p = p -> clone();
     }
 }
 

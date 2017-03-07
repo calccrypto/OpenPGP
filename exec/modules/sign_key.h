@@ -71,7 +71,7 @@ const Module sign_key(
         output(::sign_primary_key(PGPSecretKey(signer_file),
                                   args.at("passphrase"),
                                   PGPPublicKey(signee_file),
-                                  mpitoulong(hextompi(args.at("-c")))).write(flags.at("-a")), args.at("-o"));
+                                  mpitoulong(hextompi(args.at("-c")))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

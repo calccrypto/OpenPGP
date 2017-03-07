@@ -413,13 +413,13 @@ std::string Tag2::get_without_unhashed() const{
     return out;
 }
 
-void Tag2::set_pka(const uint8_t p){
-    pka = p;
+void Tag2::set_type(const uint8_t t){
+    type = t;
     size = raw().size();
 }
 
-void Tag2::set_type(const uint8_t t){
-    type = t;
+void Tag2::set_pka(const uint8_t p){
+    pka = p;
     size = raw().size();
 }
 

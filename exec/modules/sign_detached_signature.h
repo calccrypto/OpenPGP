@@ -79,7 +79,7 @@ const Module sign_detached_signature(
         output(::sign_detached_signature(pri,
                                          args.at("passphrase"),
                                          std::string(std::istreambuf_iterator <char> (file), {}),
-                                         Hash::Number.at(args.at("-h"))).write(flags.at("-a")), args.at("-o"));
+                                         Hash::Number.at(args.at("-h"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

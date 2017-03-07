@@ -110,7 +110,7 @@ const Module encrypt_pka(
                              Compression::Number.at(args.at("-c")),
                              flags.at("--mdc"),
                              signer,
-                             args.at("-p")).write(flags.at("-a")), args.at("-o"));
+                             args.at("-p")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         if (flags.at("-d")){
             remove(args.at("file").c_str());

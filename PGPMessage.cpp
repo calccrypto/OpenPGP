@@ -126,9 +126,7 @@ void PGPMessage::decompress() {
 PGPMessage::PGPMessage()
     : PGP(),
       comp(nullptr)
-{
-    type = PGP::Type::MESSAGE;
-}
+{}
 
 PGPMessage::PGPMessage(const PGP & copy)
     : PGP(copy),
@@ -181,7 +179,7 @@ std::string PGPMessage::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
+std::string PGPMessage::write(const PGP::Armored::Type armor, const uint8_t header) const{
     std::string packet_string = raw(header);
 
     // put data into a Compressed Data Packet if compression is used
@@ -190,11 +188,13 @@ std::string PGPMessage::write(const uint8_t armor, const uint8_t header) const{
         packet_string = comp -> write(header);
     }
 
-    if ((armor == 1) || (!armor && !armored)){ // if no armor or if default, and not armored
-        return packet_string;                  // return raw data
+    if ((armor == Armored::NO)                                   || // no armor
+        ((armor == Armored::DEFAULT) && (armored == Armored::NO))){ // or use stored value, and stored value is no
+        return packet_string;
     }
+
     std::string out = "-----BEGIN PGP MESSAGE-----\n";
-    for(PGP::Armor_Key const & key : keys){
+    for(Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
     out += "\n";
@@ -218,7 +218,7 @@ void PGPMessage::set_comp(const uint8_t c){
 
 bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::string & error){
     if (pgp.get_type() != PGP::Type::MESSAGE){
-        error = "Error: PGP Type is set to " + PGP::ASCII_Armor_Header[pgp.get_type()];
+        error = "Error: PGP Type is set to " + ASCII_Armor_Header[pgp.get_type()];
         return false;
     }
 
@@ -227,43 +227,43 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
         return false;
     }
 
-    if ((token != PGPMessage::OPENPGPMESSAGE)    &&
-        (token != PGPMessage::ENCRYPTEDMESSAGE)  &&
-        (token != PGPMessage::SIGNEDMESSAGE)     &&
-        (token != PGPMessage::COMPRESSEDMESSAGE) &&
-        (token != PGPMessage::LITERALMESSAGE)){
+    if ((token != OPENPGPMESSAGE)    &&
+        (token != ENCRYPTEDMESSAGE)  &&
+        (token != SIGNEDMESSAGE)     &&
+        (token != COMPRESSEDMESSAGE) &&
+        (token != LITERALMESSAGE)){
         error = "Error: Invalid Token to match.";
         return false;
     }
 
     // get list of packets and convert them to Token
-    std::list <PGPMessage::Token> s;
+    std::list <Token> s;
     for(Packet::Ptr const & p : pgp.get_packets()){
-        PGPMessage::Token push;
+        Token push;
         switch(p -> get_tag()){
             case 8:
-                push = PGPMessage::CDP;
+                push = CDP;
                 break;
             case 11:
-                push = PGPMessage::LDP;
+                push = LDP;
                 break;
             case 1:
-                push = PGPMessage::PKESKP;
+                push = PKESKP;
                 break;
             case 3:
-                push = PGPMessage::SKESKP;
+                push = SKESKP;
                 break;
             case 9:
-                push = PGPMessage::SEDP;
+                push = SEDP;
                 break;
             case 18:
-                push = PGPMessage::SEIPDP;
+                push = SEIPDP;
                 break;
             case 4:
-                push = PGPMessage::OPSP;
+                push = OPSP;
                 break;
             case 2:
-                push = PGPMessage::SP;
+                push = SP;
                 break;
             default:
                 error = "Error: Non-Message packet found.";
@@ -275,17 +275,17 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
 
     while ((*(s.begin()) != token) || (s.size() != 1)){ // while the sentence has not been fully parsed, or has been fully parse but not correctly
         bool reduced = false;
-        for(std::list <PGPMessage::Token>::iterator it = s.begin(); it != s.end(); it++){ // for each token
+        for(std::list <Token>::iterator it = s.begin(); it != s.end(); it++){ // for each token
             // make sure the sentence continues to fit at least one of the rules at least once per loop over the sentence
-            if (PGPMessage::OpenPGPMessage       (it, s) ||
-                PGPMessage::CompressedMessage    (it, s) ||
-                PGPMessage::LiteralMessage       (it, s) ||
-                PGPMessage::EncryptedSessionKey  (it, s) ||
-                PGPMessage::ESKSequence          (it, s) ||
-                PGPMessage::EncryptedData        (it, s) ||
-                PGPMessage::EncryptedMessage     (it, s) ||
-                PGPMessage::OnePassSignedMessage (it, s) ||
-                PGPMessage::SignedMessage        (it, s)){
+            if (OpenPGPMessage       (it, s) ||
+                CompressedMessage    (it, s) ||
+                LiteralMessage       (it, s) ||
+                EncryptedSessionKey  (it, s) ||
+                ESKSequence          (it, s) ||
+                EncryptedData        (it, s) ||
+                EncryptedMessage     (it, s) ||
+                OnePassSignedMessage (it, s) ||
+                SignedMessage        (it, s)){
                 reduced = true;
                 break;
             }

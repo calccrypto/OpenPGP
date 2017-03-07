@@ -34,7 +34,7 @@ const Module extract_public(
             return -1;
         }
 
-        output(PGPSecretKey(key).get_public().write(flags.at("-a")), args.at("-o"));
+        output(PGPSecretKey(key).get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }
