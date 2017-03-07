@@ -25,7 +25,7 @@ PKA::Values pka_encrypt(const uint8_t pka,
         return {RSA_encrypt(data, pub)};
     }
     if (pka == PKA::ELGAMAL){
-        return ELGAMAL_encrypt(data, pub);
+        return ElGamal_encrypt(data, pub);
     }
     else{
         throw std::runtime_error("Error: PKA number " + std::to_string(pka) + " not allowed or unknown.");

@@ -31,7 +31,7 @@ void generate_key_pair(const uint8_t pka, const PKA::Params & params, PKA::Value
             break;
         case PKA::ELGAMAL:
             {
-                PKA::Values temp = ELGAMAL_keygen(params[0]);
+                PKA::Values temp = ElGamal_keygen(params[0]);
                 pub = {temp[0], temp[1]};
                 pri = {temp[2]};
             }

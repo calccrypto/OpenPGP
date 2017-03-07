@@ -24,7 +24,7 @@ std::string pka_decrypt(const uint8_t pka, PKA::Values & data, const PKA::Values
         return mpitoraw(RSA_decrypt(data[0], pri, pub));
     }
     else if (pka == PKA::ELGAMAL){
-        return ELGAMAL_decrypt(data, pri, pub);
+        return ElGamal_decrypt(data, pri, pub);
     }
     else{
         throw std::runtime_error("Error: PKA number " + std::to_string(pka) + " not allowed or unknown.");

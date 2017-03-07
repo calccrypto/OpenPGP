@@ -1,9 +1,9 @@
 #include "generatekey.h"
 
-void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ELGAMAL_bits){
+void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
-    if (((DSA_bits < 512)) || (ELGAMAL_bits < 512)){
+    if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
         throw std::runtime_error("Error: Keysize must be at least 512 bits.");
     }
 
@@ -15,9 +15,9 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     PKA::Values dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
     PKA::Values dsa_pri = DSA_keygen(dsa_pub);
 
-    PKA::Values ELGAMAL_pub = ELGAMAL_keygen(ELGAMAL_bits);
-    PGPMPI ELGAMAL_pri = ELGAMAL_pub[3];
-    ELGAMAL_pub.pop_back();
+    PKA::Values ElGamal_pub = ElGamal_keygen(ElGamal_bits);
+    PGPMPI ElGamal_pri = ElGamal_pub[3];
+    ElGamal_pub.pop_back();
 
     // Key creation time
     time_t time = now();
@@ -72,7 +72,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     ssb -> set_version(4);
     ssb -> set_time(time);
     ssb -> set_pka(PKA::ELGAMAL);
-    ssb -> set_mpi(ELGAMAL_pub);
+    ssb -> set_mpi(ElGamal_pub);
     ssb -> set_s2k_con(254);
     ssb -> set_sym(Sym::AES256);
 
@@ -85,7 +85,7 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
 
     ssb -> set_s2k(ssb_s2k3);
     ssb -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(ssb -> get_sym())))));
-    secret = write_MPI(ELGAMAL_pri);
+    secret = write_MPI(ElGamal_pri);
     ssb -> set_secret(use_normal_CFB_encrypt(Sym::AES256, secret + use_hash(Hash::SHA1, secret), key, ssb -> get_IV()));
 
     // Subkey Binding Signature
