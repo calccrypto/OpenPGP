@@ -53,9 +53,13 @@ class PGPKey : public PGP {
         std::string keyid()     const; // keyid that is searched for on keyservers
         std::string list_keys() const; // output is copied from gpg --list-keys
 
-        // whether or not data matches a Key format
-        bool meaningful(std::string & error) const;
-        using PGP::meaningful;
+        // whether or not PGP data matches a Key format without constructing a new object
+        static bool meaningful(const PGP & pgp, std::string & error);
+        static bool meaningful(const PGP & pgp);
+
+        // whether or not *this data matches a Key format
+        virtual bool meaningful(std::string & error) const;
+        virtual bool meaningful() const;
 
         virtual PGP::Ptr clone() const;
 };

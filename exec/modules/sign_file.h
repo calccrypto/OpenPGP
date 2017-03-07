@@ -82,7 +82,7 @@ const Module sign_file(
         output(::sign_message(PGPSecretKey(key),
                               args.at("passphrase"),
                               args.at("file"),
-                              file,
+                              std::string(std::istreambuf_iterator <char> (file), {}),
                               Hash::Number.at(args.at("-h")),
                               Compression::Number.at(args.at("-c"))).write(flags.at("-a")), args.at("-o"));
 

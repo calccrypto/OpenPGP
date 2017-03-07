@@ -1,15 +1,9 @@
 #include "encrypt.h"
 
-Tag6::Ptr find_encrypting_key(const PGP & k){
-    if ((k.get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
-        (k.get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
-
-        for(Packet::Ptr const & p : k.get_packets()){
-            if ((p -> get_tag() == Packet::ID::Secret_Key)    ||
-                (p -> get_tag() == Packet::ID::Public_Key)    ||
-                (p -> get_tag() == Packet::ID::Secret_Subkey) ||
-                (p -> get_tag() == Packet::ID::Public_Subkey)){
-
+Tag6::Ptr find_encrypting_key(const PGPKey & key){
+    if (key.meaningful()){
+        for(Packet::Ptr const & p : key.get_packets()){
+            if (Packet::is_key_packet(p -> get_tag())){
                 Tag6::Ptr key = std::static_pointer_cast <Tag6> (p);
 
                 // make sure key has encrypting keys
@@ -140,7 +134,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
     return encrypted;
 }
 
-PGPMessage encrypt_pka(const PGPPublicKey & pub,
+PGPMessage encrypt_pka(const PGPKey & key,
                        const std::string & data,
                        const std::string & filename,
                        const uint8_t sym_alg,
@@ -151,13 +145,12 @@ PGPMessage encrypt_pka(const PGPPublicKey & pub,
 
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if ((pub.get_type() == PGP::Type::PUBLIC_KEY_BLOCK) ||
-        (pub.get_type() == PGP::Type::PRIVATE_KEY_BLOCK)){
+    if (!key.meaningful()){
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
-    std::vector <Packet::Ptr> packets = pub.get_packets();
-    Tag6::Ptr public_key = find_encrypting_key(pub);
+    std::vector <Packet::Ptr> packets = key.get_packets();
+    Tag6::Ptr public_key = find_encrypting_key(key);
 
     if (!public_key){
         throw std::runtime_error("Error: No encrypting key found.");

@@ -80,12 +80,12 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
     // most of the time OpenPGP Message data is compressed
     // then it is encrypted
 
-    if (m.match(PGP::Message::ENCRYPTEDMESSAGE)){
+    if (m.match(PGPMessage::ENCRYPTEDMESSAGE)){
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         error = "Error: Use decrypt to verify message.";
         return -1;
     }
-    else if (m.match(PGP::Message::SIGNEDMESSAGE)){
+    else if (m.match(PGPMessage::SIGNEDMESSAGE)){
         // Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
         // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
@@ -227,7 +227,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         return verify;
     }
-    else if (m.match(PGP::Message::COMPRESSEDMESSAGE)){
+    else if (m.match(PGPMessage::COMPRESSEDMESSAGE)){
         // Compressed Message :- Compressed Data Packet.
 
         // only one compressed data packet
@@ -239,7 +239,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         return verify_message(signing_key, PGPMessage(message), error);
     }
-    else if (m.match(PGP::Message::LITERALMESSAGE)){
+    else if (m.match(PGPMessage::LITERALMESSAGE)){
         // Literal Message :- Literal Data Packet.
 
         // only one literal data packet

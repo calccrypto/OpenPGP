@@ -47,9 +47,13 @@ class PGPDetachedSignature : public PGP {
         PGPDetachedSignature(std::istream & stream);
         ~PGPDetachedSignature();
 
-        // whether or not data matches Detached Signature format
+        // whether or not PGP data matches Detached Signature format without constructing a new object
+        static bool meaningful(const PGP & pgp, std::string & error);
+        static bool meaningful(const PGP & pgp);
+
+        // whether or not *this data matches Detached Signature format
         bool meaningful(std::string & error) const;
-        using PGP::meaningful;
+        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

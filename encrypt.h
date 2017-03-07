@@ -41,7 +41,7 @@ THE SOFTWARE.
 #include "revoke.h"
 
 // used internally
-Tag6::Ptr find_encrypting_key(const PGP & k);
+Tag6::Ptr find_encrypting_key(const PGPKey & k);
 
 PKA::Values pka_encrypt(const uint8_t pka,
                         const PGPMPI & data,
@@ -65,7 +65,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
 //      Symmetric Key Algorithm: AES256
 //      Compression Algorithm: ZLIB
 //      Use Modification Detection Packet: true
-PGPMessage encrypt_pka(const PGPPublicKey & pub,
+PGPMessage encrypt_pka(const PGPKey & key,
                        const std::string & data,
                        const std::string & filename = "",
                        const uint8_t sym_alg = Sym::ID::AES256,

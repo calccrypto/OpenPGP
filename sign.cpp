@@ -77,7 +77,6 @@ Tag2::Ptr create_sig_packet(const PGPSecretKey & pri, const uint8_t type, const 
 
 PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t hash){
     PGPDetachedSignature signature;
-    signature.set_type(PGP::Type::SIGNATURE);
     signature.set_keys({std::make_pair("Version", "cc")});
     signature.set_packets({sign_binary(pri, passphrase, binary_to_canonical(data), hash)});
 
@@ -86,7 +85,7 @@ PGPDetachedSignature sign_detached_signature(const PGPSecretKey & pri, const std
 
 // 0x00: Signature of a binary document.
 Tag2::Ptr sign_binary(const PGPSecretKey & pri, const std::string & passphrase, const std::string & data, const uint8_t version, const uint8_t hash){
-    if (pri.get_type() != PGP::Type::PRIVATE_KEY_BLOCK){
+    if (!pri.meaningful()){
         throw std::runtime_error("Error: A private key is required.");
     }
 

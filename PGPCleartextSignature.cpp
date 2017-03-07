@@ -212,6 +212,10 @@ std::string PGPCleartextSignature::data_to_text(const std::string & text){
     return out.substr(0, out.size() - 1);
 }
 
+bool PGPCleartextSignature::meaningful(const std::string & error) const{
+    return sig.meaningful(error);
+}
+
 bool PGPCleartextSignature::meaningful() const{
     return sig.meaningful();
 }
