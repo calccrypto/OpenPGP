@@ -18,13 +18,13 @@ int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::
 }
 
 int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig, std::string & error){
-    if (!sig.meaningful()){
-        error = "Error: A Detached Signature is required.";
+    if (!sig.meaningful(error)){
+        error += "Error: A Detached Signature is required.\n";
         return -1;
     }
 
-    if (!key.meaningful()){
-        error = "Error: A PGP key is required.";
+    if (!key.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
@@ -33,7 +33,7 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
     // find key id in signature
     std::string keyid = signature -> get_keyid();
     if (!keyid.size()){
-        error = "Error: No Key ID subpacket found.";
+        error += "Error: No Key ID subpacket found.\n";
         return -1;
     }
 
@@ -41,7 +41,7 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
     // and check the left 16 bits
     std::string digest = to_sign_00(binary_to_canonical(data), signature);
     if (digest.substr(0, 2) != signature -> get_left16()){
-        error = "Hash digest and given left 16 bits of hash do not match.";
+        error += "Hash digest and given left 16 bits of hash do not match.\n";
         return false;
     }
 
@@ -57,8 +57,8 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
 
                 if (pka_verify(digest, kp, signature) == 1){
                     // make sure key IDs match up
-                    if (kp -> get_keyid() == signature -> get_keyid()){
-                        error = "Warning: Key IDs don't match up.";
+                    if (kp -> get_keyid() != signature -> get_keyid()){
+                        error += "Warning: Key IDs don't match up.\n";
                     }
 
                     return 1;
@@ -77,15 +77,25 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
 
 // 0x00: Signature of a binary document.
 int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::string & error){
+    if (!signing_key){
+        error += "Error: Bad signing key.\n";
+        return -1;
+    }
+
+    if (!m.meaningful(error)){
+        error += "Error: Bad message.\n";
+        return -1;
+    }
+
     // most of the time OpenPGP Message data is compressed
     // then it is encrypted
 
-    if (m.match(PGPMessage::ENCRYPTEDMESSAGE)){
+    if (m.match(PGPMessage::ENCRYPTEDMESSAGE, error)){
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
-        error = "Error: Use decrypt to verify message.";
+        error += "Error: Use decrypt to verify message.\n";
         return -1;
     }
-    else if (m.match(PGPMessage::SIGNEDMESSAGE)){
+    else if (m.match(PGPMessage::SIGNEDMESSAGE, error)){
         // Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
         // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
@@ -142,12 +152,15 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         // check for signatures
         if (!OPSP.size() || !SP.size()){
-            throw std::runtime_error("Error: No signature found.");
+            error += "Error: No signature found.\n";
+            return -1;
+
         }
 
         // both lists should be the same size
         if (OPSP.size() != SP.size()){
-            throw std::runtime_error("Error: Different number of One-Pass Signatures and Signature packets.");
+            error += "Error: Different number of One-Pass Signatures and Signature packets.\n";
+            return -1;
         }
 
         // check for matching signature
@@ -227,7 +240,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         return verify;
     }
-    else if (m.match(PGPMessage::COMPRESSEDMESSAGE)){
+    else if (m.match(PGPMessage::COMPRESSEDMESSAGE, error)){
         // Compressed Message :- Compressed Data Packet.
 
         // only one compressed data packet
@@ -239,7 +252,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         return verify_message(signing_key, PGPMessage(message), error);
     }
-    else if (m.match(PGPMessage::LITERALMESSAGE)){
+    else if (m.match(PGPMessage::LITERALMESSAGE, error)){
         // Literal Message :- Literal Data Packet.
 
         // only one literal data packet
@@ -251,14 +264,17 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
 
         return verify_message(signing_key, PGPMessage(message), error);
     }
-    else{
-        throw std::runtime_error("Error: Not an OpenPGP Message. Perhaps Detached Signature?");
-    }
 
-    return -1; // get rid of compiler warnings
+    error += "Error: Not an OpenPGP Message. Perhaps Detached Signature?\n";
+    return -1;
 }
 
 int verify_message(const PGPKey & key, const PGPMessage & message, std::string & error){
+    if (!key.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
+        return -1;
+    }
+
     // get signing key
     Tag6::Ptr signing_key = nullptr;
     for(Packet::Ptr const & p : key.get_packets()){
@@ -276,7 +292,7 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     }
 
     if (!signing_key){
-        error = "Error: No public signing keys found";
+        error += "Error: No public signing keys found\n";
         return -1;
     }
 
@@ -290,27 +306,27 @@ int verify_message(const PGPKey & key, const PGPMessage & message){
 
 // Signature type 0x01
 int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature & message, std::string & error){
-    if (!key.meaningful()){
-        error = "Error: A PGP Key is required.";
+    if (!key.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
-    if (!message.meaningful()){
-        error = "Error: A Cleartext Signature is needed.";
+    if (!message.meaningful(error)){
+        error += "Error: A Cleartext Signature is needed.\n";
         return -1;
     }
 
     // find key id from signature to match with public key
     Tag2::Ptr signature = std::static_pointer_cast <Tag2> (message.get_sig().get_packets()[0]);
     if (!signature){
-        error = "Error: No signature found.";
+        error += "Error: No signature found.\n";
         return -1;
     }
 
     // find key id in signature
     std::string keyid = signature -> get_keyid();
     if (!keyid.size()){
-        error = "Error: No Key ID subpacket found";
+        error += "Error: No Key ID subpacket found.\n";
         return -1;
     }
 
@@ -318,7 +334,7 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
     // and check the left 16 bits
     const std::string digest = to_sign_01(message.data_to_text(), signature);
     if (digest.substr(0, 2) != signature -> get_left16()){
-        error = "Hash digest and given left 16 bits of hash do not match.";
+        error += "Hash digest and given left 16 bits of hash do not match.\n";
         return -1;
     }
 
@@ -334,8 +350,8 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
 
                 if (pka_verify(digest, kp, signature) == 1){
                     // make sure key IDs match up
-                    if (kp -> get_keyid() == signature -> get_keyid()){
-                        error = "Warning: Key IDs don't match up.";
+                    if (kp -> get_keyid() != signature -> get_keyid()){
+                        error += "Warning: Key IDs don't match up.\n";
                     }
 
                     return 1;
@@ -359,13 +375,13 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
 int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error){
-    if (!signer.meaningful()){
-        error = "Error: A PGP key is required.";
+    if (!signer.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
-    if (!signee.meaningful()){
-        error = "Error: A PGP key is required.";
+    if (!signee.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
@@ -399,7 +415,6 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
             for(Packet::Ptr const & signer_packet : signer.get_packets()){
                 if (Packet::is_key_packet(signer_packet -> get_tag())){
                     const Key::Ptr signer_key = std::static_pointer_cast <Key> (signer_packet);
-
                     // if the signing key's ID matches with the signature's ID
                     if ((signer_key -> get_keyid() == signee_signature -> get_keyid())){
                         // check if the signature is valid
@@ -430,23 +445,23 @@ int verify_key(const PGPKey & signer, const PGPKey & signee){
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
 int verify_revoke(const PGPKey & key, const PGPPublicKey & rev, std::string & error){
-    if (!key.meaningful()){
-        error = "Error: A PGP key is required.";
+    if (!key.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
-    if (!rev.meaningful()){
-        error = "Error: A revocation key is required.";
+    if (!rev.meaningful(error)){
+        error += "Error: A revocation key is required.\n";
         return -1;
     }
 
     if (rev.get_packets().size() != 1){
-        error = "Error: Wrong number of packets in revocation certificate.";
+        error += "Error: Wrong number of packets in revocation certificate.\n";
         return -1;
     }
 
     if (rev.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
-        error = "Error: Revocation certificate should contain one " + Packet::NAME.at(Packet::SIGNATURE) + ".";
+        error += "Error: Revocation certificate should contain one " + Packet::NAME.at(Packet::SIGNATURE) + ".\n";
         return -1;
     }
 
@@ -464,8 +479,8 @@ int verify_revoke(const PGPKey & key, const PGPPublicKey & rev, std::string & er
 
                 if (pka_verify(use_hash(revoke -> get_hash(), addtrailer(overkey(kp), revoke)), kp, revoke) == 1){
                     // make sure key IDs match up
-                    if (kp -> get_keyid() == revoke -> get_keyid()){
-                        error = "Warning: Key IDs don't match up.";
+                    if (kp -> get_keyid() != revoke -> get_keyid()){
+                        error += "Warning: Key IDs don't match up.\n";
                     }
 
                     return 1;

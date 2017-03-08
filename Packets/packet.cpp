@@ -21,62 +21,62 @@ const uint8_t Packet::MODIFICATION_DETECTION_CODE                  = 19;
 const uint8_t Packet::UNKNOWN                                      = 255;
 
 const std::map <uint8_t, std::string> Packet::NAME = {
-    std::make_pair(Packet::RESERVED,                               "Reserved - a packet tag MUST NOT have this value"),
-    std::make_pair(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY,       "Public-Key Encrypted Session Key"),
-    std::make_pair(Packet::SIGNATURE,                              "Signature"),
-    std::make_pair(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY,    "Symmetric-Key Encrypted Session Key"),
-    std::make_pair(Packet::ONE_PASS_SIGNATURE,                     "One-Pass Signature"),
-    std::make_pair(Packet::SECRET_KEY,                             "Secret-Key"),
-    std::make_pair(Packet::PUBLIC_KEY,                             "Public-Key"),
-    std::make_pair(Packet::SECRET_SUBKEY,                          "Secret-Subkey"),
-    std::make_pair(Packet::COMPRESSED_DATA,                        "Compressed Data"),
-    std::make_pair(Packet::SYMMETRICALLY_ENCRYPTED_DATA,           "Symmetrically (Conventional) Encrypted Data"),
-    std::make_pair(Packet::MARKER_PACKET,                          "Marker Packet (Obsolete Literal Packet)"),
-    std::make_pair(Packet::LITERAL_DATA,                           "Literal Data"),
-    std::make_pair(Packet::TRUST,                                  "(Keyring) Trust"),
-    std::make_pair(Packet::USER_ID,                                "User ID"),
-    std::make_pair(Packet::PUBLIC_SUBKEY,                          "Public-Subkey (Obsolete Comment Packet)"),
-    std::make_pair(Packet::USER_ATTRIBUTE,                         "User Attribute"),
-    std::make_pair(Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, "Sym. Encrypted Integrity Protected Data"),
-    std::make_pair(Packet::MODIFICATION_DETECTION_CODE,            "Modification Detection Code"),
-    std::make_pair(60,                                             "Private or Experimental Values"),
-    std::make_pair(61,                                             "Private or Experimental Values"),
-    std::make_pair(62,                                             "Private or Experimental Values"),
-    std::make_pair(63,                                             "Private or Experimental Values"),
+    std::make_pair(RESERVED,                               "Reserved - a packet tag MUST NOT have this value"),
+    std::make_pair(PUBLIC_KEY_ENCRYPTED_SESSION_KEY,       "Public-Key Encrypted Session Key"),
+    std::make_pair(SIGNATURE,                              "Signature"),
+    std::make_pair(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY,    "Symmetric-Key Encrypted Session Key"),
+    std::make_pair(ONE_PASS_SIGNATURE,                     "One-Pass Signature"),
+    std::make_pair(SECRET_KEY,                             "Secret-Key"),
+    std::make_pair(PUBLIC_KEY,                             "Public-Key"),
+    std::make_pair(SECRET_SUBKEY,                          "Secret-Subkey"),
+    std::make_pair(COMPRESSED_DATA,                        "Compressed Data"),
+    std::make_pair(SYMMETRICALLY_ENCRYPTED_DATA,           "Symmetrically (Conventional) Encrypted Data"),
+    std::make_pair(MARKER_PACKET,                          "Marker Packet (Obsolete Literal Packet)"),
+    std::make_pair(LITERAL_DATA,                           "Literal Data"),
+    std::make_pair(TRUST,                                  "(Keyring) Trust"),
+    std::make_pair(USER_ID,                                "User ID"),
+    std::make_pair(PUBLIC_SUBKEY,                          "Public-Subkey (Obsolete Comment Packet)"),
+    std::make_pair(USER_ATTRIBUTE,                         "User Attribute"),
+    std::make_pair(SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, "Sym. Encrypted Integrity Protected Data"),
+    std::make_pair(MODIFICATION_DETECTION_CODE,            "Modification Detection Code"),
+    std::make_pair(60,                                     "Private or Experimental Values"),
+    std::make_pair(61,                                     "Private or Experimental Values"),
+    std::make_pair(62,                                     "Private or Experimental Values"),
+    std::make_pair(63,                                     "Private or Experimental Values"),
 };
 
 bool Packet::is_key_packet(const uint8_t t){
-    return (Packet::is_primary_key(t) || Packet::is_subkey(t));
+    return (is_primary_key(t) || is_subkey(t));
 }
 
 bool Packet::is_primary_key(const uint8_t t){
-    return ((t == Packet::SECRET_KEY) ||
-            (t == Packet::PUBLIC_KEY));
+    return ((t == SECRET_KEY) ||
+            (t == PUBLIC_KEY));
 }
 
 bool Packet::is_subkey(const uint8_t t){
-    return ((t == Packet::SECRET_SUBKEY) ||
-            (t == Packet::PUBLIC_SUBKEY));
+    return ((t == SECRET_SUBKEY) ||
+            (t == PUBLIC_SUBKEY));
 }
 
 bool Packet::is_public(const uint8_t t){
-    return ((t == Packet::PUBLIC_KEY) ||
-            (t == Packet::PUBLIC_SUBKEY));
+    return ((t == PUBLIC_KEY) ||
+            (t == PUBLIC_SUBKEY));
 }
 
 bool Packet::is_secret(const uint8_t t){
-    return ((t == Packet::SECRET_KEY) ||
-            (t == Packet::SECRET_SUBKEY));
+    return ((t == SECRET_KEY) ||
+            (t == SECRET_SUBKEY));
 }
 
 bool Packet::is_user(const uint8_t t){
-    return ((t == Packet::USER_ID) ||
-            (t == Packet::USER_ATTRIBUTE));
+    return ((t == USER_ID) ||
+            (t == USER_ATTRIBUTE));
 }
 
 bool Packet::is_session_key(const uint8_t t){
-    return ((t == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) ||
-            (t == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY));
+    return ((t == PUBLIC_KEY_ENCRYPTED_SESSION_KEY) ||
+            (t == SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY));
 }
 
 std::string Packet::write_old_length(const std::string & data) const{

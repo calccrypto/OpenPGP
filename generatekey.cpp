@@ -213,7 +213,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             // if fill in the new key id
             if (new_keyid){
                 // find Key ID subpacket in the hashed subpackets
-                std::vector <Tag2Subpacket::Ptr> subpackets = sig -> get_hashed_subpackets();
+                Tag2::Subpackets subpackets = sig -> get_hashed_subpackets();
                 for(Tag2Subpacket::Ptr & s : subpackets){
                     if (s -> get_type() == Tag2Subpacket::ISSUER){
                         Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
@@ -286,7 +286,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
             // fill in signature fields
             sig -> set_left16(sig_hash.substr(0, 2));
-            sig -> set_mpi(pka_sign(sig_hash, sig -> get_pka(), (key?pub_subkey:pub_key), (key?pri_subkey:pri_key)));
+            sig -> set_mpi(pka_sign(sig_hash, sig -> get_pka(), (key?pub_subkey:pub_key), (key?pri_subkey:pri_key), Hash::SHA1));
             p = sig;
         }
         else if (p -> get_tag() == Packet::SECRET_SUBKEY){

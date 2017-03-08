@@ -65,10 +65,9 @@ const Module revoke_subkey(
         PGPSecretKey pri(file);
 
         // find private subkey
-        std::vector <Packet::Ptr> packets = pri.get_packets();
         bool found = false;
-        for(Packet::Ptr const & p : packets){
-            if (p -> get_tag() == 7){
+        for(Packet::Ptr const & p : pri.get_packets()){
+            if (p -> get_tag() == Packet::SECRET_SUBKEY){
                 found = true;
                 break;
             }

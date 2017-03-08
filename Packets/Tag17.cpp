@@ -107,19 +107,19 @@ std::string Tag17::raw() const{
     return out;
 }
 
-Tag17::Attributes_T Tag17::get_attributes() const{
+Tag17::Attributes Tag17::get_attributes() const{
     return attributes;
 }
 
-Tag17::Attributes_T Tag17::get_attributes_clone() const{
-    std::vector <Tag17Subpacket::Ptr> out;
+Tag17::Attributes Tag17::get_attributes_clone() const{
+    Attributes out;
     for(Tag17Subpacket::Ptr const & s : attributes){
         out.push_back(s -> clone());
     }
     return out;
 }
 
-void Tag17::set_attributes(const Tag17::Attributes_T & a){
+void Tag17::set_attributes(const Tag17::Attributes & a){
     attributes.clear();
     for(Tag17Subpacket::Ptr const & s : a){
         attributes.push_back(s -> clone());

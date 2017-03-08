@@ -126,7 +126,9 @@ void PGPMessage::decompress() {
 PGPMessage::PGPMessage()
     : PGP(),
       comp(nullptr)
-{}
+{
+    type = MESSAGE;
+}
 
 PGPMessage::PGPMessage(const PGP & copy)
     : PGP(copy),
@@ -205,7 +207,7 @@ uint8_t PGPMessage::get_comp() const{
     if (comp){
         return comp -> get_comp();
     }
-    return Compression::Algorithm::UNCOMPRESSED;
+    return Compression::UNCOMPRESSED;
 }
 
 void PGPMessage::set_comp(const uint8_t c){
@@ -218,12 +220,12 @@ void PGPMessage::set_comp(const uint8_t c){
 
 bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::string & error){
     if (pgp.get_type() != PGP::MESSAGE){
-        error = "Error: PGP Type is set to " + ASCII_Armor_Header[pgp.get_type()];
+        error += "Error: PGP Type is set to " + ASCII_Armor_Header[pgp.get_type()] + "\n";
         return false;
     }
 
     if (!pgp.get_packets().size()){
-        error = "Error: No packets found";
+        error += "Error: No packets found\n";
         return false;
     }
 
@@ -232,7 +234,7 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
         (token != SIGNEDMESSAGE)     &&
         (token != COMPRESSEDMESSAGE) &&
         (token != LITERALMESSAGE)){
-        error = "Error: Invalid Token to match.";
+        error += "Error: Invalid Token to match.\n";
         return false;
     }
 
@@ -266,7 +268,7 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
                 push = SP;
                 break;
             default:
-                error = "Error: Non-Message packet found.";
+                error += "Error: Non-Message packet found.\n";
                 return false;
                 break;
         }
@@ -291,7 +293,7 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
             }
         }
         if (!reduced){
-            error = "Error: Failed to reduce tokens.";
+            error += "Error: Failed to reduce tokens.\n";
             return false;
         }
     }

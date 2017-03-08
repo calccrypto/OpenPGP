@@ -65,14 +65,14 @@ THE SOFTWARE.
 
 class Tag17 : public User{
     public:
-        typedef std::vector <Tag17Subpacket::Ptr> Attributes_T;
+        typedef std::vector <Tag17Subpacket::Ptr> Attributes;
 
     private:
         uint64_t length;
         uint8_t type;
 
         // only defined subpacket is 1
-        Attributes_T attributes;
+        Attributes attributes;
 
         void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
         std::string write_subpacket(uint8_t s_type, std::string data) const;
@@ -88,9 +88,9 @@ class Tag17 : public User{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        Attributes_T get_attributes() const;
-        Attributes_T get_attributes_clone() const;
-        void set_attributes(const Attributes_T & a);
+        Attributes get_attributes() const;
+        Attributes get_attributes_clone() const;
+        void set_attributes(const Attributes & a);
 
         Packet::Ptr clone() const;
 };

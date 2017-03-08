@@ -22,7 +22,7 @@ std::string Tag2Sub22::show(const uint8_t indents, const uint8_t indent_size) co
 
     std::string out = indent + show_title();
     for(char const & alg : pca){
-        out += "\n" + indent + tab + "comp alg - " + Compression::Name.at(alg) + " (comp " + std::to_string(alg) + ")";
+        out += "\n" + indent + tab + "comp alg - " + Compression::NAME.at(alg) + " (comp " + std::to_string(alg) + ")";
     }
 
     return out;

@@ -47,6 +47,7 @@ const Module sign_file(
         std::make_pair("-o", std::make_pair("output file",               "")),
         std::make_pair("-c", std::make_pair("compression algorithm", "ZLIB")),
         std::make_pair("-h", std::make_pair("hash algorithm",        "SHA1")),
+        std::make_pair("-u", std::make_pair("User Identifier",           "")),
     },
 
     // optional flags
@@ -69,7 +70,7 @@ const Module sign_file(
             return -1;
         }
 
-        if (Compression::Number.find(args.at("-c")) == Compression::Number.end()){
+        if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
             std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
@@ -79,12 +80,21 @@ const Module sign_file(
             return -1;
         }
 
-        output(::sign_message(PGPSecretKey(key),
-                              args.at("passphrase"),
-                              args.at("file"),
-                              std::string(std::istreambuf_iterator <char> (file), {}),
-                              Hash::NUMBER.at(args.at("-h")),
-                              Compression::Number.at(args.at("-c"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        const SignArgs signargs(PGPSecretKey(key),
+                                args.at("passphrase"),
+                                args.at("-u"),
+                                4,
+                                Hash::NUMBER.at(args.at("-h")));
+
+        std::string error;
+        PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")), error);
+
+        if (message.meaningful()){
+            output(message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

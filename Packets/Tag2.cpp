@@ -56,7 +56,7 @@ void Tag2::read_subpacket(const std::string & data, std::string::size_type & pos
     }
 }
 
-void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets_T & subpackets){
+void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpackets){
     subpackets.clear();
     std::string::size_type pos = 0;
     while (pos < data.size()){
@@ -337,41 +337,43 @@ std::string Tag2::get_keyid() const{
     else if (version == 4){
         // usually found in unhashed subpackets
         for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
-            if (s -> get_type() == 16){
-                return Tag2Sub16(s -> raw()).get_keyid();
+            if (s -> get_type() == Tag2Subpacket::ISSUER){
+                return std::static_pointer_cast <Tag2Sub16> (s) -> get_keyid();
             }
         }
+
         // search hashed subpackets if necessary
         for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
-            if (s -> get_type() == 16){
-                return Tag2Sub16(s -> raw()).get_keyid();
+            if (s -> get_type() == Tag2Subpacket::ISSUER){
+                return std::static_pointer_cast <Tag2Sub16> (s) -> get_keyid();
             }
         }
     }
     else{
         throw std::runtime_error("Error: Signature Packet version " + std::to_string(version) + " not defined.");
     }
+
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-Tag2::Subpackets_T Tag2::get_hashed_subpackets() const{
+Tag2::Subpackets Tag2::get_hashed_subpackets() const{
     return hashed_subpackets;
 }
 
-Tag2::Subpackets_T Tag2::get_hashed_subpackets_clone() const{
-    std::vector <Tag2Subpacket::Ptr> out;
+Tag2::Subpackets Tag2::get_hashed_subpackets_clone() const{
+    Subpackets out;
     for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
 }
 
-Tag2::Subpackets_T Tag2::get_unhashed_subpackets() const{
+Tag2::Subpackets Tag2::get_unhashed_subpackets() const{
     return unhashed_subpackets;
 }
 
-Tag2::Subpackets_T Tag2::get_unhashed_subpackets_clone() const{
-    std::vector <Tag2Subpacket::Ptr> out;
+Tag2::Subpackets Tag2::get_unhashed_subpackets_clone() const{
+    Subpackets out;
     for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
         out.push_back(s -> clone());
     }
@@ -488,7 +490,7 @@ void Tag2::set_keyid(const std::string & k){
     size = raw().size();
 }
 
-void Tag2::set_hashed_subpackets(const Tag2::Subpackets_T & h){
+void Tag2::set_hashed_subpackets(const Tag2::Subpackets & h){
     hashed_subpackets.clear();
     for(Tag2Subpacket::Ptr const & s : h){
         hashed_subpackets.push_back(s -> clone());
@@ -496,7 +498,7 @@ void Tag2::set_hashed_subpackets(const Tag2::Subpackets_T & h){
     size = raw().size();
 }
 
-void Tag2::set_unhashed_subpackets(const Tag2::Subpackets_T & u){
+void Tag2::set_unhashed_subpackets(const Tag2::Subpackets & u){
     unhashed_subpackets.clear();
     for(Tag2Subpacket::Ptr const & s : u){
         unhashed_subpackets.push_back(s -> clone());

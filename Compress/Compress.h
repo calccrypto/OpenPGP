@@ -48,36 +48,34 @@ THE SOFTWARE.
 #include "pgpzlib.h"
 
 namespace Compression{
-    namespace Algorithm{
-        const uint8_t UNCOMPRESSED = 0;
-        const uint8_t ZIP          = 1;
-        const uint8_t ZLIB         = 2;
-        const uint8_t BZIP2        = 3;
-    }
+    const uint8_t UNCOMPRESSED = 0;
+    const uint8_t ZIP          = 1;
+    const uint8_t ZLIB         = 2;
+    const uint8_t BZIP2        = 3;
 
-    const std::map <uint8_t, std::string> Name = {
-        std::make_pair(Algorithm::UNCOMPRESSED, "UNCOMPRESSED"),
-        std::make_pair(Algorithm::ZIP,          "ZIP {RFC1951}"),
-        std::make_pair(Algorithm::ZLIB,         "ZLIB {RFC1950}"),
-        std::make_pair(Algorithm::BZIP2,        "BZip2 {BZ2}"),
-        std::make_pair(100,                     "Private/Experimental algorithm"),
-        std::make_pair(101,                     "Private/Experimental algorithm"),
-        std::make_pair(102,                     "Private/Experimental algorithm"),
-        std::make_pair(103,                     "Private/Experimental algorithm"),
-        std::make_pair(104,                     "Private/Experimental algorithm"),
-        std::make_pair(105,                     "Private/Experimental algorithm"),
-        std::make_pair(106,                     "Private/Experimental algorithm"),
-        std::make_pair(107,                     "Private/Experimental algorithm"),
-        std::make_pair(108,                     "Private/Experimental algorithm"),
-        std::make_pair(109,                     "Private/Experimental algorithm"),
-        std::make_pair(110,                     "Private/Experimental algorithm"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(UNCOMPRESSED, "UNCOMPRESSED"),
+        std::make_pair(ZIP,          "ZIP {RFC1951}"),
+        std::make_pair(ZLIB,         "ZLIB {RFC1950}"),
+        std::make_pair(BZIP2,        "BZip2 {BZ2}"),
+        std::make_pair(100,          "Private/Experimental algorithm"),
+        std::make_pair(101,          "Private/Experimental algorithm"),
+        std::make_pair(102,          "Private/Experimental algorithm"),
+        std::make_pair(103,          "Private/Experimental algorithm"),
+        std::make_pair(104,          "Private/Experimental algorithm"),
+        std::make_pair(105,          "Private/Experimental algorithm"),
+        std::make_pair(106,          "Private/Experimental algorithm"),
+        std::make_pair(107,          "Private/Experimental algorithm"),
+        std::make_pair(108,          "Private/Experimental algorithm"),
+        std::make_pair(109,          "Private/Experimental algorithm"),
+        std::make_pair(110,          "Private/Experimental algorithm"),
     };
 
-    const std::map <std::string, uint8_t> Number = {
-        std::make_pair("UNCOMPRESSED",  Algorithm::UNCOMPRESSED),
-        std::make_pair("ZIP",           Algorithm::ZIP),
-        std::make_pair("ZLIB",          Algorithm::ZLIB),
-        std::make_pair("BZip2",         Algorithm::BZIP2),
+    const std::map <std::string, uint8_t> NUMBER = {
+        std::make_pair("UNCOMPRESSED",  UNCOMPRESSED),
+        std::make_pair("ZIP",           ZIP),
+        std::make_pair("ZLIB",          ZLIB),
+        std::make_pair("BZip2",         BZIP2),
     };
 }
 

@@ -1,5 +1,5 @@
 /*
-sign_detach.h
+sign_standalone_signature.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,30 +23,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SIGN_DETACHED_SIGNATURE__
-#define __COMMAND_SIGN_DETACHED_SIGNATURE__
+#ifndef __COMMAND_SIGN_STANDALONE_SIGNATURE__
+#define __COMMAND_SIGN_STANDALONE_SIGNATURE__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module sign_detached_signature(
+const Module sign_standalone_signature(
     // name
-    "sign-detached-signature",
+    "sign-standalone-signature",
 
     // positional arguments
     {
         "private-key",
         "passphrase",
-        "file",
     },
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",        "")),
-        std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
-        std::make_pair("-u", std::make_pair("User Identifier",    "")),
+        std::make_pair("-o", std::make_pair("output file",               "")),
+        std::make_pair("-c", std::make_pair("compression algorithm", "ZLIB")),
+        std::make_pair("-h", std::make_pair("hash_algorithm",        "SHA1")),
+        std::make_pair("-u", std::make_pair("User Identifier",           "")),
     },
 
     // optional flags
@@ -63,9 +63,8 @@ const Module sign_detached_signature(
             return -1;
         }
 
-        std::ifstream file(args.at("file"), std::ios::binary);
-        if (!file){
-            std::cerr << "IOError: file '" + args.at("file") + "' could not be opened." << std::endl;
+        if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
+            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
@@ -80,8 +79,9 @@ const Module sign_detached_signature(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
+        // for now, just sign own signature packet
         std::string error;
-        PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}), error);
+        PGPDetachedSignature signature = ::sign_standalone_signature(signargs, std::static_pointer_cast <Tag2> (signargs.pri.get_packets()[2]), Compression::NUMBER.at(args.at("-c")), error);
 
         if (signature.meaningful()){
             output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));

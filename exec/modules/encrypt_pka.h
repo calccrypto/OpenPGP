@@ -72,7 +72,7 @@ const Module encrypt_pka(
             return -1;
         }
 
-        if (Compression::Number.find(args.at("-c")) == Compression::Number.end()){
+        if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
             std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
@@ -107,7 +107,7 @@ const Module encrypt_pka(
                              std::string(std::istreambuf_iterator <char> (file), {}),
                              args.at("file"),
                              Sym::NUMBER.at(args.at("-sym")),
-                             Compression::Number.at(args.at("-c")),
+                             Compression::NUMBER.at(args.at("-c")),
                              flags.at("--mdc"),
                              signer,
                              args.at("-p")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));

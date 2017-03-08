@@ -34,7 +34,7 @@ std::string Tag8::show_title() const{
 
 Tag8::Tag8()
     : Packet(Packet::COMPRESSED_DATA, 3),
-      comp(Compression::Algorithm::UNCOMPRESSED),
+      comp(Compression::UNCOMPRESSED),
       compressed_data()
 {}
 
@@ -64,7 +64,7 @@ std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
     decompressed.read_raw(get_data()); // do this in case decompressed data contains headers
 
     return indent + show_title() + "\n" +
-           indent + tab + "Compression Algorithm: " + Compression::Name.at(comp) + " (compress " + std::to_string(comp) + ")\n" +
+           indent + tab + "Compression Algorithm: " + Compression::NAME.at(comp) + " (compress " + std::to_string(comp) + ")\n" +
            indent + tab + "Compressed Data:\n" +
            decompressed.show(indents + 1, indent_size);
 }

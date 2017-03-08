@@ -171,9 +171,9 @@ TEST(PGPTest, test_gpg_public_key) {
         {
             std::string pca = pubsub22->get_pca();
             EXPECT_EQ(pca.size(), 3);
-            EXPECT_NE(pca.find(Compression::Algorithm::ZLIB),  std::string::npos);
-            EXPECT_NE(pca.find(Compression::Algorithm::BZIP2), std::string::npos);
-            EXPECT_NE(pca.find(Compression::Algorithm::ZIP),   std::string::npos);
+            EXPECT_NE(pca.find(Compression::ZLIB),  std::string::npos);
+            EXPECT_NE(pca.find(Compression::BZIP2), std::string::npos);
+            EXPECT_NE(pca.find(Compression::ZIP),   std::string::npos);
         }
         // pubsig/sub30
         {
@@ -392,9 +392,9 @@ TEST(PGPTest, test_gpg_private_key) {
         {
             std::string pca = pubsub22->get_pca();
             EXPECT_EQ(pca.size(), 3);
-            EXPECT_NE(pca.find(Compression::Algorithm::ZLIB),  std::string::npos);
-            EXPECT_NE(pca.find(Compression::Algorithm::BZIP2), std::string::npos);
-            EXPECT_NE(pca.find(Compression::Algorithm::ZIP),   std::string::npos);
+            EXPECT_NE(pca.find(Compression::ZLIB),  std::string::npos);
+            EXPECT_NE(pca.find(Compression::BZIP2), std::string::npos);
+            EXPECT_NE(pca.find(Compression::ZIP),   std::string::npos);
         }
         // pubsig/sub30
         {

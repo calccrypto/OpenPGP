@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SIGN_KEY__
-#define __COMMAND_SIGN_KEY__
+#ifndef __COMMAND_SIGN_PRIMARY_KEY__
+#define __COMMAND_SIGN_PRIMARY_KEY__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module sign_key(
+const Module sign_primary_key(
     // name
-    "sign-key",
+    "sign-primary-key",
 
     // positional arguments
     {
@@ -44,8 +44,10 @@ const Module sign_key(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",                                      "")),
-        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')", "13")),
+        std::make_pair("-o", std::make_pair("output file",                                        "")),
+        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
+        std::make_pair("-h", std::make_pair("hash algorithm",                                 "SHA1")),
+        std::make_pair("-u", std::make_pair("Signer's User Identifier",                           "")),
     },
 
     // optional flags
@@ -68,10 +70,26 @@ const Module sign_key(
             return -1;
         }
 
-        output(::sign_primary_key(PGPSecretKey(signer_file),
-                                  args.at("passphrase"),
-                                  PGPPublicKey(signee_file),
-                                  mpitoulong(hextompi(args.at("-c")))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
+            return -1;
+        }
+
+        const SignArgs signargs(PGPSecretKey(signer_file),
+                                args.at("passphrase"),
+                                args.at("-u"),
+                                4,
+                                Hash::NUMBER.at(args.at("-h")));
+
+        std::string error;
+        PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
+
+        if (key.meaningful()){
+            output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

@@ -46,12 +46,12 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::SECRET_KEY));
+    Tag5::Ptr signer = find_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: No Secret Key packet found.");
     }
 
-    Tag2::Ptr sig = create_sig_packet(signer, Signature_Type::KEY_REVOCATION_SIGNATURE, version);
+    Tag2::Ptr sig = create_sig_packet(version, Signature_Type::KEY_REVOCATION_SIGNATURE, signer -> get_pka(), Hash::SHA1, signer -> get_keyid());
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
@@ -62,9 +62,14 @@ Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passph
     sig -> set_hashed_subpackets(hashed_subpackets);
 
     // set signature data
-    std::string hashed_data = to_sign_20(signer, sig);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    std::string digest = to_sign_20(signer, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> get_mpi(), signer -> decrypt_secret_keys(passphrase), sig -> get_hash());
+    if (!vals.size()){
+        // error += "Error: PKA Signing failed.\n";
+        return nullptr;
+    }
+    sig -> set_mpi(vals);
 
     return sig;
 }
@@ -87,7 +92,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
         throw std::runtime_error("Error: A private key is required for the first argument.");
     }
 
-    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::SECRET_KEY));
+    Tag5::Ptr signer = find_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: Private signing key not found");
     }
@@ -106,7 +111,7 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    Tag2::Ptr sig = create_sig_packet(signer, Signature_Type::SUBKEY_REVOCATION_SIGNATURE, version);
+    Tag2::Ptr sig = create_sig_packet(version, Signature_Type::SUBKEY_REVOCATION_SIGNATURE, signer -> get_pka(), Hash::SHA1, signer -> get_keyid());
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
@@ -117,9 +122,14 @@ Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase,
     sig -> set_hashed_subpackets(hashed_subpackets);
 
     // set signature data
-    std::string hashed_data = to_sign_28(key, sig);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    std::string digest = to_sign_28(key, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> get_mpi(), signer -> decrypt_secret_keys(passphrase), sig -> get_hash());
+    if (!vals.size()){
+        // error += "Error: PKA Signing failed.\n";
+        return nullptr;
+    }
+    sig -> set_mpi(vals);
 
     return sig;
 }
@@ -144,7 +154,7 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: A private key is required for the second argument.");
     }
 
-    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(pri, Packet::SECRET_SUBKEY));
+    Tag5::Ptr signer = find_signing_key(pri);
     if (!signer){
         throw std::runtime_error("Error: Private signing key not found");
     }
@@ -163,12 +173,19 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
         throw std::runtime_error("Error: No Secret Subkey packet found.");
     }
 
-    User::Ptr uid = find_user_id(pri);
+    User::Ptr uid = nullptr;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        if ((p -> get_tag() == Packet::USER_ID)       ||
+            (p -> get_tag() == Packet::USER_ATTRIBUTE)){
+            uid = std::static_pointer_cast <User> (p);
+        }
+    }
+
     if (!uid){
         throw std::runtime_error("Error: No User ID packet found.");
     }
 
-    Tag2::Ptr sig = create_sig_packet(signer, Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE, version);
+    Tag2::Ptr sig = create_sig_packet(version, Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE, signer -> get_pka(), Hash::SHA1, signer -> get_keyid());
 
     // add revocation subpacket
     std::vector <Tag2Subpacket::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
@@ -179,9 +196,14 @@ PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::strin
     sig -> set_hashed_subpackets(hashed_subpackets);
 
     // set signature data
-    std::string hashed_data = to_sign_30(key, uid, sig);
-    sig -> set_left16(hashed_data.substr(0, 2));
-    sig -> set_mpi(pka_sign(hashed_data, signer, passphrase, sig -> get_hash()));
+    std::string digest = to_sign_30(key, uid, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> get_mpi(), signer -> decrypt_secret_keys(passphrase), sig -> get_hash());
+    if (!vals.size()){
+        // error += "Error: PKA Signing failed.\n";
+        return PGPPublicKey();
+    }
+    sig -> set_mpi(vals);
 
     // Create output key
     PGPPublicKey revoked(pub);

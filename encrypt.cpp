@@ -1,7 +1,8 @@
 #include "encrypt.h"
 
 Tag6::Ptr find_encrypting_key(const PGPKey & key){
-    if (key.meaningful()){
+    std::string error;
+    if (key.meaningful(error)){
         for(Packet::Ptr const & p : key.get_packets()){
             if (Packet::is_key_packet(p -> get_tag())){
                 Tag6::Ptr key = std::static_pointer_cast <Tag6> (p);
@@ -67,7 +68,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
     // if (signer){
         // // find preferred hash and compression algorithms of the signer
         // // find signing key id
-        // Tag5::Ptr tag5 = find_signing_key(*signer, 5);
+        // Tag5::Ptr tag5 = find_signing_key(*signer);
         // std::string keyid = tag5 -> get_keyid();
 
         // // find signature packet of signing key
@@ -145,11 +146,12 @@ PGPMessage encrypt_pka(const PGPKey & key,
 
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!key.meaningful()){
+    std::string error;
+    if (!key.meaningful(error)){
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
-    std::vector <Packet::Ptr> packets = key.get_packets();
+    PGP::Packets packets = key.get_packets();
     Tag6::Ptr public_key = find_encrypting_key(key);
 
     if (!public_key){

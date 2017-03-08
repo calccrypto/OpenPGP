@@ -44,9 +44,9 @@ const Module sign_cleartext_signature(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",                                        "")),
-        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
-        std::make_pair("-h", std::make_pair("hash_algorithm",                                 "SHA1")),
+        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
+        std::make_pair("-u", std::make_pair("User Identifier",    "")),
     },
 
     // optional flags
@@ -74,9 +74,21 @@ const Module sign_cleartext_signature(
             return -1;
         }
 
-        output(::sign_cleartext(PGPSecretKey(key),
+        const SignArgs signargs(PGPSecretKey(key),
                                 args.at("passphrase"),
-                                std::string(std::istreambuf_iterator<char>(file), {})).write(), args.at("-o"));
+                                args.at("-u"),
+                                4,
+                                Hash::NUMBER.at(args.at("-h")));
+
+        std::string error;
+        PGPCleartextSignature signature = ::sign_cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}), error);
+
+        if (signature.meaningful()){
+            output(signature.write(), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

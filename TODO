@@ -1,10 +1,9 @@
-Add User selection when signing
+Add Revocation Certificate type
 Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable? (currently everything throws exceptions)
 add encrypt/decrypt with passphrase
 encrypt+sign stuff
 deal with partial packets properly
 finish sign functions
-find packets properly (check if uid is associated with key, etc)
 encrypt for multiple recipients
 sign with multiple keys

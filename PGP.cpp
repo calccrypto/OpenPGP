@@ -266,6 +266,8 @@ void PGP::read(const std::string & data){
 }
 
 void PGP::read(std::istream & stream){
+    packets.clear();
+
     // find armor header
     //
     // 6.2. Forming ASCII Armor
@@ -367,6 +369,8 @@ void PGP::read(std::istream & stream){
 }
 
 void PGP::read_raw(const std::string & data){
+    packets.clear();
+
     // read each packet
     uint8_t partial = 0;
     std::string::size_type pos = 0;

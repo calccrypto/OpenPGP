@@ -53,7 +53,7 @@ THE SOFTWARE.
 
 class Tag2 : public Packet{
     public:
-        typedef std::vector <Tag2Subpacket::Ptr> Subpackets_T;
+        typedef std::vector <Tag2Subpacket::Ptr> Subpackets;
 
     private:
         // common
@@ -68,14 +68,14 @@ class Tag2 : public Packet{
         std::string keyid;
 
         // version 4 stuff
-        Subpackets_T hashed_subpackets;
-        Subpackets_T unhashed_subpackets;
+        Subpackets hashed_subpackets;
+        Subpackets unhashed_subpackets;
 
         // Function to read subpacket headers
         void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
 
         // Function to parse all subpackets
-        void read_subpackets(const std::string & data, Subpackets_T & subpackets);
+        void read_subpackets(const std::string & data, Subpackets & subpackets);
 
     public:
         typedef std::shared_ptr <Tag2> Ptr;
@@ -98,10 +98,10 @@ class Tag2 : public Packet{
         uint32_t get_time()     const;
         std::string get_keyid() const;
 
-        Subpackets_T get_hashed_subpackets()         const;
-        Subpackets_T get_hashed_subpackets_clone()   const;
-        Subpackets_T get_unhashed_subpackets()       const;
-        Subpackets_T get_unhashed_subpackets_clone() const;
+        Subpackets get_hashed_subpackets()         const;
+        Subpackets get_hashed_subpackets_clone()   const;
+        Subpackets get_unhashed_subpackets()       const;
+        Subpackets get_unhashed_subpackets_clone() const;
         std::string get_up_to_hashed()               const;     // used for signature trailer
         std::string get_without_unhashed()           const;     // used for signature type 0x50
 
@@ -115,8 +115,8 @@ class Tag2 : public Packet{
         void set_time(const uint32_t t);
         void set_keyid(const std::string & k);
 
-        void set_hashed_subpackets(const Subpackets_T & h);
-        void set_unhashed_subpackets(const Subpackets_T & u);
+        void set_hashed_subpackets(const Subpackets & h);
+        void set_unhashed_subpackets(const Subpackets & u);
 
         std::string find_subpacket(const uint8_t sub) const;    // find a subpacket within Signature Packet; returns raw data of last subpacket found
 

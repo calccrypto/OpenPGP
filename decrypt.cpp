@@ -44,7 +44,7 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 
     // find start of encrypted data
     unsigned int i = 0;
-    std::vector <Packet::Ptr> packets = m.get_packets();
+    PGP::Packets packets = m.get_packets();
     while ((i < packets.size()) &&
            (packets[i] -> get_tag() != Packet::SYMMETRICALLY_ENCRYPTED_DATA) &&
            (packets[i] -> get_tag() != Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA)){
@@ -176,7 +176,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
     std::string out = "";
     // if signing key provided, check the signature
     if (verify){
-        out = "Message was" + std::string(verify_message(*verify, decrypted)?"":" not") + " signed by key " + hexlify(verify -> keyid()) + ".\n";
+        out = "Message was" + std::string(verify_message(*verify, decrypted, out)?"":" not") + " signed by key " + hexlify(verify -> keyid()) + ".\n";
     }
 
     // extract data

@@ -81,7 +81,7 @@ namespace PKA{
         std::make_pair(110,                 "Private/Experimental algorithm"),
     };
 
-    const std::map <uint8_t, char> Short = {
+    const std::map <uint8_t, char> SHORT = {
         std::make_pair(RSA_ENCRYPT_OR_SIGN, 'R'),
         std::make_pair(RSA_ENCRYPT_ONLY,    'R'),
         std::make_pair(RSA_SIGN_ONLY,       'R'),

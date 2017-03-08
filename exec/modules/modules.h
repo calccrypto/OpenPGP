@@ -41,10 +41,12 @@ THE SOFTWARE.
 #include "revoke.h"
 #include "revoke_key.h"
 #include "revoke_subkey.h"
+#include "sign_file.h"
+#include "sign_primary_key.h"
+#include "sign_subkey.h"
 #include "sign_cleartext_signature.h"
 #include "sign_detached_signature.h"
-#include "sign_file.h"
-#include "sign_key.h"
+#include "sign_standalone_signature.h"
 #include "verify_cleartext_signature.h"
 #include "verify_detached_signature.h"
 #include "verify_key.h"
@@ -65,10 +67,12 @@ const std::vector <Module> ordered = {
     revoke,
     revoke_key,
     revoke_subkey,
+    sign_file,
+    sign_primary_key,
+    sign_subkey,
     sign_cleartext_signature,
     sign_detached_signature,
-    sign_file,
-    sign_key,
+    sign_standalone_signature,
     verify_cleartext_signature,
     verify_detached_signature,
     verify_key,

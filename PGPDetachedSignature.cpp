@@ -2,7 +2,9 @@
 
 PGPDetachedSignature::PGPDetachedSignature()
     : PGP()
-{}
+{
+    type = SIGNATURE;
+}
 
 PGPDetachedSignature::PGPDetachedSignature(const PGP & copy)
     : PGP(copy)
@@ -36,24 +38,24 @@ PGPDetachedSignature::~PGPDetachedSignature(){}
 
 bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
     if (pgp.get_type() != SIGNATURE){
-        error = "Error: ASCII Armor type is not Signature.";
+        error += "Error: ASCII Armor type is not Signature.\n";
         return false;
     }
 
     if (pgp.get_packets().size() != 1){
-        error = "Error: Wrong number of packets packets.";
+        error += "Error: Wrong number of packets.\n";
         return false;
     }
 
-    if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
-        error = "Error: Packet is not a signature packet.";
-        return false;
-    }
+    // if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
+        // error += "Error: Packet is not a signature packet.\n";
+        // return false;
+    // }
 
-    if (std::static_pointer_cast <Tag2> (pgp.get_packets()[0]) -> get_type() != Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT){
-        error = "Error: Signature type is not " + Signature_Type::NAME.at(Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT);
-        return false;
-    }
+    // if (!Signature_Type::is_signed_document(std::static_pointer_cast <Tag2> (pgp.get_packets()[0]) -> get_type())){
+        // error += "Error: Signature type is not over a document.\n";
+        // return false;
+    // }
 
     return true;
 }
