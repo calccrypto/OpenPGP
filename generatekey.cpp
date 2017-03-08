@@ -116,10 +116,10 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
     PKA::Values pub_subkey;
     PKA::Values pri_subkey;
 
-    Tag5::Ptr prikey = nullptr;
+    Tag5::Ptr prikey    = nullptr;
     Tag7::Ptr prisubkey = nullptr;
-    Tag13::Ptr uid = std::make_shared <Tag13> ();
-    Tag17::Ptr attr  = std::make_shared <Tag17> ();
+    Tag13::Ptr uid      = nullptr;
+    Tag17::Ptr attr     = nullptr;;
     bool id = false;                    // default UID came first
     bool key = false;                   // default main key came first
 
@@ -192,15 +192,15 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             key = false;
         }
         else if (p -> get_tag() == Packet::USER_ID){
-            uid -> read(p -> raw());
+            uid = std::static_pointer_cast <Tag13> (p);
             id = false;
         }
         else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
-            attr -> read(p -> raw());
+            attr = std::static_pointer_cast <Tag17> (p);
             id = true;
         }
         else if (p -> get_tag() == Packet::SIGNATURE){
-            Tag2::Ptr sig = std::make_shared <Tag2> (p -> raw());
+            Tag2::Ptr sig = std::static_pointer_cast <Tag2> (p);
 
             // check that there is a key to be signed
             if (!prikey){
@@ -290,7 +290,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             p = sig;
         }
         else if (p -> get_tag() == Packet::SECRET_SUBKEY){
-            prisubkey = std::make_shared <Tag7> (p -> raw());
+            prisubkey = std::static_pointer_cast <Tag7> (p);
 
             // Generate keypair
             PKA::Params params;
@@ -365,12 +365,10 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
     PGP::Packets pub_packets;
     for(Packet::Ptr const & p : packets){
         if (p -> get_tag() == Packet::SECRET_KEY){
-            Tag6::Ptr tag6 = std::make_shared <Tag6> (p -> raw());
-            pub_packets.push_back(tag6);
+            pub_packets.push_back(std::static_pointer_cast <Tag6> (p));
         }
         else if (p -> get_tag() == Packet::SECRET_SUBKEY){
-            Tag14::Ptr tag14 = std::make_shared <Tag14> (p -> raw());
-            pub_packets.push_back(tag14);
+            pub_packets.push_back(std::static_pointer_cast <Tag14> (p));
         }
         else if ((p -> get_tag() == Packet::SIGNATURE)  ||
                  (p -> get_tag() == Packet::USER_ID)    ||

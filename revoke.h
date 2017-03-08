@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __REVOKE__
 #define __REVOKE__
 
-#include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -40,8 +39,7 @@ THE SOFTWARE.
 
 // check if a key has been revoked
 bool check_revoked(const PGP::Packets & packets, const std::string & keyid);
-bool check_revoked(const PGPPublicKey & pub, const std::string & keyid);
-bool check_revoked(const PGPSecretKey & pri, const std::string & keyid);
+bool check_revoked(const PGPKey & key, const std::string & keyid);
 
 // 0x20: Key revocation signature
 // main function to revoke a primary key
@@ -63,7 +61,5 @@ PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, cons
 PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
 // Revoke with certificate
-PGPPublicKey revoke_with_cert(const PGPPublicKey & pub, PGPPublicKey & revoke, const uint8_t version = 4);
-PGPPublicKey revoke_with_cert(const PGPSecretKey & pri, PGPPublicKey & revoke, const uint8_t version = 4);
-
+PGPPublicKey revoke_with_cert(const PGPKey & key, PGPPublicKey & revoke, const uint8_t version = 4);
 #endif

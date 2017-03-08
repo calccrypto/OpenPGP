@@ -113,7 +113,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
         unsigned int i = 0;
         std::list <Tag4::Ptr> OPSP;                                         // treat as stack
         while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::ONE_PASS_SIGNATURE)){
-            OPSP.push_front(std::make_shared <Tag4> (packets[i] -> raw())); // put next Tag4 onto stack
+            OPSP.push_front(std::static_pointer_cast <Tag4> (packets[i]));  // put next Tag4 onto stack
             i++;
 
             if ((*(OPSP.rbegin())) -> get_nested() != 0){                   // check if there are nested packets
@@ -146,7 +146,7 @@ int verify_message(const Key::Ptr & signing_key, const PGPMessage & m, std::stri
         // get signatures
         std::list <Tag2::Ptr> SP;                                           // treat as queue
         while ((i < packets.size()) && (packets[i] -> get_tag() == 2)){
-            SP.push_front(std::make_shared <Tag2> (packets[i] -> raw()));   // put next Tag2 onto queue
+            SP.push_front(std::static_pointer_cast <Tag2> (packets[i]));    // put next Tag2 onto queue
             i++;
         }
 

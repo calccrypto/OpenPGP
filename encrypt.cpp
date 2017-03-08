@@ -75,10 +75,10 @@ Packet::Ptr encrypt_data(const std::string & session_key,
         // Tag2::Ptr tag2 = nullptr;
         // for(Packet::Ptr const & p : signer -> get_packets()){
             // if (p -> get_tag() == 2){
-                // Tag2 sig(p -> raw());
+                // Tag2::Ptr sig = std::static_pointer_cast <Tag2> (p);
 
                 // if (sig.get_keyid() == keyid){
-                    // tag2 = std::make_shared <Tag2> (sig);
+                    // tag2 = sig;
                     // break;
                 // }
             // }

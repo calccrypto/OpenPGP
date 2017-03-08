@@ -376,20 +376,20 @@ Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const st
 // 0x19: Primary Key Binding Signature
 Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee, std::string & error){
     // find signing subkey
-    Key::Ptr subkey = find_signing_key(args.pri);
+    Key::Ptr subkey = find_signing_key(args.pri, args.id);
     if (!subkey){
         error += "Error: No Signing Subkey found.\n";
         return nullptr;
     }
 
     // move subkey data into subkey packet
-    Tag7::Ptr signer_subkey = std::make_shared <Tag7> (subkey -> raw());
+    Tag7::Ptr signer_subkey = std::static_pointer_cast <Tag7> (subkey);
 
     // get signee primary and subkey
     Tag6::Ptr signee_primary = nullptr;
     for(Packet::Ptr const & p : args.pri.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_KEY){
-            signee_primary = std::make_shared <Tag6> (p -> raw());
+            signee_primary = std::static_pointer_cast <Tag6> (p);
             break;
         }
     }
@@ -402,7 +402,7 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     Tag14::Ptr signee_subkey = nullptr;
     for(Packet::Ptr const & p : args.pri.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_SUBKEY){
-            signee_subkey = std::make_shared <Tag14> (p -> raw());
+            signee_subkey = std::static_pointer_cast <Tag14> (p);
             break;
         }
     }

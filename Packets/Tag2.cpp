@@ -322,8 +322,8 @@ uint32_t Tag2::get_time() const{
     }
     else if (version == 4){
         for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
-            if (s -> get_type() == 2){
-                return Tag2Sub2(s -> raw()).get_time();
+            if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
+                return std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
             }
         }
     }

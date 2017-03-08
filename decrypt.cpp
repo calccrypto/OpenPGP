@@ -53,11 +53,11 @@ PGPMessage decrypt_data(const uint8_t sym, const PGPMessage & m, const std::stri
 
     // copy initial data to string
     if (packets[i] -> get_tag() == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
-        data = Tag9(packets[i] -> raw()).get_encrypted_data();
+        data = std::static_pointer_cast <Tag9> (packets[i]) -> get_encrypted_data();
         tag = Packet::SYMMETRICALLY_ENCRYPTED_DATA;
     }
     else if (packets[i] -> get_tag() == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
-        data = Tag18(packets[i] -> raw()).get_protected_data();
+        data = std::static_pointer_cast <Tag18> (packets[i]) -> get_protected_data();
         tag = Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA;
     }
     else{
@@ -182,7 +182,7 @@ std::string decrypt_pka(const PGPSecretKey & pri, const PGPMessage & m, const st
     // extract data
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
-            out += Tag11(p -> raw()).out(writefile);
+            out += std::static_pointer_cast <Tag11> (p) -> out(writefile);
         }
     }
 
@@ -228,7 +228,7 @@ std::string decrypt_sym(const PGPMessage & m, const std::string & passphrase, co
     // extract data
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
-            out += Tag11(p -> raw()).out(writefile);
+            out += std::static_pointer_cast <Tag11> (p) -> out(writefile);
         }
     }
     return out;

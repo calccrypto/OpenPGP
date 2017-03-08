@@ -114,7 +114,7 @@ void PGPMessage::decompress() {
 
     // check if compressed
     if ((packets.size() == 1) && (packets[0] -> get_tag() == Packet::COMPRESSED_DATA)){
-        comp = std::make_shared <Tag8> (packets[0] -> raw());
+        comp = std::static_pointer_cast <Tag8> (packets[0]);
         const std::string compressed = comp -> get_data();
         comp -> set_data("");
         comp -> set_partial(packets[0] -> get_partial());
@@ -142,7 +142,7 @@ PGPMessage::PGPMessage(const PGPMessage & copy)
       comp(copy.comp)
 {
     if (comp){
-        comp = std::make_shared <Tag8> (comp -> raw());
+        comp = std::static_pointer_cast <Tag8> (comp);
     }
 }
 
