@@ -123,7 +123,7 @@ std::string PGPKey::list_keys() const{
         }
         // if the packet is a User ID
         else if (p -> get_tag() == Packet::USER_ID){
-            out << "uid                   " << std::static_pointer_cast <Tag13> (p) -> get_contents() << "\n";
+            out << "uid                  " << std::static_pointer_cast <Tag13> (p) -> get_contents() << "\n";
         }
         // if the packet is a User Attribute
         else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
