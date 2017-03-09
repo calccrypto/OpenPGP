@@ -25,6 +25,7 @@ THE SOFTWARE.
 
 #include <iostream>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <vector>
 
@@ -43,9 +44,10 @@ std::string::size_type help(const std::string & match = "",
         indent += "    ";
     }
 
+    const std::regex regex(match);
     std::string::size_type found = 0;
     for(module::Module const & cmd : module::ordered){
-        if (cmd.get_name().substr(0, match.size()) == match){
+        if (std::regex_search(cmd.get_name(), regex)){
             stream << cmd.help(indent) << std::endl;
             found++;
         }
