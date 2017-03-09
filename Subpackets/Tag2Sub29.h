@@ -69,25 +69,37 @@ THE SOFTWARE.
 //    certification is no longer a part of validity calculations.
 
 namespace Revoke{
-    typedef uint8_t type;
-    const type No_reason_specified                    = 0;
-    const type Key_is_superceeded                     = 1;
-    const type Key_material_has_been_compromised      = 2;
-    const type Key_is_no_longer_used                  = 3;
-    const type User_ID_information_is_no_longer_valid = 32;
+    const uint8_t NO_REASON_SPECIFIED                          = 0;
+    const uint8_t KEY_IS_SUPERCEEDED                           = 1;
+    const uint8_t KEY_MATERIAL_HAS_BEEN_COMPROMISED            = 2;
+    const uint8_t KEY_IS_NO_LONGER_USED                        = 3;
+    const uint8_t USER_ID_INFORMATION_IS_NO_LONGER_VALID       = 32;
 
-    const std::map <type, std::string> Name = {
-        std::make_pair(No_reason_specified,                    "No reason specified"),
-        std::make_pair(Key_is_superceeded,                     "Key is superceded"),
-        std::make_pair(Key_material_has_been_compromised,      "Key material has been compromised"),
-        std::make_pair(Key_is_no_longer_used,                  "Key is no longer used"),
-        std::make_pair(User_ID_information_is_no_longer_valid, "User ID information is no longer valid"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(NO_REASON_SPECIFIED,                    "No reason specified"),
+        std::make_pair(KEY_IS_SUPERCEEDED,                     "Key is superceded"),
+        std::make_pair(KEY_MATERIAL_HAS_BEEN_COMPROMISED,      "Key material has been compromised"),
+        std::make_pair(KEY_IS_NO_LONGER_USED,                  "Key is no longer used"),
+        std::make_pair(USER_ID_INFORMATION_IS_NO_LONGER_VALID, "User ID information is no longer valid"),
+        std::make_pair(100,                                    "Private Use"),
+        std::make_pair(101,                                    "Private Use"),
+        std::make_pair(102,                                    "Private Use"),
+        std::make_pair(103,                                    "Private Use"),
+        std::make_pair(104,                                    "Private Use"),
+        std::make_pair(105,                                    "Private Use"),
+        std::make_pair(106,                                    "Private Use"),
+        std::make_pair(107,                                    "Private Use"),
+        std::make_pair(108,                                    "Private Use"),
+        std::make_pair(109,                                    "Private Use"),
+        std::make_pair(110,                                    "Private Use"),
     };
+    
+    bool is_key_revocation(const uint8_t code);
 }
 
 class Tag2Sub29 : public Tag2Subpacket{
     private:
-        Revoke::type code;
+        uint8_t code;
         std::string reason;
 
     public:
@@ -99,10 +111,10 @@ class Tag2Sub29 : public Tag2Subpacket{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        Revoke::type get_code() const;
+        uint8_t get_code() const;
         std::string get_reason() const;
 
-        void set_code(const Revoke::type c);
+        void set_code(const uint8_t c);
         void set_reason(const std::string & r);
 
         Tag2Subpacket::Ptr clone() const;

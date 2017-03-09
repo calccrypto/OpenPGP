@@ -41,33 +41,7 @@ std::string Tag2Sub9::show(const uint8_t indents, const uint8_t indent_size) con
         out += "Never";
     }
     else{
-        const time_t years   = (dt / 31536000);
-        const time_t days    = (dt / 86400) % 365;
-        const time_t hours   = (dt / 3600) % 24;
-        const time_t minutes = (dt / 60) % 60;
-        const time_t seconds =  dt     % 60;
-
-        if (years){
-            out += std::to_string(years) + " years";
-        }
-
-        if (days){
-            out += std::to_string(days) + " days";
-        }
-
-        if (hours){
-            out += std::to_string(hours) + " hours";
-        }
-
-        if (minutes){
-            out += std::to_string(minutes) + " minutes";
-        }
-
-        if (seconds){
-            out += std::to_string(seconds) + " seconds";
-        }
-
-        out += " after key creation";
+        out += show_dt(dt) + " after key creation";
     }
 
     return out;

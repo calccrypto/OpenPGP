@@ -57,12 +57,10 @@ THE SOFTWARE.
 //    implementation-dependent mechanisms.
 
 namespace Features_Flags{
-    typedef uint8_t type;
+    const uint8_t MODIFICATION_DETECTION = 0x01;
 
-    const type Modification_Detection = 0x01;
-
-    const std::map <uint8_t, std::string> Name = {
-        std::make_pair(Modification_Detection, "Modification Detection (packets 18 and 19)"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(MODIFICATION_DETECTION, "Modification Detection (packets 18 and 19)"),
     };
 }
 

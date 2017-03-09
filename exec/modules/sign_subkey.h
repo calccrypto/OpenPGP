@@ -78,7 +78,6 @@ const Module sign_subkey(
 
         const SignArgs signargs(PGPSecretKey(signer_file),
                                 args.at("passphrase"),
-                                args.at("-u"),
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 

@@ -29,7 +29,7 @@ std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) co
     std::string out = indent + tab + show_title() + "\n" +
                       indent;
 
-    const std::string filename = "image" + std::to_string(current) + "." + Image_Attributes::Name.at(encoding);
+    const std::string filename = "image" + std::to_string(current) + "." + Image_Attributes::NAME.at(encoding);
     std::ofstream f(filename, std::ios::binary);
     if (f){
         f << image;
@@ -47,7 +47,7 @@ std::string Tag17Sub1::raw() const{
     return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
-Image_Attributes::type Tag17Sub1::get_encoding() const{
+uint8_t Tag17Sub1::get_encoding() const{
     return encoding;
 }
 
@@ -55,7 +55,7 @@ std::string Tag17Sub1::get_image() const{
     return image;
 }
 
-void Tag17Sub1::set_encoding(const Image_Attributes::type & enc){
+void Tag17Sub1::set_encoding(const uint8_t & enc){
     encoding = enc;
 }
 

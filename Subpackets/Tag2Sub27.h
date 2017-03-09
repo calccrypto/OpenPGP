@@ -77,24 +77,22 @@ THE SOFTWARE.
 //    key the flag applies to.
 
 namespace Key_Flags{
-    typedef uint8_t type;
+    const uint8_t CERTIFY_OTHER_KEYS                         = 0x01;
+    const uint8_t SIGN_DATA                                  = 0x02;
+    const uint8_t ENCRYPT_COMMUNICATIONS                     = 0x04;
+    const uint8_t ENCRYPT_STORAGE                            = 0x08;
+    const uint8_t PRIVATE_COMPONENT_SPLIT                    = 0x10;
+    const uint8_t AUTHENTICATION                             = 0x20;
+    const uint8_t PRIVATE_COMPONENT_MULTIPLE_POSESSION       = 0x80;
 
-    const type Certify_Other_Keys                   = 0x01;
-    const type Sign_Data                            = 0x02;
-    const type Encrypt_Communications               = 0x04;
-    const type Encrypt_Storage                      = 0x08;
-    const type Private_Component_Split              = 0x10;
-    const type Authentication                       = 0x20;
-    const type Private_Component_Multiple_Posession = 0x80;
-
-    const std::map <type, std::string> Name = {
-        std::make_pair(Certify_Other_Keys,                   "This key may be used to certify other keys"),
-        std::make_pair(Sign_Data,                            "This key may be used to sign data"),
-        std::make_pair(Encrypt_Communications,               "This key may be used to encrypt communications"),
-        std::make_pair(Encrypt_Storage,                      "This key may be used to encrypt storage"),
-        std::make_pair(Private_Component_Split,              "The private component of this key may have been split by a secret-sharing mechanism"),
-        std::make_pair(Authentication,                       "This key may be used for authentication"),
-        std::make_pair(Private_Component_Multiple_Posession, "The private component of this key may be in the possession of more than one person"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(CERTIFY_OTHER_KEYS,                   "This key may be used to certify other keys"),
+        std::make_pair(SIGN_DATA,                            "This key may be used to sign data"),
+        std::make_pair(ENCRYPT_COMMUNICATIONS,               "This key may be used to encrypt communications"),
+        std::make_pair(ENCRYPT_STORAGE,                      "This key may be used to encrypt storage"),
+        std::make_pair(PRIVATE_COMPONENT_SPLIT,              "The private component of this key may have been split by a secret-sharing mechanism"),
+        std::make_pair(AUTHENTICATION,                       "This key may be used for authentication"),
+        std::make_pair(PRIVATE_COMPONENT_MULTIPLE_POSESSION, "The private component of this key may be in the possession of more than one person"),
     };
 }
 

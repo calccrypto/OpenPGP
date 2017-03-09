@@ -17,14 +17,14 @@ void Tag2Sub23::read(const std::string & data){
 }
 
 std::string Tag2Sub23::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(3 * indent_size, ' ');
     const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
 
     std::string out = indent + show_title();
     for(char const octet : flags){
         for(uint8_t bit = 0; bit < 8; bit++){
             if (octet & (1 << bit)){
-                out += "\n" + indent + tab + "Flag - " + Key_Server_Preferences::Name.at(1 << bit) + " (key " + std::to_string(1 << bit) + ")";
+                out += "\n" + indent + tab + "Flag - " + Key_Server_Preferences::NAME.at(1 << bit) + " (key " + std::to_string(1 << bit) + ")";
             }
         }
     }

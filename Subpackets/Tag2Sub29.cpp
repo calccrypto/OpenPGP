@@ -1,5 +1,10 @@
 #include "Tag2Sub29.h"
 
+bool Revoke::is_key_revocation(const uint8_t code){
+    return ((NO_REASON_SPECIFIED <= code) &&
+            (code <= KEY_IS_NO_LONGER_USED));
+}
+    
 Tag2Sub29::Tag2Sub29()
     : Tag2Subpacket(Tag2Subpacket::REASON_FOR_REVOCATION),
       code(),
@@ -19,11 +24,11 @@ void Tag2Sub29::read(const std::string & data){
 }
 
 std::string Tag2Sub29::show(const uint8_t indents, const uint8_t indent_size) const{
-    const std::string tab(3 * indent_size, ' ');
     const std::string indent(indents * indent_size, ' ');
+    const std::string tab(indent_size, ' ');
 
     std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Reason " + std::to_string(code) + " - " + Revoke::Name.at(code);
+                      indent + tab + "Reason " + std::to_string(code) + " - " + Revoke::NAME.at(code);
     if (code){
         out += "\n" + indent + tab + "Comment - " + reason;
     }
@@ -35,7 +40,7 @@ std::string Tag2Sub29::raw() const{
     return std::string(1, code) + reason;
 }
 
-Revoke::type Tag2Sub29::get_code() const{
+uint8_t Tag2Sub29::get_code() const{
     return code;
 }
 
@@ -43,7 +48,7 @@ std::string Tag2Sub29::get_reason() const{
     return reason;
 }
 
-void Tag2Sub29::set_code(const Revoke::type c){
+void Tag2Sub29::set_code(const uint8_t c){
     code = c;
 }
 

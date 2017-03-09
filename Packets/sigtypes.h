@@ -177,6 +177,7 @@ namespace Signature_Type{
 
     bool is_signed_document(const uint8_t sig);
     bool is_certification(const uint8_t sig);
+    bool is_revocation(const uint8_t sig);
 }
 
 #endif

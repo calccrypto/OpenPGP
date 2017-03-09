@@ -62,11 +62,9 @@ THE SOFTWARE.
 //    is not recognized.
 
 namespace Image_Attributes{
-    typedef uint8_t type;
+    const uint8_t JPEG = 1;
 
-    const type JPEG = 1;
-
-    const std::map <type, std::string> Name = {
+    const std::map <uint8_t, std::string> NAME = {
         std::make_pair(JPEG, "JPEG"),
         std::make_pair(100,  "Reserved for private/experimental use"),
         std::make_pair(101,  "Reserved for private/experimental use"),
@@ -85,7 +83,7 @@ namespace Image_Attributes{
 class Tag17Sub1 : public Tag17Subpacket{
     private:
         uint8_t version;
-        Image_Attributes::type encoding;
+        uint8_t encoding;
         std::string image;
 
         static unsigned int count;  // count of all images found; incremented by creating new instances of Tag17Sub1
@@ -100,10 +98,10 @@ class Tag17Sub1 : public Tag17Subpacket{
         std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
         std::string raw() const;
 
-        Image_Attributes::type get_encoding() const;
+        uint8_t get_encoding() const;
         std::string get_image() const;
 
-        void set_encoding(const Image_Attributes::type & enc);
+        void set_encoding(const uint8_t & enc);
         void set_image(const std::string & i);
 
         Tag17Subpacket::Ptr clone() const;

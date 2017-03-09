@@ -64,21 +64,22 @@ Simply `#include` whatever functions needed:
  sign           | sign.h
  verify         | verify.h
 
-Multiple classes inherit from the abstract base class PGP in order
+Multiple classes inherit from the abstract base class `PGP` in order
 to make differentiating PGP block types better in code:
 
- PGP block type          | Description
--------------------------|-------------------------------------
- PGPDetachedSignature    | detached signatures for files
- PGPKey                  | base class for OpenPGP key types
- PGPPublicKey            | holds public keys; inherits PGPKey
- PGPSecretKey            | holds private keys; inherits PGPKey
- PGPMessage              | holds OpenPGP Messages
+ PGP block type           | Description
+--------------------------|-------------------------------------
+ PGPDetachedSignature     | detached signatures for files
+ PGPKey                   | base class for OpenPGP key types
+ PGPPublicKey             | holds public keys; inherits PGPKey
+ PGPSecretKey             | holds private keys; inherits PGPKey
+ PGPMessage               | holds OpenPGP Messages
+ PGPRevocationCertificate | holds revocation certificates
 
 All these different types are able to read in any PGP data, but
 will cause problems when used.
 
-PGPCleartextSignature does not inherit from PGP and cannot
+`PGPCleartextSignature` does not inherit from PGP and cannot
 read non-Cleartext Signature data.
 
 The `exec/main.cpp` file provides a simple command line tool,

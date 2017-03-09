@@ -38,7 +38,7 @@ PGPDetachedSignature::~PGPDetachedSignature(){}
 
 bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
     if (pgp.get_type() != SIGNATURE){
-        error += "Error: ASCII Armor type is not Signature.\n";
+        error += "Error: ASCII Armor type is not SIGNATURE.\n";
         return false;
     }
 

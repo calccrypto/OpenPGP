@@ -37,9 +37,13 @@ const std::string month[12]    = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul
 time_t now();
 
 // show time as: Day_of_Week Month Day Hour:Minute:Second UTC Year
-std::string show_time(time_t T);
+std::string show_time(time_t time);
 
 // show time as Year-Month-Day
-std::string show_date(time_t T);
+std::string show_date(time_t time);
+
+// show time difference as Y Years D Days H Hours M Minutes S Seconds
+// Only if the field is not zero. If a field is 0, it will not show.
+std::string show_dt(time_t dt);
 
 #endif

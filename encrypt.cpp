@@ -68,7 +68,7 @@ Packet::Ptr encrypt_data(const std::string & session_key,
     // if (signer){
         // // find preferred hash and compression algorithms of the signer
         // // find signing key id
-        // Tag5::Ptr tag5 = find_signing_key(*signer);
+        // Key::Ptr tag5 = find_signing_key(*signer);
         // std::string keyid = tag5 -> get_keyid();
 
         // // find signature packet of signing key
@@ -151,7 +151,6 @@ PGPMessage encrypt_pka(const PGPKey & key,
         throw std::runtime_error("Error: No encrypting key found.");
     }
 
-    PGP::Packets packets = key.get_packets();
     Tag6::Ptr public_key = find_encrypting_key(key);
 
     if (!public_key){
@@ -159,8 +158,12 @@ PGPMessage encrypt_pka(const PGPKey & key,
     }
 
     // Check if key has been revoked
-    if (check_revoked(packets, public_key -> get_keyid())){
+    const int rc = check_revoked(key);
+    if (rc == 1){
         throw std::runtime_error("Error: Key " + hexlify(public_key -> get_keyid()) + " has been revoked. Nothing done.");
+    }
+    else if (rc == -1){
+        // error += "Error: check_revoked failed.\n";
     }
 
     PKA::Values mpi = public_key -> get_mpi();
@@ -196,8 +199,7 @@ PGPMessage encrypt_pka(const PGPKey & key,
     Packet::Ptr encrypted = encrypt_data(session_key, data, filename, sym_alg, comp, mdc, signer, sig_passphrase);
 
     // write data to output container
-    PGPMessage out = PGPMessage();
-    out.set_type(PGP::MESSAGE);
+    PGPMessage out;
     out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag1, encrypted});
 
@@ -236,7 +238,6 @@ PGPMessage encrypt_sym(const std::string & passphrase, const std::string & data,
 
     // write to output container
     PGPMessage out;
-    out.set_type(PGP::MESSAGE);
     out.set_keys({std::make_pair("Version", "cc")});
     out.set_packets({tag3, encrypted});
 

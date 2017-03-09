@@ -38,9 +38,8 @@ THE SOFTWARE.
 #include "decrypt_pka.h"
 #include "generate_keypair.h"
 #include "generate_revoke_cert.h"
-#include "revoke.h"
+#include "revoke_key_with_cert.h"
 #include "revoke_key.h"
-#include "revoke_subkey.h"
 #include "sign_file.h"
 #include "sign_primary_key.h"
 #include "sign_subkey.h"
@@ -64,9 +63,8 @@ const std::vector <Module> ordered = {
     decrypt_pka,
     generate_keypair,
     generate_revoke_cert,
-    revoke,
+    revoke_key_with_cert,
     revoke_key,
-    revoke_subkey,
     sign_file,
     sign_primary_key,
     sign_subkey,

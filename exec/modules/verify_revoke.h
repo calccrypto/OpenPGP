@@ -67,7 +67,7 @@ const Module verify_revoke(
         }
 
         PGPKey signer(key);
-        PGPPublicKey rev(cert);
+        PGPRevocationCertificate rev(cert);
 
         std::string err;
         const int verified = ::verify_revoke(signer, rev, err);

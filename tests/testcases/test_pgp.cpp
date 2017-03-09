@@ -178,12 +178,12 @@ TEST(PGPTest, test_gpg_public_key) {
         // pubsig/sub30
         {
             EXPECT_EQ(pubsub30->get_flags().size(), 1);
-            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::Modification_Detection);
+            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
         }
         // pubsig/sub23
         {
             EXPECT_EQ(pubsub23->get_flags().size(), 1);
-            EXPECT_EQ(static_cast <Key_Server_Preferences::type> (pubsub23->get_flags()[0]), Key_Server_Preferences::No_modify);
+            EXPECT_EQ(static_cast <uint8_t> (pubsub23->get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
         }
 
         // pubsig/unhashed
@@ -399,12 +399,12 @@ TEST(PGPTest, test_gpg_private_key) {
         // pubsig/sub30
         {
             EXPECT_EQ(pubsub30->get_flags().size(), 1);
-            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::Modification_Detection);
+            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
         }
         // pubsig/sub23
         {
             EXPECT_EQ(pubsub23->get_flags().size(), 1);
-            EXPECT_EQ(static_cast <Key_Server_Preferences::type> (pubsub23->get_flags()[0]), Key_Server_Preferences::No_modify);
+            EXPECT_EQ(static_cast <uint8_t> (pubsub23->get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
         }
 
         // pubsig/unhashed
@@ -490,7 +490,7 @@ TEST(PGPTest, test_gpg_private_key) {
 TEST(PGPTest, test_gpg_revoke) {
 
     std::string in = GPG_REVOKE3_ALICE;
-    PGPPublicKey pgp(in);
+    PGPRevocationCertificate pgp(in);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), 1);
@@ -536,7 +536,7 @@ TEST(PGPTest, test_gpg_revoke) {
         }
         // sub29
         {
-            EXPECT_EQ(sub29->get_code(), Revoke::Key_is_no_longer_used);
+            EXPECT_EQ(sub29->get_code(), Revoke::KEY_IS_NO_LONGER_USED);
             EXPECT_EQ(sub29->get_reason(), ""); // (empty string)
         }
     }

@@ -192,10 +192,7 @@ class PGPSecretKey : public PGPKey {
 
 std::ostream & operator <<(std::ostream & stream, const PGPSecretKey & pgp);
 
-// Search PGP private keys for signing keys
-// ID can be User ID data or a Key ID
-// return Tag5 because Tag 5 and Tag 7 are the same
-// TODO: convert to a Secret_Key::Ptr
-Tag5::Ptr find_signing_key(const PGPSecretKey & pri, const std::string & ID = "");
+// Search PGP keys for signing keys
+Key::Ptr find_signing_key(const PGPKey & key);
 
 #endif

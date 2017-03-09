@@ -1,5 +1,5 @@
 /*
-revoke_subkey.h
+revoke_with_cert.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,29 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_REVOKE_SUBKEY
-#define __COMMAND_REVOKE_SUBKEY
+#ifndef __COMMAND_REVOKE_KEY_WITH_CERT__
+#define __COMMAND_REVOKE_KEY_WITH_CERT__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module revoke_subkey(
+const Module revoke_key_with_cert(
     // name
-    "revoke-subkey",
+    "revoke-key-with-cert",
 
     // positional arguments
     {
-        "private-key",
-        "passphrase",
+        "target",
+        "revocation-certificate",
     },
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",   "")),
-        std::make_pair("-c", std::make_pair("code (0-3)",   "0")),
-        std::make_pair("-r", std::make_pair("reason",        "")),
+        std::make_pair("-o", std::make_pair("output file", "")),
     },
 
     // optional flags
@@ -56,37 +54,34 @@ const Module revoke_subkey(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream file(args.at("private-key"), std::ios::binary);
-        if (!file){
-            std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
+        std::ifstream target(args.at("target"), std::ios::binary);
+        if (!target){
+            std::cerr << "IOError: File '" + args.at("target") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPSecretKey pri(file);
-
-        // find private subkey
-        bool found = false;
-        for(Packet::Ptr const & p : pri.get_packets()){
-            if (p -> get_tag() == Packet::SECRET_SUBKEY){
-                found = true;
-                break;
-            }
-        }
-
-        if (!found){
-            std::cerr << "Error: No Private Subkey Packet (Tag 5) found." << std::endl;
+        std::ifstream cert(args.at("revocation-certificate"), std::ios::binary);
+        if (!cert){
+            std::cerr << "IOError: File '" + args.at("revocation-certificate") + "' not opened." << std::endl;
             return -1;
         }
 
-        output(::revoke_subkey(pri,
-                               args.at("passphrase"),
-                               args.at("-c")[0] - '0',
-                               args.at("-r")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        const PGPKey key(target);
+        const PGPRevocationCertificate rev(cert);
+        std::string error;
+
+        const PGPPublicKey revoked = ::revoke_key_with_cert(key, rev, error);
+
+        if (revoked.meaningful()){
+            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }
 );
 
 }
-
 #endif

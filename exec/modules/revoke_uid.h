@@ -1,5 +1,5 @@
 /*
-sign_cleartext_signature.h
+revoke_subkey.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,34 +23,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SIGN_CLEARTEXT_SIGNATURE__
-#define __COMMAND_SIGN_CLEARTEXT_SIGNATURE__
+#ifndef __COMMAND_REVOKE_SUBKEY__
+#define __COMMAND_REVOKE_SUBKEY__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module sign_cleartext_signature(
+const Module revoke_subkey(
     // name
-    "sign-cleartext-signature",
+    "revoke-subkey",
 
     // positional arguments
     {
         "private-key",
         "passphrase",
-        "file",
+        "ID",
     },
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-o", std::make_pair("output file",         "")),
+        std::make_pair("-c", std::make_pair("code (0-3)",         "0")),
+        std::make_pair("-r", std::make_pair("reason",             "")),
         std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
     },
 
     // optional flags
     {
-
+        std::make_pair("-a", "armored"),
     },
 
     // function to run
@@ -62,9 +64,10 @@ const Module sign_cleartext_signature(
             return -1;
         }
 
-        std::ifstream file(args.at("file"), std::ios::binary);
-        if (!file){
-            std::cerr << "IOError: File '" << args.at("file") << "' not opened." << std::endl;
+        unsigned int code;
+        std::stringstream s(args.at("-c"));
+        if (!(s >> code) || !Revoke::is_key_revocation(code)){
+            std::cerr << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
             return -1;
         }
 
@@ -73,16 +76,18 @@ const Module sign_cleartext_signature(
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(key),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
-
+        const RevArgs revargs(PGPSecretKey(key),
+                              args.at("passphrase"),
+                              static_cast <uint8_t> (code),
+                              args.at("-r"),
+                              4,
+                              Hash::NUMBER.at(args.at("-h")));
         std::string error;
-        const PGPCleartextSignature signature = ::sign_cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}), error);
 
-        if (signature.meaningful()){
-            output(signature.write(), args.at("-o"));
+        const PGPPublicKey revoked = ::revoke_uid(revargs, args.at("ID"), error);
+
+        if (revoked.meaningful()){
+            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

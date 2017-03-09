@@ -56,31 +56,34 @@ Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uin
 
 // commmon arguments for signing
 struct SignArgs{
-    const PGPSecretKey pri;                 // private key
-    const std::string passphrase;           // passphrase for a key on the private key
-    const std::string id;                   // Key ID or User string of key to be used
-    const uint8_t version;                  // 3 or 4
-    const uint8_t hash;                     // hash algorithm to use for signing
+    PGPSecretKey pri;                       // private key
+    std::string passphrase;                 // passphrase for a key on the private key
+    std::string id;                         // Key ID or User string of key to be used
+    uint8_t version;                        // 3 or 4
+    uint8_t hash;                           // hash algorithm to use for signing
 
     SignArgs(const PGPSecretKey & key,
              const std::string & pass,
-             const std::string & ID = "",   // "" means find the first signing key
              const uint8_t ver = 4,
              const uint8_t ha = Hash::SHA1)
         : pri(key),
           passphrase(pass),
-          id(ID),
           version(ver),
           hash(ha)
-    {
-        std::string error;
+    {}
+
+    bool valid(std::string & error) const{
         if (!pri.meaningful(error)){
-            throw std::runtime_error(error);
+            error += "Error: Bad Private Key.\n";
+            return false;
         }
 
-        if (Hash::NAME.find(ha) == Hash::NAME.end()){
-            throw std::runtime_error("Error: Hash algorithm number " + std::to_string(ha) + " not found.");
+        if (Hash::NAME.find(hash) == Hash::NAME.end()){
+            error += "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
+            return false;
         }
+
+        return true;
     }
 };
 
@@ -106,8 +109,8 @@ PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const uint8_t cert, std::string & error);
-PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const uint8_t cert);
+PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert, std::string & error);
+PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert);
 
 // 0x18: Subkey Binding Signature
 Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);

@@ -72,20 +72,17 @@ THE SOFTWARE.
 //    specific notation and not to notations in general.
 
 namespace Notation{
-    typedef uint8_t type;
-
-    const type Undefined      = 0x00;
-    const type Human_Readable = 0x80;
+    const uint8_t UNDEFINED      = 0x00;
+    const uint8_t HUMAN_READABLE = 0x80;
 
     // Notation on signature issuer wishes to make
-    const std::map <type, std::string> Name = {
-        std::make_pair(Human_Readable, "Human-Readable"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(HUMAN_READABLE, "Human-Readable"),
     };
 }
 
 class Tag2Sub20 : public Tag2Subpacket{
     private:
-
         std::string flags;  // 4 octets
         uint16_t mlen;
         uint16_t nlen;

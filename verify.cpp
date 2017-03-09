@@ -61,7 +61,7 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
                         error += "Warning: Key IDs don't match up.\n";
                     }
 
-                    return 1;
+                    return true;
                 }
             }
         }
@@ -354,7 +354,7 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
                         error += "Warning: Key IDs don't match up.\n";
                     }
 
-                    return 1;
+                    return true;
                 }
             }
         }
@@ -444,57 +444,94 @@ int verify_key(const PGPKey & signer, const PGPKey & signee){
 // 0x20: Key revocation signature
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
-int verify_revoke(const PGPKey & key, const PGPPublicKey & rev, std::string & error){
+
+int verify_revoke(const PGPKey & key, const Tag2::Ptr & revoke_sig, std::string & error){
     if (!key.meaningful(error)){
         error += "Error: Bad PGP Key.\n";
         return -1;
     }
 
-    if (!rev.meaningful(error)){
+    Tag5::Ptr signing_key = std::static_pointer_cast <Tag5> (find_signing_key(key));
+    if (!signing_key){
+        error += "Error: No signing key found.\n";
+        return -1;
+    }
+
+    // key IDs must match up
+    const std::string keyid = key.keyid();
+    if (keyid != revoke_sig -> get_keyid()){
+        return false;
+    }
+
+    // if the revocation signature is revoking the primary key
+    if (revoke_sig -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
+        const Key::Ptr primary = std::static_pointer_cast <Key> (key.get_packets()[0]);
+
+        // make sure the signature matches
+        const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(primary), revoke_sig)), signing_key, revoke_sig);
+        if (rc == -1){
+            error += "Error: pka_verify failure.\n";
+        }
+
+        return rc;
+    }
+    else if (revoke_sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
+        // search each packet for a subkey
+        bool found = false;
+        const PGP::Packets & packets = key.get_packets();
+        PGP::Packets::size_type i;
+        for(i = 1; i < packets.size(); i++){
+            // check if the packet is a subkey packet
+            if (Packet::is_subkey(packets[i] -> get_tag())){
+                const Key::Ptr subkey = std::static_pointer_cast <Key> (packets[i]);
+
+                // make sure the signature matches
+                if (pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(subkey), revoke_sig)), signing_key, revoke_sig) == 1){
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found){
+            error += "Error: Subkey not found.\n";
+            return -1;
+        }
+
+        // search for matching signature
+        for(; i < packets.size(); i++){
+            if (packets[i] -> get_tag() == Packet::SIGNATURE){
+                const Tag2::Ptr tag2 = std::static_pointer_cast <Tag2> (packets[i]);
+                if (tag2 -> get_keyid() == keyid){
+                    return true;
+                }
+            }
+        }
+
+        error += "Error: Subkey signature not found.\n";
+        return -1;
+    }
+
+    error += "Error: Bad revocation signature type.\n";
+    return -1;
+
+}
+
+int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error){
+    if (!revoke.meaningful(error)){
         error += "Error: A revocation key is required.\n";
         return -1;
     }
 
-    if (rev.get_packets().size() != 1){
-        error += "Error: Wrong number of packets in revocation certificate.\n";
-        return -1;
-    }
+    // get revocation signature
+    const Tag2::Ptr revoke_sig = std::static_pointer_cast <Tag2> (revoke.get_packets()[0]);
 
-    if (rev.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
-        error += "Error: Revocation certificate should contain one " + Packet::NAME.at(Packet::SIGNATURE) + ".\n";
-        return -1;
-    }
-
-   // get revocation key; assume only 1 packet
-    Tag2::Ptr revoke = std::static_pointer_cast <Tag2> (rev.get_packets()[0]);
-
-    // search each packet for a signing key
-    for(Packet::Ptr const & p : key.get_packets()){
-        // check if the packet is a key packet
-        if (Packet::is_key_packet(p -> get_tag())){
-            Key::Ptr kp = std::static_pointer_cast <Key> (p);
-
-            // make sure the key's  values can be used to sign
-            if (PKA::can_sign(kp -> get_pka())){
-
-                if (pka_verify(use_hash(revoke -> get_hash(), addtrailer(overkey(kp), revoke)), kp, revoke) == 1){
-                    // make sure key IDs match up
-                    if (kp -> get_keyid() != revoke -> get_keyid()){
-                        error += "Warning: Key IDs don't match up.\n";
-                    }
-
-                    return 1;
-                }
-            }
-        }
-    }
-
-    return false;
+    return verify_revoke(key, revoke_sig, error);
 }
 
-int verify_revoke(const PGPKey & pub, const PGPPublicKey & rev){
+int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke){
     std::string error;
-    return verify_revoke(pub, rev, error);
+    return verify_revoke(key, revoke, error);
 }
 
 // 0x40: Timestamp signature.

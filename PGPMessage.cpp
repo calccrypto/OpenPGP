@@ -220,7 +220,7 @@ void PGPMessage::set_comp(const uint8_t c){
 
 bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::string & error){
     if (pgp.get_type() != PGP::MESSAGE){
-        error += "Error: PGP Type is set to " + ASCII_Armor_Header[pgp.get_type()] + "\n";
+        error += "Error: ASCII Armor type is not MESSAGE.\n";
         return false;
     }
 

@@ -1,6 +1,6 @@
 /*
-show.h
-OpenPGP exectuable module
+PGPRevocationCertificate.h
+Revocation Certificate data structure
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -23,48 +23,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_SHOW__
-#define __COMMAND_SHOW__
+#ifndef __PGP_REVOCATION_CERTIFICATE__
+#define __PGP_REVOCATION_CERTIFICATE__
 
-#include "../../OpenPGP.h"
-#include "module.h"
+#include "PGP.h"
 
-namespace module {
+class PGPRevocationCertificate : public PGP {
+    public:
+        typedef std::shared_ptr <PGPRevocationCertificate> Ptr;
 
-const Module show(
-    // name
-    "show",
+        PGPRevocationCertificate();
+        PGPRevocationCertificate(const PGP & copy);
+        PGPRevocationCertificate(const PGPRevocationCertificate & copy);
+        PGPRevocationCertificate(const std::string & data);
+        PGPRevocationCertificate(std::istream & stream);
+        ~PGPRevocationCertificate();
 
-    // positional arguments
-    {
-        "file",
-    },
+        uint8_t get_revoke_type() const;
+        
+        // whether or not PGP data matches Revocation Certificate format without constructing a new object
+        static bool meaningful(const PGP & pgp, std::string & error);
+        static bool meaningful(const PGP & pgp);
 
-    // optional arguments
-    {
-        std::make_pair("-o", std::make_pair("output file", "")),
-    },
+        // whether or not *this data matches Revocation Certificate format
+        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
-    // optional flags
-    {
-
-    },
-
-    // function to run
-    [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream file(args.at("file"), std::ios::binary);
-        if (!file){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
-            return -1;
-        }
-
-        output(PGP(file).show(), args.at("-o"));
-
-        return 0;
-    }
-);
-
-}
+        PGP::Ptr clone() const;
+};
 
 #endif

@@ -38,6 +38,7 @@ THE SOFTWARE.
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
 #include "PGPMessage.h"
+#include "PGPRevocationCertificate.h"
 #include "PKCS1.h"
 #include "sigcalc.h"
 
@@ -79,8 +80,9 @@ int verify_key(const PGPKey & signer, const PGPKey & signee);
 // 0x20: Key revocation signature
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
-int verify_revoke(const PGPKey & pub, const PGPPublicKey & rev, std::string & error);
-int verify_revoke(const PGPKey & pub, const PGPPublicKey & rev);
+int verify_revoke(const PGPKey & key, const Tag2::Ptr & revoke_sig, std::string & error);
+int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
+int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke);
 
 // 0x40: Timestamp signature.
 

@@ -43,14 +43,16 @@ const Module generate_revoke_cert(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",  "")),
-        std::make_pair("-c", std::make_pair("code (0-3)",  "0")),
-        std::make_pair("-r", std::make_pair("reason",       "")),
+        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-c", std::make_pair("code (0-3)",        "0")),
+        std::make_pair("-r", std::make_pair("reason",             "")),
+        std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
     },
 
     // optional flags
     {
         std::make_pair("-a", "armored"),
+        std::make_pair("-s", "revoke subkey instead of primary key"),
     },
 
     // function to run
@@ -62,12 +64,34 @@ const Module generate_revoke_cert(
             return -1;
         }
 
-        PGPSecretKey pri(key);
+        unsigned int code;
+        std::stringstream s(args.at("-c"));
+        if (!(s >> code) || !Revoke::is_key_revocation(code)){
+            std::cerr << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
+            return -1;
+        }
 
-        output(::revoke_primary_key_cert_key(pri,
-                                             args.at("passphrase"),
-                                             args.at("-c")[0] - '0',
-                                             args.at("-r")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
+            return -1;
+        }
+
+        const RevArgs revargs(PGPSecretKey(key),
+                              args.at("passphrase"),
+                              static_cast <uint8_t> (code),
+                              args.at("-r"),
+                              4,
+                              Hash::NUMBER.at(args.at("-h")));
+        std::string error;
+
+        const PGPRevocationCertificate cert = revoke_key_cert(revargs, flags.at("-s")?Signature_Type::SUBKEY_REVOCATION_SIGNATURE:Signature_Type::KEY_REVOCATION_SIGNATURE, error);
+
+        if (cert.meaningful(error)){
+            output(cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

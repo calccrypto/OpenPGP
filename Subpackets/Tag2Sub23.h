@@ -43,14 +43,12 @@ THE SOFTWARE.
 //    This is found only on a self-signature.
 
 namespace Key_Server_Preferences{
-    typedef uint8_t type;
+    const uint8_t UNDEFINED = 0x00;
+    const uint8_t NO_MODIFY = 0x80;
 
-    const type Undefined = 0x00;
-    const type No_modify = 0x80;
-
-    const std::map <type, std::string> Name = {
-        std::make_pair(Undefined, ""),
-        std::make_pair(No_modify, "No-modify"),
+    const std::map <uint8_t, std::string> NAME = {
+        std::make_pair(UNDEFINED, ""),
+        std::make_pair(NO_MODIFY, "NO-MODIFY"),
     };
 }
 

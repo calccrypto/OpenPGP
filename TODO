@@ -1,4 +1,4 @@
-Add Revocation Certificate type
+Test with ElGamal/DSA
 Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable? (currently everything throws exceptions)
 add encrypt/decrypt with passphrase

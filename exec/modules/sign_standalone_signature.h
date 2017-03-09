@@ -46,7 +46,6 @@ const Module sign_standalone_signature(
         std::make_pair("-o", std::make_pair("output file",               "")),
         std::make_pair("-c", std::make_pair("compression algorithm", "ZLIB")),
         std::make_pair("-h", std::make_pair("hash_algorithm",        "SHA1")),
-        std::make_pair("-u", std::make_pair("User Identifier",           "")),
     },
 
     // optional flags
@@ -75,13 +74,12 @@ const Module sign_standalone_signature(
 
         const SignArgs signargs(PGPSecretKey(key),
                                 args.at("passphrase"),
-                                args.at("-u"),
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
         // for now, just sign own signature packet
         std::string error;
-        PGPDetachedSignature signature = ::sign_standalone_signature(signargs, std::static_pointer_cast <Tag2> (signargs.pri.get_packets()[2]), Compression::NUMBER.at(args.at("-c")), error);
+        const PGPDetachedSignature signature = ::sign_standalone_signature(signargs, std::static_pointer_cast <Tag2> (signargs.pri.get_packets()[2]), Compression::NUMBER.at(args.at("-c")), error);
 
         if (signature.meaningful()){
             output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));

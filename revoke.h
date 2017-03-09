@@ -33,33 +33,69 @@ THE SOFTWARE.
 
 #include "mpi.h"
 #include "PGPKey.h"
+#include "PGPRevocationCertificate.h"
 #include "PKCS1.h"
 #include "sign.h"
 #include "verify.h"
 
-// check if a key has been revoked
-bool check_revoked(const PGP::Packets & packets, const std::string & keyid);
-bool check_revoked(const PGPKey & key, const std::string & keyid);
+// check if a keyid has a revocation signature
+int check_revoked(const PGPKey & key, std::string & error);
+int check_revoked(const PGPKey & key);
+
+// common arguments for revoking
+struct RevArgs{
+    PGPSecretKey pri;
+    std::string passphrase;
+    uint8_t code;               // 0 - 3
+    std::string reason;
+    uint8_t version;
+    uint8_t hash;
+
+    RevArgs(const PGPSecretKey & key,
+            const std::string & pass,
+            const uint8_t rev_code = Revoke::NO_REASON_SPECIFIED,
+            const std::string & rev_reason = "",
+            const uint8_t ver = 4,
+            const uint8_t ha = Hash::SHA1)
+        : pri(key),
+          passphrase(pass),
+          code(rev_code),
+          reason(rev_reason),
+          version(ver),
+          hash(ha)
+    {}
+
+    bool valid(std::string & error) const{
+        if (!pri.meaningful(error)){
+            error += "Error: Bad Private Key.\n";
+            return false;
+        }
+
+        if (Hash::NAME.find(hash) == Hash::NAME.end()){
+            error += "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
+            return false;
+        }
+
+        return true;
+    }
+};
 
 // 0x20: Key revocation signature
-// main function to revoke a primary key
-Tag2::Ptr revoke_primary_key_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
-// packages certification into a key
-PGPPublicKey revoke_primary_key_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
-
 // 0x28: Subkey revocation signature
-// main function to revoke a subkey
-Tag2::Ptr revoke_subkey_cert(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
-// packages certification into a key
-PGPPublicKey revoke_subkey_cert_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
-
 // 0x30: Certification revocation signature
-PGPPublicKey revoke_uid(PGPPublicKey & pub, PGPSecretKey & pri, const std::string passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
 
-// Directly Revoke Something
-PGPPublicKey revoke_key(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
-PGPPublicKey revoke_subkey(PGPSecretKey & pri, const std::string & passphrase, const uint8_t code, const std::string & reason = "", const uint8_t version = 4);
+// Returns revocation signature packet
+Tag2::Ptr revoke_key_sig                (const RevArgs & args, const uint8_t type,     std::string & error);
+Tag2::Ptr revoke_uid_sig                (const RevArgs & args, const std::string & ID, std::string & error);
+
+// creates revocation certificate to be used later
+PGPRevocationCertificate revoke_key_cert(const RevArgs & args, const uint8_t type,     std::string & error);
+PGPRevocationCertificate revoke_uid_cert(const RevArgs & args, const std::string & ID, std::string & error);
+
+// Directly Revoke (does not write to key; instead, returns new copy of public key)
+PGPPublicKey revoke_key                 (const RevArgs & args, const uint8_t type,     std::string & error);
+PGPPublicKey revoke_uid                 (const RevArgs & args, const std::string & ID, std::string & error);
 
 // Revoke with certificate
-PGPPublicKey revoke_with_cert(const PGPKey & key, PGPPublicKey & revoke, const uint8_t version = 4);
+PGPPublicKey revoke_key_with_cert       (const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
 #endif

@@ -77,12 +77,11 @@ const Module sign_primary_key(
 
         const SignArgs signargs(PGPSecretKey(signer_file),
                                 args.at("passphrase"),
-                                args.at("-u"),
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
         std::string error;
-        PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
+        const PGPPublicKey key = ::sign_primary_key(signargs, args.at("-u"), PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
 
         if (key.meaningful()){
             output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
