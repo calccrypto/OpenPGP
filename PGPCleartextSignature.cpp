@@ -18,12 +18,24 @@ PGPCleartextSignature::PGPCleartextSignature(const std::string & data)
     : PGPCleartextSignature()
 {
     read(data);
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
 }
 
 PGPCleartextSignature::PGPCleartextSignature(std::istream & stream)
     : PGPCleartextSignature()
 {
     read(stream);
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
 }
 
 void PGPCleartextSignature::read(const std::string & data){

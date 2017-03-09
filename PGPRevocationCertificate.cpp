@@ -16,11 +16,27 @@ PGPRevocationCertificate::PGPRevocationCertificate(const PGPRevocationCertificat
 
 PGPRevocationCertificate::PGPRevocationCertificate(const std::string & data)
     : PGP(data)
-{}
+{
+    type = PUBLIC_KEY_BLOCK;
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
+}
 
 PGPRevocationCertificate::PGPRevocationCertificate(std::istream & stream)
     : PGP(stream)
-{}
+{
+    type = PUBLIC_KEY_BLOCK;
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
+}
 
 PGPRevocationCertificate::~PGPRevocationCertificate(){}
 

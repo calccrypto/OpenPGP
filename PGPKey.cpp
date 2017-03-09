@@ -152,7 +152,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         subkey = Packet::SECRET_SUBKEY;
     }
     else{
-        error += "Error: Bad key type.\n";
+        error += "Error: Bad key type: " + std::to_string(pgp.get_type()) + "\n";
         return false;
     }
 

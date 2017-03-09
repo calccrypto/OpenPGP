@@ -53,7 +53,7 @@ const Module generate_keypair(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+
     },
 
     // function to run
@@ -71,8 +71,8 @@ const Module generate_keypair(
                         mpitoulong(dectompi(args.at("--pks"))),
                         mpitoulong(dectompi(args.at("--sks"))));
 
-        output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".public");
-        output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".private");
+        output(pub.write(), args.at("-o") + ".public");
+        output(pri.write(), args.at("-o") + ".private");
 
         return 0;
     }

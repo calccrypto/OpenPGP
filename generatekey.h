@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__
 
-#include <vector>
-
 #include "Hashes/Hashes.h"
 #include "PKA/PKAs.h"
 #include "cfb.h"

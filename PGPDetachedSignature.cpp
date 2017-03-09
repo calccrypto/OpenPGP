@@ -12,11 +12,15 @@ PGPDetachedSignature::PGPDetachedSignature(const PGP & copy)
 
 PGPDetachedSignature::PGPDetachedSignature(const PGPDetachedSignature & copy)
     : PGP(copy)
-{}
+{
+    type = SIGNATURE;
+}
 
 PGPDetachedSignature::PGPDetachedSignature(const std::string & data)
     : PGP(data)
 {
+    type = SIGNATURE;
+
     // warn if packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){
@@ -27,6 +31,8 @@ PGPDetachedSignature::PGPDetachedSignature(const std::string & data)
 PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
     : PGP(stream)
 {
+    type = SIGNATURE;
+
     // warn if packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){

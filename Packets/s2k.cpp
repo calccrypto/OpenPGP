@@ -167,7 +167,7 @@ std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")" +
+           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
            indent + tab + tab + "Salt: " + hexlify(salt) + "\n" +
            indent + tab + tab + "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
 }

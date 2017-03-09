@@ -135,6 +135,7 @@ PGPMessage::PGPMessage(const PGP & copy)
       comp(nullptr)
 {
     decompress();
+
     type = MESSAGE;
 }
 
@@ -152,7 +153,14 @@ PGPMessage::PGPMessage(const std::string & data)
       comp(nullptr)
 {
     decompress();
+
     type = MESSAGE;
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
 }
 
 PGPMessage::PGPMessage(std::istream & stream)
@@ -160,7 +168,14 @@ PGPMessage::PGPMessage(std::istream & stream)
       comp(nullptr)
 {
     decompress();
+
     type = MESSAGE;
+
+    // warn if packet sequence is not meaningful
+    std::string error;
+    if (!meaningful(error)){
+        std::cerr << error << std::endl;
+    }
 }
 
 PGPMessage::~PGPMessage(){}

@@ -20,10 +20,10 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     ElGamal_pub.pop_back();
 
     // Key creation time
-    time_t time = now();
+    const time_t time = now();
 
     // hash algorithm for signature
-    uint8_t hash_alg = (DSA_bits == 1024)?Hash::SHA1:Hash::SHA256;
+    const uint8_t hash_alg = (DSA_bits == 1024)?Hash::SHA1:Hash::SHA256;
 
     // Secret Key Packet
     Tag5::Ptr sec = std::make_shared <Tag5> ();
@@ -104,6 +104,8 @@ void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const 
     private_key.set_keys({std::make_pair("Version", "CC")});
     private_key.set_packets({sec, uid, sig, ssb, subsig});
 
+    private_key.set_armored(true);
+
     public_key = private_key.get_public();
 }
 
@@ -170,7 +172,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
             // put private key into packet
             std::string secret = "";
-            for(PGPMPI & i : pri_key){
+            for(PGPMPI const & i : pri_key){
                 secret += write_MPI(i);
             }
 
@@ -334,7 +336,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
 
             // put private key into packet
             std::string secret = "";
-            for(PGPMPI & i : pri_subkey){
+            for(PGPMPI const & i : pri_subkey){
                 secret += write_MPI(i);
             }
 
@@ -344,7 +346,7 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             }
             else{
                 uint16_t sum = 0;
-                for(char & c : secret){
+                for(char const & c : secret){
                     sum += static_cast <uint8_t> (c);
                 }
                 check = unhexlify(makehex(sum, 4));
@@ -380,5 +382,6 @@ void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const
             break;
         }
     }
+
     public_key.set_packets(pub_packets);
 }
