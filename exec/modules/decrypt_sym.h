@@ -44,6 +44,7 @@ const Module decrypt_sym(
     // optional arguments
     {
         std::make_pair("-o", std::make_pair("output file", "")),
+        std::make_pair("-v", std::make_pair("signing public key",  "")),
     },
 
     // optional flags
@@ -60,16 +61,50 @@ const Module decrypt_sym(
             return -1;
         }
 
+        PGPPublicKey::Ptr signer = nullptr;
+        if (args.at("-v").size()){
+            std::ifstream v(args.at("-v"), std::ios::binary);
+            if (!v){
+                std::cerr << "Error: File '" + args.at("-v") + "' not opened." << std::endl;
+                return -1;
+            }
+
+            signer = std::make_shared <PGPPublicKey> (v);
+
+            if (!signer -> meaningful()){
+                std::cerr << "Error: Bad signing key.\n";
+                return -1;
+            }
+        }
+
         const PGPMessage message(msg);
         std::string error;
 
-        const std::string cleartext = ::decrypt_sym(message, args.at("passphrase"), error);
+        const PGPMessage decrypted = ::decrypt_sym(message, args.at("passphrase"), error);
 
-        if (error.size()){
-            std::cerr << error << std::endl;
-        }
-        else{
+        if (decrypted.meaningful()){
+            // extract data
+            std::string cleartext = "";
+            for(Packet::Ptr const & p : decrypted.get_packets()){
+                if (p -> get_tag() == Packet::LITERAL_DATA){
+                    cleartext += std::static_pointer_cast <Tag11> (p) -> out(false);
+                }
+            }
+
+            // if signing key provided, check the signature
+            if (signer){
+                const int verified = verify_message(*signer, decrypted, error);
+                if (verified == -1){
+                    error += "Error: Verification failure.\n";
+                }
+
+                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by key " + hexlify(signer -> keyid()) + ".\n";
+            }
+
             output(cleartext, args.at("-o"));
+       }
+        else{
+            std::cerr << error << std::endl;
         }
 
         return 0;

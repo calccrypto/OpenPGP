@@ -77,24 +77,42 @@ const Module decrypt_pka(
             }
 
             signer = std::make_shared <PGPPublicKey> (v);
+
+            if (!signer -> meaningful()){
+                std::cerr << "Error: Bad signing key.\n";
+                return -1;
+            }
         }
 
         PGPSecretKey pri(key);
         PGPMessage message(msg);
-        int verified;
         std::string error;
 
-        const std::string cleartext = ::decrypt_pka(pri, args.at("passphrase"), message, signer, &verified, error);
+        const PGPMessage decrypted = ::decrypt_pka(pri, args.at("passphrase"), message, error);
 
-        if (error.size()){
-            std::cerr << error << std::endl;
-        }
-        else{
-            output(cleartext, args.at("-o"));
-
-            if (signer){
-                output("Message was" + std::string((verified == 1)?"":" not") + " signed by key " + hexlify(signer -> keyid()) + ".\n", args.at("-o"));
+        if (decrypted.meaningful()){
+            // extract data
+            std::string cleartext = "";
+            for(Packet::Ptr const & p : decrypted.get_packets()){
+                if (p -> get_tag() == Packet::LITERAL_DATA){
+                    cleartext += std::static_pointer_cast <Tag11> (p) -> out(false);
+                }
             }
+
+            // if signing key provided, check the signature
+            if (signer){
+                const int verified = verify_message(*signer, decrypted, error);
+                if (verified == -1){
+                    error += "Error: Verification failure.\n";
+                }
+
+                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by key " + hexlify(signer -> keyid()) + ".\n";
+            }
+
+            output(cleartext, args.at("-o"));
+       }
+        else{
+            std::cerr << error << std::endl;
         }
 
         return 0;

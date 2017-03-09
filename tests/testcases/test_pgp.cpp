@@ -594,7 +594,13 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGPSecretKey pgp_pri(in_pri);
         std::string error;
-        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
+        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::static_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
         EXPECT_EQ(error, "");
     }
@@ -639,7 +645,13 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
         std::string in_pri = GPG_PRIKEY_BOB;
         PGPSecretKey pgp_pri(in_pri);
         std::string error;
-        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
+        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::static_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
         EXPECT_EQ(error, "");
     }
@@ -701,7 +713,13 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGPSecretKey pgp_pri(in_pri);
         std::string error;
-        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
+        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::static_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
         EXPECT_EQ(error, "");
     }

@@ -57,16 +57,14 @@ PGPMessage decrypt_data(const uint8_t sym,
 
 // called from outside
 // session key encrypted with public key algorithm
-std::string decrypt_pka(const PGPSecretKey & pri,
-                        const std::string & passphrase,
-                        const PGPMessage & message,
-                        const PGPKey::Ptr & signer,
-                        int * verified,
-                        std::string & error);
+PGPMessage decrypt_pka(const PGPSecretKey & pri,
+                       const std::string & passphrase,
+                       const PGPMessage & message,
+                       std::string & error);
 
 // session key encrypted with symmetric algorithm
-std::string decrypt_sym(const PGPMessage & message,
-                        const std::string & passphrase,
-                        std::string & error);
+PGPMessage decrypt_sym(const PGPMessage & message,
+                       const std::string & passphrase,
+                       std::string & error);
 
 #endif

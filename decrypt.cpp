@@ -1,22 +1,5 @@
 #include "decrypt.h"
 
-Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid){
-    for(Packet::Ptr const & p : k.get_packets()){
-        if (Packet::is_secret(p -> get_tag())){
-            Tag5::Ptr key = std::static_pointer_cast <Tag5> (p);
-            if (key -> get_public_ptr() -> get_keyid() != keyid ){
-                continue;
-            }
-
-            // make sure key has encrypting keys
-            if (PKA::can_encrypt(key -> get_pka())){
-                return key;
-            }
-        }
-    }
-    return nullptr;
-}
-
 std::string pka_decrypt(const uint8_t pka,
                         const PKA::Values & data,
                         const PKA::Values & pri,
@@ -118,36 +101,22 @@ PGPMessage decrypt_data(const uint8_t sym,
     return PGPMessage(data);
 }
 
-std::string decrypt_pka(const PGPSecretKey & pri,
-                        const std::string & passphrase,
-                        const PGPMessage & message,
-                        const PGPKey::Ptr & signer,
-                        int * verified,
-                        std::string & error){
+PGPMessage decrypt_pka(const PGPSecretKey & pri,
+                       const std::string & passphrase,
+                       const PGPMessage & message,
+                       std::string & error){
     if (!pri.meaningful(error)){
         error += "Error: Bad private key.\n";
-        return "";
+        return PGPMessage();
     }
 
     if (!message.meaningful(error)){
         error += "Error: No encrypted message found.\n";
-        return "";
+        return PGPMessage();
     }
 
-    if (signer){
-        if (!signer -> meaningful(error)){
-            error += "Error: Bad signer key.\n";
-            return "";
-        }
-
-        if (!verified){
-            error += "Error: Need a bool when providing signer key.\n";
-            return "";
-        }
-    }
-
-
-    // find session key packet; should be first packet
+    // find Public-Key Encrypted Session Key Packet (Tag 1)
+    // should be first packet
     Tag1::Ptr tag1 = nullptr;
     for(Packet::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
@@ -158,77 +127,71 @@ std::string decrypt_pka(const PGPSecretKey & pri,
 
     if (!tag1){
         error += "Error: No " + Packet::NAME.at(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
-        return "";
+        return PGPMessage();
     }
-
-    // Public-Key Encrypted Session Key Packet (Tag 1)
-    const uint8_t pka = tag1 -> get_pka();
-    PKA::Values session_key_mpi = tag1 -> get_mpi();
 
     // find corresponding secret key
-    const Tag5::Ptr sec = find_decrypting_key(pri, tag1 -> get_keyid());
+    Tag5::Ptr sec = nullptr;
+    for(Packet::Ptr const & p : pri.get_packets()){
+        sec = nullptr;
+        if (Packet::is_secret(p -> get_tag())){
+            sec = std::static_pointer_cast <Tag5> (p);
+            // encrypted packet Key ID has to match decrypting Key ID, not main Key ID
+            if (sec -> get_public_ptr() -> get_keyid() != tag1 -> get_keyid()){
+                continue;
+            }
+
+            // make sure key has encrypting keys
+            if (PKA::can_encrypt(sec -> get_pka())){
+                break;
+            }
+        }
+    }
+
     if (!sec){
         error += "Error: Correct Private Key not found.\n";
-        return "";
+        return PGPMessage();
     }
 
-    const PKA::Values pub_mpi = sec -> get_mpi();
-    const PKA::Values pri_mpi = sec -> decrypt_secret_keys(passphrase);
+    // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
+    std::string symkey = zero + pka_decrypt(tag1 -> get_pka(),
+                                            tag1 -> get_mpi(),
+                                            sec -> decrypt_secret_keys(passphrase),
+                                            sec -> get_mpi());
 
-    // get session key
-    std::string session_key = zero + pka_decrypt(pka, session_key_mpi, pri_mpi, pub_mpi);   // symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
-
-    if (!(session_key = EME_PKCS1v1_5_DECODE(session_key, error)).size()){                  // remove EME_PKCS1 encoding
+    if (!(symkey = EME_PKCS1v1_5_DECODE(symkey, error)).size()){            // remove EME_PKCS1 encoding
         error += "Error: EME_PKCS1v1_5_DECODE failure.\n";
-        return "";
+        return PGPMessage();
     }
 
-    const uint8_t sym = session_key[0];                                                     // get symmetric algorithm
-    std::string checksum = session_key.substr(session_key.size() - 2, 2);                   // get 2 octet checksum
-    session_key = session_key.substr(1, session_key.size() - 3);                            // remove both from session key
+    const uint8_t sym = symkey[0];                                          // get symmetric algorithm
+    const std::string checksum = symkey.substr(symkey.size() - 2, 2);       // get 2 octet checksum
+    symkey = symkey.substr(1, symkey.size() - 3);                           // remove both from session key
 
     uint16_t sum = 0;
-    for(char & c : session_key){                                                            // calculate session key checksum
+    for(char & c : symkey){                                                 // calculate session key checksum
         sum += static_cast <uint8_t> (c);
     }
 
-    if (unhexlify(makehex(sum, 4)) != checksum){                                            // check session key checksums
+    if (unhexlify(makehex(sum, 4)) != checksum){                            // check session key checksums
         error += "Error: Calculated session key checksum does not match given checksum.\n";
-        return "";
+        return PGPMessage();
     }
 
     // decrypt the data with the extracted key
-    PGPMessage decrypted = decrypt_data(sym, message, session_key, error);
-
-
-
-    // if signing key provided, check the signature
-    if (signer){
-        if ((*verified = verify_message(*signer, decrypted, error)) == -1){
-            error += "Error: Verification failure.\n";
-        }
-    }
-
-    // extract data
-    std::string out = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            out += std::static_pointer_cast <Tag11> (p) -> out(false);
-        }
-    }
-
-    return out;
+    return decrypt_data(sym, message, symkey, error);
 }
 
-std::string decrypt_sym(const PGPMessage & message,
-                        const std::string & passphrase,
-                        std::string & error){
+PGPMessage decrypt_sym(const PGPMessage & message,
+                       const std::string & passphrase,
+                       std::string & error){
     if (!message.meaningful(error)){
         error += "Error: Bad message.\n";
-        return "";
+        return PGPMessage();
     }
 
-    // find session key packet; should be first packet
+    // find Symmetric Key Encrypted Session Key (Tag 3)
+    // should be first packet
     Tag3::Ptr tag3 = nullptr;
     for(Packet::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
@@ -239,20 +202,9 @@ std::string decrypt_sym(const PGPMessage & message,
 
     if (!tag3){
         error += "Error: No " + Packet::NAME.at(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
-        return "";
+        return PGPMessage();
     }
 
     const std::string symkey = tag3 -> get_key(passphrase);
-    const PGPMessage decrypted = decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1), error);
-
-    // extract data
-    std::string out = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            out += std::static_pointer_cast <Tag11> (p) -> out(false);
-        }
-    }
-
-    return out;
-
+    return decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1), error);
 }
