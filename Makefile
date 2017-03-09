@@ -75,6 +75,9 @@ PGPKey.o: PGPKey.h PGPKey.cpp Packets/packets.h PGP.h
 PGPMessage.o: PGPMessage.h PGPMessage.cpp PGP.h
 	$(CXX) $(CXXFLAGS) PGPMessage.cpp
 
+PGPRevocationCertificate.o: PGPRevocationCertificate.h PGPRevocationCertificate.cpp PGP.h
+	$(CXX) $(CXXFLAGS) PGPRevocationCertificate.cpp
+
 pgptime.o: pgptime.h pgptime.cpp
 	$(CXX) $(CXXFLAGS) pgptime.cpp
 

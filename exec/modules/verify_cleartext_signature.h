@@ -76,7 +76,7 @@ const Module verify_cleartext_signature(
             std::cerr << err << std::endl;
         }
         else{
-            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by this key." << std::endl;
+            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by " << signer << "." << std::endl;
         }
 
         return 0;

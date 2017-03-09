@@ -59,6 +59,7 @@ const Module verify_message(
             std::cerr << "Error: Key file '" + args.at("key") + "' not opened." << std::endl;
             return -1;
         }
+
         std::ifstream msg(args.at("message"), std::ios::binary);
         if (!msg){
             std::cerr << "Error: Message file '" + args.at("message") + "' not opened." << std::endl;
@@ -75,7 +76,7 @@ const Module verify_message(
             std::cerr << err << std::endl;
         }
         else{
-            std::cout << "The data in '" << args.at("message") << "' was" << ((verified == 1)?"": " not") << " signed by the key " << signer << std::endl;
+            std::cout << "The data in '" << args.at("message") << "' was" << ((verified == 1)?"": " not") << " signed by " << signer << std::endl;
         }
 
         return 0;

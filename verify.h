@@ -54,7 +54,6 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
 int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig);
 
 // 0x00: Signature of a binary document.
-int verify_message(const Key::Ptr & signing_key, const PGPMessage & m);   // called by the other verify_message functions
 int verify_message(const PGPKey & key, const PGPMessage & message, std::string & error);
 int verify_message(const PGPKey & key, const PGPMessage & message);
 
@@ -80,7 +79,6 @@ int verify_key(const PGPKey & signer, const PGPKey & signee);
 // 0x20: Key revocation signature
 // 0x28: Subkey revocation signature
 // 0x30: Certification revocation signature
-int verify_revoke(const PGPKey & key, const Tag2::Ptr & revoke_sig, std::string & error);
 int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
 int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke);
 

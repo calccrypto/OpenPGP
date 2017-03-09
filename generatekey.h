@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__
 
-#include <stdexcept>
 #include <vector>
 
 #include "Hashes/Hashes.h"

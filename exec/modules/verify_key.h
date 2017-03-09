@@ -75,7 +75,7 @@ const Module verify_key(
             std::cerr << err << std::endl;
         }
         else{
-            std::cout << "Key in '" << args.at("signee-key") << "' was" << ((verified == 1)?"":" not") << " signed by key " << args.at("signer-key") << "." << std::endl;
+            std::cout << "Key in '" << args.at("signee-key") << "' was" << ((verified == 1)?"":" not") << " signed by key " << signerkey << "." << std::endl;
         }
 
         return 0;

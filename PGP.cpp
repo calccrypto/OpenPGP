@@ -10,7 +10,7 @@ const PGP::Type_t PGP::SIGNATURE         = 6; // Used for detached signatures, O
 const PGP::Type_t PGP::SIGNED_MESSAGE    = 7; // Used for cleartext signatures; header not really part of RFC 4880.
 
 const std::string PGP::ASCII_Armor_Header[] = {
-   "",                  // unknown type
+   "",                  // Unknown type
    "MESSAGE",           // Used for signed, encrypted, or compressed files.
    "PUBLIC KEY BLOCK",  // Used for armoring public keys.
    "PRIVATE KEY BLOCK", // Used for armoring private keys.
@@ -256,9 +256,7 @@ PGP::PGP(std::istream & stream)
     read(stream);
 }
 
-PGP::~PGP(){
-    packets.clear();
-}
+PGP::~PGP(){}
 
 void PGP::read(const std::string & data){
     std::stringstream s(data);
@@ -266,8 +264,6 @@ void PGP::read(const std::string & data){
 }
 
 void PGP::read(std::istream & stream){
-    packets.clear();
-
     // find armor header
     //
     // 6.2. Forming ASCII Armor

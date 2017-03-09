@@ -135,6 +135,7 @@ PGPMessage::PGPMessage(const PGP & copy)
       comp(nullptr)
 {
     decompress();
+    type = MESSAGE;
 }
 
 PGPMessage::PGPMessage(const PGPMessage & copy)
@@ -151,6 +152,7 @@ PGPMessage::PGPMessage(const std::string & data)
       comp(nullptr)
 {
     decompress();
+    type = MESSAGE;
 }
 
 PGPMessage::PGPMessage(std::istream & stream)
@@ -158,6 +160,7 @@ PGPMessage::PGPMessage(std::istream & stream)
       comp(nullptr)
 {
     decompress();
+    type = MESSAGE;
 }
 
 PGPMessage::~PGPMessage(){}
@@ -219,13 +222,13 @@ void PGPMessage::set_comp(const uint8_t c){
 }
 
 bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::string & error){
-    if (pgp.get_type() != PGP::MESSAGE){
+    if (pgp.get_type() != MESSAGE){
         error += "Error: ASCII Armor type is not MESSAGE.\n";
         return false;
     }
 
     if (!pgp.get_packets().size()){
-        error += "Error: No packets found\n";
+        error += "Error: No packets found.\n";
         return false;
     }
 
@@ -316,7 +319,7 @@ bool PGPMessage::match(const PGPMessage::Token & token) const{
 }
 
 bool PGPMessage::meaningful(const PGP & pgp, std::string & error){
-    return match(pgp, PGPMessage::OPENPGPMESSAGE, error);
+    return match(pgp, OPENPGPMESSAGE, error);
 }
 
 bool PGPMessage::meaningful(const PGP & pgp){
@@ -325,7 +328,7 @@ bool PGPMessage::meaningful(const PGP & pgp){
 }
 
 bool PGPMessage::meaningful(std::string & error) const{
-    return match(PGPMessage::OPENPGPMESSAGE, error);
+    return match(OPENPGPMESSAGE, error);
 }
 
 bool PGPMessage::meaningful() const{

@@ -230,11 +230,13 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         // calculated on the immediately preceding User Attribute packet and the
         // initial Public-Key packet.
         while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::SIGNATURE)){
+            #ifndef GPG_COMPATIBLE
             // make sure the signature type is a certification
             if (!Signature_Type::is_certification(std::static_pointer_cast <Tag2> (packets[i]) -> get_type())){
                 error += "Error: Signature type is not a certification packet.\n";
                 return false;
             }
+            #endif
 
             i++;
         }
@@ -456,14 +458,14 @@ std::ostream & operator<<(std::ostream & stream, const PGPSecretKey & pgp){
 }
 
 Key::Ptr find_signing_key(const PGPKey & key){
-    // if the key is not actually a secret key
+    // if the key is not actually a key
     std::string error;
     if (!key.meaningful(error)){
         return nullptr;
     }
 
     for(Packet::Ptr const & p : key.get_packets()){
-        if (Packet::is_secret(p -> get_tag())){                             // primary key or subkey
+        if (Packet::is_key_packet(p -> get_tag())){ // primary key or subkey
             Key::Ptr signing = std::static_pointer_cast <Key> (p);
 
             // make sure key has signing material
