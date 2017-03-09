@@ -31,16 +31,16 @@ THE SOFTWARE.
 #include "Encryptions/Encryptions.h"
 
 // OpenPGP CFB as described in RFC 4880 section 13.9
-std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix = "");
-std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data);
+std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix = "");
+std::string OpenPGP_CFB_decrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data);
 // Helper functions
 std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key, const std::string & prefix = "");
 // always returns prefix + 2 octets + cleartext
 std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet, const std::string & data, const std::string & key);
 
 // Standard CFB mode
-std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV);
-std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV);
+std::string normal_CFB_encrypt(const SymAlg::Ptr & crypt, const std::string & data, std::string IV);
+std::string normal_CFB_decrypt(const SymAlg::Ptr & crypt, const std::string & data, std::string IV);
 // Helper functions
 std::string use_normal_CFB_encrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV);
 std::string use_normal_CFB_decrypt(const uint8_t sym_alg, const std::string & data, const std::string & key, const std::string & IV);

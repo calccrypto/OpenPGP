@@ -221,14 +221,14 @@ void output(const std::string & data, const std::string & filename){
                 throw std::runtime_error("Error: File " + filename + " could not be opened.");
             }
 
-            out << data;
+            out << data << std::flush;
         }
         catch (const std::exception & e){
             std::cerr << "Error: " << e.what() << "\n" << data << std::endl;
         }
     }
     else{
-        std::cout << data << std::endl;
+        std::cout << data << std::flush;
     }
 }
 

@@ -85,13 +85,14 @@ class Packet{
         static const std::map <uint8_t, std::string> NAME;
 
         // check packets for attributes
-        static bool is_key_packet   (const uint8_t t);
-        static bool is_primary_key  (const uint8_t t);
-        static bool is_subkey       (const uint8_t t);
-        static bool is_public       (const uint8_t t);
-        static bool is_secret       (const uint8_t t);
-        static bool is_user         (const uint8_t t);
-        static bool is_session_key  (const uint8_t t);
+        static bool is_key_packet           (const uint8_t t);
+        static bool is_primary_key          (const uint8_t t);
+        static bool is_subkey               (const uint8_t t);
+        static bool is_public               (const uint8_t t);
+        static bool is_secret               (const uint8_t t);
+        static bool is_user                 (const uint8_t t);
+        static bool is_session_key          (const uint8_t t);
+        static bool is_sym_protected_data   (const uint8_t t);
 
     protected:
         uint8_t tag;        // RFC 4880 sec 4.3

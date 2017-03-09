@@ -79,6 +79,12 @@ bool Packet::is_session_key(const uint8_t t){
             (t == SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY));
 }
 
+bool Packet::is_sym_protected_data(const uint8_t t){
+    return ((t == SYMMETRICALLY_ENCRYPTED_DATA) ||
+            (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
+}
+
+
 std::string Packet::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));

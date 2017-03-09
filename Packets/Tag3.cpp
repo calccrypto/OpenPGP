@@ -90,7 +90,6 @@ std::shared_ptr<std::string> Tag3::get_esk_clone() const{
 }
 
 std::string Tag3::get_key(const std::string & pass) const{
-    std::cerr << "Warning: Tag3::get_key is untested. Potentially incorrect" << std::endl;
     std::string out = s2k -> run(pass, Sym::BLOCK_LENGTH.at(sym) >> 3);
     if (esk){
         out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0));

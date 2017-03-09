@@ -26,9 +26,7 @@ THE SOFTWARE.
 #ifndef __DECRYPT__
 #define __DECRYPT__
 
-#include <stdexcept>
 #include <string>
-#include <vector>
 
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
@@ -42,32 +40,33 @@ THE SOFTWARE.
 #include "verify.h"
 
 // used internally
-Tag5::Ptr find_decrypting_key(const PGPSecretKey & k, const std::string & keyid);
+Tag5::Ptr find_decrypting_key(const PGPSecretKey & k,
+                              const std::string & keyid = "");
 
 std::string pka_decrypt(const uint8_t pka,
-                        PKA::Values & data,
+                        const PKA::Values & data,
                         const PKA::Values & pri,
                         const PKA::Values & pub = {});
 
 // decrypt data once session key is known
 PGPMessage decrypt_data(const uint8_t sym,
-                        const PGPMessage & m,
+                        const PGPMessage & message,
                         const std::string & session_key,
-                        const bool writefile = true,
-                        const PGPPublicKey::Ptr & verify = nullptr);
+                        std::string & error);
+// ////////////////////////////////////////
 
 // called from outside
-// session key encrypted with public key algorithm; will call decrypt_sym if tag3 is found
+// session key encrypted with public key algorithm
 std::string decrypt_pka(const PGPSecretKey & pri,
-                        const PGPMessage & m,
                         const std::string & passphrase,
-                        const bool writefile = true,
-                        const PGPPublicKey::Ptr & verify = nullptr);
+                        const PGPMessage & message,
+                        const PGPKey::Ptr & signer,
+                        int * verified,
+                        std::string & error);
 
 // session key encrypted with symmetric algorithm
-std::string decrypt_sym(const PGPMessage & m,
+std::string decrypt_sym(const PGPMessage & message,
                         const std::string & passphrase,
-                        const bool writefile = true,
-                        const PGPPublicKey::Ptr & verify = nullptr);
+                        std::string & error);
 
 #endif

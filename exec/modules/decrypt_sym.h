@@ -1,5 +1,5 @@
 /*
-decrypt_pka.h
+decrypt_sym.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,29 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_DECRYPT_PKA__
-#define __COMMAND_DECRYPT_PKA__
+#ifndef __COMMAND_DECRYPT_SYM__
+#define __COMMAND_DECRYPT_SYM__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module decrypt_pka(
+const Module decrypt_sym(
     // name
-    "decrypt-pka",
+    "decrypt-sym",
 
     // positional arguments
     {
-        "private-key",
-        "passphrase",
         "file",
+        "passphrase",
     },
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",         "")),
-        std::make_pair("-v", std::make_pair("signing public key",  "")),
+        std::make_pair("-o", std::make_pair("output file", "")),
     },
 
     // optional flags
@@ -56,45 +54,22 @@ const Module decrypt_pka(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("private-key"), std::ios::binary);
-        if (!key){
-            std::cerr << "Error: File '" + args.at("private-key") + "' not opened." << std::endl;
-            return -1;
-        }
-
         std::ifstream msg(args.at("file"), std::ios::binary);
         if (!msg){
             std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
             return -1;
         }
 
-        PGPPublicKey::Ptr signer = nullptr;
-        if (args.at("-v").size()){
-            std::ifstream v(args.at("-v"), std::ios::binary);
-            if (!v){
-                std::cerr << "Error: File '" + args.at("-v") + "' not opened." << std::endl;
-                return -1;
-            }
-
-            signer = std::make_shared <PGPPublicKey> (v);
-        }
-
-        PGPSecretKey pri(key);
-        PGPMessage message(msg);
-        int verified;
+        const PGPMessage message(msg);
         std::string error;
 
-        const std::string cleartext = ::decrypt_pka(pri, args.at("passphrase"), message, signer, &verified, error);
+        const std::string cleartext = ::decrypt_sym(message, args.at("passphrase"), error);
 
         if (error.size()){
             std::cerr << error << std::endl;
         }
         else{
             output(cleartext, args.at("-o"));
-
-            if (signer){
-                output("Message was" + std::string((verified == 1)?"":" not") + " signed by key " + hexlify(signer -> keyid()) + ".\n", args.at("-o"));
-            }
         }
 
         return 0;

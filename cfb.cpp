@@ -1,6 +1,6 @@
 #include "cfb.h"
 
-std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){
+std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
     if (prefix.size() < BS){
@@ -102,7 +102,7 @@ std::string OpenPGP_CFB_encrypt(SymAlg::Ptr & crypt, const uint8_t packet, const
     return C;
 }
 
-std::string OpenPGP_CFB_decrypt(SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data){
+std::string OpenPGP_CFB_decrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
     // 1
@@ -151,7 +151,7 @@ std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet,
     return OpenPGP_CFB_decrypt(alg, packet, data);
 }
 
-std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV){
+std::string normal_CFB_encrypt(const SymAlg::Ptr & crypt, const std::string & data, std::string IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;
@@ -163,7 +163,7 @@ std::string normal_CFB_encrypt(SymAlg::Ptr & crypt, const std::string & data, st
     return out;
 }
 
-std::string normal_CFB_decrypt(SymAlg::Ptr & crypt, const std::string & data, std::string IV){
+std::string normal_CFB_decrypt(const SymAlg::Ptr & crypt, const std::string & data, std::string IV){
     std::string out = "";
     const unsigned int BS = crypt -> blocksize() >> 3;
     unsigned int x = 0;

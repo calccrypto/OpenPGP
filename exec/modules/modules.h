@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "extract_public.h"
 #include "encrypt_pka.h"
 #include "decrypt_pka.h"
+#include "decrypt_sym.h"
 #include "generate_keypair.h"
 #include "generate_revoke_cert.h"
 #include "revoke_key_with_cert.h"
@@ -61,6 +62,7 @@ const std::vector <Module> ordered = {
     extract_public,
     encrypt_pka,
     decrypt_pka,
+    decrypt_sym,
     generate_keypair,
     generate_revoke_cert,
     revoke_key_with_cert,

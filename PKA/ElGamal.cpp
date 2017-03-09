@@ -56,7 +56,7 @@ PKA::Values ElGamal_encrypt(const std::string & data, const PKA::Values & pub){
     return ElGamal_encrypt(rawtompi(data), pub);
 }
 
-std::string ElGamal_decrypt(PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub){
+std::string ElGamal_decrypt(const PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub){
     PGPMPI s, m;
     s = powm(c[0], pri[0], pub[0]);
     m = invert(s, pub[0]);

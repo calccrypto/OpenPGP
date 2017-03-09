@@ -1,6 +1,6 @@
 #include "RSA.h"
 
-PKA::Values RSA_keygen(const unsigned int & bits){
+PKA::Values RSA_keygen(const uint32_t & bits){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI p = 3, q = 3;

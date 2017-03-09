@@ -190,7 +190,7 @@ PGPMessage encrypt_pka(const PGPKey & key,
 
     std::string nibbles = mpitohex(mpi[0]);        // get hex representation of modulus
     nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
-    PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)));
+    PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, sym_alg) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1, error)));
 
     // encrypt m
     tag1 -> set_mpi(pka_encrypt(public_key -> get_pka(), m, mpi));

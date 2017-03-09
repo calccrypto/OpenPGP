@@ -35,6 +35,6 @@ THE SOFTWARE.
 PKA::Values ElGamal_keygen(unsigned int bits = 2048);
 PKA::Values ElGamal_encrypt(const PGPMPI & data, const PKA::Values & pub);
 PKA::Values ElGamal_encrypt(const std::string & data, const PKA::Values & pub);
-std::string ElGamal_decrypt(PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub);
+std::string ElGamal_decrypt(const PKA::Values & c, const PKA::Values & pri, const PKA::Values & pub);
 
 #endif

@@ -593,8 +593,10 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
     {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGPSecretKey pgp_pri(in_pri);
-        std::string message = decrypt_pka(pgp_pri, pgp, PASSPHRASE, false);
+        std::string error;
+        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
+        EXPECT_EQ(error, "");
     }
 }
 
@@ -636,8 +638,10 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
     {
         std::string in_pri = GPG_PRIKEY_BOB;
         PGPSecretKey pgp_pri(in_pri);
-        std::string message = decrypt_pka(pgp_pri, pgp, PASSPHRASE, false);
+        std::string error;
+        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
+        EXPECT_EQ(error, "");
     }
 }
 
@@ -696,8 +700,10 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
     {
         std::string in_pri = GPG_PRIKEY_ALICE;
         PGPSecretKey pgp_pri(in_pri);
-        std::string message = decrypt_pka(pgp_pri, pgp, PASSPHRASE, false);
+        std::string error;
+        std::string message = decrypt_pka(pgp_pri, PASSPHRASE, pgp, nullptr, nullptr, error);
         EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
+        EXPECT_EQ(error, "");
     }
 }
 
