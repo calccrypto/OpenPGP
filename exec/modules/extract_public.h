@@ -34,7 +34,15 @@ const Module extract_public(
             return -1;
         }
 
-        output(PGPSecretKey(key).get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        const PGPSecretKey pri(key);
+        std::string error;
+
+        if (pri.meaningful(error)){
+            output(pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

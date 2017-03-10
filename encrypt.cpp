@@ -48,19 +48,19 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 }
 
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPKey & key,
+                       const PGPPublicKey & pub,
                        std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!key.meaningful(error)){
-        error += "Error: No encrypting key found.";
+    if (!pub.meaningful(error)){
+        error += "Error: Bad public key.";
         return PGPMessage();
     }
 
     // Check if key has been revoked
-    const int rc = check_revoked(key, error);
+    const int rc = check_revoked(pub, error);
     if (rc == 1){
-        error += "Error: Key " + hexlify(key.keyid()) + " has been revoked. Nothing done.";
+        error += "Error: Key " + hexlify(pub.keyid()) + " has been revoked. Nothing done.\n";
         return PGPMessage();
     }
     else if (rc == -1){
@@ -69,7 +69,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     }
 
     Tag6::Ptr public_key = nullptr;
-    for(Packet::Ptr const & p : key.get_packets()){
+    for(Packet::Ptr const & p : pub.get_packets()){
         public_key = nullptr;
         if (Packet::is_key_packet(p -> get_tag())){
             public_key = std::static_pointer_cast <Tag6> (p);

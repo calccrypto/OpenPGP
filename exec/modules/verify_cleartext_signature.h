@@ -69,11 +69,11 @@ const Module verify_cleartext_signature(
         PGPKey signer(key);
         PGPCleartextSignature signature(sig);
 
-        std::string err;
-        const int verified = ::verify_cleartext_signature(signer, signature, err);
+        std::string error;
+        const int verified = ::verify_cleartext_signature(signer, signature, error);
 
         if (verified == -1){
-            std::cerr << err << std::endl;
+            std::cerr << error << std::endl;
         }
         else{
             std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by " << signer << "." << std::endl;

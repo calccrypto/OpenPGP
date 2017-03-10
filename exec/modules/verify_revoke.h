@@ -69,11 +69,11 @@ const Module verify_revoke(
         PGPKey signer(key);
         PGPRevocationCertificate rev(cert);
 
-        std::string err;
-        const int verified = ::verify_revoke(signer, rev, err);
+        std::string error;
+        const int verified = ::verify_revoke(signer, rev, error);
 
         if (verified == -1){
-            std::cerr << err << std::endl;
+            std::cerr << error << std::endl;
         }
         else{
             std::cout << "The certificate in '" << args.at("revocation-certificate") << "' " << ((verified == 1)?std::string("revokes"):std::string("does not revoke")) << " key " << signer << std::endl;

@@ -47,6 +47,7 @@ PGPMessage decrypt_data(const uint8_t sym,
 
     // strip extra data
     if (tag == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
+        std::cout << hexlify(data) << std::endl;
         const std::string checksum = data.substr(data.size() - 20, 20); // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);                        // remove SHA1 checksum
         if (use_hash(Hash::SHA1, data) != checksum){                    // check SHA1 checksum

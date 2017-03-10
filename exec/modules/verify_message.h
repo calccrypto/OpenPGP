@@ -69,11 +69,11 @@ const Module verify_message(
         PGPKey signer(key);
         PGPMessage message(msg);
 
-        std::string err;
-        const int verified = ::verify_message(signer, message, err);
+        std::string error;
+        const int verified = ::verify_message(signer, message, error);
 
         if (verified == -1){
-            std::cerr << err << std::endl;
+            std::cerr << error << std::endl;
         }
         else{
             std::cout << "The data in '" << args.at("message") << "' was" << ((verified == 1)?"": " not") << " signed by " << signer << std::endl;

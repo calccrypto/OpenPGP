@@ -76,11 +76,11 @@ const Module verify_detached_signature(
         PGPKey signer(key);
         PGPDetachedSignature signature(sig);
 
-        std::string err;
-        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, err);
+        std::string error;
+        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, error);
 
         if (verified == -1){
-            std::cerr << err << std::endl;
+            std::cerr << error << std::endl;
         }
         else{
             std::cout << "File '" << args.at("file") << "' was" << ((verified == 1)?"":" not") << " signed by key " << signer << "." << std::endl;

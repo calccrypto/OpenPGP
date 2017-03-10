@@ -42,7 +42,7 @@ THE SOFTWARE.
 struct EncryptArgs{
     std::string filename;
     std::string data;
-    uint8_t sym;
+    uint8_t sym;                    // algorithm used to encrypt data
     uint8_t comp;
     bool mdc;
     PGPSecretKey::Ptr signer;       // for signing data
@@ -65,19 +65,17 @@ struct EncryptArgs{
     {}
 };
 
+// encrypt data once session key has been generated
 Packet::Ptr encrypt_data(const EncryptArgs & args,
                          const std::string & session_key,
                          std::string & error);
 
-// Encrypt data
-// Default:
-//      Symmetric Key Algorithm: AES256
-//      Compression Algorithm: ZLIB
-//      Use Modification Detection Packet: true
+// encrypt with public key
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPKey & key,
+                       const PGPPublicKey & pub,
                        std::string & error);
 
+// encrypt with passphrase
 PGPMessage encrypt_sym(const EncryptArgs & args,
                        const std::string & passphrase,
                        std::string & error);
