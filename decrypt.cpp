@@ -34,24 +34,6 @@ PGPMessage decrypt_data(const uint8_t sym,
         tag = Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA;
     }
 
-    // does not work
-    // // if the packet was a partial start
-    // if (packets[i] -> get_partial()){
-        // i++;
-
-        // // add the rest of the data
-        // for(; i < packets.size(); i++){
-            // std::string raw = packets[i] -> raw();
-            // Partial::Ptr part = std::make_shared <Partial> (raw);
-            // data += part -> get_stream();
-
-            // // if the current packet is parital end, break after adding data
-            // if (packets[i] -> get_partial() == 3){
-                // break;
-            // }
-        // }
-    // }
-
     if (!data.size()){
         error += "Error: No encrypted data packet(s) found.\n";
         return PGPMessage();

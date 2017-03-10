@@ -94,18 +94,13 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     // do calculations
 
     // generate session key
-    std::size_t key_len = Sym::KEY_LENGTH.at(args.sym);
-
-    // get hex version of session key
-    std::string session_key = mpitohex(bintompi(BBS().rand(key_len)));
-
-    // unhexlify session key
-    session_key = unhexlify(std::string((key_len >> 2) - session_key.size(), '0') + session_key);
+    const std::size_t key_len = Sym::KEY_LENGTH.at(args.sym);
+    const std::string session_key = integer(BBS().rand(key_len), 2).str(256, key_len >> 3);
 
     // get checksum of session key
     uint16_t sum = 0;
-    for(char & x : session_key){
-        sum += static_cast <unsigned char> (x);
+    for(char const c : session_key){
+        sum += static_cast <unsigned char> (c);
     }
 
     std::string nibbles = mpitohex(mpi[0]);        // get hex representation of modulus
