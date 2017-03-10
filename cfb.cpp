@@ -3,11 +3,11 @@
 std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const unsigned int BS = crypt -> blocksize() >> 3;
 
-    if (prefix.size() < BS){
+    if (prefix.size() < (BS + 2)){
         throw std::runtime_error("Error: Given prefix too short.");
     }
-    else if (prefix.size() > BS){
-        prefix = prefix.substr(0, BS);    // reduce prefix
+    else if (prefix.size() > (BS + 2)){
+        prefix = prefix.substr(0, BS + 2);    // reduce prefix
     }
 
 

@@ -44,7 +44,7 @@ const Module encrypt_sym(
     // optional arguments
     {
         std::make_pair("-o",     std::make_pair("output file",                                                   "")),
-        std::make_pair("-c",     std::make_pair("compression (Uncompressed, ZIP (DEFLATE), ZLIB, BZIP2)",    "ZLIB")),
+        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",    "ZLIB")),
         std::make_pair("-p",     std::make_pair("passphrase for signing key",                                    "")),
         std::make_pair("--sign", std::make_pair("private key file",                                              "")),
         std::make_pair("--sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),

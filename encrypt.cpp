@@ -5,7 +5,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
                          std::string & error){
     // put data in Literal Data Packet
     Tag11 tag11;
-    tag11.set_format('t');
+    tag11.set_format('b');
     tag11.set_filename(args.filename);
     tag11.set_time(0);
     tag11.set_literal(args.data);
@@ -23,6 +23,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
     // generate prefix
     const std::size_t BS = Sym::BLOCK_LENGTH.at(args.sym);
     std::string prefix = integer(BBS().rand(BS), 2).str(256, BS >> 3);
+    prefix += prefix.substr(prefix.size() - 2, 2);
 
     Packet::Ptr encrypted = nullptr;
 
@@ -35,7 +36,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
     else{
         // Modification Detection Code Packet (Tag 19)
         Tag19 tag19;
-        tag19.set_hash(use_hash(Hash::SHA1, prefix + prefix.substr((BS >> 3) - 2, 2) + to_encrypt + "\xd3\x14"));
+        tag19.set_hash(use_hash(Hash::SHA1, prefix + to_encrypt + "\xd3\x14"));
 
         // Sym. Encrypted Integrity Protected Data Packet (Tag 18)
         // encrypt(compressed(literal_data_packet(plain text)) + MDC SHA1(20 octets))
@@ -53,7 +54,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     if (!pub.meaningful(error)){
-        error += "Error: Bad public key.";
+        error += "Error: Bad public key.\n";
         return PGPMessage();
     }
 
@@ -82,7 +83,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     }
 
     if (!public_key){
-        error += "Error: No encrypting key found.";
+        error += "Error: No encrypting key found.\n";
         return PGPMessage();
     }
 
@@ -112,12 +113,16 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
         (public_key -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
         tag1 -> set_mpi({RSA_encrypt(m, mpi)});
     }
-    if (public_key -> get_pka() == PKA::ELGAMAL){
+    else if (public_key -> get_pka() == PKA::ELGAMAL){
         tag1 -> set_mpi(ElGamal_encrypt(m, mpi));
     }
 
     // encrypt data and put it into a packet
     Packet::Ptr encrypted = encrypt_data(args, session_key, error);
+    if (!encrypted){
+        error += "Error: Failed to encrypt data.\n";
+        return PGPMessage();
+    }
 
     // write data to output container
     PGPMessage out;
@@ -135,7 +140,7 @@ PGPMessage encrypt_sym(const EncryptArgs & args,
     // String to Key specifier for decrypting session key
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
     s2k -> set_type(S2K::ITERATED_AND_SALTED_S2K);
-    s2k -> set_hash(Hash::SHA1);
+    s2k -> set_hash(args.hash);
     s2k -> set_salt(integer(BBS().rand(64), 2).str(256, 8));
     s2k -> set_count(96);
 
@@ -150,6 +155,10 @@ PGPMessage encrypt_sym(const EncryptArgs & args,
 
     // encrypt data
     Packet::Ptr encrypted = encrypt_data(args, session_key.substr(1, session_key.size() - 1), error);
+    if (!encrypted){
+        error += "Error: Failed to encrypt data.\n";
+        return PGPMessage();
+    }
 
     // write to output container
     PGPMessage out;

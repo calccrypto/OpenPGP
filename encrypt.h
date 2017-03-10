@@ -38,12 +38,14 @@ THE SOFTWARE.
 #include "PGPMessage.h"
 #include "PKCS1.h"
 #include "revoke.h"
+#include "sigcalc.h"
 
 struct EncryptArgs{
     std::string filename;
     std::string data;
-    uint8_t sym;                    // algorithm used to encrypt data
-    uint8_t comp;
+    uint8_t sym;                    // symmetric key algorithm used to encrypt data
+    uint8_t hash;                   // hash used to generate key
+    uint8_t comp;                   // compression algorithm for encrypted data
     bool mdc;
     PGPSecretKey::Ptr signer;       // for signing data
     std::string passphrase;         // only used when signer is present
@@ -51,6 +53,7 @@ struct EncryptArgs{
     EncryptArgs(const std::string & fname = "",
                 const std::string & dat = "",
                 const uint8_t sym_alg = Sym::AES256,
+                const uint8_t hash_alg = Hash::SHA1,
                 const uint8_t comp_alg = Compression::ZLIB,
                 const bool mod_detect = true,
                 const PGPSecretKey::Ptr & signing_key = nullptr,
@@ -58,6 +61,7 @@ struct EncryptArgs{
         : filename(fname),
           data(dat),
           sym(sym_alg),
+          hash(hash_alg),
           comp(comp_alg),
           mdc(mod_detect),
           signer(signing_key),
