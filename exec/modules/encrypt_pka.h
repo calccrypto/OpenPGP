@@ -53,7 +53,6 @@ const Module encrypt_pka(
     // optional flags
     {
         std::make_pair("-a",    "armored"),
-        std::make_pair("-d",    "delete original"),
         std::make_pair("--mdc", "use mdc?"),
     },
 
@@ -96,19 +95,29 @@ const Module encrypt_pka(
             }
 
             signer = std::make_shared <PGPSecretKey> (signing);
+
+            if (!signer -> meaningful()){
+                std::cerr << "Error: Bad signing key.\n";
+                return -1;
+            }
         }
 
-        output(::encrypt_pka(PGPPublicKey(key),
-                             std::string(std::istreambuf_iterator <char> (file), {}),
-                             args.at("file"),
-                             Sym::NUMBER.at(args.at("-sym")),
-                             Compression::NUMBER.at(args.at("-c")),
-                             flags.at("--mdc"),
-                             signer,
-                             args.at("-p")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        const EncryptArgs encryptargs(args.at("file"),
+                                      std::string(std::istreambuf_iterator <char> (file), {}),
+                                      Sym::NUMBER.at(args.at("--sym")),
+                                      Compression::NUMBER.at(args.at("-c")),
+                                      flags.at("--mdc"),
+                                      signer,
+                                      args.at("-p"));
+        std::string error;
 
-        if (flags.at("-d")){
-            remove(args.at("file").c_str());
+        const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);
+
+        if (encrypted.meaningful()){
+            output(encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
         }
 
         return 0;

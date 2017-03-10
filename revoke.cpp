@@ -6,9 +6,8 @@ int check_revoked(const PGPKey & key, std::string & error){
         return -1;
     }
 
-    // Key::Ptr signing_key = find_signing_key(key);
-
     const PGP::Packets packets = key.get_packets();
+
     if (packets[1] -> get_tag() == Packet::SIGNATURE){
         Tag2::Ptr tag2 = std::static_pointer_cast <Tag2> (packets[1]);
         // if the signature packet is a key/subkey revocation signature
@@ -29,10 +28,6 @@ int check_revoked(const PGPKey & key, std::string & error){
             if (tag2 -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
                 // TODO verify the signature/hash bits
                 return true;
-            }
-            else{
-                error += "Error: Bad signature type.\n";
-                return -1;
             }
         }
     }

@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
@@ -40,47 +39,47 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "revoke.h"
 
-// used internally
-Tag6::Ptr find_encrypting_key(const PGPKey & k);
+struct EncryptArgs{
+    std::string filename;
+    std::string data;
+    uint8_t sym;
+    uint8_t comp;
+    bool mdc;
+    PGPSecretKey::Ptr signer;       // for signing data
+    std::string passphrase;         // only used when signer is present
 
-PKA::Values pka_encrypt(const uint8_t pka,
-                        const PGPMPI & data,
-                        const PKA::Values & pub);
+    EncryptArgs(const std::string & fname = "",
+                const std::string & dat = "",
+                const uint8_t sym_alg = Sym::AES256,
+                const uint8_t comp_alg = Compression::ZLIB,
+                const bool mod_detect = true,
+                const PGPSecretKey::Ptr & signing_key = nullptr,
+                const std::string & pass = "")
+        : filename(fname),
+          data(dat),
+          sym(sym_alg),
+          comp(comp_alg),
+          mdc(mod_detect),
+          signer(signing_key),
+          passphrase(pass)
+    {}
+};
 
-PKA::Values pka_encrypt(const uint8_t pka,
-                        const std::string & data,
-                        const PKA::Values & pub);
-
-Packet::Ptr encrypt_data(const std::string & session_key,
-                         const std::string & data,
-                         const std::string & filename = "",
-                         const uint8_t sym_alg = Sym::AES256,
-                         const uint8_t comp = Compression::ZIP,
-                         const bool mdc = true,
-                         const PGPSecretKey::Ptr & signer = nullptr,
-                         const std::string & sig_passphrase = "");
+Packet::Ptr encrypt_data(const EncryptArgs & args,
+                         const std::string & session_key,
+                         std::string & error);
 
 // Encrypt data
 // Default:
 //      Symmetric Key Algorithm: AES256
 //      Compression Algorithm: ZLIB
 //      Use Modification Detection Packet: true
-PGPMessage encrypt_pka(const PGPKey & key,
-                       const std::string & data,
-                       const std::string & filename = "",
-                       const uint8_t sym_alg = Sym::AES256,
-                       const uint8_t comp = Compression::ZLIB,
-                       const bool mdc = true,
-                       const PGPSecretKey::Ptr & signer = nullptr,
-                       const std::string & sig_passphrase = "");
+PGPMessage encrypt_pka(const EncryptArgs & args,
+                       const PGPKey & key,
+                       std::string & error);
 
-PGPMessage encrypt_sym(const std::string & passphrase,
-                       const std::string & data,
-                       const std::string & filename = "",
-                       const uint8_t sym_alg = Sym::AES256,
-                       const uint8_t comp = Compression::ZLIB,
-                       const bool mdc = true,
-                       const PGPSecretKey::Ptr & signer = nullptr,
-                       const std::string & sig_passphrase = "");
+PGPMessage encrypt_sym(const EncryptArgs & args,
+                       const std::string & passphrase,
+                       std::string & error);
 
 #endif

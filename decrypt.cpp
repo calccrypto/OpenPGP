@@ -1,22 +1,5 @@
 #include "decrypt.h"
 
-std::string pka_decrypt(const uint8_t pka,
-                        const PKA::Values & data,
-                        const PKA::Values & pri,
-                        const PKA::Values & pub){
-    if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
-        (pka == PKA::RSA_ENCRYPT_ONLY)){
-        return mpitoraw(RSA_decrypt(data[0], pri, pub));
-    }
-    else if (pka == PKA::ELGAMAL){
-        return ElGamal_decrypt(data, pri, pub);
-    }
-    else{
-        throw std::runtime_error("Error: PKA number " + std::to_string(pka) + " not allowed or unknown.");
-    }
-    return ""; // should never reach here; mainly just to remove compiler warnings
-}
-
 PGPMessage decrypt_data(const uint8_t sym,
                         const PGPMessage & message,
                         const std::string & session_key,
@@ -38,10 +21,7 @@ PGPMessage decrypt_data(const uint8_t sym,
         return PGPMessage();
     }
 
-    // current packet tag being operated on
     uint8_t tag;
-
-    // Find encrypted data
     std::string data = "";
 
     // copy initial data to string
@@ -130,6 +110,11 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
         return PGPMessage();
     }
 
+    if (!PKA::can_encrypt(tag1 -> get_pka())){
+        error += "Error: Public Key Algorithm detected cannot be used to encrypt/decrypt.\n";
+        return PGPMessage();
+    }
+
     // find corresponding secret key
     Tag5::Ptr sec = nullptr;
     for(Packet::Ptr const & p : pri.get_packets()){
@@ -153,11 +138,18 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
         return PGPMessage();
     }
 
+    // decrypt secret keys
+    std::string symkey;
+    if ((tag1 -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
+        (tag1 -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
+        symkey = mpitoraw(RSA_decrypt(tag1 -> get_mpi()[0], sec -> decrypt_secret_keys(passphrase), sec -> get_mpi()));
+    }
+    else if (tag1 -> get_pka() == PKA::ELGAMAL){
+        symkey = ElGamal_decrypt(tag1 -> get_mpi(), sec -> decrypt_secret_keys(passphrase), sec -> get_mpi());
+    }
+
     // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
-    std::string symkey = zero + pka_decrypt(tag1 -> get_pka(),
-                                            tag1 -> get_mpi(),
-                                            sec -> decrypt_secret_keys(passphrase),
-                                            sec -> get_mpi());
+    symkey = zero + symkey;
 
     if (!(symkey = EME_PKCS1v1_5_DECODE(symkey, error)).size()){            // remove EME_PKCS1 encoding
         error += "Error: EME_PKCS1v1_5_DECODE failure.\n";
@@ -205,6 +197,6 @@ PGPMessage decrypt_sym(const PGPMessage & message,
         return PGPMessage();
     }
 
-    const std::string symkey = tag3 -> get_key(passphrase);
+    const std::string symkey = tag3 -> get_session_key(passphrase);
     return decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1), error);
 }

@@ -39,21 +39,11 @@ THE SOFTWARE.
 #include "PKCS1.h"
 #include "verify.h"
 
-// used internally
-Tag5::Ptr find_decrypting_key(const PGPSecretKey & k,
-                              const std::string & keyid = "");
-
-std::string pka_decrypt(const uint8_t pka,
-                        const PKA::Values & data,
-                        const PKA::Values & pri,
-                        const PKA::Values & pub = {});
-
 // decrypt data once session key is known
 PGPMessage decrypt_data(const uint8_t sym,
                         const PGPMessage & message,
                         const std::string & session_key,
                         std::string & error);
-// ////////////////////////////////////////
 
 // called from outside
 // session key encrypted with public key algorithm

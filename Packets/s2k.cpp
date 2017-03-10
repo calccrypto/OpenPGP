@@ -58,7 +58,7 @@ S2K0::S2K0(uint8_t t)
 {}
 
 S2K0::S2K0()
-    : S2K0(0)
+    : S2K0(SIMPLE_S2K)
 {}
 
 S2K0::~S2K0(){}
@@ -99,7 +99,7 @@ S2K1::S2K1(uint8_t t)
 {}
 
 S2K1::S2K1()
-    : S2K1(1)
+    : S2K1(SALTED_S2K)
 {}
 
 S2K1::~S2K1(){}
@@ -137,6 +137,10 @@ std::string S2K1::get_salt() const{
 }
 
 void S2K1::set_salt(const std::string & s){
+    if (s.size() != 8){
+        throw std::runtime_error("Error: Salt length must be 8 octets.");
+    }
+
     salt = s;
 }
 
@@ -149,7 +153,7 @@ uint32_t S2K3::coded_count(const uint8_t c){
 }
 
 S2K3::S2K3()
-    : S2K1(3),
+    : S2K1(ITERATED_AND_SALTED_S2K),
       count()
 {}
 

@@ -103,13 +103,13 @@ class Tag3 : public Packet{
         S2K::Ptr get_s2k_clone() const;
         std::shared_ptr <std::string> get_esk() const;
         std::shared_ptr <std::string> get_esk_clone() const;
-        std::string get_key(const std::string & pass) const;
+        std::string get_session_key(const std::string & pass) const;
 
         void set_sym(const uint8_t s);
         void set_s2k(const S2K::Ptr & s);
         void set_esk(std::string * s);
         void set_esk(const std::string & s);
-        void set_key(const std::string & pass, const std::string & sk = "");    // passing in empty sk will erase esk
+        void set_session_key(const std::string & pass, const std::string & sk = "");    // passing in empty sk will erase esk
 
         Packet::Ptr clone() const;
         Tag3 & operator=(const Tag3 & tag3);

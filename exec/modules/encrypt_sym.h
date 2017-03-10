@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_ENCRYPT_PKA__
-#define __COMMAND_ENCRYPT_PKA__
+#ifndef __COMMAND_ENCRYPT_SYM__
+#define __COMMAND_ENCRYPT_SYM__
 
 #include "../../OpenPGP.h"
 #include "module.h"
@@ -37,8 +37,8 @@ const Module encrypt_sym(
 
     // positional arguments
     {
-        "public-key",
         "file",
+        "passphrase"
     },
 
     // optional arguments
@@ -53,19 +53,12 @@ const Module encrypt_sym(
     // optional flags
     {
         std::make_pair("-a",    "armored"),
-        std::make_pair("-d",    "delete original"),
         std::make_pair("--mdc", "use mdc?"),
     },
 
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("public-key"), std::ios::binary);
-        if (!key){
-            std::cerr << "Error: File '" + args.at("public-key") + "' not opened." << std::endl;
-            return -1;
-        }
-
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
             std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
@@ -95,21 +88,22 @@ const Module encrypt_sym(
                 return -1;
             }
 
-            signer = std::make_shared <PGPSecretKey> (signing);
+            if (!signer -> meaningful()){
+                std::cerr << "Error: Bad signing key.\n";
+                return -1;
+            }
         }
 
-        // output(::encrypt_sym(PGPPublicKey(key),
-                             // std::string(std::istreambuf_iterator <char> (file), {}),
-                             // args.at("file"),
-                             // Sym::NUMBER.at(args.at("-sym")),
-                             // Compression::NUMBER.at(args.at("-c")),
-                             // flags.at("--mdc"),
-                             // signer,
-                             // args.at("-p")).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        const EncryptArgs encryptargs(args.at("file"),
+                                      std::string(std::istreambuf_iterator <char> (file), {}),
+                                      Sym::NUMBER.at(args.at("--sym")),
+                                      Compression::NUMBER.at(args.at("-c")),
+                                      flags.at("--mdc"),
+                                      signer,
+                                      args.at("-p"));
+        std::string error;
 
-        // if (flags.at("-d")){
-            // remove(args.at("file").c_str());
-        // }
+        output(::encrypt_sym(encryptargs, args.at("passphrase"), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }
