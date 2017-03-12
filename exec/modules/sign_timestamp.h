@@ -1,5 +1,5 @@
 /*
-verify_detached_signature.h
+sign_timestamp.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,67 +23,70 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_VERIFY_DETACHED_SIGNATURE__
-#define __COMMAND_VERIFY_DETACHED_SIGNATURE__
+#ifndef __COMMAND_SIGN_TIMESTAMP__
+#define __COMMAND_SIGN_TIMESTAMP__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module verify_detached_signature(
+const Module sign_timestamp(
     // name
-    "verify-detached-signature",
+    "sign-timestamp",
 
     // positional arguments
     {
-        "key",
-        "file",
-        "signature",
+        "signer-key",
+        "passphrase",
+        "seconds-since-epoch",
     },
 
     // optional arguments
     {
-
+        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-h", std::make_pair("hash algorithm", "SHA1")),
     },
 
     // optional flags
     {
-
+        std::make_pair("-a", "armored"),
     },
 
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream key(args.at("key"), std::ios::binary);
-        if (!key){
-            std::cerr << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
+        std::ifstream signer_file(args.at("signer-key"), std::ios::binary);
+        if (!signer_file){
+            std::cerr << "IOError: File \"" + args.at("signer-key") + "\" not opened." << std::endl;
             return -1;
         }
 
-        std::ifstream file(args.at("file"), std::ios::binary);
-        if (!file){
-            std::cerr << "Error: Data file \"" + args.at("file") + "\" not opened." << std::endl;
+        std::stringstream s(args.at("seconds-since-epoch"));
+        time_t time;
+        if (!(s >> time)){
+            std::cerr << "Error: Invalid time." << std::endl;
             return -1;
         }
 
-        std::ifstream sig(args.at("signature"), std::ios::binary);
-        if (!sig){
-            std::cerr << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        PGPKey signer(key);
-        PGPDetachedSignature signature(sig);
+        const SignArgs signargs(PGPSecretKey(signer_file),
+                                args.at("passphrase"),
+                                4,
+                                Hash::NUMBER.at(args.at("-h")));
 
         std::string error;
-        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, error);
+        PGPDetachedSignature timestamp = ::sign_timestamp(signargs, time, error);
 
-        if (verified == -1){
-            std::cerr << error << std::endl;
+        if (timestamp.meaningful()){
+            output(timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
         }
         else{
-            std::cout << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            std::cerr << error << std::endl;
         }
 
         return 0;

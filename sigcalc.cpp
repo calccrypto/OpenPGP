@@ -204,11 +204,11 @@ std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-    
+
     if (tag2 -> get_type() != Signature_Type::KEY_REVOCATION_SIGNATURE){
         throw std::runtime_error("Error: Bad signature type.");
     }
-    
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
@@ -216,11 +216,11 @@ std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-    
+
     if (tag2 -> get_type() != Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
         throw std::runtime_error("Error: Bad signature type.");
     }
-    
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
@@ -236,14 +236,13 @@ std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_40(const Tag2::Ptr & /*tag2*/){
-    throw std::runtime_error("Error: Signature directly on a key has not implemented.");
-    // if (!tag2){
-        // throw std::runtime_error("Error: No signature packet");
-    // }
+std::string to_sign_40(const Tag2::Ptr & tag2){
+    // throw std::runtime_error("Error: Signature directly on a key has not implemented.");
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
 
-    //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
-    return "";
+    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
 std::string to_sign_50(const Tag2 & sig, const Tag2::Ptr & /*tag2*/){

@@ -468,5 +468,52 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke){
 }
 
 // 0x40: Timestamp signature.
+int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp, std::string & error){
+    if (!key.meaningful(error)){
+        error += "Error: Bad PGP Key.\n";
+        return -1;
+    }
+
+    if (!timestamp.meaningful(error)){
+        error += "Error: Bad timestamp signature.\n";
+        return -1;
+    }
+
+    const Tag2::Ptr signature = std::static_pointer_cast <Tag2> (timestamp.get_packets()[0]);
+
+    // find key id in signature
+    const std::string keyid = signature -> get_keyid();
+    if (!keyid.size()){
+        error += "Error: No Key ID subpacket found.\n";
+        return -1;
+    }
+
+    // make sure the key ID on the signature matches the Key's ID
+    if (key.keyid() != keyid){
+        return false;
+    }
+
+    // calculate the digest of the data (treated as binary)
+    // and check the left 16 bits
+    const std::string digest = to_sign_40(signature);
+    if (digest.substr(0, 2) != signature -> get_left16()){
+        error += "Hash digest and given left 16 bits of hash do not match.\n";
+        return false;
+    }
+
+    // get signing key
+    const Key::Ptr signing_key = find_signing_key(key);
+    if (!signing_key){
+        error += "Error: No public signing keys found.\n";
+        return -1;
+    }
+
+    return pka_verify(digest, signing_key, signature, error);
+}
+
+int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp){
+    std::string error;
+    return verify_timestamp(key, timestamp, error);
+}
 
 // 0x50: Third-Party Confirmation signature.

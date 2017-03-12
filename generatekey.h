@@ -39,6 +39,10 @@ THE SOFTWARE.
 #include "sigcalc.h"
 #include "sign.h"
 
+// self-signs all signature packets whose Key ID is the given key's Key ID
+// not doing revocations for now
+bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, std::string & error);
+
 struct KeyGen{
     std::string passphrase;
 
@@ -53,7 +57,8 @@ struct KeyGen{
         std::string user    = "";
         std::string comment = "";
         std::string email   = "";
-        uint8_t sig         = Hash::SHA256;         // hash algorithm used to sign
+        uint8_t     sig     = Hash::SHA256;         // hash algorithm used to sign
+        time_t      expire  = 0;
     };
 
     // at least 1 User ID packet
@@ -66,6 +71,7 @@ struct KeyGen{
         uint8_t     sym     = Sym::AES256;          // symmetric key algorithm used by S2K
         uint8_t     hash    = Hash::SHA256;         // hash algorithm used by S2K
         uint8_t     sig     = Hash::SHA256;         // hash algorithm used to sign
+        time_t      expire  = 0;
     };
 
     // 0 or more subkeys
@@ -150,7 +156,8 @@ struct KeyGen{
     }
 };
 
-// Fills in provided empty keys
-bool generate_keys(const KeyGen & config, PGPPublicKey & public_key, PGPSecretKey & private_key, std::string & error);
+// generate a new private key
+// public key can be extracted from the private key
+bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & error);
 
 #endif

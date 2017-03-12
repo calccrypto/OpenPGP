@@ -51,11 +51,13 @@ THE SOFTWARE.
 #include "sign_cleartext_signature.h"
 #include "sign_detached_signature.h"
 #include "sign_standalone_signature.h"
+#include "sign_timestamp.h"
 #include "verify_cleartext_signature.h"
 #include "verify_detached_signature.h"
 #include "verify_key.h"
 #include "verify_message.h"
 #include "verify_revoke.h"
+#include "verify_timestamp.h"
 
 namespace module {
 
@@ -81,11 +83,13 @@ const std::vector <Module> ordered = {
     sign_cleartext_signature,
     sign_detached_signature,
     sign_standalone_signature,
+    sign_timestamp,
     verify_cleartext_signature,
     verify_detached_signature,
     verify_key,
     verify_message,
     verify_revoke,
+    verify_timestamp,
 };
 
 }

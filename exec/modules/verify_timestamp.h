@@ -1,5 +1,5 @@
 /*
-verify_detached_signature.h
+verify_timestamp.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,22 +23,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_VERIFY_DETACHED_SIGNATURE__
-#define __COMMAND_VERIFY_DETACHED_SIGNATURE__
+#ifndef __COMMAND_VERIFY_TIMESTAMP__
+#define __COMMAND_VERIFY_TIMESTAMP__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module verify_detached_signature(
+const Module verify_timestamp(
     // name
-    "verify-detached-signature",
+    "verify-timestamp",
 
     // positional arguments
     {
         "key",
-        "file",
         "signature",
     },
 
@@ -61,12 +60,6 @@ const Module verify_detached_signature(
             return -1;
         }
 
-        std::ifstream file(args.at("file"), std::ios::binary);
-        if (!file){
-            std::cerr << "Error: Data file \"" + args.at("file") + "\" not opened." << std::endl;
-            return -1;
-        }
-
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
             std::cerr << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
@@ -77,13 +70,13 @@ const Module verify_detached_signature(
         PGPDetachedSignature signature(sig);
 
         std::string error;
-        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, error);
+        const int verified = ::verify_timestamp(signer, signature, error);
 
         if (verified == -1){
             std::cerr << error << std::endl;
         }
         else{
-            std::cout << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            std::cout << "Timestamp signature in \"" << args.at("signature") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

@@ -400,6 +400,11 @@ Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & pas
 
 // 0x19: Primary Key Binding Signature
 Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee, std::string & error){
+    if (!args.valid(error)){
+        error += "Error: Bad arguments.\n";
+        return nullptr;
+    }
+
     // find signing subkey
     Tag5::Ptr subkey = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!subkey){
@@ -438,6 +443,11 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     }
 
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::PRIMARY_KEY_BINDING_SIGNATURE, signer_subkey -> get_pka(), args.hash, signer_subkey -> get_keyid());
+    if (!sig){
+        error += "Error: Signature packet generation failure.\n";
+        return nullptr;
+    }
+
     const std::string digest = to_sign_18(signee_primary, signer_subkey, sig);
     sig -> set_left16(digest.substr(0, 2));
     PKA::Values vals = pka_sign(digest, signer_subkey -> get_pka(), signer_subkey -> decrypt_secret_keys(args.passphrase), signer_subkey -> get_mpi(), args.hash, error);
@@ -453,4 +463,42 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
 Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee){
     std::string error;
     return sign_primary_key_binding(args, signee, error);
+}
+
+PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, std::string & error){
+    if (!args.valid(error)){
+        error += "Error: Bad arguments.\n";
+        return PGPDetachedSignature();
+    }
+    
+    Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
+    if (!signer){
+        error += "Error: Signing key not found.\n";
+        return PGPDetachedSignature();
+    }
+    
+    Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::TIMESTAMP_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
+    if (!sig){
+        error += "Error: Signature packet generation failure.\n";
+        return PGPDetachedSignature();
+    }
+
+    Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> ();
+    tag2sub2 -> set_time(time);
+    sig -> set_hashed_subpackets({tag2sub2});
+
+    const std::string digest = to_sign_40(sig);
+    sig -> set_left16(digest.substr(0, 2));
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash, error);
+    if (!vals.size()){
+        error += "Error: PKA Signing failed.\n";
+        return PGPDetachedSignature();
+    }
+    sig -> set_mpi(vals);
+    
+    PGPDetachedSignature timestamp;
+    timestamp.set_keys({std::make_pair("Version", "cc")});
+    timestamp.set_packets({sig});
+
+    return timestamp;
 }

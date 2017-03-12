@@ -133,11 +133,12 @@ const Module generate_keypair(
         subkey.sig        = Hash::NUMBER.at(args.at("--ssig"));
         config.subkeys.push_back(subkey);
 
-        PGPPublicKey pub;
         PGPSecretKey pri;
         std::string error;
 
-        if (::generate_keys(config, pub, pri, error)){
+        if (::generate_key(config, pri, error)){
+            const PGPPublicKey pub = pri.get_public();
+
             output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".public");
             output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".private");
         }

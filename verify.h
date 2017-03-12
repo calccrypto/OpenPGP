@@ -84,6 +84,8 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
 int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke);
 
 // 0x40: Timestamp signature.
+int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp, std::string & error);
+int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp);
 
 // 0x50: Third-Party Confirmation signature.
 
