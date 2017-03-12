@@ -93,9 +93,10 @@ struct RevArgs{
 // 0x30: Certification revocation signature
 
 // Returns revocation signature packet
-Tag2::Ptr revoke_sig                        (const RevArgs & args, const Tag5::Ptr & signer, const Key::Ptr & target, Tag2::Ptr & rev, std::string & error);
+Tag2::Ptr revoke_sig                        (const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig, std::string & error);
 Tag2::Ptr revoke_key_sig                    (const RevArgs & args, std::string & error);
 Tag2::Ptr revoke_subkey_sig                 (const RevArgs & args, const std::string & keyid, std::string & error);
+Tag2::Ptr revoke_uid_sig                    (const Tag5::Ptr & signer, const std::string & passphrase, const User::Ptr & user, Tag2::Ptr & sig, std::string & error);
 Tag2::Ptr revoke_uid_sig                    (const RevArgs & args, const std::string & ID, std::string & error);
 
 // creates revocation certificate to be used later

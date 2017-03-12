@@ -237,11 +237,14 @@ std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
 }
 
 std::string to_sign_40(const Tag2::Ptr & tag2){
-    // throw std::runtime_error("Error: Signature directly on a key has not implemented.");
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-
+    
+    if (tag2 -> get_type() != Signature_Type::TIMESTAMP_SIGNATURE){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+    
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
