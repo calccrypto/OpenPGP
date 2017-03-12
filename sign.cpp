@@ -207,9 +207,53 @@ PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert, std::string & error){
+Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig, std::string & error){
+    if (!signer_signing_key){
+        error += "Error: No signing key given.\n";
+        return nullptr;
+    }
+
+    if (!signee_primary_key){
+        error += "Error: No signee primary key given.\n";
+        return nullptr;
+    }
+
+    if (!signee_id){
+        error += "Error: No User Identifier given.\n";
+        return nullptr;
+    }
+
+    if (!sig){
+        error += "Error: No signature data given.\n";
+        return nullptr;
+    }
+
+    if (!Signature_Type::is_certification(sig -> get_type())){
+        error += "Error: Invalid Certification Value: " + integer(sig -> get_type()).str(16) + "\n";
+        return nullptr;
+    }
+
+    const std::string digest = to_sign_cert(sig -> get_type(), signee_primary_key, signee_id, sig);
+    sig -> set_left16(digest.substr(0, 2));
+    PKA::Values vals = pka_sign(digest, signer_signing_key -> get_pka(), signer_signing_key -> decrypt_secret_keys(passphrase), signer_signing_key -> get_mpi(), sig -> get_hash(), error);
+    if (!vals.size()){
+        error += "Error: PKA Signing failed.\n";
+        return nullptr;
+    }
+    sig -> set_mpi(vals);
+
+    return sig;
+}
+
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert, std::string & error){
     if (!args.valid(error)){
         error += "Error: Bad arguments.\n";
+        return PGPPublicKey();
+    }
+
+    // check if signer has already been revoked
+    if (check_revoked(args.pri, error)){
+        error += "Error: Signer key is revoked. Nothing done.\n";
         return PGPPublicKey();
     }
 
@@ -218,8 +262,20 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, c
         return PGPPublicKey();
     }
 
+    if (check_revoked(signee, error)){
+        error += "Error: Signer key is revoked. Nothing done.\n";
+        return PGPPublicKey();
+    }
+
     if (!Signature_Type::is_certification(cert)){
         error += "Error: Invalid Certification Value: " + integer(cert).str(16) + "\n";
+        return PGPPublicKey();
+    }
+
+    // get signer's signing packet
+    Tag5::Ptr signer_signing_key = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
+    if (!signer_signing_key){
+        error += "Error: Signing key not found.\n";
         return PGPPublicKey();
     }
 
@@ -230,32 +286,16 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, c
     // find matching user identifier
     PGP::Packets::size_type i = 1;
     do{
-        // take care of revocation signatures
-        if (signee_packets[i] -> get_tag() == Packet::SIGNATURE){
-            Tag2::Ptr tag2 = std::static_pointer_cast <Tag2> (signee_packets[i]);
-            // if the signature packet was signed by the signee
-            if (signee_primary_key -> get_keyid() == tag2 -> get_keyid()){
-                // if the packet contains a revocation signature
-                if (tag2 -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
-                    // if the revocation signature is for the primary key, error
-                    if (pka_verify(use_hash(tag2 -> get_hash(), addtrailer(overkey(signee_primary_key), tag2)), signee_primary_key, tag2) == 1){
-                        error += "Error: The signee primary key has already been revoked.\n";
-                        return signee;
-                    }
-                }
-                else{
-                    error += "Error: Random packet has been found.\n";
-                    return PGPPublicKey();
-                }
-            }
-        }
         // find matching user identifier
-        else if (Packet::is_user(signee_packets[i] -> get_tag())){
+        if (Packet::is_user(signee_packets[i] -> get_tag())){
             // if the packet is a User ID
             if (signee_packets[i] -> get_tag() == Packet::USER_ID){
-                signee_id = std::static_pointer_cast <Tag13> (signee_packets[i]);
-                i++; // go past User ID packet
-                break;
+                Tag13::Ptr tag13 = std::static_pointer_cast <Tag13> (signee_packets[i]);
+                if (tag13 -> get_contents().find(user) != std::string::npos){
+                    signee_id = tag13;
+                    i++; // go past User ID packet
+                    break;
+                }
             }
             // else if (signee_packets[i] -> get_tag() == Packet::USER_ATTRIBUTE){}
         }
@@ -268,31 +308,33 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, c
         return PGPPublicKey();
     }
 
-    // get signer's signing packet
-    Tag5::Ptr signer_signing_key = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
-    if (!signer_signing_key){
-        error += "Error: Signing key not found.\n";
-        return PGPPublicKey();
-    }
+    // search through signatures to see signer has already certified this user
+    while (i < signee_packets.size() && (signee_packets[i] -> get_tag() == Packet::SIGNATURE)){
+        const int rc = verify_key(signer_signing_key, signee_primary_key, signee_id, std::static_pointer_cast <Tag2> (signee_packets[i]), error);
+        if (rc == -1){
+            error += "Error: Signature verification failure.\n";
+            return PGPPublicKey();
+        }
+        else if (rc == 1){
+            std::cerr << "Warning: Primary Key and User ID have already been signed by " << args.pri << std::endl;
+            return signee;
+        }
 
-    // TODO check if signer has been revoked
-
-    // check if the signer has already signed this key
-    if (verify_key(args.pri, signee) == 1){
-        std::cerr << "Warning: Key " << signee << " has already been signed by this key " << args.pri << ". Nothing done. " << std::endl;
-        return signee;
+        i++;
     }
 
     // sign key
     Tag2::Ptr sig = create_sig_packet(args.version, cert, signer_signing_key -> get_pka(), args.hash, signer_signing_key -> get_keyid());
-    const std::string digest = to_sign_cert(cert, signee_primary_key, signee_id, sig);
-    sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer_signing_key -> get_pka(), signer_signing_key -> decrypt_secret_keys(args.passphrase), signer_signing_key -> get_mpi(), args.hash, error);
-    if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+    if (!sig){
+        error += "Error: Signature packet generation failure.\n";
         return PGPPublicKey();
     }
-    sig -> set_mpi(vals);
+
+    sig = sign_primary_key(signer_signing_key, args.passphrase, signee_primary_key, signee_id, sig, error);
+    if (!sig){
+        error += "Error: Signature calculation failure.\n";
+        return PGPPublicKey();
+    }
 
     // Create output key
     PGPPublicKey out(signee);
@@ -317,9 +359,9 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, c
     return out;
 }
 
-PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert){
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert){
     std::string error;
-    return sign_primary_key(args, user, signee, cert, error);
+    return sign_primary_key(args, signee, user, cert, error);
 }
 
 // 0x18: Subkey Binding Signature

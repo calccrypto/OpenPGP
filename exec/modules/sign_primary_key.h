@@ -47,7 +47,7 @@ const Module sign_primary_key(
         std::make_pair("-o", std::make_pair("output file",                                        "")),
         std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
         std::make_pair("-h", std::make_pair("hash algorithm",                                 "SHA1")),
-        std::make_pair("-u", std::make_pair("Signer's User Identifier",                           "")),
+        std::make_pair("-u", std::make_pair("user to certify",                                    "")),
     },
 
     // optional flags
@@ -81,7 +81,7 @@ const Module sign_primary_key(
                                 Hash::NUMBER.at(args.at("-h")));
 
         std::string error;
-        const PGPPublicKey key = ::sign_primary_key(signargs, args.at("-u"), PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
+        const PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), args.at("-u"), mpitoulong(hextompi(args.at("-c"))), error);
 
         if (key.meaningful()){
             output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));

@@ -1,6 +1,6 @@
 #include "verify.h"
 
-int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee){
+int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee, std::string & error){
     if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
         (pka == PKA::RSA_SIGN_ONLY)){
         // RFC 4880 sec 5.2.2
@@ -10,11 +10,13 @@ int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka
     else if (pka == PKA::DSA){
         return DSA_verify(digest, signee, signer);
     }
+
+    error += "Error: Bad PKA value.\n";
     return -1;
 }
 
-int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::Ptr & signee){
-    return pka_verify(digest, signee -> get_hash(), signee -> get_pka(), signer -> get_mpi(), signee -> get_mpi());
+int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::Ptr & signee, std::string & error){
+    return pka_verify(digest, signee -> get_hash(), signee -> get_pka(), signer -> get_mpi(), signee -> get_mpi(), error);
 }
 
 int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig, std::string & error){
@@ -57,7 +59,7 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
         return -1;
     }
 
-    return pka_verify(digest, signing_key, signature);
+    return pka_verify(digest, signing_key, signature, error);
 }
 
 int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig){
@@ -217,7 +219,7 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
 
                         if (verify){
                             // check if the key matches this signature
-                            verify = pka_verify(digest, signing_key, *(SP.begin()));
+                            verify = pka_verify(digest, signing_key, *(SP.begin()), error);
                         }
                     }
                 // }
@@ -312,7 +314,7 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
         return -1;
     }
 
-    return pka_verify(digest, signing_key, signature);
+    return pka_verify(digest, signing_key, signature, error);
 }
 
 int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature & message){
@@ -326,6 +328,16 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
+int verify_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error){
+    // if the signing key's ID doesn't match with the signature's ID
+    if ((signer_key -> get_keyid() != signee_signature -> get_keyid())){
+        return false;
+    }
+
+    // check if the signature is valid
+    return pka_verify(to_sign_cert(signee_signature -> get_type(), signee_key, signee_id, signee_signature), signer_key, signee_signature, error);
+}
+
 int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error){
     if (!signer.meaningful(error)){
         error += "Error: Bad Signer Key.\n";
@@ -369,17 +381,14 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
 
             const Tag2::Ptr signee_signature = std::static_pointer_cast <Tag2> (signee_packet);
 
-            // if the signing key's ID matches with the signature's ID
-            if ((signer_keyid == signee_signature -> get_keyid())){
-                // check if the signature is valid
-                const int rc = pka_verify(to_sign_cert(signee_signature -> get_type(), signee_key, signee_id, signee_signature), signer_key, signee_signature);
-                if (rc == 1){
-                    return true;
-                }
-                else if (rc == -1){
-                    error += "Error: pka_verify failure.\n";
-                    return -1;
-                }
+            // check if the signature is valid
+            const int rc = verify_key(signer_key, signee_key, signee_id, signee_signature, error);
+            if (rc == 1){
+                return true;
+            }
+            else if (rc == -1){
+                error += "Error: pka_verify failure.\n";
+                return -1;
             }
         }
     }
@@ -429,13 +438,13 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
 
     // if the revocation signature is revoking the primary key
     if (revoke_sig -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
-        return pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (key.get_packets()[0])), revoke_sig)), signing_key, revoke_sig);
+        return pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (key.get_packets()[0])), revoke_sig)), signing_key, revoke_sig, error);
     }
     else if (revoke_sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
         // search each packet for a subkey
         for(Packet::Ptr const & p : key.get_packets()){
             if (Packet::is_subkey(p -> get_tag())){
-                const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (p)), revoke_sig)), signing_key, revoke_sig);
+                const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (p)), revoke_sig)), signing_key, revoke_sig, error);
                 if (rc == 1){
                     return true;
                 }

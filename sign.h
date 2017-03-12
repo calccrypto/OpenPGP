@@ -45,6 +45,7 @@ THE SOFTWARE.
 #include "pgptime.h"
 #include "revoke.h"
 #include "sigcalc.h"
+#include "verify.h"
 
 // internal functions
 PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash, std::string & error);
@@ -108,8 +109,9 @@ PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert, std::string & error);
-PGPPublicKey sign_primary_key(const SignArgs & args, const std::string & user, const PGPPublicKey & signee, const uint8_t cert);
+Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig, std::string & error);
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert, std::string & error);
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert);
 
 // 0x18: Subkey Binding Signature
 Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);

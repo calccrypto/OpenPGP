@@ -43,10 +43,10 @@ THE SOFTWARE.
 #include "sigcalc.h"
 
 // pka_verify with variables only
-int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee);
+int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee, std::string & error);
 
 // pka_verify with packets
-int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::Ptr & signee);
+int pka_verify(const std::string & digest, const Key::Ptr & signer, const Tag2::Ptr & signee, std::string & error);
 // /////////////////
 
 // detached signatures (not a standalone signature)
@@ -67,6 +67,7 @@ int verify_cleartext_signature(const PGPKey & pub, const PGPCleartextSignature &
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
+int verify_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error);
 int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error);
 int verify_key(const PGPKey & signer, const PGPKey & signee);
 

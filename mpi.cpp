@@ -51,7 +51,7 @@ bool knuth_prime_test(const PGPMPI & a, int test){
 }
 
 void mpiswap(PGPMPI & a, PGPMPI & b){
-    swap(a, b);
+    std::swap(a, b);
 }
 
 PGPMPI mpigcd(const PGPMPI &a, const PGPMPI &b){
