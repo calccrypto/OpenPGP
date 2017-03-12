@@ -63,8 +63,8 @@ class Tag8 : public Packet{
         std::string compressed_data;
 
         // call external functions to do compression and decompression
-        std::string compress(const std::string & data);
-        std::string decompress(const std::string & data);
+        std::string compress(const std::string & data) const;
+        std::string decompress(const std::string & data) const;
 
         std::string show_title() const;
 

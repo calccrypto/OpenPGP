@@ -109,7 +109,7 @@ bool PGPMessage::SignedMessage(std::list <Token>::iterator it, std::list <Token>
     return false;
 }
 
-void PGPMessage::decompress() {
+bool PGPMessage::decompress(std::string & error) {
     comp.reset();
 
     // check if compressed
@@ -120,7 +120,17 @@ void PGPMessage::decompress() {
         comp -> set_partial(packets[0] -> get_partial());
         packets.clear();
         read(compressed);
+
+        type = MESSAGE;
+
+        // warn if decompressed packet sequence is not meaningful
+        if (!meaningful(error)){
+            error += "Error: Decompression failure.\n";
+            return false;
+        }
     }
+
+    return true;
 }
 
 PGPMessage::PGPMessage()
@@ -134,9 +144,12 @@ PGPMessage::PGPMessage(const PGP & copy)
     : PGP(copy),
       comp(nullptr)
 {
-    decompress();
-
     type = MESSAGE;
+
+    std::string error;
+    if (!decompress(error)){
+        throw std::runtime_error(error);
+    }
 }
 
 PGPMessage::PGPMessage(const PGPMessage & copy)
@@ -152,14 +165,16 @@ PGPMessage::PGPMessage(const std::string & data)
     : PGP(data),
       comp(nullptr)
 {
-    decompress();
-
     type = MESSAGE;
 
-    // warn if packet sequence is not meaningful
+    // warn if decompressed packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){
-        std::cerr << error << std::endl;
+        throw std::runtime_error(error);
+    }
+
+    if (!decompress(error)){
+        throw std::runtime_error(error);
     }
 }
 
@@ -167,14 +182,16 @@ PGPMessage::PGPMessage(std::istream & stream)
     : PGP(stream),
       comp(nullptr)
 {
-    decompress();
-
     type = MESSAGE;
 
     // warn if packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){
-        std::cerr << error << std::endl;
+        throw std::runtime_error(error);
+    }
+
+    if (!decompress(error)){
+        throw std::runtime_error(error);
     }
 }
 
@@ -182,7 +199,7 @@ PGPMessage::~PGPMessage(){}
 
 std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) const{
     std::stringstream out;
-    if (comp){ // if compression was used, add a header
+    if (comp){                  // if compression was used, add a header
         out << comp -> show(indents, indent_size);
     }
     out << PGP::show(indents + static_cast <bool> (comp), indent_size);
@@ -191,10 +208,10 @@ std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) c
 
 std::string PGPMessage::raw(const uint8_t header) const{
     std::string out = PGP::raw(header);
-    if (comp){ // if compression was used; compress data
+    if (comp){                  // if compression was used; compress data
         comp -> set_data(out);
         out = comp -> write(header);
-        comp -> set_data(""); // hold compressed data for as little time as possible
+        comp -> set_data("");   // hold compressed data for as little time as possible
     }
     return out;
 }

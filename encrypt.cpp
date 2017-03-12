@@ -25,14 +25,14 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
         tag11.set_literal(args.data);
 
         to_encrypt = tag11.write(2);
-    }
 
-    if (args.comp){
-        // Compressed Data Packet (Tag 8)
-        Tag8 tag8;
-        tag8.set_comp(args.comp);
-        tag8.set_data(to_encrypt); // put source data into compressed packet
-        to_encrypt = tag8.write(2);
+        if (args.comp){
+            // Compressed Data Packet (Tag 8)
+            Tag8 tag8;
+            tag8.set_comp(args.comp);
+            tag8.set_data(to_encrypt); // put source data into compressed packet
+            to_encrypt = tag8.write(2);
+        }
     }
 
     // generate prefix

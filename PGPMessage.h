@@ -97,7 +97,7 @@ class PGPMessage : public PGP {
 
         Tag8::Ptr comp;                                                                     // store tag8 data, if it exists
 
-        void decompress();                                                                  // decompress packet
+        bool decompress(std::string & error);                                               // decompress packet
 
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;

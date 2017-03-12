@@ -1,11 +1,11 @@
 #include "Tag8.h"
 #include "../PGPMessage.h"
 
-std::string Tag8::compress(const std::string & data){
+std::string Tag8::compress(const std::string & data) const{
     return PGP_compress(comp, data);
 }
 
-std::string Tag8::decompress(const std::string & data){
+std::string Tag8::decompress(const std::string & data) const{
     return PGP_decompress(comp, data);
 }
 
@@ -82,24 +82,20 @@ std::string Tag8::get_compressed_data() const{
 }
 
 std::string Tag8::get_data() const{
-    return PGP_decompress(comp, compressed_data);
+    return decompress(compressed_data);
 }
 
 void Tag8::set_comp(const uint8_t alg){
     // recompress data
-    if (compressed_data.size()){
-        const std::string data = get_data();// decompress data
-        comp = alg;                         // set new compression algorithm
-        set_data(data);                     // compress data with new algorithm
-    }
-
+    const std::string data = get_data();// decompress data
+    comp = alg;                         // set new compression algorithm
+    set_data(data);                     // compress data with new algorithm
     comp = alg;
-
     size = raw().size();
 }
 
 void Tag8::set_data(const std::string & data){
-    compressed_data = PGP_compress(comp, data);
+    compressed_data = compress(data);
     size = raw().size();
 }
 

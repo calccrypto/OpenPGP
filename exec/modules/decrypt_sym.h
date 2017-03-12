@@ -98,7 +98,7 @@ const Module decrypt_sym(
                     error += "Error: Verification failure.\n";
                 }
 
-                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by key " + hexlify(signer -> keyid()) + ".\n";
+                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-v") + "\" (" + hexlify(signer -> keyid()) + ").\n";
             }
 
             output(cleartext, args.at("-o"));
