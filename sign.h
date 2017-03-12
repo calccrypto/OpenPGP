@@ -58,7 +58,6 @@ Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uin
 struct SignArgs{
     PGPSecretKey pri;                       // private key
     std::string passphrase;                 // passphrase for a key on the private key
-    std::string id;                         // Key ID or User string of key to be used
     uint8_t version;                        // 3 or 4
     uint8_t hash;                           // hash algorithm to use for signing
 

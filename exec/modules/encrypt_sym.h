@@ -43,12 +43,13 @@ const Module encrypt_sym(
 
     // optional arguments
     {
-        std::make_pair("-o",     std::make_pair("output file",                                                   "")),
-        std::make_pair("-h",     std::make_pair("hash_algorithm", "SHA1")),
-        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",              "ZLIB")),
-        std::make_pair("-p",     std::make_pair("passphrase for signing key",                                    "")),
-        std::make_pair("--sign", std::make_pair("private key file",                                              "")),
-        std::make_pair("--sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),
+        std::make_pair("-o",        std::make_pair("output file",                                       "")),
+        std::make_pair("-c",        std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",  "ZLIB")),
+        std::make_pair("-p",        std::make_pair("passphrase for signing key",                        "")),
+        std::make_pair("--sym",     std::make_pair("symmetric encryption algorithm",              "AES256")),
+        std::make_pair("--khash",   std::make_pair("hash algorithm for key generation",             "SHA1")),
+        std::make_pair("--sign",    std::make_pair("private key file",                                  "")),
+        std::make_pair("--shash",   std::make_pair("hash algorithm for signing",                    "SHA1")),
     },
 
     // optional flags
@@ -66,11 +67,6 @@ const Module encrypt_sym(
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
-            return -1;
-        }
-
         if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
             std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
@@ -81,13 +77,18 @@ const Module encrypt_sym(
             return -1;
         }
 
+        if (Hash::NUMBER.find(args.at("--khash")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--khash") << std::endl;
+            return -1;
+        }
+
+        if (Hash::NUMBER.find(args.at("--shash")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
+            return -1;
+        }
+
         PGPSecretKey::Ptr signer = nullptr;
         if (args.at("--sign").size()){
-            if (args.find("p") == args.end()){ // need to check whether or not "-p" was used, not whether or not the passphrase is an empty string
-                std::cerr << "Error: Option \"-p\" and singer passphrase needed." << std::endl;
-                return -1;
-            }
-
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
                 std::cerr << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
@@ -103,14 +104,14 @@ const Module encrypt_sym(
         const EncryptArgs encryptargs(args.at("file"),
                                       std::string(std::istreambuf_iterator <char> (file), {}),
                                       Sym::NUMBER.at(args.at("--sym")),
-                                      Hash::NUMBER.at(args.at("-h")),
                                       Compression::NUMBER.at(args.at("-c")),
                                       flags.at("--mdc"),
                                       signer,
-                                      args.at("-p"));
+                                      args.at("-p"),
+                                      Hash::NUMBER.at(args.at("--khash")));
         std::string error;
 
-        output(::encrypt_sym(encryptargs, args.at("passphrase"), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        output(::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
 
         return 0;
     }

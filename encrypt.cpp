@@ -3,14 +3,29 @@
 Packet::Ptr encrypt_data(const EncryptArgs & args,
                          const std::string & session_key,
                          std::string & error){
-    // put data in Literal Data Packet
-    Tag11 tag11;
-    tag11.set_format('b');
-    tag11.set_filename(args.filename);
-    tag11.set_time(0);
-    tag11.set_literal(args.data);
+    std::string to_encrypt;
 
-    std::string to_encrypt = tag11.write(2);
+    // if message is to be signed
+    if (args.signer){
+        const SignArgs signargs(*(args.signer), args.passphrase, 4, args.hash);
+        PGPMessage signed_message = sign_binary(signargs, args.filename, args.data, args.comp, error);
+        if (!signed_message.meaningful(error)){
+            error += "Error: Signing failure.\n";
+            return nullptr;
+        }
+
+        to_encrypt = signed_message.raw();
+    }
+    else{
+        // put data in Literal Data Packet
+        Tag11 tag11;
+        tag11.set_format('b');
+        tag11.set_filename(args.filename);
+        tag11.set_time(0);
+        tag11.set_literal(args.data);
+
+        to_encrypt = tag11.write(2);
+    }
 
     if (args.comp){
         // Compressed Data Packet (Tag 8)
@@ -134,13 +149,14 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 
 PGPMessage encrypt_sym(const EncryptArgs & args,
                        const std::string & passphrase,
+                       const uint8_t key_hash,
                        std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     // String to Key specifier for decrypting session key
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
     s2k -> set_type(S2K::ITERATED_AND_SALTED_S2K);
-    s2k -> set_hash(args.hash);
+    s2k -> set_hash(key_hash);
     s2k -> set_salt(integer(BBS().rand(64), 2).str(256, 8));
     s2k -> set_count(96);
 

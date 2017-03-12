@@ -43,12 +43,12 @@ const Module encrypt_pka(
 
     // optional arguments
     {
-        std::make_pair("-o",     std::make_pair("output file",                                                   "")),
-        std::make_pair("-h",     std::make_pair("hash_algorithm", "SHA1")),
-        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",              "ZLIB")),
-        std::make_pair("-p",     std::make_pair("passphrase for signing key",                                    "")),
-        std::make_pair("--sign", std::make_pair("private key file",                                              "")),
-        std::make_pair("--sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),
+        std::make_pair("-o",     std::make_pair("output file",                                      "")),
+        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)", "ZLIB")),
+        std::make_pair("-p",     std::make_pair("passphrase for signing key",                       "")),
+        std::make_pair("--sign", std::make_pair("private key file",                                 "")),
+        std::make_pair("--sym",  std::make_pair("symmetric encryption algorithm",             "AES256")),
+        std::make_pair("-h",     std::make_pair("hash_algorithm for signing",                   "SHA1")),
     },
 
     // optional flags
@@ -73,7 +73,7 @@ const Module encrypt_pka(
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -89,11 +89,6 @@ const Module encrypt_pka(
 
         PGPSecretKey::Ptr signer = nullptr;
         if (args.at("--sign").size()){
-            if (args.find("p") == args.end()){ // need to check whether or not "-p" was used, not whether or not the passphrase is an empty string
-                std::cerr << "Error: Option \"-p\" and singer passphrase needed." << std::endl;
-                return -1;
-            }
-
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
                 std::cerr << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
@@ -111,11 +106,11 @@ const Module encrypt_pka(
         const EncryptArgs encryptargs(args.at("file"),
                                       std::string(std::istreambuf_iterator <char> (file), {}),
                                       Sym::NUMBER.at(args.at("--sym")),
-                                      Hash::NUMBER.at(args.at("-h")),
                                       Compression::NUMBER.at(args.at("-c")),
                                       flags.at("--mdc"),
                                       signer,
-                                      args.at("-p"));
+                                      args.at("-p"),
+                                      Hash::NUMBER.at(args.at("-h")));
         std::string error;
 
         const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);

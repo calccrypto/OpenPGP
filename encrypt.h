@@ -36,36 +36,35 @@ THE SOFTWARE.
 #include "PKA/PKAs.h"
 #include "PKCS1.h"
 #include "cfb.h"
-#include "mpi.h"
 #include "revoke.h"
-#include "sigcalc.h"
+#include "sign.h"
 
 struct EncryptArgs{
     std::string filename;
     std::string data;
     uint8_t sym;                    // symmetric key algorithm used to encrypt data
-    uint8_t hash;                   // hash used to generate key
     uint8_t comp;                   // compression algorithm for encrypted data
     bool mdc;
     PGPSecretKey::Ptr signer;       // for signing data
     std::string passphrase;         // only used when signer is present
+    uint8_t hash;                   // hash used to sign data
 
     EncryptArgs(const std::string & fname = "",
                 const std::string & dat = "",
                 const uint8_t sym_alg = Sym::AES256,
-                const uint8_t hash_alg = Hash::SHA1,
                 const uint8_t comp_alg = Compression::ZLIB,
                 const bool mod_detect = true,
                 const PGPSecretKey::Ptr & signing_key = nullptr,
-                const std::string & pass = "")
+                const std::string & pass = "",
+                const uint8_t hash_alg = Hash::SHA1)
         : filename(fname),
           data(dat),
           sym(sym_alg),
-          hash(hash_alg),
           comp(comp_alg),
           mdc(mod_detect),
           signer(signing_key),
-          passphrase(pass)
+          passphrase(pass),
+          hash(hash_alg)
     {}
 
     bool verify(std::string & error) const{
@@ -86,6 +85,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 // encrypt with passphrase
 PGPMessage encrypt_sym(const EncryptArgs & args,
                        const std::string & passphrase,
+                       const uint8_t key_hash,
                        std::string & error);
 
 #endif

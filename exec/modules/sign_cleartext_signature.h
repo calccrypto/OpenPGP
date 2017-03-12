@@ -69,7 +69,7 @@ const Module sign_cleartext_signature(
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 

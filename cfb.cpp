@@ -10,36 +10,34 @@ std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet,
         prefix = prefix.substr(0, BS + 2);    // reduce prefix
     }
 
-
-// 13.9. OpenPGP CFB Mode
-//
-//    OpenPGP does symmetric encryption using a variant of Cipher Feedback
-//    mode (CFB mode). This section describes the procedure it uses in
-//    detail. This mode is what is used for Symmetrically Encrypted Data
-//    Packets; the mechanism used for encrypting secret-key material is
-//    similar, and is described in the sections above.
-//
-//    In the description below, the value BS is the block size in octets of
-//    the cipher. Most ciphers have a block size of 8 octets. The AES and
-//    Twofish have a block size of 16 octets. Also note that the
-//    description below assumes that the IV and CFB arrays start with an
-//    index of 1 (unlike the C language, which assumes arrays start with a
-//    zero index).
-//
-//    OpenPGP CFB mode uses an initialization vector (IV) of all zeros, and
-//    prefixes the plaintext with BS+2 octets of random data, such that
-//    octets BS+1 and BS+2 match octets BS-1 and BS. It does a CFB
-//    resynchronization after encrypting those BS+2 octets.
-//
-//    Thus, for an algorithm that has a block size of 8 octets (64 bits),
-//    the IV is 10 octets long and ocets 7 and 8 of the IV are the same as
-//    octets 9 and 10. For an algorithm with a block size of 16 octets
-//    (128 bits), the IV is 18 octets long, and octets 17 and 18 replicate
-//    octets 15 and 16. Those extra two octets are an easy check for a
-//    correct key.
-//
-//    Step by step, here is the procedure:
-
+    // 13.9. OpenPGP CFB Mode
+    //
+    //    OpenPGP does symmetric encryption using a variant of Cipher Feedback
+    //    mode (CFB mode). This section describes the procedure it uses in
+    //    detail. This mode is what is used for Symmetrically Encrypted Data
+    //    Packets; the mechanism used for encrypting secret-key material is
+    //    similar, and is described in the sections above.
+    //
+    //    In the description below, the value BS is the block size in octets of
+    //    the cipher. Most ciphers have a block size of 8 octets. The AES and
+    //    Twofish have a block size of 16 octets. Also note that the
+    //    description below assumes that the IV and CFB arrays start with an
+    //    index of 1 (unlike the C language, which assumes arrays start with a
+    //    zero index).
+    //
+    //    OpenPGP CFB mode uses an initialization vector (IV) of all zeros, and
+    //    prefixes the plaintext with BS+2 octets of random data, such that
+    //    octets BS+1 and BS+2 match octets BS-1 and BS. It does a CFB
+    //    resynchronization after encrypting those BS+2 octets.
+    //
+    //    Thus, for an algorithm that has a block size of 8 octets (64 bits),
+    //    the IV is 10 octets long and ocets 7 and 8 of the IV are the same as
+    //    octets 9 and 10. For an algorithm with a block size of 16 octets
+    //    (128 bits), the IV is 18 octets long, and octets 17 and 18 replicate
+    //    octets 15 and 16. Those extra two octets are an easy check for a
+    //    correct key.
+    //
+    //    Step by step, here is the procedure:
 
     //    1. The feedback register (FR) is set to the IV, which is all zeros.
     std::string FR(BS, 0);
