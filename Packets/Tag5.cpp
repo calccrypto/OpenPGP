@@ -62,30 +62,58 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
         }
     }
 
-    out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
-           indent + tab + tab;
+    if (s2k_con){
+        out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
+               indent + tab + tab;
 
-    if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
-        (pka == PKA::RSA_ENCRYPT_ONLY)    ||
-        (pka == PKA::RSA_SIGN_ONLY)){
-        out += "RSA d, p, q, u";
-    }
-    else if (pka == PKA::ELGAMAL){
-        out += "ELGAMAL x";
-    }
-    else if (pka == PKA::DSA){
-        out += "DSA x";
-    }
-    out += " + ";
+        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
+            (pka == PKA::RSA_SIGN_ONLY)){
+            out += "RSA d, p, q, u";
+        }
+        else if (pka == PKA::ELGAMAL){
+            out += "ELGAMAL x";
+        }
+        else if (pka == PKA::DSA){
+            out += "DSA x";
+        }
+        out += " + ";
 
-    if (s2k_con == 254){
-        out += "SHA1 hash";
+        if (s2k_con == 254){
+            out += "SHA1 hash";
+        }
+        else{
+            out += "2 Octet Checksum";
+        }
+
+        out += ": " + hexlify(secret);
     }
     else{
-        out += "2 Octet Checksum";
+        std::string::size_type pos = 0;
+
+        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
+            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
+            (pka == PKA::RSA_SIGN_ONLY)){
+            out += indent + tab + "RSA d: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            out += indent + tab + "RSA p: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            out += indent + tab + "RSA q: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            out += indent + tab + "RSA u: " + mpitohex(read_MPI(secret, pos)) + "\n";
+        }
+        else if (pka == PKA::ELGAMAL){
+            out += indent + tab + "ELGAMAL x: " + mpitohex(read_MPI(secret, pos)) + "\n";
+        }
+        else if (pka == PKA::DSA){
+            out += indent + tab + "DSA x: " + mpitohex(read_MPI(secret, pos)) + "\n";
+        }
+
+        if (s2k_con == 254){
+            out += indent + tab + "SHA1 hash: " + hexlify(secret.substr(pos, 20)) + "\n";
+        }
+        else{
+            out += indent + tab + "2 Octet Checksum : " + hexlify(secret.substr(pos, 2)) + "\n";
+        }
     }
 
-    out += ": " + hexlify(secret);
     return out;
 }
 

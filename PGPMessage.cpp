@@ -167,7 +167,7 @@ PGPMessage::PGPMessage(const std::string & data)
 {
     type = MESSAGE;
 
-    // warn if decompressed packet sequence is not meaningful
+    // throw if decompressed packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){
         throw std::runtime_error(error);
@@ -184,7 +184,7 @@ PGPMessage::PGPMessage(std::istream & stream)
 {
     type = MESSAGE;
 
-    // warn if packet sequence is not meaningful
+    // throw if packet sequence is not meaningful
     std::string error;
     if (!meaningful(error)){
         throw std::runtime_error(error);
