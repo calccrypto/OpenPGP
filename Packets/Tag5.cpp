@@ -332,7 +332,7 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
 
     // calculate and check checksum
     if(s2k_con == 254){
-        calculated_checksum = use_hash(s2k -> get_hash(), keys); // SHA1
+        calculated_checksum = use_hash(Hash::SHA1, keys);
     }
     else{
         uint16_t sum = 0;
