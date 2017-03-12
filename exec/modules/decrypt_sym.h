@@ -44,7 +44,7 @@ const Module decrypt_sym(
     // optional arguments
     {
         std::make_pair("-o", std::make_pair("output file", "")),
-        std::make_pair("-v", std::make_pair("signing public key",  "")),
+        std::make_pair("-s", std::make_pair("signing public key",  "")),
     },
 
     // optional flags
@@ -61,15 +61,15 @@ const Module decrypt_sym(
             return -1;
         }
 
-        PGPPublicKey::Ptr signer = nullptr;
-        if (args.at("-v").size()){
-            std::ifstream v(args.at("-v"), std::ios::binary);
-            if (!v){
-                std::cerr << "Error: File \"" + args.at("-v") + "\" not opened." << std::endl;
+        PGPKey::Ptr signer = nullptr;
+        if (args.at("-s").size()){
+            std::ifstream s(args.at("-s"), std::ios::binary);
+            if (!s){
+                std::cerr << "Error: File \"" + args.at("-s") + "\" not opened." << std::endl;
                 return -1;
             }
 
-            signer = std::make_shared <PGPPublicKey> (v);
+            signer = std::make_shared <PGPPublicKey> (s);
 
             if (!signer -> meaningful()){
                 std::cerr << "Error: Bad signing key.\n";
@@ -98,7 +98,7 @@ const Module decrypt_sym(
                     error += "Error: Verification failure.\n";
                 }
 
-                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-v") + "\" (" + hexlify(signer -> keyid()) + ").\n";
+                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
             }
 
             output(cleartext, args.at("-o"));

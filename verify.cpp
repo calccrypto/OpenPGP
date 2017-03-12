@@ -240,14 +240,9 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     else if (message.match(PGPMessage::COMPRESSEDMESSAGE, error)){
         // Compressed Message :- Compressed Data Packet.
 
-        // only one compressed data packet
-        std::string compressed = message.get_packets()[0] -> raw();
-
         // decompress data
-        Tag8 tag8(compressed);
-        compressed = tag8.get_data();
-
-        return verify_message(key, PGPMessage(compressed), error);
+        // assume only one compressed data packet
+        return verify_message(key, PGPMessage(std::static_pointer_cast <Tag8> (message.get_packets()[0]) -> get_data()), error);
     }
     else if (message.match(PGPMessage::LITERALMESSAGE, error)){
         // Literal Message :- Literal Data Packet.
