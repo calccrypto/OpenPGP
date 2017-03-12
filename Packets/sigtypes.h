@@ -154,7 +154,7 @@ namespace Signature_Type{
     const uint8_t TIMESTAMP_SIGNATURE                                               = 0X40;
     const uint8_t THIRD_PARTY_CONFIRMATION_SIGNATURE                                = 0X50;
 
-    // NOT PART OF STANDARD
+    // not part of standard
     const uint8_t UNKNOWN                                                           = 0XFF;
 
     const std::map <uint8_t, std::string> NAME = {

@@ -1,5 +1,5 @@
 /*
-revoke_uid.h
+revoke_primary_key.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_REVOKE_UID__
-#define __COMMAND_REVOKE_UID__
+#ifndef __COMMAND_REVOKE_PRIMARY_KEY__
+#define __COMMAND_REVOKE_PRIMARY_KEY__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module revoke_uid(
+const Module revoke_primary_key(
     // name
-    "revoke-uid",
+    "revoke-primary-key",
 
     // positional arguments
     {
@@ -43,11 +43,10 @@ const Module revoke_uid(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",         "")),
-        std::make_pair("-c", std::make_pair("code (0-3)",         "0")),
-        std::make_pair("-r", std::make_pair("reason",              "")),
-        std::make_pair("-h", std::make_pair("hash algorithm",  "SHA1")),
-        std::make_pair("-u", std::make_pair("user ID to match",    "")),
+        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-c", std::make_pair("code (0-3)",        "0")),
+        std::make_pair("-r", std::make_pair("reason",             "")),
+        std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
     },
 
     // optional flags
@@ -60,7 +59,7 @@ const Module revoke_uid(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            std::cerr << "Error: Could not open private key file \"" + args.at("private-key") + "\"" << std::endl;
             return -1;
         }
 
@@ -86,20 +85,14 @@ const Module revoke_uid(
                               Hash::NUMBER.at(args.at("-h")));
         std::string error;
 
-        const PGPPublicKey revoked = ::revoke_uid(revargs, args.at("-u"), error);
+        const PGPPublicKey revoked = ::revoke_key(revargs, error);
 
-        #ifdef GPG_COMPATIBLE
         if (revoked.meaningful()){
-        #endif
             output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
-        #ifdef GPG_COMPATIBLE
         }
         else{
-        #endif
             std::cerr << error << std::endl;
-        #ifdef GPG_COMPATIBLE
         }
-        #endif
 
         return 0;
     }

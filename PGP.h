@@ -110,17 +110,18 @@ class PGP{
         virtual std::string write(const Armored armor = DEFAULT, const uint8_t header = 0) const;
 
         // Accessors
-        bool get_armored()   const;
-        Type_t get_type()             const;
-        const Armor_Keys & get_keys() const;
-        const Packets & get_packets() const;            // get copy of all packet pointers (for looping through packets)
-        Packets get_packets_clone()   const;            // clone all packets (for modifying packets)
+        bool get_armored()              const;
+        Type_t get_type()               const;
+        const Armor_Keys & get_keys()   const;
+        const Packets & get_packets()   const;          // get copy of all packet pointers (for looping through packets)
+        Packets get_packets_clone()     const;          // clone all packets (for modifying packets)
 
         // Modifiers
         void set_armored(const bool a);
         void set_type(const Type_t header);
         void set_keys(const Armor_Keys & keys);
-        void set_packets(const Packets & p);            // clones the input packets
+        void set_packets(const Packets & p);            // copies the the input packet pointers
+        void set_packets_clone(const Packets & p);      // clones the input packets
 
         PGP & operator=(const PGP & copy);              // get deep copy object
         virtual Ptr clone() const;                      // get deep copy pointer

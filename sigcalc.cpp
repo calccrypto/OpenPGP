@@ -174,7 +174,6 @@ std::string to_sign_cert(const uint8_t cert, const Key::Ptr & key, const User::P
     return digest;
 }
 
-
 std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
@@ -205,7 +204,11 @@ std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-
+    
+    if (tag2 -> get_type() != Signature_Type::KEY_REVOCATION_SIGNATURE){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+    
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
@@ -213,12 +216,24 @@ std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-
+    
+    if (tag2 -> get_type() != Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+    
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
 std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
-    return to_sign_10(key, id, tag2);
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
+    if (tag2 -> get_type() != Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
 std::string to_sign_40(const Tag2::Ptr & /*tag2*/){

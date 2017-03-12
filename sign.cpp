@@ -218,6 +218,11 @@ Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string
         return nullptr;
     }
 
+    if (!Packet::is_primary_key(signee_primary_key -> get_tag())){
+        error += "Error: signee key is not a primary key.\n";
+        return nullptr;
+    }
+
     if (!signee_id){
         error += "Error: No User Identifier given.\n";
         return nullptr;
@@ -365,7 +370,7 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
 }
 
 // 0x18: Subkey Binding Signature
-Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash, const uint8_t version, std::string & error){
+Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig, std::string & error){
     if (!primary){
         error += "Error: No primary key.\n";
         return nullptr;
@@ -376,10 +381,14 @@ Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const st
         return nullptr;
     }
 
-    Tag2::Ptr sig = create_sig_packet(version, Signature_Type::SUBKEY_BINDING_SIGNATURE, primary -> get_pka(), hash, primary -> get_keyid());
+    if (!sig){
+        error += "Error: No signature.\n";
+        return nullptr;
+    }
+
     const std::string digest = to_sign_18(primary, sub, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, primary -> get_pka(), primary -> decrypt_secret_keys(passphrase), primary -> get_mpi(), hash, error);
+    PKA::Values vals = pka_sign(digest, primary -> get_pka(), primary -> decrypt_secret_keys(passphrase), primary -> get_mpi(), sig -> get_hash(), error);
     if (!vals.size()){
         error += "Error: PKA Signing failed.\n";
         return nullptr;

@@ -24,7 +24,7 @@ std::string Tag2Sub27::show(const uint8_t indents, const uint8_t indent_size) co
     for(char const octet : flags){
         for(uint8_t bit = 0; bit < 8; bit++){
             if (octet & (1 << bit)){
-                out += "\n" + indent + tab + "Flag - " + Key_Flags::NAME.at(1 << bit) + " (key " + std::to_string(1 << bit) + ")";
+                out += "\n" + indent + tab + "Flag - " + Key_Flags::NAME.at(1 << bit) + " (key 0x" + makehex(1 << bit, 2) + ")";
             }
         }
     }

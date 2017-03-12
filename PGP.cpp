@@ -460,6 +460,10 @@ void PGP::set_keys(const PGP::Armor_Keys & k){
 
 void PGP::set_packets(const PGP::Packets & p){
     packets = p;
+}
+
+void PGP::set_packets_clone(const PGP::Packets & p){
+    packets = p;
     for(Packet::Ptr & p : packets){
         p = p -> clone();
     }

@@ -1,5 +1,5 @@
 /*
-generate_revoke_cert.h
+revoke_subkey.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_GENERATE_REVOKE_CERT__
-#define __COMMAND_GENERATE_REVOKE_CERT__
+#ifndef __COMMAND_REVOKE_SUBKEY__
+#define __COMMAND_REVOKE_SUBKEY__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module generate_revoke_cert(
+const Module revoke_subkey(
     // name
-    "generate-revoke-cert",
+    "revoke-subkey",
 
     // positional arguments
     {
@@ -47,12 +47,12 @@ const Module generate_revoke_cert(
         std::make_pair("-c", std::make_pair("code (0-3)",        "0")),
         std::make_pair("-r", std::make_pair("reason",             "")),
         std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
+        std::make_pair("-k", std::make_pair("subkey ID to match", "")),
     },
 
     // optional flags
     {
         std::make_pair("-a", "armored"),
-        std::make_pair("-s", "revoke subkey instead of primary key"),
     },
 
     // function to run
@@ -60,7 +60,7 @@ const Module generate_revoke_cert(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            std::cerr << "Error: Could not open private key file \"" + args.at("private-key") + "\"" << std::endl;
             return -1;
         }
 
@@ -76,18 +76,20 @@ const Module generate_revoke_cert(
             return -1;
         }
 
-        const RevArgs revargs(PGPSecretKey(key),
+        const PGPSecretKey pri(key);
+        const RevArgs revargs(pri,
                               args.at("passphrase"),
+                              pri,
                               static_cast <uint8_t> (code),
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
         std::string error;
 
-        const PGPRevocationCertificate cert = revoke_key_cert(revargs, flags.at("-s")?Signature_Type::SUBKEY_REVOCATION_SIGNATURE:Signature_Type::KEY_REVOCATION_SIGNATURE, error);
+        const PGPPublicKey revoked = ::revoke_subkey(revargs, args.at("-k"), error);
 
-        if (cert.meaningful(error)){
-            output(cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        if (revoked.meaningful()){
+            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

@@ -114,7 +114,7 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
 PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert);
 
 // 0x18: Subkey Binding Signature
-Tag2::Ptr sign_subkey(const Tag5::Ptr & primary, const Tag7::Ptr & sub, const std::string & passphrase, const uint8_t hash = Hash::SHA1, const uint8_t version = 4);
+Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig, std::string & error);
 
 // 0x19: Primary Key Binding Signature
 Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee, std::string & error);
