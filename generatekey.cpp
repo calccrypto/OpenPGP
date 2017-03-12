@@ -147,10 +147,22 @@ bool generate_keys(const KeyGen & key, PGPPublicKey & public_key, PGPSecretKey &
             // calculate the key from the passphrase
             std::string session_key = s2k3 -> run(key.passphrase, Sym::KEY_LENGTH.at(skey.sym) >> 3);
 
+            // add checksum to secret
+            secret += use_hash(Hash::SHA1, secret);
+
             // encrypt private key value
             subkey -> set_s2k(s2k3);
             subkey -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(skey.sym)))));
             secret = use_normal_CFB_encrypt(skey.sym, secret + use_hash(Hash::SHA1, secret), session_key, subkey -> get_IV());
+        }
+        else{
+            // add checksum to secret
+            uint16_t checksum = 0;
+            for(uint8_t const c : secret){
+                checksum += c;
+            }
+
+            secret += unhexlify(makehex(checksum, 4));
         }
 
         subkey -> set_secret(secret);
