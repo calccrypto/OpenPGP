@@ -79,22 +79,19 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
     const std::string tab(indent_size, ' ');
 
     std::string out = indent + tab + "Version: " + std::to_string(version) + " - " + ((version < 4)?"Old":"New") + "\n" +
-                      indent + tab + "Creation Time: " + show_time(time);
+                      indent + tab + "Creation Time: " + show_time(time) + " " + std::to_string(time) + "\n";
 
     if (version < 4){
-        out += "\n" +
-               indent + tab + "Expiration Time (Days): " + std::to_string(expire);
+        out += indent + tab + "Expiration Time (Days): " + std::to_string(expire) + "\n";
         if (!expire){
-            out += " (Never)";
+            out += " (Never)\n";
         }
-        out += "\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+        out += indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
                indent + tab + "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)\n" +
                indent + tab + "RSA e: " + mpitohex(mpi[1]);
     }
     else if (version == 4){
-        out += "\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
+        out += indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
         if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
             (pka == PKA::RSA_ENCRYPT_ONLY)    ||
             (pka == PKA::RSA_SIGN_ONLY)){

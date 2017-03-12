@@ -11,18 +11,22 @@ PKA::Values RSA_keygen(const uint32_t & bits){
         q = nextprime(q);
     }
 
-    PGPMPI n = p * q;
-    PGPMPI tot = (p - 1) * (q - 1);
+    // required by RFC 4880 sec 5.5.3
+    if (p > q){
+        mpiswap(p, q);
+    }
+
+    const PGPMPI n = p * q;
+    const PGPMPI tot = (p - 1) * (q - 1);
+
     PGPMPI e = bintompi(BBS().rand(bits));
     e += ((e & 1) == 0);
-    PGPMPI gcd = 0;
-    while (gcd != 1){
+    while (mpigcd(tot, e) != 1){
         e += 2;
-        gcd = mpigcd(tot, e);
     }
-    PGPMPI d;
-    d = invert(e, tot);
-    return {n, e, d}; // split this into {n, e} and {d}
+
+    // split this into {n, e} and {d, p, q, u}
+    return {n, e, invert(e, tot), p, q, invert(p, q)};
 }
 
 PGPMPI RSA_encrypt(const PGPMPI & data, const PKA::Values & pub){

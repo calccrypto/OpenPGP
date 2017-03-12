@@ -50,6 +50,7 @@ unsigned int bitsize(const PGPMPI & a);
 
 bool knuth_prime_test(const PGPMPI & a, int test);
 
+void mpiswap(PGPMPI & a,PGPMPI & b);
 PGPMPI mpigcd(const PGPMPI & a, const PGPMPI & b);
 PGPMPI nextprime(const PGPMPI & a);
 PGPMPI powm(const PGPMPI & base, const PGPMPI & exp, const PGPMPI & mod);

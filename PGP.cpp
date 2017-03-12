@@ -407,7 +407,7 @@ std::string PGP::raw(const uint8_t header) const{
 }
 
 std::string PGP::write(const PGP::Armored armor, const uint8_t header) const{
-    const std::string packet_string = raw(header);                  // raw PGP data = binary, no ASCII headers
+    const std::string packet_string = raw(header);  // raw PGP data = binary, no ASCII headers
 
     if ((armor == Armored::NO)                   || // no armor
         ((armor == Armored::DEFAULT) && !armored)){ // or use stored value, and stored value is no

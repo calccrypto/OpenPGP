@@ -94,23 +94,29 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
         if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
             (pka == PKA::RSA_ENCRYPT_ONLY)    ||
             (pka == PKA::RSA_SIGN_ONLY)){
-            out += indent + tab + "RSA d: " + mpitohex(read_MPI(secret, pos)) + "\n";
-            out += indent + tab + "RSA p: " + mpitohex(read_MPI(secret, pos)) + "\n";
-            out += indent + tab + "RSA q: " + mpitohex(read_MPI(secret, pos)) + "\n";
-            out += indent + tab + "RSA u: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            const PGPMPI d = read_MPI(secret, pos);
+            const PGPMPI p = read_MPI(secret, pos);
+            const PGPMPI q = read_MPI(secret, pos);
+            const PGPMPI u = read_MPI(secret, pos);
+            out += indent + tab + "RSA d: (" + std::to_string(bitsize(d)) + ") bits: " + mpitohex(d) + "\n";
+            out += indent + tab + "RSA p: (" + std::to_string(bitsize(p)) + ") bits: " + mpitohex(p) + "\n";
+            out += indent + tab + "RSA q: (" + std::to_string(bitsize(q)) + ") bits: " + mpitohex(q) + "\n";
+            out += indent + tab + "RSA u: (" + std::to_string(bitsize(u)) + ") bits: " + mpitohex(u) + "\n";
         }
         else if (pka == PKA::ELGAMAL){
-            out += indent + tab + "ELGAMAL x: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            const PGPMPI x = read_MPI(secret, pos);
+            out += indent + tab + "ELGAMAL x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
         }
         else if (pka == PKA::DSA){
-            out += indent + tab + "DSA x: " + mpitohex(read_MPI(secret, pos)) + "\n";
+            const PGPMPI x = read_MPI(secret, pos);
+            out += indent + tab + "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
         }
 
         if (s2k_con == 254){
-            out += indent + tab + "SHA1 hash: " + hexlify(secret.substr(pos, 20)) + "\n";
+            out += indent + tab + "SHA1 hash: " + hexlify(secret.substr(pos, 20));
         }
         else{
-            out += indent + tab + "2 Octet Checksum : " + hexlify(secret.substr(pos, 2)) + "\n";
+            out += indent + tab + "2 Octet Checksum : " + hexlify(secret.substr(pos, 2));
         }
     }
 

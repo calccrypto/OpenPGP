@@ -138,8 +138,8 @@ const Module generate_keypair(
         std::string error;
 
         if (::generate_keys(config, pub, pri, error)){
-            output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".public");
-            output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o") + ".private");
+            output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".public");
+            output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".private");
         }
         else{
             std::cerr << error << std::endl;

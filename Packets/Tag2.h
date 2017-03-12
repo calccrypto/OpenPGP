@@ -91,7 +91,7 @@ class Tag2 : public Packet{
         uint8_t get_type() const;
         uint8_t get_pka()  const;
         uint8_t get_hash() const;
-        std::string get_left16() const;                         // whatever is stored, not calculated
+        std::string get_left16() const;                       // whatever is stored, not calculated
         PKA::Values get_mpi() const;
 
         // special functions: works differently depending on version
@@ -118,7 +118,7 @@ class Tag2 : public Packet{
         void set_hashed_subpackets(const Subpackets & h);
         void set_unhashed_subpackets(const Subpackets & u);
 
-        std::string find_subpacket(const uint8_t sub) const;    // find a subpacket within Signature Packet; returns raw data of last subpacket found
+        std::string find_subpacket(const uint8_t sub) const;  // find a subpacket within Signature Packet; returns raw data of last subpacket found
 
         Packet::Ptr clone() const;
         Tag2 & operator=(const Tag2 & copy);

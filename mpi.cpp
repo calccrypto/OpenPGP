@@ -50,21 +50,28 @@ bool knuth_prime_test(const PGPMPI & a, int test){
     return mpz_probab_prime_p(a.get_mpz_t(), test);
 }
 
+void mpiswap(PGPMPI & a, PGPMPI & b){
+    swap(a, b);
+}
+
 PGPMPI mpigcd(const PGPMPI &a, const PGPMPI &b){
     PGPMPI ret;
     mpz_gcd(ret.get_mpz_t(), a.get_mpz_t(), b.get_mpz_t());
     return ret;
 }
+
 PGPMPI nextprime(const PGPMPI &a){
     PGPMPI ret;
     mpz_nextprime(ret.get_mpz_t(), a.get_mpz_t());
     return ret;
 }
+
 PGPMPI powm(const PGPMPI &base, const PGPMPI &exp, const PGPMPI &mod){
     PGPMPI ret;
     mpz_powm_sec(ret.get_mpz_t(), base.get_mpz_t(), exp.get_mpz_t(), mod.get_mpz_t());
     return ret;
 }
+
 PGPMPI invert(const PGPMPI &a, const PGPMPI &b){
     PGPMPI ret;
     mpz_invert(ret.get_mpz_t(), a.get_mpz_t(), b.get_mpz_t());
