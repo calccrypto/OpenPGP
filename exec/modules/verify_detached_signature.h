@@ -57,19 +57,19 @@ const Module verify_detached_signature(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Public key file '" + args.at("key") + "' not opened." << std::endl;
+            std::cerr << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: Data file '" + args.at("file") + "' not opened." << std::endl;
+            std::cerr << "Error: Data file \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
-            std::cerr << "Error: Signature file '" + args.at("signature") + "' not opened." << std::endl;
+            std::cerr << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -83,7 +83,7 @@ const Module verify_detached_signature(
             std::cerr << error << std::endl;
         }
         else{
-            std::cout << "File '" << args.at("file") << "' was" << ((verified == 1)?"":" not") << " signed by key " << signer << "." << std::endl;
+            std::cout << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

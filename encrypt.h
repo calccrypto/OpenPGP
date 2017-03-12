@@ -31,12 +31,12 @@ THE SOFTWARE.
 
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
-#include "PKA/PKAs.h"
-#include "cfb.h"
-#include "mpi.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
+#include "PKA/PKAs.h"
 #include "PKCS1.h"
+#include "cfb.h"
+#include "mpi.h"
 #include "revoke.h"
 #include "sigcalc.h"
 
@@ -67,6 +67,10 @@ struct EncryptArgs{
           signer(signing_key),
           passphrase(pass)
     {}
+
+    bool verify(std::string & error) const{
+        return false;
+    }
 };
 
 // encrypt data once session key has been generated

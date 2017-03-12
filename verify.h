@@ -31,15 +31,15 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "Packets/packets.h"
-#include "PKA/PKAs.h"
-#include "mpi.h"
-#include "PGPKey.h"
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
+#include "PGPKey.h"
 #include "PGPMessage.h"
 #include "PGPRevocationCertificate.h"
+#include "PKA/PKAs.h"
 #include "PKCS1.h"
+#include "Packets/packets.h"
+#include "mpi.h"
 #include "sigcalc.h"
 
 // pka_verify with variables only

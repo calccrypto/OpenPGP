@@ -60,7 +60,7 @@ const Module revoke_subkey(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File '" + args.at("private-key") + "' not opened." << std::endl;
+            std::cerr << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 

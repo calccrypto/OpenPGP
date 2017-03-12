@@ -60,7 +60,7 @@ const Module revoke_key(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Could not open private key file '" + args.at("private-key") + "'" << std::endl;
+            std::cerr << "Error: Could not open private key file \"" + args.at("private-key") + "\"" << std::endl;
             return -1;
         }
 

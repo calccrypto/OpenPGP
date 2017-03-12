@@ -57,7 +57,7 @@ const Module decrypt_sym(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream msg(args.at("file"), std::ios::binary);
         if (!msg){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -65,7 +65,7 @@ const Module decrypt_sym(
         if (args.at("-v").size()){
             std::ifstream v(args.at("-v"), std::ios::binary);
             if (!v){
-                std::cerr << "Error: File '" + args.at("-v") + "' not opened." << std::endl;
+                std::cerr << "Error: File \"" + args.at("-v") + "\" not opened." << std::endl;
                 return -1;
             }
 

@@ -333,12 +333,12 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
 // 0x13: Positive certification of a User ID and Public-Key packet.
 int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error){
     if (!signer.meaningful(error)){
-        error += "Error: Bad PGP Key.\n";
+        error += "Error: Bad Signer Key.\n";
         return -1;
     }
 
     if (!signee.meaningful(error)){
-        error += "Error: Bad PGP Key.\n";
+        error += "Error: Bad Signee Key.\n";
         return -1;
     }
 
@@ -372,20 +372,18 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
         else if (signee_packet -> get_tag() == Packet::SIGNATURE){
             // TODO differentiate between certification and revocation
 
-            const uint8_t signee_key_version = signee_key -> get_version();
-            const std::string signee_key_str = overkey(signee_key);
-            const std::string signee_user_str = certification(signee_key_version, signee_id);
             const Tag2::Ptr signee_signature = std::static_pointer_cast <Tag2> (signee_packet);
-
-            // add hash contexts together and append trailer data
-            const std::string signee_with_trailer = addtrailer(signee_key_str + signee_user_str, signee_signature);
-            const std::string hash = use_hash(signee_signature -> get_hash(), signee_with_trailer);
 
             // if the signing key's ID matches with the signature's ID
             if ((signer_keyid == signee_signature -> get_keyid())){
                 // check if the signature is valid
-                if (pka_verify(hash, signer_key, signee_signature)){
+                const int rc = pka_verify(to_sign_cert(signee_signature -> get_type(), signee_key, signee_id, signee_signature), signer_key, signee_signature);
+                if (rc == 1){
                     return true;
+                }
+                else if (rc == -1){
+                    error += "Error: pka_verify failure.\n";
+                    return -1;
                 }
             }
         }
@@ -443,12 +441,12 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
         for(Packet::Ptr const & p : key.get_packets()){
             if (Packet::is_subkey(p -> get_tag())){
                 const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (p)), revoke_sig)), signing_key, revoke_sig);
-                if (rc == -1){
+                if (rc == 1){
+                    return true;
+                }
+                else if (rc == -1){
                     error += "Error: pka_verify failure.\n";
                     return -1;
-                }
-                else if (rc == 1){
-                    return true;
                 }
             }
         }

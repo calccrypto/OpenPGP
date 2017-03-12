@@ -56,7 +56,7 @@ std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size)
     if (s2k_con > 253){
         out += indent + tab + "String-to-Key Usage Conventions: " + std::to_string(s2k_con) + "\n" +
                indent + tab + "Symmetric Key Algorithm: " + Sym::NAME.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
-               tab + s2k -> show(indents) + "\n";
+               s2k -> show(indents, indent_size) + "\n";
         if (s2k -> get_type()){
             out += indent + tab + "IV: " + hexlify(IV) + "\n";
         }
@@ -344,7 +344,7 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     }
 
     if (calculated_checksum != given_checksum){
-        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match. ");
+        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match.");
     }
 
     // extract MPI values

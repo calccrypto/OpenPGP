@@ -58,13 +58,13 @@ const Module decrypt_pka(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File '" + args.at("private-key") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream msg(args.at("file"), std::ios::binary);
         if (!msg){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -72,7 +72,7 @@ const Module decrypt_pka(
         if (args.at("-v").size()){
             std::ifstream v(args.at("-v"), std::ios::binary);
             if (!v){
-                std::cerr << "Error: File '" + args.at("-v") + "' not opened." << std::endl;
+                std::cerr << "Error: File \"" + args.at("-v") + "\" not opened." << std::endl;
                 return -1;
             }
 

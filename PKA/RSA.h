@@ -35,14 +35,14 @@ THE SOFTWARE.
 // Generate RSA key values
 PKA::Values RSA_keygen(const uint32_t & bits = 2048);
 
-// Encrypt some data
+// Encrypt data
 PGPMPI RSA_encrypt(const PGPMPI & data, const PKA::Values & pub);
 PGPMPI RSA_encrypt(const std::string & data, const PKA::Values & pub);
 
-// Decrypt some data
+// Decrypt data
 PGPMPI RSA_decrypt(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub);
 
-// Sign some data
+// Sign data
 PGPMPI RSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub);
 PGPMPI RSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub);
 

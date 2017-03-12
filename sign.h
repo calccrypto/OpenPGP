@@ -31,24 +31,24 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "common/includes.h"
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
-#include "Packets/packets.h"
-#include "PKA/PKAs.h"
-#include "decrypt.h"
-#include "mpi.h"
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
+#include "PKA/PKAs.h"
+#include "Packets/packets.h"
+#include "common/includes.h"
+#include "decrypt.h"
+#include "mpi.h"
 #include "pgptime.h"
 #include "revoke.h"
 #include "sigcalc.h"
 
 // internal functions
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pub, const PKA::Values & pri, const uint8_t hash, std::string & error);
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pub, const PKA::Values & pri, const uint8_t hash);
+PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash, std::string & error);
+PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash);
 
 // Generates a new signature packet without PKA values
 Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uint8_t pka, const uint8_t hash, const std::string & keyid);

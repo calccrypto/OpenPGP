@@ -55,7 +55,7 @@ const Module list(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream f(args.at("key"), std::ios::binary);
         if (!f){
-            std::cerr << "Error: File '" << args.at("key") << "' not opened." << std::endl;
+            std::cerr << "Error: File \"" << args.at("key") << "\" not opened." << std::endl;
             return -1;
         }
 

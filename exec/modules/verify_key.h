@@ -56,13 +56,13 @@ const Module verify_key(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream signer(args.at("signer-key"), std::ios::binary);
         if (!signer){
-            std::cerr << "Error: Key file '" + args.at("signer-key") + "' not opened." << std::endl;
+            std::cerr << "Error: Key file \"" + args.at("signer-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream signee(args.at("signee-key"), std::ios::binary);
         if (!signee){
-            std::cerr << "Error: Signing Key file '" + args.at("signee-key") + "' not opened." << std::endl;
+            std::cerr << "Error: Signing Key file \"" + args.at("signee-key") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -75,7 +75,7 @@ const Module verify_key(
             std::cerr << error << std::endl;
         }
         else{
-            std::cout << "Key in '" << args.at("signee-key") << "' was" << ((verified == 1)?"":" not") << " signed by key " << signerkey << "." << std::endl;
+            std::cout << "Key in \"" << args.at("signee-key") << "\" (" << signeekey << ") was" << ((verified == 1)?"":" not") << " signed by key in \"" << args.at("signer-key") << "\" (" << signerkey << ")." << std::endl;
         }
 
         return 0;

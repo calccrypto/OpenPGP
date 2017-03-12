@@ -79,7 +79,7 @@ Tag2::Ptr revoke_key_sig(const RevArgs & args, const uint8_t type, std::string &
         digest = to_sign_20(signer, sig);
     }
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> get_mpi(), signer -> decrypt_secret_keys(args.passphrase), sig -> get_hash());
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), sig -> get_hash(), error);
     if (!vals.size()){
         error += "Error: PKA Signing failed.\n";
         return nullptr;
@@ -137,7 +137,7 @@ Tag2::Ptr revoke_uid_sig(const RevArgs & args, const std::string & ID, std::stri
     // set signature data
     std::string digest = to_sign_30(signer, user, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> get_mpi(), signer -> decrypt_secret_keys(args.passphrase), sig -> get_hash());
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), sig -> get_hash(), error);
     if (!vals.size()){
         error += "Error: PKA Signing failed.\n";
         return nullptr;

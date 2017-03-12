@@ -56,13 +56,13 @@ const Module verify_cleartext_signature(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File '" + args.at("key") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
-            std::cerr << "Error: File '" + args.at("signature") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("signature") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -76,7 +76,7 @@ const Module verify_cleartext_signature(
             std::cerr << error << std::endl;
         }
         else{
-            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by " << signer << "." << std::endl;
+            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

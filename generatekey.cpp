@@ -1,387 +1,183 @@
 #include "generatekey.h"
 
-void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const std::string & user, const std::string & comment, const std::string & email, const unsigned int DSA_bits, const unsigned int ElGamal_bits){
+bool generate_keys(const KeyGen & key, PGPPublicKey & public_key, PGPSecretKey & private_key, std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
-    if (((DSA_bits < 512)) || (ElGamal_bits < 512)){
-        throw std::runtime_error("Error: Keysize must be at least 512 bits.");
+    if (!key.valid(error)){
+        error += "Error: Bad key generation configuration.\n";
+        return false;
     }
 
-    if (DSA_bits & 1023){
-        throw std::runtime_error("Error: DSA keysize should be 1024, 2048, or 3072 bits.");
-    }
-
-    // generate pka values
-    PKA::Values dsa_pub = new_DSA_public(DSA_bits, (DSA_bits == 1024)?160:256);
-    PKA::Values dsa_pri = DSA_keygen(dsa_pub);
-
-    PKA::Values ElGamal_pub = ElGamal_keygen(ElGamal_bits);
-    PGPMPI ElGamal_pri = ElGamal_pub[3];
-    ElGamal_pub.pop_back();
+    // collection of packets to be put into final key
+    PGP::Packets packets;
 
     // Key creation time
     const time_t time = now();
 
-    // hash algorithm for signature
-    const uint8_t hash_alg = (DSA_bits == 1024)?Hash::SHA1:Hash::SHA256;
+    // generate Primary Key, User ID, and Signature packets
+
+    // generate public key values for primary key
+    PKA::Values pub;
+    PKA::Values pri;
+    if (!generate_keypair(key.pka, generate_pka_params(key.pka, key.bits), pri, pub)){
+        error += "Error: Could not generate primary key pair.\n";
+        return false;
+    }
+
+    // convert the secret values into a string
+    std::string secret;
+    for(PGPMPI const & mpi : pri){
+        secret += write_MPI(mpi);
+    }
 
     // Secret Key Packet
     Tag5::Ptr sec = std::make_shared <Tag5> ();
     sec -> set_version(4);
     sec -> set_time(time);
-    sec -> set_pka(PKA::DSA);
-    sec -> set_mpi(dsa_pub);
-    sec -> set_s2k_con(254);
-    sec -> set_sym(Sym::AES256);
+    sec -> set_pka(key.pka);
+    sec -> set_mpi(pub);
+    sec -> set_s2k_con(0); // no passphrase up to here
 
-    // Secret Key Packet S2K
-    S2K3::Ptr sec_s2k3 = std::make_shared <S2K3> ();
-    sec_s2k3 -> set_hash(Hash::SHA1);
-    sec_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
-    sec_s2k3 -> set_count(96);
+    // encrypt secret only if there is a passphrase
+    if (key.passphrase.size()){
+        sec -> set_s2k_con(254);
+        sec -> set_sym(key.sym);
 
-    // calculate the key from the passphrase
-    std::string key = sec_s2k3 -> run(passphrase, Sym::KEY_LENGTH.at(sec -> get_sym()) >> 3);
+        // Secret Key Packet S2K
+        S2K3::Ptr s2k3 = std::make_shared <S2K3> ();
+        s2k3 -> set_hash(key.hash);
+        s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64))));
+        s2k3 -> set_count(96);
 
-    // encrypt private key value
-    sec -> set_s2k(sec_s2k3);
-    sec -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(sec -> get_sym())))));
-    std::string secret = write_MPI(dsa_pri[0]);
-    sec -> set_secret(use_normal_CFB_encrypt(Sym::AES256, secret + use_hash(Hash::SHA1, secret), key, sec -> get_IV()));
+        // calculate the key from the passphrase
+        const std::string session_key = s2k3 -> run(key.passphrase, Sym::KEY_LENGTH.at(key.sym) >> 3);
 
-    std::string keyid = sec -> get_keyid();
+        // encrypt private key value
+        sec -> set_s2k(s2k3);
+        sec -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(key.sym)))));
+        secret = use_normal_CFB_encrypt(key.sym, secret + use_hash(Hash::SHA1, secret), session_key, sec -> get_IV());
+    }
 
-    Tag13::Ptr uid = std::make_shared <Tag13> ();
-    uid -> set_contents(user, comment, email);
+    sec -> set_secret(secret);
 
-    Tag2::Ptr sig = std::make_shared <Tag2> ();
-    sig -> set_version(4);
-    sig -> set_type(Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
-    sig -> set_pka(PKA::DSA);
-    sig -> set_hash(hash_alg);
-    Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> (); tag2sub2 -> set_time(time);
-    sig -> set_hashed_subpackets({tag2sub2});
-    Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> (); tag2sub16 -> set_keyid(keyid);
-    sig -> set_unhashed_subpackets({tag2sub16});
-    std::string sig_hash = to_sign_13(sec, uid, sig);
-    sig -> set_left16(sig_hash.substr(0, 2));
-    sig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
+    // first packet is primary key
+    packets.push_back(sec);
 
-    // Secret Subkey Packet
-    Tag7::Ptr ssb = std::make_shared <Tag7> ();
-    ssb -> set_version(4);
-    ssb -> set_time(time);
-    ssb -> set_pka(PKA::ELGAMAL);
-    ssb -> set_mpi(ElGamal_pub);
-    ssb -> set_s2k_con(254);
-    ssb -> set_sym(Sym::AES256);
+    // get ID of entire key
+    const std::string keyid = sec -> get_keyid();
 
-    // Secret Subkey S2K
-    S2K3::Ptr ssb_s2k3 = std::make_shared <S2K3> ();
-    ssb_s2k3 -> set_hash(Hash::SHA1);
-    ssb_s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
-    ssb_s2k3 -> set_count(96);
-    key = ssb_s2k3 -> run(passphrase, Sym::KEY_LENGTH.at(ssb -> get_sym()) >> 3);
+    // generate User ID and Signature packets
+    for(KeyGen::UserID const & id : key.uids){
+        // User ID
+        Tag13::Ptr uid = std::make_shared <Tag13> ();
+        uid -> set_contents(id.user, id.comment, id.email);
 
-    ssb -> set_s2k(ssb_s2k3);
-    ssb -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(ssb -> get_sym())))));
-    secret = write_MPI(ElGamal_pri);
-    ssb -> set_secret(use_normal_CFB_encrypt(Sym::AES256, secret + use_hash(Hash::SHA1, secret), key, ssb -> get_IV()));
+        packets.push_back(uid);
 
-    // Subkey Binding Signature
-    Tag2::Ptr subsig = std::make_shared <Tag2> ();
-    subsig -> set_version(4);
-    subsig -> set_type(Signature_Type::SUBKEY_BINDING_SIGNATURE);
-    subsig -> set_pka(PKA::DSA);
-    subsig -> set_hash(hash_alg);
-    subsig -> set_hashed_subpackets({tag2sub2});
-    subsig -> set_unhashed_subpackets({tag2sub16});
-    sig_hash = to_sign_18(sec, ssb, subsig);
-    subsig -> set_left16(sig_hash.substr(0, 2));
-    subsig -> set_mpi(DSA_sign(sig_hash, dsa_pri, dsa_pub));
+        Tag2::Ptr sig = std::make_shared <Tag2> ();
+        sig -> set_version(4);
+        sig -> set_type(Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
+        sig -> set_pka(key.pka);
+        sig -> set_hash(id.sig);
 
+        // set creation time
+        Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> ();
+        tag2sub2 -> set_time(time);
+        sig -> set_hashed_subpackets({tag2sub2});
+
+        // set issuer
+        Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> ();
+        tag2sub16 -> set_keyid(keyid);
+        sig -> set_unhashed_subpackets({tag2sub16});
+
+        // sign Primary Key and User ID
+        const std::string sig_hash = to_sign_13(sec, uid, sig);
+        sig -> set_left16(sig_hash.substr(0, 2));
+        sig -> set_mpi(pka_sign(sig_hash, key.pka, pri, pub, id.sig, error));
+
+        packets.push_back(sig);
+    }
+
+    // generate 0 or more subkeys and associated signature packet
+    for(KeyGen::SubkeyGen const & skey : key.subkeys){
+        PKA::Values subkey_pub;
+        PKA::Values subkey_pri;
+        if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits), subkey_pri, subkey_pub)){
+            error += "Error: Could not generate subkey pair.\n";
+            return false;
+        }
+
+        // convert the secret values into a string
+        secret = "";
+        for(PGPMPI const & mpi : subkey_pri){
+            secret += write_MPI(mpi);
+        }
+
+        // Secret Subkey Packet
+        Tag7::Ptr subkey = std::make_shared <Tag7> ();
+        subkey -> set_version(4);
+        subkey -> set_time(time);
+        subkey -> set_pka(skey.pka);
+        subkey -> set_mpi(subkey_pub);
+        subkey -> set_s2k_con(0); // no passphrase up to here
+
+        // encrypt secret only if there is a passphrase
+        if (key.passphrase.size()){
+            subkey -> set_s2k_con(254);
+            subkey -> set_sym(skey.sym);
+
+            // Secret Subkey S2K
+            S2K3::Ptr s2k3 = std::make_shared <S2K3> ();
+            s2k3 -> set_hash(skey.hash);
+            s2k3 -> set_salt(unhexlify(bintohex(BBS().rand(64)))); // new salt value
+            s2k3 -> set_count(96);
+
+            // calculate the key from the passphrase
+            std::string session_key = s2k3 -> run(key.passphrase, Sym::KEY_LENGTH.at(skey.sym) >> 3);
+
+            // encrypt private key value
+            subkey -> set_s2k(s2k3);
+            subkey -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(skey.sym)))));
+            secret = use_normal_CFB_encrypt(skey.sym, secret + use_hash(Hash::SHA1, secret), session_key, subkey -> get_IV());
+        }
+
+        subkey -> set_secret(secret);
+
+        packets.push_back(subkey);
+
+        // Subkey Binding Signature
+        Tag2::Ptr subsig = std::make_shared <Tag2> ();
+        subsig -> set_version(4);
+        subsig -> set_type(Signature_Type::SUBKEY_BINDING_SIGNATURE);
+        subsig -> set_pka(key.pka);
+        subsig -> set_hash(skey.sig);
+
+        // set creation time
+        Tag2Sub2::Ptr tag2sub2 = std::make_shared <Tag2Sub2> ();
+        tag2sub2 -> set_time(time);
+        subsig -> set_hashed_subpackets({tag2sub2});
+
+        // set issuer
+        Tag2Sub16::Ptr tag2sub16 = std::make_shared <Tag2Sub16> ();
+        tag2sub16 -> set_keyid(keyid);
+        subsig -> set_unhashed_subpackets({tag2sub16});
+
+        // sign
+        const std::string sig_hash = to_sign_18(sec, subkey, subsig);
+        subsig -> set_left16(sig_hash.substr(0, 2));
+        subsig -> set_mpi(pka_sign(sig_hash, key.pka, pri, pub, skey.sig, error));
+
+        packets.push_back(subsig);
+    }
+
+    // put everything into a private key
     private_key.set_type(PGP::PRIVATE_KEY_BLOCK);
-    private_key.set_keys({std::make_pair("Version", "CC")});
-    private_key.set_packets({sec, uid, sig, ssb, subsig});
-
+    private_key.set_keys({std::make_pair("Version", "cc")});
+    private_key.set_packets(packets);
     private_key.set_armored(true);
 
+    // extract public key from private key
     public_key = private_key.get_public();
-}
 
-void add_key_values(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase, const bool new_keyid, const unsigned int pri_key_size, const unsigned int subkey_size){
-    BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
-
-    // at most only 1 of each pair is expected
-    PKA::Values pub_key;
-    PKA::Values pri_key;
-    PKA::Values pub_subkey;
-    PKA::Values pri_subkey;
-
-    Tag5::Ptr prikey    = nullptr;
-    Tag7::Ptr prisubkey = nullptr;
-    Tag13::Ptr uid      = nullptr;
-    Tag17::Ptr attr     = nullptr;;
-    bool id = false;                    // default UID came first
-    bool key = false;                   // default main key came first
-
-    PGP::Packets packets = private_key.get_packets();
-    for(Packet::Ptr & p : packets){
-        if (p -> get_tag() == 5){       // Secret Key Packet
-            prikey = std::static_pointer_cast <Tag5> (p);
-
-            // Generate keypair
-            PKA::Params params;
-
-            if ((prikey -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
-                (prikey -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
-                params = {pri_key_size};
-            }
-            else if (prikey -> get_pka() == PKA::ELGAMAL){
-                if (prikey -> get_version() == 3){
-                    throw std::runtime_error("Error: Only RSA is defined for version 3 key packets.");
-                }
-                params = {pri_key_size};
-            }
-            else if (prikey -> get_pka() == PKA::DSA){
-                if (prikey -> get_version() == 3){
-                    throw std::runtime_error("Error: Only RSA is defined for version 3 key packets.");
-                }
-                params = {pri_key_size};
-                if (pri_key_size == 1024){
-                    params.push_back(160);
-                }
-                else if (pri_key_size == 2048){
-                    params.push_back(256);
-                }
-                else if (pri_key_size == 3072){
-                    params.push_back(256);
-                }
-                else{
-                    throw std::runtime_error("Error: Undefined bit size for DSA: " + std::to_string(pri_key_size));
-                }
-            }
-            else{
-                throw std::runtime_error("Error: Undefined or reserved PKA number: " + std::to_string(prikey -> get_pka()));
-            }
-
-            generate_key_pair(prikey -> get_pka(), params, pub_key, pri_key);
-
-            // put public key into packet
-            prikey -> set_mpi(pub_key);
-
-            // put private key into packet
-            std::string secret = "";
-            for(PGPMPI const & i : pri_key){
-                secret += write_MPI(i);
-            }
-
-            std::string check;
-            if (prikey -> get_s2k_con() == 254){
-                check = use_hash(Hash::SHA1, secret);
-            }
-            else{
-                uint16_t sum = 0;
-                for(char & c : secret){
-                    sum += static_cast <uint8_t> (c);
-                }
-                check = unhexlify(makehex(sum, 4));
-            }
-            std::string k = prikey -> get_s2k() -> run(passphrase, 16);
-            prikey -> set_secret(use_normal_CFB_encrypt(prikey -> get_sym(), secret + check, k, prikey -> get_IV()));
-            p = prikey;
-
-            key = false;
-        }
-        else if (p -> get_tag() == Packet::USER_ID){
-            uid = std::static_pointer_cast <Tag13> (p);
-            id = false;
-        }
-        else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
-            attr = std::static_pointer_cast <Tag17> (p);
-            id = true;
-        }
-        else if (p -> get_tag() == Packet::SIGNATURE){
-            Tag2::Ptr sig = std::static_pointer_cast <Tag2> (p);
-
-            // check that there is a key to be signed
-            if (!prikey){
-                throw std::runtime_error("Error: No primary key to be signed.");
-            }
-
-            // the correct key id
-            std::string keyid = prikey -> get_keyid();
-
-            // if fill in the new key id
-            if (new_keyid){
-                // find Key ID subpacket in the hashed subpackets
-                Tag2::Subpackets subpackets = sig -> get_hashed_subpackets();
-                for(Tag2Subpacket::Ptr & s : subpackets){
-                    if (s -> get_type() == Tag2Subpacket::ISSUER){
-                        Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
-                        t -> set_keyid(keyid);
-                        s = t;
-                        break;
-                    }
-                }
-
-                // find Key ID subpacket in the unhashed subpackets
-                bool found = false;
-                subpackets = sig -> get_unhashed_subpackets();
-                for(Tag2Subpacket::Ptr & s : subpackets){
-                    if (s -> get_type() == Tag2Subpacket::ISSUER){
-                        Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
-                        t -> set_keyid(keyid);
-                        s = t;
-                        found = true;
-                        break;
-                    }
-                }
-
-                // add a new unhashed subpacket
-                if (!found){
-                    Tag2Sub16::Ptr t = std::make_shared <Tag2Sub16> ();
-                    t -> set_keyid(keyid);
-                    subpackets.push_back(t);
-                }
-
-                // put new subpackets back, since they are clone of the original
-                sig -> set_unhashed_subpackets(subpackets);
-            }
-
-            std::string sig_hash;
-            if (!key){  // if the key is a primary key
-                // get the user id/attribute packet
-                User::Ptr i = uid;
-                if (id){
-                    i = attr;
-                }
-                if (!i){
-                    throw std::runtime_error("Error: No User ID or Attribute packet to be signed.");
-                }
-
-                // really not necessary since they all call to_sign_10
-                if (sig -> get_type() == Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
-                    sig_hash = to_sign_10(prikey, i, sig);
-                }
-                else if (sig -> get_type() == Signature_Type::PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
-                    sig_hash = to_sign_11(prikey, i, sig);
-                }
-                else if (sig -> get_type() == Signature_Type::CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
-                    sig_hash = to_sign_12(prikey, i, sig);
-                }
-                else if (sig -> get_type() == Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
-                    sig_hash = to_sign_13(prikey, i, sig);
-                }
-            }
-            else{       // if the key is a subkey
-                if (!prisubkey){
-                    throw std::runtime_error("Error: No primary key to be signed.");
-                }
-                if (sig -> get_type() == Signature_Type::SUBKEY_BINDING_SIGNATURE){
-                    sig_hash = to_sign_18(prikey, prisubkey, sig);
-                }
-                else if (sig -> get_type() == Signature_Type::PRIMARY_KEY_BINDING_SIGNATURE){
-                    sig_hash = to_sign_19(prikey, prisubkey, sig);
-                }
-            }
-
-            // fill in signature fields
-            sig -> set_left16(sig_hash.substr(0, 2));
-            sig -> set_mpi(pka_sign(sig_hash, sig -> get_pka(), (key?pub_subkey:pub_key), (key?pri_subkey:pri_key), Hash::SHA1));
-            p = sig;
-        }
-        else if (p -> get_tag() == Packet::SECRET_SUBKEY){
-            prisubkey = std::static_pointer_cast <Tag7> (p);
-
-            // Generate keypair
-            PKA::Params params;
-
-            if ((prisubkey -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
-                (prisubkey -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
-                params = {subkey_size};
-            }
-            else if (prisubkey -> get_pka() == PKA::ELGAMAL){
-                if (prisubkey -> get_version() == 3){
-                    throw std::runtime_error("Error: Only RSA is defined for version 3 key packets.");
-                }
-                params = {subkey_size};
-            }
-            else if (prisubkey -> get_pka() == PKA::DSA){
-                if (prisubkey -> get_version() == 3){
-                    throw std::runtime_error("Error: Only RSA is defined for version 3 key packets.");
-                }
-                params = {subkey_size};
-                if (subkey_size == 1024){
-                    params.push_back(160);
-                }
-                else if (subkey_size == 2048){
-                    params.push_back(256);
-                }
-                else if (subkey_size == 3072){
-                    params.push_back(256);
-                }
-                else{
-                    throw std::runtime_error("Error: Undefined bit size for DSA: " + std::to_string(subkey_size));
-                }
-            }
-            else{
-                throw std::runtime_error("Error: Undefined or reserved PKA number: " + std::to_string(prisubkey -> get_pka()));
-            }
-
-            generate_key_pair(prisubkey -> get_pka(), params, pub_subkey, pri_subkey);
-
-            // put publc key into packet
-            prisubkey -> set_mpi(pub_subkey);
-
-            // put private key into packet
-            std::string secret = "";
-            for(PGPMPI const & i : pri_subkey){
-                secret += write_MPI(i);
-            }
-
-            std::string check;
-            if (prisubkey -> get_s2k_con() == 254){
-                check = use_hash(Hash::SHA1, secret);
-            }
-            else{
-                uint16_t sum = 0;
-                for(char const & c : secret){
-                    sum += static_cast <uint8_t> (c);
-                }
-                check = unhexlify(makehex(sum, 4));
-            }
-            std::string k = prisubkey -> get_s2k() -> run(passphrase, 16);
-            prisubkey -> set_secret(use_normal_CFB_encrypt(prisubkey -> get_sym(), secret + check, k, prisubkey -> get_IV()));
-            p = prisubkey;
-
-            key = true;
-        }
-        else{
-            throw std::runtime_error("Error: Packet Tag " + std::to_string(p -> get_tag()) + " does not belong in a private key.");
-            break;
-        }
-    }
-
-    // write changes to public key
-    PGP::Packets pub_packets;
-    for(Packet::Ptr const & p : packets){
-        if (p -> get_tag() == Packet::SECRET_KEY){
-            pub_packets.push_back(std::static_pointer_cast <Tag6> (p));
-        }
-        else if (p -> get_tag() == Packet::SECRET_SUBKEY){
-            pub_packets.push_back(std::static_pointer_cast <Tag14> (p));
-        }
-        else if ((p -> get_tag() == Packet::SIGNATURE)  ||
-                 (p -> get_tag() == Packet::USER_ID)    ||
-                 (p -> get_tag() == Packet::USER_ATTRIBUTE)){
-            pub_packets.push_back(p -> clone());
-        }
-        else{
-            throw std::runtime_error("Error: Packet Tag " + std::to_string(p -> get_tag()) + " doesn't belong here.");
-            break;
-        }
-    }
-
-    public_key.set_packets(pub_packets);
+    return true;
 }

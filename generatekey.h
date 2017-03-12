@@ -26,27 +26,131 @@ THE SOFTWARE.
 #ifndef __GENERATE_KEY__
 #define __GENERATE_KEY__
 
+#include <string>
+#include <vector>
+
 #include "Hashes/Hashes.h"
+#include "PGPKey.h"
 #include "PKA/PKAs.h"
+#include "PKCS1.h"
 #include "cfb.h"
 #include "mpi.h"
-#include "PGPKey.h"
 #include "pgptime.h"
-#include "PKCS1.h"
-#include "sign.h"
 #include "sigcalc.h"
+#include "sign.h"
+
+struct KeyGen{
+    std::string passphrase;
+
+    // Primary Key
+    uint8_t     pka         = PKA::RSA_ENCRYPT_OR_SIGN;
+    std::size_t bits        = 2048;
+    uint8_t     sym         = Sym::AES256;          // symmetric key algorithm used by S2K
+    uint8_t     hash        = Hash::SHA256;         // hash algorithm used by S2K
+
+    // User ID (s)
+    struct UserID{
+        std::string user    = "";
+        std::string comment = "";
+        std::string email   = "";
+        uint8_t sig         = Hash::SHA256;         // hash algorithm used to sign
+    };
+
+    // at least 1 User ID packet
+    std::vector <UserID> uids;
+
+    // Subkey(s)
+    struct SubkeyGen{
+        uint8_t     pka     = PKA::RSA_ENCRYPT_OR_SIGN;
+        std::size_t bits    = 2048;
+        uint8_t     sym     = Sym::AES256;          // symmetric key algorithm used by S2K
+        uint8_t     hash    = Hash::SHA256;         // hash algorithm used by S2K
+        uint8_t     sig     = Hash::SHA256;         // hash algorithm used to sign
+    };
+
+    // 0 or more subkeys
+    std::vector <SubkeyGen> subkeys;
+
+    bool valid(std::string & error) const{
+        if (PKA::NAME.find(pka) == PKA::NAME.end()){
+            error += "Error: Bad Public Key Algorithm: " + std::to_string(pka);
+            return false;
+        }
+
+        if (!(PKA::can_sign(pka))){
+            error += "Error: Primary key should be able to sign.\n";
+            return false;
+        }
+
+        if (bits < 512){
+            error += "Error: Primary PKA key size should be at least 512 bits.\n";
+            return false;
+        }
+
+        if (Sym::NAME.find(sym) == Sym::NAME.end()){
+            error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
+            return false;
+        }
+
+        if (Hash::NAME.find(hash) == Hash::NAME.end()){
+            error += "Error: Bad Hash Algorithm: " + std::to_string(hash);
+            return false;
+        }
+
+        if (!uids.size()){
+            error += "Error: Need at least 1 User ID.\n";
+            return false;
+        }
+
+        for(UserID const & uid : uids){
+            if (Hash::NAME.find(uid.sig) == Hash::NAME.end()){
+                error += "Error: Bad Hash Algorithm: " + std::to_string(uid.sig);
+                return false;
+            }
+
+            if ((pka == PKA::DSA) && (Hash::LENGTH.at(uid.sig) < 256)){
+                error += "Error: DSA needs a 256 bit or larger hash.\n";
+                return false;
+            }
+        }
+
+        for(SubkeyGen const & subkey : subkeys){
+            if (PKA::NAME.find(subkey.pka) == PKA::NAME.end()){
+                error += "Error: Bad Public Key Algorithm: " + std::to_string(subkey.pka);
+                return false;
+            }
+
+            if (subkey.bits < 512){
+                error += "Error: Subkey PKA key size should be at least 512 bits.\n";
+                return false;
+            }
+
+            if (Sym::NAME.find(subkey.sym) == Sym::NAME.end()){
+                error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(subkey.sym);
+                return false;
+            }
+
+            if (Hash::NAME.find(subkey.hash) == Hash::NAME.end()){
+                error += "Error: Bad Hash Algorithm: " + std::to_string(subkey.hash);
+                return false;
+            }
+
+            if (Hash::NAME.find(subkey.sig) == Hash::NAME.end()){
+                error += "Error: Bad Hash Algorithm: " + std::to_string(subkey.sig);
+                return false;
+            }
+
+            if ((subkey.pka == PKA::DSA) && (Hash::LENGTH.at(subkey.sig) < 256)){
+                error += "Error: DSA needs a 256 bit or larger hash.\n";
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
 
 // Fills in provided empty keys
-void generate_keys(PGPPublicKey & public_key, PGPSecretKey & private_key, const std::string & passphrase = "", const std::string & user = "", const std::string & comment = "", const std::string & email = "", const unsigned int DSA_bits = 2048, const unsigned int ElGamal_bits = 2048);
-
-// Given a private key with its packets filled with non PKA data, will try
-// to fill in the following fields of both the public key and private key:
-//  public PKA values
-//  private PKA values
-//  signatures
-//  key id (optional)
-//
-// All other fields should be filled by the user
-void add_key_values(PGPPublicKey & pub, PGPSecretKey & pri, const std::string & passphrase = "", const bool new_keyid = false, const unsigned int pri_key_size = 2048, const unsigned int subkey_size = 2048);
+bool generate_keys(const KeyGen & config, PGPPublicKey & public_key, PGPSecretKey & private_key, std::string & error);
 
 #endif

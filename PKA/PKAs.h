@@ -52,41 +52,49 @@ THE SOFTWARE.
 #include "RSA.h"
 
 namespace PKA{
-    const uint8_t RSA_ENCRYPT_OR_SIGN = 1;
-    const uint8_t RSA_ENCRYPT_ONLY    = 2;
-    const uint8_t RSA_SIGN_ONLY       = 3;
-    const uint8_t ELGAMAL             = 16;
-    const uint8_t DSA                 = 17;
+    const uint8_t RSA_ENCRYPT_OR_SIGN           = 1;
+    const uint8_t RSA_ENCRYPT_ONLY              = 2;
+    const uint8_t RSA_SIGN_ONLY                 = 3;
+    const uint8_t ELGAMAL                       = 16;
+    const uint8_t DSA                           = 17;
 
     const std::map <uint8_t, std::string> NAME = {
-        std::make_pair(RSA_ENCRYPT_OR_SIGN, "RSA (Encrypt or Sign)"),
-        std::make_pair(RSA_ENCRYPT_ONLY,    "RSA Encrypt-Only"),       // deprecated
-        std::make_pair(RSA_SIGN_ONLY,       "RSA Sign-Only"),          // deprecated
-        std::make_pair(ELGAMAL,             "ELGAMAL (Encrypt-Only)"),
-        std::make_pair(DSA,                 "DSA"),
-        std::make_pair(18,                  "Reserved for Elliptic Curve"),
-        std::make_pair(19,                  "Reserved for ECDSA"),
-        std::make_pair(20,                  "Reserved (formerly ELGAMAL Encrypt or Sign)"),
-        std::make_pair(21,                  "Reserved for Diffie-Hellman (X9.42), as defined for IETF-S / MIME)"),
-        std::make_pair(100,                 "Private/Experimental algorithm"),
-        std::make_pair(101,                 "Private/Experimental algorithm"),
-        std::make_pair(102,                 "Private/Experimental algorithm"),
-        std::make_pair(103,                 "Private/Experimental algorithm"),
-        std::make_pair(104,                 "Private/Experimental algorithm"),
-        std::make_pair(105,                 "Private/Experimental algorithm"),
-        std::make_pair(106,                 "Private/Experimental algorithm"),
-        std::make_pair(107,                 "Private/Experimental algorithm"),
-        std::make_pair(108,                 "Private/Experimental algorithm"),
-        std::make_pair(109,                 "Private/Experimental algorithm"),
-        std::make_pair(110,                 "Private/Experimental algorithm"),
+        std::make_pair(RSA_ENCRYPT_OR_SIGN,     "RSA (Encrypt or Sign)"),
+        std::make_pair(RSA_ENCRYPT_ONLY,        "RSA Encrypt-Only"),       // deprecated
+        std::make_pair(RSA_SIGN_ONLY,           "RSA Sign-Only"),          // deprecated
+        std::make_pair(ELGAMAL,                 "ELGAMAL (Encrypt-Only)"),
+        std::make_pair(DSA,                     "DSA"),
+        std::make_pair(18,                      "Reserved for Elliptic Curve"),
+        std::make_pair(19,                      "Reserved for ECDSA"),
+        std::make_pair(20,                      "Reserved (formerly ELGAMAL Encrypt or Sign)"),
+        std::make_pair(21,                      "Reserved for Diffie-Hellman (X9.42), as defined for IETF-S / MIME)"),
+        std::make_pair(100,                     "Private/Experimental algorithm"),
+        std::make_pair(101,                     "Private/Experimental algorithm"),
+        std::make_pair(102,                     "Private/Experimental algorithm"),
+        std::make_pair(103,                     "Private/Experimental algorithm"),
+        std::make_pair(104,                     "Private/Experimental algorithm"),
+        std::make_pair(105,                     "Private/Experimental algorithm"),
+        std::make_pair(106,                     "Private/Experimental algorithm"),
+        std::make_pair(107,                     "Private/Experimental algorithm"),
+        std::make_pair(108,                     "Private/Experimental algorithm"),
+        std::make_pair(109,                     "Private/Experimental algorithm"),
+        std::make_pair(110,                     "Private/Experimental algorithm"),
+    };
+
+    const std::map <std::string, uint8_t> NUMBER = {
+        std::make_pair("RSA_ENCRYPT_OR_SIGN",   RSA_ENCRYPT_OR_SIGN),
+        std::make_pair("RSA_ENCRYPT_ONLY",      RSA_ENCRYPT_ONLY),
+        std::make_pair("RSA_SIGN_ONLY",         RSA_SIGN_ONLY),
+        std::make_pair("ELGAMAL",               ELGAMAL),
+        std::make_pair("DSA",                   DSA),
     };
 
     const std::map <uint8_t, char> SHORT = {
-        std::make_pair(RSA_ENCRYPT_OR_SIGN, 'R'),
-        std::make_pair(RSA_ENCRYPT_ONLY,    'R'),
-        std::make_pair(RSA_SIGN_ONLY,       'R'),
-        std::make_pair(ELGAMAL,             'g'),
-        std::make_pair(DSA,                 'D'),
+        std::make_pair(RSA_ENCRYPT_OR_SIGN,     'R'),
+        std::make_pair(RSA_ENCRYPT_ONLY,        'R'),
+        std::make_pair(RSA_SIGN_ONLY,           'R'),
+        std::make_pair(ELGAMAL,                 'g'),
+        std::make_pair(DSA,                     'D'),
     };
 
     bool can_encrypt(const uint8_t alg);
@@ -95,13 +103,14 @@ namespace PKA{
 }
 
 /*
-param:
+params:
     DSA = {L, N}
     ELGAMAL = {bits}
     RSA = {bits}
 
 pub and pri are destination containers
 */
-void generate_key_pair(const uint8_t pka, const PKA::Params & params, PKA::Values & pub, PKA::Values & pri);
+PKA::Params generate_pka_params(const uint8_t pka, const std::size_t bits);
+uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Values & pri, PKA::Values & pub);
 
 #endif

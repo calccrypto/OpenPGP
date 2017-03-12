@@ -55,7 +55,7 @@ const Module show_cleartext_signature(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: File '" + args.at("filename") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("filename") + "\" not opened." << std::endl;
             return -1;
         }
 

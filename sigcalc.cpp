@@ -5,7 +5,7 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
         throw std::runtime_error("Error: No signature packet");
     }
 
-    std::string trailer = sig -> get_up_to_hashed();
+    const std::string trailer = sig -> get_up_to_hashed();
     if (sig -> get_version() == 3){
         return data + trailer.substr(1, trailer.size() - 1); // remove version from trailer
     }
@@ -15,6 +15,7 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
     else{
         throw std::runtime_error("Error: addtrailer for version " + std::to_string(sig -> get_version()) + " not defined.");
     }
+
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
@@ -108,20 +109,71 @@ std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: No signature packet");
     }
 
+    if (tag2 -> get_type() != Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
 std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
-    return to_sign_10(key, id, tag2);
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
+    if (tag2 -> get_type() != Signature_Type::PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
 std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
-    return to_sign_10(key, id, tag2);
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
+    if (tag2 -> get_type() != Signature_Type::CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
 std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
-    return to_sign_10(key, id, tag2);
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
+
+    if (tag2 -> get_type() != Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        throw std::runtime_error("Error: Bad signature type.");
+    }
+
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
+
+std::string to_sign_cert(const uint8_t cert, const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & sig){
+    std::string digest;
+
+    if (cert == Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        digest = to_sign_10(key, id, sig);
+    }
+    else if (cert == Signature_Type::PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        digest = to_sign_11(key, id, sig);
+    }
+    else if (cert == Signature_Type::CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        digest = to_sign_12(key, id, sig);
+    }
+    else if (cert == Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        digest = to_sign_13(key, id, sig);
+    }
+    else{
+        throw std::runtime_error("Error: Bad certification type.");
+    }
+
+    return digest;
+}
+
 
 std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2){
     if (!tag2){

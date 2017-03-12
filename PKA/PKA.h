@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "../mpi.h"
 
 namespace PKA{
-    typedef std::vector <unsigned int> Params;
+    typedef std::vector <std::size_t> Params;
     typedef std::vector <PGPMPI> Values;
 }
 

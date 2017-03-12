@@ -66,89 +66,89 @@ THE SOFTWARE.
 #include "Twofish.h"
 
 namespace Sym{
-    const uint8_t PLAINTEXT   = 0;
-    const uint8_t IDEA        = 1;
-    const uint8_t TRIPLEDES   = 2;
-    const uint8_t CAST5       = 3;
-    const uint8_t BLOWFISH    = 4;
-    const uint8_t AES128      = 7;
-    const uint8_t AES192      = 8;
-    const uint8_t AES256      = 9;
-    const uint8_t TWOFISH256  = 10;
-    const uint8_t CAMELLIA128 = 11;
-    const uint8_t CAMELLIA192 = 12;
-    const uint8_t CAMELLIA256 = 13;
+    const uint8_t PLAINTEXT             = 0;
+    const uint8_t IDEA                  = 1;
+    const uint8_t TRIPLEDES             = 2;
+    const uint8_t CAST5                 = 3;
+    const uint8_t BLOWFISH              = 4;
+    const uint8_t AES128                = 7;
+    const uint8_t AES192                = 8;
+    const uint8_t AES256                = 9;
+    const uint8_t TWOFISH256            = 10;
+    const uint8_t CAMELLIA128           = 11;
+    const uint8_t CAMELLIA192           = 12;
+    const uint8_t CAMELLIA256           = 13;
 
     const std::map <uint8_t, std::string> NAME = {
-        std::make_pair(PLAINTEXT,   "PLAINTEXT"),
-        std::make_pair(IDEA,        "IDEA"),
-        std::make_pair(TRIPLEDES,   "TRIPLEDES"),
-        std::make_pair(CAST5,       "CAST5"),
-        std::make_pair(BLOWFISH,    "BLOWFISH"),
-        std::make_pair(5,           "Reserved"),
-        std::make_pair(6,           "Reserved"),
-        std::make_pair(AES128,      "AES128"),
-        std::make_pair(AES192,      "AES192"),
-        std::make_pair(AES256,      "AES256"),
-        std::make_pair(TWOFISH256,  "TWOFISH256"),
-        std::make_pair(CAMELLIA128, "CAMELLIA128"),
-        std::make_pair(CAMELLIA192, "CAMELLIA192"),
-        std::make_pair(CAMELLIA256, "CAMELLIA256"),
-        std::make_pair(100,         "Private/Experimental algorithm"),
-        std::make_pair(101,         "Private/Experimental algorithm"),
-        std::make_pair(102,         "Private/Experimental algorithm"),
-        std::make_pair(103,         "Private/Experimental algorithm"),
-        std::make_pair(104,         "Private/Experimental algorithm"),
-        std::make_pair(105,         "Private/Experimental algorithm"),
-        std::make_pair(106,         "Private/Experimental algorithm"),
-        std::make_pair(107,         "Private/Experimental algorithm"),
-        std::make_pair(108,         "Private/Experimental algorithm"),
-        std::make_pair(109,         "Private/Experimental algorithm"),
-        std::make_pair(110,         "Private/Experimental algorithm"),
-        std::make_pair(255,         "Private/Experimental algorithm"),
+        std::make_pair(PLAINTEXT,       "PLAINTEXT"),
+        std::make_pair(IDEA,            "IDEA"),
+        std::make_pair(TRIPLEDES,       "TRIPLEDES"),
+        std::make_pair(CAST5,           "CAST5"),
+        std::make_pair(BLOWFISH,        "BLOWFISH"),
+        std::make_pair(5,               "Reserved"),
+        std::make_pair(6,               "Reserved"),
+        std::make_pair(AES128,          "AES128"),
+        std::make_pair(AES192,          "AES192"),
+        std::make_pair(AES256,          "AES256"),
+        std::make_pair(TWOFISH256,      "TWOFISH256"),
+        std::make_pair(CAMELLIA128,     "CAMELLIA128"),
+        std::make_pair(CAMELLIA192,     "CAMELLIA192"),
+        std::make_pair(CAMELLIA256,     "CAMELLIA256"),
+        std::make_pair(100,             "Private/Experimental algorithm"),
+        std::make_pair(101,             "Private/Experimental algorithm"),
+        std::make_pair(102,             "Private/Experimental algorithm"),
+        std::make_pair(103,             "Private/Experimental algorithm"),
+        std::make_pair(104,             "Private/Experimental algorithm"),
+        std::make_pair(105,             "Private/Experimental algorithm"),
+        std::make_pair(106,             "Private/Experimental algorithm"),
+        std::make_pair(107,             "Private/Experimental algorithm"),
+        std::make_pair(108,             "Private/Experimental algorithm"),
+        std::make_pair(109,             "Private/Experimental algorithm"),
+        std::make_pair(110,             "Private/Experimental algorithm"),
+        std::make_pair(255,             "Private/Experimental algorithm"),
     };
 
     const std::map <std::string, uint8_t> NUMBER = {
-        std::make_pair("PLAINTEXT",   PLAINTEXT),
-        std::make_pair("IDEA",        IDEA),
-        std::make_pair("TRIPLEDES",   TRIPLEDES),
-        std::make_pair("CAST5",       CAST5),
-        std::make_pair("BLOWFISH",    BLOWFISH),
-        std::make_pair("AES128",      AES128),
-        std::make_pair("AES192",      AES192),
-        std::make_pair("AES256",      AES256),
-        std::make_pair("TWOFISH256",  TWOFISH256),
-        std::make_pair("CAMELLIA128", CAMELLIA128),
-        std::make_pair("CAMELLIA192", CAMELLIA192),
-        std::make_pair("CAMELLIA256", CAMELLIA256),
+        std::make_pair("PLAINTEXT",     PLAINTEXT),
+        std::make_pair("IDEA",          IDEA),
+        std::make_pair("TRIPLEDES",     TRIPLEDES),
+        std::make_pair("CAST5",         CAST5),
+        std::make_pair("BLOWFISH",      BLOWFISH),
+        std::make_pair("AES128",        AES128),
+        std::make_pair("AES192",        AES192),
+        std::make_pair("AES256",        AES256),
+        std::make_pair("TWOFISH256",    TWOFISH256),
+        std::make_pair("CAMELLIA128",   CAMELLIA128),
+        std::make_pair("CAMELLIA192",   CAMELLIA192),
+        std::make_pair("CAMELLIA256",   CAMELLIA256),
     };
 
     const std::map <uint8_t, std::size_t> BLOCK_LENGTH = {
-        std::make_pair(IDEA,         64),
-        std::make_pair(TRIPLEDES,    64),
-        std::make_pair(CAST5,        64),
-        std::make_pair(BLOWFISH,     64),
-        std::make_pair(AES128,      128),
-        std::make_pair(AES192,      128),
-        std::make_pair(AES256,      128),
-        std::make_pair(TWOFISH256,  128),
-        std::make_pair(CAMELLIA128, 128),
-        std::make_pair(CAMELLIA192, 128),
-        std::make_pair(CAMELLIA256, 128),
+        std::make_pair(IDEA,             64),
+        std::make_pair(TRIPLEDES,        64),
+        std::make_pair(CAST5,            64),
+        std::make_pair(BLOWFISH,         64),
+        std::make_pair(AES128,          128),
+        std::make_pair(AES192,          128),
+        std::make_pair(AES256,          128),
+        std::make_pair(TWOFISH256,      128),
+        std::make_pair(CAMELLIA128,     128),
+        std::make_pair(CAMELLIA192,     128),
+        std::make_pair(CAMELLIA256,     128),
     };
 
     const std::map <uint8_t, std::size_t> KEY_LENGTH = {
-        std::make_pair(IDEA,        128),
-        std::make_pair(TRIPLEDES,   192),
-        std::make_pair(CAST5,       128),
-        std::make_pair(BLOWFISH,    128),
-        std::make_pair(AES128,      128),
-        std::make_pair(AES192,      192),
-        std::make_pair(AES256,      256),
-        std::make_pair(TWOFISH256,  256),
-        std::make_pair(CAMELLIA128, 128),
-        std::make_pair(CAMELLIA192, 192),
-        std::make_pair(CAMELLIA256, 256),
+        std::make_pair(IDEA,            128),
+        std::make_pair(TRIPLEDES,       192),
+        std::make_pair(CAST5,           128),
+        std::make_pair(BLOWFISH,        128),
+        std::make_pair(AES128,          128),
+        std::make_pair(AES192,          192),
+        std::make_pair(AES256,          256),
+        std::make_pair(TWOFISH256,      256),
+        std::make_pair(CAMELLIA128,     128),
+        std::make_pair(CAMELLIA192,     192),
+        std::make_pair(CAMELLIA256,     256),
     };
 }
 

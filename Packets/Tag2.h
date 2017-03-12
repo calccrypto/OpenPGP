@@ -102,8 +102,8 @@ class Tag2 : public Packet{
         Subpackets get_hashed_subpackets_clone()   const;
         Subpackets get_unhashed_subpackets()       const;
         Subpackets get_unhashed_subpackets_clone() const;
-        std::string get_up_to_hashed()               const;     // used for signature trailer
-        std::string get_without_unhashed()           const;     // used for signature type 0x50
+        std::string get_up_to_hashed()             const;     // used for signature trailer
+        std::string get_without_unhashed()         const;     // used for signature type 0x50
 
         void set_type(const uint8_t t);
         void set_pka (const uint8_t p);

@@ -44,7 +44,8 @@ const Module encrypt_sym(
     // optional arguments
     {
         std::make_pair("-o",     std::make_pair("output file",                                                   "")),
-        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",    "ZLIB")),
+        std::make_pair("-h",     std::make_pair("hash_algorithm", "SHA1")),
+        std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",              "ZLIB")),
         std::make_pair("-p",     std::make_pair("passphrase for signing key",                                    "")),
         std::make_pair("--sign", std::make_pair("private key file",                                              "")),
         std::make_pair("--sym",  std::make_pair("symmetric encryption algorithm",                          "AES256")),
@@ -61,7 +62,12 @@ const Module encrypt_sym(
        const std::map <std::string, bool>        & flags) -> int {
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: File '" + args.at("file") + "' not opened." << std::endl;
+            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
+            return -1;
+        }
+
+        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-n") << std::endl;
             return -1;
         }
 
@@ -84,7 +90,7 @@ const Module encrypt_sym(
 
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
-                std::cerr << "Error: File '" + args.at("--sign") + "' not opened." << std::endl;
+                std::cerr << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
                 return -1;
             }
 
@@ -97,6 +103,7 @@ const Module encrypt_sym(
         const EncryptArgs encryptargs(args.at("file"),
                                       std::string(std::istreambuf_iterator <char> (file), {}),
                                       Sym::NUMBER.at(args.at("--sym")),
+                                      Hash::NUMBER.at(args.at("-h")),
                                       Compression::NUMBER.at(args.at("-c")),
                                       flags.at("--mdc"),
                                       signer,
