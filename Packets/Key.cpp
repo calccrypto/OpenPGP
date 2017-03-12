@@ -79,7 +79,7 @@ std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) c
     const std::string tab(indent_size, ' ');
 
     std::string out = indent + tab + "Version: " + std::to_string(version) + " - " + ((version < 4)?"Old":"New") + "\n" +
-                      indent + tab + "Creation Time: " + show_time(time) + " " + std::to_string(time) + "\n";
+                      indent + tab + "Creation Time: " + show_time(time) + "\n";
 
     if (version < 4){
         out += indent + tab + "Expiration Time (Days): " + std::to_string(expire) + "\n";
