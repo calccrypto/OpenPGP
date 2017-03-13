@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <stdexcept>
 
 #include "Encryptions/Encryptions.h"
+#include "Packets/packets.h"
 
 // OpenPGP CFB as described in RFC 4880 section 13.9
 std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix = "");

@@ -55,7 +55,7 @@ std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet,
     //    5. FR is encrypted to produce FRE, the encryption of the first BS octets of ciphertext.
     FRE = crypt -> encrypt(FR);
 
-    if (packet == 9){           // resynchronization
+    if (packet == Packet::SYMMETRICALLY_ENCRYPTED_DATA){                    // resynchronization
         //    6. The left two octets of FRE get xored with the next two octets of data that were prefixed to the plaintext. This produces C[BS+1] and C[BS+2], the next two octets of ciphertext.
         C += xor_strings(FRE.substr(0, 2), prefix.substr(BS - 2, 2));
 
@@ -68,8 +68,7 @@ std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet,
         //    9. FRE is xored with the first BS octets of the given plaintext, now that we have finished encrypting the BS+2 octets of prefixed data. This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of ciphertext.
         C += xor_strings(FRE, data.substr(0, BS));
     }
-    else if (packet == 18){     // no resynchronization
-
+    else if (packet == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){     // no resynchronization
         // 5.13. Sym. Encrypted Integrity Protected Data Packet (Tag 18)
         //
         //    Unlike the Symmetrically Encrypted Data Packet, no
@@ -120,7 +119,7 @@ std::string OpenPGP_CFB_decrypt(const SymAlg::Ptr & crypt, const uint8_t packet,
     }
 
     std::string P = "";
-    unsigned int x = (packet == 9)?2:0;
+    unsigned int x = (packet == Packet::SYMMETRICALLY_ENCRYPTED_DATA)?2:0;
     while ((x + BS) < data.size()){
         std::string substr = data.substr(x, BS);
         P += xor_strings(FRE, substr);
