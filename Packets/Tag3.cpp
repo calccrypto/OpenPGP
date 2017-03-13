@@ -89,7 +89,7 @@ std::shared_ptr <std::string> Tag3::get_esk_clone() const{
 }
 
 std::string Tag3::get_session_key(const std::string & pass) const{
-    std::string out = s2k -> run(pass, Sym::BLOCK_LENGTH.at(sym) >> 3);
+    std::string out = s2k -> run(pass, Sym::KEY_LENGTH.at(sym) >> 3);
     if (esk){
         out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0));
     }
@@ -133,7 +133,7 @@ void Tag3::set_session_key(const std::string & pass, const std::string & sk){
     //sk should be [1 octet symmetric key algorithm] + [session key(s)]
     esk.reset();
     if (s2k && (sk.size() > 1)){
-        esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sym, sk, s2k -> run(pass, Sym::BLOCK_LENGTH.at(sym) >> 3), std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0)));
+        esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sym, sk, s2k -> run(pass, Sym::KEY_LENGTH.at(sym) >> 3), std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0)));
     }
     size = raw().size();
 }
