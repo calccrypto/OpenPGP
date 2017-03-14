@@ -106,12 +106,8 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     // convert the secret values into a string
     std::string secret;
     for(PGPMPI const & mpi : pri){
-        std::cout << std::hex << mpi << std::endl;
         secret += write_MPI(mpi);
     }
-
-//    std::cout << std::endl;
-//    std::cout<< hexlify(secret)<<std::endl;
 
     // Secret Key Packet
     Tag5::Ptr sec = std::make_shared <Tag5> ();
@@ -150,13 +146,10 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
             checksum += static_cast <uint16_t> (c);
         }
 
-//        std::cout << makehex(checksum, 4) << std::endl;
         secret += unhexlify(makehex(checksum, 4));
     }
 
     sec -> set_secret(secret);
-
-//    std::cout << sec -> show() << std::endl;
 
     // first packet is primary key
     packets.push_back(sec);
