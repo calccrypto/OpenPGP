@@ -156,8 +156,9 @@ struct KeyGen{
     }
 };
 
-// generate a new private key
+// preset key generation
+// return sin a private key
 // public key can be extracted from the private key
-bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & error);
+PGPSecretKey generate_key(KeyGen & config, std::string & error);
 
 #endif

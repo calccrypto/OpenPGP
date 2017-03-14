@@ -89,23 +89,28 @@ PGPMPI random(unsigned int bits){
 
 // given some value, return the formatted mpi
 std::string write_MPI(const PGPMPI & data){
-    std::string out = mpitoraw(data);
+    const std::string out = mpitoraw(data);
     return unhexlify(makehex(bitsize(data), 4)) + out;
 }
 
-// remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
+// Read mpi from data, returning mpi value. The position will be updated to the octet after the end of the mpi value
 PGPMPI read_MPI(const std::string & data, std::string::size_type & pos){
+    // get number of bits
     uint16_t size = (static_cast <uint8_t> (data[pos]) << 8) |
-                     static_cast <uint8_t> (data[pos + 1]); // get number of bits
-    pos += 2;                                               // update position
+                     static_cast <uint8_t> (data[pos + 1]);
+    // update position
+    pos += 2;
 
+    // pad to nearest 8 bits
     while (size & 7){
-        size++;                                             // pad to nearest 8 bits
+        size++;
     }
 
-    size >>= 3;                                             // get number of octets
-    PGPMPI out = rawtompi(data.substr(pos, size));          // turn to mpz_class
+    // get number of octets
+    size >>= 3;
+
+    // turn to mpz_class
+    const PGPMPI out = rawtompi(data.substr(pos, size));
     pos += size;
     return out;
 }
-

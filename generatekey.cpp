@@ -79,12 +79,12 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
     return true;
 }
 
-bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & error){
+PGPSecretKey generate_key(KeyGen & config, std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     if (!config.valid(error)){
         error += "Error: Bad key generation configuration.\n";
-        return false;
+        return PGPSecretKey();
     }
 
     // collection of packets to be put into final key
@@ -100,14 +100,18 @@ bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & err
     PKA::Values pri;
     if (!generate_keypair(config.pka, generate_pka_params(config.pka, config.bits >> 1), pri, pub)){
         error += "Error: Could not generate primary key pair.\n";
-        return false;
+        return PGPSecretKey();
     }
 
     // convert the secret values into a string
     std::string secret;
     for(PGPMPI const & mpi : pri){
+        std::cout << std::hex << mpi << std::endl;
         secret += write_MPI(mpi);
     }
+
+//    std::cout << std::endl;
+//    std::cout<< hexlify(secret)<<std::endl;
 
     // Secret Key Packet
     Tag5::Ptr sec = std::make_shared <Tag5> ();
@@ -143,18 +147,21 @@ bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & err
         // add checksum to secret
         uint16_t checksum = 0;
         for(uint8_t const c : secret){
-            checksum += c;
+            checksum += static_cast <uint16_t> (c);
         }
 
+//        std::cout << makehex(checksum, 4) << std::endl;
         secret += unhexlify(makehex(checksum, 4));
     }
 
     sec -> set_secret(secret);
 
+//    std::cout << sec -> show() << std::endl;
+
     // first packet is primary key
     packets.push_back(sec);
 
-    // get ID of entire key
+    // get ID of primary key
     const std::string keyid = sec -> get_keyid();
 
     // generate User ID and Signature packets
@@ -185,7 +192,7 @@ bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & err
         sig = sign_primary_key(sec, config.passphrase, sec, uid, sig, error);
         if (!sig){
             error += "Error: Failed to sign primary config.\n";
-            return false;
+            return PGPSecretKey();
         }
 
         packets.push_back(sig);
@@ -197,7 +204,7 @@ bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & err
         PKA::Values subkey_pri;
         if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits >> 1), subkey_pri, subkey_pub)){
             error += "Error: Could not generate subkey pair.\n";
-            return false;
+            return PGPSecretKey();
         }
 
         // convert the secret values into a string
@@ -271,19 +278,19 @@ bool generate_key(KeyGen & config, PGPSecretKey & private_key, std::string & err
         subsig = sign_subkey_binding(sec, config.passphrase, subkey, subsig, error);
         if (!subsig){
             error += "Error: Subkey signing failure.\n";
-            return false;
+            return PGPSecretKey();
         }
 
         packets.push_back(subsig);
     }
 
     // put everything into a private key
-    private_key.set_type(PGP::PRIVATE_KEY_BLOCK);
+    PGPSecretKey private_key;
     private_key.set_keys({std::make_pair("Version", "cc")});
     private_key.set_packets(packets);
     private_key.set_armored(true);
 
     // can call fill_key_sigs as well
     // return fill_key_sigs(private_key, config.passphrase, error);
-    return true;
+    return private_key;
 }
