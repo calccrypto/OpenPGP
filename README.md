@@ -89,14 +89,14 @@ the command line program with make.
 
 All data structures have some standard functions:
 
- Function | Description
-----------|------------------------------------------
-    read  | reads data without the respective header information
-    show  | displays the data in human readable form like the way pgpdump.net does it.
-    raw   | returns a string that can be read by the read function.
-    write | returns a string of the entire data, including extra data, such as header and size.
-    clone | returns a pointer to a deep copy of the object (mainly used for moving PGP data around).
-    Ptr   | a typedef for std::shared_ptr&lt;T&gt; for the class where the typedef is found.
+Function | Description
+---------|------------------------------------------
+   read  | reads data without the header information
+   show  | displays the data in human readable form like the way pgpdump.net does it.
+   raw   | returns a string of packet data without the header information
+   write | returns a string of the entire data, including the header.
+   clone | returns a pointer to a deep copy of the object (mainly used for moving PGP data around).
+   Ptr   | a typedef for std::shared_ptr&lt;T&gt; for the class where the typedef is found.
 
 `operator =` and the copy constructor have been overloaded
 for the data structures that need deep copy.
