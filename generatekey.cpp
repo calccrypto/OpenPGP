@@ -16,12 +16,9 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
     User::Ptr user = nullptr;
 
     for(Packet::Ptr & p : packets){
-        if (Packet::is_primary_key(p -> get_tag())){
+        if (Packet::is_key_packet(p -> get_tag())){
             key = std::static_pointer_cast <Key> (p);
             user = nullptr;
-        }
-        else if (Packet::is_subkey(p -> get_tag())){
-            key = std::static_pointer_cast <Key> (p);
         }
         else if (Packet::is_user(p -> get_tag())){
             user = std::static_pointer_cast <User> (p);
@@ -136,7 +133,7 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
         // encrypt private key value
         sec -> set_s2k(s2k3);
         sec -> set_IV(unhexlify(bintohex(BBS().rand(Sym::BLOCK_LENGTH.at(config.sym)))));
-        secret = use_normal_CFB_encrypt(config.sym, secret + use_hash(Hash::SHA1, secret), session_key, sec -> get_IV());
+        secret = use_normal_CFB_encrypt(config.sym, secret, session_key, sec -> get_IV());
     }
     else{
         // add checksum to secret
@@ -189,7 +186,7 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
 
         packets.push_back(sig);
     }
-
+/*
     // generate 0 or more subkeys and associated signature packet
     for(KeyGen::SubkeyGen const & skey : config.subkeys){
         PKA::Values subkey_pub;
@@ -275,7 +272,7 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
 
         packets.push_back(subsig);
     }
-
+*/
     // put everything into a private key
     PGPSecretKey private_key;
     private_key.set_keys({std::make_pair("Version", "cc")});
