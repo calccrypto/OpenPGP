@@ -14,7 +14,6 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
 
     Key::Ptr key = nullptr;
     User::Ptr user = nullptr;
-    Key::Ptr subkey = nullptr;
 
     for(Packet::Ptr & p : packets){
         if (Packet::is_primary_key(p -> get_tag())){
@@ -22,7 +21,7 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
             user = nullptr;
         }
         else if (Packet::is_subkey(p -> get_tag())){
-            subkey = std::static_pointer_cast <Key> (p);
+            key = std::static_pointer_cast <Key> (p);
         }
         else if (Packet::is_user(p -> get_tag())){
             user = std::static_pointer_cast <User> (p);
@@ -57,7 +56,7 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
                     sig = revoke_sig(primary, passphrase, primary, sig, error);
                 }
                 else if (sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
-                    sig = revoke_sig(primary, passphrase, subkey, sig, error);
+                    sig = revoke_sig(primary, passphrase, key, sig, error);
                 }
                 else if (sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
                     sig = revoke_uid_sig(primary, passphrase, user, sig, error);

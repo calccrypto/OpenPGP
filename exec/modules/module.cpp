@@ -36,8 +36,6 @@ void Module::check_duplicate(const Args & arg, const Flags & flag) const{
     }
 }
 
-void  Module::check_run(const std::function <int(std::map <std::string, std::string> &)> & func) const{}
-
 // unknown arguments are ignored
 const char * Module::parse(int argc, char * argv[],
                            std::map <std::string, std::string> & parsed_args,
@@ -46,7 +44,6 @@ const char * Module::parse(int argc, char * argv[],
     for(int i = 0; i < argc; i++){
         // if the first character of the argument is a dash
         if (argv[i][0] == '-'){
-
             // check if option is in args
             Args::const_iterator args_it = args.find(argv[i]);
             if (args_it != args.end()){

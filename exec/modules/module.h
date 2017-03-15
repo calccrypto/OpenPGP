@@ -68,7 +68,6 @@ class Module{
 
         // check if elements of rhs are already in lhs
         void check_duplicate(const Args & arg, const Flags & flag) const;
-        void check_run(const std::function <int(std::map <std::string, std::string> &)> & func) const;
 
         // unknown arguments are ignored
         const char * parse(int argc, char * argv[],

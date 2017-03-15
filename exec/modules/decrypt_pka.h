@@ -44,8 +44,8 @@ const Module decrypt_pka(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",         "")),
-        std::make_pair("-s", std::make_pair("signing public key",  "")),
+        std::make_pair("-o", std::make_pair("output file",        "")),
+        std::make_pair("-s", std::make_pair("signing public key", "")),
     },
 
     // optional flags
