@@ -37,7 +37,7 @@ const Module list(
 
     // positional arguments
     {
-        "key",
+        "file",
     },
 
     // optional arguments
@@ -53,9 +53,9 @@ const Module list(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream f(args.at("key"), std::ios::binary);
+        std::ifstream f(args.at("file"), std::ios::binary);
         if (!f){
-            std::cerr << "Error: File \"" << args.at("key") << "\" not opened." << std::endl;
+            std::cerr << "Error: File \"" << args.at("file") << "\" not opened." << std::endl;
             return -1;
         }
 

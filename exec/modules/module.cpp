@@ -2,17 +2,35 @@
 
 namespace module {
 
-void Module::check_name(const std::string & n) const{
-    // check for whitespace in name
-    for(char const & c : n){
+void Module::check_names_ws() const{
+    // check name of this module
+    for(char const & c : name){
         if (std::isspace(c)){
-            throw std::runtime_error("Error: Whitespace found in name: " + n);
+            throw std::runtime_error("Error: Whitespace found in name: " + name);
+        }
+    }
+
+    // check names of optional arguments
+    for(std::pair <std::string const, std::pair <std::string, std::string> > const & opt : opts){
+        for(char const & c : opt.first){
+            if (std::isspace(c)){
+                throw std::runtime_error("Error: Whitespace found in optional argument: " + opt.first);
+            }
+        }
+    }
+
+    // check names of flags
+    for(std::pair <std::string const, std::pair <std::string, bool> > const & flag : flags){
+        for(char const & c : flag.first){
+            if (std::isspace(c)){
+                throw std::runtime_error("Error: Whitespace found in flag: " + flag.first);
+            }
         }
     }
 }
 
-void Module::check_positional(const std::vector <std::string> & pos) const{
-    // make sure there aren't duplicate positional arguements
+void Module::check_duplicate() const{
+    // make sure there aren't duplicate positional arguments
     std::vector <std::string> pos_cp = positional;
     std::sort(pos_cp.begin(), pos_cp.end());
     for(std::string::size_type i = 1; i < pos_cp.size(); i++){
@@ -20,18 +38,25 @@ void Module::check_positional(const std::vector <std::string> & pos) const{
             throw std::runtime_error("Error: Duplicate postional arguments found: " + pos_cp[i]);
         }
     }
-}
 
-void Module::check_duplicate(const Args & arg, const Flags & flag) const{
-    for(std::pair <const std::string, std::string> const & f : flag){
-        if (arg.find(f.first) != args.end()){
-            throw std::runtime_error("Error: Duplicate option " + f.first + " found.");
+    // check for duplicate positional/optional arguments
+    for(std::string const & pos : positional){
+        if (opts.find(pos) != opts.end()){
+            throw std::runtime_error("Error: Duplicate positional/optional argument " + pos + " found.");
         }
     }
 
-    for(std::pair <const std::string, std::pair <std::string, std::string> > const & a : arg){
-        if (flag.find(a.first) != flags.end()){
-            throw std::runtime_error("Error: Duplicate option " + a.first + " found.");
+    // check for duplicate positional arguments/flags
+    for(std::string const & pos : positional){
+        if (flags.find(pos) != flags.end()){
+            throw std::runtime_error("Error: Duplicate positional argument/flag " + pos + " found.");
+        }
+    }
+
+    // check for duplicate optional arguments/flags
+    for(std::pair <const std::string, std::pair <std::string, bool> > const & flag : flags){
+        if (opts.find(flag.first) != opts.end()){
+            throw std::runtime_error("Error: Duplicate optional argument/flag " + flag.first + " found.");
         }
     }
 }
@@ -40,42 +65,32 @@ void Module::check_duplicate(const Args & arg, const Flags & flag) const{
 const char * Module::parse(int argc, char * argv[],
                            std::map <std::string, std::string> & parsed_args,
                            std::map <std::string, bool>        & parsed_flags) const{
+
     std::vector <std::string>::size_type pos = 0;
     for(int i = 0; i < argc; i++){
-        // if the first character of the argument is a dash
-        if (argv[i][0] == '-'){
-            // check if option is in args
-            Args::const_iterator args_it = args.find(argv[i]);
-            if (args_it != args.end()){
-                // if no more arguments
-                if ((i + 1) >= argc){
-                    return argv[i];
-                }
-
-                parsed_args[args_it -> first] = argv[i + 1];
-                i++;// skip value
-                continue;
+        // check if option is in opts
+        Opts::const_iterator opts_it = opts.find(argv[i]);
+        if (opts_it != opts.end()){
+            // if no more arguments
+            if ((i + 1) >= argc){
+                return argv[i];
             }
 
-            // check if option is in flags
-            Flags::const_iterator flags_it = flags.find(argv[i]);
-            if (flags_it != flags.end()){
-                parsed_flags[flags_it -> first] = true;
-                continue;
-            }
-
-            // error
-            return argv[i];
+            parsed_args[opts_it -> first] = argv[i + 1];
+            i++;// skip value
+            continue;
         }
-        else{
-            // set positional argument
-            if (pos < positional.size()){
-                // if positional argument isn't already in the arguments list
-                if (parsed_args.find(positional[pos]) == parsed_args.end()){
-                    parsed_args[positional[pos]] = argv[i];
-                    pos++;
-                }
-            }
+
+        // check if option is in flags
+        Flags::const_iterator flags_it = flags.find(argv[i]);
+        if (flags_it != flags.end()){
+            parsed_flags[flags_it -> first] = !flags_it -> second.second;
+            continue;
+        }
+
+        // assume it is a positional argument
+        if (pos < positional.size()){
+            parsed_args[positional[pos++]] = argv[i];
         }
     }
 
@@ -89,7 +104,7 @@ const char * Module::parse(int argc, char * argv[],
 Module::Module(const Module & cmd)
     : name(cmd.name),
       positional(cmd.positional),
-      args(cmd.args),
+      opts(cmd.opts),
       flags(cmd.flags),
       run(cmd.run)
 {}
@@ -97,43 +112,32 @@ Module::Module(const Module & cmd)
 Module::Module(Module && cmd)
     : name(std::move(cmd.name)),
       positional(std::move(cmd.positional)),
-      args(std::move(cmd.args)),
+      opts(std::move(cmd.opts)),
       flags(std::move(cmd.flags)),
       run(std::move(cmd.run))
 {}
 
-Module::Module(const std::string                                                      & n,
-               const std::vector <std::string>                                        & pos,
-               const Args                                                             & arg,
-               const Flags                                                            & flag,
-               const std::function <int(const std::map <std::string, std::string> &,
-                                        const std::map <std::string, bool>        &)> & func)
+Module::Module(const std::string                & n,
+               const std::vector <std::string>  & pos,
+               const Module::Opts               & opt,
+               const Module::Flags              & flag,
+               const Module::Run                & func)
 
-    : name(),
-      positional(),
-      args(),
-      flags(),
-      run()
+    : name(n),
+      positional(pos),
+      opts(opt),
+      flags(flag),
+      run(func)
 {
-    check_name(n);
-    check_positional(pos);
-    check_optional(args);
-    check_optional(flags);
-
-    check_duplicate(args, flags);
-
-    // only set values after input passes
-    name       = n;
-    positional = pos;
-    args       = arg;
-    flags      = flag;
-    run        = func;
+    // throw if fail
+    check_names_ws();
+    check_duplicate();
 }
 
 Module & Module::operator=(const Module & cmd){
     name       = cmd.name;
     positional = cmd.positional;
-    args       = cmd.args;
+    opts       = cmd.opts;
     flags      = cmd.flags;
     run        = cmd.run;
     return *this;
@@ -142,7 +146,7 @@ Module & Module::operator=(const Module & cmd){
 Module & Module::operator=(Module && cmd){
     name       = std::move(cmd.name);
     positional = std::move(cmd.positional);
-    args       = std::move(cmd.args);
+    opts       = std::move(cmd.opts);
     flags      = std::move(cmd.flags);
     run        = std::move(cmd.run);
     return *this;
@@ -161,22 +165,22 @@ std::string Module::help(const std::string & indent) const{
     }
 
     // add "[options]" marker
-    if (args.size() || flags.size()){
+    if (opts.size() || flags.size()){
         help_str += " [options]\n";
 
         // add optional arguments
-        if (args.size()){
+        if (opts.size()){
             help_str += indent + "    Optional Arguments:\n";
-            for(std::pair <const std::string, std::pair <std::string, std::string> > const & arg : args){
-                help_str += indent + "        " + arg.first + " " + arg.second.first + "; default value: \"" + arg.second.second + "\"\n";
+            for(std::pair <const std::string, std::pair <std::string, std::string> > const & opt : opts){
+                help_str += indent + "        " + opt.first + " " + opt.second.first + "; default value: \"" + opt.second.second + "\"\n";
             }
         }
 
         // add optional flags
         if (flags.size()){
             help_str += "\n" + indent + "    Optional Flags:\n";
-            for(std::pair <const std::string, std::string> const & flag :flags){
-                help_str += indent + "        " + flag.first + " " + flag.second + "\n";
+            for(std::pair <std::string const, std::pair <std::string, bool> > const & flag : flags){
+                help_str += indent + "        " + flag.first + " " + flag.second.first + "; default value: " + (flag.second.second?"true":"false") + "\n";
             }
         }
     }
@@ -190,14 +194,14 @@ std::string Module::help(const std::string & indent) const{
 int Module::operator()(int argc, char * argv[]) const{
     // fill arguments with optional argument default values
     std::map <std::string, std::string> parsed_args;
-    for(std::pair <const std::string, std::pair <std::string, std::string> > const & arg : args){
-        parsed_args[arg.first] = arg.second.second;
+    for(std::pair <std::string const, std::pair <std::string, std::string> > const & opt : opts){
+        parsed_args[opt.first] = opt.second.second;
     }
 
     // fill arguments with optional flag default values (false)
     std::map <std::string, bool> parsed_flags;
-    for(std::pair <const std::string, std::string> const & flag : flags){
-        parsed_flags[flag.first] = false;
+    for(std::pair <std::string const, std::pair <std::string, bool> > const & flag : flags){
+        parsed_flags[flag.first] = flag.second.second;
     }
 
     // parse input arguments

@@ -54,8 +54,8 @@ const Module encrypt_sym(
 
     // optional flags
     {
-        std::make_pair("-a",    "armored"),
-        std::make_pair("--mdc", "use mdc?"),
+        std::make_pair("-a",        std::make_pair("armored",                                         true)),
+        std::make_pair("--mdc",     std::make_pair("use mdc?",                                        true)),
     },
 
     // function to run

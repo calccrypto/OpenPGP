@@ -48,7 +48,7 @@ const Module revoke_key_with_cert(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+        std::make_pair("-a", std::make_pair("armored",   true)),
     },
 
     // function to run

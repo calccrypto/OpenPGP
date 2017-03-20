@@ -50,7 +50,7 @@ const Module sign_standalone_signature(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+        std::make_pair("-a", std::make_pair("armored",                true)),
     },
 
     // function to run

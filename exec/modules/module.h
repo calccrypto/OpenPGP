@@ -38,36 +38,31 @@ namespace module {
 
 class Module{
     public:
-        typedef std::map <std::string, std::pair <std::string, std::string> > Args;
-        typedef std::map <std::string, std::string>                           Flags;
+        // Optional arguments with default values
+        // name -> <explaination, default value>
+        typedef std::map <std::string, std::pair <std::string, std::string> >    Opts;
+
+        // optional arguments that default to true and false only
+        // flags used flip default value
+        // name -> <explaination, true/false>
+        typedef std::map <std::string, std::pair <std::string, bool> >           Flags;
+
+        // function to check arguments and run user defined actions
+        typedef std::function <int(const std::map <std::string, std::string> &,
+                                   const std::map <std::string, bool>        &)> Run;
 
     private:
-        std::string name;                                                     // name of this module, and calling string; no whitespace
-        std::vector <std::string> positional;                                 // postional arguments
-        Args args;                                                            // option -> value
-        Flags flags;                                                          // all values start as false; no chaining
-        std::function <int(const std::map <std::string, std::string> &,
-                           const std::map <std::string, bool>        &)> run; // function to run
+        std::string name;                       // name of this module, and calling string; no whitespace
+        std::vector <std::string> positional;   // required postional arguments (no default value)
+        Opts opts;                              // optional arguments (default value provided)
+        Flags flags;                            // boolean arguments  (default value provided)
+        Run run;                                // function to run
 
-        // constructor argument checks
-        // throws if fail
-        void check_name(const std::string & n) const;
-        void check_positional(const std::vector <std::string> & pos) const;
+        // check for whitespace in names; throws if fail
+        void check_names_ws() const;
 
-        // check for whitespace in optional arguments
-        template <typename Optional>
-        void check_optional(const Optional & options) const{
-            for(auto option : options){
-                for(char const & c : option.first){
-                    if (std::isspace(c)){
-                        throw std::runtime_error("Error: Whitespace found in option: " + option.first);
-                    }
-                }
-            }
-        }
-
-        // check if elements of rhs are already in lhs
-        void check_duplicate(const Args & arg, const Flags & flag) const;
+        // check if there are any duplicate argument names; throws if fail
+        void check_duplicate() const;
 
         // unknown arguments are ignored
         const char * parse(int argc, char * argv[],
@@ -78,12 +73,11 @@ class Module{
         Module() = default;                                         // no default constructor
         Module(const Module & cmd);
         Module(Module && cmd);
-        Module(const std::string                                                      & n,
-               const std::vector <std::string>                                        & pos,
-               const Args                                                             & arg,
-               const Flags                                                            & flag,
-               const std::function <int(const std::map <std::string, std::string> &,
-                                        const std::map <std::string, bool>        &)> & func);
+        Module(const std::string                & n,
+               const std::vector <std::string>  & pos,
+               const Opts                       & opts,
+               const Flags                      & flag,
+               const Run                        & func);
 
         Module & operator=(const Module & cmd);
         Module & operator=(Module && cmd);

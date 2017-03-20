@@ -65,7 +65,7 @@ const Module generate_keypair(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+        std::make_pair("-a",         std::make_pair("armored",                                               true)),
     },
 
     // function to run

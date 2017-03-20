@@ -52,7 +52,7 @@ const Module generate_revoke_subkey_cert(
 
     // optional flags
     {
-        std::make_pair("-a", "armored"),
+        std::make_pair("-a", std::make_pair("armored",          true)),
     },
 
     // function to run
