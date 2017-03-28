@@ -1,5 +1,5 @@
-#ifndef __TESTS_TRIPLEDESECBVARKEY__
-#define __TESTS_TRIPLEDESECBVARKEY__
+#ifndef __TRIPLEDESECBVARKEY__
+#define __TRIPLEDESECBVARKEY__
 
 #include <string>
 #include <vector>
@@ -127,4 +127,4 @@ static const std::vector<std::string> TDES_ECB_VARKEY_CIPHER = {
     "869efd7f9f265a09",
 };
 
-#endif // __TESTS_TRIPLEDESECBVARKEY__
+#endif // __TRIPLEDESECBVARKEY__

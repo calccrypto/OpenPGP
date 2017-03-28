@@ -1,5 +1,5 @@
-#ifndef __TESTS_RIPEMD160TESTVECTORS__
-#define __TESTS_RIPEMD160TESTVECTORS__
+#ifndef __RIPEMD160TESTVECTORS__
+#define __RIPEMD160TESTVECTORS__
 
 #include <string>
 #include <vector>
@@ -28,4 +28,4 @@ static const std::vector<std::string> RIPEMD160_MSG_HEXDIGEST = {
     "9b752e45573d4b39f4dbd3323cab82bf63326bfb",
 };
 
-#endif // __TESTS_RIPEMD160TESTVECTORS__
+#endif // __RIPEMD160TESTVECTORS__

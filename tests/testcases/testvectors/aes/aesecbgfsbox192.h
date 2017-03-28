@@ -1,5 +1,5 @@
-#ifndef __TESTS_AESECBGFSBOX192__
-#define __TESTS_AESECBGFSBOX192__
+#ifndef __AESECBGFSBOX192__
+#define __AESECBGFSBOX192__
 
 #include <string>
 #include <vector>
@@ -26,4 +26,4 @@ static const std::vector<std::string> AES192_ECB_GFSBOX_CIPHER = {
     "067cd9d3749207791841562507fa9626",
 };
 
-#endif // __TESTS_AESECBGFSBOX192__
+#endif // __AESECBGFSBOX192__

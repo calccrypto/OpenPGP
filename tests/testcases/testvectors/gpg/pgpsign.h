@@ -1,5 +1,5 @@
-#ifndef __TESTS_PGPSIGN__
-#define __TESTS_PGPSIGN__
+#ifndef __PGPSIGN__
+#define __PGPSIGN__
 
 #include <string>
 
@@ -21,4 +21,4 @@ static const std::string GPG_CLEARSIGN_ALICE =
         "-----END PGP SIGNATURE-----"
         ;
 
-#endif // __TESTS_PGPSIGN__
+#endif // __PGPSIGN__

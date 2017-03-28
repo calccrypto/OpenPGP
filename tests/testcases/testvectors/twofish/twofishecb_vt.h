@@ -1,5 +1,5 @@
-#ifndef __TESTS_TWOFISHECB_VT__
-#define __TESTS_TWOFISHECB_VT__
+#ifndef __TWOFISHECB_VT__
+#define __TWOFISHECB_VT__
 
 #include <string>
 #include <vector>
@@ -536,4 +536,4 @@ static const std::vector<std::string> TWOFISH256_ECB_VT_CIPHER = {
     "23D1247EFF4CA8CBB378DF118369821E",
 };
 
-#endif // __TESTS_TWOFISHECB_VT__
+#endif // __TWOFISHECB_VT__

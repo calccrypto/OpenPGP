@@ -1,5 +1,5 @@
-#ifndef __TESTS_BLOWFISHTESTVECTORS__
-#define __TESTS_BLOWFISHTESTVECTORS__
+#ifndef __BLOWFISHTESTVECTORS__
+#define __BLOWFISHTESTVECTORS__
 
 #include <string>
 #include <vector>
@@ -117,4 +117,4 @@ static const std::vector<std::string> BLOWFISH_ECB_CIPHER = {
     "6b5c5a9c5d9e0a5a",
 };
 
-#endif // __TESTS_BLOWFISHTESTVECTORS__
+#endif // __BLOWFISHTESTVECTORS__

@@ -1,5 +1,5 @@
-#ifndef __TESTS_SHA256SHORTMSG__
-#define __TESTS_SHA256SHORTMSG__
+#ifndef __SHA256SHORTMSG__
+#define __SHA256SHORTMSG__
 
 #include <string>
 #include <vector>
@@ -142,4 +142,4 @@ static const std::vector<std::string> SHA256_SHORT_MSG_HEXDIGEST = {
     "42e61e174fbb3897d6dd6cef3dd2802fe67b331953b06114a65c772859dfc1aa",
 };
 
-#endif // __TESTS_SHA256SHORTMSG__
+#endif // __SHA256SHORTMSG__

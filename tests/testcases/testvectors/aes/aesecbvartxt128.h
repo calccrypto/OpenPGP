@@ -1,5 +1,5 @@
-#ifndef __TESTS_AESECBVARTXT128__
-#define __TESTS_AESECBVARTXT128__
+#ifndef __AESECBVARTXT128__
+#define __AESECBVARTXT128__
 
 #include <string>
 #include <vector>
@@ -270,4 +270,4 @@ static const std::vector<std::string> AES128_ECB_VARTXT_CIPHER = {
     "3f5b8cc9ea855a0afa7347d23e8d664e",
 };
 
-#endif // __TESTS_AESECBVARTXT128__
+#endif // __AESECBVARTXT128__

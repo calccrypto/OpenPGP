@@ -1,5 +1,5 @@
-#ifndef __TESTS_DSASIGGEN___
-#define __TESTS_DSASIGGEN___
+#ifndef __DSASIGGEN___
+#define __DSASIGGEN___
 
 #include <string>
 #include <vector>
@@ -118,4 +118,4 @@ static const std::vector<std::string> DSA_SIGGEN_S = {
     "436f1199978c53de730239ec9ce2b9fa9add8979",
 };
 
-#endif // __TESTS_DSASIGGEN__
+#endif // __DSASIGGEN__

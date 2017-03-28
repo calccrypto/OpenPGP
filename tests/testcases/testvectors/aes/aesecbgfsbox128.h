@@ -1,5 +1,5 @@
-#ifndef __TESTS_ECBGFSBOX128__
-#define __TESTS_ECBGFSBOX128__
+#ifndef __ECBGFSBOX128__
+#define __ECBGFSBOX128__
 
 #include <string>
 #include <vector>
@@ -28,4 +28,4 @@ static const std::vector<std::string> AES128_ECB_GFSBOX_CIPHER = {
     "08a4e2efec8a8e3312ca7460b9040bbf",
 };
 
-#endif // __TESTS_ECBGFSBOX128__
+#endif // __ECBGFSBOX128__

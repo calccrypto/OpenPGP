@@ -1,5 +1,5 @@
-#ifndef __TESTS_PGPENCRYPT__
-#define __TESTS_PGPENCRYPT__
+#ifndef __PGPENCRYPT__
+#define __PGPENCRYPT__
 
 #include <string>
 
@@ -59,4 +59,4 @@ static const std::string GPG_SYMMETRIC_ENCRYPT_TO_ALICE =
         "-----END PGP MESSAGE-----"
         ;
 
-#endif // __TESTS_PGPENCRYPT__
+#endif // __PGPENCRYPT__

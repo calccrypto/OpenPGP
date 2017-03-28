@@ -1,5 +1,5 @@
-#ifndef __TESTS_TWOFISHECB_VK__
-#define __TESTS_TWOFISHECB_VK__
+#ifndef __TWOFISHECB_VK__
+#define __TWOFISHECB_VK__
 
 #include <string>
 #include <vector>
@@ -1178,4 +1178,4 @@ static const std::vector<std::string> TWOFISH256_ECB_VK_CIPHER = {
     "85F345366155D13F8F257734D2CBD6D9",
 };
 
-#endif // __TESTS_TWOFISHECB_VK__
+#endif // __TWOFISHECB_VK__

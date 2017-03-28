@@ -1,5 +1,5 @@
-#ifndef __TESTS_RSASIGGEN15_186_2__
-#define __TESTS_RSASIGGEN15_186_2__
+#ifndef __RSASIGGEN15_186_2__
+#define __RSASIGGEN15_186_2__
 
 #include <string>
 #include <vector>
@@ -560,4 +560,4 @@ static const std::vector<std::vector<std::string> > RSA_SIGGEN_SIG = {
     }
 };
 
-#endif // __TESTS_RSASIGGEN15_186_2__
+#endif // __RSASIGGEN15_186_2__

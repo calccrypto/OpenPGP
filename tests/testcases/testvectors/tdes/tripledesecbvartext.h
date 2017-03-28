@@ -1,5 +1,5 @@
-#ifndef __TESTS_TRIPLEDESECBVARTEXT__
-#define __TESTS_TRIPLEDESECBVARTEXT__
+#ifndef __TRIPLEDESECBVARTEXT__
+#define __TRIPLEDESECBVARTEXT__
 
 #include <string>
 #include <vector>
@@ -142,4 +142,4 @@ static const std::vector<std::string> TDES_ECB_VARTEXT_CIPHER = {
     "166b40b44aba4bd6",
 };
 
-#endif // __TESTS_TRIPLEDESECBVARTEXT__
+#endif // __TRIPLEDESECBVARTEXT__

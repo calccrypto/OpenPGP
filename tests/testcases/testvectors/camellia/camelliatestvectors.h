@@ -4085,4 +4085,4 @@ static const std::vector<std::vector<std::string> > CAMELLIA256_ECB_CIPHER = {
     }
 };
 
-#endif // __TESTS_CAMELLIATESTVECTORS__
+#endif // __CAMELLIATESTVECTORS__

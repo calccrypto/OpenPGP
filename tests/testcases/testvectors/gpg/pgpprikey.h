@@ -1,5 +1,5 @@
-#ifndef __TESTS_PGPPRIKEY__
-#define __TESTS_PGPPRIKEY__
+#ifndef __PGPPRIKEY__
+#define __PGPPRIKEY__
 
 #include <string>
 
@@ -127,4 +127,4 @@ static const std::string GPG_PRIKEY_BOB =
         "-----END PGP PRIVATE KEY BLOCK-----"
         ;
 
-#endif // __TESTS_PGPPRIKEY__
+#endif // __PGPPRIKEY__

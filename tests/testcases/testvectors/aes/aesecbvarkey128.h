@@ -1,5 +1,5 @@
-#ifndef __TESTS_AESECBVARKEY128__
-#define __TESTS_AESECBVARKEY128__
+#ifndef __AESECBVARKEY128__
+#define __AESECBVARKEY128__
 
 #include <string>
 #include <vector>
@@ -270,4 +270,4 @@ static const std::vector<std::string> AES128_ECB_VARKEY_CIPHER = {
     "a1f6258c877d5fcd8964484538bfc92c",
 };
 
-#endif // __TESTS_AESECBVARKEY128__
+#endif // __AESECBVARKEY128__

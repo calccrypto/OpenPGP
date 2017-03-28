@@ -1,5 +1,5 @@
-#ifndef __TESTS_TRIPLEDESECBSUBTAB__
-#define __TESTS_TRIPLEDESECBSUBTAB__
+#ifndef __TRIPLEDESECBSUBTAB__
+#define __TRIPLEDESECBSUBTAB__
 
 #include <string>
 #include <vector>
@@ -72,4 +72,4 @@ static const std::vector<std::string> TDES_ECB_SUBTAB_CIPHER = {
     "63fac0d034d9f793",
 };
 
-#endif // __TESTS_TRIPLEDESECBSUBTAB__
+#endif // __TRIPLEDESECBSUBTAB__

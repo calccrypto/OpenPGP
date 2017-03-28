@@ -1,5 +1,5 @@
-#ifndef __TESTS_TRIPLEDESECBPERMOP__
-#define __TESTS_TRIPLEDESECBPERMOP__
+#ifndef __TRIPLEDESECBPERMOP__
+#define __TRIPLEDESECBPERMOP__
 
 #include <string>
 #include <vector>
@@ -78,4 +78,4 @@ static const std::vector<std::string> TDES_ECB_PERMOP_CIPHER = {
     "1aeac39a61f0a464",
 };
 
-#endif // __TESTS_TRIPLEDESECBPERMOP__
+#endif // __TRIPLEDESECBPERMOP__

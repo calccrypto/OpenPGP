@@ -1,5 +1,5 @@
-#ifndef __TESTS_TRIPLEDESECBINVPERM__
-#define __TESTS_TRIPLEDESECBINVPERM__
+#ifndef __TRIPLEDESECBINVPERM__
+#define __TRIPLEDESECBINVPERM__
 
 #include <string>
 #include <vector>
@@ -142,4 +142,4 @@ static const std::vector<std::string> TDES_ECB_INVPERM_CIPHER = {
     "0000000000000001",
 };
 
-#endif // __TESTS_TRIPLEDESECBINVPERM__
+#endif // __TRIPLEDESECBINVPERM__

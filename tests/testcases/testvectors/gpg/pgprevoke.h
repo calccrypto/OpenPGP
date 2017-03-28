@@ -1,5 +1,5 @@
-#ifndef __TESTS_PGPREVOKE__
-#define __TESTS_PGPREVOKE__
+#ifndef __PGPREVOKE__
+#define __PGPREVOKE__
 
 #include <string>
 
@@ -19,4 +19,4 @@ static const std::string GPG_REVOKE3_ALICE =
         "-----END PGP PUBLIC KEY BLOCK-----"
         ;
 
-#endif // __TESTS_PGPREVOKE__
+#endif // __PGPREVOKE__

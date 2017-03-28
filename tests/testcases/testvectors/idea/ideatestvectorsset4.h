@@ -1,5 +1,5 @@
-#ifndef __TESTS_IDEATESTVECTORSSET4__
-#define __TESTS_IDEATESTVECTORSSET4__
+#ifndef __IDEATESTVECTORSSET4__
+#define __IDEATESTVECTORSSET4__
 
 #include <string>
 #include <vector>
@@ -21,4 +21,4 @@ static const std::vector<std::string> IDEA_SET4_CIPHER = {
     "c8fb51d3516627a8",
 };
 
-#endif // __TESTS_IDEATESTVECTORSSET4__
+#endif // __IDEATESTVECTORSSET4__

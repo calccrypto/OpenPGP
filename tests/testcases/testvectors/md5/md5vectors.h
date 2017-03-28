@@ -1,5 +1,5 @@
-#ifndef __TESTS_MD5VECTORS__
-#define __TESTS_MD5VECTORS__
+#ifndef __MD5VECTORS__
+#define __MD5VECTORS__
 
 #include <string>
 #include <vector>
@@ -271,4 +271,4 @@ static const std::vector<std::string> MD5_HASHES = {
 };
 
 
-#endif // __TESTS_MD5VECTORS__
+#endif // __MD5VECTORS__

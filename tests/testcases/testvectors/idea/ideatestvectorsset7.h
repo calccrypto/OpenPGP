@@ -1,5 +1,5 @@
-#ifndef __TESTS_IDEATESTVECTORSSET7__
-#define __TESTS_IDEATESTVECTORSSET7__
+#ifndef __IDEATESTVECTORSSET7__
+#define __IDEATESTVECTORSSET7__
 
 #include <string>
 #include <vector>
@@ -783,4 +783,4 @@ static const std::vector<std::string> IDEA_SET7_CIPHER = {
     "ffffffffffffffff",
 };
 
-#endif // __TESTS_IDEATESTVECTORSSET7__
+#endif // __IDEATESTVECTORSSET7__

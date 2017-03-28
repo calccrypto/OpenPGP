@@ -1,5 +1,5 @@
-#ifndef __TESTS_AESECBSBOX256__
-#define __TESTS_AESECBSBOX256__
+#ifndef __AESECBSBOX256__
+#define __AESECBSBOX256__
 
 #include <string>
 #include <vector>
@@ -46,4 +46,4 @@ static const std::vector<std::string> AES256_ECB_SBOX_CIPHER = {
     "179a49c712154bbffbe6e7a84a18e220",
 };
 
-#endif // __TESTS_AESECBSBOX256__
+#endif // __AESECBSBOX256__

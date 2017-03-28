@@ -1,5 +1,5 @@
-#ifndef __TESTS_PGPPUBKEY__
-#define __TESTS_PGPPUBKEY__
+#ifndef __PGPPUBKEY__
+#define __PGPPUBKEY__
 
 #include <string>
 
@@ -36,4 +36,4 @@ static const std::string GPG_PUBKEY_ALICE =
         "-----END PGP PUBLIC KEY BLOCK-----"
         ;
 
-#endif // __TESTS_PGPPUBKEY__
+#endif // __PGPPUBKEY__
