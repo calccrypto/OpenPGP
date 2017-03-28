@@ -7,7 +7,7 @@
 #include "testvectors/aes/aesecbvarkey192.h"
 #include "testvectors/aes/aesecbvartxt192.h"
 
-TEST(AESTest, test_aes192_ecb_gfsbox) {
+TEST(AES, 192_ecb_gfsbox) {
 
     ASSERT_EQ(AES192_ECB_GFSBOX_PLAIN.size(), AES192_ECB_GFSBOX_CIPHER.size());
 
@@ -20,7 +20,7 @@ TEST(AESTest, test_aes192_ecb_gfsbox) {
     }
 }
 
-TEST(AESTest, test_aes192_ecb_sbox) {
+TEST(AES, 192_ecb_sbox) {
 
     ASSERT_EQ(AES192_ECB_SBOX_KEY.size(), AES192_ECB_SBOX_CIPHER.size());
 
@@ -33,7 +33,7 @@ TEST(AESTest, test_aes192_ecb_sbox) {
     }
 }
 
-TEST(AESTest, test_aes192_ecb_varkey) {
+TEST(AES, 192_ecb_varkey) {
 
     ASSERT_EQ(AES192_ECB_VARKEY_KEY.size(), AES192_ECB_VARKEY_CIPHER.size());
 
@@ -46,7 +46,7 @@ TEST(AESTest, test_aes192_ecb_varkey) {
     }
 }
 
-TEST(AESTest, test_aes192_ecb_vartxt) {
+TEST(AES, 192_ecb_vartxt) {
 
     ASSERT_EQ(AES192_ECB_VARTXT_PLAIN.size(), AES192_ECB_VARTXT_CIPHER.size());
 

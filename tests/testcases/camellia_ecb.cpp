@@ -4,7 +4,7 @@
 
 #include "testvectors/camellia/camelliatestvectors.h"
 
-TEST(CamelliaTest, test_camellia128_ecb) {
+TEST(Camellia, 128_ecb) {
 
     ASSERT_EQ(CAMELLIA128_ECB_KEY.size(), CAMELLIA128_ECB_CIPHER.size());
 
@@ -20,7 +20,7 @@ TEST(CamelliaTest, test_camellia128_ecb) {
     }
 }
 
-TEST(CamelliaTest, test_camellia192_ecb) {
+TEST(Camellia, 192_ecb) {
 
     ASSERT_EQ(CAMELLIA192_ECB_KEY.size(), CAMELLIA192_ECB_CIPHER.size());
 
@@ -36,7 +36,7 @@ TEST(CamelliaTest, test_camellia192_ecb) {
     }
 }
 
-TEST(CamelliaTest, test_camellia256_ecb) {
+TEST(Camellia, 256_ecb) {
 
     ASSERT_EQ(CAMELLIA256_ECB_KEY.size(), CAMELLIA256_ECB_CIPHER.size());
 

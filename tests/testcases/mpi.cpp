@@ -4,7 +4,7 @@
 
 const int COUNT = 10;
 
-TEST(MPITest, test_add_sub){
+TEST(MPI, add_sub){
     PGPMPI a = random(512);
     for (int i = 0; i < COUNT; ++i){
         PGPMPI b = random(512);
@@ -15,7 +15,7 @@ TEST(MPITest, test_add_sub){
     }
 }
 
-TEST(MPITest, test_mul_div_mod){
+TEST(MPI, mul_div_mod){
     for (int i = 0; i < COUNT; ++i){
         PGPMPI a = random(400), b = a;
         a <<= i+1;
@@ -26,7 +26,7 @@ TEST(MPITest, test_mul_div_mod){
     }
 }
 
-TEST(MPITest, test_lshift){
+TEST(MPI, lshift){
     PGPMPI a = random(200), b, c = 1;
     for (int i = 0; i < COUNT; ++i){
         b = a << i+1;
@@ -36,7 +36,7 @@ TEST(MPITest, test_lshift){
     }
 }
 
-TEST(MPITest, test_rshift){
+TEST(MPI, rshift){
     PGPMPI a = random(200), b, c = 1;
     for (int i = 0; i < COUNT; ++i){
         b = a >> i+1;

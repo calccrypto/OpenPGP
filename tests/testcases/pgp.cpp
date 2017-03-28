@@ -45,7 +45,7 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
     return result;
 }
 
-TEST(PGPTest, test_gpg_public_key) {
+TEST(PGP, gpg_public_key) {
 
     std::string in = GPG_PUBKEY_ALICE;
     PGPPublicKey pgp(in);
@@ -253,7 +253,7 @@ TEST(PGPTest, test_gpg_public_key) {
 
 }
 
-TEST(PGPTest, test_gpg_private_key) {
+TEST(PGP, gpg_private_key) {
 
     std::string in = GPG_PRIKEY_ALICE;
     PGPSecretKey pgp(in);
@@ -487,7 +487,7 @@ TEST(PGPTest, test_gpg_private_key) {
 
 }
 
-TEST(PGPTest, test_gpg_revoke) {
+TEST(PGP, gpg_revoke) {
 
     std::string in = GPG_REVOKE3_ALICE;
     PGPRevocationCertificate pgp(in);
@@ -555,7 +555,7 @@ TEST(PGPTest, test_gpg_revoke) {
 
 }
 
-TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
+TEST(PGP, gpg_pka_encrypt_anonymous) {
 
     std::string in = GPG_PKA_ENCRYPT_TO_ALICE;
     PGPMessage pgp(in);
@@ -606,7 +606,7 @@ TEST(PGPTest, test_gpg_pka_encrypt_anonymous) {
     }
 }
 
-TEST(PGPTest, test_gpg_pka_encrypt) {
+TEST(PGP, gpg_pka_encrypt) {
 
     std::string in = GPG_PKA_ENCRYPT_ALICE_TO_BOB;
     PGPMessage pgp(in);
@@ -657,7 +657,7 @@ TEST(PGPTest, test_gpg_pka_encrypt) {
     }
 }
 
-TEST(PGPTest, test_gpg_symmetric_encrypt) {
+TEST(PGP, gpg_symmetric_encrypt) {
 
     std::string in = GPG_SYMMETRIC_ENCRYPT_TO_ALICE;
     PGPMessage pgp(in);
@@ -725,7 +725,7 @@ TEST(PGPTest, test_gpg_symmetric_encrypt) {
     }
 }
 
-TEST(PGPTest, test_gpg_clearsign) {
+TEST(PGP, gpg_clearsign) {
 
     std::string in = GPG_CLEARSIGN_ALICE;
     PGPCleartextSignature pgp(in);

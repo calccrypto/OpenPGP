@@ -6,7 +6,7 @@
 
 const uint8_t PKA_RSA = 1;
 
-TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
+TEST(RSA, sign_pkcs1_v1_5) {
 
     ASSERT_EQ(RSA_SIGGEN_N.size(), RSA_SIGGEN_D.size());
 
@@ -29,7 +29,7 @@ TEST(RSATest, test_rsa_sign_pkcs1_v1_5) {
     }
 }
 
-TEST(RSATest, test_rsa_keygen) {
+TEST(RSA, keygen) {
     PKA::Values key = RSA_keygen(512);
     PKA::Values pub = {key[0], key[1]};
     PKA::Values pri = {key[2], key[3], key[4], key[5]};

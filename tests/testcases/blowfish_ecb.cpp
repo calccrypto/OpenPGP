@@ -4,7 +4,7 @@
 
 #include "testvectors/blowfish/blowfishtestvectors.h"
 
-TEST(BlowfishTest, test_blowfish_ecb) {
+TEST(Blowfish, ecb) {
 
     ASSERT_EQ(BLOWFISH_ECB_KEY.size(), BLOWFISH_ECB_PLAIN.size());
     ASSERT_EQ(BLOWFISH_ECB_PLAIN.size(), BLOWFISH_ECB_CIPHER.size());

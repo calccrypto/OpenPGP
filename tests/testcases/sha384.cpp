@@ -4,7 +4,7 @@
 
 #include "testvectors/sha/sha384shortmsg.h"
 
-TEST(SHA384Test, test_sha384_short_msg) {
+TEST(SHA384, short_msg) {
 
     ASSERT_EQ(SHA384_SHORT_MSG.size(), SHA384_SHORT_MSG_HEXDIGEST.size());
 

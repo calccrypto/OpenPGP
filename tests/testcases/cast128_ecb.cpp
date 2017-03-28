@@ -2,7 +2,7 @@
 
 #include "Encryptions/CAST128.h"
 
-TEST(CAST128Test, test_cast128_ecb) {
+TEST(CAST, 128_ecb) {
 
     // Test vector from <http://tools.ietf.org/html/rfc2144#appendix-B>
     const std::string CAST128_ECB_KEY = unhexlify("0123456712345678234567893456789a");
@@ -16,7 +16,7 @@ TEST(CAST128Test, test_cast128_ecb) {
 }
 
 /*
-TEST(CAST128Test, test_cast128_maintenance_test) {
+TEST(CAST128, cast128_maintenance_test) {
 
     // Test vector from <http://tools.ietf.org/html/rfc2144#appendix-B>
     std::string aL, aR, bL, bR;

@@ -4,7 +4,7 @@
 
 #include "testvectors/md5/md5vectors.h"
 
-TEST(MD5Test, test_md5_vectors) {
+TEST(MD5, vectors) {
 
     ASSERT_EQ(MD5_BYTES.size(), MD5_HASHES.size());
 

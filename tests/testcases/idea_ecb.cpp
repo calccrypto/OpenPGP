@@ -11,7 +11,7 @@
 #include "testvectors/idea/ideatestvectorsset7.h"
 #include "testvectors/idea/ideatestvectorsset8.h"
 
-TEST(IDEATest, test_idea_ecb_set1) {
+TEST(IDEA, ecb_set1) {
 
     ASSERT_EQ(IDEA_SET1_KEY.size(), IDEA_SET1_CIPHER.size());
 
@@ -24,7 +24,7 @@ TEST(IDEATest, test_idea_ecb_set1) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set2) {
+TEST(IDEA, ecb_set2) {
 
     ASSERT_EQ(IDEA_SET2_PLAIN.size(), IDEA_SET2_CIPHER.size());
 
@@ -37,7 +37,7 @@ TEST(IDEATest, test_idea_ecb_set2) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set3) {
+TEST(IDEA, ecb_set3) {
 
     ASSERT_EQ(IDEA_SET3_KEY.size(), IDEA_SET3_PLAIN.size());
     ASSERT_EQ(IDEA_SET3_PLAIN.size(), IDEA_SET3_CIPHER.size());
@@ -49,7 +49,7 @@ TEST(IDEATest, test_idea_ecb_set3) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set4) {
+TEST(IDEA, ecb_set4) {
 
     ASSERT_EQ(IDEA_SET4_KEY.size(), IDEA_SET4_PLAIN.size());
     ASSERT_EQ(IDEA_SET4_PLAIN.size(), IDEA_SET4_CIPHER.size());
@@ -61,7 +61,7 @@ TEST(IDEATest, test_idea_ecb_set4) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set5) {
+TEST(IDEA, ecb_set5) {
 
     ASSERT_EQ(IDEA_SET5_KEY.size(), IDEA_SET5_PLAIN.size());
 
@@ -74,7 +74,7 @@ TEST(IDEATest, test_idea_ecb_set5) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set6) {
+TEST(IDEA, ecb_set6) {
 
     ASSERT_EQ(IDEA_SET6_PLAIN.size(), IDEA_SET6_CIPHER.size());
 
@@ -87,7 +87,7 @@ TEST(IDEATest, test_idea_ecb_set6) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set7) {
+TEST(IDEA, ecb_set7) {
 
     ASSERT_EQ(IDEA_SET7_KEY.size(), IDEA_SET7_PLAIN.size());
     ASSERT_EQ(IDEA_SET7_PLAIN.size(), IDEA_SET7_CIPHER.size());
@@ -99,7 +99,7 @@ TEST(IDEATest, test_idea_ecb_set7) {
     }
 }
 
-TEST(IDEATest, test_idea_ecb_set8) {
+TEST(IDEA, ecb_set8) {
 
     ASSERT_EQ(IDEA_SET8_KEY.size(), IDEA_SET8_PLAIN.size());
     ASSERT_EQ(IDEA_SET8_PLAIN.size(), IDEA_SET8_CIPHER.size());

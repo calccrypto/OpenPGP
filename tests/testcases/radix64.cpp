@@ -2,7 +2,7 @@
 
 #include "radix64.h"
 
-TEST(Radix64Test, test_rfc4648_base64_test_vectors){
+TEST(Radix64, rfc4648_base64_test_vectors){
 
     // ascii2radix64
     EXPECT_EQ(ascii2radix64(""), "");

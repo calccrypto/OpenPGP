@@ -8,7 +8,7 @@
 #include "testvectors/tdes/tripledesecbvarkey.h"
 #include "testvectors/tdes/tripledesecbvartext.h"
 
-TEST(TripleDESTest, test_tripledes_ecb_invperm) {
+TEST(TripleDES, ecb_invperm) {
 
     ASSERT_EQ(TDES_ECB_INVPERM_PLAIN.size(), TDES_ECB_INVPERM_CIPHER.size());
 
@@ -21,7 +21,7 @@ TEST(TripleDESTest, test_tripledes_ecb_invperm) {
     }
 }
 
-TEST(TripleDESTest, test_tripledes_ecb_permop) {
+TEST(TripleDES, ecb_permop) {
 
     ASSERT_EQ(TDES_ECB_PERMOP_KEY.size(), TDES_ECB_PERMOP_CIPHER.size());
 
@@ -35,7 +35,7 @@ TEST(TripleDESTest, test_tripledes_ecb_permop) {
     }
 }
 
-TEST(TripleDESTest, test_tripledes_ecb_subtab) {
+TEST(TripleDES, ecb_subtab) {
 
     ASSERT_EQ(TDES_ECB_SUBTAB_KEY.size(), TDES_ECB_SUBTAB_PLAIN.size());
     ASSERT_EQ(TDES_ECB_SUBTAB_PLAIN.size(), TDES_ECB_SUBTAB_CIPHER.size());
@@ -48,7 +48,7 @@ TEST(TripleDESTest, test_tripledes_ecb_subtab) {
     }
 }
 
-TEST(TripleDESTest, test_tripledes_ecb_varkey) {
+TEST(TripleDES, ecb_varkey) {
 
     ASSERT_EQ(TDES_ECB_VARKEY_KEY.size(), TDES_ECB_VARKEY_CIPHER.size());
 
@@ -62,7 +62,7 @@ TEST(TripleDESTest, test_tripledes_ecb_varkey) {
     }
 }
 
-TEST(TripleDESTest, test_tripledes_ecb_vartext) {
+TEST(TripleDES, ecb_vartext) {
 
     ASSERT_EQ(TDES_ECB_VARTEXT_PLAIN.size(), TDES_ECB_VARTEXT_CIPHER.size());
 

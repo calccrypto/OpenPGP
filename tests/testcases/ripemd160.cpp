@@ -4,7 +4,7 @@
 
 #include "testvectors/ripemd/ripemd160testvectors.h"
 
-TEST(RIPEMDTest, test_ripemd160_testvectors) {
+TEST(RIPEMD, testvectors) {
 
     ASSERT_EQ(RIPEMD160_MSG.size(), RIPEMD160_MSG_HEXDIGEST.size());
 

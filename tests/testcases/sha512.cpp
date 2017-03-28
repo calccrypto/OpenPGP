@@ -4,7 +4,7 @@
 
 #include "testvectors/sha/sha512shortmsg.h"
 
-TEST(SHA512Test, test_sha512_short_msg) {
+TEST(SHA512, short_msg) {
 
     ASSERT_EQ(SHA512_SHORT_MSG.size(), SHA512_SHORT_MSG_HEXDIGEST.size());
 

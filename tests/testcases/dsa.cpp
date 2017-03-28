@@ -6,7 +6,7 @@
 
 const uint8_t PKA_DSA = PKA::DSA;
 
-TEST(DSATest, test_dsa_siggen) {
+TEST(DSA, dsa_siggen) {
 
     ASSERT_EQ(DSA_SIGGEN_MSG.size(), DSA_SIGGEN_X.size());
     ASSERT_EQ(DSA_SIGGEN_X.size(), DSA_SIGGEN_Y.size());

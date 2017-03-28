@@ -7,7 +7,7 @@
 
 // Test vectors from <https://www.schneier.com/code/twofish-kat.zip>
 
-TEST(TwofishTest, test_twofish128_ecb_ival) {
+TEST(Twofish, 128_ecb_ival) {
 
     std::string key(16, 0);
     std::string plain(16, 0);
@@ -18,7 +18,7 @@ TEST(TwofishTest, test_twofish128_ecb_ival) {
     EXPECT_EQ(twofish.decrypt(cipher), plain);
 }
 
-TEST(TwofishTest, test_twofish192_ecb_ival) {
+TEST(Twofish, 192_ecb_ival) {
 
     std::string key = unhexlify("0123456789ABCDEFFEDCBA98765432100011223344556677");
     std::string plain(16, 0);
@@ -30,7 +30,7 @@ TEST(TwofishTest, test_twofish192_ecb_ival) {
 
 }
 
-TEST(TwofishTest, test_twofish256_ecb_ival) {
+TEST(Twofish, 256_ecb_ival) {
 
     std::string key = unhexlify("0123456789ABCDEFFEDCBA987654321000112233445566778899AABBCCDDEEFF");
     std::string plain(16, 0);
@@ -42,7 +42,7 @@ TEST(TwofishTest, test_twofish256_ecb_ival) {
 
 }
 
-TEST(TwofishTest, test_twofish128_ecb_tbl) {
+TEST(Twofish, 128_ecb_tbl) {
 
     std::string key(16, 0);
     std::string plain(16, 0);
@@ -57,7 +57,7 @@ TEST(TwofishTest, test_twofish128_ecb_tbl) {
 
 }
 
-TEST(TwofishTest, test_twofish192_ecb_tbl) {
+TEST(Twofish, 192_ecb_tbl) {
     std::string key(24, 0);
     std::string plain(16, 0);
 
@@ -71,7 +71,7 @@ TEST(TwofishTest, test_twofish192_ecb_tbl) {
 
 }
 
-TEST(TwofishTest, test_twofish1256_ecb_tbl) {
+TEST(Twofish, 256_ecb_tbl) {
     std::string key(32, 0);
     std::string plain(16, 0);
 
@@ -85,7 +85,7 @@ TEST(TwofishTest, test_twofish1256_ecb_tbl) {
 
 }
 
-TEST(TwofishTest, test_twofish128_ecb_vk) {
+TEST(Twofish, 128_ecb_vk) {
 
     ASSERT_EQ(TWOFISH128_ECB_VK_KEY.size(), TWOFISH128_ECB_VK_CIPHER.size());
 
@@ -98,7 +98,7 @@ TEST(TwofishTest, test_twofish128_ecb_vk) {
     }
 }
 
-TEST(TwofishTest, test_twofish192_ecb_vk) {
+TEST(Twofish, 192_ecb_vk) {
 
     ASSERT_EQ(TWOFISH192_ECB_VK_KEY.size(), TWOFISH192_ECB_VK_CIPHER.size());
 
@@ -111,7 +111,7 @@ TEST(TwofishTest, test_twofish192_ecb_vk) {
     }
 }
 
-TEST(TwofishTest, test_twofish256_ecb_vk) {
+TEST(Twofish, 256_ecb_vk) {
 
     ASSERT_EQ(TWOFISH256_ECB_VK_KEY.size(), TWOFISH256_ECB_VK_CIPHER.size());
 
@@ -124,7 +124,7 @@ TEST(TwofishTest, test_twofish256_ecb_vk) {
     }
 }
 
-TEST(TwofishTest, test_twofish128_ecb_vt) {
+TEST(Twofish, 128_ecb_vt) {
 
     ASSERT_EQ(TWOFISH_ECB_VT_PLAIN.size(), TWOFISH128_ECB_VT_CIPHER.size());
 
@@ -137,7 +137,7 @@ TEST(TwofishTest, test_twofish128_ecb_vt) {
     }
 }
 
-TEST(TwofishTest, test_twofish192_ecb_vt) {
+TEST(Twofish, 192_ecb_vt) {
 
     ASSERT_EQ(TWOFISH_ECB_VT_PLAIN.size(), TWOFISH192_ECB_VT_CIPHER.size());
 
@@ -150,7 +150,7 @@ TEST(TwofishTest, test_twofish192_ecb_vt) {
     }
 }
 
-TEST(TwofishTest, test_twofish256_ecb_vt) {
+TEST(Twofish, 256_ecb_vt) {
 
     ASSERT_EQ(TWOFISH_ECB_VT_PLAIN.size(), TWOFISH256_ECB_VT_CIPHER.size());
 
