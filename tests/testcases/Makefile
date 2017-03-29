@@ -24,13 +24,13 @@ Hashes:
 PKA:
 	$(MAKE) -C PKA
 
-all: $(OPENPGP_TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
+all: $(TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f $(OPENPGP_TESTCASES_OBJECTS)
+	rm -f $(TESTCASES_OBJECTS)
 
 clean-all: clean
 	$(MAKE) clean -C common
