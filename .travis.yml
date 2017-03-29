@@ -45,4 +45,4 @@ before_script:
   - make
 
 script:
-  - ./test
+  - ./tests

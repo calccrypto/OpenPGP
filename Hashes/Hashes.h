@@ -49,7 +49,7 @@ THE SOFTWARE.
 //    Implementations MUST implement SHA-1. Implementations MAY implement
 //    other algorithms. MD5 is deprecated.
 
-#include "Hash.h"
+#include "HashAlg.h"
 
 #include "MD5.h"
 #include "RIPEMD160.h"

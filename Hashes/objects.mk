@@ -1,5 +1,6 @@
-HASHES_OBJECTS=Hash.o                 \
-               Hashes.o               \
+HASHES_OBJECTS=Hashes.o               \
+               HashAlg.o              \
+               MerkleDamgard.o        \
                MD5.o                  \
                RIPEMD160.o            \
                SHA1.o                 \

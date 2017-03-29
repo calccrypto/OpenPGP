@@ -1,18 +1,18 @@
 #include "SHA512.h"
 
-uint64_t SHA512::S0(uint64_t & value) const{
+uint64_t SHA512::S0(uint64_t & value) const {
     return ROR(value, 28, 64) ^ ROR(value, 34, 64) ^ ROR(value, 39, 64);
 }
 
-uint64_t SHA512::S1(uint64_t & value) const{
+uint64_t SHA512::S1(uint64_t & value) const {
     return ROR(value, 14, 64) ^ ROR(value, 18, 64) ^ ROR(value, 41, 64);
 }
 
-uint64_t SHA512::s0(uint64_t & value) const{
+uint64_t SHA512::s0(uint64_t & value) const {
     return ROR(value, 1, 64) ^ ROR(value, 8, 64) ^ (value >> 7);
 }
 
-uint64_t SHA512::s1(uint64_t & value) const{
+uint64_t SHA512::s1(uint64_t & value) const {
     return ROR(value, 19, 64) ^ ROR(value, 61, 64) ^ (value >> 6);
 }
 
@@ -27,7 +27,7 @@ void SHA512::original_h(){
     ctx.h7 = 0x5be0cd19137e2179ULL;
 }
 
-void SHA512::calc(const std::string & data, context & state) const{
+void SHA512::calc(const std::string & data, context & state) const {
     for(unsigned int n = 0; n < (data.size() >> 7); n++){
         std::string temp = data.substr(n << 7, 128);
         uint64_t skey[80];
@@ -55,7 +55,7 @@ void SHA512::calc(const std::string & data, context & state) const{
 }
 
 SHA512::SHA512() :
-    HashAlg(),
+    MerkleDamgard(),
     ctx()
 {
     original_h();
@@ -86,10 +86,10 @@ std::string SHA512::hexdigest(){
     return makehex(tmp.h0, 16) + makehex(tmp.h1, 16) + makehex(tmp.h2, 16) + makehex(tmp.h3, 16) + makehex(tmp.h4, 16) + makehex(tmp.h5, 16) + makehex(tmp.h6, 16) + makehex(tmp.h7, 16);
 }
 
-unsigned int SHA512::blocksize() const{
+std::size_t SHA512::blocksize() const {
     return 1024;
 }
 
-unsigned int SHA512::digestsize() const{
+std::size_t SHA512::digestsize() const {
     return 512;
 }

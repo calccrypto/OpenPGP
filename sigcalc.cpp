@@ -24,7 +24,7 @@ std::string overkey(const Key::Ptr & key){
         throw std::runtime_error("Error: No key packet.");
     }
 
-    std::string str = key -> raw_common();
+    const std::string str = key -> raw_common();
     return "\x99" + unhexlify(makehex(str.size(), 4)) + str;
 }
 
@@ -37,7 +37,7 @@ std::string certification(uint8_t version, const User::Ptr & id){
         return id -> raw();
     }
     else if (version == 4){
-        std::string data = id -> raw();
+        const std::string data = id -> raw();
         if (id -> get_tag() == Packet::USER_ID){
             return "\xb4" + unhexlify(makehex(data.size(), 8)) + data;
         }
@@ -48,6 +48,7 @@ std::string certification(uint8_t version, const User::Ptr & id){
     else{
         throw std::runtime_error("Error: Certification for version " + std::to_string(version) + " not defined.");
     }
+
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
@@ -240,11 +241,11 @@ std::string to_sign_40(const Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
-    
+
     if (tag2 -> get_type() != Signature_Type::TIMESTAMP_SIGNATURE){
         throw std::runtime_error("Error: Bad signature type.");
     }
-    
+
     return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
 }
 

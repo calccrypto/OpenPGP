@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
-#include "Hash.h"
+#include "MerkleDamgard.h"
 
-class SHA1 : public HashAlg {
+class SHA1 : public MerkleDamgard{
     private:
         struct context{
             uint32_t h0, h1, h2, h3, h4;
@@ -56,8 +56,8 @@ class SHA1 : public HashAlg {
         SHA1(const std::string & str);
         void update(const std::string & str);
         std::string hexdigest();
-        unsigned int blocksize() const;
-        unsigned int digestsize() const;
+        std::size_t blocksize() const;
+        std::size_t digestsize() const;
 };
 
 #endif

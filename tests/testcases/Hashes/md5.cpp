@@ -2,7 +2,7 @@
 
 #include "Hashes/MD5.h"
 
-#include "testvectors/md5/md5vectors.h"
+#include "testvectors/md5/md5testvectors.h"
 
 TEST(MD5, vectors) {
 

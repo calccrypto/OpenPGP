@@ -29,12 +29,12 @@ THE SOFTWARE.
 
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
-#include "Hash.h"
+#include "MerkleDamgard.h"
 
 #include "RIPEMD_Const.h"
 #include "RIPEMD160_Const.h"
 
-class RIPEMD160 : public HashAlg{
+class RIPEMD160 : public MerkleDamgard{
     private:
         struct context{
             uint32_t h0, h1, h2, h3, h4;
@@ -61,8 +61,8 @@ class RIPEMD160 : public HashAlg{
         RIPEMD160(const std::string & data);
         void update(const std::string & data);
         std::string hexdigest();
-        unsigned int blocksize() const;
-        unsigned int digestsize() const;
+        std::size_t blocksize() const;
+        std::size_t digestsize() const;
 };
 
 #endif

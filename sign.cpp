@@ -234,7 +234,7 @@ Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string
     }
 
     if (!Signature_Type::is_certification(sig -> get_type())){
-        error += "Error: Invalid Certification Value: " + integer(sig -> get_type()).str(16) + "\n";
+        error += "Error: Invalid Certification Value: 0x" + makehex(sig -> get_type(), 2) + "\n";
         return nullptr;
     }
 
@@ -273,7 +273,7 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
     }
 
     if (!Signature_Type::is_certification(cert)){
-        error += "Error: Invalid Certification Value: " + integer(cert).str(16) + "\n";
+        error += "Error: Invalid Certification Value: 0x" + makehex(cert, 2) + "\n";
         return PGPPublicKey();
     }
 

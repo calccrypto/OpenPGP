@@ -30,6 +30,10 @@ THE SOFTWARE.
 #include <utility>
 #include <vector>
 
+#include <gtest/gtest.h>
+
+#include "common/includes.h"
+
 // hold matching plaintext/key/ciphertext tuples
 typedef std::tuple <std::string, std::string, std::string> PlainKeyCipher;
 

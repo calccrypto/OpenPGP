@@ -1,18 +1,18 @@
 #include "SHA256.h"
 
-uint32_t SHA256::S0(const uint32_t & value) const{
+uint32_t SHA256::S0(const uint32_t & value) const {
     return ROR(value, 2, 32) ^ ROR(value, 13, 32) ^ ROR(value, 22, 32);
 }
 
-uint32_t SHA256::S1(const uint32_t & value) const{
+uint32_t SHA256::S1(const uint32_t & value) const {
     return ROR(value, 6, 32) ^ ROR(value, 11, 32) ^ ROR(value, 25, 32);
 }
 
-uint32_t SHA256::s0(const uint32_t & value) const{
+uint32_t SHA256::s0(const uint32_t & value) const {
     return ROR(value, 7, 32) ^ ROR(value, 18, 32) ^ (value >> 3);
 }
 
-uint32_t SHA256::s1(const uint32_t & value) const{
+uint32_t SHA256::s1(const uint32_t & value) const {
     return ROR(value, 17, 32) ^ ROR(value, 19, 32) ^ (value >> 10);
 }
 
@@ -27,7 +27,7 @@ void SHA256::original_h(){
     ctx.h7 = 0x5be0cd19;
 }
 
-void SHA256::calc(const std::string &data, context &state) const{
+void SHA256::calc(const std::string &data, context &state) const {
     for(unsigned int n = 0; n < (data.size() >> 6); n++){
         std::string temp = data.substr(n << 6, 64);
         uint32_t skey[64];
@@ -55,7 +55,7 @@ void SHA256::calc(const std::string &data, context &state) const{
 }
 
 SHA256::SHA256() :
-    HashAlg(),
+    MerkleDamgard(),
     ctx()
 {
     original_h();
@@ -86,10 +86,10 @@ std::string SHA256::hexdigest(){
     return makehex(tmp.h0, 8) + makehex(tmp.h1, 8) + makehex(tmp.h2, 8) + makehex(tmp.h3, 8) + makehex(tmp.h4, 8) + makehex(tmp.h5, 8) + makehex(tmp.h6, 8) + makehex(tmp.h7, 8);
 }
 
-unsigned int SHA256::blocksize() const{
+std::size_t SHA256::blocksize() const {
     return 512;
 }
 
-unsigned int SHA256::digestsize() const{
+std::size_t SHA256::digestsize() const {
     return 256;
 }

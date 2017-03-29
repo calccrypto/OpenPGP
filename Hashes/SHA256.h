@@ -28,12 +28,12 @@ THE SOFTWARE.
 
 #include "../common/cryptomath.h"
 #include "../common/includes.h"
-#include "Hash.h"
+#include "MerkleDamgard.h"
 
 #include "SHA2_Functions.h"
 #include "SHA256_Const.h"
 
-class SHA256 : public HashAlg{
+class SHA256 : public MerkleDamgard{
     protected:
         struct context{
             uint32_t h0, h1, h2, h3, h4, h5, h6, h7;
@@ -59,8 +59,8 @@ class SHA256 : public HashAlg{
 
         void update(const std::string &str);
         virtual std::string hexdigest();
-        virtual unsigned int blocksize() const;
-        virtual unsigned int digestsize() const;
+        virtual std::size_t blocksize() const;
+        virtual std::size_t digestsize() const;
 };
 
 #endif

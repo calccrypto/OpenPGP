@@ -1,6 +1,6 @@
 #include "RIPEMD160.h"
 
-uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const{
+uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const {
     if (round < 16){
         return x ^ y ^ z;
     }
@@ -18,7 +18,7 @@ uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z
     }
 }
 
-std::string RIPEMD160::to_little_end(const std::string &data) const{
+std::string RIPEMD160::to_little_end(const std::string &data) const {
     std::string result;
     for(unsigned int x = 0; x < (data.size() >> 2); x++){
         result += little_end(data.substr(x << 2, 4), 256);
@@ -26,7 +26,7 @@ std::string RIPEMD160::to_little_end(const std::string &data) const{
     return result;
 }
 
-void RIPEMD160::calc(const std::string &data, context &state) const{
+void RIPEMD160::calc(const std::string &data, context &state) const {
     for(unsigned int i = 0; i < (data.size() >> 6); i++){
         uint32_t a = state.h0, b = state.h1, c = state.h2, d = state.h3, e = state.h4, A = state.h0, B = state.h1, C = state.h2, D = state.h3, E = state.h4;
         uint32_t X[16];
@@ -51,7 +51,7 @@ void RIPEMD160::calc(const std::string &data, context &state) const{
 }
 
 RIPEMD160::RIPEMD160() :
-    HashAlg(),
+    MerkleDamgard(),
     ctx(RIPEMD_H0, RIPEMD_H1, RIPEMD_H2, RIPEMD_H3, RIPEMD_H4)
 {}
 
@@ -83,10 +83,10 @@ std::string RIPEMD160::hexdigest(){
     return little_end(makehex(tmp.h0, 8)) + little_end(makehex(tmp.h1, 8)) + little_end(makehex(tmp.h2, 8)) + little_end(makehex(tmp.h3, 8)) + little_end(makehex(tmp.h4, 8));
 }
 
-unsigned int RIPEMD160::blocksize() const{
+std::size_t RIPEMD160::blocksize() const {
     return 512;
 }
 
-unsigned int RIPEMD160::digestsize() const{
+std::size_t RIPEMD160::digestsize() const {
     return 160;
 }
