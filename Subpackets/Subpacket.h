@@ -91,7 +91,7 @@ THE SOFTWARE.
 class Subpacket{
     protected:
         uint8_t type;
-        unsigned int size; // only used for displaying. recalculated when writing
+        std::size_t size; // only used for displaying. recalculated when writing
 
         std::string write_subpacket(const std::string & data) const;
 
@@ -112,10 +112,10 @@ class Subpacket{
         std::string write() const;
 
         uint8_t get_type() const;
-        unsigned int get_size() const;
+        std::size_t get_size() const;
 
-        void set_type(uint8_t t);
-        void set_size(unsigned int s);
+        void set_type(const uint8_t t);
+        void set_size(const std::size_t s);
 };
 
 #endif

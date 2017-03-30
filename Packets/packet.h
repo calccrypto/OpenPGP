@@ -98,7 +98,7 @@ class Packet{
         uint8_t tag;        // RFC 4880 sec 4.3
         uint8_t version;
         bool format;        // OLD or NEW; only used when "show"ing. "write" will write whatever it set; default is NEW
-        unsigned int size;  // This value is only correct when the packet was generated with the read() function
+        std::size_t size;   // This value is only correct when the packet was generated with the read() function
         uint8_t partial;    // 0-3; 0 = not partial, 1 = partial begin, 2 = partial continue, 3 = partial end
 
         // returns packet data with old format packet length
@@ -110,8 +110,8 @@ class Packet{
         // returns first line of show functions (no tab or newline)
         virtual std::string show_title() const; // virtual to allow for overriding for special cases
 
-        Packet(uint8_t tag);
-        Packet(uint8_t tag, uint8_t version);
+        Packet(const uint8_t t);
+        Packet(const uint8_t t, const uint8_t ver);
         Packet(const Packet & copy);
 
     public:
@@ -127,15 +127,15 @@ class Packet{
         // Accessors
         uint8_t get_tag() const;
         bool get_format() const;
-        unsigned int get_version() const;
-        unsigned int get_size() const;
+        uint8_t get_version() const;
+        std::size_t get_size() const;
         uint8_t get_partial() const;
 
         // Modifiers
         void set_tag(const uint8_t t);
         void set_format(const bool f);
-        void set_version(const unsigned int v);
-        void set_size(const unsigned int s);
+        void set_version(const uint8_t v);
+        void set_size(const std::size_t s);
         void set_partial(const uint8_t p);
 
         virtual Ptr clone() const = 0;

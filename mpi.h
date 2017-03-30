@@ -46,7 +46,7 @@ std::string mpitobin(const PGPMPI & a);
 
 unsigned long mpitoulong(const PGPMPI & a);
 
-unsigned int bitsize(const PGPMPI & a);
+std::size_t bitsize(const PGPMPI & a);
 
 bool knuth_prime_test(const PGPMPI & a, int test);
 

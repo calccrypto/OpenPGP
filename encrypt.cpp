@@ -37,7 +37,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 
     // generate prefix
     const std::size_t BS = Sym::BLOCK_LENGTH.at(args.sym);
-    std::string prefix = integer(BBS().rand(BS), 2).str(256, BS >> 3);
+    std::string prefix = unbinify(BBS().rand(BS));
     prefix += prefix.substr(prefix.size() - 2, 2);
 
     Packet::Ptr encrypted = nullptr;
@@ -111,7 +111,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 
     // generate session key
     const std::size_t key_len = Sym::KEY_LENGTH.at(args.sym);
-    const std::string session_key = integer(BBS().rand(key_len), 2).str(256, key_len >> 3);
+    const std::string session_key = unbinify(BBS().rand(key_len));
 
     // get checksum of session key
     uint16_t sum = 0;
@@ -157,7 +157,7 @@ PGPMessage encrypt_sym(const EncryptArgs & args,
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
     s2k -> set_type(S2K::ITERATED_AND_SALTED_S2K);
     s2k -> set_hash(key_hash);
-    s2k -> set_salt(integer(BBS().rand(64), 2).str(256, 8));
+    s2k -> set_salt(unbinify(BBS().rand(64)));
     s2k -> set_count(96);
 
     // generate Symmetric-Key Encrypted Session Key Packets (Tag 3)

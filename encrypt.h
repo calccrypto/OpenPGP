@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "common/integer.h"
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
 #include "PGPKey.h"

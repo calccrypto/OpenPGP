@@ -42,7 +42,7 @@ unsigned long mpitoulong(const PGPMPI & a){
     return a.get_ui();
 }
 
-unsigned int bitsize(const PGPMPI &a){
+std::size_t bitsize(const PGPMPI &a){
     return mpitobin(a).size();
 }
 

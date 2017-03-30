@@ -161,13 +161,13 @@ std::string Packet::show_title() const{
     return out;
 }
 
-Packet::Packet(uint8_t tag)
-    : Packet(tag, 0)
+Packet::Packet(const uint8_t t)
+    : Packet(t, 0)
 {}
 
-Packet::Packet(uint8_t tag, uint8_t version)
-    : tag(tag),
-      version(version),
+Packet::Packet(const uint8_t t, uint8_t ver)
+    : tag(t),
+      version(ver),
       format(true),
       size(0),
       partial(0)
@@ -204,11 +204,11 @@ bool Packet::get_format() const{
     return format;
 }
 
-unsigned int Packet::get_version() const{
+uint8_t Packet::get_version() const{
     return version;
 }
 
-unsigned int Packet::get_size() const{
+std::size_t Packet::get_size() const{
     return size;
 }
 
@@ -224,11 +224,11 @@ void Packet::set_format(const bool f){
     format = f;
 }
 
-void Packet::set_version(const unsigned int v){
+void Packet::set_version(const uint8_t v){
     version = v;
 }
 
-void Packet::set_size(const unsigned int s){
+void Packet::set_size(const std::size_t s){
     size = s;
 }
 

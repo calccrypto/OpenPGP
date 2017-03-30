@@ -18,7 +18,7 @@ TEST(MPI, add_sub){
 TEST(MPI, mul_div_mod){
     for (int i = 0; i < COUNT; ++i){
         PGPMPI a = random(400), b = a;
-        a <<= i+1;
+        a <<= (i+1);
         a += i;
         PGPMPI c = a % b, d = a / b;
         PGPMPI e = d * b + c;
@@ -29,7 +29,7 @@ TEST(MPI, mul_div_mod){
 TEST(MPI, lshift){
     PGPMPI a = random(200), b, c = 1;
     for (int i = 0; i < COUNT; ++i){
-        b = a << i+1;
+        b = a << (i+1);
         c += c;
         PGPMPI d = a * c;
         EXPECT_EQ(d-b, 0);
@@ -39,7 +39,7 @@ TEST(MPI, lshift){
 TEST(MPI, rshift){
     PGPMPI a = random(200), b, c = 1;
     for (int i = 0; i < COUNT; ++i){
-        b = a >> i+1;
+        b = a >> (i+1);
         c += c;
         PGPMPI d = a / c;
         EXPECT_EQ(d-b, 0);

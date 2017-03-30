@@ -28,15 +28,15 @@ uint8_t Subpacket::get_type() const{
     return type;
 }
 
-unsigned int Subpacket::get_size() const{
+std::size_t Subpacket::get_size() const{
     return size;
 }
 
-void Subpacket::set_type(uint8_t t){
+void Subpacket::set_type(const uint8_t t){
     type = t;
 }
 
-void Subpacket::set_size(unsigned int s){
+void Subpacket::set_size(const std::size_t s){
     size = s;
 }
 

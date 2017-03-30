@@ -51,7 +51,7 @@ cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNGs.h
 decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h verify.h
 	$(CXX) $(CXXFLAGS) decrypt.cpp
 
-encrypt.o: encrypt.h encrypt.cpp common/integer.h Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h revoke.h
+encrypt.o: encrypt.h encrypt.cpp Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h revoke.h
 	$(CXX) $(CXXFLAGS) encrypt.cpp
 
 generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h pgptime.h PKCS1.h sign.h sigcalc.h

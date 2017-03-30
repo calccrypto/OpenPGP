@@ -5,12 +5,7 @@ CXXFLAGS=-std=c++11 -Wall -c -I../../../../googletest/googletest/include -I../..
 debug: CXXFLAGS += -g
 debug: all
 
-.PHONY: integer
-
-integer:
-	$(MAKE) -C integer
-
-all: $(COMMON_TESTCASES_OBJECTS) integer
+all: $(COMMON_TESTCASES_OBJECTS)
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
