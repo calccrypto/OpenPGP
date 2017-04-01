@@ -77,15 +77,18 @@ to make differentiating PGP block types better in code:
  PGPRevocationCertificate | holds revocation certificates
 
 All these different types are able to read in any PGP data, but
-will cause problems when used.
+will cause problems when used. The `meaningful` function in these
+PGP objects is provided to make sure that the data contained is
+meaningful.
 
 `PGPCleartextSignature` does not inherit from PGP and cannot
 read non-Cleartext Signature data.
 
-The `exec/main.cpp` file provides a simple command line tool,
-which can be used as examples on how to use the functions. A lot
-of the output was based on/inspired by pgpdump.net and GPG. Build
-the command line program with make.
+The `exec/main.cpp` file provides a simple command line tool that
+uses modules from the exec/modules directory to provide functionality.
+These can be used as examples on how to use the functions. A lot
+of the output was based on/inspired by pgpdump.net and GPG. The command
+line program can be built with make.
 
 All data structures have some standard functions:
 
@@ -105,12 +108,8 @@ To build just the library, run make in `OpenPGP/`.
 
 ## Notes:
 
-Sometimes, there are excerpts from RFC 4880 in the code.
-Most of those excerpts are not the full text of the sections.
-Please refer to the RFC for the full text.
+Keyrings were not implemented. Rather, individual keys are
+read from the directory used as arguments to functions.
 
-Keyrings were not implemented. Rather, keys are read
-from the directory used as arguments to functions.
-
-If for some reason the program cannot operate on some data
-properly, an exception will be thrown.
+gpg sometimes does weird things, so if gpg compatibility is
+desired, define the macro `GPG_COMPATIBLE` when compiling.
