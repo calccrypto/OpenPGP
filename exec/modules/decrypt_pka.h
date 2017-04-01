@@ -99,14 +99,24 @@ const Module decrypt_pka(
                 }
             }
 
+            cleartext += "\n";
+
             // if signing key provided, check the signature
             if (signer){
                 const int verified = verify_message(*signer, decrypted, error);
                 if (verified == -1){
-                    error += "Error: Verification failure.\n";
+                    std::cerr << error << "Error: Verification failure.\n" << std::endl;
                 }
 
-                cleartext += "\n\nMessage was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
+                cleartext += "Message was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
+            }
+            // otherwise, just list attached signatures
+            else{
+                for(Packet::Ptr const & p : decrypted.get_packets()){
+                    if (p -> get_tag() == Packet::SIGNATURE){
+                        cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <Tag2> (p) -> get_keyid()) + " found.\n";
+                    }
+                }
             }
 
             output(cleartext, args.at("-o"));

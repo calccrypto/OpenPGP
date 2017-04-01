@@ -1,7 +1,6 @@
 Generate key pairs with RSA
 Find PGP keys with formats/packets I have never seen before
 Make error handling more reasonable? (currently everything throws exceptions)
-add encrypt with passphrase
 deal with partial packets properly
 finish sign functions
 encrypt for multiple recipients
