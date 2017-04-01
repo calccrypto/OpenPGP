@@ -1,6 +1,6 @@
 # common Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c
+CXXFLAGS=-std=c++11 -Wall -c -DGPG_COMPATIBLE
 
 include objects.mk
 

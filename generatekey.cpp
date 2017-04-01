@@ -94,22 +94,10 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     // generate public key values for primary key
     PKA::Values pub;
     PKA::Values pri;
-    if (!generate_keypair(config.pka, generate_pka_params(config.pka, config.bits >> 1), pri, pub)){
+    if (!generate_keypair(config.pka, generate_pka_params(config.pka, config.bits >> 1, error), pri, pub, error)){
         error += "Error: Could not generate primary key pair.\n";
         return PGPSecretKey();
     }
-
-    // pub = {
-        // hextompi("a2f705210d5cfefd4c10f83df7a55ef22736e2e88ac7aaa0be23dc13b79e61e1698d091e0db64171aa14d037393e45106249cd03f5da24e5d038d702e8895a91de1127756015d946cad0702617aec05d883dd719364a646a87337c350a62d7fd9324f7f1c9691b2fda7b1df642665b8698ab7b72e5c45d9a3d20f74c7f7f8bc8edd3b5f6173f9d428b66848b4619c38707fe07937d1d1def88971b8edb13ca22b946bd0967b61d127102a48213e992500a002568d7e9ceb6d77d125348317403d5725126953a56e97157dcf4d250b4ce1c3c0434d94882a7be356624b6b514efd999bdbdf2bfd520fa9f2a28ce560578af2999c62af209fa23051133ee516e75"),
-        // hextompi("10001"),
-    // };
-
-    // pri = {
-        // hextompi("1123929605ce4481063978aa27bbec2ee281eabe532e299b4b340146cf96682be94a6c6d8d3aa04a607d5ce299f21b185c85ef7a5da66a2003549f044ec9774d8501dfd8ffd87c67ee179adbdebcc1bd7481307895d5a016f60e2b9f766eabd19ee291f30b6032fc46e990de9fe01cfb1c5e5896de645705cc2d05e53539884d57f100309f49cb4a0235cf402f1bd8a61dbd89f64ca3557298ce81e71cf701583a54bce3492daa94167a5370aeadfbc273dc93b2994e2828b0d19a820600025c4f21c021ebc52c48de3da19a048971901d12a0f650f03478522908e07895372731bd0b9bb6811bb9ffe021f9b29dbc3cc383a92aa582866f1119635d199ddb41"),
-        // hextompi("c0c96e1ef316dc71f7a21499b14922dc8129b7e018678b1835ba98492789a10751731785c9bad5fd3d3ec03831dec56490d7f1e68aeed626a227aaf65cbdc5736e6bac4fd193225f4c53901b87a35afda564b8923e09142d762d2310ad851bde45346742d1f5dc3d3369e51333f067a40656eaa934ce464da183914199df9bd5"),
-        // hextompi("d86654eda6666c9f1f76e7b9edf44630a660248c4782c76afd77ecc9a70e3e74771321e1f47311ae9888bf173c53ea9937dc5179d50ef9204843d7950f2e5ca2ce76b5a3a465127aa30ebe2e78a90064ac723b33b4645a9b1761c0fd23b32168755ade989d5044bab6ce186d7a2dcc3d4c152942dbb037de5e17c226ff68f821"),
-        // hextompi("9f6099570d583b2467f8ba6bcc8242738f212673bec4168320cf8a3fa3ece0d3cf3ffb3ebda4369a5f4b18cc9fc846e348f6cdff67a0012ebf55fdf812859d5be4e78809733a7bfdbb6ca14ad7f5f92b1e23ec5a44f81d0134a124f9f5e4ea13ccfce3fa40470ff73f71b7b9100a0155fcccf00c183e026de35533f0fd79b758"),
-    // };
 
     // convert the secret values into a string
     std::string secret;
@@ -198,12 +186,12 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
 
         packets.push_back(sig);
     }
-/*
+
     // generate 0 or more subkeys and associated signature packet
     for(KeyGen::SubkeyGen const & skey : config.subkeys){
         PKA::Values subkey_pub;
         PKA::Values subkey_pri;
-        if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits >> 1), subkey_pri, subkey_pub)){
+        if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits >> 1, error), subkey_pri, subkey_pub, error)){
             error += "Error: Could not generate subkey pair.\n";
             return PGPSecretKey();
         }
@@ -284,7 +272,7 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
 
         packets.push_back(subsig);
     }
-*/
+
     // put everything into a private key
     PGPSecretKey private_key;
     private_key.set_keys({std::make_pair("Version", "cc")});

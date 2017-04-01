@@ -3,20 +3,37 @@
 PKA::Values RSA_keygen(const uint32_t & bits){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    PGPMPI p = 3, q = 3;
-    while (p == q){
-        p = bintompi(BBS().rand(bits));
-        q = bintompi(BBS().rand(bits));
-        p = nextprime(p);
-        q = nextprime(q);
+    PGPMPI p = 3;
+    PGPMPI q = 3;
+
+    // gpg only accepts 'n's of certain sizes
+    #ifdef GPG_COMPATIBLE
+    const uint32_t bitsize_1 = bits << 1;       // 1024, 2048, 4096
+    const uint32_t bitsize_2 = bitsize_1 - 8;   // 1016, 2040, 4088
+
+    if ((bitsize_1 != 1024) && (bitsize_1 != 2048) && (bitsize_1 != 4096)){
+        return {};
     }
+
+    PGPMPI n;
+    while (bitsize(n) != (bits << 1)){
+        p = nextprime(bintompi("1" + BBS().rand(bits - 1)));
+        q = nextprime(bintompi("1" + BBS().rand(bits - 1)));
+        n = p * q;
+    }
+    #else
+    while (p == q){
+        p = nextprime(bintompi(BBS().rand(bits)));
+        q = nextprime(bintompi(BBS().rand(bits)));
+    }
+    const PGPMPI n = p * q;
+    #endif
 
     // required by RFC 4880 sec 5.5.3
     if (p > q){
         mpiswap(p, q);
     }
 
-    const PGPMPI n = p * q;
     const PGPMPI tot = (p - 1) * (q - 1);
 
     PGPMPI e = bintompi(BBS().rand(bits));
