@@ -30,13 +30,14 @@ PKA::Params generate_pka_params(const uint8_t pka, const std::size_t bits, std::
             break;
         case PKA::DSA:
             if (bits & 1023){
-                throw std::runtime_error("Error: DSA keysize should be 1024, 2048, or 3072 bits.");
+                error += "Error: DSA keysize should be 1024, 2048, or 3072 bits.\n";
+                return {};
             }
 
             params.push_back((bits == 1024)?160:256);
             break;
         default:
-            error += "\nError: Undefined or reserved PKA number: " + std::to_string(pka);
+            error += "Error: Undefined or reserved PKA number: " + std::to_string(pka) + "\n";
             return {};
             break;
     }
@@ -46,7 +47,7 @@ PKA::Params generate_pka_params(const uint8_t pka, const std::size_t bits, std::
 
 uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Values & pri, PKA::Values & pub, std::string & error){
     if (!params.size()){
-        error += "\nError: No PKA key generation configuration provided.";
+        error += "Error: No PKA key generation configuration provided.\n";
         return 0;
     }
 
@@ -56,7 +57,7 @@ uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Val
         case PKA::RSA_SIGN_ONLY:
             pub = RSA_keygen(params[0]);                // n, e, d, p, q, u
             if (!pub.size()){
-                error += "\nError: Bad RSA key generation values.";
+                error += "Error: Bad RSA key generation values.\n";
                 return 0;
             }
             pri = {pub[2], pub[3], pub[4], pub[5]};     // d, p, q, u
@@ -75,7 +76,7 @@ uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Val
             pri = DSA_keygen(pub);                      // x
             break;
         default:
-            error += "\nError: Undefined or reserved PKA number: " + std::to_string(pka);
+            error += "Error: Undefined or reserved PKA number: " + std::to_string(pka) + "\n";
             return 0;
             break;
     }

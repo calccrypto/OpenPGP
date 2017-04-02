@@ -67,8 +67,23 @@ struct EncryptArgs{
           hash(hash_alg)
     {}
 
-    bool verify(std::string & error) const{
-        return false;
+    bool valid(std::string & error) const{
+        if (Sym::NAME.find(sym) == Sym::NAME.end()){
+            error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
+            return false;
+        }
+
+        if (Compression::NAME.find(comp) == Compression::NAME.end()){
+            error += "Error: Bad Compression Algorithm: " + std::to_string(comp);
+            return false;
+        }
+
+        if (Hash::NAME.find(hash) == Hash::NAME.end()){
+            error += "Error: Bad Hash Algorithm: " + std::to_string(hash);
+            return false;
+        }
+
+        return true;
     }
 };
 

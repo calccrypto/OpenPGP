@@ -3,6 +3,12 @@
 Packet::Ptr encrypt_data(const EncryptArgs & args,
                          const std::string & session_key,
                          std::string & error){
+
+    if (!args.valid(error)){
+        error += "Error: Bad argument.\n";
+        return PGPMessage();
+    }
+
     std::string to_encrypt;
 
     // if message is to be signed
@@ -67,6 +73,11 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
                        const PGPPublicKey & pub,
                        std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+
+    if (!args.valid(error)){
+        error += "Error: Bad argument.\n";
+        return PGPMessage();
+    }
 
     if (!pub.meaningful(error)){
         error += "Error: Bad public key.\n";
@@ -152,6 +163,11 @@ PGPMessage encrypt_sym(const EncryptArgs & args,
                        const uint8_t key_hash,
                        std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+
+    if (!args.valid(error)){
+        error += "Error: Bad argument.\n";
+        return PGPMessage();
+    }
 
     // String to Key specifier for decrypting session key
     S2K3::Ptr s2k = std::make_shared <S2K3> ();
