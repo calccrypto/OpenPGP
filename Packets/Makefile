@@ -23,7 +23,7 @@ packets.o: packets.cpp packets.h $(PACKETS_OBJECTS:.o=.h)
 s2k.o: s2k.cpp s2k.h ../common/includes.h ../Hashes/Hashes.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2.o: Tag2.cpp Tag2.h ../Subpackets/subpackets.h packet.h
+Tag2.o: Tag2.cpp Tag2.h ../Subpackets/Subpackets.h packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 Tag3.o: Tag3.cpp Tag3.h ../cfb.h packet.h s2k.h
