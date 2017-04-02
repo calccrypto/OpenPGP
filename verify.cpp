@@ -82,184 +82,132 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     // most of the time OpenPGP Message data is compressed
     // then it is encrypted
 
+    error = "";
     if (message.match(PGPMessage::ENCRYPTEDMESSAGE, error)){
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         error += "Error: Use decrypt to verify message.\n";
         return -1;
     }
-    else if (message.match(PGPMessage::SIGNEDMESSAGE, error)){
+
+    error = "";
+    if (message.match(PGPMessage::SIGNEDMESSAGE, error)){
         // Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
-        // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
-        // parse packets
-        PGP::Packets packets = message.get_packets();
+        const PGP::Packets packets = message.get_packets();
 
-        //   Note that if a message contains more than one one-pass signature,
-        //   then the Signature packets bracket the message; that is, the first
-        //   Signature packet after the message corresponds to the last one-pass
-        //   packet and the final Signature packet corresponds to the first
-        //   one-pass packet.
+        if ((packets.size() > 2)                                         &&
+            (packets.front() -> get_tag() == Packet::ONE_PASS_SIGNATURE) &&
+            (packets.back()  -> get_tag() == Packet::SIGNATURE)){
+            // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
-        // Tag4_0, Tag4_1, ... , Tag4_n, Tag8/11, Tag2_n, ... , Tag2_1, Tag2_0
+            // 5.4. One-Pass Signature Packets (Tag 4)
+            //    Note that if a message contains more than one one-pass signature,
+            //    then the Signature packets bracket the message; that is, the first
+            //    Signature packet after the message corresponds to the last one-pass
+            //    packet and the final Signature packet corresponds to the first
+            //    one-pass packet.
+            //
+            //    Tag4_0,
+            //        Tag4_1,
+            //            ... ,
+            //                Tag4_n,
+            //                    Tag8/11,
+            //                Tag2_n,
+            //            ... ,
+            //        Tag2_1,
+            //    Tag2_0
+            //
 
-        unsigned int i = 0;
-        std::list <Tag4::Ptr> OPSP;                                         // treat as stack
-        while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::ONE_PASS_SIGNATURE)){
-            OPSP.push_front(std::static_pointer_cast <Tag4> (packets[i]));  // put next Tag4 onto stack
-            i++;
-
-            if ((*(OPSP.rbegin())) -> get_nested() != 0){                   // check if there are nested packets
-                break;                                                      // just in case extra data was placed, allowing for errors later
+            // get signing key
+            const Key::Ptr signing_key = find_signing_key(key);
+            if (!signing_key){
+                error += "Error: No public signing keys found.\n";
+                return -1;
             }
-        }
 
-        // get signed data
-        std::string binary = packets[i] -> raw();
-        i++;
-        binary = Tag11(binary).get_literal();                               // binary data hashed directly
-        std::string text;                                                   // text data line endings converted to <CR><LF>
-
-        // cache text version of data
-        // probably only one of binary or text is needed at one time
-        if (binary[0] == '\n'){
-            text = "\r";
-        }
-        text += std::string(1, binary[0]);
-        unsigned int c = 1;
-        while (c < binary.size()){
-            if (binary[c] == '\n'){                                         // if current character is newline
-                if (binary[c - 1] != '\r'){                                 // if previous character was not carriage return
-                    text += "\r";                                           // add a carriage return
-                }
+            // get One-Pass Signature Packet(s) end + 1
+            PGP::Packets::size_type OPSP = 0;
+            while ((OPSP < packets.size()) && (packets[OPSP] -> get_tag() == Packet::ONE_PASS_SIGNATURE)){
+                OPSP++;
             }
-            text += std::string(1, binary[c++]);                            // add current character
-        }
+            if (OPSP == packets.size()){
+                error += "Error: No OpenPGP Message.\n";
+                return -1;
+            }
 
-        // get signatures
-        std::list <Tag2::Ptr> SP;                                           // treat as queue
-        while ((i < packets.size()) && (packets[i] -> get_tag() == 2)){
-            SP.push_front(std::static_pointer_cast <Tag2> (packets[i]));    // put next Tag2 onto queue
-            i++;
-        }
+            // OpenPGP Message in the center
+            PGP::Packets::size_type msg = OPSP;
+            if (msg >= packets.size()){
+                error += "Error: OpenPGP Message not found.\n";
+                return -1;
+            }
 
-        // check for signatures
-        if (!OPSP.size() || !SP.size()){
-            error += "Error: No signature found.\n";
-            return -1;
+            // get Signature Packet(s) start
+            PGP::Packets::size_type SP = packets.size() - OPSP--;
+            if (SP < OPSP){
+                error += "Error: Wrong number of packets.\n";
+                return -1;
+            }
 
-        }
-
-        // both lists should be the same size
-        if (OPSP.size() != SP.size()){
-            error += "Error: Different number of One-Pass Signatures and Signature packets.\n";
-            return -1;
-        }
-
-        // get signing key
-        const Key::Ptr signing_key = find_signing_key(key);
-        if (!signing_key){
-            error += "Error: No public signing keys found.\n";
-            return -1;
-        }
-
-        // check for matching signature
-        bool verify = false;
-        while (OPSP.size() && SP.size()){
-
-            // // extra warnings
-            // // check that KeyIDs match
-            // if ((*(OPSP.rbegin())) -> get_keyid() == (*(SP.begin())) -> get_keyid()){
-
-                // // check that all the parameters match
-                // bool match = true;
-
-                // // Signature Type
-                // if ((*(OPSP.rbegin())) -> get_type() != (*(SP.begin())) -> get_type()){
-                    // match = false;
-                    // std::cerr << "Warning: One-Pass Signature Packet and Signature Packet Signature Type mismatch" << std::endl;
-                // }
-
-                // // Hash Algorithm
-                // if ((*(OPSP.rbegin())) -> get_hash() != (*(SP.begin())) -> get_hash()){
-                    // match = false;
-                    // std::cerr << "Warning: One-Pass Signature Packet and Signature Packet Hash Algorithm mismatch" << std::endl;
-                // }
-
-                // // Public Key Algorithm
-                // if ((*(OPSP.rbegin())) -> get_pka() != (*(SP.begin())) -> get_pka()){
-                    // match = false;
-                    // std::cerr << "Warning: One-Pass Signature Packet and Signature Packet Public Key Algorithm mismatch" << std::endl;
-                // }
-
-                // // check signature
-                // if (match){
-
-                    // if KeyID of given key matches this Tag4/Tag2 pair's KeyID
-                    if (signing_key -> get_keyid() == (*(SP.begin())) -> get_keyid()){
-
-                        // get hashed data
-                        std::string digest;
-                        if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT){
-                            digest = to_sign_00(binary, *(SP.begin()));
+            // find signature with matching keyid
+            while (SP < packets.size()){
+                if (std::static_pointer_cast <Tag4> (packets[OPSP]) -> get_keyid() == signing_key -> get_keyid()){
+                    // build signed data
+                    std::string binary = "";
+                    for(PGP::Packets::size_type i = msg; i < SP; i++){
+                        // actually only expects 1 literal data packet
+                        if (packets[i] -> get_tag() == Packet::LITERAL_DATA){
+                            binary += binary_to_canonical(std::static_pointer_cast <Tag11> (packets[i]) -> get_literal());
                         }
-                        else if ((*(OPSP.rbegin())) -> get_type() == Signature_Type::SIGNATURE_OF_A_CANONICAL_TEXT_DOCUMENT){
-                                digest = to_sign_01(text, *(SP.begin()));
-                        }
-
-                        // don't know if other signature types can be here
-                        // else if (Signature_Type::is_cert((*(OPSP.rbegin())) -> get_type())){
-                            // std::cerr << "Warning: Bad signature type: " << std::to_string((*(OPSP.rbegin())) -> get_type()) << std::endl;
-                            // verify = false;
-                        // }
                         else{
-                            std::cerr << "Warning: Bad signature type: " << std::to_string((*(OPSP.rbegin())) -> get_type()) << std::endl;
-                            verify = false;
-                            break;
-                        }
-
-                        if (verify){
-                            // check if the key matches this signature
-                            verify = pka_verify(digest, signing_key, *(SP.begin()), error);
+                            binary += packets[i] -> raw();
                         }
                     }
-                // }
-            // }
-            // else{
-                // verify = false;
-                // std:cerr << "Warning: One-Pass Signature Packet and Signature Packet KeyID mismatch" << std::endl;
-            // }
 
-            // free shared_ptr
-            OPSP.rbegin() -> reset();
-            SP.begin() -> reset();
+                    // do verification
+                    const Tag2::Ptr sig = std::static_pointer_cast <Tag2> (packets[SP]);
+                    const int rc = pka_verify(to_sign_00(binary, sig), signing_key, sig, error);
+                    if (rc == -1){
+                        error += "Error: PKA verify failure.\n";
+                        return -1;
+                    }
+                    else if (rc == 1){
+                        return true;
+                    }
+                }
 
-            OPSP.pop_back(); // pop top of stack
-            SP.pop_front();  // pop front of queue
+                OPSP--;
+                SP++;
+            }
+
+            return false;
+        }
+        else if (packets.size() &&
+                 (packets.front() -> get_tag() == Packet::SIGNATURE)){
+            // Signature Packet, OpenPGP Message
+            error += "Error: Signature Packet + OpenPGP Message signature not implmented.\n";
+            return -1;
         }
 
-        return verify;
+        error += "Error: Bad Signed Message.\n";
+        return -1;
     }
-    else if (message.match(PGPMessage::COMPRESSEDMESSAGE, error)){
-        // Compressed Message :- Compressed Data Packet.
 
-        // decompress data
-        // assume only one compressed data packet
+    // this should never happen, because PGPMessage automatically decompresses
+    error = "";
+    if (message.match(PGPMessage::COMPRESSEDMESSAGE, error)){
+        // Compressed Message :- Compressed Data Packet.
         return verify_message(key, PGPMessage(std::static_pointer_cast <Tag8> (message.get_packets()[0]) -> get_data()), error);
     }
-    else if (message.match(PGPMessage::LITERALMESSAGE, error)){
+
+    error = "";
+    if (message.match(PGPMessage::LITERALMESSAGE, error)){
         // Literal Message :- Literal Data Packet.
-
-        // only one literal data packet
-        std::string compressed = message.get_packets()[0] -> raw();
-
-        // extract data
-        Tag11 tag11(compressed);
-        compressed = tag11.get_literal(); // not sure if this is correct
-
-        return verify_message(key, PGPMessage(compressed), error);
+        // return verify_message(key, PGPMessage(std::static_pointer_cast <Tag11> (message.get_packets()[0]) -> get_literal()), error);
+        return true;
     }
 
-    error += "Error: Not an OpenPGP Message. Perhaps Detached Signature?\n";
+    error = "Error: Not an OpenPGP Message. Perhaps Detached Signature?\n";
     return -1;
 }
 

@@ -26,9 +26,6 @@ THE SOFTWARE.
 #ifndef __VERIFY__
 #define __VERIFY__
 
-#include <list>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 
 #include "PGPCleartextSignature.h"

@@ -264,10 +264,11 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
         return false;
     }
 
-    if ((token != OPENPGPMESSAGE)    &&
-        (token != ENCRYPTEDMESSAGE)  &&
-        (token != SIGNEDMESSAGE)     &&
-        (token != COMPRESSEDMESSAGE) &&
+    if ((token != OPENPGPMESSAGE)       &&
+        (token != ENCRYPTEDMESSAGE)     &&
+        (token != SIGNEDMESSAGE)        &&
+        (token != ONEPASSSIGNEDMESSAGE) &&  // special case of Signed Message
+        (token != COMPRESSEDMESSAGE)    &&
         (token != LITERALMESSAGE)){
         error += "Error: Invalid Token to match.\n";
         return false;
@@ -277,36 +278,35 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
     std::list <Token> s;
     for(Packet::Ptr const & p : pgp.get_packets()){
         Token push;
-        switch(p -> get_tag()){
-            case 8:
-                push = CDP;
-                break;
-            case 11:
-                push = LDP;
-                break;
-            case 1:
-                push = PKESKP;
-                break;
-            case 3:
-                push = SKESKP;
-                break;
-            case 9:
-                push = SEDP;
-                break;
-            case 18:
-                push = SEIPDP;
-                break;
-            case 4:
-                push = OPSP;
-                break;
-            case 2:
-                push = SP;
-                break;
-            default:
-                error += "Error: Non-Message packet found.\n";
-                return false;
-                break;
+        if (p -> get_tag() == Packet::COMPRESSED_DATA){
+            push = CDP;
         }
+        else if (p -> get_tag() == Packet::LITERAL_DATA){
+            push = LDP;
+        }
+        else if (p -> get_tag() == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
+            push = PKESKP;
+        }
+        else if (p -> get_tag() == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
+            push = SKESKP;
+        }
+        else if (p -> get_tag() == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
+            push = SEDP;
+        }
+        else if (p -> get_tag() == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
+            push = SEIPDP;
+        }
+        else if (p -> get_tag() == Packet::ONE_PASS_SIGNATURE){
+            push = OPSP;
+        }
+        else if (p -> get_tag() == Packet::SIGNATURE){
+            push = SP;
+        }
+        else{
+            error += "Error: Non-Message packet found.\n";
+            return false;
+        }
+
         s.push_back(push);
     }
 
