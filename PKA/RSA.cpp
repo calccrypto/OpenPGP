@@ -6,20 +6,26 @@ PKA::Values RSA_keygen(const uint32_t & bits){
     PGPMPI p = 3;
     PGPMPI q = 3;
 
-    // gpg only accepts 'n's of certain sizes
     #ifdef GPG_COMPATIBLE
-    const uint32_t bitsize_1 = bits << 1;       // 1024, 2048, 4096
-    const uint32_t bitsize_2 = bitsize_1 - 8;   // 1016, 2040, 4088
-
-    if ((bitsize_1 != 1024) && (bitsize_1 != 2048) && (bitsize_1 != 4096)){
+    // gpg only accepts 'n's of certain sizes
+    const uint32_t nbitsize = bits << 1;
+    if ((nbitsize != 1024) &&
+        (nbitsize != 2048) &&
+        (nbitsize != 4096)){
         return {};
     }
 
     PGPMPI n;
-    while (bitsize(n) != (bits << 1)){
+    while (true){
         p = nextprime(bintompi("1" + BBS().rand(bits - 1)));
         q = nextprime(bintompi("1" + BBS().rand(bits - 1)));
         n = p * q;
+
+        // 1016, 1024, 2040, 2048, 4088, 4096 bit 'n's allowed
+        const std::size_t nbits = bitsize(n);
+        if ((nbits == nbitsize) || (nbits == (nbitsize - 8))){
+            break;
+        }
     }
     #else
     while (p == q){

@@ -66,8 +66,8 @@ uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Val
             pub.pop_back();                             // d
             break;
         case PKA::ELGAMAL:
-            pub = ElGamal_keygen(params[0]);            // p, g, y
-            pri = {pub[2]};                             // x
+            pub = ElGamal_keygen(params[0]);            // p, g, y, x
+            pri = {pub[3]};                             // x
             pub.pop_back();                             // x
             break;
         case PKA::DSA:
