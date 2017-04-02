@@ -26,10 +26,10 @@ THE SOFTWARE.
 #ifndef __ELGAMAL__
 #define __ELGAMAL__
 
-#include "../common/includes.h"
 #include "../RNG/RNGs.h"
-#include "../pgptime.h"
+#include "../common/includes.h"
 #include "../mpi.h"
+#include "../pgptime.h"
 #include "PKA.h"
 
 // Generate ElGamal key values

@@ -7,11 +7,14 @@ include objects.mk
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(HASHES_OBJECTS)
-
 .PHONY: clean
 
-%.o : %.cpp %.h ../common/cryptomath.h ../common/includes.h 
+all: $(HASHES_OBJECTS)
+
+%.o : %.cpp %.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+Hashes.o : Hashes.cpp Hashes.h  $(HASHES_OBJECTS:.o=.h)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:

@@ -30,13 +30,13 @@ THE SOFTWARE.
 
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
-#include "Packets/packets.h"
-#include "PKA/PKAs.h"
-#include "cfb.h"
-#include "mpi.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
+#include "PKA/PKAs.h"
 #include "PKCS1.h"
+#include "Packets/packets.h"
+#include "cfb.h"
+#include "mpi.h"
 #include "verify.h"
 
 // decrypt data once session key is known

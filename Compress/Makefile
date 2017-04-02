@@ -7,11 +7,14 @@ include objects.mk
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(COMPRESS_OBJECTS)
-
 .PHONY: clean
 
+all: $(COMPRESS_OBJECTS)
+
 %.o : %.cpp %.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+Compress.o: Compress.cpp Compress.h $(COMPRESS_OBJECTS:.o=.h)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:

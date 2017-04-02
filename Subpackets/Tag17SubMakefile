@@ -1,0 +1,22 @@
+# Tag17 Subpackets Makefile
+CXX?=g++
+CXXFLAGS=-std=c++11 -Wall -c -DGPG_COMPATIBLE
+
+include objects.mk
+
+debug: CXXFLAGS += -g
+debug: all
+
+all: $(TAG17SUBPACKETS_OBJECTS)
+
+.PHONY: clean
+
+%.o : %.cpp %.h Tag17Subpacket.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+Tag17Subpacket.o: Tag17Subpacket.cpp Tag17Subpacket.h  Subpacket.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+clean:
+	rm -f $(TAG17SUBPACKETS_OBJECTS)
+

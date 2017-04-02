@@ -31,10 +31,10 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <vector>
 
-#include "mpi.h"
 #include "PGPKey.h"
 #include "PGPRevocationCertificate.h"
 #include "PKCS1.h"
+#include "mpi.h"
 #include "sign.h"
 #include "verify.h"
 

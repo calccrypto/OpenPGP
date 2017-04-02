@@ -17,9 +17,9 @@ include Subpackets/objects.mk
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(TARGET)
-
 .PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean clean-all
+
+all: $(TARGET)
 
 common:
 	$(MAKE) -C common
@@ -45,59 +45,59 @@ RNG:
 Subpackets:
 	$(MAKE) -C Subpackets
 
-cfb.o: cfb.h cfb.cpp Encryptions/Encryptions.h RNG/RNGs.h
-	$(CXX) $(CXXFLAGS) cfb.cpp
+cfb.o: cfb.cpp cfb.h Encryptions/Encryptions.h Packets/packet.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-decrypt.o: decrypt.h decrypt.cpp Compress/Compress.h Hashes/Hashes.h Packets/packets.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h verify.h
-	$(CXX) $(CXXFLAGS) decrypt.cpp
+decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h Packets/packets.h cfb.h mpi.h verify.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-encrypt.o: encrypt.h encrypt.cpp Compress/Compress.h Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h PGPMessage.h PKCS1.h revoke.h
-	$(CXX) $(CXXFLAGS) encrypt.cpp
+encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h cfb.h revoke.h sign.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-generatekey.o: generatekey.h generatekey.cpp Hashes/Hashes.h PKA/PKA.h cfb.h PGPKey.h pgptime.h PKCS1.h sign.h sigcalc.h
-	$(CXX) $(CXXFLAGS) generatekey.cpp
+generatekey.o: generatekey.cpp generatekey.h Hashes/Hashes.h PGPKey.h PKA/PKA.h PKCS1.h cfb.h mpi.h pgptime.h sigcalc.h sign.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-mpi.o: mpi.h mpi.cpp common/includes.h
-	$(CXX) $(CXXFLAGS) mpi.cpp
+mpi.o: mpi.cpp mpi.h common/includes.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGP.o: PGP.h PGP.cpp common/includes.h Packets/packets.h pgptime.h radix64.h
-	$(CXX) $(CXXFLAGS) PGP.cpp
+PGP.o: PGP.cpp PGP.h common/includes.h Packets/packets.h pgptime.h radix64.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPCleartextSignature.o: PGPCleartextSignature.h PGPCleartextSignature.cpp PGP.h PGPDetachedSignature.h
-	$(CXX) $(CXXFLAGS) PGPCleartextSignature.cpp
+PGPCleartextSignature.o: PGPCleartextSignature.cpp PGPCleartextSignature.h PGP.h PGPDetachedSignature.h sigcalc.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPDetachedSignature.o: PGPDetachedSignature.h PGPDetachedSignature.cpp PGP.h
-	$(CXX) $(CXXFLAGS) PGPDetachedSignature.cpp
+PGPDetachedSignature.o: PGPDetachedSignature.cpp PGPDetachedSignature.h PGP.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPKey.o: PGPKey.h PGPKey.cpp Packets/packets.h PGP.h
-	$(CXX) $(CXXFLAGS) PGPKey.cpp
+PGPKey.o: PGPKey.cpp PGPKey.h Packets/packets.h PKA/PKAs.h PGP.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPMessage.o: PGPMessage.h PGPMessage.cpp PGP.h
-	$(CXX) $(CXXFLAGS) PGPMessage.cpp
+PGPMessage.o: PGPMessage.cpp PGPMessage.h PGP.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPRevocationCertificate.o: PGPRevocationCertificate.h PGPRevocationCertificate.cpp PGP.h
-	$(CXX) $(CXXFLAGS) PGPRevocationCertificate.cpp
+PGPRevocationCertificate.o: PGPRevocationCertificate.cpp PGPRevocationCertificate.h PGP.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-pgptime.o: pgptime.h pgptime.cpp
-	$(CXX) $(CXXFLAGS) pgptime.cpp
+pgptime.o: pgptime.cpp pgptime.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-PKCS1.o: PKCS1.h PKCS1.cpp common/includes.h RNG/RNGs.h pgptime.h
-	$(CXX) $(CXXFLAGS) PKCS1.cpp
+PKCS1.o: PKCS1.cpp PKCS1.h common/includes.h Hashes/Hashes.h RNG/RNGs.h mpi.h pgptime.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-radix64.o: radix64.h radix64.cpp common/includes.h
-	$(CXX) $(CXXFLAGS) radix64.cpp
+radix64.o: radix64.cpp radix64.h common/includes.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-revoke.o: revoke.h revoke.cpp PGPKey.h PKCS1.h mpi.h PGPKey.h PKCS1.h sign.h verify.h
-	$(CXX) $(CXXFLAGS) revoke.cpp
+revoke.o: revoke.cpp revoke.h PGPKey.h PGPRevocationCertificate.h PKCS1.h mpi.h sign.h verify.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-sigcalc.o: sigcalc.h sigcalc.cpp Hashes/Hashes.h Packets/packets.h pgptime.h
-	$(CXX) $(CXXFLAGS) sigcalc.cpp
+sigcalc.o: sigcalc.cpp sigcalc.h Hashes/Hashes.h Packets/packets.h pgptime.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-sign.o: sign.h sign.cpp common/includes.h Compress/Compress.h Packets/packets.h PKA/PKA.h decrypt.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h pgptime.h revoke.h sigcalc.h
-	$(CXX) $(CXXFLAGS) sign.cpp
+sign.o: sign.cpp sign.h Compress/Compress.h Hashes/Hashes.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h PKA/PKA.h Packets/packets.h common/includes.h decrypt.h mpi.h pgptime.h revoke.h sigcalc.h verify.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
-verify.o: verify.h verify.cpp Packets/packets.h PKA/PKA.h mpi.h PGPCleartextSignature.h PGPDetachedSignature.h PGPMessage.h PGPKey.h PKCS1.h sigcalc.h
-	$(CXX) $(CXXFLAGS) verify.cpp
+verify.o: verify.cpp verify.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h PGPRevocationCertificate.h PKA/PKA.h PKCS1.h Packets/packets.h mpi.h sigcalc.h
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(TARGET): $(OPENPGP_OBJECTS) common Compress Encryptions Hashes Packets PKA RNG Subpackets
 	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(addprefix common/, $(COMMON_OBJECTS)) $(addprefix Compress/, $(COMPRESS_OBJECTS)) $(addprefix Encryptions/, $(ENCRYPTIONS_OBJECTS)) $(addprefix Hashes/, $(HASHES_OBJECTS)) $(addprefix Packets/, $(PACKETS_OBJECTS)) $(addprefix PKA/, $(PKA_OBJECTS)) $(addprefix RNG/, $(RNG_OBJECTS)) $(addprefix Subpackets/, $(SUBPACKETS_OBJECTS))

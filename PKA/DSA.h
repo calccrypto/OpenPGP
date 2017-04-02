@@ -26,10 +26,10 @@ THE SOFTWARE.
 #ifndef __DSA__
 #define __DSA__
 
-#include "../common/includes.h"
 #include "../RNG/RNGs.h"
-#include "../pgptime.h"
+#include "../common/includes.h"
 #include "../mpi.h"
+#include "../pgptime.h"
 #include "PKA.h"
 
 // Generate new set of parameters

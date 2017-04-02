@@ -7,9 +7,9 @@ include objects.mk
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(RNG_OBJECTS)
-
 .PHONY: clean
+
+all: $(RNG_OBJECTS)
 
 %.o : %.cpp %.h
 	$(CXX) $(CXXFLAGS) $< -o $@

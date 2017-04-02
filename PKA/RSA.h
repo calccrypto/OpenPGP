@@ -26,10 +26,10 @@ THE SOFTWARE.
 #ifndef __RSA__
 #define __RSA__
 
-#include "../common/includes.h"
 #include "../RNG/RNGs.h"
-#include "../pgptime.h"
+#include "../common/includes.h"
 #include "../mpi.h"
+#include "../pgptime.h"
 #include "PKA.h"
 
 // Generate RSA key values
