@@ -32,7 +32,7 @@ Tag3.o: Tag3.cpp Tag3.h ../cfb.h packet.h s2k.h
 Tag8.o: Tag8.cpp Tag8.h ../Compress/Compress.h ../PGPMessage.h packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag17.o: Tag17.cpp Tag17.h ../Subpackets/subpackets.h packet.h
+Tag17.o: Tag17.cpp Tag17.h ../Subpackets/Subpackets.h packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
