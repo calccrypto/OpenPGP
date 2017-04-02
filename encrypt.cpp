@@ -6,7 +6,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 
     if (!args.valid(error)){
         error += "Error: Bad argument.\n";
-        return PGPMessage();
+        return nullptr;
     }
 
     std::string to_encrypt;
