@@ -72,13 +72,11 @@ void Tag17::read(const std::string & data){
         read_subpacket(data, pos, length);
 
         Tag17Subpacket::Ptr subpacket = nullptr;
-        switch (data[pos]){ // first octet of data is subpacket type
-            case 1:
-                subpacket = std::make_shared <Tag17Sub1> ();
-                break;
-            default:
-                throw std::runtime_error("Error: Subpacket tag not defined or reserved.");
-                break;
+        if (data[pos] == Tag17Subpacket::IMAGE_ATTRIBUTE){
+            subpacket = std::make_shared <Tag17Sub1> ();
+        }
+        else {
+            throw std::runtime_error("Error: Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
         }
 
         subpacket -> read(data.substr(pos + 1, length - 1));

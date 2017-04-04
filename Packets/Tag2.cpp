@@ -64,81 +64,82 @@ void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpacke
         std::string::size_type length;
         read_subpacket(data, pos, length);  // pos moved past header to [length + data]
 
+        // first octet of data is subpacket type
         Tag2Subpacket::Ptr subpacket = nullptr;
-        switch (data[pos]){                 // first octet of data is subpacket type
-            // reserved sub values will crash the program
-            case 2:
-                subpacket = std::make_shared <Tag2Sub2> ();
-                break;
-            case 3:
-                subpacket = std::make_shared <Tag2Sub3> ();
-                break;
-            case 4:
-                subpacket = std::make_shared <Tag2Sub4> ();
-                break;
-            case 5:
-                subpacket = std::make_shared <Tag2Sub5> ();
-                break;
-            case 6:
-                subpacket = std::make_shared <Tag2Sub6> ();
-                break;
-            case 9:
-                subpacket = std::make_shared <Tag2Sub9> ();
-                break;
-            case 10:
-                subpacket = std::make_shared <Tag2Sub10> ();
-                break;
-            case 11:
-                subpacket = std::make_shared <Tag2Sub11> ();
-                break;
-            case 12:
-                subpacket = std::make_shared <Tag2Sub12> ();
-                break;
-            case 16:
-                subpacket = std::make_shared <Tag2Sub16> ();
-                break;
-            case 20:
-                subpacket = std::make_shared <Tag2Sub20> ();
-                break;
-            case 21:
-                subpacket = std::make_shared <Tag2Sub21> ();
-                break;
-            case 22:
-                subpacket = std::make_shared <Tag2Sub22> ();
-                break;
-            case 23:
-                subpacket = std::make_shared <Tag2Sub23> ();
-                break;
-            case 24:
-                subpacket = std::make_shared <Tag2Sub24> ();
-                break;
-            case 25:
-                subpacket = std::make_shared <Tag2Sub25> ();
-                break;
-            case 26:
-                subpacket = std::make_shared <Tag2Sub26> ();
-                break;
-            case 27:
-                subpacket = std::make_shared <Tag2Sub27> ();
-                break;
-            case 28:
-                subpacket = std::make_shared <Tag2Sub28> ();
-                break;
-            case 29:
-                subpacket = std::make_shared <Tag2Sub29> ();
-                break;
-            case 30:
-                subpacket = std::make_shared <Tag2Sub30> ();
-                break;
-            case 31:
-                subpacket = std::make_shared <Tag2Sub31> ();
-                break;
-            case 32:
-                subpacket = std::make_shared <Tag2Sub32> ();
-                break;
-            default:
-                throw std::runtime_error("Error: Subpacket tag not defined or reserved.");
-                break;
+        if (data[pos] == Tag2Subpacket::SIGNATURE_CREATION_TIME){
+            subpacket = std::make_shared <Tag2Sub2> ();
+        }
+        else if (data[pos] == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
+            subpacket = std::make_shared <Tag2Sub3> ();
+        }
+        else if (data[pos] == Tag2Subpacket::EXPORTABLE_CERTIFICATION){
+            subpacket = std::make_shared <Tag2Sub4> ();
+        }
+        else if (data[pos] == Tag2Subpacket::TRUST_SIGNATURE){
+            subpacket = std::make_shared <Tag2Sub5> ();
+        }
+        else if (data[pos] == Tag2Subpacket::REGULAR_EXPRESSION){
+            subpacket = std::make_shared <Tag2Sub6> ();
+        }
+        else if (data[pos] == Tag2Subpacket::REVOCABLE){
+            subpacket = std::make_shared <Tag2Sub7> ();
+        }
+        else if (data[pos] == Tag2Subpacket::KEY_EXPIRATION_TIME){
+            subpacket = std::make_shared <Tag2Sub9> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY){
+            subpacket = std::make_shared <Tag2Sub10> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS){
+            subpacket = std::make_shared <Tag2Sub11> ();
+        }
+        else if (data[pos] == Tag2Subpacket::REVOCATION_KEY){
+            subpacket = std::make_shared <Tag2Sub12> ();
+        }
+        else if (data[pos] == Tag2Subpacket::ISSUER){
+            subpacket = std::make_shared <Tag2Sub16> ();
+        }
+        else if (data[pos] == Tag2Subpacket::NOTATION_DATA){
+            subpacket = std::make_shared <Tag2Sub20> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PREFERRED_HASH_ALGORITHMS){
+            subpacket = std::make_shared <Tag2Sub21> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS){
+            subpacket = std::make_shared <Tag2Sub22> ();
+        }
+        else if (data[pos] == Tag2Subpacket::KEY_SERVER_PREFERENCES){
+            subpacket = std::make_shared <Tag2Sub23> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PREFERRED_KEY_SERVER){
+            subpacket = std::make_shared <Tag2Sub24> ();
+        }
+        else if (data[pos] == Tag2Subpacket::PRIMARY_USER_ID){
+            subpacket = std::make_shared <Tag2Sub25> ();
+        }
+        else if (data[pos] == Tag2Subpacket::POLICY_URI){
+            subpacket = std::make_shared <Tag2Sub26> ();
+        }
+        else if (data[pos] == Tag2Subpacket::KEY_FLAGS){
+            subpacket = std::make_shared <Tag2Sub27> ();
+        }
+        else if (data[pos] == Tag2Subpacket::SIGNERS_USER_ID){
+            subpacket = std::make_shared <Tag2Sub28> ();
+        }
+        else if (data[pos] == Tag2Subpacket::REASON_FOR_REVOCATION){
+            subpacket = std::make_shared <Tag2Sub29> ();
+        }
+        else if (data[pos] == Tag2Subpacket::FEATURES){
+            subpacket = std::make_shared <Tag2Sub30> ();
+        }
+        else if (data[pos] == Tag2Subpacket::SIGNATURE_TARGET){
+            subpacket = std::make_shared <Tag2Sub31> ();
+        }
+        else if (data[pos] == Tag2Subpacket::EMBEDDED_SIGNATURE){
+            subpacket = std::make_shared <Tag2Sub32> ();
+        }
+        else{
+            throw std::runtime_error("Error: Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
         }
 
         // subpacket guaranteed to be defined

@@ -94,12 +94,12 @@ class Packet{
         static bool is_session_key          (const uint8_t t);
         static bool is_sym_protected_data   (const uint8_t t);
 
-	public:
-		enum Format{
-			DEFAULT,
-			OLD,
-			NEW,
-		};
+    public:
+        enum Format{
+            DEFAULT,
+            OLD,
+            NEW,
+        };
 
     protected:
         uint8_t tag;        // RFC 4880 sec 4.3

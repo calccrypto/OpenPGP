@@ -27,6 +27,8 @@ THE SOFTWARE.
 #define __TAG17__
 
 #include <vector>
+#include <stdexcept>
+#include <string>
 
 #include "../common/includes.h"
 #include "../Subpackets/Tag17Subpackets.h"
