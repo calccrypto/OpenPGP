@@ -543,7 +543,7 @@ TEST(PGP, gpg_revoke) {
     // unhashed
     {
         auto unhashed = revsig->get_unhashed_subpackets();
-        ASSERT_EQ(unhashed.size(), (std::size_t) 1);
+        ASSERT_EQ(unhashed.size(), (Tag2::Subpackets::size_type) 1);
 
         Subpacket::Ptr s0 = unhashed[0];
         ASSERT_EQ(s0->get_type(), Tag2Subpacket::ISSUER);
@@ -770,7 +770,7 @@ TEST(PGP, gpg_clearsign) {
     // unhashed
     {
         auto unhashed = tag2->get_unhashed_subpackets();
-        ASSERT_EQ(unhashed.size(), (std::size_t) 1);
+        ASSERT_EQ(unhashed.size(), (Tag2::Subpackets::size_type) 1);
 
         Subpacket::Ptr s0 = unhashed[0];
         ASSERT_EQ(s0->get_type(), Tag2Subpacket::ISSUER);
