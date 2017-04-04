@@ -14,8 +14,8 @@ PKA::Values ElGamal_keygen(unsigned int bits){
     bits *= 5;
 
     // random prime p = kq + 1
-    PGPMPI p = bintompi("1" + BBS().rand(bits - 1));      // pick random starting point
-    p = ((p - 1) / q) * q + 1;                       // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
+    PGPMPI p = bintompi("1" + BBS().rand(bits - 1));                // pick random starting point
+    p = ((p - 1) / q) * q + 1;                                      // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!knuth_prime_test(p, 25)){
         p += q;
     }
@@ -25,8 +25,7 @@ PKA::Values ElGamal_keygen(unsigned int bits){
     PGPMPI h = 1;
     PGPMPI exp = (p - 1) / q;
     while (g == 1){
-        h++;
-        g = powm(h, exp, p);
+        g = powm(++h, exp, p);
     }
 
     // 0 < x < p

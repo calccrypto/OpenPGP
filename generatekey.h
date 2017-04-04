@@ -88,10 +88,34 @@ struct KeyGen{
             return false;
         }
 
-        if (bits < 512){
-            error += "Error: Primary PKA key size should be at least 512 bits.\n";
+        #ifdef GPG_COMPATIBLE
+        if (PKA::is_RSA(pka)){
+            if ((bits < 1024) || (bits > 4096)){
+                error += "Error: RSA key size should be between 1024 and 4096 bits.\n";
+                return false;
+            }
+
+            if (bits % 32){
+                error += "Error: GPG only accepts keys whose size is a multiple of 32.\n";
+                return false;
+            }
+        }
+        else if (PKA::DSA == pka){
+            if ((bits < 1024) || (bits > 3072)){
+                error += "Error: DSA key size should be between 1024 and 3072 bits.\n";
+                return false;
+            }
+
+            if (bits % 64){
+                error += "Error: GPG only accepts DSA keys whose size is a multiple of 64.\n";
+                return false;
+            }
+        }
+        else{
+            error += "Error: Unknown PKA " + std::to_string(pka) + " got through filter.\n";
             return false;
         }
+        #endif
 
         if (Sym::NAME.find(sym) == Sym::NAME.end()){
             error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
@@ -126,10 +150,34 @@ struct KeyGen{
                 return false;
             }
 
-            if (subkey.bits < 512){
-                error += "Error: Subkey PKA key size should be at least 512 bits.\n";
+            #ifdef GPG_COMPATIBLE
+            if (PKA::is_RSA(subkey.pka)){
+                if ((subkey.bits < 1024) || (subkey.bits > 4096)){
+                    error += "Error: RSA key size should be between 1024 and 4096 bits.\n";
+                    return false;
+                }
+
+                if (subkey.bits % 32){
+                    error += "Error: GPG only accepts keys whose size is a multiple of 32.\n";
+                    return false;
+                }
+            }
+            else if ((PKA::DSA == subkey.pka) || (PKA::ELGAMAL == pka)){
+                if ((subkey.bits < 1024) || (subkey.bits > 3072)){
+                    error += "Error: DSA/ElGamal key size should be between 1024 and 3072 bits.\n";
+                    return false;
+                }
+
+                if (subkey.bits % 64){
+                    error += "Error: GPG only accepts DSA/ElGamal keys whose size is a multiple of 64.\n";
+                    return false;
+                }
+            }
+            else{
+                error += "Error: Unknown PKA " + std::to_string(subkey.pka) + " got through filter.\n";
                 return false;
             }
+            #endif
 
             if (Sym::NAME.find(subkey.sym) == Sym::NAME.end()){
                 error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(subkey.sym);
@@ -156,8 +204,8 @@ struct KeyGen{
     }
 };
 
-// preset key generation
-// return sin a private key
+// key generation using config defined above
+// returns a private key
 // public key can be extracted from the private key
 PGPSecretKey generate_key(KeyGen & config, std::string & error);
 

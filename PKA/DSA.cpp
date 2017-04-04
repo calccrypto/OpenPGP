@@ -16,8 +16,8 @@ PKA::Values new_DSA_public(const uint32_t & L, const uint32_t & N){
     }
 
     // random prime p = kq + 1
-    PGPMPI p = bintompi("1" + BBS().rand(L - 1));      // pick random starting point
-    p = ((p - 1) / q) * q + 1;                    // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
+    PGPMPI p = bintompi("1" + BBS().rand(L - 1));                   // pick random starting point
+    p = ((p - 1) / q) * q + 1;                                      // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!knuth_prime_test(p, 25)){
         p += q;
     }
@@ -37,7 +37,7 @@ PKA::Values DSA_keygen(PKA::Values & pub){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     PGPMPI x = 0;
-    std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesnt work for some reason
+    std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesn't work for some reason
     unsigned int bits = bitsize(pub[1]) - 1;
     while (true){
         // 0 < x < q
@@ -60,6 +60,7 @@ PKA::Values DSA_keygen(PKA::Values & pub){
         if (DSA_verify(test, rs, pub)){
             break;
         }
+
         pub.pop_back();
     }
 

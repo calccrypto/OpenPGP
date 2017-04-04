@@ -9,9 +9,9 @@ PKA::Values RSA_keygen(const uint32_t & bits){
     #ifdef GPG_COMPATIBLE
     // gpg only accepts 'n's of certain sizes
     const uint32_t nbitsize = bits << 1;
-    if ((nbitsize != 1024) &&
-        (nbitsize != 2048) &&
-        (nbitsize != 4096)){
+    if ((nbitsize < 1024) ||    // less than 1024
+        (nbitsize & 31)   ||    // not a multiple of 32
+        (nbitsize > 4096)){     // more than 4096
         return {};
     }
 
@@ -21,13 +21,13 @@ PKA::Values RSA_keygen(const uint32_t & bits){
         q = nextprime(bintompi("1" + BBS().rand(bits - 1)));
         n = p * q;
 
-        // 1016, 1024, 2040, 2048, 4088, 4096 bit 'n's allowed
         const std::size_t nbits = bitsize(n);
         if ((nbits == nbitsize) || (nbits == (nbitsize - 8))){
             break;
         }
     }
     #else
+    // don't check bitsize
     while (p == q){
         p = nextprime(bintompi(BBS().rand(bits)));
         q = nextprime(bintompi(BBS().rand(bits)));
