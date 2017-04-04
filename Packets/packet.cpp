@@ -182,15 +182,14 @@ Packet::Packet(const Packet & copy)
 {}
 
 Packet::Packet()
-    : Packet(0)
+    : Packet(UNKNOWN)
 {}
 
 Packet::~Packet(){}
 
-std::string Packet::write(uint8_t header) const{
-    if ((header && ((header == 2) ||                          // if user set new packet header or
-       ((header == 1) && (tag > 15)))) ||                     // if user set new packet header but tag is greater than 15 or
-       (!header && ((format || ((!format) && (tag > 15)))))){ // if user did not set packet header and format is new, or format is old but tag is greater than 15
+std::string Packet::write(const Packet::Format header) const{
+    if ((header == NEW) ||      // specified new header
+        (tag > 15)){            // tag > 15, so new header is required
         return write_new_length(raw());
     }
     return write_old_length(raw());

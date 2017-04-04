@@ -398,7 +398,7 @@ std::string PGP::show(const uint8_t indents, const uint8_t indent_size) const{
     return out;
 }
 
-std::string PGP::raw(const uint8_t header) const{
+std::string PGP::raw(const Packet::Format header) const{
     std::string out = "";
     for(Packet::Ptr const & p : packets){
         out += p -> write(header);
@@ -406,7 +406,7 @@ std::string PGP::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor, const uint8_t header) const{
+std::string PGP::write(const PGP::Armored armor, const Packet::Format header) const{
     const std::string packet_string = raw(header);  // raw PGP data = binary, no ASCII headers
 
     if ((armor == Armored::NO)                   || // no armor
@@ -450,8 +450,8 @@ void PGP::set_armored(const bool a){
     armored = a;
 }
 
-void PGP::set_type(const PGP::Type_t header){
-    type = header;
+void PGP::set_type(const PGP::Type_t t){
+    type = t;
 }
 
 void PGP::set_keys(const PGP::Armor_Keys & k){

@@ -104,7 +104,7 @@ std::string PGPCleartextSignature::show(const uint8_t indents, const uint8_t ind
            sig.show(indents + 1, indent_size);
 }
 
-std::string PGPCleartextSignature::write(uint8_t header) const{
+std::string PGPCleartextSignature::write(const Packet::Format header) const{
     std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
 
     // write Armor Header

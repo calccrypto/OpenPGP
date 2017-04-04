@@ -94,10 +94,17 @@ class Packet{
         static bool is_session_key          (const uint8_t t);
         static bool is_sym_protected_data   (const uint8_t t);
 
+	public:
+		enum Format{
+			DEFAULT,
+			OLD,
+			NEW,
+		};
+
     protected:
         uint8_t tag;        // RFC 4880 sec 4.3
         uint8_t version;
-        bool format;        // OLD or NEW; only used when "show"ing. "write" will write whatever it set; default is NEW
+        bool format;        // OLD (false) or NEW (true); defaults to NEW
         std::size_t size;   // This value is only correct when the packet was generated with the read() function
         uint8_t partial;    // 0-3; 0 = not partial, 1 = partial begin, 2 = partial continue, 3 = partial end
 
@@ -122,7 +129,7 @@ class Packet{
         virtual void read(const std::string & data) = 0;
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const = 0;
         virtual std::string raw() const = 0;
-        std::string write(uint8_t header = 0) const; // 0 for use default; 1 for OLD; 2 for NEW
+        std::string write(const Format header = DEFAULT) const;
 
         // Accessors
         uint8_t get_tag() const;

@@ -206,7 +206,7 @@ std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) c
     return out.str();
 }
 
-std::string PGPMessage::raw(const uint8_t header) const{
+std::string PGPMessage::raw(const Packet::Format header) const{
     std::string out = PGP::raw(header);
     if (comp){                  // if compression was used; compress data
         comp -> set_data(out);
@@ -216,7 +216,7 @@ std::string PGPMessage::raw(const uint8_t header) const{
     return out;
 }
 
-std::string PGPMessage::write(const PGP::Armored armor, const uint8_t header) const{
+std::string PGPMessage::write(const PGP::Armored armor, const Packet::Format header) const{
     std::string packet_string = raw(header);
 
     // put data into a Compressed Data Packet if compression is used

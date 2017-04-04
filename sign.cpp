@@ -136,7 +136,7 @@ PGPMessage sign_binary(const SignArgs & args, const std::string & filename, cons
         Tag8 tag8;
         tag8.set_data(signature.raw());
         tag8.set_comp(compress);
-        std::string raw = tag8.write(2);
+        std::string raw = tag8.write(Packet::Format::NEW);
         signature = PGPMessage(raw);
     }
 

@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __PGP_BASE__
 #define __PGP_BASE__
 
-#include <list>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -106,8 +105,8 @@ class PGP{
         void read_raw(std::istream & stream);
 
         virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-        virtual std::string raw(const uint8_t header = 0) const;                                    // write packets only; header is for writing default (0), old (1) or new (2) header formats
-        virtual std::string write(const Armored armor = DEFAULT, const uint8_t header = 0) const;
+        virtual std::string raw(const Packet::Format header = Packet::Format::DEFAULT) const;       // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        virtual std::string write(const Armored armor = DEFAULT, const Packet::Format header = Packet::Format::DEFAULT) const;
 
         // Accessors
         bool get_armored()              const;
@@ -118,7 +117,7 @@ class PGP{
 
         // Modifiers
         void set_armored(const bool a);
-        void set_type(const Type_t header);
+        void set_type(const Type_t t);
         void set_keys(const Armor_Keys & keys);
         void set_packets(const Packets & p);            // copies the the input packet pointers
         void set_packets_clone(const Packets & p);      // clones the input packets
