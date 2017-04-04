@@ -39,8 +39,9 @@ void Tag11::read(const std::string & data){
 std::string Tag11::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
+    const decltype(Literal::NAME)::const_iterator literal_it = Literal::NAME.find(format);
     return indent + show_title() + "\n" +
-           indent + tab + "Format: " + Literal::Name.at(format) + "\n" +
+           indent + tab + "Format: " + ((literal_it == Literal::NAME.end())?"Unknown":(literal_it -> second)) + "\n" +
            indent + tab + "Data (" + std::to_string(1 + filename.size() + 4 + literal.size()) + " octets):\n" +
            indent + tab + tab + "Filename: " + filename + "\n" +
            indent + tab + tab + "Creation Date: " + show_time(time) + "\n" +

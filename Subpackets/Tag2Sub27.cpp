@@ -24,7 +24,8 @@ std::string Tag2Sub27::show(const std::size_t indents, const std::size_t indent_
     for(char const octet : flags){
         for(uint8_t bit = 0; bit < 8; bit++){
             if (octet & (1 << bit)){
-                out += "\n" + indent + tab + "Flag - " + Key_Flags::NAME.at(1 << bit) + " (key 0x" + makehex(1 << bit, 2) + ")";
+                const decltype(Key_Flags::NAME)::const_iterator kf_it = Key_Flags::NAME.find(1 << bit);
+                out += "\n" + indent + tab + "Flag - " + ((kf_it == Key_Flags::NAME.end())?"Unknown":(kf_it -> second)) + " (key 0x" + makehex(1 << bit, 2) + ")";
             }
         }
     }

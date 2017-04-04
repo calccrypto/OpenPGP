@@ -22,7 +22,8 @@ std::string Tag2Sub11::show(const std::size_t indents, const std::size_t indent_
 
     std::string out = indent + show_title();
     for(char const & c : psa){
-        out += "\n" + indent + tab + "sym alg - " + Sym::NAME.at(c) + " (sym " + std::to_string(c) + ")";
+        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(c);
+        out += "\n" + indent + tab + "sym alg - " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(c) + ")";
     }
 
     return out;

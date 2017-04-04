@@ -166,12 +166,16 @@ void Tag2::read(const std::string & data){
         hash   = data[16];
         left16 = data.substr(17, 2);
         std::string::size_type pos = 19;
-        if (pka < 4){
+
+        if (PKA::is_RSA(pka)){
             mpi.push_back(read_MPI(data, pos)); // RSA m**d mod n
         }
-        if (pka == 17){
+        else if (pka == PKA::DSA){
             mpi.push_back(read_MPI(data, pos)); // DSA r
             mpi.push_back(read_MPI(data, pos)); // DSA s
+        }
+        else{
+            throw std::runtime_error("Error: Unknown PKA type: " + std::to_string(pka));
         }
     }
     else if (version == 4){
@@ -190,10 +194,10 @@ void Tag2::read(const std::string & data){
         // get left 16 bits
         left16 = data.substr(hashed_size + 6 + 2 + unhashed_size, 2);
 
-//        if (pka < 4)
+//        if (PKA::is_RSA(PKA))
         std::string::size_type pos = hashed_size + 6 + 2 + unhashed_size + 2;
         mpi.push_back(read_MPI(data, pos));         // RSA m**d mod n
-        if (pka == 17){
+        if (pka == PKA::DSA){
 //            mpi.push_back(read_MPI(data, pos));   // DSA r
             mpi.push_back(read_MPI(data, pos));     // DSA s
         }
@@ -206,21 +210,24 @@ void Tag2::read(const std::string & data){
 std::string Tag2::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
-
+    const decltype(Signature_Type::NAME)::const_iterator sigtype_it = Signature_Type::NAME.find(type);
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
+    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash);
     std::string out = indent + show_title() + "\n" +
                       indent + tab + "Version: " + std::to_string(version) + "\n";
+
     if (version < 4){
         out += indent + tab + "Hashed Material:\n" +
-               indent + tab + tab + "Signature Type: " + Signature_Type::NAME.at(type) + " (type 0x" + makehex(type, 2) + ")\n" +
+               indent + tab + tab + "Signature Type: " + ((sigtype_it == Signature_Type::NAME.end())?"Unknown":(sigtype_it -> second)) + " (type 0x" + makehex(type, 2) + ")\n" +
                indent + tab + tab + "Creation Time: " + show_time(time) + "\n" +
                indent + tab + "Signer's Key ID: " + hexlify(keyid) + "\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
-               indent + tab + "Hash Algorithm: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")\n";
+               indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")\n";
     }
     else if (version == 4){
-        out += indent + tab + "Signature Type: " + Signature_Type::NAME.at(type) + " (type 0x" + makehex(type, 2) + ")\n" +
-               indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
-               indent + tab + "Hash Algorithm: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")";
+        out += indent + tab + "Signature Type: " + ((sigtype_it == Signature_Type::NAME.end())?"Unknown":(sigtype_it -> second)) + " (type 0x" + makehex(type, 2) + ")\n" +
+               indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n" +
+               indent + tab + "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")";
 
         if (hashed_subpackets.size()){
             time_t create_time = 0;

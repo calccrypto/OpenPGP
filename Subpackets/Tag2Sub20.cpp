@@ -28,7 +28,8 @@ std::string Tag2Sub20::show(const std::size_t indents, const std::size_t indent_
 
     std::string out = indent + show_title();
     for(char const & f : flags){
-        out += "\n" + indent + tab + "Flag - " + Notation::NAME.at(f) + " (not " + std::to_string(f) + ")";
+        const decltype(Notation::NAME)::const_iterator not_it = Notation::NAME.find(f);
+        out += "\n" + indent + tab + "Flag - " + ((not_it == Notation::NAME.end())?"Unknown":(not_it -> second)) + " (not " + std::to_string(f) + ")";
     }
 
     return out + "\n" +

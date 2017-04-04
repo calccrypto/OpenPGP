@@ -21,8 +21,9 @@ std::string Tag2Sub22::show(const std::size_t indents, const std::size_t indent_
     const std::string tab(indent_size, ' ');
 
     std::string out = indent + show_title();
-    for(char const & alg : pca){
-        out += "\n" + indent + tab + "comp alg - " + Compression::NAME.at(alg) + " (comp " + std::to_string(alg) + ")";
+    for(char const & c : pca){
+        const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(c);
+        out += "\n" + indent + tab + "comp alg - " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (comp " + std::to_string(c) + ")";
     }
 
     return out;

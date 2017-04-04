@@ -12,7 +12,7 @@ bool PKA::can_sign(const uint8_t alg){
             (alg == PKA::DSA));
 }
 
-bool is_RSA(const uint8_t alg){
+bool PKA::is_RSA(const uint8_t alg){
     return ((alg == PKA::RSA_ENCRYPT_OR_SIGN) ||
             (alg == PKA::RSA_ENCRYPT_ONLY)    ||
             (alg == PKA::RSA_SIGN_ONLY));

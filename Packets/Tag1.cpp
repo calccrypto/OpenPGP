@@ -34,10 +34,11 @@ void Tag1::read(const std::string & data){
 std::string Tag1::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     std::string out = indent + show_title() + "\n" +
                       indent + tab + "Version: " + std::to_string(version) + "\n" +
                       indent + tab + "KeyID: " + hexlify(keyid) + "\n" +
-                      indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
+                      indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n";
     if (pka < 4){
         out += indent + tab + "RSA m**e mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
     }

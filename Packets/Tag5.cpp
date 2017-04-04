@@ -54,8 +54,9 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
     const std::string tab(indent_size, ' ');
     std::string out;
     if (s2k_con > 253){
+        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
         out += indent + tab + "String-to-Key Usage Conventions: " + std::to_string(s2k_con) + "\n" +
-               indent + tab + "Symmetric Key Algorithm: " + Sym::NAME.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+               indent + tab + "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")\n" +
                s2k -> show(indents, indent_size) + "\n";
         if (s2k -> get_type()){
             out += indent + tab + "IV: " + hexlify(IV) + "\n";
@@ -66,9 +67,7 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
                indent + tab + tab;
 
-        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
-            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
-            (pka == PKA::RSA_SIGN_ONLY)){
+        if (PKA::is_RSA(pka)){
             out += "RSA d, p, q, u";
         }
         else if (pka == PKA::ELGAMAL){
@@ -76,6 +75,9 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         }
         else if (pka == PKA::DSA){
             out += "DSA x";
+        }
+        else{
+            out += "Unknown";
         }
         out += " + ";
 
@@ -91,9 +93,7 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
     else{
         std::string::size_type pos = 0;
 
-        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
-            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
-            (pka == PKA::RSA_SIGN_ONLY)){
+        if (PKA::is_RSA(pka)){
             const PGPMPI d = read_MPI(secret, pos);
             const PGPMPI p = read_MPI(secret, pos);
             const PGPMPI q = read_MPI(secret, pos);
@@ -110,6 +110,9 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         else if (pka == PKA::DSA){
             const PGPMPI x = read_MPI(secret, pos);
             out += indent + tab + "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
+        }
+        else{
+            out += "Unknown";
         }
 
         if (s2k_con == 254){

@@ -23,9 +23,10 @@ void Tag2Sub12::read(const std::string & data){
 std::string Tag2Sub12::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     return indent + show_title() + "\n" +
            indent + tab + "Class: " + std::to_string(_class) + "\n" +
-           indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n" +
            indent + tab + "Fingerprint: " + fingerprint;
 }
 

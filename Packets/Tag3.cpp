@@ -54,9 +54,10 @@ void Tag3::read(const std::string & data){
 std::string Tag3::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
+    const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
     std::string out = indent + show_title() + "\n" +
                       indent + tab + "Version: " + std::to_string(version) + "\n" +
-                      indent + tab + "Symmetric Key Algorithm: " + Sym::NAME.at(sym) + " (sym " + std::to_string(sym) + ")\n" +
+                      indent + tab + "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")\n" +
                       s2k -> show(indents, indent_size);
     if (esk){
         out += "\n" + indent + tab + "Encrypted Session Key: " + hexlify(*esk);

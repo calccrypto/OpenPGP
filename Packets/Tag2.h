@@ -28,8 +28,12 @@ THE SOFTWARE.
 #ifndef __TAG2__
 #define __TAG2__
 
+#include <stdexcept>
+#include <string>
+
 #include "../Hashes/Hashes.h"
 #include "../PKA/PKAs.h"
+#include "../Subpackets/Tag2Subpackets.h"
 #include "packet.h"
 #include "sigtypes.h"
 

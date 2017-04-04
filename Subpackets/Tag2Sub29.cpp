@@ -4,7 +4,7 @@ bool Revoke::is_key_revocation(const uint8_t code){
     return ((NO_REASON_SPECIFIED <= code) &&
             (code <= KEY_IS_NO_LONGER_USED));
 }
-    
+
 Tag2Sub29::Tag2Sub29()
     : Tag2Subpacket(Tag2Subpacket::REASON_FOR_REVOCATION),
       code(),
@@ -27,8 +27,10 @@ std::string Tag2Sub29::show(const std::size_t indents, const std::size_t indent_
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 
+    const decltype(Revoke::NAME)::const_iterator revoke_it = Revoke::NAME.find(code);
+
     std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Reason " + std::to_string(code) + " - " + Revoke::NAME.at(code);
+                      indent + tab + "Reason " + std::to_string(code) + " - " + ((revoke_it == Revoke::NAME.end())?"Unknown":(revoke_it -> second));
     if (code){
         out += "\n" + indent + tab + "Comment - " + reason;
     }

@@ -21,8 +21,9 @@ std::string Tag2Sub21::show(const std::size_t indents, const std::size_t indent_
     const std::string tab(indent_size, ' ');
 
     std::string out = indent + show_title();
-    for(char const & alg : pha){
-        out += "\n" + indent + tab + "hash alg - " + Hash::NAME.at(alg) + " (hash " + std::to_string(alg) + ")";
+    for(char const & c : pha){
+        const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(c);
+        out += "\n" + indent + tab + "hash alg - " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(c) + ")";
     }
 
     return out;

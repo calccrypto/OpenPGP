@@ -81,7 +81,7 @@ namespace Literal {
     const uint8_t Text      = 't';     // should be equal to 0x74
     const uint8_t UTF8_Text = 'u';     // should be equal to 0x75
 
-    const std::map <uint8_t, std::string> Name = {
+    const std::map <uint8_t, std::string> NAME = {
         std::make_pair(Binary,    "Binary"),
         std::make_pair(Text,      "Text"),
         std::make_pair(UTF8_Text, "UTF-8 Text"),

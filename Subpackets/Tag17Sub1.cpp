@@ -26,10 +26,12 @@ std::string Tag17Sub1::show(const std::size_t indents, const std::size_t indent_
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 
+    const decltype(Image_Attributes::NAME)::const_iterator ia_it = Image_Attributes::NAME.find(encoding);
+
     std::string out = indent + tab + show_title() + "\n" +
                       indent;
 
-    const std::string filename = "image" + std::to_string(current) + "." + Image_Attributes::NAME.at(encoding);
+    const std::string filename = "image" + std::to_string(current) + "." + ((ia_it == Image_Attributes::NAME.end())?"Unknown":(ia_it -> second));
     std::ofstream f(filename, std::ios::binary);
     if (f){
         f << image;

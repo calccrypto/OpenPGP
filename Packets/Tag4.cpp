@@ -36,11 +36,14 @@ void Tag4::read(const std::string & data){
 std::string Tag4::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
+    const decltype(Signature_Type::NAME)::const_iterator sigtype_it = Signature_Type::NAME.find(type);
+    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash);
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     return indent + show_title() + "\n" +
            indent + tab + "Version: " + std::to_string(version) + "\n" +
-           indent + tab + "Signature Type: " + Signature_Type::NAME.at(type) + " (sig " + std::to_string(type) + ")\n" +
-           indent + tab + "Hash Algorithm: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
-           indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
+           indent + tab + "Signature Type: " + ((sigtype_it == Signature_Type::NAME.end())?"Unknown":(sigtype_it -> second))+ " (sig " + std::to_string(type) + ")\n" +
+           indent + tab + "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")\n" +
+           indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second))  + " (pka " + std::to_string(pka) + ")\n" +
            indent + tab + "KeyID: " + hexlify(keyid) + "\n" +
            indent + tab + "Nested: " + std::to_string(nested);
     }
