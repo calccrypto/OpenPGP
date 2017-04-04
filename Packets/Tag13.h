@@ -47,7 +47,7 @@ class Tag13 : public User{
         Tag13(const Tag13 & copy);
         Tag13(const std::string & data);
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_contents() const;

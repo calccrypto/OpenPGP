@@ -83,7 +83,7 @@ class Tag4 : public Packet{
         Tag4(const Tag4 & copy);
         Tag4(const std::string & data);
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         uint8_t get_type() const;

@@ -96,7 +96,7 @@ void PGPCleartextSignature::read(std::istream & stream){
     sig.read(ASCII_signature);
 }
 
-std::string PGPCleartextSignature::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string PGPCleartextSignature::show(const std::size_t indents, const std::size_t indent_size) const{
     return std::string(indents * indent_size, ' ') +
            "Message:\n"                            +
            dash_escape(message)                    +

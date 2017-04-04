@@ -104,8 +104,8 @@ class PGP{
         void read_raw(const std::string & data);
         void read_raw(std::istream & stream);
 
-        virtual std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-        virtual std::string raw(const Packet::Format header = Packet::Format::DEFAULT) const;       // write packets only; header is for writing default (0), old (1) or new (2) header formats
+        virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
+        virtual std::string raw(const Packet::Format header = Packet::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
         virtual std::string write(const Armored armor = DEFAULT, const Packet::Format header = Packet::Format::DEFAULT) const;
 
         // Accessors

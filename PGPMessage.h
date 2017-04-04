@@ -95,9 +95,9 @@ class PGPMessage : public PGP {
         static bool OnePassSignedMessage (std::list <Token>::iterator it, std::list <Token> & s);
         static bool SignedMessage        (std::list <Token>::iterator it, std::list <Token> & s);
 
-        Tag8::Ptr comp;                                                                     // store tag8 data, if it exists
+        Tag8::Ptr comp;                                                                             // store tag8 data, if it exists
 
-        bool decompress(std::string & error);                                               // decompress packet
+        bool decompress(std::string & error);                                                       // decompress packet
 
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;
@@ -109,13 +109,13 @@ class PGPMessage : public PGP {
         PGPMessage(std::istream & stream);
         ~PGPMessage();
 
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
         std::string raw(const Packet::Format header = Packet::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
         std::string write(const Armored armor = DEFAULT, const Packet::Format header = Packet::Format::DEFAULT) const;
 
-        uint8_t get_comp() const;                                                           // get compression algorithm
+        uint8_t get_comp() const;                                                                   // get compression algorithm
 
-        void set_comp(const uint8_t c);                                                     // set compression algorithm
+        void set_comp(const uint8_t c);                                                             // set compression algorithm
 
         // whether or not PGP packet composition matches a OpenPGP Message grammar without constructing a new object
         static bool match(const PGP & pgp, const Token & token, std::string & error);

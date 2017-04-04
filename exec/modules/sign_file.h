@@ -88,7 +88,7 @@ const Module sign_file(
         const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")), error);
 
         if (message.meaningful()){
-            output(message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

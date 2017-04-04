@@ -69,7 +69,7 @@ void S2K0::read(const std::string & data, std::string::size_type & pos){
     pos += 2;
 }
 
-std::string S2K0::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string S2K0::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
@@ -111,7 +111,7 @@ void S2K1::read(const std::string & data, std::string::size_type & pos){
     pos += 10;
 }
 
-std::string S2K1::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string S2K1::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +
@@ -167,7 +167,7 @@ void S2K3::read(const std::string & data, std::string::size_type & pos){
     pos += 11;
 }
 
-std::string S2K3::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string S2K3::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + tab + show_title() + "\n" +

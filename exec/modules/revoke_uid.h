@@ -91,7 +91,7 @@ const Module revoke_uid(
         #ifdef GPG_COMPATIBLE
         if (revoked.meaningful()){
         #endif
-            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         #ifdef GPG_COMPATIBLE
         }
         else{

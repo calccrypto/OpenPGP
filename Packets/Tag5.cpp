@@ -49,7 +49,7 @@ void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
     s2k -> read(data, pos);
 }
 
-std::string Tag5::show_private(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag5::show_private(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     std::string out;
@@ -156,7 +156,7 @@ void Tag5::read(const std::string & data){
     secret = data.substr(pos, data.size() - pos);
 }
 
-std::string Tag5::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag5::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + show_title() + "\n" +

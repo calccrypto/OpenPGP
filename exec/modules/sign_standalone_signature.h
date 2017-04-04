@@ -82,7 +82,7 @@ const Module sign_standalone_signature(
         const PGPDetachedSignature signature = ::sign_standalone_signature(signargs, std::static_pointer_cast <Tag2> (signargs.pri.get_packets()[2]), Compression::NUMBER.at(args.at("-c")), error);
 
         if (signature.meaningful()){
-            output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

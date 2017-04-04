@@ -22,7 +22,7 @@ void Tag17Sub1::read(const std::string & data){
     image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
 }
 
-std::string Tag17Sub1::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag17Sub1::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 

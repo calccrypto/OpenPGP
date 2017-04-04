@@ -56,7 +56,7 @@ void Tag8::read(const std::string & data){
     compressed_data = data.substr(1, size - 1);
 }
 
-std::string Tag8::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag8::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 

@@ -140,8 +140,8 @@ const Module generate_keypair(
         if (pri.meaningful()){
             const PGPPublicKey pub = pri.get_public();
 
-            output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".public");
-            output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, 1), args.at("-o") + ".private");
+            output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o") + ".public");
+            output(pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o") + ".private");
         }
         else{
             std::cerr << error << std::endl;

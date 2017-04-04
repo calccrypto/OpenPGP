@@ -139,7 +139,7 @@ class Tag5 : public Tag6{
         std::string secret;
 
         void read_s2k(const std::string & data, std::string::size_type & pos);
-        std::string show_private(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show_private(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
 
         Tag5(uint8_t tag);
 
@@ -151,7 +151,7 @@ class Tag5 : public Tag6{
         Tag5(const std::string & data);
         virtual ~Tag5();
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         uint8_t get_s2k_con() const;

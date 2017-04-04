@@ -15,7 +15,7 @@ void Tag2Sub16::read(const std::string & data){
     keyid = data;
 }
 
-std::string Tag2Sub16::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag2Sub16::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + show_title() + "\n" + 

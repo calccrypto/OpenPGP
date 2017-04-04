@@ -113,7 +113,7 @@ const Module encrypt_sym(
                                       Hash::NUMBER.at(args.at("--shash")));
         std::string error;
 
-        output(::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+        output(::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
 
         return 0;
     }

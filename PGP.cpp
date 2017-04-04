@@ -390,7 +390,7 @@ void PGP::read_raw(std::istream & stream){
     read_raw(std::string(std::istreambuf_iterator <char> (stream), {}));
 }
 
-std::string PGP::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string PGP::show(const std::size_t indents, const std::size_t indent_size) const{
     std::string out;
     for(Packet::Ptr const & p : packets){
         out += p -> show(indents, indent_size) + "\n";

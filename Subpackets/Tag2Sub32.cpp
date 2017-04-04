@@ -23,7 +23,7 @@ void Tag2Sub32::read(const std::string & data){
     size = data.size();
 }
 
-std::string Tag2Sub32::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag2Sub32::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indent_size, ' ');
     const std::string tab(indents * indent_size, ' ');
     return tab + show_title() + "\n" + 

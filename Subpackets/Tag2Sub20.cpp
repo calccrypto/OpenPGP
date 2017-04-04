@@ -22,7 +22,7 @@ void Tag2Sub20::read(const std::string & data){
     size  = 4 + mlen + nlen;
 }
 
-std::string Tag2Sub20::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag2Sub20::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 

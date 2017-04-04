@@ -52,7 +52,7 @@ class Tag12 : public Packet{
         Tag12(const std::string & data);
         Tag12(std::istream & stream);
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_trust() const;

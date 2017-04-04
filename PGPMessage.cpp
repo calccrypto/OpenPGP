@@ -197,7 +197,7 @@ PGPMessage::PGPMessage(std::istream & stream)
 
 PGPMessage::~PGPMessage(){}
 
-std::string PGPMessage::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string PGPMessage::show(const std::size_t indents, const std::size_t indent_size) const{
     std::stringstream out;
     if (comp){                  // if compression was used, add a header
         out << comp -> show(indents, indent_size);
@@ -267,7 +267,7 @@ bool PGPMessage::match(const PGP & pgp, const PGPMessage::Token & token, std::st
     if ((token != OPENPGPMESSAGE)       &&
         (token != ENCRYPTEDMESSAGE)     &&
         (token != SIGNEDMESSAGE)        &&
-        (token != ONEPASSSIGNEDMESSAGE) &&  // special case of Signed Message
+        // (token != ONEPASSSIGNEDMESSAGE) &&  // special case of Signed Message
         (token != COMPRESSEDMESSAGE)    &&
         (token != LITERALMESSAGE)){
         error += "Error: Invalid Token to match.\n";

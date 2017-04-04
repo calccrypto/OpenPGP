@@ -51,7 +51,7 @@ void Tag3::read(const std::string & data){
     }
 }
 
-std::string Tag3::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag3::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     std::string out = indent + show_title() + "\n" +

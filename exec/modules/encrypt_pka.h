@@ -116,7 +116,7 @@ const Module encrypt_pka(
         const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);
 
         if (encrypted.meaningful()){
-            output(encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

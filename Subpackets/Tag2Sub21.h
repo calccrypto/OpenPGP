@@ -48,7 +48,7 @@ class Tag2Sub21 : public Tag2Subpacket{
         Tag2Sub21();
         Tag2Sub21(const std::string & data);
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_pha() const;  // returns string of preferred hash algorithms (ex: "\x01\x02\x03")

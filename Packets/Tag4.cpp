@@ -33,7 +33,7 @@ void Tag4::read(const std::string & data){
     nested  = data[12];
 }
 
-std::string Tag4::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Tag4::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     return indent + show_title() + "\n" +

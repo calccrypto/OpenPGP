@@ -33,7 +33,7 @@ void Key::read(const std::string & data){
     read_common(data, pos);
 }
 
-std::string Key::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Key::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     return tab + show_title() + "\n" + show_common(indents, indent_size);
 }
@@ -74,7 +74,7 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
     }
 }
 
-std::string Key::show_common(const uint8_t indents, const uint8_t indent_size) const{
+std::string Key::show_common(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
 

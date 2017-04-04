@@ -34,7 +34,7 @@ void Partial::read(const std::string & data){
     stream = data;
 }
 
-std::string Partial::show(const uint8_t indents, const uint8_t indent_size) const{
+std::string Partial::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');
     return tab + tab + show_title() + "\n" + std::string((indents + 1) * indent_size, ' ') + hexlify(stream);
 }

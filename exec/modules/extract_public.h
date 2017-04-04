@@ -38,7 +38,7 @@ const Module extract_public(
         std::string error;
 
         if (pri.meaningful(error)){
-            output(pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

@@ -83,7 +83,7 @@ class PGPCleartextSignature {
 
         void read(const std::string & data);
         void read(std::istream & stream);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string write(const Packet::Format header = Packet::Format::DEFAULT) const;
 
         PGP::Armor_Keys get_hash_armor_header() const;

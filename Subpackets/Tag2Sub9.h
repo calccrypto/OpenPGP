@@ -50,8 +50,8 @@ class Tag2Sub9 : public Tag2Subpacket{
         Tag2Sub9();
         Tag2Sub9(const std::string & data);
         void read(const std::string & data);
-        std::string show(const time_t create_time, const uint8_t indents = 0, const uint8_t indent_size = 4) const;
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const time_t create_time, const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         time_t get_dt() const;

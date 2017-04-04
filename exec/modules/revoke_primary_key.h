@@ -88,7 +88,7 @@ const Module revoke_primary_key(
         const PGPPublicKey revoked = ::revoke_key(revargs, error);
 
         if (revoked.meaningful()){
-            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

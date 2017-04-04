@@ -50,7 +50,7 @@ class Tag2Sub11 : public Tag2Subpacket{
         Tag2Sub11();
         Tag2Sub11(const std::string & data);
         void read(const std::string & data);
-        std::string show(const uint8_t indents = 0, const uint8_t indent_size = 4) const;
+        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
         std::string get_psa() const;  // string containing Symmetric Key Algorithm values (ex: "\x07\x08\x09")

@@ -89,7 +89,7 @@ const Module generate_revoke_subkey_cert(
         const PGPRevocationCertificate cert = ::revoke_subkey_cert(revargs, args.at("-k"), error);
 
         if (cert.meaningful(error)){
-            output(cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;

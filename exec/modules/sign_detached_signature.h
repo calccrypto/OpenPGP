@@ -82,7 +82,7 @@ const Module sign_detached_signature(
         const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}), error);
 
         if (signature.meaningful()){
-            output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;
