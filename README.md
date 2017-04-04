@@ -101,7 +101,7 @@ Function | Description
    clone | returns a pointer to a deep copy of the object (mainly used for moving PGP data around).
    Ptr   | a typedef for std::shared_ptr&lt;T&gt; for the class where the typedef is found.
 
-`operator =` and the copy constructor have been overloaded
+`operator=` and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
 To build just the library, run make in `OpenPGP/`.
