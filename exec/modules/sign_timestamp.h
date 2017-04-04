@@ -83,7 +83,7 @@ const Module sign_timestamp(
         PGPDetachedSignature timestamp = ::sign_timestamp(signargs, time, error);
 
         if (timestamp.meaningful()){
-            output(timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO), args.at("-o"));
+            output(timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{
             std::cerr << error << std::endl;
