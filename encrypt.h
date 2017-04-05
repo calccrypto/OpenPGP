@@ -95,7 +95,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 
 // encrypt with public key
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPPublicKey & pub,
+                       const PGPKey & pub,
                        std::string & error);
 
 // encrypt with passphrase

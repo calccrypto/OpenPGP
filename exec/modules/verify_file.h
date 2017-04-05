@@ -1,5 +1,5 @@
 /*
-verify_message.h
+verify_file.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_VERIFY_MESSAGE__
-#define __COMMAND_VERIFY_MESSAGE__
+#ifndef __COMMAND_VERIFY_FILE__
+#define __COMMAND_VERIFY_FILE__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module verify_message(
+const Module verify_file(
     // name
-    "verify-message",
+    "verify-file",
 
     // positional arguments
     {
@@ -70,7 +70,7 @@ const Module verify_message(
         PGPMessage message(msg);
 
         std::string error;
-        const int verified = ::verify_message(signer, message, error);
+        const int verified = ::verify_binary(signer, message, error);
 
         if (verified == -1){
             std::cerr << error << std::endl;

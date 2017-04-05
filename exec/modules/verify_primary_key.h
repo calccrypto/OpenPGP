@@ -1,5 +1,5 @@
 /*
-verify_key.h
+verify_primary_key.h
 OpenPGP exectuable module
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_VERIFY_KEY__
-#define __COMMAND_VERIFY_KEY__
+#ifndef __COMMAND_VERIFY_PRIMARY_KEY__
+#define __COMMAND_VERIFY_PRIMARY_KEY__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module verify_key(
+const Module verify_primary_key(
     // name
-    "verify-key",
+    "verify-primary-key",
 
     // positional arguments
     {
@@ -69,7 +69,7 @@ const Module verify_key(
         PGPKey signerkey(signer), signeekey(signee);
 
         std::string error;
-        const int verified = ::verify_key(signerkey, signeekey, error);
+        const int verified = ::verify_primary_key(signerkey, signeekey, error);
 
         if (verified == -1){
             std::cerr << error << std::endl;

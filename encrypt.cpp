@@ -70,7 +70,7 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 }
 
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPPublicKey & pub,
+                       const PGPKey & pgpkey,
                        std::string & error){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
@@ -79,15 +79,15 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
         return PGPMessage();
     }
 
-    if (!pub.meaningful(error)){
-        error += "Error: Bad public key.\n";
+    if (!pgpkey.meaningful(error)){
+        error += "Error: Bad key.\n";
         return PGPMessage();
     }
 
     // Check if key has been revoked
-    const int rc = check_revoked(pub, error);
+    const int rc = check_revoked(pgpkey, error);
     if (rc == 1){
-        error += "Error: Key " + hexlify(pub.keyid()) + " has been revoked. Nothing done.\n";
+        error += "Error: Key " + hexlify(pgpkey.keyid()) + " has been revoked. Nothing done.\n";
         return PGPMessage();
     }
     else if (rc == -1){
@@ -95,28 +95,28 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
         return PGPMessage();
     }
 
-    Tag6::Ptr public_key = nullptr;
-    for(Packet::Ptr const & p : pub.get_packets()){
-        public_key = nullptr;
+    Key::Ptr key = nullptr;
+    for(Packet::Ptr const & p : pgpkey.get_packets()){
+        key = nullptr;
         if (Packet::is_key_packet(p -> get_tag())){
-            public_key = std::static_pointer_cast <Tag6> (p);
+            key = std::static_pointer_cast <Key> (p);
 
             // make sure key has encrypting keys
-            if (PKA::can_encrypt(public_key -> get_pka())){
+            if (PKA::can_encrypt(key -> get_pka())){
                 break;
             }
         }
     }
 
-    if (!public_key){
+    if (!key){
         error += "Error: No encrypting key found.\n";
         return PGPMessage();
     }
 
-    PKA::Values mpi = public_key -> get_mpi();
+    PKA::Values mpi = key -> get_mpi();
     Tag1::Ptr tag1 = std::make_shared <Tag1> ();
-    tag1 -> set_keyid(public_key -> get_keyid());
-    tag1 -> set_pka(public_key -> get_pka());
+    tag1 -> set_keyid(key -> get_keyid());
+    tag1 -> set_pka(key -> get_pka());
 
     // do calculations
 
@@ -135,11 +135,11 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, args.sym) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1, error)));
 
     // encrypt m
-    if ((public_key -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
-        (public_key -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
+    if ((key -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
+        (key -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
         tag1 -> set_mpi({RSA_encrypt(m, mpi)});
     }
-    else if (public_key -> get_pka() == PKA::ELGAMAL){
+    else if (key -> get_pka() == PKA::ELGAMAL){
         tag1 -> set_mpi(ElGamal_encrypt(m, mpi));
     }
 

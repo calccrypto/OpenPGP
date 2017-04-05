@@ -2,6 +2,7 @@
 
 #include "sign.h"
 
+#include "../testvectors/msgpass.h"
 #include "testvectors/rsa/rsasiggen15_186-2.h"
 
 const uint8_t PKA_RSA = 1;
@@ -34,7 +35,7 @@ TEST(RSA, keygen) {
     PKA::Values pub = {key[0], key[1]};
     PKA::Values pri = {key[2], key[3], key[4], key[5]};
 
-    PGPMPI message = rawtompi("The magic words are squeamish ossifrage\n");
+    PGPMPI message = rawtompi(MESSAGE);
 
     auto encrypted = RSA_encrypt(message, pub);
     auto decrypted = RSA_decrypt(encrypted, pri, pub);

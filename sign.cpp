@@ -193,15 +193,6 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
 }
 
 // 0x02: Standalone signature.
-PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2::Ptr & src, const uint8_t compress, std::string & error){
-    throw std::runtime_error("Error: sign_standalone_signature not implemented yet");
-    return PGPDetachedSignature();
-}
-
-PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2::Ptr & src, const uint8_t compress){
-    std::string error;
-    return sign_standalone_signature(args, src, compress, error);
-}
 
 // 0x10: Generic certification of a User ID and Public-Key packet.
 // 0x11: Persona certification of a User ID and Public-Key packet.
@@ -315,7 +306,7 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
 
     // search through signatures to see signer has already certified this user
     while (i < signee_packets.size() && (signee_packets[i] -> get_tag() == Packet::SIGNATURE)){
-        const int rc = verify_key(signer_signing_key, signee_primary_key, signee_id, std::static_pointer_cast <Tag2> (signee_packets[i]), error);
+        const int rc = verify_primary_key(signer_signing_key, signee_primary_key, signee_id, std::static_pointer_cast <Tag2> (signee_packets[i]), error);
         if (rc == -1){
             error += "Error: Signature verification failure.\n";
             return PGPPublicKey();
@@ -470,13 +461,13 @@ PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, st
         error += "Error: Bad arguments.\n";
         return PGPDetachedSignature();
     }
-    
+
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer){
         error += "Error: Signing key not found.\n";
         return PGPDetachedSignature();
     }
-    
+
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::TIMESTAMP_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
     if (!sig){
         error += "Error: Signature packet generation failure.\n";
@@ -495,7 +486,7 @@ PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, st
         return PGPDetachedSignature();
     }
     sig -> set_mpi(vals);
-    
+
     PGPDetachedSignature timestamp;
     timestamp.set_keys({std::make_pair("Version", "cc")});
     timestamp.set_packets({sig});

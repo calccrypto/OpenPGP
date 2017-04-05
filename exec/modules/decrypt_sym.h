@@ -95,7 +95,7 @@ const Module decrypt_sym(
 
             // if signing key provided, check the signature
             if (signer){
-                const int verified = verify_message(*signer, decrypted, error);
+                const int verified = verify_binary(*signer, decrypted, error);
                 if (verified == -1){
                     std::cerr << error << "Error: Verification failure.\n" << std::endl;
                 }

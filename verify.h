@@ -51,8 +51,8 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
 int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig);
 
 // 0x00: Signature of a binary document.
-int verify_message(const PGPKey & key, const PGPMessage & message, std::string & error);
-int verify_message(const PGPKey & key, const PGPMessage & message);
+int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & error);
+int verify_binary(const PGPKey & key, const PGPMessage & message);
 
 // 0x01: Signature of a canonical text document.
 int verify_cleartext_signature(const PGPKey & pub, const PGPCleartextSignature & message, std::string & error);
@@ -64,9 +64,9 @@ int verify_cleartext_signature(const PGPKey & pub, const PGPCleartextSignature &
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-int verify_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error);
-int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error);
-int verify_key(const PGPKey & signer, const PGPKey & signee);
+int verify_primary_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error);
+int verify_primary_key(const PGPKey & signer, const PGPKey & signee, std::string & error);
+int verify_primary_key(const PGPKey & signer, const PGPKey & signee);
 
 // 0x18: Subkey Binding Signature
 

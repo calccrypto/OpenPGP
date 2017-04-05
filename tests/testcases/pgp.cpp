@@ -11,15 +11,13 @@
 #include "sign.h"
 #include "verify.h"
 
-#include "testvectors/gpg/pgpencrypt.h"
+#include "testvectors/msgpass.h"
 #include "testvectors/gpg/pgpprikey.h"
 #include "testvectors/gpg/pgppubkey.h"
 #include "testvectors/gpg/pgprevoke.h"
 #include "testvectors/gpg/pgpsign.h"
 
-static const std::string PASSPHRASE = "test";
-
-time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
+time_t get_utc(int year, int month, int day, int hour, int minute, int second){
     tm in;
     in.tm_year = year - 1900;
     in.tm_mon  = month - 1;
@@ -33,14 +31,14 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
     int utc = 0, local = 0;
     tm *tmp;
     tmp = gmtime(&result);
-    utc = tmp->tm_hour;
+    utc = tmp -> tm_hour;
     tmp = localtime(&result);
-    local = tmp->tm_hour;
-    if ( utc != local ) {
+    local = tmp -> tm_hour;
+    if ( utc != local ){
         int diff = local - utc;
-        if ( diff < 0 && diff < -12 ) {
+        if ( diff < 0 && diff < -12 ){
             diff += 24;
-        } else if (diff > 0 && diff > 12) {
+        } else if (diff > 0 && diff > 12){
             diff -= 24;
         }
         result += diff*60*60;
@@ -148,10 +146,8 @@ TEST(PGP, keygen){
     EXPECT_EQ(pub.meaningful(error), true);
 }
 
-TEST(PGP, gpg_public_key) {
-
-    std::string in = GPG_PUBKEY_ALICE;
-    PGPPublicKey pgp(in);
+TEST(PGP, public_key){
+    PGPPublicKey pgp(GPG_PUBKEY_ALICE);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
@@ -163,36 +159,36 @@ TEST(PGP, gpg_public_key) {
             p3 = packets[3],
             p4 = packets[4];
 
-    ASSERT_EQ(p0->get_tag(), Packet::PUBLIC_KEY);
-    ASSERT_EQ(p1->get_tag(), Packet::USER_ID);
-    ASSERT_EQ(p2->get_tag(), Packet::SIGNATURE);
-    ASSERT_EQ(p3->get_tag(), Packet::PUBLIC_SUBKEY);
-    ASSERT_EQ(p4->get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(p0 -> get_tag(), Packet::PUBLIC_KEY);
+    ASSERT_EQ(p1 -> get_tag(), Packet::USER_ID);
+    ASSERT_EQ(p2 -> get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(p3 -> get_tag(), Packet::PUBLIC_SUBKEY);
+    ASSERT_EQ(p4 -> get_tag(), Packet::SIGNATURE);
     Tag6::Ptr  pubkey = std::dynamic_pointer_cast <Tag6>  (p0);
     Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (p1);
     Tag14::Ptr subkey = std::dynamic_pointer_cast <Tag14> (p3);
     Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (p2),
                subsig = std::dynamic_pointer_cast <Tag2>  (p4);
 
-    EXPECT_EQ(pubkey->get_version(), (uint8_t) 4);
-    EXPECT_EQ(subkey->get_version(), (uint8_t) 4);
-    EXPECT_EQ(pubsig->get_version(), (uint8_t) 4);
-    EXPECT_EQ(subsig->get_version(), (uint8_t) 4);
-    EXPECT_EQ(userid->get_version(), (uint8_t) 0);      // undefined
+    EXPECT_EQ(pubkey -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(subkey -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(pubsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(subsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(userid -> get_version(), (uint8_t) 0);    // undefined
 
-    EXPECT_EQ(pubkey->get_size(), (std::size_t) 269);
-    EXPECT_EQ(userid->get_size(), (std::size_t) 36);
-    EXPECT_EQ(pubsig->get_size(), (std::size_t) 312);
-    EXPECT_EQ(subkey->get_size(), (std::size_t) 269);
-    EXPECT_EQ(subsig->get_size(), (std::size_t) 287);
+    EXPECT_EQ(pubkey -> get_size(), (std::size_t) 269);
+    EXPECT_EQ(userid -> get_size(), (std::size_t) 36);
+    EXPECT_EQ(pubsig -> get_size(), (std::size_t) 312);
+    EXPECT_EQ(subkey -> get_size(), (std::size_t) 269);
+    EXPECT_EQ(subsig -> get_size(), (std::size_t) 287);
 
     time_t gen_time = get_utc(2014, 6, 22, 12, 50, 48);
 
     // pubkey
     {
-        EXPECT_EQ(pubkey->get_time(), gen_time);        // 2014-06-22T12:50:48 UTC
-        EXPECT_EQ(pubkey->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = pubkey->get_mpi();
+        EXPECT_EQ(pubkey -> get_time(), gen_time);      // 2014-06-22T12:50:48 UTC
+        EXPECT_EQ(pubkey -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        auto mpi = pubkey -> get_mpi();
         auto n = mpi[0], e = mpi[1];
         EXPECT_EQ(bitsize(n), (std::size_t) 2048);      // 2048-bit
         EXPECT_EQ(mpitohex(n), "bc047e94d471f3ccbd525d6a6f8e17f7b1f00527c722c3913ce787fbd0090e3af8be7e59410f63b3983a9507b761045c11510e62f5a8cfbcdc180976a4c225737b8e06d8531f38c6eaa996954d5521a6763231f07c2b43605d052abdf39d6c668ac94bc89f543052d050530c70c48a49a970867c00178f9076dd0e151d254632767b2926e9baa22c6d0c213f1f45de74991396d7e8d10508cf679139410ab311b1279dd3c0d37facca54d523cd14a3df488eb8f592c5a19bcfede67c8170815c588adf39d188197da40492aac5b183c303f6ef23b0b5e48ff73b2d806afb0fb4f16ba32769249d3a7ca0ef0b9b3d57852dc9a979b6d56f3dc170e28dcb2e536d");
@@ -202,21 +198,21 @@ TEST(PGP, gpg_public_key) {
 
     // userid
     {
-        EXPECT_EQ(userid->raw(), "alice (test key) <alice@example.com>");
+        EXPECT_EQ(userid -> raw(), "alice (test key) <alice@example.com>");
     }
 
     // pubsig
     {
-        EXPECT_EQ(pubsig->get_type(), Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
-        EXPECT_EQ(pubsig->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        EXPECT_EQ(pubsig->get_hash(), Hash::SHA1);
-        EXPECT_EQ(pubsig->get_left16(), "\x04\x5e");
-        auto mpi = pubsig->get_mpi();
+        EXPECT_EQ(pubsig -> get_type(), Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
+        EXPECT_EQ(pubsig -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(pubsig -> get_hash(), Hash::SHA1);
+        EXPECT_EQ(pubsig -> get_left16(), "\x04\x5e");
+        auto mpi = pubsig -> get_mpi();
         ASSERT_EQ(mpi.size(), (PKA::Values::size_type) 1);
         EXPECT_EQ(bitsize(mpi[0]), (std::size_t) 2047); // 2047-bit
         EXPECT_EQ(mpitohex(mpi[0]), "688a18a258f866cf50f1c938dc15b11298da0bfbd680241f52545af5023722858cdfb579da22e66dae36dff9a817f797192e95b7074bab49381acb837f1216d4e8e3c2de2fb5547a515b5236823bcb4b3bca1a68455fa984c4dc21b1a5af2308aea580c0ae2ca3f5db343beaa559524702d09e40d1923314ef0f15646acec91b9c6d9cba9d9b87fa78626a522ae1520f0aed361df00f8191a9ecb1fb12732e9f6e5e1c4bece397e4dcfbacd41918882c2dfa75b98b54587f0cd61195bdce41b690329a746c6e37b7e2ef9b06206bf280ff93ec0b891929790492a9971acaa9e7e141585ca41800dd462b6f8235c0f1e0b691a5054da8f90295f5949e22fb5e5c");
         // pubsig/hashed
-        auto pubsub = pubsig->get_hashed_subpackets();
+        auto pubsub = pubsig -> get_hashed_subpackets();
         ASSERT_EQ(pubsub.size(), (Tag2::Subpackets::size_type) 7);
         Subpacket::Ptr
                 ps0 = pubsub[0],
@@ -227,13 +223,13 @@ TEST(PGP, gpg_public_key) {
                 ps5 = pubsub[5],
                 ps6 = pubsub[6];
 
-        ASSERT_EQ(ps0->get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ps1->get_type(), Tag2Subpacket::KEY_FLAGS);
-        ASSERT_EQ(ps2->get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
-        ASSERT_EQ(ps3->get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
-        ASSERT_EQ(ps4->get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
-        ASSERT_EQ(ps5->get_type(), Tag2Subpacket::FEATURES);
-        ASSERT_EQ(ps6->get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
+        ASSERT_EQ(ps0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(ps1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(ps2 -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
+        ASSERT_EQ(ps3 -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
+        ASSERT_EQ(ps4 -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
+        ASSERT_EQ(ps5 -> get_type(), Tag2Subpacket::FEATURES);
+        ASSERT_EQ(ps6 -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
         Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ps0);
         Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ps1);
         Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (ps2);
@@ -244,15 +240,15 @@ TEST(PGP, gpg_public_key) {
 
         // pubsig/sub2
         {
-            EXPECT_EQ(pubsub2->get_time(), gen_time); // 2014-06-22T12:50:48 UTC
+            EXPECT_EQ(pubsub2 -> get_time(), gen_time); // 2014-06-22T12:50:48 UTC
         }
         // pubsig/sub27
         {
-            EXPECT_EQ(pubsub27->get_flags(), std::string(1, 1 | 2));
+            EXPECT_EQ(pubsub27 -> get_flags(), std::string(1, 1 | 2));
         }
         // pubsig/sub11
         {
-            std::string psa = pubsub11->get_psa();
+            std::string psa = pubsub11 -> get_psa();
             EXPECT_EQ(psa.size(), (std::string::size_type) 5);
             EXPECT_NE(psa.find(Sym::AES256),    std::string::npos);
             EXPECT_NE(psa.find(Sym::AES192),    std::string::npos);
@@ -262,7 +258,7 @@ TEST(PGP, gpg_public_key) {
         }
         // pubsig/sub21
         {
-            std::string pha = pubsub21->get_pha();
+            std::string pha = pubsub21 -> get_pha();
             EXPECT_EQ(pha.size(), (std::string::size_type) 5);
             EXPECT_NE(pha.find(Hash::SHA256), std::string::npos);
             EXPECT_NE(pha.find(Hash::SHA1),   std::string::npos);
@@ -272,7 +268,7 @@ TEST(PGP, gpg_public_key) {
         }
         // pubsig/sub22
         {
-            std::string pca = pubsub22->get_pca();
+            std::string pca = pubsub22 -> get_pca();
             EXPECT_EQ(pca.size(), (std::string::size_type) 3);
             EXPECT_NE(pca.find(Compression::ZLIB),  std::string::npos);
             EXPECT_NE(pca.find(Compression::BZIP2), std::string::npos);
@@ -280,32 +276,32 @@ TEST(PGP, gpg_public_key) {
         }
         // pubsig/sub30
         {
-            EXPECT_EQ(pubsub30->get_flags().size(), (std::string::size_type) 1);
-            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
+            EXPECT_EQ(pubsub30 -> get_flags().size(), (std::string::size_type) 1);
+            EXPECT_EQ(pubsub30 -> get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
         }
         // pubsig/sub23
         {
-            EXPECT_EQ(pubsub23->get_flags().size(), (std::string::size_type) 1);
-            EXPECT_EQ(static_cast <uint8_t> (pubsub23->get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
+            EXPECT_EQ(pubsub23 -> get_flags().size(), (std::string::size_type) 1);
+            EXPECT_EQ(static_cast <uint8_t> (pubsub23 -> get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
         }
 
         // pubsig/unhashed
-        auto uh_pubsub = pubsig->get_unhashed_subpackets();
+        auto uh_pubsub = pubsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_pubsub.size(), (Tag2::Subpackets::size_type) 1);
         Subpacket::Ptr uhps0 = uh_pubsub[0];
-        ASSERT_EQ(uhps0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(uhps0 -> get_type(), Tag2Subpacket::ISSUER);
         Tag2Sub16::Ptr pubsub16 = std::dynamic_pointer_cast <Tag2Sub16> (uhps0);
         // pubsig/sub16
         {
-            EXPECT_EQ(pubsub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+            EXPECT_EQ(pubsub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
         }
     }
 
     // subkey
     {
-        EXPECT_EQ(subkey->get_time(), gen_time);                        // 2014-06-22T12:50:48 UTC
-        EXPECT_EQ(subkey->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = subkey->get_mpi();
+        EXPECT_EQ(subkey -> get_time(), gen_time);                     // 2014-06-22T12:50:48 UTC
+        EXPECT_EQ(subkey -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        auto mpi = subkey -> get_mpi();
         auto n = mpi[0], e = mpi[1];
         EXPECT_EQ(bitsize(n), (std::size_t) 2048);                     // 2048-bit
         EXPECT_EQ(mpitohex(n), "d98aac4e3f499e2264aebd71ea0e7d8a8d4690ff73d09125cd197892f1bb59492b8523dc5e4a0b9e0702babf65a71113d96a7ba2ee37cdc2ae8b0b03c67b16c12bd67e6835e4de01cd84baba53fb3d22294252dbb2ba854d1fe25f473b6ac8141392697bc6049d3865d9a00f909971e3b1903758e11b13a4661cf79080beac6d9ddb9113dfa788d2fc38a073b8d2717d0e28721f37dc0f7b6eb9a389f8050fac387ba3dedaf32210995534df5188982d431d0f6d93daa48b10ae7a337571f8bbcea59c9677789eedc2fcf2572f3d2ace9ae12b4817aa08d9541a423d0e60fd657f332c3fe47eef242e56715d25422971b6381a1e6a52bbae574da0077f83a535");
@@ -315,51 +311,49 @@ TEST(PGP, gpg_public_key) {
 
     // subsig
     {
-        EXPECT_EQ(subsig->get_type(), Signature_Type::SUBKEY_BINDING_SIGNATURE);
-        EXPECT_EQ(subsig->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        EXPECT_EQ(subsig->get_hash(), Hash::SHA1);
-        EXPECT_EQ(subsig->get_left16(), "\x9a\xeb");
-        EXPECT_EQ(bitsize(subsig->get_mpi()[0]), (std::size_t) 2047);  // 2047-bit
+        EXPECT_EQ(subsig -> get_type(), Signature_Type::SUBKEY_BINDING_SIGNATURE);
+        EXPECT_EQ(subsig -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(subsig -> get_hash(), Hash::SHA1);
+        EXPECT_EQ(subsig -> get_left16(), "\x9a\xeb");
+        EXPECT_EQ(bitsize(subsig -> get_mpi()[0]), (std::size_t) 2047);  // 2047-bit
 
         // subsig/hashed
-        auto subsub = subsig->get_hashed_subpackets();
+        auto subsub = subsig -> get_hashed_subpackets();
         ASSERT_EQ(subsub.size(), (Tag2::Subpackets::size_type) 2);
         Subpacket::Ptr
                 ss0 = subsub[0],
                 ss1 = subsub[1];
 
-        ASSERT_EQ(ss0->get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ss1->get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(ss0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(ss1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
 
         Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ss0);
         Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ss1);
         // subsig/sub2
         {
-            EXPECT_EQ(subsub2->get_time(), gen_time);                  // 2014-06-22T12:50:48 UTC
+            EXPECT_EQ(subsub2 -> get_time(), gen_time);                  // 2014-06-22T12:50:48 UTC
         }
         // subsig/sub27
         {
-            EXPECT_EQ(subsub27->get_flags(), std::string(1, 4 | 8));
+            EXPECT_EQ(subsub27 -> get_flags(), std::string(1, 4 | 8));
         }
 
         // subsig/unhashed
-        auto uh_subsub = subsig->get_unhashed_subpackets();
+        auto uh_subsub = subsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_subsub.size(), (Tag2::Subpackets::size_type) 1);
         Subpacket::Ptr uhss0 = uh_subsub[0];
-        ASSERT_EQ(uhss0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(uhss0 -> get_type(), Tag2Subpacket::ISSUER);
         Tag2Sub16::Ptr subsub16 = std::dynamic_pointer_cast <Tag2Sub16> (uhss0);
         // subsig/sub16
         {
-            EXPECT_EQ(subsub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+            EXPECT_EQ(subsub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
         }
     }
 
 }
 
-TEST(PGP, gpg_private_key) {
-
-    std::string in = GPG_PRIKEY_ALICE;
-    PGPSecretKey pgp(in);
+TEST(PGP, private_key){
+    PGPSecretKey pgp(GPG_PRIKEY_ALICE);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
@@ -371,49 +365,49 @@ TEST(PGP, gpg_private_key) {
             p3 = packets[3],
             p4 = packets[4];
 
-    ASSERT_EQ(p0->get_tag(), Packet::SECRET_KEY);
-    ASSERT_EQ(p1->get_tag(), Packet::USER_ID);
-    ASSERT_EQ(p2->get_tag(), Packet::SIGNATURE);
-    ASSERT_EQ(p3->get_tag(), Packet::SECRET_SUBKEY);
-    ASSERT_EQ(p4->get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(p0 -> get_tag(), Packet::SECRET_KEY);
+    ASSERT_EQ(p1 -> get_tag(), Packet::USER_ID);
+    ASSERT_EQ(p2 -> get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(p3 -> get_tag(), Packet::SECRET_SUBKEY);
+    ASSERT_EQ(p4 -> get_tag(), Packet::SIGNATURE);
     Tag5::Ptr  seckey = std::dynamic_pointer_cast <Tag5>  (p0);
     Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (p1);
     Tag7::Ptr  subkey = std::dynamic_pointer_cast <Tag7>  (p3);
     Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (p2),
                subsig = std::dynamic_pointer_cast <Tag2>  (p4);
 
-    EXPECT_EQ(seckey->get_version(), (uint8_t) 4);
-    EXPECT_EQ(subkey->get_version(), (uint8_t) 4);
-    EXPECT_EQ(pubsig->get_version(), (uint8_t) 4);
-    EXPECT_EQ(subsig->get_version(), (uint8_t) 4);
-    EXPECT_EQ(userid->get_version(), (uint8_t) 0);          // undefined
+    EXPECT_EQ(seckey -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(subkey -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(pubsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(subsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(userid -> get_version(), (uint8_t) 0);       // undefined
 
-    EXPECT_EQ(seckey->get_size(), (std::size_t) 958);
-    EXPECT_EQ(userid->get_size(), (std::size_t) 36);
-    EXPECT_EQ(pubsig->get_size(), (std::size_t) 312);
-    EXPECT_EQ(subkey->get_size(), (std::size_t) 958);
-    EXPECT_EQ(subsig->get_size(), (std::size_t) 287);
+    EXPECT_EQ(seckey -> get_size(), (std::size_t) 958);
+    EXPECT_EQ(userid -> get_size(), (std::size_t) 36);
+    EXPECT_EQ(pubsig -> get_size(), (std::size_t) 312);
+    EXPECT_EQ(subkey -> get_size(), (std::size_t) 958);
+    EXPECT_EQ(subsig -> get_size(), (std::size_t) 287);
 
     time_t gen_time = get_utc(2014, 6, 22, 12, 50, 48);
 
     // seckey
     {
-        EXPECT_EQ(seckey->get_time(), gen_time);            // 2014-06-22T12:50:48 UTC
-        EXPECT_EQ(seckey->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = seckey->get_mpi();
+        EXPECT_EQ(seckey -> get_time(), gen_time);         // 2014-06-22T12:50:48 UTC
+        EXPECT_EQ(seckey -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        auto mpi = seckey -> get_mpi();
         auto n = mpi[0], e = mpi[1];
         EXPECT_EQ(bitsize(n), (std::size_t) 2048);         // 2048-bit
         EXPECT_EQ(mpitohex(n), "bc047e94d471f3ccbd525d6a6f8e17f7b1f00527c722c3913ce787fbd0090e3af8be7e59410f63b3983a9507b761045c11510e62f5a8cfbcdc180976a4c225737b8e06d8531f38c6eaa996954d5521a6763231f07c2b43605d052abdf39d6c668ac94bc89f543052d050530c70c48a49a970867c00178f9076dd0e151d254632767b2926e9baa22c6d0c213f1f45de74991396d7e8d10508cf679139410ab311b1279dd3c0d37facca54d523cd14a3df488eb8f592c5a19bcfede67c8170815c588adf39d188197da40492aac5b183c303f6ef23b0b5e48ff73b2d806afb0fb4f16ba32769249d3a7ca0ef0b9b3d57852dc9a979b6d56f3dc170e28dcb2e536d");
         EXPECT_EQ(bitsize(e), (std::size_t) 17);           // 17-bit
         EXPECT_EQ(e, 0x10001);
-        EXPECT_EQ(seckey->get_sym(), Sym::CAST5);
-        EXPECT_EQ(seckey->get_IV(), "\x47\xdb\x0a\x37\x11\x76\xb3\x5d");
-        auto secs2k = seckey->get_s2k();
-        EXPECT_EQ(secs2k->get_type(), S2K::ITERATED_AND_SALTED_S2K);
-        EXPECT_EQ(secs2k->get_hash(), Hash::SHA1);
+        EXPECT_EQ(seckey -> get_sym(), Sym::CAST5);
+        EXPECT_EQ(seckey -> get_IV(), "\x47\xdb\x0a\x37\x11\x76\xb3\x5d");
+        auto secs2k = seckey -> get_s2k();
+        EXPECT_EQ(secs2k -> get_type(), S2K::ITERATED_AND_SALTED_S2K);
+        EXPECT_EQ(secs2k -> get_hash(), Hash::SHA1);
         S2K3::Ptr secs2k3 = std::dynamic_pointer_cast <S2K3> (secs2k);
-        EXPECT_EQ(secs2k3->get_count(), (uint8_t) 96);
-        auto secmpi = seckey->decrypt_secret_keys(PASSPHRASE);
+        EXPECT_EQ(secs2k3 -> get_count(), (uint8_t) 96);
+        auto secmpi = seckey -> decrypt_secret_keys(PASSPHRASE);
         EXPECT_EQ(secmpi.size(), (PKA::Values::size_type) 4);
         EXPECT_EQ(mpitohex(secmpi[0]), "03949bbb19be693235e62b7ef33fcd6f5813afb7d8db542c99a3921eed10a3153050c993e30dbe6c454939836d27bb5f2c137323899bccd48fd909efe5b93b60a645daaf6aa3d1b8ee08fed72d56158bd13cb62c73e34ba0ed82f6ba76390eff43ea71f110ae7e814ad3fa5e8007dd5750acc92873aaff320ea56cf0ade4dc7994ac78d9dfc567ead2589f514ac4a95d2a28685d1f593129f7f82fdaca2e4e87b4b223ca3d6c742370bfba2a4954b1c7bcf4290addad26c2a52ea4a5d664a8c32cf729bb1c783fa817ef50c5432a3c1c73ef9d1e08ecf9780d5f3c8667ade01f397270b2919d632cba1ccd4c0861cb8420f4eabe8606115342657a281f1051d1");
         EXPECT_EQ(mpitohex(secmpi[1]), "d03b3727809678a98fb4f94f9fde836efeaacafefd721ebb83c90dfebcc169a88944859afb2c4154c20d45a155d85bf692be56c1778b0bd94b77fd878d81bbe5584fbb28e716785821b1f4e0a3bffb7bc812c51394dc803d53afa261745092ed3169fcc7e2d125f2595a1555efc5f350be6654b050057839be3fc3ac1719453d");
@@ -423,21 +417,21 @@ TEST(PGP, gpg_private_key) {
 
     // userid
     {
-        EXPECT_EQ(userid->raw(), "alice (test key) <alice@example.com>");
+        EXPECT_EQ(userid -> raw(), "alice (test key) <alice@example.com>");
     }
 
     // pubsig (same as test_gpg_public_key)
     {
-        EXPECT_EQ(pubsig->get_type(), Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
-        EXPECT_EQ(pubsig->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        EXPECT_EQ(pubsig->get_hash(), Hash::SHA1);
-        EXPECT_EQ(pubsig->get_left16(), "\x04\x5e");
-        auto mpi = pubsig->get_mpi();
+        EXPECT_EQ(pubsig -> get_type(), Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET);
+        EXPECT_EQ(pubsig -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(pubsig -> get_hash(), Hash::SHA1);
+        EXPECT_EQ(pubsig -> get_left16(), "\x04\x5e");
+        auto mpi = pubsig -> get_mpi();
         ASSERT_EQ(mpi.size(), (PKA::Values::size_type) 1);
         EXPECT_EQ(bitsize(mpi[0]), (std::size_t) 2047);    // 2047-bit
         EXPECT_EQ(mpitohex(mpi[0]), "688a18a258f866cf50f1c938dc15b11298da0bfbd680241f52545af5023722858cdfb579da22e66dae36dff9a817f797192e95b7074bab49381acb837f1216d4e8e3c2de2fb5547a515b5236823bcb4b3bca1a68455fa984c4dc21b1a5af2308aea580c0ae2ca3f5db343beaa559524702d09e40d1923314ef0f15646acec91b9c6d9cba9d9b87fa78626a522ae1520f0aed361df00f8191a9ecb1fb12732e9f6e5e1c4bece397e4dcfbacd41918882c2dfa75b98b54587f0cd61195bdce41b690329a746c6e37b7e2ef9b06206bf280ff93ec0b891929790492a9971acaa9e7e141585ca41800dd462b6f8235c0f1e0b691a5054da8f90295f5949e22fb5e5c");
         // pubsig/hashed
-        auto pubsub = pubsig->get_hashed_subpackets();
+        auto pubsub = pubsig -> get_hashed_subpackets();
         ASSERT_EQ(pubsub.size(), (Tag2::Subpackets::size_type) 7);
         Subpacket::Ptr
                 ps0 = pubsub[0],
@@ -448,13 +442,13 @@ TEST(PGP, gpg_private_key) {
                 ps5 = pubsub[5],
                 ps6 = pubsub[6];
 
-        ASSERT_EQ(ps0->get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ps1->get_type(), Tag2Subpacket::KEY_FLAGS);
-        ASSERT_EQ(ps2->get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
-        ASSERT_EQ(ps3->get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
-        ASSERT_EQ(ps4->get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
-        ASSERT_EQ(ps5->get_type(), Tag2Subpacket::FEATURES);
-        ASSERT_EQ(ps6->get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
+        ASSERT_EQ(ps0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(ps1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(ps2 -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
+        ASSERT_EQ(ps3 -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
+        ASSERT_EQ(ps4 -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
+        ASSERT_EQ(ps5 -> get_type(), Tag2Subpacket::FEATURES);
+        ASSERT_EQ(ps6 -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
         Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ps0);
         Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ps1);
         Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (ps2);
@@ -465,15 +459,15 @@ TEST(PGP, gpg_private_key) {
 
         // pubsig/sub2
         {
-            EXPECT_EQ(pubsub2->get_time(), gen_time); // 2014-06-22T12:50:48 UTC
+            EXPECT_EQ(pubsub2 -> get_time(), gen_time); // 2014-06-22T12:50:48 UTC
         }
         // pubsig/sub27
         {
-            EXPECT_EQ(pubsub27->get_flags(), std::string(1, 1 | 2));
+            EXPECT_EQ(pubsub27 -> get_flags(), std::string(1, 1 | 2));
         }
         // pubsig/sub11
         {
-            std::string psa = pubsub11->get_psa();
+            std::string psa = pubsub11 -> get_psa();
             EXPECT_EQ(psa.size(), (std::string::size_type) 5);
             EXPECT_NE(psa.find(Sym::AES128),    std::string::npos);
             EXPECT_NE(psa.find(Sym::AES192),    std::string::npos);
@@ -483,7 +477,7 @@ TEST(PGP, gpg_private_key) {
         }
         // pubsig/sub21
         {
-            std::string pha = pubsub21->get_pha();
+            std::string pha = pubsub21 -> get_pha();
             EXPECT_EQ(pha.size(), (std::string::size_type) 5);
             EXPECT_NE(pha.find(Hash::SHA256), std::string::npos);
             EXPECT_NE(pha.find(Hash::SHA1),   std::string::npos);
@@ -493,7 +487,7 @@ TEST(PGP, gpg_private_key) {
         }
         // pubsig/sub22
         {
-            std::string pca = pubsub22->get_pca();
+            std::string pca = pubsub22 -> get_pca();
             EXPECT_EQ(pca.size(), (std::string::size_type) 3);
             EXPECT_NE(pca.find(Compression::ZLIB),  std::string::npos);
             EXPECT_NE(pca.find(Compression::BZIP2), std::string::npos);
@@ -501,45 +495,45 @@ TEST(PGP, gpg_private_key) {
         }
         // pubsig/sub30
         {
-            EXPECT_EQ(pubsub30->get_flags().size(), (std::string::size_type) 1);
-            EXPECT_EQ(pubsub30->get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
+            EXPECT_EQ(pubsub30 -> get_flags().size(), (std::string::size_type) 1);
+            EXPECT_EQ(pubsub30 -> get_flags()[0], Features_Flags::MODIFICATION_DETECTION);
         }
         // pubsig/sub23
         {
-            EXPECT_EQ(pubsub23->get_flags().size(), (std::string::size_type) 1);
-            EXPECT_EQ(static_cast <uint8_t> (pubsub23->get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
+            EXPECT_EQ(pubsub23 -> get_flags().size(), (std::string::size_type) 1);
+            EXPECT_EQ(static_cast <uint8_t> (pubsub23 -> get_flags()[0]), Key_Server_Preferences::NO_MODIFY);
         }
 
         // pubsig/unhashed
-        auto uh_pubsub = pubsig->get_unhashed_subpackets();
+        auto uh_pubsub = pubsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_pubsub.size(), (Tag2::Subpackets::size_type) 1);
         Subpacket::Ptr uhps0 = uh_pubsub[0];
-        ASSERT_EQ(uhps0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(uhps0 -> get_type(), Tag2Subpacket::ISSUER);
         Tag2Sub16::Ptr pubsub16 = std::dynamic_pointer_cast <Tag2Sub16> (uhps0);
         // pubsig/sub16
         {
-            EXPECT_EQ(pubsub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+            EXPECT_EQ(pubsub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
         }
     }
 
     // subkey
     {
-        EXPECT_EQ(subkey->get_time(), gen_time);    // 2014-06-22T12:50:48 UTC
-        EXPECT_EQ(subkey->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = subkey->get_mpi();
+        EXPECT_EQ(subkey -> get_time(), gen_time); // 2014-06-22T12:50:48 UTC
+        EXPECT_EQ(subkey -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        auto mpi = subkey -> get_mpi();
         auto n = mpi[0], e = mpi[1];
         EXPECT_EQ(bitsize(n), (std::size_t) 2048); // 2048-bit
         EXPECT_EQ(mpitohex(n), "d98aac4e3f499e2264aebd71ea0e7d8a8d4690ff73d09125cd197892f1bb59492b8523dc5e4a0b9e0702babf65a71113d96a7ba2ee37cdc2ae8b0b03c67b16c12bd67e6835e4de01cd84baba53fb3d22294252dbb2ba854d1fe25f473b6ac8141392697bc6049d3865d9a00f909971e3b1903758e11b13a4661cf79080beac6d9ddb9113dfa788d2fc38a073b8d2717d0e28721f37dc0f7b6eb9a389f8050fac387ba3dedaf32210995534df5188982d431d0f6d93daa48b10ae7a337571f8bbcea59c9677789eedc2fcf2572f3d2ace9ae12b4817aa08d9541a423d0e60fd657f332c3fe47eef242e56715d25422971b6381a1e6a52bbae574da0077f83a535");
         EXPECT_EQ(bitsize(e), (std::size_t) 17);   // 17-bit
         EXPECT_EQ(e, 0x10001);
-        EXPECT_EQ(subkey->get_sym(), Sym::CAST5);
-        EXPECT_EQ(subkey->get_IV(), "\x22\x01\xe4\x2a\xc6\x81\x4d\x35");
-        auto subs2k = subkey->get_s2k();
-        EXPECT_EQ(subs2k->get_type(), S2K::ITERATED_AND_SALTED_S2K);
-        EXPECT_EQ(subs2k->get_hash(), Hash::SHA1);
+        EXPECT_EQ(subkey -> get_sym(), Sym::CAST5);
+        EXPECT_EQ(subkey -> get_IV(), "\x22\x01\xe4\x2a\xc6\x81\x4d\x35");
+        auto subs2k = subkey -> get_s2k();
+        EXPECT_EQ(subs2k -> get_type(), S2K::ITERATED_AND_SALTED_S2K);
+        EXPECT_EQ(subs2k -> get_hash(), Hash::SHA1);
         S2K3::Ptr subs2k3 = std::dynamic_pointer_cast <S2K3> (subs2k);
-        EXPECT_EQ(subs2k3->get_count(), (uint8_t) 96);
-        auto secmpi = subkey->decrypt_secret_keys(PASSPHRASE);
+        EXPECT_EQ(subs2k3 -> get_count(), (uint8_t) 96);
+        auto secmpi = subkey -> decrypt_secret_keys(PASSPHRASE);
         EXPECT_EQ(secmpi.size(), (PKA::Values::size_type) 4);
         EXPECT_EQ(mpitohex(secmpi[0]), "6275226e19b3ba880b7490d6855e0090dc47136a22a343864dd118e2bcd893dd0b7eeb4f9a373e11cc4f7e7110d36fe5c171b1ba78c1b5f5466534db851201a6f52dd3b15baf1591d05021e92208644f594824d33d8db0b64ad77c52f37fed4534e47fac5edf88bed54e0d64ee079ce5b66034c49bc152ff059e57a7c5b546b9526a98fa7d2371d8843887c7708a5a5db82f3520cb7d784602b145e4c3de287fc2dd50a9b9c99d34176852e1024cf1eac2d9039b5a690991ee2f1b178c308587f62801955d3254530203b039823aec6d50bd40d791711fff815c76cd99164725cd43f4c2134c1053f63281d4a6d210809f6b686a3db45d66ebd85ac16883e413");
         EXPECT_EQ(mpitohex(secmpi[1]), "ebc63b9c2c5002d77f3f3261ce3ebdd4710827b180f0a2b5b847c2e5e6365903fc8ae73078666737850c0575d1ef558b0d77e3039f1e4cef6a97e90ccc70bec4459f4140725d98f2d275f81da1326b34cf1e0b0b69466e878e2c98823732ea5baa0cff7d687bf44590a0bab69f6d7182dcfb8ec20197fe9533730ce0549f991b");
@@ -549,49 +543,47 @@ TEST(PGP, gpg_private_key) {
 
     // subsig (same as test_gpg_public_key)
     {
-        EXPECT_EQ(subsig->get_type(), Signature_Type::SUBKEY_BINDING_SIGNATURE);
-        EXPECT_EQ(subsig->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        EXPECT_EQ(subsig->get_hash(), Hash::SHA1);
-        EXPECT_EQ(subsig->get_left16(), "\x9a\xeb");
-        EXPECT_EQ(bitsize(subsig->get_mpi()[0]), (std::size_t) 2047); // 2047-bit
+        EXPECT_EQ(subsig -> get_type(), Signature_Type::SUBKEY_BINDING_SIGNATURE);
+        EXPECT_EQ(subsig -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(subsig -> get_hash(), Hash::SHA1);
+        EXPECT_EQ(subsig -> get_left16(), "\x9a\xeb");
+        EXPECT_EQ(bitsize(subsig -> get_mpi()[0]), (std::size_t) 2047); // 2047-bit
 
         // subsig/hashed
-        auto subsub = subsig->get_hashed_subpackets();
+        auto subsub = subsig -> get_hashed_subpackets();
         ASSERT_EQ(subsub.size(), (Tag2::Subpackets::size_type) 2);
         Subpacket::Ptr
                 ss0 = subsub[0],
                 ss1 = subsub[1];
 
-        ASSERT_EQ(ss0->get_type(), (uint8_t) 2);
-        ASSERT_EQ(ss1->get_type(), (uint8_t) 27);
+        ASSERT_EQ(ss0 -> get_type(), (uint8_t) 2);
+        ASSERT_EQ(ss1 -> get_type(), (uint8_t) 27);
 
         Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ss0);
         Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ss1);
         // subsig/sub2
         {
-            EXPECT_EQ(subsub2->get_time(), gen_time); // 2014-06-22T12:50:48 UTC
+            EXPECT_EQ(subsub2 -> get_time(), gen_time); // 2014-06-22T12:50:48 UTC
         }
         // subsig/sub27
         {
-            EXPECT_EQ(subsub27->get_flags(), std::string(1, 4 | 8));
+            EXPECT_EQ(subsub27 -> get_flags(), std::string(1, 4 | 8));
         }
 
         // subsig/unhashed
-        auto uh_subsub = subsig->get_unhashed_subpackets();
+        auto uh_subsub = subsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_subsub.size(), (Tag2::Subpackets::size_type) 1);
         Subpacket::Ptr uhss0 = uh_subsub[0];
-        ASSERT_EQ(uhss0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(uhss0 -> get_type(), Tag2Subpacket::ISSUER);
         Tag2Sub16::Ptr subsub16 = std::dynamic_pointer_cast <Tag2Sub16> (uhss0);
         // subsig/sub16
         {
-            EXPECT_EQ(subsub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+            EXPECT_EQ(subsub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
         }
     }
-
 }
 
-TEST(PGP, gpg_revoke) {
-
+TEST(PGP, revoke){
     std::string in = GPG_REVOKE3_ALICE;
     PGPRevocationCertificate pgp(in);
 
@@ -600,18 +592,18 @@ TEST(PGP, gpg_revoke) {
 
     Packet::Ptr p0 = packets[0];
 
-    ASSERT_EQ(p0->get_tag(), (uint8_t) 2);
+    ASSERT_EQ(p0 -> get_tag(), (uint8_t) 2);
     Tag2::Ptr revsig = std::dynamic_pointer_cast <Tag2> (p0);
 
-    EXPECT_EQ(revsig->get_version(), (uint8_t) 4);
-    EXPECT_EQ(revsig->get_size(), (std::size_t) 287);
+    EXPECT_EQ(revsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(revsig -> get_size(), (std::size_t) 287);
 
-    EXPECT_EQ(revsig->get_type(), Signature_Type::KEY_REVOCATION_SIGNATURE);
-    EXPECT_EQ(revsig->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-    EXPECT_EQ(revsig->get_hash(), Hash::SHA1);
-    EXPECT_EQ(revsig->get_left16(), "\xcf\xb9");
+    EXPECT_EQ(revsig -> get_type(), Signature_Type::KEY_REVOCATION_SIGNATURE);
+    EXPECT_EQ(revsig -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+    EXPECT_EQ(revsig -> get_hash(), Hash::SHA1);
+    EXPECT_EQ(revsig -> get_left16(), "\xcf\xb9");
 
-    auto mpi = revsig->get_mpi();
+    auto mpi = revsig -> get_mpi();
     ASSERT_EQ(mpi.size(), (PKA::Values::size_type) 1);
 
     auto sign = mpi[0];
@@ -620,219 +612,207 @@ TEST(PGP, gpg_revoke) {
 
     // hashed
     {
-        auto hashed = revsig->get_hashed_subpackets();
+        auto hashed = revsig -> get_hashed_subpackets();
         ASSERT_EQ(hashed.size(), (std::size_t) 2);
 
         Subpacket::Ptr
                 s0 = hashed[0],
                 s1 = hashed[1];
 
-        ASSERT_EQ(s0->get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(s1->get_type(), Tag2Subpacket::REASON_FOR_REVOCATION);
+        ASSERT_EQ(s0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(s1 -> get_type(), Tag2Subpacket::REASON_FOR_REVOCATION);
 
         Tag2Sub2::Ptr sub2   = std::dynamic_pointer_cast <Tag2Sub2>  (s0);
         Tag2Sub29::Ptr sub29 = std::dynamic_pointer_cast <Tag2Sub29> (s1);
 
         // sub2
         {
-            EXPECT_EQ(sub2->get_time(), get_utc(2014, 6, 22, 13, 03, 49));
+            EXPECT_EQ(sub2 -> get_time(), get_utc(2014, 6, 22, 13, 03, 49));
         }
         // sub29
         {
-            EXPECT_EQ(sub29->get_code(), Revoke::KEY_IS_NO_LONGER_USED);
-            EXPECT_EQ(sub29->get_reason(), ""); // (empty string)
+            EXPECT_EQ(sub29 -> get_code(), Revoke::KEY_IS_NO_LONGER_USED);
+            EXPECT_EQ(sub29 -> get_reason(), ""); // (empty string)
         }
     }
     // unhashed
     {
-        auto unhashed = revsig->get_unhashed_subpackets();
+        auto unhashed = revsig -> get_unhashed_subpackets();
         ASSERT_EQ(unhashed.size(), (Tag2::Subpackets::size_type) 1);
 
         Subpacket::Ptr s0 = unhashed[0];
-        ASSERT_EQ(s0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(s0 -> get_type(), Tag2Subpacket::ISSUER);
 
         Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
-        EXPECT_EQ(sub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+        EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
 
 
 }
 
-TEST(PGP, gpg_pka_decrypt_anonymous) {
+TEST(PGP, encrypt_decrypt_pka_mdc){
+    std::string error;
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    const EncryptArgs encrypt_args("", MESSAGE);
 
-    std::string in = GPG_PKA_ENCRYPT_TO_ALICE;
-    PGPMessage pgp(in);
+    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+    EXPECT_EQ(encrypted.meaningful(error), true);
 
-    auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 2);
+    const PGP::Packets packets = encrypted.get_packets();
+    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
 
-    Packet::Ptr
-            p0 = packets[0],
-            p1 = packets[1];
-    ASSERT_EQ(p0->get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    ASSERT_EQ(p1->get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+    const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
+    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
 
-    Tag1::Ptr  tag1  = std::dynamic_pointer_cast <Tag1>  (p0);
-    Tag18::Ptr tag18 = std::dynamic_pointer_cast <Tag18> (p1);
-
-    EXPECT_EQ(tag1->get_version(),  (uint8_t) 3);
-    EXPECT_EQ(tag18->get_version(), (uint8_t) 1);
-
-    EXPECT_EQ(tag1->get_size(),  (std::size_t) 268);
-    EXPECT_EQ(tag18->get_size(), (std::size_t) 109);
-
-    // tag1
-    {
-        EXPECT_EQ(tag1->get_keyid(), "\x9f\x0f\xf4\x0f\xd2\x70\x61\xe1");
-        EXPECT_EQ(tag1->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = tag1->get_mpi();
-        EXPECT_EQ(mpi.size(), (PKA::Values::size_type) 1);
-
-        auto key = mpi[0];
-        EXPECT_EQ(bitsize(key), (std::size_t) 2047);
-        EXPECT_EQ(mpitohex(key), "53031ee2f4be3ea2808d4fc7258f75a652af233ad5be0cd910e615ed266691e8ac584b3960b09c6c5d65c8c68d4caa46c5fe172cba7042aaf23da1a7f7ca61aad28015f88935ecd91f8501f3f9f85302a507c862aad2d9b7ed975bd5704aaeb57a0eebc2c393315dbe6e27b0e3f3347ccc677f1952dfa9ad2bbc6980386b9086729687113cac9842f6bf802aeb376932770844f8e96bea683be14557f57ba6b735f1f9c5f2e5a56acbf810f7aacc9d9657be659f707aec6a9a6aa3616a6b2e10a8dc94cccbca39cf80e1dc3205803a0ebe6614871be4a52117b0a39b0bc67919c3a2dbcfbb6ca0b21f39cd8f5374f3adf2adc97f7697f663ffa985c47e7de16f");
-    }
-    // tag18
-    {
-        std::string in_pri = GPG_PRIKEY_ALICE;
-        PGPSecretKey pgp_pri(in_pri);
-        std::string error;
-        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
-        std::string message = "";
-        for(Packet::Ptr const & p : decrypted.get_packets()){
-            if (p -> get_tag() == Packet::LITERAL_DATA){
-                message += std::static_pointer_cast <Tag11> (p) -> out(false);
-            }
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+    std::string message = "";
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == Packet::LITERAL_DATA){
+            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
         }
-        EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
-        EXPECT_EQ(error, "");
     }
+    EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(PGP, gpg_pka_decrypt) {
+TEST(PGP, encrypt_decrypt_pka_no_mdc){
+    std::string error;
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    EncryptArgs encrypt_args;
+    encrypt_args.data = MESSAGE;
+    encrypt_args.mdc = false;
 
-    std::string in = GPG_PKA_ENCRYPT_ALICE_TO_BOB;
-    PGPMessage pgp(in);
+    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+    EXPECT_EQ(encrypted.meaningful(error), true);
 
-    auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 2);
+    const PGP::Packets packets = encrypted.get_packets();
+    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
 
-    Packet::Ptr
-            p0 = packets[0],
-            p1 = packets[1];
-    ASSERT_EQ(p0->get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    ASSERT_EQ(p1->get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+    Tag1::Ptr tag1 = std::dynamic_pointer_cast <Tag1> (packets[0]);
+    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
 
-    Tag1::Ptr  tag1  = std::dynamic_pointer_cast <Tag1> (p0);
-    Tag18::Ptr tag18 = std::dynamic_pointer_cast <Tag18> (p1);
-
-    EXPECT_EQ(tag1->get_version(),  (uint8_t) 3);
-    EXPECT_EQ(tag18->get_version(), (uint8_t) 1);
-
-    EXPECT_EQ(tag1->get_size(),  (std::size_t) 268);
-    EXPECT_EQ(tag18->get_size(), (std::size_t) 415);
-
-    // tag1
-    {
-        EXPECT_EQ(tag1->get_keyid(), "\xd4\x23\x0a\xa3\x68\x61\xc3\x5d");
-        EXPECT_EQ(tag1->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = tag1->get_mpi();
-        EXPECT_EQ(mpi.size(), (PKA::Values::size_type) 1);
-
-        auto key = mpi[0];
-        EXPECT_EQ(bitsize(key), (std::size_t) 2048);
-        EXPECT_EQ(mpitohex(key), "a60b39b03f08f2b083c9ffe6d77e4ca8d4edc9b6ff754f7e3e368c7bc06742763c5305e3fc279d7d667e1ae9067130e61e240b6be6e474fe80e625d86d536841f6d1161a1947a56f46d1d622f9f147f57a511e6216998be9a4966b92e0f751f69138f1b4c293608ad67b4b6d16e5ceed79cbdc09622e2bfd2a8de19d47a8946437c97ca5b95f6dc1a6a5ce86e041d6785962d64d8d96f830950bf112509a146dbd9322f54343a2ffba543859d81948890be209e6e1240cbe02b9e59d306e1697a32842f9e360596e3d866f6219b0131aa47577cf622778e6ae4de7a0db7af511e220f63f7ac0f8030e5e43583c362ebba9646d505a31d02018640b45e75c8fd7");
-    }
-    // tag18
-    {
-        std::string in_pri = GPG_PRIKEY_BOB;
-        PGPSecretKey pgp_pri(in_pri);
-        std::string error;
-        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
-        std::string message = "";
-        for(Packet::Ptr const & p : decrypted.get_packets()){
-            if (p -> get_tag() == Packet::LITERAL_DATA){
-                message += std::static_pointer_cast <Tag11> (p) -> out(false);
-            }
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+    std::string message = "";
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == Packet::LITERAL_DATA){
+            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
         }
-        EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
-        EXPECT_EQ(error, "");
     }
+    EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(PGP, gpg_symmetric_decrypt) {
+TEST(PGP, encrypt_decrypt_symmetric_mdc){
+    std::string error;
+    const EncryptArgs encrypt_args("", MESSAGE);
 
-    std::string in = GPG_SYMMETRIC_ENCRYPT_TO_ALICE;
-    PGPMessage pgp(in);
+    const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
+    EXPECT_EQ(encrypted.meaningful(error), true);
 
-    auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 3);
+    const PGP::Packets packets = encrypted.get_packets();
+    EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
+    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
 
-    Packet::Ptr
-            p0 = packets[0],
-            p1 = packets[1],
-            p2 = packets[2];
-    ASSERT_EQ(p0->get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    ASSERT_EQ(p1->get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
-    ASSERT_EQ(p2->get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+    const Tag3::Ptr tag3  = std::dynamic_pointer_cast <Tag3>  (packets[0]);
+    EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
 
-    Tag1::Ptr tag1 = std::dynamic_pointer_cast <Tag1> (p0);
-    Tag3::Ptr tag3 = std::dynamic_pointer_cast <Tag3> (p1);
-    Tag18::Ptr tag18 = std::dynamic_pointer_cast <Tag18> (p2);
-
-    EXPECT_EQ(tag1->get_version(),  (uint8_t) 3);
-    EXPECT_EQ(tag3->get_version(),  (uint8_t) 4);
-    EXPECT_EQ(tag18->get_version(), (uint8_t) 1);
-
-    EXPECT_EQ(tag1->get_size(),  (std::size_t) 268);
-    EXPECT_EQ(tag3->get_size(),  (std::size_t) 46);
-    EXPECT_EQ(tag18->get_size(), (std::size_t) 109);
-
-    // tag1
-    {
-        EXPECT_EQ(tag1->get_keyid(), "\x9f\x0f\xf4\x0f\xd2\x70\x61\xe1");
-        EXPECT_EQ(tag1->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-        auto mpi = tag1->get_mpi();
-        EXPECT_EQ(mpi.size(), (PKA::Values::size_type) 1);
-
-        auto key = mpi[0];
-        EXPECT_EQ(bitsize(key), (std::size_t) 2046);
-        EXPECT_EQ(mpitohex(key), "28982f6746b8acb2885b4eb7c07a5c2dfeae90e9c476550d90107719915340f906ca3016fbcd6e0854648e612e5a04c80d52e8184f6f890920769b074205c5b3a8286898a639f74a724e4e529709812feb25c77d9f344953a42760cdbf48adcbb81c9d829eb1010a2c8f6bc2334a12d3703db9a2ae8bbd2b3b2eeda805883c1111489d23abc2c7ac59d5535c633a115eaaafc3433cae7a36167b4e247f072fc9685554624a3840f52a8118f3c0d8b341063aa8be4ef17f8b5091e6034486b4fcbb34f2a865884600b7861468e8f999240c88818c46a83a3f753dce5930a2072e31019a4f11931494e9f6bedacbbd65d436acf314f36a3092cae5b67b33e36a37");
-    }
-    // tag3
-    {
-        EXPECT_EQ(tag3->get_sym(), Sym::CAST5);
-        auto s2k = tag3->get_s2k();
-        ASSERT_EQ(s2k->get_type(), S2K::ITERATED_AND_SALTED_S2K);
-        auto s2k3 = std::dynamic_pointer_cast <S2K3> (s2k);
-        EXPECT_EQ(s2k3->get_hash(), Hash::SHA1);
-        EXPECT_EQ(s2k3->get_salt(), "\x5f\x04\x1c\x5d\x66\x36\xc8\x95");
-        EXPECT_EQ(s2k3->get_count(), (uint8_t) 96);
-        // TODO
-        auto esk = tag3->get_esk();
-    }
-    // tag18
-    {
-        std::string in_pri = GPG_PRIKEY_ALICE;
-        PGPSecretKey pgp_pri(in_pri);
-        std::string error;
-        PGPMessage decrypted = decrypt_pka(pgp_pri, PASSPHRASE, pgp, error);
-        std::string message = "";
-        for(Packet::Ptr const & p : decrypted.get_packets()){
-            if (p -> get_tag() == Packet::LITERAL_DATA){
-                message += std::static_pointer_cast <Tag11> (p) -> out(false);
-            }
+    const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
+    std::string message = "";
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == Packet::LITERAL_DATA){
+            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
         }
-        EXPECT_EQ(message, "The magic words are squeamish ossifrage\n");
-        EXPECT_EQ(error, "");
     }
+    EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(PGP, gpg_clearsign) {
+TEST(PGP, encrypt_decrypt_symmetric_no_mdc){
+    std::string error;
 
-    std::string in = GPG_CLEARSIGN_ALICE;
-    PGPCleartextSignature pgp(in);
+    EncryptArgs encrypt_args;
+    encrypt_args.data = MESSAGE;
+    encrypt_args.mdc = false;
 
+    const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
+    EXPECT_EQ(encrypted.meaningful(error), true);
+
+    const PGP::Packets packets = encrypted.get_packets();
+    EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
+    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
+
+    const Tag3::Ptr tag3 = std::dynamic_pointer_cast <Tag3> (packets[0]);
+    EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
+
+    const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
+    std::string message = "";
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == Packet::LITERAL_DATA){
+            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+        }
+    }
+    EXPECT_EQ(message, MESSAGE);
+}
+
+TEST(PGP, encrypt_sign_decrypt_verify){
+    std::string error;
+    const PGPSecretKey pri(GPG_PRIKEY_BOB);
+
+    EncryptArgs encrypt_args;
+    encrypt_args.data = MESSAGE;
+    encrypt_args.signer = std::make_shared <PGPSecretKey> (pri);
+    encrypt_args.passphrase = PASSPHRASE;
+
+    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+    EXPECT_EQ(encrypted.meaningful(error), true);
+
+    const PGP::Packets packets = encrypted.get_packets();
+    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+
+    const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
+    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
+
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+    std::string message = "";
+    for(Packet::Ptr const & p : decrypted.get_packets()){
+        if (p -> get_tag() == Packet::LITERAL_DATA){
+            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+        }
+    }
+    EXPECT_EQ(message, MESSAGE);
+
+    EXPECT_EQ(verify_binary(pri, decrypted, error), true);
+}
+
+TEST(PGP, sign_verify_detached){
+    std::string error;
+
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    const SignArgs sign_args(pri, PASSPHRASE);
+    const PGPDetachedSignature sig = sign_detached_signature(sign_args, MESSAGE, error);
+    EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
+}
+
+TEST(PGP, sign_verify_binary){
+    std::string error;
+
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    const SignArgs sign_args(pri, PASSPHRASE);
+    const PGPDetachedSignature sig = sign_binary(sign_args, "", MESSAGE, Compression::ZLIB, error);
+    EXPECT_EQ(verify_binary(pri, sig, error), true);
+}
+
+TEST(PGP, clearsign){
+    PGPCleartextSignature pgp(GPG_CLEARSIGN_ALICE);
     EXPECT_EQ(pgp.get_message(), "The magic words are squeamish ossifrage");
 
     auto key = pgp.get_sig();
@@ -841,19 +821,19 @@ TEST(PGP, gpg_clearsign) {
     EXPECT_EQ(packets.size(), (PGP::Packets::size_type) 1);
 
     Packet::Ptr p0 = packets[0];
-    ASSERT_EQ(p0->get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(p0 -> get_tag(), Packet::SIGNATURE);
 
     Tag2::Ptr tag2 = std::dynamic_pointer_cast <Tag2> (p0);
 
-    EXPECT_EQ(tag2->get_version(), (uint8_t) 4);
+    EXPECT_EQ(tag2 -> get_version(), (uint8_t) 4);
 
-    EXPECT_EQ(tag2->get_size(), (std::size_t) 284);
+    EXPECT_EQ(tag2 -> get_size(), (std::size_t) 284);
 
-    EXPECT_EQ(tag2->get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-    EXPECT_EQ(tag2->get_hash(), Hash::SHA1);
-    EXPECT_EQ(tag2->get_left16(), "\x77\x8e");
+    EXPECT_EQ(tag2 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+    EXPECT_EQ(tag2 -> get_hash(), Hash::SHA1);
+    EXPECT_EQ(tag2 -> get_left16(), "\x77\x8e");
 
-    auto mpi = tag2->get_mpi();
+    auto mpi = tag2 -> get_mpi();
     ASSERT_EQ(mpi.size(), (PKA::Values::size_type) 1);
     auto sign = mpi[0];
     EXPECT_EQ(bitsize(sign), (std::size_t) 2047);
@@ -861,25 +841,37 @@ TEST(PGP, gpg_clearsign) {
 
     // hashed
     {
-        auto hashed = tag2->get_hashed_subpackets();
+        auto hashed = tag2 -> get_hashed_subpackets();
         ASSERT_EQ(hashed.size(), (std::size_t) 1);
 
         Subpacket::Ptr s0 = hashed[0];
-        ASSERT_EQ(s0->get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(s0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
 
         Tag2Sub2::Ptr sub2 = std::dynamic_pointer_cast <Tag2Sub2> (s0);
-        EXPECT_EQ(sub2->get_time(), get_utc(2014, 06, 22, 13, 05, 41));
+        EXPECT_EQ(sub2 -> get_time(), get_utc(2014, 06, 22, 13, 05, 41));
     }
     // unhashed
     {
-        auto unhashed = tag2->get_unhashed_subpackets();
+        auto unhashed = tag2 -> get_unhashed_subpackets();
         ASSERT_EQ(unhashed.size(), (Tag2::Subpackets::size_type) 1);
 
         Subpacket::Ptr s0 = unhashed[0];
-        ASSERT_EQ(s0->get_type(), Tag2Subpacket::ISSUER);
+        ASSERT_EQ(s0 -> get_type(), Tag2Subpacket::ISSUER);
 
         Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
-        EXPECT_EQ(sub16->get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
+        EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
 
+}
+
+TEST(PGP, verify_primary_key){
+    std::string error;
+
+    const PGPPublicKey pub(GPG_PUBKEY_ALICE);
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+
+    EXPECT_EQ(verify_primary_key(pub, pub, error), true);
+    EXPECT_EQ(verify_primary_key(pub, pri, error), true);
+    EXPECT_EQ(verify_primary_key(pri, pub, error), true);
+    EXPECT_EQ(verify_primary_key(pri, pri, error), true);
 }

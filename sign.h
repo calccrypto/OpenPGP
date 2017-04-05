@@ -101,9 +101,6 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
 PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text);
 
 // 0x02: Standalone signature.
-// TODO Make this work
-PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2::Ptr & src, const uint8_t compress, std::string & error);
-PGPDetachedSignature sign_standalone_signature(const SignArgs & args, const Tag2::Ptr & src, const uint8_t compress);
 
 // 0x10: Generic certification of a User ID and Public-Key packet.
 // 0x11: Persona certification of a User ID and Public-Key packet.

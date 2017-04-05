@@ -45,17 +45,16 @@ THE SOFTWARE.
 #include "revoke_primary_key.h"
 #include "revoke_subkey.h"
 #include "revoke_uid.h"
+#include "sign_cleartext_signature.h"
+#include "sign_detached_signature.h"
 #include "sign_file.h"
 #include "sign_primary_key.h"
 #include "sign_subkey.h"
-#include "sign_cleartext_signature.h"
-#include "sign_detached_signature.h"
-#include "sign_standalone_signature.h"
 #include "sign_timestamp.h"
 #include "verify_cleartext_signature.h"
 #include "verify_detached_signature.h"
-#include "verify_key.h"
-#include "verify_message.h"
+#include "verify_file.h"
+#include "verify_primary_key.h"
 #include "verify_revoke.h"
 #include "verify_timestamp.h"
 
@@ -77,17 +76,16 @@ const std::vector <Module> ordered = {
     revoke_primary_key,
     revoke_subkey,
     revoke_uid,
+    sign_cleartext_signature,
+    sign_detached_signature,
     sign_file,
     sign_primary_key,
     sign_subkey,
-    sign_cleartext_signature,
-    sign_detached_signature,
-    sign_standalone_signature,
     sign_timestamp,
     verify_cleartext_signature,
     verify_detached_signature,
-    verify_key,
-    verify_message,
+    verify_file,
+    verify_primary_key,
     verify_revoke,
     verify_timestamp,
 };

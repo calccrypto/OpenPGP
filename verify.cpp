@@ -68,7 +68,7 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
 }
 
 // 0x00: Signature of a binary document.
-int verify_message(const PGPKey & key, const PGPMessage & message, std::string & error){
+int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & error){
     if (!key.meaningful(error)){
         error += "Error: Bad PGP Key.\n";
         return -1;
@@ -97,7 +97,7 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
 
         if ((packets.size() > 2)                                         &&
             (packets.front() -> get_tag() == Packet::ONE_PASS_SIGNATURE) &&
-            (packets.back()  -> get_tag() == Packet::SIGNATURE)){
+            (packets.back() -> get_tag() == Packet::SIGNATURE)){
             // One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 
             // 5.4. One-Pass Signature Packets (Tag 4)
@@ -197,13 +197,13 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     error = "";
     if (message.match(PGPMessage::COMPRESSEDMESSAGE, error)){
         // Compressed Message :- Compressed Data Packet.
-        return verify_message(key, PGPMessage(std::static_pointer_cast <Tag8> (message.get_packets()[0]) -> get_data()), error);
+        return verify_binary(key, PGPMessage(std::static_pointer_cast <Tag8> (message.get_packets()[0]) -> get_data()), error);
     }
 
     error = "";
     if (message.match(PGPMessage::LITERALMESSAGE, error)){
         // Literal Message :- Literal Data Packet.
-        // return verify_message(key, PGPMessage(std::static_pointer_cast <Tag11> (message.get_packets()[0]) -> get_literal()), error);
+        // return verify_binary(key, PGPMessage(std::static_pointer_cast <Tag11> (message.get_packets()[0]) -> get_literal()), error);
         return true;
     }
 
@@ -211,9 +211,9 @@ int verify_message(const PGPKey & key, const PGPMessage & message, std::string &
     return -1;
 }
 
-int verify_message(const PGPKey & key, const PGPMessage & message){
+int verify_binary(const PGPKey & key, const PGPMessage & message){
     std::string error;
-    return verify_message(key, message, error);
+    return verify_binary(key, message, error);
 }
 
 // Signature type 0x01
@@ -276,7 +276,7 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-int verify_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error){
+int verify_primary_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const User::Ptr & signee_id, const Tag2::Ptr & signee_signature, std::string & error){
     // if the signing key's ID doesn't match with the signature's ID
     if ((signer_key -> get_keyid() != signee_signature -> get_keyid())){
         return false;
@@ -286,7 +286,7 @@ int verify_key(const Key::Ptr & signer_key, const Key::Ptr & signee_key, const U
     return pka_verify(to_sign_cert(signee_signature -> get_type(), signee_key, signee_id, signee_signature), signer_key, signee_signature, error);
 }
 
-int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error){
+int verify_primary_key(const PGPKey & signer, const PGPKey & signee, std::string & error){
     if (!signer.meaningful(error)){
         error += "Error: Bad Signer Key.\n";
         return -1;
@@ -330,7 +330,7 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
             const Tag2::Ptr signee_signature = std::static_pointer_cast <Tag2> (signee_packet);
 
             // check if the signature is valid
-            const int rc = verify_key(signer_key, signee_key, signee_id, signee_signature, error);
+            const int rc = verify_primary_key(signer_key, signee_key, signee_id, signee_signature, error);
             if (rc == 1){
                 return true;
             }
@@ -344,9 +344,9 @@ int verify_key(const PGPKey & signer, const PGPKey & signee, std::string & error
     return false;
 }
 
-int verify_key(const PGPKey & signer, const PGPKey & signee){
+int verify_primary_key(const PGPKey & signer, const PGPKey & signee){
     std::string error;
-    return verify_key(signer, signee, error);
+    return verify_primary_key(signer, signee, error);
 }
 
 // 0x18: Subkey Binding Signature
