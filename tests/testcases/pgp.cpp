@@ -4,9 +4,9 @@
 
 #include <gtest/gtest.h>
 
-#include "PGP.h"
 #include "PGPCleartextSignature.h"
 #include "decrypt.h"
+#include "generatekey.h"
 
 #include "testvectors/gpg/pgpencrypt.h"
 #include "testvectors/gpg/pgpprikey.h"
@@ -43,6 +43,106 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
         result += diff*60*60;
     }
     return result;
+}
+
+TEST(PGP, keygen_config){
+    std::string error;
+    KeyGen config;
+
+    // no starting user ID packet
+    EXPECT_EQ(config.valid(error), false);
+    config.uids.push_back(KeyGen::UserID());
+    EXPECT_EQ(config.valid(error), true);
+
+    // PKA
+    config.pka = 255;                           // invalid PKA
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & pka : PKA::NUMBER){
+        config.pka = pka.second;
+        EXPECT_EQ(config.valid(error), PKA::can_sign(config.pka));
+    }
+    config.pka = PKA::RSA_ENCRYPT_OR_SIGN;
+
+    // Sym
+    config.sym = 255;                           // invalid Sym
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & sym : Sym::NUMBER){
+        config.sym = sym.second;                // valid Sym
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.sym = Sym::AES256;
+
+    // Hash
+    config.hash = 255;                          // invalid Hash
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & hash : Hash::NUMBER){
+        config.hash = hash.second;              // valid Hash
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.sym = Hash::SHA256;
+
+    // add subkey
+    config.subkeys.push_back(KeyGen::SubkeyGen());
+    EXPECT_EQ(config.valid(error), true);
+
+    // subkey PKA
+    config.subkeys[0].pka = 255;                // invalid PKA
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & pka : PKA::NUMBER){
+        config.subkeys[0].pka = pka.second;
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.subkeys[0].pka = PKA::RSA_ENCRYPT_OR_SIGN;
+
+    // subkey Sym
+    config.subkeys[0].sym = 255;                // invalid Sym
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & sym : Sym::NUMBER){
+        config.subkeys[0].sym = sym.second;     // valid Sym
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.subkeys[0].sym = Sym::AES256;
+
+    // subkey S2K Hash
+    config.subkeys[0].hash = 255;               // invalid s2k Hash
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & hash : Hash::NUMBER){
+        config.subkeys[0].hash = hash.second;   // valid s2k Hash
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.subkeys[0].hash = Hash::SHA256;
+
+    // subkey signing Hash
+    config.subkeys[0].sig = 255;               // invalid signing Hash
+    EXPECT_EQ(config.valid(error), false);
+    for(std::pair <std::string const, uint8_t> const & hash : Hash::NUMBER){
+        config.subkeys[0].sig = hash.second;   // valid signing Hash
+        EXPECT_EQ(config.valid(error), true);
+    }
+    config.subkeys[0].sig = Hash::SHA256;
+
+    EXPECT_EQ(config.valid(error), true);
+}
+
+TEST(PGP, keygen){
+    std::string error;
+    KeyGen config;
+
+    // no starting user ID packet
+    EXPECT_EQ(config.valid(error), false);
+    config.uids.push_back(KeyGen::UserID());
+    EXPECT_EQ(config.valid(error), true);
+
+    // add subkey
+    config.subkeys.push_back(KeyGen::SubkeyGen());
+
+    // generate private key
+    const PGPSecretKey pri = generate_key(config, error);
+    EXPECT_EQ(pri.meaningful(error), true);
+
+    // extract public key from private
+    const PGPPublicKey pub = pri.get_public();
+    EXPECT_EQ(pub.meaningful(error), true);
 }
 
 TEST(PGP, gpg_public_key) {

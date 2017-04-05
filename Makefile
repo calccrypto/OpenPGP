@@ -48,13 +48,13 @@ Subpackets:
 cfb.o: cfb.cpp cfb.h Encryptions/Encryptions.h Packets/packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h Packets/packets.h cfb.h mpi.h verify.h
+decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h Packets/packets.h cfb.h mpi.h verify.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h cfb.h revoke.h sign.h
+encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h PGPKey.h PGPMessage.h PKA/PKA.h PKCS1.h cfb.h revoke.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-generatekey.o: generatekey.cpp generatekey.h Hashes/Hashes.h PGPKey.h PKA/PKA.h PKCS1.h cfb.h mpi.h pgptime.h sigcalc.h sign.h
+generatekey.o: generatekey.cpp generatekey.h Encryptions/Encryptions.h Hashes/Hashes.h PGPKey.h PKA/PKA.h PKCS1.h cfb.h mpi.h pgptime.h sigcalc.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 mpi.o: mpi.cpp mpi.h common/includes.h

@@ -105,7 +105,6 @@ namespace Sym{
         std::make_pair(108,             "Private/Experimental algorithm"),
         std::make_pair(109,             "Private/Experimental algorithm"),
         std::make_pair(110,             "Private/Experimental algorithm"),
-        std::make_pair(255,             "Private/Experimental algorithm"),
     };
 
     const std::map <std::string, uint8_t> NUMBER = {

@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <string>
 
 #include "Compress/Compress.h"
+#include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"

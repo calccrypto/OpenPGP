@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <string>
 #include <vector>
 
+#include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
 #include "PGPKey.h"
 #include "PKA/PKAs.h"

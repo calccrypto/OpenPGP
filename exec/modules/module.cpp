@@ -54,7 +54,7 @@ void Module::check_duplicate() const{
     }
 
     // check for duplicate optional arguments/flags
-    for(std::pair <const std::string, std::pair <std::string, bool> > const & flag : flags){
+    for(std::pair <std::string const, std::pair <std::string, bool> > const & flag : flags){
         if (opts.find(flag.first) != opts.end()){
             throw std::runtime_error("Error: Duplicate optional argument/flag " + flag.first + " found.");
         }
@@ -171,7 +171,7 @@ std::string Module::help(const std::string & indent) const{
         // add optional arguments
         if (opts.size()){
             help_str += indent + "    Optional Arguments:\n";
-            for(std::pair <const std::string, std::pair <std::string, std::string> > const & opt : opts){
+            for(std::pair <std::string const, std::pair <std::string, std::string> > const & opt : opts){
                 help_str += indent + "        " + opt.first + " " + opt.second.first + "; default value: \"" + opt.second.second + "\"\n";
             }
         }
