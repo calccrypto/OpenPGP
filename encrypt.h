@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __PGPENCRYPT__
-#define __PGPENCRYPT__
+#ifndef __ENCRYPT__
+#define __ENCRYPT__
 
 #include <stdexcept>
 #include <string>

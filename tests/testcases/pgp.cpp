@@ -4,9 +4,12 @@
 
 #include <gtest/gtest.h>
 
-#include "PGPCleartextSignature.h"
 #include "decrypt.h"
+#include "encrypt.h"
 #include "generatekey.h"
+#include "revoke.h"
+#include "sign.h"
+#include "verify.h"
 
 #include "testvectors/gpg/pgpencrypt.h"
 #include "testvectors/gpg/pgpprikey.h"
@@ -655,7 +658,7 @@ TEST(PGP, gpg_revoke) {
 
 }
 
-TEST(PGP, gpg_pka_encrypt_anonymous) {
+TEST(PGP, gpg_pka_decrypt_anonymous) {
 
     std::string in = GPG_PKA_ENCRYPT_TO_ALICE;
     PGPMessage pgp(in);
@@ -669,7 +672,7 @@ TEST(PGP, gpg_pka_encrypt_anonymous) {
     ASSERT_EQ(p0->get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
     ASSERT_EQ(p1->get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
 
-    Tag1::Ptr  tag1  = std::dynamic_pointer_cast <Tag1> (p0);
+    Tag1::Ptr  tag1  = std::dynamic_pointer_cast <Tag1>  (p0);
     Tag18::Ptr tag18 = std::dynamic_pointer_cast <Tag18> (p1);
 
     EXPECT_EQ(tag1->get_version(),  (uint8_t) 3);
@@ -706,7 +709,7 @@ TEST(PGP, gpg_pka_encrypt_anonymous) {
     }
 }
 
-TEST(PGP, gpg_pka_encrypt) {
+TEST(PGP, gpg_pka_decrypt) {
 
     std::string in = GPG_PKA_ENCRYPT_ALICE_TO_BOB;
     PGPMessage pgp(in);
@@ -757,7 +760,7 @@ TEST(PGP, gpg_pka_encrypt) {
     }
 }
 
-TEST(PGP, gpg_symmetric_encrypt) {
+TEST(PGP, gpg_symmetric_decrypt) {
 
     std::string in = GPG_SYMMETRIC_ENCRYPT_TO_ALICE;
     PGPMessage pgp(in);
