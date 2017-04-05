@@ -51,7 +51,7 @@ TEST(PGP, gpg_public_key) {
     PGPPublicKey pgp(in);
 
     auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type)5);
+    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
 
     Packet::Ptr
             p0 = packets[0],
@@ -259,7 +259,7 @@ TEST(PGP, gpg_private_key) {
     PGPSecretKey pgp(in);
 
     auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type)5);
+    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
 
     Packet::Ptr
             p0 = packets[0],
@@ -311,7 +311,7 @@ TEST(PGP, gpg_private_key) {
         S2K3::Ptr secs2k3 = std::dynamic_pointer_cast <S2K3> (secs2k);
         EXPECT_EQ(secs2k3->get_count(), (uint8_t) 96);
         auto secmpi = seckey->decrypt_secret_keys(PASSPHRASE);
-        EXPECT_EQ(secmpi.size(), (PKA::Values::size_type)4);
+        EXPECT_EQ(secmpi.size(), (PKA::Values::size_type) 4);
         EXPECT_EQ(mpitohex(secmpi[0]), "03949bbb19be693235e62b7ef33fcd6f5813afb7d8db542c99a3921eed10a3153050c993e30dbe6c454939836d27bb5f2c137323899bccd48fd909efe5b93b60a645daaf6aa3d1b8ee08fed72d56158bd13cb62c73e34ba0ed82f6ba76390eff43ea71f110ae7e814ad3fa5e8007dd5750acc92873aaff320ea56cf0ade4dc7994ac78d9dfc567ead2589f514ac4a95d2a28685d1f593129f7f82fdaca2e4e87b4b223ca3d6c742370bfba2a4954b1c7bcf4290addad26c2a52ea4a5d664a8c32cf729bb1c783fa817ef50c5432a3c1c73ef9d1e08ecf9780d5f3c8667ade01f397270b2919d632cba1ccd4c0861cb8420f4eabe8606115342657a281f1051d1");
         EXPECT_EQ(mpitohex(secmpi[1]), "d03b3727809678a98fb4f94f9fde836efeaacafefd721ebb83c90dfebcc169a88944859afb2c4154c20d45a155d85bf692be56c1778b0bd94b77fd878d81bbe5584fbb28e716785821b1f4e0a3bffb7bc812c51394dc803d53afa261745092ed3169fcc7e2d125f2595a1555efc5f350be6654b050057839be3fc3ac1719453d");
         EXPECT_EQ(mpitohex(secmpi[2]), "e7262ff9b96de7b93a9977edebd1b424217c8e1edce2e1ac9e38493ef5e727b4fbbc64312e0a48823fa5e71292d939e724f2c5d32eed544be5e7bc3421b4b6031cd65b1d8531d24e1d44bd282edddb20f58abdd78722a18e4f62fde869381f5e6040e1163e399f7b7b614f17bb51038c23c57b1d87241d97dbc7e4b85e1909f1");
@@ -437,7 +437,7 @@ TEST(PGP, gpg_private_key) {
         S2K3::Ptr subs2k3 = std::dynamic_pointer_cast <S2K3> (subs2k);
         EXPECT_EQ(subs2k3->get_count(), (uint8_t) 96);
         auto secmpi = subkey->decrypt_secret_keys(PASSPHRASE);
-        EXPECT_EQ(secmpi.size(), (PKA::Values::size_type)4);
+        EXPECT_EQ(secmpi.size(), (PKA::Values::size_type) 4);
         EXPECT_EQ(mpitohex(secmpi[0]), "6275226e19b3ba880b7490d6855e0090dc47136a22a343864dd118e2bcd893dd0b7eeb4f9a373e11cc4f7e7110d36fe5c171b1ba78c1b5f5466534db851201a6f52dd3b15baf1591d05021e92208644f594824d33d8db0b64ad77c52f37fed4534e47fac5edf88bed54e0d64ee079ce5b66034c49bc152ff059e57a7c5b546b9526a98fa7d2371d8843887c7708a5a5db82f3520cb7d784602b145e4c3de287fc2dd50a9b9c99d34176852e1024cf1eac2d9039b5a690991ee2f1b178c308587f62801955d3254530203b039823aec6d50bd40d791711fff815c76cd99164725cd43f4c2134c1053f63281d4a6d210809f6b686a3db45d66ebd85ac16883e413");
         EXPECT_EQ(mpitohex(secmpi[1]), "ebc63b9c2c5002d77f3f3261ce3ebdd4710827b180f0a2b5b847c2e5e6365903fc8ae73078666737850c0575d1ef558b0d77e3039f1e4cef6a97e90ccc70bec4459f4140725d98f2d275f81da1326b34cf1e0b0b69466e878e2c98823732ea5baa0cff7d687bf44590a0bab69f6d7182dcfb8ec20197fe9533730ce0549f991b");
         EXPECT_EQ(mpitohex(secmpi[2]), "ec3409ddb6f104384a7f4788ba73164d8420bdbc240d815c6e615603955ca128a388c21c0c19fe42be806922c2708d37efefd57a52f1fb777cfad002f2ba4f6c4c7119734340f13639b02a5c66d9b98048388ab3e97fca8f47fb07d360ed629762c045929f4f60c37c34a52ae75a12be68cb9644d7867de03029c3dccc736fef");
@@ -663,7 +663,7 @@ TEST(PGP, gpg_symmetric_encrypt) {
     PGPMessage pgp(in);
 
     auto packets = pgp.get_packets();
-    ASSERT_EQ(packets.size(), (PGP::Packets::size_type)3);
+    ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 3);
 
     Packet::Ptr
             p0 = packets[0],
