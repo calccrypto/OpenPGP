@@ -118,76 +118,74 @@ Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t &
         out = std::make_shared <Partial> ();
     }
     else{
-        switch (tag){
-            case 0:
-                throw std::runtime_error("Error: Tag number MUST NOT be 0.");
-                break;
-            case 1:
-                out = std::make_shared <Tag1> ();
-                break;
-            case 2:
-                out = std::make_shared <Tag2> ();
-                break;
-            case 3:
-                out = std::make_shared <Tag3> ();
-                break;
-            case 4:
-                out = std::make_shared <Tag4> ();
-                break;
-            case 5:
-                out = std::make_shared <Tag5> ();
-                break;
-            case 6:
-                out = std::make_shared <Tag6> ();
-                break;
-            case 7:
-                out = std::make_shared <Tag7> ();
-                break;
-            case 8:
-                out = std::make_shared <Tag8> ();
-                break;
-            case 9:
-                out = std::make_shared <Tag9> ();
-                break;
-            case 10:
-                out = std::make_shared <Tag10> ();
-                break;
-            case 11:
-                out = std::make_shared <Tag11> ();
-                break;
-            case 12:
-                out = std::make_shared <Tag12> ();
-                break;
-            case 13:
-                out = std::make_shared <Tag13> ();
-                break;
-            case 14:
-                out = std::make_shared <Tag14> ();
-                break;
-            case 17:
-                out = std::make_shared <Tag17> ();
-                break;
-            case 18:
-                out = std::make_shared <Tag18> ();
-                break;
-            case 19:
-                out = std::make_shared <Tag19> ();
-                break;
-            case 60:
-                out = std::make_shared <Tag60> ();
-                break;
-            case 61:
-                out = std::make_shared <Tag61> ();
-                break;
-            case 62:
-                out = std::make_shared <Tag62> ();
-                break;
-            case 63:
-                out = std::make_shared <Tag63> ();
-                break;
-            default:
-                throw std::runtime_error("Error: Tag not defined.");
-                break;
+        if (tag == Packet::RESERVED){
+            throw std::runtime_error("Error: Tag number MUST NOT be 0.");
+        }
+        else if (tag == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
+            out = std::make_shared <Tag1> ();
+        }
+        else if (tag == Packet::SIGNATURE){
+            out = std::make_shared <Tag2> ();
+        }
+        else if (tag == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
+            out = std::make_shared <Tag3> ();
+        }
+        else if (tag == Packet::ONE_PASS_SIGNATURE){
+            out = std::make_shared <Tag4> ();
+        }
+        else if (tag == Packet::SECRET_KEY){
+            out = std::make_shared <Tag5> ();
+        }
+        else if (tag == Packet::PUBLIC_KEY){
+            out = std::make_shared <Tag6> ();
+        }
+        else if (tag == Packet::SECRET_SUBKEY){
+            out = std::make_shared <Tag7> ();
+        }
+        else if (tag == Packet::COMPRESSED_DATA){
+            out = std::make_shared <Tag8> ();
+        }
+        else if (tag == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
+            out = std::make_shared <Tag9> ();
+        }
+        else if (tag == Packet::MARKER_PACKET){
+            out = std::make_shared <Tag10> ();
+        }
+        else if (tag == Packet::LITERAL_DATA){
+            out = std::make_shared <Tag11> ();
+        }
+        else if (tag == Packet::TRUST){
+            out = std::make_shared <Tag12> ();
+        }
+        else if (tag == Packet::USER_ID){
+            out = std::make_shared <Tag13> ();
+        }
+        else if (tag == Packet::PUBLIC_SUBKEY){
+            out = std::make_shared <Tag14> ();
+        }
+        else if (tag == Packet::USER_ATTRIBUTE){
+            out = std::make_shared <Tag17> ();
+        }
+        else if (tag == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
+            out = std::make_shared <Tag18> ();
+        }
+        else if (tag == Packet::MODIFICATION_DETECTION_CODE){
+            out = std::make_shared <Tag19> ();
+        }
+        else if (tag == 60){
+            out = std::make_shared <Tag60> ();
+        }
+        else if (tag == 61){
+            out = std::make_shared <Tag61> ();
+        }
+        else if (tag == 62){
+            out = std::make_shared <Tag62> ();
+        }
+        else if (tag == 63){
+            out = std::make_shared <Tag63> ();
+        }
+        else{
+            throw std::runtime_error("Error: Tag not defined.");
         }
     }
 
