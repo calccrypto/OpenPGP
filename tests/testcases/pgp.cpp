@@ -878,9 +878,9 @@ TEST(PGP, sign_verify_detached){
 
     // gpg data
     {
-        const PGPMessage sig(GPG_DETACHED_SIG_ALICE);
+        const PGPDetachedSignature sig(GPG_DETACHED_SIG_ALICE);
         ASSERT_EQ(sig.meaningful(error), true);
-        EXPECT_EQ(verify_binary(pri, sig, error), true);
+        EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
     }
 
     // calculated data
