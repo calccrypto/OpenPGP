@@ -35,11 +35,6 @@ int check_revoked(const PGPKey & key, std::string & error){
     return false;
 }
 
-int check_revoked(const PGPKey & key){
-    std::string error;
-    return check_revoked(key, error);
-}
-
 // Returns revocation signature packet
 Tag2::Ptr revoke_sig(const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig, std::string & error){
     if (!signer){

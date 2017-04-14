@@ -84,7 +84,7 @@ const Module sign_subkey(
         // std::string error;
         // PGPPublicKey key = ::sign_subkey(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
 
-        // if (key.meaningful()){
+        // if (key.meaningful(error)){
             // output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         // }
         // else{

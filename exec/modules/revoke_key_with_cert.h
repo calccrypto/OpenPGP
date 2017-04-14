@@ -72,7 +72,7 @@ const Module revoke_key_with_cert(
 
         const PGPPublicKey revoked = ::revoke_key_with_cert(key, rev, error);
 
-        if (revoked.meaningful()){
+        if (revoked.meaningful(error)){
             output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{

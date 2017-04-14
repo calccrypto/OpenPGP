@@ -59,7 +59,6 @@ class PGPKey : public PGP {
 
         // whether or not *this data matches a Key format
         virtual bool meaningful(std::string & error) const;
-        virtual bool meaningful() const;
 
         virtual PGP::Ptr clone() const;
 };
@@ -147,7 +146,6 @@ class PGPPublicKey : public PGPKey {
 
         // whether or not data matches the Public Key format
         bool meaningful(std::string & error) const;
-        using PGPKey::meaningful;
 
         PGPPublicKey & operator=(const PGPPublicKey & pub);
         PGPPublicKey & operator=(const PGPSecretKey & pri);
@@ -185,7 +183,6 @@ class PGPSecretKey : public PGPKey {
 
         // whether or not data matches Secret Key format
         bool meaningful(std::string & error) const;
-        using PGPKey::meaningful;
 
         PGP::Ptr clone() const;
 };

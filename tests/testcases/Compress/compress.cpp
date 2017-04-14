@@ -2,7 +2,7 @@
 
 #include "Compress/Compress.h"
 
-#include "../testvectors/msgpass.h"
+#include "../testvectors/msg.h"
 
 TEST(Compress, deflate) {
     auto compressed = PGP_compress(Compression::ZIP, MESSAGE);

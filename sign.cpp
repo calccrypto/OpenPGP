@@ -15,11 +15,6 @@ PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::V
     return {};
 }
 
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash){
-    std::string error;
-    return pka_sign(digest, pka, pri, pub, hash, error);
-}
-
 Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uint8_t pka, const uint8_t hash, const std::string & keyid){
     // Set up signature packet
     Tag2::Ptr tag2 = std::make_shared <Tag2> ();
@@ -82,11 +77,6 @@ PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::s
     return signature;
 }
 
-PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::string & data){
-    std::string error;
-    return sign_detached_signature(args, data, error);
-}
-
 // 0x00: Signature of a binary document.
 PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress, std::string & error){
     if (!args.valid(error)){
@@ -143,11 +133,6 @@ PGPMessage sign_binary(const SignArgs & args, const std::string & filename, cons
     return signature;
 }
 
-PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress){
-    std::string error;
-    return sign_binary(args, filename, data, compress, error);
-}
-
 // 0x01: Signature of a canonical text document.
 PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text, std::string & error){
     if (!args.valid(error)){
@@ -185,11 +170,6 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
     message.set_sig(signature);
 
     return message;
-}
-
-PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text){
-    std::string error;
-    return sign_cleartext_signature(args, text, error);
 }
 
 // 0x02: Standalone signature.
@@ -355,11 +335,6 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
     return out;
 }
 
-PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert){
-    std::string error;
-    return sign_primary_key(args, signee, user, cert, error);
-}
-
 // 0x18: Subkey Binding Signature
 Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig, std::string & error){
     if (!primary){
@@ -449,11 +424,6 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     sig -> set_mpi(vals);
 
     return sig;
-}
-
-Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee){
-    std::string error;
-    return sign_primary_key_binding(args, signee, error);
 }
 
 PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, std::string & error){

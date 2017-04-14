@@ -78,7 +78,8 @@ const Module decrypt_pka(
 
             signer = std::make_shared <PGPKey> (s);
 
-            if (!signer -> meaningful()){
+            std::string error;
+            if (!signer -> meaningful(error)){
                 std::cerr << "Error: Bad signing key.\n";
                 return -1;
             }
@@ -90,7 +91,7 @@ const Module decrypt_pka(
 
         const PGPMessage decrypted = ::decrypt_pka(pri, args.at("passphrase"), message, error);
 
-        if (decrypted.meaningful()){
+        if (decrypted.meaningful(error)){
             // extract data
             std::string cleartext = "";
             for(Packet::Ptr const & p : decrypted.get_packets()){

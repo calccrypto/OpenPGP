@@ -35,7 +35,8 @@ PGPKey::PGPKey(std::istream & stream)
 PGPKey::~PGPKey(){}
 
 std::string PGPKey::keyid() const{
-    if (!meaningful()){
+    std::string error;
+    if (!meaningful(error)){
         throw std::runtime_error("Error: Bad Key.");
     }
 
@@ -311,11 +312,6 @@ bool PGPKey::meaningful(const PGP & pgp){
 
 bool PGPKey::meaningful(std::string & error) const{
     return meaningful(*this, error);
-}
-
-bool PGPKey::meaningful() const{
-    std::string error;
-    return meaningful(error);
 }
 
 PGP::Ptr PGPKey::clone() const{

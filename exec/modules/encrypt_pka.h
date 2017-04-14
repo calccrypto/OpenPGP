@@ -97,7 +97,8 @@ const Module encrypt_pka(
 
             signer = std::make_shared <PGPSecretKey> (signing);
 
-            if (!signer -> meaningful()){
+            std::string error;
+            if (!signer -> meaningful(error)){
                 std::cerr << "Error: Bad signing key.\n";
                 return -1;
             }
@@ -115,7 +116,7 @@ const Module encrypt_pka(
 
         const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);
 
-        if (encrypted.meaningful()){
+        if (encrypted.meaningful(error)){
             output(encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{

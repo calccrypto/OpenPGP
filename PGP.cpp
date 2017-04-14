@@ -383,7 +383,7 @@ void PGP::read_raw(const std::string & data){
         }
     }
 
-    armored = Armored::NO;               // assume data was not armored, since it was submitted through this function
+    armored = Armored::NO;                    // assume data was not armored, since it was submitted through this function
 }
 
 void PGP::read_raw(std::istream & stream){

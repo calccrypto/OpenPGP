@@ -41,7 +41,8 @@ PGPRevocationCertificate::PGPRevocationCertificate(std::istream & stream)
 PGPRevocationCertificate::~PGPRevocationCertificate(){}
 
 uint8_t PGPRevocationCertificate::get_revoke_type() const{
-    if (!meaningful()){
+    std::string error;
+    if (!meaningful(error)){
         throw std::runtime_error("Error: Bad Revocation Certificate.");
     }
 
@@ -79,10 +80,6 @@ bool PGPRevocationCertificate::meaningful(const PGP & pgp){
 
 bool PGPRevocationCertificate::meaningful(std::string & error) const{
     return meaningful(*this, error);
-}
-
-bool PGPRevocationCertificate::meaningful() const{
-    return meaningful(*this);
 }
 
 PGP::Ptr PGPRevocationCertificate::clone() const{

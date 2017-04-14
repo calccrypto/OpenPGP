@@ -228,10 +228,6 @@ bool PGPCleartextSignature::meaningful(std::string & error) const{
     return sig.meaningful(error);
 }
 
-bool PGPCleartextSignature::meaningful() const{
-    return sig.meaningful();
-}
-
 PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){
     hash_armor_header = copy.hash_armor_header;
     message = copy.message;

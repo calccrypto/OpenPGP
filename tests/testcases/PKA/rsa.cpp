@@ -2,7 +2,7 @@
 
 #include "sign.h"
 
-#include "../testvectors/msgpass.h"
+#include "../testvectors/msg.h"
 #include "testvectors/rsa/rsasiggen15_186-2.h"
 
 const uint8_t PKA_RSA = 1;

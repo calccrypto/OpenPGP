@@ -24,13 +24,13 @@ TEST(DSA, dsa_siggen) {
         auto k = hextompi(DSA_SIGGEN_K[i]);
         auto r = hextompi(DSA_SIGGEN_R[i]);
         auto s = hextompi(DSA_SIGGEN_S[i]);
-        std::vector<PGPMPI> sig = {r, s};
+        std::vector <PGPMPI> sig = {r, s};
         std::string error;
         EXPECT_EQ(DSA_sign(digest, {x}, {p, q, g, y}, k), sig);
         EXPECT_EQ(pka_verify(digest, Hash::SHA1, PKA_DSA, {p, q, g, y}, sig, error), true);
 
         //! test random k
-        auto new_sig = pka_sign(digest, PKA_DSA, {x}, {p, q, g, y}, Hash::SHA1);
+        auto new_sig = pka_sign(digest, PKA_DSA, {x}, {p, q, g, y}, Hash::SHA1, error);
         EXPECT_NE(new_sig, sig);
         EXPECT_EQ(pka_verify(digest, Hash::SHA1, PKA_DSA, {p, q, g, y}, new_sig, error), true);
     }

@@ -137,7 +137,7 @@ const Module generate_keypair(
         std::string error;
         const PGPSecretKey pri = ::generate_key(config, error);
 
-        if (pri.meaningful()){
+        if (pri.meaningful(error)){
             const PGPPublicKey pub = pri.get_public();
 
             output(pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o") + ".public");

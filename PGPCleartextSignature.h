@@ -100,7 +100,6 @@ class PGPCleartextSignature {
         static std::string data_to_text(const std::string & text);   // remove trailing whitespace
 
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
         PGPCleartextSignature & operator=(const PGPCleartextSignature & copy);
         PGPCleartextSignature::Ptr clone() const;

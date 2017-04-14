@@ -363,11 +363,6 @@ bool PGPMessage::meaningful(std::string & error) const{
     return match(OPENPGPMESSAGE, error);
 }
 
-bool PGPMessage::meaningful() const{
-    std::string error;
-    return meaningful(error);
-}
-
 PGP::Ptr PGPMessage::clone() const{
     return std::make_shared <PGPMessage> (*this);
 }

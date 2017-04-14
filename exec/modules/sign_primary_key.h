@@ -83,7 +83,7 @@ const Module sign_primary_key(
         std::string error;
         const PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), args.at("-u"), mpitoulong(hextompi(args.at("-c"))), error);
 
-        if (key.meaningful()){
+        if (key.meaningful(error)){
             output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         }
         else{

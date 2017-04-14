@@ -62,11 +62,6 @@ int verify_detached_signature(const PGPKey & key, const std::string & data, cons
     return pka_verify(digest, signing_key, signature, error);
 }
 
-int verify_detached_signature(const PGPKey & key, const std::string & data, const PGPDetachedSignature & sig){
-    std::string error;
-    return verify_detached_signature(key, data, sig, error);
-}
-
 // 0x00: Signature of a binary document.
 int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & error){
     if (!key.meaningful(error)){
@@ -211,11 +206,6 @@ int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & 
     return -1;
 }
 
-int verify_binary(const PGPKey & key, const PGPMessage & message){
-    std::string error;
-    return verify_binary(key, message, error);
-}
-
 // Signature type 0x01
 int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature & message, std::string & error){
     if (!key.meaningful(error)){
@@ -263,11 +253,6 @@ int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature &
     }
 
     return pka_verify(digest, signing_key, signature, error);
-}
-
-int verify_cleartext_signature(const PGPKey & key, const PGPCleartextSignature & message){
-    std::string error;
-    return verify_cleartext_signature(key, message, error);
 }
 
 // 0x02: Standalone signature.
@@ -344,11 +329,6 @@ int verify_primary_key(const PGPKey & signer, const PGPKey & signee, std::string
     return false;
 }
 
-int verify_primary_key(const PGPKey & signer, const PGPKey & signee){
-    std::string error;
-    return verify_primary_key(signer, signee, error);
-}
-
 // 0x18: Subkey Binding Signature
 
 // 0x19: Primary Key Binding Signature
@@ -410,11 +390,6 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
     return -1;
 }
 
-int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke){
-    std::string error;
-    return verify_revoke(key, revoke, error);
-}
-
 // 0x40: Timestamp signature.
 int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp, std::string & error){
     if (!key.meaningful(error)){
@@ -457,11 +432,6 @@ int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp,
     }
 
     return pka_verify(digest, signing_key, signature, error);
-}
-
-int verify_timestamp(const PGPKey & key, const PGPDetachedSignature & timestamp){
-    std::string error;
-    return verify_timestamp(key, timestamp, error);
 }
 
 // 0x50: Third-Party Confirmation signature.

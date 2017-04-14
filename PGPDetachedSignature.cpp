@@ -75,11 +75,6 @@ bool PGPDetachedSignature::meaningful(std::string & error) const{
     return meaningful(*this, error);
 }
 
-bool PGPDetachedSignature::meaningful() const{
-    std::string error;
-    return meaningful(error);
-}
-
 PGP::Ptr PGPDetachedSignature::clone() const{
     return std::make_shared <PGPDetachedSignature> (*this);
 }

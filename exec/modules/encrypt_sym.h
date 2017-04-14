@@ -97,7 +97,8 @@ const Module encrypt_sym(
 
             signer = std::make_shared <PGPSecretKey> (signing);
 
-            if (!signer -> meaningful()){
+            std::string error;
+            if (!signer -> meaningful(error)){
                 std::cerr << "Error: Bad signing key.\n";
                 return -1;
             }

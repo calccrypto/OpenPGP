@@ -11,11 +11,17 @@
 #include "sign.h"
 #include "verify.h"
 
-#include "testvectors/msgpass.h"
-#include "testvectors/gpg/pgpprikey.h"
-#include "testvectors/gpg/pgppubkey.h"
-#include "testvectors/gpg/pgprevoke.h"
-#include "testvectors/gpg/pgpsign.h"
+#include "testvectors/gpg/clearsign.h"
+#include "testvectors/gpg/detached.h"
+#include "testvectors/gpg/encryptsign.h"
+#include "testvectors/gpg/pkaencrypted.h"
+#include "testvectors/gpg/prikey.h"
+#include "testvectors/gpg/pubkey.h"
+#include "testvectors/gpg/revoke.h"
+#include "testvectors/gpg/sign.h"
+#include "testvectors/gpg/symencrypted.h"
+#include "testvectors/msg.h"
+#include "testvectors/pass.h"
 
 time_t get_utc(int year, int month, int day, int hour, int minute, int second){
     tm in;
@@ -48,6 +54,7 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second){
 
 TEST(PGP, keygen_config){
     std::string error;
+
     KeyGen config;
 
     // no starting user ID packet
@@ -127,6 +134,7 @@ TEST(PGP, keygen_config){
 
 TEST(PGP, keygen){
     std::string error;
+
     KeyGen config;
 
     // no starting user ID packet
@@ -147,28 +155,30 @@ TEST(PGP, keygen){
 }
 
 TEST(PGP, public_key){
-    PGPPublicKey pgp(GPG_PUBKEY_ALICE);
+    std::string error;
 
-    auto packets = pgp.get_packets();
+    const PGPPublicKey pub(GPG_PUBKEY_ALICE);
+    ASSERT_EQ(pub.meaningful(error), true);
+
+    // read public key into PGPSecretKey
+    {
+        const PGPSecretKey pri(GPG_PUBKEY_ALICE);
+        ASSERT_EQ(pri.meaningful(error), false);
+    }
+
+    auto packets = pub.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
 
-    Packet::Ptr
-            p0 = packets[0],
-            p1 = packets[1],
-            p2 = packets[2],
-            p3 = packets[3],
-            p4 = packets[4];
-
-    ASSERT_EQ(p0 -> get_tag(), Packet::PUBLIC_KEY);
-    ASSERT_EQ(p1 -> get_tag(), Packet::USER_ID);
-    ASSERT_EQ(p2 -> get_tag(), Packet::SIGNATURE);
-    ASSERT_EQ(p3 -> get_tag(), Packet::PUBLIC_SUBKEY);
-    ASSERT_EQ(p4 -> get_tag(), Packet::SIGNATURE);
-    Tag6::Ptr  pubkey = std::dynamic_pointer_cast <Tag6>  (p0);
-    Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (p1);
-    Tag14::Ptr subkey = std::dynamic_pointer_cast <Tag14> (p3);
-    Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (p2),
-               subsig = std::dynamic_pointer_cast <Tag2>  (p4);
+    ASSERT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY);
+    ASSERT_EQ(packets[1] -> get_tag(), Packet::USER_ID);
+    ASSERT_EQ(packets[2] -> get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(packets[3] -> get_tag(), Packet::PUBLIC_SUBKEY);
+    ASSERT_EQ(packets[4] -> get_tag(), Packet::SIGNATURE);
+    Tag6::Ptr  pubkey = std::dynamic_pointer_cast <Tag6>  (packets[0]);
+    Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (packets[1]);
+    Tag14::Ptr subkey = std::dynamic_pointer_cast <Tag14> (packets[3]);
+    Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (packets[2]),
+               subsig = std::dynamic_pointer_cast <Tag2>  (packets[4]);
 
     EXPECT_EQ(pubkey -> get_version(), (uint8_t) 4);
     EXPECT_EQ(subkey -> get_version(), (uint8_t) 4);
@@ -214,29 +224,21 @@ TEST(PGP, public_key){
         // pubsig/hashed
         auto pubsub = pubsig -> get_hashed_subpackets();
         ASSERT_EQ(pubsub.size(), (Tag2::Subpackets::size_type) 7);
-        Subpacket::Ptr
-                ps0 = pubsub[0],
-                ps1 = pubsub[1],
-                ps2 = pubsub[2],
-                ps3 = pubsub[3],
-                ps4 = pubsub[4],
-                ps5 = pubsub[5],
-                ps6 = pubsub[6];
 
-        ASSERT_EQ(ps0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ps1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
-        ASSERT_EQ(ps2 -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
-        ASSERT_EQ(ps3 -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
-        ASSERT_EQ(ps4 -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
-        ASSERT_EQ(ps5 -> get_type(), Tag2Subpacket::FEATURES);
-        ASSERT_EQ(ps6 -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
-        Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ps0);
-        Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ps1);
-        Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (ps2);
-        Tag2Sub21::Ptr pubsub21 = std::dynamic_pointer_cast <Tag2Sub21> (ps3);
-        Tag2Sub22::Ptr pubsub22 = std::dynamic_pointer_cast <Tag2Sub22> (ps4);
-        Tag2Sub30::Ptr pubsub30 = std::dynamic_pointer_cast <Tag2Sub30> (ps5);
-        Tag2Sub23::Ptr pubsub23 = std::dynamic_pointer_cast <Tag2Sub23> (ps6);
+        ASSERT_EQ(pubsub[0] -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(pubsub[1] -> get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(pubsub[2] -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
+        ASSERT_EQ(pubsub[3] -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
+        ASSERT_EQ(pubsub[4] -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
+        ASSERT_EQ(pubsub[5] -> get_type(), Tag2Subpacket::FEATURES);
+        ASSERT_EQ(pubsub[6] -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
+        Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (pubsub[0]);
+        Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (pubsub[1]);
+        Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (pubsub[2]);
+        Tag2Sub21::Ptr pubsub21 = std::dynamic_pointer_cast <Tag2Sub21> (pubsub[3]);
+        Tag2Sub22::Ptr pubsub22 = std::dynamic_pointer_cast <Tag2Sub22> (pubsub[4]);
+        Tag2Sub30::Ptr pubsub30 = std::dynamic_pointer_cast <Tag2Sub30> (pubsub[5]);
+        Tag2Sub23::Ptr pubsub23 = std::dynamic_pointer_cast <Tag2Sub23> (pubsub[6]);
 
         // pubsig/sub2
         {
@@ -299,13 +301,13 @@ TEST(PGP, public_key){
 
     // subkey
     {
-        EXPECT_EQ(subkey -> get_time(), gen_time);                     // 2014-06-22T12:50:48 UTC
+        EXPECT_EQ(subkey -> get_time(), gen_time);                      // 2014-06-22T12:50:48 UTC
         EXPECT_EQ(subkey -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
         auto mpi = subkey -> get_mpi();
         auto n = mpi[0], e = mpi[1];
-        EXPECT_EQ(bitsize(n), (std::size_t) 2048);                     // 2048-bit
+        EXPECT_EQ(bitsize(n), (std::size_t) 2048);                      // 2048-bit
         EXPECT_EQ(mpitohex(n), "d98aac4e3f499e2264aebd71ea0e7d8a8d4690ff73d09125cd197892f1bb59492b8523dc5e4a0b9e0702babf65a71113d96a7ba2ee37cdc2ae8b0b03c67b16c12bd67e6835e4de01cd84baba53fb3d22294252dbb2ba854d1fe25f473b6ac8141392697bc6049d3865d9a00f909971e3b1903758e11b13a4661cf79080beac6d9ddb9113dfa788d2fc38a073b8d2717d0e28721f37dc0f7b6eb9a389f8050fac387ba3dedaf32210995534df5188982d431d0f6d93daa48b10ae7a337571f8bbcea59c9677789eedc2fcf2572f3d2ace9ae12b4817aa08d9541a423d0e60fd657f332c3fe47eef242e56715d25422971b6381a1e6a52bbae574da0077f83a535");
-        EXPECT_EQ(bitsize(e), (std::size_t) 17);                       // 17-bit
+        EXPECT_EQ(bitsize(e), (std::size_t) 17);                        // 17-bit
         EXPECT_EQ(e, 0x10001);
     }
 
@@ -320,15 +322,12 @@ TEST(PGP, public_key){
         // subsig/hashed
         auto subsub = subsig -> get_hashed_subpackets();
         ASSERT_EQ(subsub.size(), (Tag2::Subpackets::size_type) 2);
-        Subpacket::Ptr
-                ss0 = subsub[0],
-                ss1 = subsub[1];
 
-        ASSERT_EQ(ss0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ss1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(subsub[0] -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(subsub[1] -> get_type(), Tag2Subpacket::KEY_FLAGS);
 
-        Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ss0);
-        Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ss1);
+        Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (subsub[0]);
+        Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (subsub[1]);
         // subsig/sub2
         {
             EXPECT_EQ(subsub2 -> get_time(), gen_time);                  // 2014-06-22T12:50:48 UTC
@@ -353,28 +352,30 @@ TEST(PGP, public_key){
 }
 
 TEST(PGP, private_key){
-    PGPSecretKey pgp(GPG_PRIKEY_ALICE);
+    std::string error;
 
-    auto packets = pgp.get_packets();
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    // read private key into PGPPublicKey
+    {
+        const PGPPublicKey pub(GPG_PRIKEY_ALICE);
+        ASSERT_EQ(pub.meaningful(error), false);
+    }
+
+    auto packets = pri.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
 
-    Packet::Ptr
-            p0 = packets[0],
-            p1 = packets[1],
-            p2 = packets[2],
-            p3 = packets[3],
-            p4 = packets[4];
-
-    ASSERT_EQ(p0 -> get_tag(), Packet::SECRET_KEY);
-    ASSERT_EQ(p1 -> get_tag(), Packet::USER_ID);
-    ASSERT_EQ(p2 -> get_tag(), Packet::SIGNATURE);
-    ASSERT_EQ(p3 -> get_tag(), Packet::SECRET_SUBKEY);
-    ASSERT_EQ(p4 -> get_tag(), Packet::SIGNATURE);
-    Tag5::Ptr  seckey = std::dynamic_pointer_cast <Tag5>  (p0);
-    Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (p1);
-    Tag7::Ptr  subkey = std::dynamic_pointer_cast <Tag7>  (p3);
-    Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (p2),
-               subsig = std::dynamic_pointer_cast <Tag2>  (p4);
+    ASSERT_EQ(packets[0] -> get_tag(), Packet::SECRET_KEY);
+    ASSERT_EQ(packets[1] -> get_tag(), Packet::USER_ID);
+    ASSERT_EQ(packets[2] -> get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(packets[3] -> get_tag(), Packet::SECRET_SUBKEY);
+    ASSERT_EQ(packets[4] -> get_tag(), Packet::SIGNATURE);
+    Tag5::Ptr  seckey = std::dynamic_pointer_cast <Tag5>  (packets[0]);
+    Tag13::Ptr userid = std::dynamic_pointer_cast <Tag13> (packets[1]);
+    Tag7::Ptr  subkey = std::dynamic_pointer_cast <Tag7>  (packets[3]);
+    Tag2::Ptr  pubsig = std::dynamic_pointer_cast <Tag2>  (packets[2]),
+               subsig = std::dynamic_pointer_cast <Tag2>  (packets[4]);
 
     EXPECT_EQ(seckey -> get_version(), (uint8_t) 4);
     EXPECT_EQ(subkey -> get_version(), (uint8_t) 4);
@@ -428,34 +429,27 @@ TEST(PGP, private_key){
         EXPECT_EQ(pubsig -> get_left16(), "\x04\x5e");
         auto mpi = pubsig -> get_mpi();
         ASSERT_EQ(mpi.size(), (PKA::Values::size_type) 1);
-        EXPECT_EQ(bitsize(mpi[0]), (std::size_t) 2047);    // 2047-bit
+        EXPECT_EQ(bitsize(mpi[0]),    (std::size_t) 2047);    // 2047-bit
         EXPECT_EQ(mpitohex(mpi[0]), "688a18a258f866cf50f1c938dc15b11298da0bfbd680241f52545af5023722858cdfb579da22e66dae36dff9a817f797192e95b7074bab49381acb837f1216d4e8e3c2de2fb5547a515b5236823bcb4b3bca1a68455fa984c4dc21b1a5af2308aea580c0ae2ca3f5db343beaa559524702d09e40d1923314ef0f15646acec91b9c6d9cba9d9b87fa78626a522ae1520f0aed361df00f8191a9ecb1fb12732e9f6e5e1c4bece397e4dcfbacd41918882c2dfa75b98b54587f0cd61195bdce41b690329a746c6e37b7e2ef9b06206bf280ff93ec0b891929790492a9971acaa9e7e141585ca41800dd462b6f8235c0f1e0b691a5054da8f90295f5949e22fb5e5c");
+
         // pubsig/hashed
         auto pubsub = pubsig -> get_hashed_subpackets();
         ASSERT_EQ(pubsub.size(), (Tag2::Subpackets::size_type) 7);
-        Subpacket::Ptr
-                ps0 = pubsub[0],
-                ps1 = pubsub[1],
-                ps2 = pubsub[2],
-                ps3 = pubsub[3],
-                ps4 = pubsub[4],
-                ps5 = pubsub[5],
-                ps6 = pubsub[6];
 
-        ASSERT_EQ(ps0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(ps1 -> get_type(), Tag2Subpacket::KEY_FLAGS);
-        ASSERT_EQ(ps2 -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
-        ASSERT_EQ(ps3 -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
-        ASSERT_EQ(ps4 -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
-        ASSERT_EQ(ps5 -> get_type(), Tag2Subpacket::FEATURES);
-        ASSERT_EQ(ps6 -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
-        Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ps0);
-        Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ps1);
-        Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (ps2);
-        Tag2Sub21::Ptr pubsub21 = std::dynamic_pointer_cast <Tag2Sub21> (ps3);
-        Tag2Sub22::Ptr pubsub22 = std::dynamic_pointer_cast <Tag2Sub22> (ps4);
-        Tag2Sub30::Ptr pubsub30 = std::dynamic_pointer_cast <Tag2Sub30> (ps5);
-        Tag2Sub23::Ptr pubsub23 = std::dynamic_pointer_cast <Tag2Sub23> (ps6);
+        ASSERT_EQ(pubsub[0] -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(pubsub[1] -> get_type(), Tag2Subpacket::KEY_FLAGS);
+        ASSERT_EQ(pubsub[2] -> get_type(), Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS);
+        ASSERT_EQ(pubsub[3] -> get_type(), Tag2Subpacket::PREFERRED_HASH_ALGORITHMS);
+        ASSERT_EQ(pubsub[4] -> get_type(), Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS);
+        ASSERT_EQ(pubsub[5] -> get_type(), Tag2Subpacket::FEATURES);
+        ASSERT_EQ(pubsub[6] -> get_type(), Tag2Subpacket::KEY_SERVER_PREFERENCES);
+        Tag2Sub2::Ptr  pubsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (pubsub[0]);
+        Tag2Sub27::Ptr pubsub27 = std::dynamic_pointer_cast <Tag2Sub27> (pubsub[1]);
+        Tag2Sub11::Ptr pubsub11 = std::dynamic_pointer_cast <Tag2Sub11> (pubsub[2]);
+        Tag2Sub21::Ptr pubsub21 = std::dynamic_pointer_cast <Tag2Sub21> (pubsub[3]);
+        Tag2Sub22::Ptr pubsub22 = std::dynamic_pointer_cast <Tag2Sub22> (pubsub[4]);
+        Tag2Sub30::Ptr pubsub30 = std::dynamic_pointer_cast <Tag2Sub30> (pubsub[5]);
+        Tag2Sub23::Ptr pubsub23 = std::dynamic_pointer_cast <Tag2Sub23> (pubsub[6]);
 
         // pubsig/sub2
         {
@@ -552,15 +546,11 @@ TEST(PGP, private_key){
         // subsig/hashed
         auto subsub = subsig -> get_hashed_subpackets();
         ASSERT_EQ(subsub.size(), (Tag2::Subpackets::size_type) 2);
-        Subpacket::Ptr
-                ss0 = subsub[0],
-                ss1 = subsub[1];
+        ASSERT_EQ(subsub[0] -> get_type(), (uint8_t) 2);
+        ASSERT_EQ(subsub[1] -> get_type(), (uint8_t) 27);
 
-        ASSERT_EQ(ss0 -> get_type(), (uint8_t) 2);
-        ASSERT_EQ(ss1 -> get_type(), (uint8_t) 27);
-
-        Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (ss0);
-        Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (ss1);
+        Tag2Sub2::Ptr  subsub2  = std::dynamic_pointer_cast <Tag2Sub2>  (subsub[0]);
+        Tag2Sub27::Ptr subsub27 = std::dynamic_pointer_cast <Tag2Sub27> (subsub[1]);
         // subsig/sub2
         {
             EXPECT_EQ(subsub2 -> get_time(), gen_time); // 2014-06-22T12:50:48 UTC
@@ -584,18 +574,18 @@ TEST(PGP, private_key){
 }
 
 TEST(PGP, revoke){
-    std::string in = GPG_REVOKE3_ALICE;
-    PGPRevocationCertificate pgp(in);
+    std::string error;
+
+    const PGPRevocationCertificate pgp(GPG_REVOKE3_ALICE);
+    ASSERT_EQ(pgp.meaningful(error), true);
 
     auto packets = pgp.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 1);
 
-    Packet::Ptr p0 = packets[0];
+    ASSERT_EQ(packets[0] -> get_tag(), (uint8_t) 2);
+    Tag2::Ptr revsig = std::dynamic_pointer_cast <Tag2> (packets[0]);
 
-    ASSERT_EQ(p0 -> get_tag(), (uint8_t) 2);
-    Tag2::Ptr revsig = std::dynamic_pointer_cast <Tag2> (p0);
-
-    EXPECT_EQ(revsig -> get_version(), (uint8_t) 4);
+    EXPECT_EQ(revsig -> get_version(), (uint8_t)    4);
     EXPECT_EQ(revsig -> get_size(), (std::size_t) 287);
 
     EXPECT_EQ(revsig -> get_type(), Signature_Type::KEY_REVOCATION_SIGNATURE);
@@ -614,16 +604,11 @@ TEST(PGP, revoke){
     {
         auto hashed = revsig -> get_hashed_subpackets();
         ASSERT_EQ(hashed.size(), (std::size_t) 2);
+        ASSERT_EQ(hashed[0] -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
+        ASSERT_EQ(hashed[1] -> get_type(), Tag2Subpacket::REASON_FOR_REVOCATION);
 
-        Subpacket::Ptr
-                s0 = hashed[0],
-                s1 = hashed[1];
-
-        ASSERT_EQ(s0 -> get_type(), Tag2Subpacket::SIGNATURE_CREATION_TIME);
-        ASSERT_EQ(s1 -> get_type(), Tag2Subpacket::REASON_FOR_REVOCATION);
-
-        Tag2Sub2::Ptr sub2   = std::dynamic_pointer_cast <Tag2Sub2>  (s0);
-        Tag2Sub29::Ptr sub29 = std::dynamic_pointer_cast <Tag2Sub29> (s1);
+        Tag2Sub2::Ptr sub2   = std::dynamic_pointer_cast <Tag2Sub2>  (hashed[0]);
+        Tag2Sub29::Ptr sub29 = std::dynamic_pointer_cast <Tag2Sub29> (hashed[1]);
 
         // sub2
         {
@@ -646,187 +631,305 @@ TEST(PGP, revoke){
         Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
-
-
 }
 
 TEST(PGP, encrypt_decrypt_pka_mdc){
     std::string error;
+
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    const EncryptArgs encrypt_args("", MESSAGE);
+    ASSERT_EQ(pri.meaningful(error), true);
 
-    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
-    EXPECT_EQ(encrypted.meaningful(error), true);
-
-    const PGP::Packets packets = encrypted.get_packets();
-    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
-
-    const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
-    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
-    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
-    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
-
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
-    std::string message = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+    // gpg data
+    {
+        const PGPMessage gpg_encrypted(GPG_PKA_ENCRYPT_TO_ALICE);
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
         }
+        EXPECT_EQ(message, MESSAGE);
     }
-    EXPECT_EQ(message, MESSAGE);
+
+    // calculated data
+    {
+        const EncryptArgs encrypt_args("", MESSAGE);
+
+        const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+        EXPECT_EQ(encrypted.meaningful(error), true);
+
+        const PGP::Packets packets = encrypted.get_packets();
+        EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+        EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+
+        const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
+        EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+        EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+        EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
+
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+        EXPECT_EQ(message, MESSAGE);
+    }
 }
 
 TEST(PGP, encrypt_decrypt_pka_no_mdc){
     std::string error;
+
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    EncryptArgs encrypt_args;
-    encrypt_args.data = MESSAGE;
-    encrypt_args.mdc = false;
+    ASSERT_EQ(pri.meaningful(error), true);
 
-    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
-    EXPECT_EQ(encrypted.meaningful(error), true);
-
-    const PGP::Packets packets = encrypted.get_packets();
-    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
-
-    Tag1::Ptr tag1 = std::dynamic_pointer_cast <Tag1> (packets[0]);
-    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
-    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
-    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
-
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
-    std::string message = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+    // gpg data
+    {
+        const PGPMessage gpg_encrypted(GPG_PKA_ENCRYPT_NO_MDC_TO_ALICE);
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
         }
+        EXPECT_EQ(message, MESSAGE);
     }
-    EXPECT_EQ(message, MESSAGE);
+
+    // calculated data
+    {
+        EncryptArgs encrypt_args;
+        encrypt_args.data = MESSAGE;
+        encrypt_args.mdc = false;
+
+        const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+        EXPECT_EQ(encrypted.meaningful(error), true);
+
+        const PGP::Packets packets = encrypted.get_packets();
+        EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+        EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
+
+        Tag1::Ptr tag1 = std::dynamic_pointer_cast <Tag1> (packets[0]);
+        EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+        EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+        EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
+
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+        EXPECT_EQ(message, MESSAGE);
+    }
 }
 
 TEST(PGP, encrypt_decrypt_symmetric_mdc){
     std::string error;
-    const EncryptArgs encrypt_args("", MESSAGE);
 
-    const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
-    EXPECT_EQ(encrypted.meaningful(error), true);
-
-    const PGP::Packets packets = encrypted.get_packets();
-    EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
-    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
-
-    const Tag3::Ptr tag3  = std::dynamic_pointer_cast <Tag3>  (packets[0]);
-    EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
-
-    const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
-    std::string message = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+    // gpg data
+    {
+        const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_TO_ALICE);
+        ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+        const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
         }
+        EXPECT_EQ(message, MESSAGE);
     }
-    EXPECT_EQ(message, MESSAGE);
+
+    // calculated data
+    {
+        const EncryptArgs encrypt_args("", MESSAGE);
+
+        const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
+        EXPECT_EQ(encrypted.meaningful(error), true);
+
+        const PGP::Packets packets = encrypted.get_packets();
+        EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
+        EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+
+        const Tag3::Ptr tag3  = std::dynamic_pointer_cast <Tag3>  (packets[0]);
+        EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
+
+        const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+        EXPECT_EQ(message, MESSAGE);
+    }
 }
 
 TEST(PGP, encrypt_decrypt_symmetric_no_mdc){
     std::string error;
 
-    EncryptArgs encrypt_args;
-    encrypt_args.data = MESSAGE;
-    encrypt_args.mdc = false;
-
-    const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
-    EXPECT_EQ(encrypted.meaningful(error), true);
-
-    const PGP::Packets packets = encrypted.get_packets();
-    EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
-    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
-
-    const Tag3::Ptr tag3 = std::dynamic_pointer_cast <Tag3> (packets[0]);
-    EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
-
-    const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
-    std::string message = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+    // gpg data
+    {
+        const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_NO_MDC_TO_ALICE);
+        ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+        const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
         }
+        EXPECT_EQ(message, MESSAGE);
     }
-    EXPECT_EQ(message, MESSAGE);
+
+    // calculated data
+    {
+        EncryptArgs encrypt_args;
+        encrypt_args.data = MESSAGE;
+        encrypt_args.mdc = false;
+
+        const PGPMessage encrypted = encrypt_sym(encrypt_args, PASSPHRASE, Sym::AES256, error);
+        EXPECT_EQ(encrypted.meaningful(error), true);
+
+        const PGP::Packets packets = encrypted.get_packets();
+        EXPECT_EQ(packets[0] -> get_tag(), Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY);
+        EXPECT_EQ(packets[1] -> get_tag(), Packet::SYMMETRICALLY_ENCRYPTED_DATA);
+
+        const Tag3::Ptr tag3 = std::dynamic_pointer_cast <Tag3> (packets[0]);
+        EXPECT_EQ(tag3 -> get_version(), (uint8_t) 4);
+
+        const PGPMessage decrypted = decrypt_sym(encrypted, PASSPHRASE, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+        EXPECT_EQ(message, MESSAGE);
+    }
 }
 
 TEST(PGP, encrypt_sign_decrypt_verify){
     std::string error;
-    const PGPSecretKey pri(GPG_PRIKEY_BOB);
 
-    EncryptArgs encrypt_args;
-    encrypt_args.data = MESSAGE;
-    encrypt_args.signer = std::make_shared <PGPSecretKey> (pri);
-    encrypt_args.passphrase = PASSPHRASE;
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    ASSERT_EQ(pri.meaningful(error), true);
 
-    const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
-    EXPECT_EQ(encrypted.meaningful(error), true);
-
-    const PGP::Packets packets = encrypted.get_packets();
-    EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
-    EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
-
-    const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
-    EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
-    EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
-    EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
-    EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
-
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
-    std::string message = "";
-    for(Packet::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+    // gpg data
+    {
+        const PGPMessage gpg_encrypted(GPG_ENCRYPTED_AND_SIGNED_ALICE);
+        ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
         }
-    }
-    EXPECT_EQ(message, MESSAGE);
+        EXPECT_EQ(message, MESSAGE);
 
-    EXPECT_EQ(verify_binary(pri, decrypted, error), true);
+        EXPECT_EQ(verify_binary(pri, decrypted, error), true);
+    }
+
+    // calculated data
+    {
+        EncryptArgs encrypt_args;
+        encrypt_args.data = MESSAGE;
+        encrypt_args.signer = std::make_shared <PGPSecretKey> (pri);
+        encrypt_args.passphrase = PASSPHRASE;
+
+        const PGPMessage encrypted = encrypt_pka(encrypt_args, pri, error);
+        EXPECT_EQ(encrypted.meaningful(error), true);
+
+        const PGP::Packets packets = encrypted.get_packets();
+        EXPECT_EQ(packets[0] -> get_tag(), Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY);
+        EXPECT_EQ(packets[1] -> get_tag(), Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA);
+
+        const Tag1::Ptr tag1  = std::dynamic_pointer_cast <Tag1> (packets[0]);
+        EXPECT_EQ(tag1 -> get_version(), (uint8_t) 3);
+        EXPECT_EQ(tag1 -> get_keyid(), pri.keyid());
+        EXPECT_EQ(tag1 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
+        EXPECT_EQ(tag1 -> get_mpi().size(), (PKA::Values::size_type) 1);
+
+        const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, encrypted, error);
+        std::string message = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                message += std::dynamic_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+        EXPECT_EQ(message, MESSAGE);
+
+        EXPECT_EQ(verify_binary(pri, decrypted, error), true);
+    }
 }
 
 TEST(PGP, sign_verify_detached){
     std::string error;
 
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    const SignArgs sign_args(pri, PASSPHRASE);
-    const PGPDetachedSignature sig = sign_detached_signature(sign_args, MESSAGE, error);
-    EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    // gpg data
+    {
+        const PGPMessage sig(GPG_DETACHED_SIG_ALICE);
+        ASSERT_EQ(sig.meaningful(error), true);
+        EXPECT_EQ(verify_binary(pri, sig, error), true);
+    }
+
+    // calculated data
+    {
+        ASSERT_EQ(pri.meaningful(error), true);
+        const SignArgs sign_args(pri, PASSPHRASE);
+        const PGPDetachedSignature sig = sign_detached_signature(sign_args, MESSAGE, error);
+        EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
+    }
 }
 
 TEST(PGP, sign_verify_binary){
     std::string error;
 
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    const SignArgs sign_args(pri, PASSPHRASE);
-    const PGPDetachedSignature sig = sign_binary(sign_args, "", MESSAGE, Compression::ZLIB, error);
-    EXPECT_EQ(verify_binary(pri, sig, error), true);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    // gpg data
+    {
+        const PGPMessage sig(GPG_SIGNATURE_ALICE);
+        ASSERT_EQ(sig.meaningful(error), true);
+        EXPECT_EQ(verify_binary(pri, sig, error), true);
+    }
+
+    // calculated data
+    {
+        const SignArgs sign_args(pri, PASSPHRASE);
+        const PGPMessage sig = sign_binary(sign_args, "", MESSAGE, Compression::ZLIB, error);
+        EXPECT_EQ(verify_binary(pri, sig, error), true);
+    }
 }
 
 TEST(PGP, clearsign){
-    PGPCleartextSignature pgp(GPG_CLEARSIGN_ALICE);
-    EXPECT_EQ(pgp.get_message(), "The magic words are squeamish ossifrage");
+    std::string error;
 
-    auto key = pgp.get_sig();
+    const PGPCleartextSignature clearsig(GPG_CLEARSIGN_ALICE);
+    ASSERT_EQ(clearsig.meaningful(error), true);
+    EXPECT_EQ(clearsig.get_message(), MESSAGE.substr(0, MESSAGE.size() - 1));
+
+    auto key = clearsig.get_sig();
     auto packets = key.get_packets();
 
     EXPECT_EQ(packets.size(), (PGP::Packets::size_type) 1);
 
-    Packet::Ptr p0 = packets[0];
-    ASSERT_EQ(p0 -> get_tag(), Packet::SIGNATURE);
+    ASSERT_EQ(packets[0] -> get_tag(), Packet::SIGNATURE);
 
-    Tag2::Ptr tag2 = std::dynamic_pointer_cast <Tag2> (p0);
+    Tag2::Ptr tag2 = std::dynamic_pointer_cast <Tag2> (packets[0]);
 
-    EXPECT_EQ(tag2 -> get_version(), (uint8_t) 4);
-
+    EXPECT_EQ(tag2 -> get_version(), (uint8_t)    4);
     EXPECT_EQ(tag2 -> get_size(), (std::size_t) 284);
 
     EXPECT_EQ(tag2 -> get_pka(), PKA::RSA_ENCRYPT_OR_SIGN);
@@ -861,7 +964,6 @@ TEST(PGP, clearsign){
         Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
-
 }
 
 TEST(PGP, verify_primary_key){

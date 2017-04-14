@@ -81,7 +81,7 @@ const Module sign_cleartext_signature(
         std::string error;
         const PGPCleartextSignature signature = ::sign_cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}), error);
 
-        if (signature.meaningful()){
+        if (signature.meaningful(error)){
             output(signature.write(), args.at("-o"));
         }
         else{

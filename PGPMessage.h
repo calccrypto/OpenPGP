@@ -132,7 +132,6 @@ class PGPMessage : public PGP {
         // check if packet sequence of *this is a meaningful and correct OpenPGP Message
         // whether or not data matches Detached Signature format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

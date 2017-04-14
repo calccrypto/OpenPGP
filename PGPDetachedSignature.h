@@ -53,7 +53,6 @@ class PGPDetachedSignature : public PGP {
 
         // whether or not *this data matches Detached Signature format
         bool meaningful(std::string & error) const;
-        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

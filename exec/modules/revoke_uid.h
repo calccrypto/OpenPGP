@@ -89,7 +89,7 @@ const Module revoke_uid(
         const PGPPublicKey revoked = ::revoke_uid(revargs, args.at("-u"), error);
 
         #ifdef GPG_COMPATIBLE
-        if (revoked.meaningful()){
+        if (revoked.meaningful(error)){
         #endif
             output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
         #ifdef GPG_COMPATIBLE
