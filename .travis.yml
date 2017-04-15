@@ -10,7 +10,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - chmod +x gtest.sh
         - export CC=gcc-4.8
@@ -20,18 +20,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=gcc-4.9
         - export CXX=g++-4.9
@@ -41,18 +36,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=gcc-5
         - export CXX=g++-5
@@ -62,18 +52,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=gcc-6
         - export CXX=g++-6
@@ -83,18 +68,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages: ['clang-3.5', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-3.5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-3.5
         - export CXX=clang++-3.5
@@ -104,18 +84,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
-          packages: ['clang-3.6', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-3.6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-3.6
         - export CXX=clang++-3.6
@@ -125,18 +100,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
-          packages: ['clang-3.7', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-3.7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-3.7
         - export CXX=clang++-3.7
@@ -146,18 +116,13 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-          packages: ['clang-3.8', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-3.8
         - export CXX=clang++-3.8
@@ -167,11 +132,6 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       dist: trusty
@@ -179,7 +139,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
-          packages: ['clang-3.9', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-3.9
         - export CXX=clang++-3.9
@@ -189,11 +149,6 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
 
     - os: linux
       dist: trusty
@@ -201,7 +156,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['clang-4.0', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'gem', 'lcov']
+          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       before_script:
         - export CC=clang-4.0
         - export CXX=clang++-4.0
@@ -211,8 +166,3 @@ matrix:
         - make debug
       script:
         - ./tests
-      after_success:
-        - gem install coveralls-lcov
-        - lcov --directory .. --capture --output-file coverage.info
-        - lcov --remove coverage.info 'tests/*' '/usr/*' 'googletest/*' --output-file coverage.info
-        - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info
