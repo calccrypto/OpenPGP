@@ -1,15 +1,17 @@
 # Packets Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -DGPG_COMPATIBLE
+CXXFLAGS=-std=c++11 -Wall -c
 
 include objects.mk
+
+all: $(PACKETS_OBJECTS)
+
+gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 
 debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: clean
-
-all: $(PACKETS_OBJECTS)
 
 %.o : %.cpp %.h packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@

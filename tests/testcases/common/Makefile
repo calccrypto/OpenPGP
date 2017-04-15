@@ -2,10 +2,10 @@
 CXX?=g++
 CXXFLAGS=-std=c++11 -Wall -c -I../../../../googletest/googletest/include -I../../../common
 
+all: $(COMMON_TESTCASES_OBJECTS)
+
 debug: CXXFLAGS += -g
 debug: all
-
-all: $(COMMON_TESTCASES_OBJECTS)
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@

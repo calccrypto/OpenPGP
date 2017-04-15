@@ -1,6 +1,6 @@
 # OpenPGP Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -DGPG_COMPATIBLE
+CXXFLAGS=-std=c++11 -Wall -c
 AR=ar
 TARGET=libOpenPGP.a
 
@@ -14,36 +14,38 @@ include PKA/objects.mk
 include RNG/objects.mk
 include Subpackets/objects.mk
 
+all: $(TARGET)
+
+gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
+
 debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean clean-all
 
-all: $(TARGET)
-
 common:
-	$(MAKE) -C common
+	$(MAKE) $(MAKECMDGOALS) -C common
 
 Compress:
-	$(MAKE) -C Compress
+	$(MAKE) $(MAKECMDGOALS) -C Compress
 
 Encryptions:
-	$(MAKE) -C Encryptions
+	$(MAKE) $(MAKECMDGOALS) -C Encryptions
 
 Hashes:
-	$(MAKE) -C Hashes
+	$(MAKE) $(MAKECMDGOALS) -C Hashes
 
 Packets:
-	$(MAKE) -C Packets
+	$(MAKE) $(MAKECMDGOALS) -C Packets
 
 PKA:
-	$(MAKE) -C PKA
+	$(MAKE) $(MAKECMDGOALS) -C PKA
 
 RNG:
-	$(MAKE) -C RNG
+	$(MAKE) $(MAKECMDGOALS) -C RNG
 
 Subpackets:
-	$(MAKE) -C Subpackets
+	$(MAKE) $(MAKECMDGOALS) -C Subpackets
 
 cfb.o: cfb.cpp cfb.h Encryptions/Encryptions.h Packets/packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@

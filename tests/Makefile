@@ -12,18 +12,18 @@ include testcases/Encryptions/objects.mk
 include testcases/Hashes/objects.mk
 include testcases/PKA/objects.mk
 
+all: $(TARGET)
+
 debug: CXXFLAGS += -g
 debug: all
-
-all: $(TARGET)
 
 .PHONY: libs testcases run clean clean-testcases clean-lib clean-all
 
 libs:
-	$(MAKE) -C ..
+	$(MAKE) $(MAKECMDGOALS) -C ..
 
 testcases:
-	$(MAKE) -C testcases
+	$(MAKE) $(MAKECMDGOALS) -C testcases
 
 $(TARGET): main.cc libs testcases
 	$(CXX) $(CXXFLAGS) main.cc $(addprefix testcases/, $(TESTCASES_OBJECTS)) $(addprefix testcases/common/, $(COMMON_TESTCASES_OBJECTS)) $(addprefix testcases/Compress/, $(COMPRESS_TESTCASES_OBJECTS)) $(addprefix testcases/Encryptions/, $(ENCRYPTIONS_TESTCASES_OBJECTS)) $(addprefix testcases/Hashes/, $(HASHES_TESTCASES_OBJECTS)) $(addprefix testcases/PKA/, $(PKA_TESTCASES_OBJECTS)) $(LDFLAGS) -o $(TARGET)

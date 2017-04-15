@@ -2,29 +2,29 @@
 CXX?=g++
 CXXFLAGS=-std=c++11 -Wall -c -I../../../googletest/googletest/include -I../..
 
+include objects.mk
+
+all: $(TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
+
 debug: CXXFLAGS += -g
 debug: all
-
-include objects.mk
 
 .PHONY: common Compress Encryptions Hashes PKA
 
 common:
-	$(MAKE) -C common
+	$(MAKE) $(MAKECMDGOALS) -C common
 
 Compress:
-	$(MAKE) -C Compress
+	$(MAKE) $(MAKECMDGOALS) -C Compress
 
 Encryptions:
-	$(MAKE) -C Encryptions
+	$(MAKE) $(MAKECMDGOALS) -C Encryptions
 
 Hashes:
-	$(MAKE) -C Hashes
+	$(MAKE) $(MAKECMDGOALS) -C Hashes
 
 PKA:
-	$(MAKE) -C PKA
-
-all: $(TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
+	$(MAKE) $(MAKECMDGOALS) -C PKA
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@

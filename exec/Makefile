@@ -6,18 +6,18 @@ TARGET=OpenPGP
 
 include modules/objects.mk
 
+all: $(TARGET)
+
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(TARGET)
-
-.PHONY: lib modules clean clean-all
+.PHONY: lib modules clean clean-modules clean-all
 
 lib:
-	$(MAKE) -C ..
+	$(MAKE) $(MAKECMDGOALS) -C ..
 
 modules:
-	$(MAKE) -C modules
+	$(MAKE) $(MAKECMDGOALS) -C modules
 
 $(TARGET): main.cpp ../OpenPGP.h lib modules
 	$(CXX) $(CXXFLAGS) main.cpp $(addprefix modules/, $(MODULES_OBJECTS)) $(LDFLAGS) -o $(TARGET)
@@ -25,6 +25,8 @@ $(TARGET): main.cpp ../OpenPGP.h lib modules
 clean:
 	rm -f $(TARGET)
 
-clean-all: clean
-	$(MAKE) clean-all -C ..
+clean-modules:
 	$(MAKE) clean -C modules
+
+clean-all: clean clean-modules
+	$(MAKE) clean-all -C ..
