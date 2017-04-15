@@ -17,9 +17,13 @@ include Subpackets/objects.mk
 all: $(TARGET)
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
+gpg-compatible: all
 
 debug: CXXFLAGS += -g
 debug: all
+
+gpg-debug: CXXFLAGS += -DGPG_COMPATIBLE
+gpg-debug: debug
 
 .PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean clean-all
 

@@ -9,6 +9,8 @@ all: $(TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
 debug: CXXFLAGS += -g
 debug: all
 
+gpg-debug: debug
+
 .PHONY: common Compress Encryptions Hashes PKA
 
 common:

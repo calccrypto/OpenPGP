@@ -7,6 +7,8 @@ all: $(COMMON_TESTCASES_OBJECTS)
 debug: CXXFLAGS += -g
 debug: all
 
+gpg-debug: debug
+
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 

@@ -17,6 +17,8 @@ all: $(TARGET)
 debug: CXXFLAGS += -g
 debug: all
 
+gpg-debug: debug
+
 .PHONY: libs testcases run clean clean-testcases clean-lib clean-all
 
 libs:

@@ -4,10 +4,12 @@ CXXFLAGS=-std=c++11 -Wall -c -DGPG_COMPATIBLE
 
 include objects.mk
 
+all: $(TAG2SUBPACKETS_OBJECTS)
+
 debug: CXXFLAGS += -g
 debug: all
 
-all: $(TAG2SUBPACKETS_OBJECTS)
+gpg-debug: debug
 
 .PHONY: clean
 

@@ -7,9 +7,13 @@ include objects.mk
 all: $(SUBPACKET_OBJECTS) Tag2Sub Tag17Sub
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
+gpg-compatible: all
 
 debug: CXXFLAGS += -g
 debug: all
+
+gpg-debug: CXXFLAGS += -g -DGPG_COMPATIBLE
+gpg-debug: all
 
 .PHONY: Tag2Sub Tag17Sub clean
 
