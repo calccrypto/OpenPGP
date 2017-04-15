@@ -15,9 +15,9 @@ matrix:
         - export CC=gcc-4.8
         - export CXX=g++-4.8
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -35,9 +35,9 @@ matrix:
         - export CXX=g++-4.9
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -55,9 +55,9 @@ matrix:
         - export CXX=g++-5
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -75,9 +75,9 @@ matrix:
         - export CXX=g++-6
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -95,9 +95,9 @@ matrix:
         - export CXX=clang++-3.5
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -115,9 +115,9 @@ matrix:
         - export CXX=clang++-3.6
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -135,9 +135,9 @@ matrix:
         - export CXX=clang++-3.7
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -155,9 +155,9 @@ matrix:
         - export CXX=clang++-3.8
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -176,9 +176,9 @@ matrix:
         - export CXX=clang++-3.9
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -197,9 +197,9 @@ matrix:
         - export CXX=clang++-4.0
         - chmod +x gtest.sh
         - ./gtest.sh
-      script:
         - cd tests
         - make debug
+      script:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
