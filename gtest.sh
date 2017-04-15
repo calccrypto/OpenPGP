@@ -9,5 +9,3 @@ cd googletest
 git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
 cmake CMakeLists.txt
 make
-cd ../OpenPGP/tests
-make debug

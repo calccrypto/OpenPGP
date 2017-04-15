@@ -10,8 +10,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=g++-4.8
       before_script:
         - chmod +x gtest.sh
         - export CC=gcc-4.8
@@ -19,6 +17,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -30,8 +29,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=g++-4.9
       before_script:
         - export CC=gcc-4.9
         - export CXX=g++-4.9
@@ -39,6 +36,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -50,8 +48,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=g++-5
       before_script:
         - export CC=gcc-5
         - export CXX=g++-5
@@ -59,6 +55,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -70,8 +67,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=g++-6
       before_script:
         - export CC=gcc-6
         - export CXX=g++-6
@@ -79,26 +74,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
-        - ./tests
-      after_success:
-        - pip install --user cpp-coveralls
-        - coveralls --gcov gcov-6 --gcov-options '\-lp'
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++
-      before_script:
-        - export CC=clang
-        - export CXX=clang++
-        - chmod +x gtest.sh
-        - ./gtest.sh
-      script:
-        - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -110,8 +86,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
           packages: ['clang-3.5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-3.5
       before_script:
         - export CC=clang-3.5
         - export CXX=clang++-3.5
@@ -119,6 +93,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -130,8 +105,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
           packages: ['clang-3.6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-3.6
       before_script:
         - export CC=clang-3.6
         - export CXX=clang++-3.6
@@ -139,6 +112,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -150,8 +124,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
           packages: ['clang-3.7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-3.7
       before_script:
         - export CC=clang-3.7
         - export CXX=clang++-3.7
@@ -159,6 +131,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -170,8 +143,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-3.8
       before_script:
         - export CC=clang-3.8
         - export CXX=clang++-3.8
@@ -179,6 +150,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -191,8 +163,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-3.9
       before_script:
         - export CC=clang-3.9
         - export CXX=clang++-3.9
@@ -200,6 +170,7 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -212,8 +183,6 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      env:
-        - COMPILER=clang++-4.0
       before_script:
         - export CC=clang-4.0
         - export CXX=clang++-4.0
@@ -221,8 +190,8 @@ matrix:
         - ./gtest.sh
       script:
         - cd tests
+        - make debug
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
-
