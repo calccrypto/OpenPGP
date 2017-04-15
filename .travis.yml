@@ -21,6 +21,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -40,6 +41,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -59,6 +61,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -78,6 +81,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -97,6 +101,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -116,6 +121,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -135,6 +141,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -154,6 +161,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -174,6 +182,7 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
     - os: linux
@@ -194,4 +203,5 @@ matrix:
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
+        - cd ..
         - coveralls --gcov gcov-6 --gcov-options '\-lp'
