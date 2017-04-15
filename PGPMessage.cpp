@@ -345,18 +345,8 @@ bool PGPMessage::match(const PGPMessage::Token & token, std::string & error) con
     return match(*this, token, error);
 }
 
-bool PGPMessage::match(const PGPMessage::Token & token) const{
-    std::string error;
-    return match(*this, token, error);
-}
-
 bool PGPMessage::meaningful(const PGP & pgp, std::string & error){
     return match(pgp, OPENPGPMESSAGE, error);
-}
-
-bool PGPMessage::meaningful(const PGP & pgp){
-    std::string error;
-    return meaningful(pgp, error);
 }
 
 bool PGPMessage::meaningful(std::string & error) const{

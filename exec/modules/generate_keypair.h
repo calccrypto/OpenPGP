@@ -133,7 +133,6 @@ const Module generate_keypair(
         subkey.sig        = Hash::NUMBER.at(args.at("--ssig"));
         config.subkeys.push_back(subkey);
 
-
         std::string error;
         const PGPSecretKey pri = ::generate_key(config, error);
 

@@ -123,11 +123,9 @@ class PGPMessage : public PGP {
 
         // whether or not the packet composition of *this matches a OpenPGP Message grammar without constructing a new object
         bool match(const Token & token, std::string & error) const;
-        bool match(const Token & token) const;
 
         // check if packet sequence of PGP data is a meaningful and correct OpenPGP Message without constructing a new object
         static bool meaningful(const PGP & pgp, std::string & error);
-        static bool meaningful(const PGP & pgp);
 
         // check if packet sequence of *this is a meaningful and correct OpenPGP Message
         // whether or not data matches Detached Signature format

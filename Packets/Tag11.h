@@ -77,14 +77,14 @@ THE SOFTWARE.
 //    endings by the receiving software.
 
 namespace Literal {
-    const uint8_t Binary    = 'b';     // should be equal to 0x62
-    const uint8_t Text      = 't';     // should be equal to 0x74
-    const uint8_t UTF8_Text = 'u';     // should be equal to 0x75
+    const uint8_t BINARY    = 'b';     // should be equal to 0x62
+    const uint8_t TEXT      = 't';     // should be equal to 0x74
+    const uint8_t UTF8_TEXT = 'u';     // should be equal to 0x75
 
     const std::map <uint8_t, std::string> NAME = {
-        std::make_pair(Binary,    "Binary"),
-        std::make_pair(Text,      "Text"),
-        std::make_pair(UTF8_Text, "UTF-8 Text"),
+        std::make_pair(BINARY,    "Binary"),
+        std::make_pair(TEXT,      "Text"),
+        std::make_pair(UTF8_TEXT, "UTF-8 Text"),
     };
 }
 

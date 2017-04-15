@@ -66,7 +66,7 @@ std::string Tag8::show(const std::size_t indents, const std::size_t indent_size)
     return indent + show_title() + "\n" +
            indent + tab + "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")\n" +
            indent + tab + "Compressed Data:\n" +
-           decompressed.show(indents + 1, indent_size);
+           decompressed.show(indents + 2, indent_size);
 }
 
 std::string Tag8::raw() const{

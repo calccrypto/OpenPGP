@@ -73,11 +73,6 @@ bool PGPRevocationCertificate::meaningful(const PGP & pgp, std::string & error){
     return true;
 }
 
-bool PGPRevocationCertificate::meaningful(const PGP & pgp){
-    std::string error;
-    return meaningful(pgp, error);
-}
-
 bool PGPRevocationCertificate::meaningful(std::string & error) const{
     return meaningful(*this, error);
 }

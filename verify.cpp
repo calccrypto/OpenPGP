@@ -358,7 +358,7 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
         return false;
     }
 
-    Key::Ptr signing_key = find_signing_key(key);
+    const Key::Ptr signing_key = find_signing_key(key);
     if (!signing_key){
         error += "Error: No signing key found.\n";
         return -1;

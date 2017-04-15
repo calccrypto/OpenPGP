@@ -66,11 +66,6 @@ bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
     return true;
 }
 
-bool PGPDetachedSignature::meaningful(const PGP & pgp){
-    std::string error;
-    return meaningful(pgp, error);
-}
-
 bool PGPDetachedSignature::meaningful(std::string & error) const{
     return meaningful(*this, error);
 }

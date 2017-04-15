@@ -178,7 +178,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     unsigned int i = 1;
     while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::SIGNATURE)){
         if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
-            std::cerr << "Warning: Revocation Signature found on primary key." << std::endl;
+            error += "Warning: Revocation Signature found on primary key.\n";
             i++;
         }
         else{

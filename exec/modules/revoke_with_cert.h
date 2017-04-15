@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __COMMAND_REVOKE_KEY_WITH_CERT__
-#define __COMMAND_REVOKE_KEY_WITH_CERT__
+#ifndef __COMMAND_REVOKE_WITH_CERT__
+#define __COMMAND_REVOKE_WITH_CERT__
 
 #include "../../OpenPGP.h"
 #include "module.h"
 
 namespace module {
 
-const Module revoke_key_with_cert(
+const Module revoke_with_cert(
     // name
-    "revoke-key-with-cert",
+    "revoke-with-cert",
 
     // positional arguments
     {
@@ -70,7 +70,7 @@ const Module revoke_key_with_cert(
         const PGPRevocationCertificate rev(cert);
         std::string error;
 
-        const PGPPublicKey revoked = ::revoke_key_with_cert(key, rev, error);
+        const PGPPublicKey revoked = ::revoke_with_cert(key, rev, error);
 
         if (revoked.meaningful(error)){
             output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
