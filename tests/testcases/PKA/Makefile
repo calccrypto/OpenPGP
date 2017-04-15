@@ -6,7 +6,7 @@ include objects.mk
 
 all: $(PKA_TESTCASES_OBJECTS)
 
-debug: CXXFLAGS += -g
+debug: CXXFLAGS += -g -O0 --coverage
 debug: all
 
 %.o : %.cpp

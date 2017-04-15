@@ -1,48 +1,184 @@
+# from <https://github.com/taocpp/PEGTL/blob/master/.travis.yml>
+
 language: cpp
 
-# from <http://stackoverflow.com/questions/22111549/travis-ci-with-clang-3-4-and-c11>
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=g++-4.8
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-compiler:
-  - clang
-  - gcc
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=g++-4.9
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-before_install:
-  # g++-6
-  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=g++-5
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  # clang 3.4
-  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=g++-6
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  - sudo apt-get update -qq
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  # g++6
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-6; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          packages: ['clang-3.5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-3.5
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  # clang 3.4
-  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
-  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
+          packages: ['clang-3.6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-3.6
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  # for OpenPGP
-  - sudo apt-get install libgmp-dev
-  - sudo apt-get install libbz2-dev
-  - sudo apt-get install zlib1g-dev
-  - sudo apt-get install libzip-dev
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
+          packages: ['clang-3.7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-3.7
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  # for Google Test
-  - sudo apt-get install git cmake
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
+          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-3.8
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-before_script:
-  # not much better than git submodules, but there was never a need/want for the repo in this repo
-  - cd ..
-  - git clone https://github.com/google/googletest.git
-  - cd googletest
-  - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
-  - cmake CMakeLists.txt
-  - make
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
+          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-3.9
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-  - cd ../OpenPGP/tests
-  - make debug
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'pip']
+      env:
+        - COMPILER=clang++-4.0
+      before_script:
+        - ./gtest.sh
+      script:
+        - ./tests
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls --gcov gcov-6 --gcov-options '\-lp'
 
-script:
-  - ./tests

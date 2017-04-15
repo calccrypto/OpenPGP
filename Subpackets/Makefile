@@ -8,7 +8,7 @@ all: $(SUBPACKET_OBJECTS) Tag2Sub Tag17Sub
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 
-debug: CXXFLAGS += -g
+debug: CXXFLAGS += -g -O0 --coverage
 debug: all
 
 .PHONY: Tag2Sub Tag17Sub clean

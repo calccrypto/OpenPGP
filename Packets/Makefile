@@ -8,7 +8,7 @@ all: $(PACKETS_OBJECTS)
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 
-debug: CXXFLAGS += -g
+debug: CXXFLAGS += -g -O0 --coverage
 debug: all
 
 .PHONY: clean

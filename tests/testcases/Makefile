@@ -6,7 +6,7 @@ include objects.mk
 
 all: $(TESTCASES_OBJECTS) common Compress Encryptions Hashes PKA
 
-debug: CXXFLAGS += -g
+debug: CXXFLAGS += -g -O0 --coverage
 debug: all
 
 .PHONY: common Compress Encryptions Hashes PKA
