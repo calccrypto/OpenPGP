@@ -22,7 +22,7 @@ matrix:
       after_success:
         - pip install --user cpp-coveralls
         - cd ..
-        - coveralls --gcov gcov-6 --gcov-options '\-lp'
+        - coveralls --gcov gcov-4.8 --gcov-options '\-lp'
 
     - os: linux
       compiler: gcc
@@ -42,7 +42,7 @@ matrix:
       after_success:
         - pip install --user cpp-coveralls
         - cd ..
-        - coveralls --gcov gcov-6 --gcov-options '\-lp'
+        - coveralls --gcov gcov-4.9 --gcov-options '\-lp'
 
     - os: linux
       compiler: gcc
@@ -62,7 +62,7 @@ matrix:
       after_success:
         - pip install --user cpp-coveralls
         - cd ..
-        - coveralls --gcov gcov-6 --gcov-options '\-lp'
+        - coveralls --gcov gcov-5 --gcov-options '\-lp'
 
     - os: linux
       compiler: gcc
@@ -109,7 +109,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
-          packages: ['clang-3.6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
+          packages: ['clang-3.6', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-3.6
         - export CXX=clang++-3.6
@@ -129,7 +129,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
-          packages: ['clang-3.7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
+          packages: ['clang-3.7', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-3.7
         - export CXX=clang++-3.7
@@ -149,7 +149,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
+          packages: ['clang-3.8', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-3.8
         - export CXX=clang++-3.8
@@ -170,7 +170,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
-          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
+          packages: ['clang-3.9', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-3.9
         - export CXX=clang++-3.9
@@ -191,7 +191,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
+          packages: ['clang-4.0', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-4.0
         - export CXX=clang++-4.0
