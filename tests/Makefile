@@ -14,7 +14,7 @@ include testcases/PKA/objects.mk
 
 all: $(TARGET)
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: libs testcases run clean clean-testcases clean-lib clean-all

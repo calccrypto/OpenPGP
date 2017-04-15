@@ -18,7 +18,7 @@ all: $(TARGET)
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: common Compress Encryptions Hashes Packets PKA RNG Subpackets clean clean-all

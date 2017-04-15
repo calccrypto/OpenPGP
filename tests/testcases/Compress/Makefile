@@ -6,7 +6,7 @@ include objects.mk
 
 all: $(COMPRESS_TESTCASES_OBJECTS)
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 %.o : %.cpp

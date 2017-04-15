@@ -8,7 +8,7 @@ include modules/objects.mk
 
 all: $(TARGET)
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: lib modules clean clean-modules clean-all

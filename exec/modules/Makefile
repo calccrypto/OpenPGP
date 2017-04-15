@@ -6,7 +6,7 @@ include objects.mk
 
 all: $(MODULES_OBJECTS)
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: clean

@@ -8,7 +8,7 @@ all: $(COMPRESS_OBJECTS)
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 
-debug: CXXFLAGS += -g -O0 --coverage
+debug: CXXFLAGS += -g
 debug: all
 
 .PHONY: clean
