@@ -89,26 +89,6 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages: ['clang-3.4', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
-      before_script:
-        - export CC=clang-3.4
-        - export CXX=clang++-3.4
-        - chmod +x gtest.sh
-        - ./gtest.sh
-        - cd tests
-        - make debug
-      script:
-        - ./tests
-      after_success:
-        - pip install --user cpp-coveralls
-        - cd ..
-        - coveralls --gcov gcov-6 --gcov-options '\-lp'
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
           packages: ['clang-3.5', 'g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       before_script:
         - export CC=clang-3.5
