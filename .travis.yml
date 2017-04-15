@@ -12,11 +12,13 @@ matrix:
           packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=g++-4.8
-        - CXX=g++-4.8
       before_script:
         - chmod +x gtest.sh
+        - export CC=gcc-4.8
+        - export CXX=g++-4.8
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -30,11 +32,13 @@ matrix:
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=g++-4.9
-        - CXX=g++-4.9
       before_script:
+        - export CC=gcc-4.9
+        - export CXX=g++-4.9
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -48,11 +52,13 @@ matrix:
           packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=g++-5
-        - CXX=g++-5
       before_script:
+        - export CC=gcc-5
+        - export CXX=g++-5
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -66,11 +72,13 @@ matrix:
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=g++-6
-        - CXX=g++-6
       before_script:
+        - export CC=gcc-6
+        - export CXX=g++-6
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -84,11 +92,13 @@ matrix:
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++
-        - CXX=clang++
       before_script:
+        - export CC=clang
+        - export CXX=clang++
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -102,11 +112,13 @@ matrix:
           packages: ['clang-3.5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-3.5
-        - CXX=clang++-3.5
       before_script:
+        - export CC=clang-3.5
+        - export CXX=clang++-3.5
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -120,11 +132,13 @@ matrix:
           packages: ['clang-3.6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-3.6
-        - CXX=clang++-3.6
       before_script:
+        - export CC=clang-3.6
+        - export CXX=clang++-3.6
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -138,11 +152,13 @@ matrix:
           packages: ['clang-3.7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-3.7
-        - CXX=clang++-3.7
       before_script:
+        - export CC=clang-3.7
+        - export CXX=clang++-3.7
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -156,11 +172,13 @@ matrix:
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-3.8
-        - CXX=clang++-3.8
       before_script:
+        - export CC=clang-3.8
+        - export CXX=clang++-3.8
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -175,11 +193,13 @@ matrix:
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-3.9
-        - CXX=clang++-3.9
       before_script:
+        - export CC=clang-3.9
+        - export CXX=clang++-3.9
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
@@ -194,11 +214,13 @@ matrix:
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'git', 'cmake', 'python-pip']
       env:
         - COMPILER=clang++-4.0
-        - CXX=clang++-4.0
       before_script:
+        - export CC=clang-4.0
+        - export CXX=clang++-4.0
         - chmod +x gtest.sh
         - ./gtest.sh
       script:
+        - cd tests
         - ./tests
       after_success:
         - pip install --user cpp-coveralls
