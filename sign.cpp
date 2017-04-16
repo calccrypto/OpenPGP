@@ -50,11 +50,11 @@ PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::s
 
     // Check if key has been revoked
     const int rc = check_revoked(args.pri, error);
-    if (rc == 1){
+    if (rc == true){
         error += "Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.\n";
         return PGPDetachedSignature();
     }
-    else if (rc == 1){
+    else if (rc == true){
         error += "Error: check_revoked failed.\n";
         return PGPDetachedSignature();
     }
@@ -291,7 +291,7 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
             error += "Error: Signature verification failure.\n";
             return PGPPublicKey();
         }
-        else if (rc == 1){
+        else if (rc == true){
             std::cerr << "Warning: Primary Key and User ID have already been signed by " << args.pri << std::endl;
             return signee;
         }

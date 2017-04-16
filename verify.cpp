@@ -166,7 +166,7 @@ int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & 
                         error += "Error: PKA verify failure.\n";
                         return -1;
                     }
-                    else if (rc == 1){
+                    else if (rc == true){
                         return true;
                     }
                 }
@@ -316,7 +316,7 @@ int verify_primary_key(const PGPKey & signer, const PGPKey & signee, std::string
 
             // check if the signature is valid
             const int rc = verify_primary_key(signer_key, signee_key, signee_id, signee_signature, error);
-            if (rc == 1){
+            if (rc == true){
                 return true;
             }
             else if (rc == -1){
@@ -373,7 +373,24 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
         for(Packet::Ptr const & p : key.get_packets()){
             if (Packet::is_subkey(p -> get_tag())){
                 const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (p)), revoke_sig)), signing_key, revoke_sig, error);
-                if (rc == 1){
+                if (rc == true){
+                    return true;
+                }
+                else if (rc == -1){
+                    error += "Error: pka_verify failure.\n";
+                    return -1;
+                }
+            }
+        }
+
+        return false;
+    }
+    else if (revoke_sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
+        for(Packet::Ptr const & p : key.get_packets()){
+            if (Packet::is_user(p -> get_tag())){
+                const User::Ptr user = std::static_pointer_cast <User> (p);
+                const int rc = pka_verify(to_sign_30(signing_key, user, revoke_sig), signing_key, revoke_sig, error);
+                if (rc == true){
                     return true;
                 }
                 else if (rc == -1){

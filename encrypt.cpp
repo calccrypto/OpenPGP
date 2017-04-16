@@ -86,7 +86,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 
     // Check if key has been revoked
     const int rc = check_revoked(pgpkey, error);
-    if (rc == 1){
+    if (rc == true){
         error += "Error: Key " + hexlify(pgpkey.keyid()) + " has been revoked. Nothing done.\n";
         return PGPMessage();
     }

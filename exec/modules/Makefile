@@ -6,8 +6,12 @@ include objects.mk
 
 all: $(MODULES_OBJECTS)
 
+gpg-compatible: all
+
 debug: CXXFLAGS += -g
 debug: all
+
+gpg-debug: debug
 
 .PHONY: clean
 

@@ -77,6 +77,11 @@ struct SignArgs{
             return false;
         }
 
+        if ((version != 3) && (version != 4)){
+            error += "Error: Bad version: " + std::to_string(version) + "\n";
+            return false;
+        }
+
         if (Hash::NAME.find(hash) == Hash::NAME.end()){
             error += "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
             return false;

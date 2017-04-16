@@ -41,10 +41,11 @@ THE SOFTWARE.
 #include "generate_keypair.h"
 #include "generate_revoke_key_cert.h"
 // #include "generate_revoke_subkey_cert.h"
+#include "generate_revoke_uid_cert.h"
 #include "revoke_with_cert.h"
 #include "revoke_primary_key.h"
-// #include "revoke_subkey.h"
-// #include "revoke_uid.h"
+#include "revoke_subkey.h"
+#include "revoke_uid.h"
 #include "sign_cleartext_signature.h"
 #include "sign_detached_signature.h"
 #include "sign_file.h"
@@ -72,10 +73,11 @@ const std::vector <Module> ordered = {
     generate_keypair,
     generate_revoke_key_cert,
     // generate_revoke_subkey_cert,
+    generate_revoke_uid_cert,
     revoke_with_cert,
     revoke_primary_key,
-    // revoke_subkey,
-    // revoke_uid,
+    revoke_subkey,
+    revoke_uid,
     sign_cleartext_signature,
     sign_detached_signature,
     sign_file,

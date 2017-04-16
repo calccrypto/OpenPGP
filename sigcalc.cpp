@@ -106,8 +106,16 @@ std::string to_sign_02(const Tag2::Ptr & tag2){
 }
 
 std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
     if (!tag2){
-        throw std::runtime_error("Error: No signature packet");
+        throw std::runtime_error("Error: No signature packet.");
     }
 
     if (tag2 -> get_type() != Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
@@ -118,8 +126,16 @@ std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
 }
 
 std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
     if (!tag2){
-        throw std::runtime_error("Error: No signature packet");
+        throw std::runtime_error("Error: No signature packet.");
     }
 
     if (tag2 -> get_type() != Signature_Type::PERSONA_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
@@ -130,8 +146,16 @@ std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
 }
 
 std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
     if (!tag2){
-        throw std::runtime_error("Error: No signature packet");
+        throw std::runtime_error("Error: No signature packet.");
     }
 
     if (tag2 -> get_type() != Signature_Type::CASUAL_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
@@ -142,8 +166,16 @@ std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
 }
 
 std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
     if (!tag2){
-        throw std::runtime_error("Error: No signature packet");
+        throw std::runtime_error("Error: No signature packet.");
     }
 
     if (tag2 -> get_type() != Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
@@ -154,8 +186,21 @@ std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
 }
 
 std::string to_sign_cert(const uint8_t cert, const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & sig){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
+    if (!sig){
+        throw std::runtime_error("Error: No signature packet.");
+    }
+
     std::string digest;
 
+    // doesnt really matter since the functions are all the same
     if (cert == Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
         digest = to_sign_10(key, id, sig);
     }
@@ -192,12 +237,15 @@ std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & subkey, const 
 }
 
 std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){
-    throw std::runtime_error("Error: Signature directly on a key has not implemented.");
     // if (!tag2){
         // throw std::runtime_error("Error: No signature packet");
     // }
 
-    //    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    // if (tag2 -> get_type() != Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
+        // throw std::runtime_error("Error: Bad signature type.");
+    // }
+
+    // return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
     return "";
 }
 
@@ -226,8 +274,16 @@ std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
 }
 
 std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!id){
+        throw std::runtime_error("Error: No user packet.");
+    }
+
     if (!tag2){
-        throw std::runtime_error("Error: No signature packet");
+        throw std::runtime_error("Error: No signature packet.");
     }
 
     if (tag2 -> get_type() != Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){

@@ -52,12 +52,12 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
                 else if (sig -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
                     sig = revoke_sig(primary, passphrase, primary, sig, error);
                 }
-                // else if (sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
-                    // sig = revoke_sig(primary, passphrase, key, sig, error);
-                // }
-                // else if (sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
-                    // sig = revoke_uid_sig(primary, passphrase, user, sig, error);
-                // }
+                else if (sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
+                    sig = revoke_sig(primary, passphrase, key, sig, error);
+                }
+                else if (sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
+                    sig = revoke_uid_sig(primary, passphrase, user, sig, error);
+                }
                 else{
                     std::cerr << "Warning: Bad or unhandled signature type: 0x" << makehex(sig -> get_type(), 2) << std::endl;
                 }
