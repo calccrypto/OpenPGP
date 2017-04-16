@@ -472,7 +472,7 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
 
     // make sure that the revocation certificate is for the given key
     const int rc = verify_revoke(key, revoke, error);
-    if (rc == 0){
+    if (rc == false){
         error += "Error: Revocation certificate is not for key " + hexlify(key.keyid()) + "\n";
         return PGPPublicKey();
     }
@@ -482,9 +482,7 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
     }
 
     // extract revocation signature; don't need to check - should have been caught by revoke.meaningful()
-    Tag2::Ptr revoke_sig = std::static_pointer_cast <Tag2> (revoke.get_packets()[0]);
-
-    const std::string keyid = revoke_sig -> get_keyid();
+    const Tag2::Ptr revoke_sig = std::static_pointer_cast <Tag2> (revoke.get_packets()[0]);
 
     // Create output key
     const PGP::Packets & old_packets = key.get_packets();
@@ -503,8 +501,39 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
         new_packets.push_back(revoke_sig -> clone());
     }
 
-    // push all packets up to the subkey
     unsigned int i = 1;
+
+    // if the revocation was for a user packet, put it behind the user packet
+    if (revoke_sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
+        // go to first user packet
+        while ((i < old_packets.size()) && !Packet::is_user(old_packets[i] -> get_tag())){
+            i++;
+        }
+
+        // search all user packets
+        const Key::Ptr signing_key = std::static_pointer_cast <Key> (old_packets[0]);
+        while ((i < old_packets.size()) && Packet::is_user(old_packets[i] -> get_tag())){
+            const User::Ptr user = std::static_pointer_cast <User> (old_packets[i]);
+            const int rc = pka_verify(to_sign_30(signing_key, user, revoke_sig), signing_key, revoke_sig, error);
+            if (rc == true){
+                new_packets.push_back(old_packets[i++] -> clone());
+                new_packets.push_back(revoke_sig -> clone());
+                i++;
+                break;
+            }
+            else if (rc == -1){
+                error += "Error: pka_verify failure.\n";
+                return PGPPublicKey();
+            }
+
+            // ignore signatures
+            while ((i < old_packets.size()) && (old_packets[i] -> get_tag() == Packet::SIGNATURE)){
+                new_packets.push_back(old_packets[i++] -> clone());
+            }
+        }
+    }
+
+    // push all packets up to the subkey
     while ((i < old_packets.size()) && !Packet::is_subkey(old_packets[i] -> get_tag())){
         new_packets.push_back(old_packets[i++] -> clone());
     }
