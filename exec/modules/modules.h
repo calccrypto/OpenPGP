@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "decrypt_sym.h"
 #include "generate_keypair.h"
 #include "generate_revoke_key_cert.h"
-// #include "generate_revoke_subkey_cert.h"
+#include "generate_revoke_subkey_cert.h"
 #include "generate_revoke_uid_cert.h"
 #include "revoke_with_cert.h"
 #include "revoke_primary_key.h"
@@ -72,7 +72,7 @@ const std::vector <Module> ordered = {
     decrypt_sym,
     generate_keypair,
     generate_revoke_key_cert,
-    // generate_revoke_subkey_cert,
+    generate_revoke_subkey_cert,
     generate_revoke_uid_cert,
     revoke_with_cert,
     revoke_primary_key,

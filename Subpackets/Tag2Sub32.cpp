@@ -2,12 +2,12 @@
 
 Tag2Sub32::Tag2Sub32()
     : Tag2Subpacket(Tag2Subpacket::EMBEDDED_SIGNATURE),
-      embedded()
+      embedded(nullptr)
 {}
 
 Tag2Sub32::Tag2Sub32(const Tag2Sub32 & copy)
     : Tag2Subpacket(copy),
-    embedded(std::dynamic_pointer_cast<Tag2> (copy.embedded -> clone()))
+      embedded(std::static_pointer_cast <Tag2> (copy.embedded -> clone()))
 {}
 
 Tag2Sub32::Tag2Sub32(const std::string & data)
@@ -26,8 +26,8 @@ void Tag2Sub32::read(const std::string & data){
 std::string Tag2Sub32::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indent_size, ' ');
     const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + 
-           tab + embedded -> show(indents, indent_size);
+    return tab + show_title() + "\n" +
+           embedded -> show(indents + 1, indent_size);
 }
 
 std::string Tag2Sub32::raw() const{
@@ -39,7 +39,7 @@ Tag2::Ptr Tag2Sub32::get_embedded() const{
 }
 
 void Tag2Sub32::set_embedded(const Tag2::Ptr & e){
-    embedded = std::dynamic_pointer_cast<Tag2> (e -> clone());
+    embedded = std::static_pointer_cast <Tag2> (e -> clone());
 }
 
 Tag2Subpacket::Ptr Tag2Sub32::clone() const{
@@ -48,6 +48,6 @@ Tag2Subpacket::Ptr Tag2Sub32::clone() const{
 
 Tag2Sub32 & Tag2Sub32::operator=(const Tag2Sub32 & copy){
     Tag2Subpacket::operator=(copy);
-    embedded = std::dynamic_pointer_cast<Tag2> (copy.embedded -> clone());
+    embedded = std::static_pointer_cast <Tag2> (copy.embedded -> clone());
     return *this;
 }
