@@ -20,24 +20,25 @@ void Tag17Sub1::read(const std::string & data){
     version = data[2];
     encoding = data[3];
     image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
+    size = image.size();
 }
 
 std::string Tag17Sub1::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     const decltype(Image_Attributes::NAME)::const_iterator ia_it = Image_Attributes::NAME.find(encoding);
-    std::string out = indent + tab + show_title() + "\n" +
-                      indent;
+    std::string out = indent + show_title() + "\n" +
+                      indent + tab;
 
     const std::string filename = "image" + std::to_string(current) + "." + ((ia_it == Image_Attributes::NAME.end())?"Unknown":(ia_it -> second));
     std::ofstream f(filename, std::ios::binary);
     if (f){
         f << image;
         f.close();
-        out += tab + "Check working directory for";
+        out += "Check working directory for";
     }
     else{
-        out += tab + "Error writing to";
+        out += "Error writing to";
     }
 
     return out + " '" + filename + "' (" + std::to_string(image.size()) + " octets).";
