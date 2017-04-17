@@ -111,7 +111,6 @@ int verify_binary(const PGPKey & key, const PGPMessage & message, std::string & 
             //            ... ,
             //        Tag2_1,
             //    Tag2_0
-            //
 
             // get signing key
             const Key::Ptr signing_key = find_signing_key(key);

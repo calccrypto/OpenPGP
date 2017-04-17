@@ -71,6 +71,27 @@ THE SOFTWARE.
 //             31 = Signature Target
 //             32 = Embedded Signature
 //     100 To 110 = Private or experimental
+//
+//    An implementation SHOULD ignore any subpacket of a type that it does
+//    not recognize.
+//
+//    Bit 7 of the subpacket type is the "critical" bit.  If set, it
+//    denotes that the subpacket is one that is critical for the evaluator
+//    of the signature to recognize.  If a subpacket is encountered that is
+//    marked critical but is unknown to the evaluating software, the
+//    evaluator SHOULD consider the signature to be in error.
+//
+//    An evaluator may "recognize" a subpacket, but not implement it.  The
+//    purpose of the critical bit is to allow the signer to tell an
+//    evaluator that it would prefer a new, unknown feature to generate an
+//    error than be ignored.
+//
+//    Implementations SHOULD implement the three preferred algorithm
+//    subpackets (11, 21, and 22), as well as the "Reason for Revocation"
+//    subpacket.  Note, however, that if an implementation chooses not to
+//    implement some of the preferences, it is required to behave in a
+//    polite manner to respect the wishes of those users who do implement
+//    these preferences.
 
 class Tag2Subpacket: public Subpacket {
     public:

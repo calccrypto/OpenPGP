@@ -41,7 +41,7 @@ Tag2::~Tag2(){
 void Tag2::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
     length = 0;
 
-    uint8_t first_octet = static_cast <unsigned char> (data[pos]);
+    const uint8_t first_octet = static_cast <unsigned char> (data[pos]);
     if (first_octet < 192){
         length = first_octet;
         pos += 1;
@@ -59,91 +59,96 @@ void Tag2::read_subpacket(const std::string & data, std::string::size_type & pos
 void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpackets){
     subpackets.clear();
     std::string::size_type pos = 0;
+
     while (pos < data.size()){
         // read subpacket data out
         std::string::size_type length;
         read_subpacket(data, pos, length);  // pos moved past header to [length + data]
 
-        // first octet of data is subpacket type
         Tag2Subpacket::Ptr subpacket = nullptr;
-        if (data[pos] == Tag2Subpacket::SIGNATURE_CREATION_TIME){
+
+        // first octet of data is subpacket type
+        // ignore critical bit until later
+        const uint8_t type = data[pos] & 0x7f;
+        if (type == Tag2Subpacket::SIGNATURE_CREATION_TIME){
             subpacket = std::make_shared <Tag2Sub2> ();
         }
-        else if (data[pos] == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
+        else if (type == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
             subpacket = std::make_shared <Tag2Sub3> ();
         }
-        else if (data[pos] == Tag2Subpacket::EXPORTABLE_CERTIFICATION){
+        else if (type == Tag2Subpacket::EXPORTABLE_CERTIFICATION){
             subpacket = std::make_shared <Tag2Sub4> ();
         }
-        else if (data[pos] == Tag2Subpacket::TRUST_SIGNATURE){
+        else if (type == Tag2Subpacket::TRUST_SIGNATURE){
             subpacket = std::make_shared <Tag2Sub5> ();
         }
-        else if (data[pos] == Tag2Subpacket::REGULAR_EXPRESSION){
+        else if (type == Tag2Subpacket::REGULAR_EXPRESSION){
             subpacket = std::make_shared <Tag2Sub6> ();
         }
-        else if (data[pos] == Tag2Subpacket::REVOCABLE){
+        else if (type == Tag2Subpacket::REVOCABLE){
             subpacket = std::make_shared <Tag2Sub7> ();
         }
-        else if (data[pos] == Tag2Subpacket::KEY_EXPIRATION_TIME){
+        else if (type == Tag2Subpacket::KEY_EXPIRATION_TIME){
             subpacket = std::make_shared <Tag2Sub9> ();
         }
-        else if (data[pos] == Tag2Subpacket::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY){
+        else if (type == Tag2Subpacket::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY){
             subpacket = std::make_shared <Tag2Sub10> ();
         }
-        else if (data[pos] == Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS){
+        else if (type == Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS){
             subpacket = std::make_shared <Tag2Sub11> ();
         }
-        else if (data[pos] == Tag2Subpacket::REVOCATION_KEY){
+        else if (type == Tag2Subpacket::REVOCATION_KEY){
             subpacket = std::make_shared <Tag2Sub12> ();
         }
-        else if (data[pos] == Tag2Subpacket::ISSUER){
+        else if (type == Tag2Subpacket::ISSUER){
             subpacket = std::make_shared <Tag2Sub16> ();
         }
-        else if (data[pos] == Tag2Subpacket::NOTATION_DATA){
+        else if (type == Tag2Subpacket::NOTATION_DATA){
             subpacket = std::make_shared <Tag2Sub20> ();
         }
-        else if (data[pos] == Tag2Subpacket::PREFERRED_HASH_ALGORITHMS){
+        else if (type == Tag2Subpacket::PREFERRED_HASH_ALGORITHMS){
             subpacket = std::make_shared <Tag2Sub21> ();
         }
-        else if (data[pos] == Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS){
+        else if (type == Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS){
             subpacket = std::make_shared <Tag2Sub22> ();
         }
-        else if (data[pos] == Tag2Subpacket::KEY_SERVER_PREFERENCES){
+        else if (type == Tag2Subpacket::KEY_SERVER_PREFERENCES){
             subpacket = std::make_shared <Tag2Sub23> ();
         }
-        else if (data[pos] == Tag2Subpacket::PREFERRED_KEY_SERVER){
+        else if (type == Tag2Subpacket::PREFERRED_KEY_SERVER){
             subpacket = std::make_shared <Tag2Sub24> ();
         }
-        else if (data[pos] == Tag2Subpacket::PRIMARY_USER_ID){
+        else if (type == Tag2Subpacket::PRIMARY_USER_ID){
             subpacket = std::make_shared <Tag2Sub25> ();
         }
-        else if (data[pos] == Tag2Subpacket::POLICY_URI){
+        else if (type == Tag2Subpacket::POLICY_URI){
             subpacket = std::make_shared <Tag2Sub26> ();
         }
-        else if (data[pos] == Tag2Subpacket::KEY_FLAGS){
+        else if (type == Tag2Subpacket::KEY_FLAGS){
             subpacket = std::make_shared <Tag2Sub27> ();
         }
-        else if (data[pos] == Tag2Subpacket::SIGNERS_USER_ID){
+        else if (type == Tag2Subpacket::SIGNERS_USER_ID){
             subpacket = std::make_shared <Tag2Sub28> ();
         }
-        else if (data[pos] == Tag2Subpacket::REASON_FOR_REVOCATION){
+        else if (type == Tag2Subpacket::REASON_FOR_REVOCATION){
             subpacket = std::make_shared <Tag2Sub29> ();
         }
-        else if (data[pos] == Tag2Subpacket::FEATURES){
+        else if (type == Tag2Subpacket::FEATURES){
             subpacket = std::make_shared <Tag2Sub30> ();
         }
-        else if (data[pos] == Tag2Subpacket::SIGNATURE_TARGET){
+        else if (type == Tag2Subpacket::SIGNATURE_TARGET){
             subpacket = std::make_shared <Tag2Sub31> ();
         }
-        else if (data[pos] == Tag2Subpacket::EMBEDDED_SIGNATURE){
+        else if (type == Tag2Subpacket::EMBEDDED_SIGNATURE){
             subpacket = std::make_shared <Tag2Sub32> ();
         }
         else{
-            throw std::runtime_error("Error: Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
+            throw std::runtime_error("Error: Tag 2 Subpacket tag not defined or reserved: " + std::to_string(type));
         }
 
         // subpacket guaranteed to be defined
         subpacket -> read(data.substr(pos + 1, length - 1));
+        subpacket -> set_critical(data[pos] & 0x80);
         subpackets.push_back(subpacket);
 
         // go to end of current subpacket
@@ -335,7 +340,6 @@ std::array <uint32_t, 3> Tag2::get_times() const{
             // 5.2.3.4. Signature Creation Time
             //    ...
             //    MUST be present in the hashed area.
-            //
             if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
                 times[0] = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
             }

@@ -13,15 +13,36 @@ std::string Subpacket::write_subpacket(const std::string & data) const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
+std::string Subpacket::show_title() const{
+    if (critical){
+        return "Critical: ";
+    }
+
+    return "";
+}
+
 Subpacket::Subpacket(uint8_t type, unsigned int size)
-    : type(type),
+    : critical(false),
+      type(type),
       size(size)
 {}
+
+Subpacket::Subpacket(const Subpacket & copy)
+    : critical(copy.critical),
+      type(copy.type),
+      size(copy.size)
+{}
+
+Subpacket & Subpacket::operator=(const Subpacket & copy){
+    type = copy.type;
+    size = copy.size;
+    return *this;
+}
 
 Subpacket::~Subpacket(){}
 
 std::string Subpacket::write() const{
-    return write_subpacket(std::string(1, type) + raw());
+    return write_subpacket(std::string(1, type | (critical?0x80:0x00)) + raw());
 }
 
 uint8_t Subpacket::get_type() const{
@@ -32,21 +53,14 @@ std::size_t Subpacket::get_size() const{
     return size;
 }
 
+void Subpacket::set_critical(const bool c){
+    critical = c;
+}
+
 void Subpacket::set_type(const uint8_t t){
     type = t;
 }
 
 void Subpacket::set_size(const std::size_t s){
     size = s;
-}
-
-Subpacket::Subpacket(const Subpacket & copy)
-    : type(copy.type),
-      size(copy.size)
-{}
-
-Subpacket & Subpacket::operator=(const Subpacket & copy){
-    type = copy.type;
-    size = copy.size;
-    return *this;
 }

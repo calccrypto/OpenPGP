@@ -4,34 +4,19 @@
 void Tag17::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
     length = 0;
 
-    uint8_t first_octet = data[pos];
+    const uint8_t first_octet = static_cast <unsigned char> (data[pos]);
     if (first_octet < 192){
         length = first_octet;
         pos += 1;
     }
-    else if ((192 <= first_octet) & (first_octet < 255)){
-        length = toint(data.substr(0, 2), 256) - (192 << 8) + 192;
+    else if ((192 <= first_octet) && (first_octet < 255)){
+        length = toint(data.substr(pos, 2), 256) - (192 << 8) + 192;
         pos += 2;
     }
     else if (first_octet == 255){
-        length = toint(data.substr(1, 4), 256);
+        length = toint(data.substr(pos + 1, 4), 256);
         pos += 5;
     }
-
-    pos += length;
-}
-
-std::string Tag17::write_subpacket(uint8_t s_type, std::string data) const{
-    if (data.size() < 192){
-        return std::string(1, data.size()) + std::string(1, s_type) + data;
-    }
-    else if ((192 <= data.size()) && (data.size() < 8383)){
-        return unhexlify(makehex(((((data.size() >> 8) + 192) << 8) + (data.size() & 0xff) - 192), 4)) + std::string(1, s_type) + data;
-    }
-    else{
-        return "\xff" + unhexlify(makehex(data.size(), 8)) + std::string(1, s_type) + data;
-    }
-    return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
 Tag17::Tag17()
@@ -63,12 +48,12 @@ Tag17::~Tag17(){
 }
 
 void Tag17::read(const std::string & data){
-    std::string::size_type pos = 0;
     size = data.size();
 
     // read subpackets
+    std::string::size_type pos = 0;
     while (pos < size){
-        std::string::size_type length = 0;
+        std::string::size_type length;
         read_subpacket(data, pos, length);
 
         Tag17Subpacket::Ptr subpacket = nullptr;
@@ -76,7 +61,7 @@ void Tag17::read(const std::string & data){
             subpacket = std::make_shared <Tag17Sub1> ();
         }
         else {
-            throw std::runtime_error("Error: Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
+            throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
         }
 
         subpacket -> read(data.substr(pos + 1, length - 1));

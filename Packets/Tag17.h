@@ -77,7 +77,6 @@ class Tag17 : public User{
         Attributes attributes;
 
         void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
-        std::string write_subpacket(uint8_t s_type, std::string data) const;
 
     public:
         typedef std::shared_ptr <Tag17> Ptr;

@@ -185,7 +185,7 @@ Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t &
             out = std::make_shared <Tag63> ();
         }
         else{
-            throw std::runtime_error("Error: Tag not defined.");
+            throw std::runtime_error("Error: Tag not defined: " + std::to_string(tag) + ".");
         }
     }
 

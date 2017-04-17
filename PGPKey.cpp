@@ -44,7 +44,7 @@ std::string PGPKey::keyid() const{
     return std::static_pointer_cast <Key> (packets[0]) -> get_keyid();
 }
 
-// output style inspired from pgp.mit.edu (sks)
+// output style inspired by gpg and SKS Keyserver/pgp.mit.edu
 std::string PGPKey::list_keys(const std::size_t indents, const std::size_t indent_size) const{
     std::string error;
     if (!meaningful(error)){
@@ -80,7 +80,7 @@ std::string PGPKey::list_keys(const std::size_t indents, const std::size_t inden
             for(Tag17Subpacket::Ptr const & s : std::static_pointer_cast <Tag17> (p) -> get_attributes()){
                 // since only subpacket type 1 is defined
                 out << "\n"
-                    << indent << "att                   [jpeg image of size " << std::static_pointer_cast <Tag17Sub1> (s) -> get_image().size() << "]";
+                    << indent << "att  att  [jpeg image of size " << std::static_pointer_cast <Tag17Sub1> (s) -> get_image().size() << "]";
             }
         }
         // Signature
@@ -106,7 +106,7 @@ std::string PGPKey::list_keys(const std::size_t indents, const std::size_t inden
                 out << " " << show_date(times[0]);
             }
             // else{
-                // out << " " << std::setfill(' ') << std::setw(10) ;
+                // out << " " << std::setfill(' ') << std::setw(10);
             // }
 
             // if the signature expires
@@ -114,7 +114,7 @@ std::string PGPKey::list_keys(const std::size_t indents, const std::size_t inden
                 out << " " << show_date(times[1]);
             }
             else{
-                out << " " << std::setfill(' ') << std::setw(10) ;
+                out << " " << std::setfill(' ') << std::setw(10);
             }
 
             // if the key expires
@@ -122,7 +122,7 @@ std::string PGPKey::list_keys(const std::size_t indents, const std::size_t inden
                 out << " " << show_date(times[2]);
             }
             else{
-                out << " " << std::setfill(' ') << std::setw(10) ;
+                out << " " << std::setfill(' ') << std::setw(10);
             }
         }
         else{}

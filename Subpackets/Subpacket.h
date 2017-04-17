@@ -90,13 +90,14 @@ THE SOFTWARE.
 
 class Subpacket{
     protected:
+        bool critical;
         uint8_t type;
         std::size_t size; // only used for displaying. recalculated when writing
 
         std::string write_subpacket(const std::string & data) const;
 
         // returns first line of show functions (no tab or newline)
-        virtual std::string show_title() const = 0;
+        virtual std::string show_title() const;
 
         Subpacket(uint8_t type = 0, unsigned int size = 0);
         Subpacket(const Subpacket & copy);
@@ -108,12 +109,14 @@ class Subpacket{
         virtual ~Subpacket();
         virtual void read(const std::string & data) = 0;
         virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
-        virtual std::string raw() const = 0; // returns raw subpacket data, with no header
-        std::string write() const;
+        virtual std::string raw()   const = 0; // returns raw subpacket data, with no header
+        std::string write()         const;
 
-        uint8_t get_type() const;
-        std::size_t get_size() const;
+        bool get_critical()         const;
+        uint8_t get_type()          const;
+        std::size_t get_size()      const;
 
+        void set_critical(const bool c);
         void set_type(const uint8_t t);
         void set_size(const std::size_t s);
 };
