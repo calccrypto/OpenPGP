@@ -194,7 +194,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     // User Attribute packets and User ID packets may be freely intermixed
     // in this section, so long as the signatures that follow them are
     // maintained on the proper User Attribute or User ID packet.
-    std::size_t user_id_count = 0;
+    bool user_id = false;
     do{
         // make sure there is a User packet
         if ((packets[i] -> get_tag() != Packet::USER_ID)       &&
@@ -204,7 +204,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         }
 
         // need at least one User ID packet
-        user_id_count += (packets[i] -> get_tag() == Packet::USER_ID);
+        user_id |= (packets[i] -> get_tag() == Packet::USER_ID);
 
         // go to next packet
         i++;
@@ -237,7 +237,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
              (Packet::is_user(packets[i] -> get_tag())));
 
     // need at least one User ID packet
-    if (!user_id_count){
+    if (!user_id){
         error += "Error: Need at least one " + Packet::NAME.at(Packet::USER_ID) + ".\n";
         return false;
     }

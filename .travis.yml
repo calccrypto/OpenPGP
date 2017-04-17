@@ -16,7 +16,7 @@ matrix:
         - export CXX=g++-4.8
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -32,7 +32,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -48,7 +48,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -64,7 +64,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -80,7 +80,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -97,7 +97,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests
 
@@ -114,6 +114,6 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make gdb-debug
+        - make gpg-debug
       script:
         - ./tests

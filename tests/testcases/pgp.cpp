@@ -144,7 +144,31 @@ TEST(PGP, revoke_key){
 
 // TEST(PGP, revoke_subkey){}
 
-// TEST(PGP, revoke_uid){}
+TEST(PGP, revoke_uid){
+    std::string error;
+
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    const RevArgs revargs(pri, PASSPHRASE, pri);
+    const PGPRevocationCertificate rev = revoke_key_cert(revargs, error);
+    ASSERT_EQ(rev.meaningful(error), true);
+
+    // make sure that the revocation certificate generated is for this key
+    EXPECT_EQ(verify_revoke(pri, rev, error), true);
+
+    // revoke directly on the key and make sure it is revoked
+    const PGPPublicKey dirrevpub = revoke_subkey(revargs, error);
+    EXPECT_EQ(check_revoked(dirrevpub, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+
+    error = "";
+
+    // revoke the key and make sure the returned public key is revoked
+    const PGPPublicKey revpub = revoke_with_cert(pri, rev, error);
+    EXPECT_EQ(check_revoked(revpub, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+}
 
 TEST(PGP, encrypt_decrypt_pka_mdc){
     std::string error;
