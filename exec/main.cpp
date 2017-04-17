@@ -31,21 +31,19 @@ THE SOFTWARE.
 
 #include "modules/modules.h"
 
-std::string::size_type help(const std::string & match = "",
-                            const bool show_header    = false,
+std::ostream & show_header(std::ostream & stream = std::cout,
+                           std::string indent    = ""){
+    return stream << indent << "An OpenPGP implementation (RFC 4880)\n"
+           << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
+           << indent << "    help [module name] - print all modules with matching name\n"
+           << std::endl;
+}
+
+std::size_t help(const std::string & match = "",
                             std::ostream & stream     = std::cout,
                             std::string indent        = ""){
-    if (show_header){
-        stream << indent << "An OpenPGP implementation (RFC 4880)\n"
-               << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
-               << indent << "All optional flags default to false\n\n"
-               << indent << "    help [module name]- print all modules with matching name\n"
-               << std::endl;
-        indent += "    ";
-    }
-
     const std::regex regex(match);
-    std::string::size_type found = 0;
+    std::size_t found = 0;
     for(module::Module const & cmd : module::ordered){
         if (std::regex_search(cmd.get_name(), regex)){
             stream << cmd.help(indent) << std::endl;
@@ -58,16 +56,23 @@ std::string::size_type help(const std::string & match = "",
 
 int main(int argc, char * argv[]){
     if (argc == 1){
-        return help("", true);
+        show_header(std::cout);
+        help("", std::cout, "    ");
+        return 0;
     }
 
     // if requesting help
-    if (!std::strncmp(argv[1],"help", 4)){
+    if (!std::strncmp(argv[1], "help", 4)){
         if (argc == 2){
-            help("", true);
+            show_header(std::cout);
+            help("", std::cout, "    ");
         }
         else{
-            help(argv[2], false);
+            std::stringstream s;
+            const std::size_t found = help(argv[2], s, "    ");
+            if (found){
+                std::cout << found << " matches:\n" << s.str() << std::flush;
+            }
         }
         return 0;
     }
@@ -85,8 +90,9 @@ int main(int argc, char * argv[]){
     if (it == mapping.end()){
         std::cerr << "Error: Function " << argv[1] << " not found." << std::endl;
         std::stringstream s;
-        if (help(argv[1], false, s, "    ")){
-            std::cout << "Possible matches:\n" << s.str() << std::endl;
+        const std::size_t found = help(argv[1], s, "    ");
+        if (found){
+            std::cout << found << " matches:\n" << s.str() << std::flush;
         }
         return -1;
     }
