@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "../cfb.h"
+#include "../Misc/cfb.h"
 #include "packet.h"
 #include "s2k.h"
 

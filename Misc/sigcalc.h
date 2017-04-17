@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "Hashes/Hashes.h"
-#include "Packets/packets.h"
+#include "../Hashes/Hashes.h"
+#include "../Packets/packets.h"
 #include "pgptime.h"
 
 // Modify data for signature version 3 or 4

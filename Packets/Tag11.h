@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <fstream>
 #include <sstream>
 
-#include "../pgptime.h"
+#include "../Misc/pgptime.h"
 #include "packet.h"
 
 // 5.9. Literal Data Packet (Tag 11)

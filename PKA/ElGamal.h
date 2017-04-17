@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include "../RNG/RNGs.h"
 #include "../common/includes.h"
-#include "../mpi.h"
-#include "../pgptime.h"
+#include "../Misc/mpi.h"
+#include "../Misc/pgptime.h"
 #include "PKA.h"
 
 // Generate ElGamal key values

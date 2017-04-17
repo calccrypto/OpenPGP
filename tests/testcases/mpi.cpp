@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "mpi.h"
+#include "Misc/mpi.h"
 
 const int COUNT = 10;
 

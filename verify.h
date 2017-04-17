@@ -28,16 +28,16 @@ THE SOFTWARE.
 
 #include <string>
 
+#include "Misc/PKCS1.h"
+#include "Misc/mpi.h"
+#include "Misc/sigcalc.h"
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
 #include "PGPRevocationCertificate.h"
 #include "PKA/PKAs.h"
-#include "PKCS1.h"
 #include "Packets/packets.h"
-#include "mpi.h"
-#include "sigcalc.h"
 
 // pka_verify with variables only
 int pka_verify(const std::string & digest, const uint8_t hash, const uint8_t pka, const PKA::Values & signer, const PKA::Values & signee, std::string & error);

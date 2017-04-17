@@ -31,13 +31,13 @@ THE SOFTWARE.
 
 #include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
+#include "Misc/PKCS1.h"
+#include "Misc/cfb.h"
+#include "Misc/mpi.h"
+#include "Misc/pgptime.h"
+#include "Misc/sigcalc.h"
 #include "PGPKey.h"
 #include "PKA/PKAs.h"
-#include "PKCS1.h"
-#include "cfb.h"
-#include "mpi.h"
-#include "pgptime.h"
-#include "sigcalc.h"
 #include "sign.h"
 
 // self-signs all signature packets whose Key ID is the given key's Key ID

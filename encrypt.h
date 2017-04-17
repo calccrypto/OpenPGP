@@ -32,11 +32,11 @@ THE SOFTWARE.
 #include "Compress/Compress.h"
 #include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
+#include "Misc/PKCS1.h"
+#include "Misc/cfb.h"
 #include "PGPKey.h"
 #include "PGPMessage.h"
 #include "PKA/PKAs.h"
-#include "PKCS1.h"
-#include "cfb.h"
 #include "revoke.h"
 #include "sign.h"
 

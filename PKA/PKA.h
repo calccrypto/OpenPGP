@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <vector>
 
-#include "../mpi.h"
+#include "../Misc/mpi.h"
 
 namespace PKA{
     typedef std::vector <std::size_t> Params;

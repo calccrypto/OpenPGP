@@ -31,8 +31,8 @@ THE SOFTWARE.
 #include <iostream>
 
 #include "../common/cryptomath.h"
-#include "../mpi.h"
-#include "../pgptime.h"
+#include "../Misc/mpi.h"
+#include "../Misc/pgptime.h"
 
 class BBS{
     private:

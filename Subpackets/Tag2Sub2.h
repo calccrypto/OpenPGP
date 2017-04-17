@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB2__
 #define __TAG2_SUB2__
 
-#include "../pgptime.h"
+#include "../Misc/pgptime.h"
 #include "Tag2Subpacket.h"
 
 // 5.2.3.4. Signature Creation Time

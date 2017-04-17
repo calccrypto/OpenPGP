@@ -33,10 +33,9 @@ THE SOFTWARE.
 #include <vector>
 #include <utility>
 
-#include "common/includes.h"
+#include "Misc/radix64.h"
 #include "Packets/packets.h"
-#include "pgptime.h"
-#include "radix64.h"
+#include "common/includes.h"
 
 class PGP{
     public:

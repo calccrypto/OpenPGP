@@ -33,6 +33,9 @@ THE SOFTWARE.
 
 #include "Compress/Compress.h"
 #include "Hashes/Hashes.h"
+#include "Misc/mpi.h"
+#include "Misc/pgptime.h"
+#include "Misc/sigcalc.h"
 #include "PGPCleartextSignature.h"
 #include "PGPDetachedSignature.h"
 #include "PGPKey.h"
@@ -41,10 +44,7 @@ THE SOFTWARE.
 #include "Packets/packets.h"
 #include "common/includes.h"
 #include "decrypt.h"
-#include "mpi.h"
-#include "pgptime.h"
 #include "revoke.h"
-#include "sigcalc.h"
 #include "verify.h"
 
 // internal functions

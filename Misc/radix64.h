@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "common/includes.h"
+#include "../common/includes.h"
 
 // 6.1.  An Implementation of the CRC-24 in "C"
 //

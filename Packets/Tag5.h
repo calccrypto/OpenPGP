@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "../cfb.h"
-#include "../mpi.h"
+#include "../Misc/cfb.h"
+#include "../Misc/mpi.h"
 #include "Tag6.h"
 #include "s2k.h"
 

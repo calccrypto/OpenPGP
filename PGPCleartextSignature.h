@@ -26,9 +26,9 @@ THE SOFTWARE.
 #ifndef __PGP_CLEARTEXT_SIGNATURE__
 #define __PGP_CLEARTEXT_SIGNATURE__
 
+#include "Misc/sigcalc.h"
 #include "PGP.h"
 #include "PGPDetachedSignature.h"
-#include "sigcalc.h"
 
 // 7. Cleartext Signature Framework
 //

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "../Hashes/Hashes.h"
 #include "../PKA/PKAs.h"
-#include "../mpi.h"
+#include "../Misc/mpi.h"
 #include "packet.h"
 
 // For Tags 5, 6, 7, and 14

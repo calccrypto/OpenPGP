@@ -19,13 +19,13 @@ gpg-debug: debug
 Tag2Subpacket.o: Tag2Subpacket.cpp Tag2Subpacket.h Subpacket.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2Sub2.o: Tag2Sub2.cpp Tag2Sub2.h ../pgptime.h Tag2Subpacket.h
+Tag2Sub2.o: Tag2Sub2.cpp Tag2Sub2.h ../Misc/pgptime.h Tag2Subpacket.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2Sub3.o: Tag2Sub3.cpp Tag2Sub3.h ../pgptime.h Tag2Subpacket.h
+Tag2Sub3.o: Tag2Sub3.cpp Tag2Sub3.h ../Misc/pgptime.h Tag2Subpacket.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2Sub9.o: Tag2Sub9.cpp Tag2Sub9.h ../pgptime.h Tag2Subpacket.h
+Tag2Sub9.o: Tag2Sub9.cpp Tag2Sub9.h ../Misc/pgptime.h Tag2Subpacket.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 Tag2Sub11.o: Tag2Sub11.cpp Tag2Sub11.h  ../Encryptions/Encryptions.h Tag2Subpacket.h

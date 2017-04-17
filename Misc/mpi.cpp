@@ -1,6 +1,6 @@
 #include "mpi.h"
 
-#include "RNG/BBS.h"
+#include "../RNG/BBS.h"
 
 PGPMPI hextompi(const std::string & hex){
     return PGPMPI(hex, 16);

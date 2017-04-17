@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <stdexcept>
 
-#include "common/includes.h"
-#include "Hashes/Hashes.h"
-#include "RNG/RNGs.h"
+#include "../Hashes/Hashes.h"
+#include "../RNG/RNGs.h"
+#include "../common/includes.h"
 #include "mpi.h"
 #include "pgptime.h"
 
