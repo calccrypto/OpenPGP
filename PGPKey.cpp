@@ -227,8 +227,12 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::SIGNATURE)){
             const Tag2::Ptr sig = std::static_pointer_cast <Tag2> (packets[i]);
             if (!Signature_Type::is_certification(sig -> get_type())){
-                if ((user -> get_tag() != Packet::USER_ID) ||
-                    (sig -> get_type() != Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE)){
+                // User IDs can have revocation signatures
+                if ((user -> get_tag() == Packet::USER_ID) &&
+                    (sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE)){
+                    error += "Warning: Revocation Signature found on UID.\n";
+                }
+                else{
                     error += "Error: Signature is not a certification or revocation.\n";
                     return false;
                 }

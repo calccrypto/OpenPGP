@@ -113,12 +113,12 @@ PGPRevocationCertificate revoke_key_cert    (const RevArgs & args, std::string &
 PGPRevocationCertificate revoke_subkey_cert (const RevArgs & args, const std::string & keyid, std::string & error);
 PGPRevocationCertificate revoke_uid_cert    (const RevArgs & args, const std::string & ID, std::string & error);
 
+// Revoke with certificate 
+PGPPublicKey revoke_with_cert               (const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
+
 // Directly Revoke (does not write to key; instead, returns new copy of public key)
 PGPPublicKey revoke_key                     (const RevArgs & args, std::string & error);
 PGPPublicKey revoke_subkey                  (const RevArgs & args, const std::string & keyid, std::string & error);
 PGPPublicKey revoke_uid                     (const RevArgs & args, const std::string & ID, std::string & error);
-
-// Revoke key/subkey with certificate (not uid)
-PGPPublicKey revoke_with_cert               (const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
 
 #endif

@@ -41,7 +41,7 @@ std::string Tag17Sub1::show(const std::size_t indents, const std::size_t indent_
         out += "Error writing to";
     }
 
-    return out + " '" + filename + "' (" + std::to_string(image.size()) + " octets).";
+    return out + " '" + filename + "'.";
 }
 
 std::string Tag17Sub1::raw() const{

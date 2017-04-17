@@ -129,20 +129,53 @@ TEST(PGP, revoke_key){
     // make sure that the revocation certificate generated is for this key
     EXPECT_EQ(verify_revoke(pri, rev, error), true);
 
-    // revoke directly on the key and make sure it is revoked
-    const PGPPublicKey dirrevpub = revoke_key(revargs, error);
-    EXPECT_EQ(check_revoked(dirrevpub, error), true);
+    // revoke the key and make sure the returned public key is revoked
+    const PGPPublicKey revpub = revoke_with_cert(pri, rev, error);
+    EXPECT_EQ(revpub.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(revpub, error), true);
     EXPECT_EQ(error, "Warning: Revocation Signature found on primary key.\n");
 
     error = "";
 
-    // revoke the key and make sure the returned public key is revoked
-    const PGPPublicKey revpub = revoke_with_cert(pri, rev, error);
-    EXPECT_EQ(check_revoked(revpub, error), true);
+    // revoke directly on the key and make sure it is revoked
+    const PGPPublicKey dirrevpub = revoke_key(revargs, error);
+    EXPECT_EQ(dirrevpub.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(dirrevpub, error), true);
     EXPECT_EQ(error, "Warning: Revocation Signature found on primary key.\n");
 }
 
-// TEST(PGP, revoke_subkey){}
+TEST(PGP, revoke_subkey){
+    std::string error;
+
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    const RevArgs revargs(pri, PASSPHRASE, pri);
+    const PGPRevocationCertificate rev = revoke_subkey_cert(revargs, unhexlify("d27061e1"), error);
+    rev.meaningful(error);
+    ASSERT_EQ(rev.meaningful(error), true);
+
+    // make sure that the revocation certificate generated is for this key
+    EXPECT_EQ(verify_revoke(pri, rev, error), true);
+
+    // revoke the subkey and make sure the returned public key is revoked
+    const PGPPublicKey revsub = revoke_with_cert(pri, rev, error);
+    EXPECT_EQ(revsub.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(revsub, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+
+    error = "";
+
+    // revoke directly on the key and make sure it is revoked
+    const PGPPublicKey dirrevsub = revoke_subkey(revargs, unhexlify("d27061e1"), error);
+    EXPECT_EQ(dirrevsub.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(dirrevsub, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+}
 
 TEST(PGP, revoke_uid){
     std::string error;
@@ -151,23 +184,27 @@ TEST(PGP, revoke_uid){
     ASSERT_EQ(pri.meaningful(error), true);
 
     const RevArgs revargs(pri, PASSPHRASE, pri);
-    const PGPRevocationCertificate rev = revoke_key_cert(revargs, error);
+    const PGPRevocationCertificate rev = revoke_uid_cert(revargs, "alice", error);
     ASSERT_EQ(rev.meaningful(error), true);
 
     // make sure that the revocation certificate generated is for this key
     EXPECT_EQ(verify_revoke(pri, rev, error), true);
 
-    // revoke directly on the key and make sure it is revoked
-    const PGPPublicKey dirrevpub = revoke_subkey(revargs, error);
-    EXPECT_EQ(check_revoked(dirrevpub, error), true);
-    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+    // revoke the uid and make sure the returned public key is revoked
+    const PGPPublicKey revuid = revoke_with_cert(pri, rev, error);
+    EXPECT_EQ(revuid.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(revuid, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on UID.\n");
 
     error = "";
 
-    // revoke the key and make sure the returned public key is revoked
-    const PGPPublicKey revpub = revoke_with_cert(pri, rev, error);
-    EXPECT_EQ(check_revoked(revpub, error), true);
-    EXPECT_EQ(error, "Warning: Revocation Signature found on subkey.\n");
+    // revoke directly on the key and make sure it is revoked
+    const PGPPublicKey dirrevuid = revoke_uid(revargs, "alice", error);
+    EXPECT_EQ(dirrevuid.meaningful(error), true);
+    error = "";
+    EXPECT_EQ(check_revoked(dirrevuid, error), true);
+    EXPECT_EQ(error, "Warning: Revocation Signature found on UID.\n");
 }
 
 TEST(PGP, encrypt_decrypt_pka_mdc){
