@@ -40,9 +40,18 @@ std::string PGPKey::keyid() const{
         throw std::runtime_error("Error: Bad Key.");
     }
 
-    // guaranteed to have at least 2 packets
     return std::static_pointer_cast <Key> (packets[0]) -> get_keyid();
 }
+
+std::string PGPKey::fingerprint() const{
+    std::string error;
+    if (!meaningful(error)){
+        throw std::runtime_error("Error: Bad Key.");
+    }
+
+    return std::static_pointer_cast <Key> (packets[0]) -> get_fingerprint();
+}
+
 
 // output style inspired by gpg and SKS Keyserver/pgp.mit.edu
 std::string PGPKey::list_keys(const std::size_t indents, const std::size_t indent_size) const{

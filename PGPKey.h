@@ -53,7 +53,10 @@ class PGPKey : public PGP {
         // keyid that is searched for on keyservers
         std::string keyid() const;
 
-        // output is copied from gpg --list-keys
+        // fingerprint of entire key (primary key packet)
+        std::string fingerprint() const;
+
+        // output style inspired by gpg and SKS Keyserver/pgp.mit.edu
         std::string list_keys(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
 
         // whether or not PGP data matches a Key format without constructing a new object

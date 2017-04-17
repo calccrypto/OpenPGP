@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "module.h"
 
 #include "list.h"
+#include "fingerprint.h"
 #include "show.h"
 #include "show_cleartext_signature.h"
 #include "extract_public.h"
@@ -63,6 +64,7 @@ namespace module {
 
 const std::vector <Module> ordered = {
     list,
+    fingerprint,
     show,
     show_cleartext_signature,
     extract_public,
