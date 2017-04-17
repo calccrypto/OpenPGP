@@ -372,7 +372,7 @@ int verify_revoke(const PGPKey & key, const PGPRevocationCertificate & revoke, s
         // search each packet for a subkey
         for(Packet::Ptr const & p : key.get_packets()){
             if (Packet::is_subkey(p -> get_tag())){
-                const int rc = pka_verify(use_hash(revoke_sig -> get_hash(), addtrailer(overkey(std::static_pointer_cast <Key> (p)), revoke_sig)), signing_key, revoke_sig, error);
+                const int rc = pka_verify(to_sign_28(std::static_pointer_cast <Key> (p), revoke_sig), signing_key, revoke_sig, error);
                 if (rc == true){
                     return true;
                 }

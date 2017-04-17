@@ -44,7 +44,6 @@ const Module generate_revoke_uid_cert(
     // optional arguments
     {
         std::make_pair("-o", std::make_pair("output file",        "")),
-        std::make_pair("-c", std::make_pair("code (0-3)",        "0")),
         std::make_pair("-r", std::make_pair("reason",             "")),
         std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
         std::make_pair("-u", std::make_pair("User ID to match",   "")),
@@ -64,13 +63,6 @@ const Module generate_revoke_uid_cert(
             return -1;
         }
 
-        unsigned int code;
-        std::stringstream s(args.at("-c"));
-        if (!(s >> code) || !Revoke::is_key_revocation(code)){
-            std::cerr << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
-            return -1;
-        }
-
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
             std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
@@ -80,7 +72,7 @@ const Module generate_revoke_uid_cert(
         const RevArgs revargs(pri,
                               args.at("passphrase"),
                               pri,
-                              static_cast <uint8_t> (code),
+                              Revoke::USER_ID_INFORMATION_IS_NO_LONGER_VALID,
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));

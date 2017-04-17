@@ -264,6 +264,22 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
         i++;
 
+        #ifdef GPG_COMPATIBLE
+        // gpg places revocation signature before subkey signature
+        if ((packets[i] -> get_tag() == Packet::SIGNATURE) &&
+            (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE)){
+            error += "Warning: Revocation Signature found on subkey.\n";
+            i++;
+
+            // make sure there is at least 1 more signature packet after the revocation signature
+            if ((i >= packets.size())                         ||
+                (packets[i] -> get_tag() != Packet::SIGNATURE)){
+                error += "Error: Signature packet not following revocation signature.\n";
+                return false;
+            }
+        }
+        #endif
+
         //    - After each Subkey packet, one Signature packet, plus optionally a revocation
         if ((i >= packets.size())                         ||
             (packets[i] -> get_tag() != Packet::SIGNATURE)){
@@ -271,16 +287,15 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
             return false;
         }
 
-        // #ifndef GPG_COMPATIBLE
-        // // check that the Signature packet is a Subkey binding signature
-        // if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() != Signature_Type::SUBKEY_BINDING_SIGNATURE){
-            // error += "Error: Signature packet following subpacket is not of type " + Signature_Type::NAME.at(Signature_Type::SUBKEY_BINDING_SIGNATURE) + ".\n";
-            // return false;
-        // }
-        // #endif
+        // check that the Signature packet is a Subkey binding signature
+        if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() != Signature_Type::SUBKEY_BINDING_SIGNATURE){
+            error += "Error: Signature packet following subpacket is not of type " + Signature_Type::NAME.at(Signature_Type::SUBKEY_BINDING_SIGNATURE) + ".\n";
+            return false;
+        }
 
         i++;
 
+        #ifndef GPG_COMPATIBLE
         // if there are no more packets to check, stop checking
         if (i >= packets.size()){
             break;
@@ -289,16 +304,15 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         // optionally a revocation
         if (packets[i] -> get_tag() == Packet::SIGNATURE){
             if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
-                std::cerr << "Warning: Revocation Signature found on subkey." << std::endl;
+                error += "Warning: Revocation Signature found on subkey.\n";
                 i++;
             }
-            #ifndef GPG_COMPATIBLE
             else{
                 error += "Error: Signature packet following subkey signature is not a " + Signature_Type::NAME.at(Signature_Type::SUBKEY_REVOCATION_SIGNATURE) + ".\n";
                 return false;
             }
-            #endif
         }
+        #endif
     }
 
     // the index should be at the end of the packets

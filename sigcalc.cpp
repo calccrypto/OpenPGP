@@ -250,6 +250,14 @@ std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){
 }
 
 std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
+    if (!key){
+        throw std::runtime_error("Error: No key packet.");
+    }
+
+    if (!Packet::is_primary_key(key -> get_tag())){
+        throw std::runtime_error("Error: Bad key packet.");
+    }
+
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
@@ -261,7 +269,15 @@ std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
     return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
-std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
+std::string to_sign_28(const Key::Ptr & subkey, const Tag2::Ptr & tag2){
+    if (!subkey){
+        throw std::runtime_error("Error: No subkey packet.");
+    }
+
+    if (!Packet::is_subkey(subkey -> get_tag())){
+        throw std::runtime_error("Error: Bad subkey packet.");
+    }
+
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
@@ -270,7 +286,7 @@ std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2){
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
+    return use_hash(tag2 -> get_hash(), addtrailer(overkey(subkey), tag2));
 }
 
 std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){

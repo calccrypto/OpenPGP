@@ -185,7 +185,7 @@ std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2);
 //    by the top-level signature key that is bound to this subkey, or
 //    by an authorized revocation key, should be considered valid
 //    revocation signatures.
-std::string to_sign_28(const Key::Ptr & key, const Tag2::Ptr & tag2);
+std::string to_sign_28(const Key::Ptr & subkey, const Tag2::Ptr & tag2);
 
 // 0x30: Certification revocation signature
 //    This signature revokes an earlier User ID certification signature
