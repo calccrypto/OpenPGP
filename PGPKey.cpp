@@ -194,7 +194,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     // User Attribute packets and User ID packets may be freely intermixed
     // in this section, so long as the signatures that follow them are
     // maintained on the proper User Attribute or User ID packet.
-    bool user_id = false;
+    Tag13::Ptr user_id = nullptr;
     do{
         // make sure there is a User packet
         if ((packets[i] -> get_tag() != Packet::USER_ID)       &&
@@ -203,8 +203,10 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
             return false;
         }
 
-        // need at least one User ID packet
-        user_id |= (packets[i] -> get_tag() == Packet::USER_ID);
+        const User::Ptr user = std::static_pointer_cast <User> (packets[i]);
+        if (user -> get_tag() == Packet::USER_ID){
+            user_id = std::static_pointer_cast <Tag13> (user);
+        }
 
         // go to next packet
         i++;
@@ -223,13 +225,14 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
         // calculated on the immediately preceding User Attribute packet and the
         // initial Public-Key packet.
         while ((i < packets.size()) && (packets[i] -> get_tag() == Packet::SIGNATURE)){
-            #ifndef GPG_COMPATIBLE
-            // make sure the signature type is a certification
-            if (!Signature_Type::is_certification(std::static_pointer_cast <Tag2> (packets[i]) -> get_type())){
-                error += "Error: Signature type is not a certification packet.\n";
-                return false;
+            const Tag2::Ptr sig = std::static_pointer_cast <Tag2> (packets[i]);
+            if (!Signature_Type::is_certification(sig -> get_type())){
+                if ((user -> get_tag() != Packet::USER_ID) ||
+                    (sig -> get_type() != Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE)){
+                    error += "Error: Signature is not a certification or revocation.\n";
+                    return false;
+                }
             }
-            #endif
 
             i++;
         }
