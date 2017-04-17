@@ -1,5 +1,4 @@
 # from <https://github.com/taocpp/PEGTL/blob/master/.travis.yml>
-# and  <https://gronlier.fr/blog/2015/01/adding-code-coverage-to-your-c-project/>
 
 language: cpp
 
@@ -17,7 +16,7 @@ matrix:
         - export CXX=g++-4.8
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -33,7 +32,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -49,7 +48,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -65,7 +64,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -81,7 +80,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -98,7 +97,7 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
 
@@ -115,6 +114,6 @@ matrix:
         - chmod +x gtest.sh
         - ./gtest.sh
         - cd tests
-        - make debug
+        - make gdb-debug
       script:
         - ./tests
