@@ -426,7 +426,7 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     return sig;
 }
 
-PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, std::string & error){
+PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time, std::string & error){
     if (!args.valid(error)){
         error += "Error: Bad arguments.\n";
         return PGPDetachedSignature();

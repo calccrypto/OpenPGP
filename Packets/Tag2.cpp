@@ -231,7 +231,7 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
                indent + tab + "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")";
 
         if (hashed_subpackets.size()){
-            time_t create_time = 0;
+            uint32_t create_time = 0;
 
             out += "\n" + indent + tab + "Hashed Sub:";
             for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
@@ -250,7 +250,7 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
         }
 
         if (unhashed_subpackets.size()){
-            time_t create_time = 0;
+            uint32_t create_time = 0;
 
             out += "\n" + indent + tab + "Unhashed Sub:";
             for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
@@ -324,18 +324,56 @@ PKA::Values Tag2::get_mpi() const{
     return mpi;
 }
 
-uint32_t Tag2::get_time() const{
+std::array <uint32_t, 3> Tag2::get_times() const{
+    std::array <uint32_t, 3> times = {0, 0, 0};
     if (version == 3){
-        return time;
+        times[0] = time;
     }
     else if (version == 4){
+        // usually found in hashed subpackets
         for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+            // 5.2.3.4. Signature Creation Time
+            //    ...
+            //    MUST be present in the hashed area.
+            //
             if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                return std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
+                times[0] = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
+            }
+            else if (s -> get_type() == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
+                times[1] = std::static_pointer_cast <Tag2Sub3> (s) -> get_dt();
+            }
+            else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
+                times[2] = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
             }
         }
+
+        // search unhashed subpackets
+        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+            if (s -> get_type() == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
+                times[1] = std::static_pointer_cast <Tag2Sub3> (s) -> get_dt();
+            }
+            else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
+                times[2] = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
+            }
+        }
+
+        if (!times[0]){
+            throw std::runtime_error("Error: No signature creation time found.\n");
+        }
+
+        if (times[1]){
+            times[1] += times[0];
+        }
+
+        if (times[2]){
+            times[2] += times[0];
+        }
     }
-    return 0;
+    else{
+        throw std::runtime_error("Error: Signature Packet version " + std::to_string(version) + " not defined.");
+    }
+
+    return times;
 }
 
 std::string Tag2::get_keyid() const{

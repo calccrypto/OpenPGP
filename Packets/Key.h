@@ -35,7 +35,7 @@ THE SOFTWARE.
 // Key is equivalent to Tag6 (but don't substitute Key for Tag6)
 class Key : public Packet{
     protected:
-        time_t time;
+        uint32_t time;
         uint8_t pka;
         PKA::Values mpi;
 
@@ -62,11 +62,11 @@ class Key : public Packet{
         std::string show_common(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw_common() const;
 
-        time_t get_time() const;
+        uint32_t get_time() const;
         uint8_t get_pka() const;
         PKA::Values get_mpi() const;
 
-        void set_time(const time_t t);
+        void set_time(const uint32_t t);
         void set_pka(const uint8_t p);
         void set_mpi(const PKA::Values & m);
 

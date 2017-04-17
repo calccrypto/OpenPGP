@@ -125,7 +125,7 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
 // /////////////////////////////////////////
 
 // 0x40: Timestamp signature.
-PGPDetachedSignature sign_timestamp(const SignArgs & args, const time_t time, std::string & error);
+PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time, std::string & error);
 
 // 0x50: Third-Party Confirmation signature.
 #endif

@@ -89,7 +89,7 @@ TEST(gpg, public_key){
     EXPECT_EQ(subkey -> get_size(), (std::size_t) 269);
     EXPECT_EQ(subsig -> get_size(), (std::size_t) 287);
 
-    const time_t gen_time = get_utc(2014, 6, 22, 12, 50, 48);
+    const uint32_t gen_time = get_utc(2014, 6, 22, 12, 50, 48);
 
     // pubkey
     {
@@ -774,7 +774,7 @@ TEST(gpg, encrypt_sign_decrypt_verify){
     packets = decrypted.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 3);
 
-    const time_t gen_time = get_utc(2017, 4, 14, 19, 37, 32);   // 2017-04-14T19:37:32 UTC
+    const uint32_t gen_time = get_utc(2017, 4, 14, 19, 37, 32);   // 2017-04-14T19:37:32 UTC
 
     // tag 4
     {

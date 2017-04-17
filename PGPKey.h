@@ -34,10 +34,10 @@ class PGPKey : public PGP {
     private:
         // for listing keys
         const std::map <uint8_t, std::string> Public_Key_Type = {
-            std::make_pair( 5, "sec"),
-            std::make_pair( 6, "pub"),
-            std::make_pair( 7, "ssb"),
-            std::make_pair(14, "sub"),
+            std::make_pair(Packet::SECRET_KEY,    "sec"),
+            std::make_pair(Packet::PUBLIC_KEY,    "pub"),
+            std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
+            std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
         };
 
     public:
@@ -50,8 +50,11 @@ class PGPKey : public PGP {
         PGPKey(std::istream & stream);
         ~PGPKey();
 
-        std::string keyid()     const; // keyid that is searched for on keyservers
-        std::string list_keys() const; // output is copied from gpg --list-keys
+        // keyid that is searched for on keyservers
+        std::string keyid() const;
+
+        // output is copied from gpg --list-keys
+        std::string list_keys(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
 
         // whether or not PGP data matches a Key format without constructing a new object
         static bool meaningful(const PGP & pgp, std::string & error);

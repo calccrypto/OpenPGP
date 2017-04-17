@@ -63,7 +63,7 @@ const Module sign_timestamp(
         }
 
         std::stringstream s(args.at("seconds-since-epoch"));
-        time_t time;
+        uint32_t time;
         if (!(s >> time)){
             std::cerr << "Error: Invalid time." << std::endl;
             return -1;

@@ -26,11 +26,11 @@ std::string Tag2Sub2::raw() const{
     return unhexlify(makehex(static_cast <uint32_t> (time), 8));
 }
 
-time_t Tag2Sub2::get_time() const{
+uint32_t Tag2Sub2::get_time() const{
     return time;
 }
 
-void Tag2Sub2::set_time(const time_t t){
+void Tag2Sub2::set_time(const uint32_t t){
     time = t;
 }
 

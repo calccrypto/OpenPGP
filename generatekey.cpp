@@ -87,7 +87,7 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     PGP::Packets packets;
 
     // Key creation time
-    const time_t time = now();
+    const uint32_t time = now();
 
     // generate Primary Key, User ID, and Signature packets
 

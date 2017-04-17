@@ -129,7 +129,7 @@ std::string Key::raw_common() const{
     return out;
 }
 
-time_t Key::get_time() const{
+uint32_t Key::get_time() const{
     return time;
 }
 
@@ -141,7 +141,7 @@ PKA::Values Key::get_mpi() const{
     return mpi;
 }
 
-void Key::set_time(time_t t){
+void Key::set_time(uint32_t t){
     time = t;
 }
 

@@ -25,17 +25,20 @@ TEST(PGP, keygen){
 
     // no starting user ID packet
     EXPECT_EQ(config.valid(error), false);
+    error = "";
     config.uids.push_back(KeyGen::UserID());
     EXPECT_EQ(config.valid(error), true);
 
     // PKA
     config.pka = 255;                           // invalid PKA
     EXPECT_EQ(config.valid(error), false);
+    error = "";
     for(std::pair <std::string const, uint8_t> const & pka : PKA::NUMBER){
         config.pka = pka.second;
         EXPECT_EQ(config.valid(error), PKA::can_sign(config.pka));
     }
     config.pka = PKA::RSA_ENCRYPT_OR_SIGN;
+    error = "";
 
     // Sym
     config.sym = 255;                           // invalid Sym
@@ -45,6 +48,7 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.sym = Sym::AES256;
+    error = "";
 
     // Hash
     config.hash = 255;                          // invalid Hash
@@ -54,10 +58,12 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.sym = Hash::SHA256;
+    error = "";
 
     // add subkey
     config.subkeys.push_back(KeyGen::SubkeyGen());
     EXPECT_EQ(config.valid(error), true);
+    error = "";
 
     // subkey PKA
     config.subkeys[0].pka = 255;                // invalid PKA
@@ -67,6 +73,7 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.subkeys[0].pka = PKA::RSA_ENCRYPT_OR_SIGN;
+    error = "";
 
     // subkey Sym
     config.subkeys[0].sym = 255;                // invalid Sym
@@ -76,6 +83,7 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.subkeys[0].sym = Sym::AES256;
+    error = "";
 
     // subkey S2K Hash
     config.subkeys[0].hash = 255;               // invalid s2k Hash
@@ -85,6 +93,7 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.subkeys[0].hash = Hash::SHA256;
+    error = "";
 
     // subkey signing Hash
     config.subkeys[0].sig = 255;               // invalid signing Hash
@@ -94,6 +103,7 @@ TEST(PGP, keygen){
         EXPECT_EQ(config.valid(error), true);
     }
     config.subkeys[0].sig = Hash::SHA256;
+    error = "";
 
     EXPECT_EQ(config.valid(error), true);
 

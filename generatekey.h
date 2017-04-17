@@ -59,7 +59,7 @@ struct KeyGen{
         std::string comment = "";
         std::string email   = "";
         uint8_t     sig     = Hash::SHA256;         // hash algorithm used to sign
-        time_t      expire  = 0;
+        uint32_t    expire  = 0;
     };
 
     // at least 1 User ID packet
@@ -72,7 +72,7 @@ struct KeyGen{
         uint8_t     sym     = Sym::AES256;          // symmetric key algorithm used by S2K
         uint8_t     hash    = Hash::SHA256;         // hash algorithm used by S2K
         uint8_t     sig     = Hash::SHA256;         // hash algorithm used to sign
-        time_t      expire  = 0;
+        uint32_t    expire  = 0;
     };
 
     // 0 or more subkeys

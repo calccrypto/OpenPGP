@@ -37,12 +37,12 @@ const Module list(
 
     // positional arguments
     {
-        "file",
+        "key-file",
     },
 
     // optional arguments
     {
-
+        std::make_pair("-o", std::make_pair("output file", "")),
     },
 
     // optional flags
@@ -53,13 +53,22 @@ const Module list(
     // function to run
     [](const std::map <std::string, std::string> & args,
        const std::map <std::string, bool>        & flags) -> int {
-        std::ifstream f(args.at("file"), std::ios::binary);
+        std::ifstream f(args.at("key-file"), std::ios::binary);
         if (!f){
-            std::cerr << "Error: File \"" << args.at("file") << "\" not opened." << std::endl;
+            std::cerr << "Error: File \"" << args.at("key-file") << "\" not opened." << std::endl;
             return -1;
         }
 
-        std::cout << PGPKey(f).list_keys() << std::endl;
+        std::string error;
+
+        const PGPKey key(f);
+
+        if (key.meaningful(error)){
+            output(key.list_keys(), args.at("-o"));
+        }
+        else{
+            std::cerr << error << std::endl;
+        }
 
         return 0;
     }

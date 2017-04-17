@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 class Tag2Sub2 : public Tag2Subpacket{
     private:
-        time_t time;
+        uint32_t time;
 
     public:
         typedef std::shared_ptr <Tag2Sub2> Ptr;
@@ -50,9 +50,9 @@ class Tag2Sub2 : public Tag2Subpacket{
         std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
         std::string raw() const;
 
-        time_t get_time() const;
+        uint32_t get_time() const;
 
-        void set_time(const time_t t);
+        void set_time(const uint32_t t);
 
         Tag2Subpacket::Ptr clone() const;
 };

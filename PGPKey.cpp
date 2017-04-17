@@ -44,98 +44,90 @@ std::string PGPKey::keyid() const{
     return std::static_pointer_cast <Key> (packets[0]) -> get_keyid();
 }
 
-// output style is copied from gpg --list-keys
-std::string PGPKey::list_keys() const{
-    // primary key id
-    const std::string id = keyid();
-
-    // scan for revocation and expiration time
-    std::string revoked = "";
-    std::string expire = "";
-    for(Packet::Ptr const & p : packets){
-        if (p -> get_tag() == Packet::SIGNATURE){
-            Tag2::Ptr tag2 = std::static_pointer_cast <Tag2> (p);
-
-            // only check signature packets that were issued by the primary key
-            if (tag2 -> get_keyid() == id){
-                if ((tag2 -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE) ||
-                    (tag2 -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE)){
-                    // keep only last value found
-                    revoked = show_date(tag2 -> get_time());
-                }
-
-                // allow for values to be overwritten: use last expiration packet
-                time_t create_time = 0;
-                time_t expire_dt = 0;
-
-                // search hashed subpackets
-                for(Tag2Subpacket::Ptr const s : tag2 -> get_hashed_subpackets()){
-                    if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                        create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
-                    }
-                    else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                        expire_dt = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
-                    }
-                }
-
-                // search unhashed subpackets
-                for(Tag2Subpacket::Ptr const s : tag2 -> get_unhashed_subpackets()){
-                    if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                        create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
-                    }
-                    else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                        expire_dt = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
-                    }
-                }
-
-                // only add entry if expiration time is present
-                if (expire_dt){
-                    if (!create_time){
-                        expire = show_dt(expire_dt);
-                    }
-                    else{
-                        expire = show_date(create_time + expire_dt);
-                    }
-                }
-            }
-        }
+// output style inspired from pgp.mit.edu (sks)
+std::string PGPKey::list_keys(const std::size_t indents, const std::size_t indent_size) const{
+    std::string error;
+    if (!meaningful(error)){
+        error += "Error: Key data not meaningful.\n";
+        return "";
     }
+
+    const std::string indent(indents * indent_size, ' ');
 
     // print Key and User packets
     std::stringstream out;
     for(Packet::Ptr const & p : packets){
-        // if the packet is a key
+        // primary key/subkey
         if (Packet::is_key_packet(p -> get_tag())){
-            Key::Ptr key = std::static_pointer_cast <Key> (p);
-            out << Public_Key_Type.at(p -> get_tag()) << "   " << std::setfill(' ') << std::setw(4) << std::to_string(bitsize(key -> get_mpi()[0]))
-                << PKA::SHORT.at(key -> get_pka()) << "/"
-                << hexlify(key -> get_keyid().substr(4, 4)) << " "
-                << show_date(key -> get_time());
+            const Key::Ptr key = std::static_pointer_cast <Key> (p);
 
-            // revocation has priority
-            if (revoked.size()){
-                out << " [revoked: " << revoked << "]";
-            }
-            else if (expire.size()){
-                out << " [expires: " << expire << "]";
+            if (Packet::is_subkey(p -> get_tag())){
+                out << "\n";
             }
 
-            out << "\n";
+            out << indent << Public_Key_Type.at(p -> get_tag()) << "  " << std::setfill(' ') << std::setw(4) << std::to_string(bitsize(key -> get_mpi()[0]))
+                << indent << PKA::SHORT.at(key -> get_pka()) << "/"
+                << indent << hexlify(key -> get_keyid().substr(4, 4)) << " "
+                << indent << show_date(key -> get_time());
         }
-        // if the packet is a User ID
+        // User ID
         else if (p -> get_tag() == Packet::USER_ID){
-            out << "uid                  " << std::static_pointer_cast <Tag13> (p) -> get_contents() << "\n";
+            out << "\n"
+                << indent << "uid " << std::static_pointer_cast <Tag13> (p) -> get_contents();
         }
-        // if the packet is a User Attribute
+        // User Attribute
         else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
             for(Tag17Subpacket::Ptr const & s : std::static_pointer_cast <Tag17> (p) -> get_attributes()){
                 // since only subpacket type 1 is defined
-                out << "att                   [jpeg image of size " << std::static_pointer_cast <Tag17Sub1> (s) -> get_image().size() << "]\n";
+                out << "\n"
+                    << indent << "att                   [jpeg image of size " << std::static_pointer_cast <Tag17Sub1> (s) -> get_image().size() << "]";
             }
         }
-        // if the packet is a signature, do nothing
-        // else if (p -> get_tag() == Packet::SIGNATURE){}
+        // Signature
+        else if (p -> get_tag() == Packet::SIGNATURE){
+            out << indent << "sig ";
+
+            const Tag2::Ptr sig = std::static_pointer_cast <Tag2> (p);
+            if (Signature_Type::is_revocation(sig -> get_type())){
+                out << "revok";
+            }
+            else if (sig -> get_type() == Signature_Type::SUBKEY_BINDING_SIGNATURE){
+                out << "sbind";
+            }
+            else{
+                out << " sig ";
+            }
+
+            const std::array <uint32_t, 3> times = sig -> get_times();  // {signature creation time, signature expiration time, key expiration time}
+            out << "  " << hexlify(sig -> get_keyid().substr(4, 4));
+
+            // signature creation time (should always exist)
+            if (times[0]){
+                out << " " << show_date(times[0]);
+            }
+            // else{
+                // out << " " << std::setfill(' ') << std::setw(10) ;
+            // }
+
+            // if the signature expires
+            if (times[1]){
+                out << " " << show_date(times[1]);
+            }
+            else{
+                out << " " << std::setfill(' ') << std::setw(10) ;
+            }
+
+            // if the key expires
+            if (times[2]){
+                out << " " << show_date(times[2]);
+            }
+            else{
+                out << " " << std::setfill(' ') << std::setw(10) ;
+            }
+        }
         else{}
+
+        out << "\n";
     }
 
     return out.str();
@@ -172,7 +164,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     }
 
     // get version of primary key
-    uint8_t primary_key_version = std::static_pointer_cast <Key> (packets[0]) -> get_version();
+    const uint8_t primary_key_version = std::static_pointer_cast <Key> (packets[0]) -> get_version();
 
     //   - Zero or more revocation signatures
     unsigned int i = 1;

@@ -28,8 +28,10 @@ THE SOFTWARE.
 #ifndef __TAG2__
 #define __TAG2__
 
+#include <array>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "../Hashes/Hashes.h"
 #include "../PKA/PKAs.h"
@@ -90,24 +92,24 @@ class Tag2 : public Packet{
         ~Tag2();
         void read(const std::string & data);
         std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw()  const;
+        std::string raw()                               const;
 
-        uint8_t get_type() const;
-        uint8_t get_pka()  const;
-        uint8_t get_hash() const;
-        std::string get_left16() const;                       // whatever is stored, not calculated
-        PKA::Values get_mpi() const;
+        uint8_t get_type()                              const;
+        uint8_t get_pka()                               const;
+        uint8_t get_hash()                              const;
+        std::string get_left16()                        const;      // whatever is stored, not calculated
+        PKA::Values get_mpi()                           const;
 
         // special functions: works differently depending on version
-        uint32_t get_time()     const;
-        std::string get_keyid() const;
+        std::array <uint32_t, 3> get_times()            const;      // signature creation/expiration time and key expiration time; creation time should always exist; expirations times are 0 for version 3 signatures
+        std::string get_keyid()                         const;
 
-        Subpackets get_hashed_subpackets()         const;
-        Subpackets get_hashed_subpackets_clone()   const;
-        Subpackets get_unhashed_subpackets()       const;
-        Subpackets get_unhashed_subpackets_clone() const;
-        std::string get_up_to_hashed()             const;     // used for signature trailer
-        std::string get_without_unhashed()         const;     // used for signature type 0x50
+        Subpackets get_hashed_subpackets()              const;
+        Subpackets get_hashed_subpackets_clone()        const;
+        Subpackets get_unhashed_subpackets()            const;
+        Subpackets get_unhashed_subpackets_clone()      const;
+        std::string get_up_to_hashed()                  const;     // used for signature trailer
+        std::string get_without_unhashed()              const;     // used for signature type 0x50
 
         void set_type(const uint8_t t);
         void set_pka (const uint8_t p);
@@ -122,7 +124,7 @@ class Tag2 : public Packet{
         void set_hashed_subpackets(const Subpackets & h);
         void set_unhashed_subpackets(const Subpackets & u);
 
-        std::string find_subpacket(const uint8_t sub) const;  // find a subpacket within Signature Packet; returns raw data of last subpacket found
+        std::string find_subpacket(const uint8_t sub)   const;      // find a subpacket within Signature Packet; returns raw data of last subpacket found
 
         Packet::Ptr clone() const;
         Tag2 & operator=(const Tag2 & copy);
