@@ -65,7 +65,7 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
             }
             else if ((ctb & 3) == 2){                               // 2 - The packet has a four-octet length. The header is 5 octets long.
                 length = toint(data.substr(pos + 2, 4), 256);
-                pos += 5;
+                pos += 6;
             }
             else if ((ctb & 3) == 3){                               // The packet is of indeterminate length. The header is 1 octet long, and the implementation must determine how long the packet is.
                 partial = 1;                                        // set to partial start
@@ -86,7 +86,7 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
             }
             else if (first_octet == 255){                           // 8384 - 4294967295; A five-octet Body Length header encodes packet lengths of up to 4,294,967,295 (0xFFFFFFFF) octets in length.
                 length = toint(data.substr(pos + 2, 4), 256);
-                pos += 5;
+                pos += 6;
             }
             else if (224 <= first_octet){                           // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
                 partial = 1;                                        // set to partial start
