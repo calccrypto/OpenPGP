@@ -243,7 +243,7 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
     }
 
     //    - Zero or more Subkey packets
-    while ((i + 1) < packets.size()){
+    while (i < packets.size()){
         if  (packets[i] -> get_tag() != subkey){
             error += "Error: Bad subkey packet.\n";
             return false;
@@ -256,55 +256,38 @@ bool PGPKey::meaningful(const PGP & pgp, std::string & error){
 
         i++;
 
-        #ifdef GPG_COMPATIBLE
-        // gpg places revocation signature before subkey signature
-        if ((packets[i] -> get_tag() == Packet::SIGNATURE) &&
-            (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE)){
-            error += "Warning: Revocation Signature found on subkey.\n";
-            i++;
-
-            // make sure there is at least 1 more signature packet after the revocation signature
-            if ((i >= packets.size())                         ||
-                (packets[i] -> get_tag() != Packet::SIGNATURE)){
-                error += "Error: Signature packet not following revocation signature.\n";
-                return false;
-            }
-        }
-        #endif
+        // Each Subkey packet MUST be followed by one Signature packet, which
+        // should be a subkey binding signature issued by the top-level key.
+        // For subkeys that can issue signatures, the subkey binding signature
+        // MUST contain an Embedded Signature subpacket with a primary key
+        // binding signature (0x19) issued by the subkey on the top-level key.
+        //
+        // Subkey and Key packets may each be followed by a revocation Signature
+        // packet to indicate that the key is revoked. Revocation signatures
+        // are only accepted if they are issued by the key itself, or by a key
+        // that is authorized to issue revocations via a Revocation Key
+        // subpacket in a self-signature by the top-level key.
 
         //    - After each Subkey packet, one Signature packet, plus optionally a revocation
-        if ((i >= packets.size())                         ||
-            (packets[i] -> get_tag() != Packet::SIGNATURE)){
-            error += "Error: Signature packet not following subkey packet.\n";
-            return false;
-        }
-
-        // check that the Signature packet is a Subkey binding signature
-        if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() != Signature_Type::SUBKEY_BINDING_SIGNATURE){
-            error += "Error: Signature packet following subpacket is not of type " + Signature_Type::NAME.at(Signature_Type::SUBKEY_BINDING_SIGNATURE) + ".\n";
-            return false;
-        }
-
-        i++;
-
-        #ifndef GPG_COMPATIBLE
-        // if there are no more packets to check, stop checking
-        if (i >= packets.size()){
-            break;
-        }
-
-        // optionally a revocation
-        if (packets[i] -> get_tag() == Packet::SIGNATURE){
-            if (std::static_pointer_cast <Tag2> (packets[i]) -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
+        bool subkey_binding = false;
+        while ((i < packets.size()) &&
+               (packets[i] -> get_tag() == Packet::SIGNATURE)){
+            const Tag2::Ptr sig = std::static_pointer_cast <Tag2> (packets[i]);
+            if (sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
                 error += "Warning: Revocation Signature found on subkey.\n";
-                i++;
             }
-            else{
-                error += "Error: Signature packet following subkey signature is not a " + Signature_Type::NAME.at(Signature_Type::SUBKEY_REVOCATION_SIGNATURE) + ".\n";
-                return false;
+            // at least one of the signatures should be a subkey binding signature (?)
+            else if (sig -> get_type() == Signature_Type::SUBKEY_BINDING_SIGNATURE){
+                subkey_binding = true;
             }
+
+            i++;
         }
-        #endif
+
+        if (!subkey_binding){
+            error += "Error: No " + Signature_Type::NAME.at(Signature_Type::SUBKEY_BINDING_SIGNATURE) + " packet found following subkey.\n";
+            return false;
+        }
     }
 
     // the index should be at the end of the packets
