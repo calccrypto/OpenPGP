@@ -42,7 +42,7 @@ const Module show(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file", "")),
+
     },
 
     // optional flags
@@ -59,7 +59,7 @@ const Module show(
             return -1;
         }
 
-        output(PGP(file).show(), args.at("-o"));
+        std::cout << PGP(file).show() << std::endl;;
 
         return 0;
     }

@@ -44,7 +44,6 @@ const Module sign_subkey(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",                                        "")),
         std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
         std::make_pair("-h", std::make_pair("hash algorithm",                                 "SHA1")),
         std::make_pair("-u", std::make_pair("Signer's User Identifier",                           "")),
@@ -85,7 +84,7 @@ const Module sign_subkey(
         // PGPPublicKey key = ::sign_subkey(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
 
         // if (key.meaningful(error)){
-            // output(key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            // std::cout << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         // }
         // else{
             // std::cerr << error << std::endl;

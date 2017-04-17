@@ -88,9 +88,6 @@ class Module{
         int operator()(int argc, char * argv[]) const;              // call operator() after setup
 };
 
-// Output data into a file, or if not possible, to std::cout
-void output(const std::string & data, const std::string & filename = "");
-
 }
 
 #endif

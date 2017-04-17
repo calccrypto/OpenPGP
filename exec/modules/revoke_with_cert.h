@@ -43,7 +43,7 @@ const Module revoke_with_cert(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file", "")),
+
     },
 
     // optional flags
@@ -73,7 +73,7 @@ const Module revoke_with_cert(
         const PGPPublicKey revoked = ::revoke_with_cert(key, rev, error);
 
         if (revoked.meaningful(error)){
-            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

@@ -44,7 +44,6 @@ const Module sign_file(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",               "")),
         std::make_pair("-c", std::make_pair("compression algorithm", "ZLIB")),
         std::make_pair("-h", std::make_pair("hash algorithm",        "SHA1")),
     },
@@ -88,7 +87,7 @@ const Module sign_file(
         const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")), error);
 
         if (message.meaningful(error)){
-            output(message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

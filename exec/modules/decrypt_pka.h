@@ -44,7 +44,6 @@ const Module decrypt_pka(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",        "")),
         std::make_pair("-s", std::make_pair("signing public key", "")),
     },
 
@@ -120,7 +119,7 @@ const Module decrypt_pka(
                 }
             }
 
-            output(cleartext, args.at("-o"));
+            std::cout << cleartext << std::endl;;
        }
         else{
             std::cerr << error << std::endl;

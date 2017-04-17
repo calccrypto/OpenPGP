@@ -44,7 +44,6 @@ const Module sign_detached_signature(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",        "")),
         std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
     },
 
@@ -82,7 +81,7 @@ const Module sign_detached_signature(
         const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}), error);
 
         if (signature.meaningful(error)){
-            output(signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

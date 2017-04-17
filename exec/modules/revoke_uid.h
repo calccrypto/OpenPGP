@@ -43,7 +43,6 @@ const Module revoke_uid(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",         "")),
         std::make_pair("-c", std::make_pair("code (0-3)",         "0")),
         std::make_pair("-r", std::make_pair("reason",              "")),
         std::make_pair("-h", std::make_pair("hash algorithm",  "SHA1")),
@@ -91,7 +90,7 @@ const Module revoke_uid(
         #ifdef GPG_COMPATIBLE
         if (revoked.meaningful(error)){
         #endif
-            output(revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         #ifdef GPG_COMPATIBLE
         }
         else{

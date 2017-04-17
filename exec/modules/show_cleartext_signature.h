@@ -42,7 +42,7 @@ const Module show_cleartext_signature(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file", "")),
+
     },
 
     // optional flags
@@ -59,7 +59,7 @@ const Module show_cleartext_signature(
             return -1;
         }
 
-        output(PGPCleartextSignature(file).show(), args.at("-o"));
+        std::cout << PGPCleartextSignature(file).show() << std::endl;;
 
         return 0;
     }

@@ -17,7 +17,7 @@ const Module extract_public(
 
     // optional arugments
     {
-        std::make_pair("-o", std::make_pair("output file", "")),
+
     },
 
     // optional flags
@@ -38,7 +38,7 @@ const Module extract_public(
         std::string error;
 
         if (pri.meaningful(error)){
-            output(pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

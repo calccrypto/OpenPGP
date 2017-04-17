@@ -42,7 +42,7 @@ const Module list(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file", "")),
+
     },
 
     // optional flags
@@ -64,7 +64,7 @@ const Module list(
         const PGPKey key(f);
 
         if (key.meaningful(error)){
-            output(key.list_keys(), args.at("-o"));
+            std::cout << key.list_keys() << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

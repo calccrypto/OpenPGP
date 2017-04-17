@@ -43,7 +43,6 @@ const Module encrypt_sym(
 
     // optional arguments
     {
-        std::make_pair("-o",        std::make_pair("output file",                                       "")),
         std::make_pair("-c",        std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)",  "ZLIB")),
         std::make_pair("-p",        std::make_pair("passphrase for signing key",                        "")),
         std::make_pair("--sym",     std::make_pair("symmetric encryption algorithm",              "AES256")),
@@ -114,7 +113,7 @@ const Module encrypt_sym(
                                       Hash::NUMBER.at(args.at("--shash")));
         std::string error;
 
-        output(::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+        std::cout << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
 
         return 0;
     }

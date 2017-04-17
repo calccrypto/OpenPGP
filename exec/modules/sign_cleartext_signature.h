@@ -44,7 +44,6 @@ const Module sign_cleartext_signature(
 
     // optional arguments
     {
-        std::make_pair("-o", std::make_pair("output file",        "")),
         std::make_pair("-h", std::make_pair("hash_algorithm", "SHA1")),
     },
 
@@ -82,7 +81,7 @@ const Module sign_cleartext_signature(
         const PGPCleartextSignature signature = ::sign_cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}), error);
 
         if (signature.meaningful(error)){
-            output(signature.write(), args.at("-o"));
+            std::cout << signature.write() << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

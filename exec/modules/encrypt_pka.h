@@ -43,7 +43,6 @@ const Module encrypt_pka(
 
     // optional arguments
     {
-        std::make_pair("-o",     std::make_pair("output file",                                      "")),
         std::make_pair("-c",     std::make_pair("compression (UNCOMPRESSED, ZIP, ZLIB, BZIP2)", "ZLIB")),
         std::make_pair("-p",     std::make_pair("passphrase for signing key",                       "")),
         std::make_pair("--sign", std::make_pair("private key file",                                 "")),
@@ -117,7 +116,7 @@ const Module encrypt_pka(
         const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);
 
         if (encrypted.meaningful(error)){
-            output(encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW), args.at("-o"));
+            std::cout << encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
         }
         else{
             std::cerr << error << std::endl;

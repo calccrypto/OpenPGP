@@ -213,24 +213,4 @@ int Module::operator()(int argc, char * argv[]) const{
     return 0;
 }
 
-// Output data into a file, or if not possible, to std::cout
-void output(const std::string & data, const std::string & filename){
-    if (filename != ""){
-        try{
-            std::ofstream out(filename.c_str(), std::ios::binary);
-            if (!out){
-                throw std::runtime_error("Error: File " + filename + " could not be opened.");
-            }
-
-            out << data << std::flush;
-        }
-        catch (const std::exception & e){
-            std::cerr << "Error: " << e.what() << "\n" << data << std::endl;
-        }
-    }
-    else{
-        std::cout << data << std::flush;
-    }
-}
-
 }
