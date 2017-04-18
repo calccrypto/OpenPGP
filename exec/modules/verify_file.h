@@ -53,30 +53,32 @@ const Module verify_file(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Key file \"" + args.at("key") + "\" not opened." << std::endl;
+            err << "Error: Key file \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream msg(args.at("message"), std::ios::binary);
         if (!msg){
-            std::cerr << "Error: Message file \"" + args.at("message") + "\" not opened." << std::endl;
+            err << "Error: Message file \"" + args.at("message") + "\" not opened." << std::endl;
             return -1;
         }
 
-        PGPKey signer(key);
-        PGPMessage message(msg);
+        const PGPKey signer(key);
+        const PGPMessage message(msg);
 
         std::string error;
         const int verified = ::verify_binary(signer, message, error);
 
         if (verified == -1){
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
         else{
-            std::cout << "The data in \"" << args.at("message") << "\" was" << ((verified == 1)?"": " not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            out << "The data in \"" << args.at("message") << "\" was" << ((verified == 1)?"": " not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

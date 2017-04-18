@@ -53,29 +53,31 @@ const Module verify_primary_key(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream signer(args.at("signer-key"), std::ios::binary);
         if (!signer){
-            std::cerr << "Error: Key file \"" + args.at("signer-key") + "\" not opened." << std::endl;
+            err << "Error: Key file \"" + args.at("signer-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream signee(args.at("signee-key"), std::ios::binary);
         if (!signee){
-            std::cerr << "Error: Signing Key file \"" + args.at("signee-key") + "\" not opened." << std::endl;
+            err << "Error: Signing Key file \"" + args.at("signee-key") + "\" not opened." << std::endl;
             return -1;
         }
 
-        PGPKey signerkey(signer), signeekey(signee);
+        const PGPKey signerkey(signer), signeekey(signee);
 
         std::string error;
         const int verified = ::verify_primary_key(signerkey, signeekey, error);
 
         if (verified == -1){
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
         else{
-            std::cout << "Key in \"" << args.at("signee-key") << "\" (" << signeekey << ") was" << ((verified == 1)?"":" not") << " signed by key in \"" << args.at("signer-key") << "\" (" << signerkey << ")." << std::endl;
+            out << "Key in \"" << args.at("signee-key") << "\" (" << signeekey << ") was" << ((verified == 1)?"":" not") << " signed by key in \"" << args.at("signer-key") << "\" (" << signerkey << ")." << std::endl;
         }
 
         return 0;

@@ -56,22 +56,24 @@ const Module generate_revoke_subkey_cert(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         unsigned int code;
         std::stringstream s(args.at("-c"));
         if (!(s >> code) || !Revoke::is_key_revocation(code)){
-            std::cerr << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
+            err << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -88,10 +90,10 @@ const Module generate_revoke_subkey_cert(
         const PGPRevocationCertificate cert = ::revoke_subkey_cert(revargs, args.at("-k"), error);
 
         if (cert.meaningful(error)){
-            std::cout << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

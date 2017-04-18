@@ -58,31 +58,33 @@ const Module encrypt_pka(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("public-key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File \"" + args.at("public-key") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("public-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
         if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
-            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
+            err << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
         if (Sym::NUMBER.find(args.at("--sym")) == Sym::NUMBER.end()){
-            std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
+            err << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
             return -1;
         }
 
@@ -90,7 +92,7 @@ const Module encrypt_pka(
         if (args.at("--sign").size()){
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
-                std::cerr << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
+                err << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
                 return -1;
             }
 
@@ -98,7 +100,7 @@ const Module encrypt_pka(
 
             std::string error;
             if (!signer -> meaningful(error)){
-                std::cerr << "Error: Bad signing key.\n";
+                err << "Error: Bad signing key.\n";
                 return -1;
             }
         }
@@ -116,10 +118,10 @@ const Module encrypt_pka(
         const PGPMessage encrypted = ::encrypt_pka(encryptargs, PGPPublicKey(key), error);
 
         if (encrypted.meaningful(error)){
-            std::cout << encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << encrypted.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

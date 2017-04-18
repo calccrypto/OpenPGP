@@ -52,10 +52,12 @@ const Module list(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream f(args.at("key-file"), std::ios::binary);
         if (!f){
-            std::cerr << "Error: File \"" << args.at("key-file") << "\" not opened." << std::endl;
+            err << "Error: File \"" << args.at("key-file") << "\" not opened." << std::endl;
             return -1;
         }
 
@@ -64,10 +66,10 @@ const Module list(
         const PGPKey key(f);
 
         if (key.meaningful(error)){
-            std::cout << key.list_keys() << std::endl;;
+            out << key.list_keys() << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

@@ -122,7 +122,6 @@ Module::Module(const std::string                & n,
                const Module::Opts               & opt,
                const Module::Flags              & flag,
                const Module::Run                & func)
-
     : name(n),
       positional(pos),
       opts(opt),
@@ -191,7 +190,7 @@ std::string Module::help(const std::string & indent) const{
     return help_str;
 }
 
-int Module::operator()(int argc, char * argv[]) const{
+int Module::operator()(int argc, char * argv[], std::ostream & out, std::ostream & err) const{
     // fill arguments with optional argument default values
     std::map <std::string, std::string> parsed_args;
     for(std::pair <std::string const, std::pair <std::string, std::string> > const & opt : opts){
@@ -205,8 +204,8 @@ int Module::operator()(int argc, char * argv[]) const{
     }
 
     // parse input arguments
-    if (parse(argc, argv, parsed_args, parsed_flags) || (run(parsed_args, parsed_flags) == -1)){
-        std::cout << help() << std::endl;
+    if (parse(argc, argv, parsed_args, parsed_flags) || (run(parsed_args, parsed_flags, out, err) == -1)){
+        out << help() << std::endl;
         return -1;
     }
 

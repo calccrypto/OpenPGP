@@ -54,36 +54,38 @@ const Module verify_detached_signature(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
+            err << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: Data file \"" + args.at("file") + "\" not opened." << std::endl;
+            err << "Error: Data file \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
-            std::cerr << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
+            err << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
             return -1;
         }
 
-        PGPKey signer(key);
-        PGPDetachedSignature signature(sig);
+        const PGPKey signer(key);
+        const PGPDetachedSignature signature(sig);
 
         std::string error;
         const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, error);
 
         if (verified == -1){
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
         else{
-            std::cout << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            out << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

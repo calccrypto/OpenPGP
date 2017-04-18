@@ -59,30 +59,32 @@ const Module encrypt_sym(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
         if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
-            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
+            err << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
         if (Sym::NUMBER.find(args.at("--sym")) == Sym::NUMBER.end()){
-            std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
+            err << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--khash")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--khash") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--khash") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--shash")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
             return -1;
         }
 
@@ -90,7 +92,7 @@ const Module encrypt_sym(
         if (args.at("--sign").size()){
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
-                std::cerr << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
+                err << "Error: File \"" + args.at("--sign") + "\" not opened." << std::endl;
                 return -1;
             }
 
@@ -98,7 +100,7 @@ const Module encrypt_sym(
 
             std::string error;
             if (!signer -> meaningful(error)){
-                std::cerr << "Error: Bad signing key.\n";
+                err << "Error: Bad signing key.\n";
                 return -1;
             }
         }
@@ -113,7 +115,7 @@ const Module encrypt_sym(
                                       Hash::NUMBER.at(args.at("--shash")));
         std::string error;
 
-        std::cout << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+        out << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
 
         return 0;
     }

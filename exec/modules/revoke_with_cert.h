@@ -53,16 +53,18 @@ const Module revoke_with_cert(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream target(args.at("target"), std::ios::binary);
         if (!target){
-            std::cerr << "IOError: File \"" + args.at("target") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("target") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream cert(args.at("revocation-certificate"), std::ios::binary);
         if (!cert){
-            std::cerr << "IOError: File \"" + args.at("revocation-certificate") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("revocation-certificate") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -73,10 +75,10 @@ const Module revoke_with_cert(
         const PGPPublicKey revoked = ::revoke_with_cert(key, rev, error);
 
         if (revoked.meaningful(error)){
-            std::cout << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

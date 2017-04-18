@@ -44,7 +44,7 @@ const Module sign_subkey(
 
     // optional arguments
     {
-        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
+        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 with; '0x')",   "13")),
         std::make_pair("-h", std::make_pair("hash algorithm",                                 "SHA1")),
         std::make_pair("-u", std::make_pair("Signer's User Identifier",                           "")),
         std::make_pair("-v", std::make_pair("Signee's User Identifier",                           "")),
@@ -57,21 +57,23 @@ const Module sign_subkey(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream signer_file(args.at("signer-key"), std::ios::binary);
         if (!signer_file){
-            std::cerr << "IOError: File \"" + args.at("signer-key") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("signer-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream signee_file(args.at("signee-key"), std::ios::binary);
         if (!signee_file){
-            std::cerr << "IOError: File \"" + args.at("signee-key") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("signee-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -84,10 +86,10 @@ const Module sign_subkey(
         // PGPPublicKey key = ::sign_subkey(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
 
         // if (key.meaningful(error)){
-            // std::cout << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            // out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         // }
         // else{
-            // std::cerr << error << std::endl;
+            // err << error << std::endl;
         // }
 
         return 0;

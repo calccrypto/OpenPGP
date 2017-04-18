@@ -53,17 +53,19 @@ const Module fingerprint(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream f(args.at("key-file"), std::ios::binary);
         if (!f){
-            std::cerr << "Error: File \"" << args.at("key-file") << "\" not opened." << std::endl;
+            err << "Error: File \"" << args.at("key-file") << "\" not opened." << std::endl;
             return -1;
         }
 
         std::stringstream s(args.at("-c"));
         std::string::size_type split;
         if (!(s >> split)){
-            std::cerr << "Error: Bad split size." << std::endl;
+            err << "Error: Bad split size." << std::endl;
             return -1;
         }
 
@@ -74,14 +76,14 @@ const Module fingerprint(
         if (key.meaningful(error)){
             const std::string fp = hexlify(key.fingerprint());
 
-            std::string out;
+            std::string separated;
 
             if (split){
                 const std::string sep = args.at("-s");
 
                 // insert separator
                 for(std::string::size_type i = 0; (i + split) < fp.size(); i += split){
-                    out += fp.substr(i, split) + sep;
+                    separated += fp.substr(i, split) + sep;
                 }
 
                 std::string::size_type rem = fp.size() % split;
@@ -89,16 +91,16 @@ const Module fingerprint(
                     rem = split;
                 }
 
-                out += fp.substr(fp.size() - rem, rem);
+                separated += fp.substr(fp.size() - rem, rem);
             }
             else{
-                out = fp;
+                separated = fp;
             }
 
-            std::cout << out + "\n" << std::endl;;
+            out << separated + "\n" << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

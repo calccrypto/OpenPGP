@@ -34,14 +34,14 @@ THE SOFTWARE.
 std::ostream & show_header(std::ostream & stream = std::cout,
                            std::string indent    = ""){
     return stream << indent << "An OpenPGP implementation (RFC 4880)\n"
-           << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
-           << indent << "    help [module name] - print all modules with matching name\n"
-           << std::endl;
+                  << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
+                  << indent << "    help [module name] - print all modules with matching name\n"
+                  << std::endl;
 }
 
-std::size_t help(const std::string & match = "",
-                            std::ostream & stream     = std::cout,
-                            std::string indent        = ""){
+std::size_t help(const std::string & match        = "",
+                            std::ostream & stream = std::cout,
+                            std::string indent    = ""){
     const std::regex regex(match);
     std::size_t found = 0;
     for(module::Module const & cmd : module::ordered){

@@ -53,10 +53,12 @@ const Module decrypt_sym(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream msg(args.at("file"), std::ios::binary);
         if (!msg){
-            std::cerr << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("file") + "\" not opened." << std::endl;
             return -1;
         }
 
@@ -64,7 +66,7 @@ const Module decrypt_sym(
         if (args.at("-s").size()){
             std::ifstream s(args.at("-s"), std::ios::binary);
             if (!s){
-                std::cerr << "Error: File \"" + args.at("-s") + "\" not opened." << std::endl;
+                err << "Error: File \"" + args.at("-s") + "\" not opened." << std::endl;
                 return -1;
             }
 
@@ -72,7 +74,7 @@ const Module decrypt_sym(
 
             std::string error;
             if (!signer -> meaningful(error)){
-                std::cerr << "Error: Bad signing key.\n";
+                err << "Error: Bad signing key.\n";
                 return -1;
             }
         }
@@ -97,7 +99,7 @@ const Module decrypt_sym(
             if (signer){
                 const int verified = verify_binary(*signer, decrypted, error);
                 if (verified == -1){
-                    std::cerr << error << "Error: Verification failure.\n" << std::endl;
+                    err << error << "Error: Verification failure.\n" << std::endl;
                 }
 
                 cleartext += "Message was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
@@ -111,10 +113,10 @@ const Module decrypt_sym(
                 }
             }
 
-            std::cout << cleartext << std::endl;;
+            out << cleartext << std::endl;
        }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

@@ -55,26 +55,28 @@ const Module sign_file(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "IOError: file \"" + args.at("file") + "\" could not be opened." << std::endl;
+            err << "IOError: file \"" + args.at("file") + "\" could not be opened." << std::endl;
             return -1;
         }
 
         if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
-            std::cerr << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
+            err << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -87,10 +89,10 @@ const Module sign_file(
         const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")), error);
 
         if (message.meaningful(error)){
-            std::cout << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

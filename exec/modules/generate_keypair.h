@@ -71,44 +71,46 @@ const Module generate_keypair(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         if (PKA::NUMBER.find(args.at("--ppka")) == PKA::NUMBER.end()){
-            std::cerr << "Error: Bad Public Key Algorithm: " << args.at("--pka") << std::endl;
+            err << "Error: Bad Public Key Algorithm: " << args.at("--pka") << std::endl;
             return -1;
         }
 
         if (Sym::NUMBER.find(args.at("--psym")) == Sym::NUMBER.end()){
-            std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--psym") << std::endl;
+            err << "Error: Bad Symmetric Key Algorithm: " << args.at("--psym") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--phash")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--phash") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--phash") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--psig")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--psig") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--psig") << std::endl;
             return -1;
         }
 
         if (PKA::NUMBER.find(args.at("--spka")) == PKA::NUMBER.end()){
-            std::cerr << "Error: Bad Public Key Algorithm: " << args.at("--ska") << std::endl;
+            err << "Error: Bad Public Key Algorithm: " << args.at("--ska") << std::endl;
             return -1;
         }
 
         if (Sym::NUMBER.find(args.at("--ssym")) == Sym::NUMBER.end()){
-            std::cerr << "Error: Bad Symmetric Key Algorithm: " << args.at("--ssym") << std::endl;
+            err << "Error: Bad Symmetric Key Algorithm: " << args.at("--ssym") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--shash")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("--ssig")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("--ssig") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("--ssig") << std::endl;
             return -1;
         }
 
@@ -145,23 +147,23 @@ const Module generate_keypair(
 
             std::ofstream pub_out(pub_name, std::ios::binary);
             if (!pub_out){
-                std::cerr << "Error: Could not open public key file '" << pub_name << "' for writing." << std::endl;
+                err << "Error: Could not open public key file '" << pub_name << "' for writing." << std::endl;
                 return -1;
             }
 
             std::ofstream pri_out(pri_name, std::ios::binary);
             if (!pri_out){
-                std::cerr << "Error: Could not open private key file '" << pri_name << "' for writing." << std::endl;
+                err << "Error: Could not open private key file '" << pri_name << "' for writing." << std::endl;
                 return -1;
             }
 
             pub_out << pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
             pri_out << pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
 
-            std::cout << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
+            out << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

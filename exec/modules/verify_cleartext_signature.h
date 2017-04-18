@@ -53,30 +53,32 @@ const Module verify_cleartext_signature(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: File \"" + args.at("key") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
-            std::cerr << "Error: File \"" + args.at("signature") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("signature") + "\" not opened." << std::endl;
             return -1;
         }
 
-        PGPKey signer(key);
-        PGPCleartextSignature signature(sig);
+        const PGPKey signer(key);
+        const PGPCleartextSignature signature(sig);
 
         std::string error;
         const int verified = ::verify_cleartext_signature(signer, signature, error);
 
         if (verified == -1){
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
         else{
-            std::cout << "This message was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            out << "This message was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

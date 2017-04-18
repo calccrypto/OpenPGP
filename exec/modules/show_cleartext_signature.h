@@ -52,14 +52,16 @@ const Module show_cleartext_signature(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "Error: File \"" + args.at("filename") + "\" not opened." << std::endl;
+            err << "Error: File \"" + args.at("filename") + "\" not opened." << std::endl;
             return -1;
         }
 
-        std::cout << PGPCleartextSignature(file).show() << std::endl;;
+        out << PGPCleartextSignature(file).show() << std::endl;
 
         return 0;
     }

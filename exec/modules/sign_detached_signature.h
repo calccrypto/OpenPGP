@@ -54,21 +54,23 @@ const Module sign_detached_signature(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream file(args.at("file"), std::ios::binary);
         if (!file){
-            std::cerr << "IOError: file \"" + args.at("file") + "\" could not be opened." << std::endl;
+            err << "IOError: file \"" + args.at("file") + "\" could not be opened." << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -81,10 +83,10 @@ const Module sign_detached_signature(
         const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}), error);
 
         if (signature.meaningful(error)){
-            std::cout << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         }
         else{
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
 
         return 0;

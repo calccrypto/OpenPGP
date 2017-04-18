@@ -56,22 +56,24 @@ const Module revoke_uid(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("private-key"), std::ios::binary);
         if (!key){
-            std::cerr << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
+            err << "IOError: File \"" + args.at("private-key") + "\" not opened." << std::endl;
             return -1;
         }
 
         unsigned int code;
         std::stringstream s(args.at("-c"));
         if (!(s >> code) || !Revoke::is_key_revocation(code)){
-            std::cerr << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
+            err << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
             return -1;
         }
 
         if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
-            std::cerr << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
+            err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
@@ -90,12 +92,12 @@ const Module revoke_uid(
         #ifdef GPG_COMPATIBLE
         if (revoked.meaningful(error)){
         #endif
-            std::cout << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;;
+            out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         #ifdef GPG_COMPATIBLE
         }
         else{
         #endif
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         #ifdef GPG_COMPATIBLE
         }
         #endif

@@ -53,30 +53,32 @@ const Module verify_timestamp(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags) -> int {
+       const std::map <std::string, bool>        & flags,
+       std::ostream                              & out,
+       std::ostream                              & err) -> int {
         std::ifstream key(args.at("key"), std::ios::binary);
         if (!key){
-            std::cerr << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
+            err << "Error: Public key file \"" + args.at("key") + "\" not opened." << std::endl;
             return -1;
         }
 
         std::ifstream sig(args.at("signature"), std::ios::binary);
         if (!sig){
-            std::cerr << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
+            err << "Error: Signature file \"" + args.at("signature") + "\" not opened." << std::endl;
             return -1;
         }
 
-        PGPKey signer(key);
-        PGPDetachedSignature signature(sig);
+        const PGPKey signer(key);
+        const PGPDetachedSignature signature(sig);
 
         std::string error;
         const int verified = ::verify_timestamp(signer, signature, error);
 
         if (verified == -1){
-            std::cerr << error << std::endl;
+            err << error << std::endl;
         }
         else{
-            std::cout << "Timestamp signature in \"" << args.at("signature") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            out << "Timestamp signature in \"" << args.at("signature") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
         }
 
         return 0;

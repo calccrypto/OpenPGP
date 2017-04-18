@@ -49,7 +49,9 @@ class Module{
 
         // function to check arguments and run user defined actions
         typedef std::function <int(const std::map <std::string, std::string> &,
-                                   const std::map <std::string, bool>        &)> Run;
+                                   const std::map <std::string, bool>        &,
+                                   std::ostream                              &,
+                                   std::ostream                              &)> Run;
 
     private:
         std::string name;                       // name of this module, and calling string; no whitespace
@@ -85,7 +87,10 @@ class Module{
         const std::string & get_name() const;                       // can only get name out
         std::string help(const std::string & indent = "") const;    // get help string
 
-        int operator()(int argc, char * argv[]) const;              // call operator() after setup
+        // call operator() after setup
+        int operator()(int argc, char * argv[],
+                       std::ostream & out = std::cout,
+                       std::ostream & err = std::cerr) const;
 };
 
 }
