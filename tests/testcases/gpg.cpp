@@ -482,10 +482,10 @@ TEST(gpg, private_key){
 TEST(gpg, revoke){
     std::string error;
 
-    const PGPRevocationCertificate pgp(GPG_REVOKE3_ALICE);
-    ASSERT_EQ(pgp.meaningful(error), true);
+    const PGPRevocationCertificate rev(GPG_REVOKE3_ALICE);
+    ASSERT_EQ(rev.meaningful(error), true);
 
-    const PGP::Packets packets = pgp.get_packets();
+    const PGP::Packets packets = rev.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 1);
 
     ASSERT_EQ(packets[0] -> get_tag(), (uint8_t) 2);
@@ -535,9 +535,14 @@ TEST(gpg, revoke){
         const Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
+
+    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    ASSERT_EQ(pri.meaningful(error), true);
+
+    EXPECT_EQ(verify_revoke(pri, rev, error), true);
 }
 
-TEST(gpg, encrypt_decrypt_pka_mdc){
+TEST(gpg, decrypt_pka_mdc){
     std::string error;
 
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
@@ -585,7 +590,7 @@ TEST(gpg, encrypt_decrypt_pka_mdc){
     EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(gpg, encrypt_decrypt_pka_no_mdc){
+TEST(gpg, decrypt_pka_no_mdc){
     std::string error;
 
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
@@ -631,7 +636,7 @@ TEST(gpg, encrypt_decrypt_pka_no_mdc){
     EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(gpg, encrypt_decrypt_symmetric_mdc){
+TEST(gpg, decrypt_symmetric_mdc){
     std::string error;
 
     const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_TO_ALICE);
@@ -677,7 +682,7 @@ TEST(gpg, encrypt_decrypt_symmetric_mdc){
     EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(gpg, encrypt_decrypt_symmetric_no_mdc){
+TEST(gpg, decrypt_symmetric_no_mdc){
     std::string error;
 
     const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_NO_MDC_TO_ALICE);
@@ -722,7 +727,7 @@ TEST(gpg, encrypt_decrypt_symmetric_no_mdc){
     EXPECT_EQ(message, MESSAGE);
 }
 
-TEST(gpg, encrypt_sign_decrypt_verify){
+TEST(gpg, decrypt_verify){
     std::string error;
 
     const PGPSecretKey pri(GPG_PRIKEY_ALICE);
