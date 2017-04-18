@@ -42,8 +42,8 @@ const Module fingerprint(
 
     // optional arguments
     {
-        std::make_pair("-s", std::make_pair("separator",  ":")),
-        std::make_pair("-c", std::make_pair("split size", "2")),
+        std::make_pair("-s", std::make_pair("separator",                       ":")),
+        std::make_pair("-g", std::make_pair("group this many octets together", "1")),
     },
 
     // optional flags
@@ -62,7 +62,7 @@ const Module fingerprint(
             return -1;
         }
 
-        std::stringstream s(args.at("-c"));
+        std::stringstream s(args.at("-g"));
         std::string::size_type split;
         if (!(s >> split)){
             err << "Error: Bad split size." << std::endl;
@@ -74,7 +74,7 @@ const Module fingerprint(
         const PGPKey key(f);
 
         if (key.meaningful(error)){
-            const std::string fp = hexlify(key.fingerprint());
+            const std::string fp = key.fingerprint();
 
             std::string separated;
 
@@ -83,21 +83,21 @@ const Module fingerprint(
 
                 // insert separator
                 for(std::string::size_type i = 0; (i + split) < fp.size(); i += split){
-                    separated += fp.substr(i, split) + sep;
+                    separated += hexlify(fp.substr(i, split)) + sep;
                 }
 
                 std::string::size_type rem = fp.size() % split;
-                if (!rem){
+                if (!rem || (split == 1)){
                     rem = split;
                 }
 
-                separated += fp.substr(fp.size() - rem, rem);
+                separated += hexlify(fp.substr(fp.size() - rem, rem));
             }
             else{
-                separated = fp;
+                separated = hexlify(fp);
             }
 
-            out << separated + "\n" << std::endl;
+            out << separated << std::endl;
         }
         else{
             err << error << std::endl;

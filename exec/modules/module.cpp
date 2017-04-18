@@ -3,6 +3,11 @@
 namespace module {
 
 void Module::check_names_ws() const{
+    // make sure the module is callable
+    if (!name.size()){
+        throw std::runtime_error("Error: Empty name");
+    }
+
     // check name of this module
     for(char const & c : name){
         if (std::isspace(c)){

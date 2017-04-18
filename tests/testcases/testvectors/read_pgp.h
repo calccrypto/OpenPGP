@@ -1,9 +1,8 @@
 #ifndef __READ_PGP__
 #define __READ_PGP__
 
+#include <fstream>
 #include <string>
-
-#include "PGP.h"
 
 #ifndef GPG_DIR
 #define GPG_DIR "testcases/testvectors/gpg/"

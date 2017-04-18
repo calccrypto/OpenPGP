@@ -66,7 +66,7 @@ const Module list(
         const PGPKey key(f);
 
         if (key.meaningful(error)){
-            out << key.list_keys() << std::endl;
+            out << key.list_keys() << std::flush;
         }
         else{
             err << error << std::endl;
