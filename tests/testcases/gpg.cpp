@@ -11,17 +11,9 @@
 #include "sign.h"
 #include "verify.h"
 
-#include "testvectors/gpg/clearsign.h"
-#include "testvectors/gpg/detached.h"
-#include "testvectors/gpg/encryptsign.h"
-#include "testvectors/gpg/pkaencrypted.h"
-#include "testvectors/gpg/prikey.h"
-#include "testvectors/gpg/pubkey.h"
-#include "testvectors/gpg/revoke.h"
-#include "testvectors/gpg/sign.h"
-#include "testvectors/gpg/symencrypted.h"
 #include "testvectors/msg.h"
 #include "testvectors/pass.h"
+#include "testvectors/read_pgp.h"
 
 time_t get_utc(int year, int month, int day, int hour, int minute, int second){
     tm in;
@@ -55,13 +47,13 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second){
 TEST(gpg, public_key){
     std::string error;
 
-    const PGPPublicKey pub(GPG_PUBKEY_ALICE);
-    ASSERT_EQ(pub.meaningful(error), true);
+    PGPPublicKey pub;
+    ASSERT_EQ(read_pgp <PGPPublicKey> ("Alicepub", pub), true);
 
     // read public key into PGPSecretKey
     {
-        const PGPSecretKey pri(GPG_PUBKEY_ALICE);
-        ASSERT_EQ(pri.meaningful(error), false);
+        PGPSecretKey pri;
+        EXPECT_EQ(read_pgp <PGPSecretKey> ("Alicepub", pri), false);
     }
 
     const PGP::Packets packets = pub.get_packets();
@@ -256,13 +248,13 @@ TEST(gpg, public_key){
 TEST(gpg, private_key){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
 
     // read private key into PGPPublicKey
     {
-        const PGPPublicKey pub(GPG_PRIKEY_ALICE);
-        ASSERT_EQ(pub.meaningful(error), false);
+        PGPPublicKey pub;
+        EXPECT_EQ(read_pgp <PGPPublicKey> ("Aliceri", pub), false);
     }
 
     const PGP::Packets packets = pri.get_packets();
@@ -482,8 +474,11 @@ TEST(gpg, private_key){
 TEST(gpg, revoke){
     std::string error;
 
-    const PGPRevocationCertificate rev(GPG_REVOKE3_ALICE);
-    ASSERT_EQ(rev.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
+
+    PGPRevocationCertificate rev;
+    ASSERT_EQ(read_pgp <PGPRevocationCertificate> ("revoke", rev), true);
 
     const PGP::Packets packets = rev.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 1);
@@ -536,20 +531,17 @@ TEST(gpg, revoke){
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
-
     EXPECT_EQ(verify_revoke(pri, rev, error), true);
 }
 
 TEST(gpg, decrypt_pka_mdc){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
 
-    const PGPMessage gpg_encrypted(GPG_PKA_ENCRYPT_TO_ALICE);
-    ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+    PGPMessage gpg_encrypted;
+    ASSERT_EQ(read_pgp <PGPMessage> ("pkaencrypted", gpg_encrypted), true);
 
     // make sure data was read correctly
     const PGP::Packets packets = gpg_encrypted.get_packets();
@@ -593,10 +585,12 @@ TEST(gpg, decrypt_pka_mdc){
 TEST(gpg, decrypt_pka_no_mdc){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
     ASSERT_EQ(pri.meaningful(error), true);
 
-    const PGPMessage gpg_encrypted(GPG_PKA_ENCRYPT_NO_MDC_TO_ALICE);
+    PGPMessage gpg_encrypted;
+    ASSERT_EQ(read_pgp <PGPMessage> ("pkaencryptednomdc", gpg_encrypted), true);
     ASSERT_EQ(gpg_encrypted.meaningful(error), true);
 
     // make sure data was read correctly
@@ -639,8 +633,8 @@ TEST(gpg, decrypt_pka_no_mdc){
 TEST(gpg, decrypt_symmetric_mdc){
     std::string error;
 
-    const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_TO_ALICE);
-    ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+    PGPMessage gpg_encrypted;
+    ASSERT_EQ(read_pgp <PGPMessage> ("symencrypted", gpg_encrypted), true);
 
     // make sure data was read correctly
     const PGP::Packets packets = gpg_encrypted.get_packets();
@@ -685,8 +679,8 @@ TEST(gpg, decrypt_symmetric_mdc){
 TEST(gpg, decrypt_symmetric_no_mdc){
     std::string error;
 
-    const PGPMessage gpg_encrypted(GPG_SYM_ENCRYPT_NO_MDC_TO_ALICE);
-    ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+    PGPMessage gpg_encrypted;
+    ASSERT_EQ(read_pgp <PGPMessage> ("symencryptednomdc", gpg_encrypted), true);
 
     // make sure data was read correctly
     const PGP::Packets packets = gpg_encrypted.get_packets();
@@ -730,11 +724,11 @@ TEST(gpg, decrypt_symmetric_no_mdc){
 TEST(gpg, decrypt_verify){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
 
-    const PGPMessage gpg_encrypted(GPG_ENCRYPTED_AND_SIGNED_ALICE);
-    ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+    PGPMessage gpg_encrypted;
+    ASSERT_EQ(read_pgp <PGPMessage> ("encryptsign", gpg_encrypted), true);
 
     // make sure data was read correctly
     PGP::Packets packets = gpg_encrypted.get_packets();
@@ -845,30 +839,36 @@ TEST(gpg, decrypt_verify){
 TEST(gpg, verify_detached){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
 
-    const PGPDetachedSignature sig(GPG_DETACHED_SIG_ALICE);
-    ASSERT_EQ(sig.meaningful(error), true);
+    PGPDetachedSignature sig;
+    ASSERT_EQ(read_pgp <PGPDetachedSignature> ("detached", sig), true);
+
     EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
 }
 
 TEST(gpg, verify_binary){
     std::string error;
 
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
 
-    const PGPMessage sig(GPG_SIGNATURE_ALICE);
-    ASSERT_EQ(sig.meaningful(error), true);
+    PGPMessage sig;
+    ASSERT_EQ(read_pgp <PGPMessage> ("signature", sig), true);
+
     EXPECT_EQ(verify_binary(pri, sig, error), true);
 }
 
 TEST(gpg, verify_cleartext){
     std::string error;
 
-    const PGPCleartextSignature clearsig(GPG_CLEARSIGN_ALICE);
-    ASSERT_EQ(clearsig.meaningful(error), true);
+    PGPSecretKey pri;
+    ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
+
+    PGPCleartextSignature clearsig;
+    ASSERT_EQ(read_pgp <PGPCleartextSignature> ("clearsign", clearsig), true);
+
     EXPECT_EQ(clearsig.get_message(), MESSAGE.substr(0, MESSAGE.size() - 1)); // final newline is removed
 
     const PGPDetachedSignature key = clearsig.get_sig();
@@ -914,9 +914,6 @@ TEST(gpg, verify_cleartext){
         const Tag2Sub16::Ptr sub16 = std::dynamic_pointer_cast <Tag2Sub16> (s0);
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
-
-    const PGPSecretKey pri(GPG_PRIKEY_ALICE);
-    ASSERT_EQ(pri.meaningful(error), true);
 
     EXPECT_EQ(verify_cleartext_signature(pri, clearsig, error), true);
 }

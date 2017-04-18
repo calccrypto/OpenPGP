@@ -304,7 +304,7 @@ void PGP::read(std::istream & stream){
         // if ASCII Armor was set before calling read()
         if (type != UNKNOWN){
             if (type != new_type){
-                std::cerr << "Warning: ASCII Armor does not match data type: " << std::to_string(new_type) << std::endl;
+                std::cerr << "Warning: Previous ASCII Armor " << ASCII_Armor_Header[type] << " does not match input armor type: " << ASCII_Armor_Header[new_type] << std::endl;
             }
         }
 

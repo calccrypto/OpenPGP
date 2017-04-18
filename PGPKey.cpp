@@ -393,9 +393,7 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
 
 PGPSecretKey::PGPSecretKey()
     : PGPKey()
-{
-    type = PRIVATE_KEY_BLOCK;
-}
+{}
 
 PGPSecretKey::PGPSecretKey(const PGPKey & copy)
     : PGPKey(copy)
