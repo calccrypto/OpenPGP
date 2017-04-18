@@ -9,6 +9,8 @@ debug: all
 
 gpg-debug: debug
 
+.PHONY: clean
+
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 

@@ -17,8 +17,8 @@ std::string show_time(time_t time){
          << month[gmt -> tm_mon] << " "
          << gmt -> tm_mday << " "
          << std::setfill('0') << std::setw(2) << gmt -> tm_hour << ":"
-         << std::setfill('0') << std::setw(2) << gmt -> tm_min << ":"
-         << std::setfill('0') << std::setw(2) << gmt -> tm_sec << " UTC "
+         << std::setfill('0') << std::setw(2) << gmt -> tm_min  << ":"
+         << std::setfill('0') << std::setw(2) << gmt -> tm_sec  << " UTC "
          << (1900 + gmt -> tm_year);
     return date.str();
 }

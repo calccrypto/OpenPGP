@@ -10,6 +10,7 @@ include testcases/common/objects.mk
 include testcases/Compress/objects.mk
 include testcases/Encryptions/objects.mk
 include testcases/Hashes/objects.mk
+include testcases/Misc/objects.mk
 include testcases/PKA/objects.mk
 
 all: $(TARGET)
@@ -28,7 +29,7 @@ testcases:
 	$(MAKE) $(MAKECMDGOALS) -C testcases
 
 $(TARGET): main.cc libs testcases
-	$(CXX) $(CXXFLAGS) main.cc $(addprefix testcases/, $(TESTCASES_OBJECTS)) $(addprefix testcases/common/, $(COMMON_TESTCASES_OBJECTS)) $(addprefix testcases/Compress/, $(COMPRESS_TESTCASES_OBJECTS)) $(addprefix testcases/Encryptions/, $(ENCRYPTIONS_TESTCASES_OBJECTS)) $(addprefix testcases/Hashes/, $(HASHES_TESTCASES_OBJECTS)) $(addprefix testcases/PKA/, $(PKA_TESTCASES_OBJECTS)) $(LDFLAGS) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) main.cc $(addprefix testcases/, $(TESTCASES_OBJECTS)) $(addprefix testcases/common/, $(COMMON_TESTCASES_OBJECTS)) $(addprefix testcases/Compress/, $(COMPRESS_TESTCASES_OBJECTS)) $(addprefix testcases/Encryptions/, $(ENCRYPTIONS_TESTCASES_OBJECTS)) $(addprefix testcases/Hashes/, $(HASHES_TESTCASES_OBJECTS)) $(addprefix testcases/MISC/, $(MISC_TESTCASES_OBJECTS)) $(addprefix testcases/PKA/, $(PKA_TESTCASES_OBJECTS)) $(LDFLAGS) -o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)

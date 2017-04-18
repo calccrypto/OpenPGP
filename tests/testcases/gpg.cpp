@@ -254,7 +254,7 @@ TEST(gpg, private_key){
     // read private key into PGPPublicKey
     {
         PGPPublicKey pub;
-        EXPECT_EQ(read_pgp <PGPPublicKey> ("Aliceri", pub), false);
+        EXPECT_EQ(read_pgp <PGPPublicKey> ("Alicepri", pub), false);
     }
 
     const PGP::Packets packets = pri.get_packets();
