@@ -289,26 +289,16 @@ void PGP::read(std::istream & stream){
     }
     else{
         // parse armor header
-        Type_t new_type;
-        for(new_type = MESSAGE; new_type != SIGNED_MESSAGE; new_type++){
-            if (("-----BEGIN PGP " + ASCII_Armor_Header[new_type] + "-----") == line){
+        for(type = MESSAGE; type != SIGNED_MESSAGE; type++){
+            if (("-----BEGIN PGP " + ASCII_Armor_Header[type] + "-----") == line){
                 break;
             }
         }
 
         // Cleartext Signature Framework
-        if (new_type == SIGNED_MESSAGE){
+        if (type == SIGNED_MESSAGE){
             throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
         }
-
-        // if ASCII Armor was set before calling read()
-        if (type != UNKNOWN){
-            if (type != new_type){
-                std::cerr << "Warning: Previous ASCII Armor " << ASCII_Armor_Header[type] << " does not match input armor type: " << ASCII_Armor_Header[new_type] << std::endl;
-            }
-        }
-
-        type = new_type;
 
         // read Armor Key(s)
         while (std::getline(stream, line) && line.size()){

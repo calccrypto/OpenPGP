@@ -52,7 +52,6 @@ std::string PGPKey::fingerprint() const{
     return std::static_pointer_cast <Key> (packets[0]) -> get_fingerprint();
 }
 
-
 // output style inspired by gpg and SKS Keyserver/pgp.mit.edu
 std::string PGPKey::list_keys(const std::size_t indents, const std::size_t indent_size) const{
     std::string error;
@@ -393,7 +392,9 @@ std::ostream & operator<<(std::ostream & stream, const PGPPublicKey & pgp){
 
 PGPSecretKey::PGPSecretKey()
     : PGPKey()
-{}
+{
+    type = PRIVATE_KEY_BLOCK;
+}
 
 PGPSecretKey::PGPSecretKey(const PGPKey & copy)
     : PGPKey(copy)
