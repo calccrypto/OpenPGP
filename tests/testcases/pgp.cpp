@@ -107,7 +107,6 @@ TEST(PGP, keygen){
     // generate private key
     const PGPSecretKey pri = generate_key(config, error);
     EXPECT_EQ(pri.meaningful(error), true);
-    std::cout << error << std::endl;
 
     // extract public key from private
     const PGPPublicKey pub = pri.get_public();
