@@ -56,6 +56,9 @@ TEST(gpg, public_key){
         EXPECT_EQ(read_pgp <PGPSecretKey> ("Alicepub", pri), false);
     }
 
+    ASSERT_EQ(pub.keyid(), unhexlify("d5d7da71c354960e"));
+    ASSERT_EQ(pub.fingerprint(), unhexlify("4b3292e956b577ad703443f4d5d7da71c354960e"));
+
     const PGP::Packets packets = pub.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);
 
@@ -256,6 +259,9 @@ TEST(gpg, private_key){
         PGPPublicKey pub;
         EXPECT_EQ(read_pgp <PGPPublicKey> ("Alicepri", pub), false);
     }
+
+    ASSERT_EQ(pri.keyid(), unhexlify("d5d7da71c354960e"));
+    ASSERT_EQ(pri.fingerprint(), unhexlify("4b3292e956b577ad703443f4d5d7da71c354960e"));
 
     const PGP::Packets packets = pri.get_packets();
     ASSERT_EQ(packets.size(), (PGP::Packets::size_type) 5);

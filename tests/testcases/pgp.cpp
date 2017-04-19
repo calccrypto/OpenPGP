@@ -111,6 +111,9 @@ TEST(PGP, keygen){
     // extract public key from private
     const PGPPublicKey pub = pri.get_public();
     EXPECT_EQ(pub.meaningful(error), true);
+
+    EXPECT_EQ(pri.keyid(), pub.keyid());
+    EXPECT_EQ(pri.fingerprint(), pub.fingerprint());
 }
 
 TEST(PGP, revoke_key){
