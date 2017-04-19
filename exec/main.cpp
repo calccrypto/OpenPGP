@@ -57,7 +57,7 @@ std::size_t help(const std::string & match        = "",
 int main(int argc, char * argv[]){
     if (argc == 1){
         show_header(std::cout);
-        help("", std::cout, "");
+        help("", std::cout, "    ");
         return 0;
     }
 
@@ -65,13 +65,17 @@ int main(int argc, char * argv[]){
     if (!std::strncmp(argv[1], "help", 4)){
         if (argc == 2){
             show_header(std::cout);
-            help("", std::cout, "");
+            help("", std::cout, "    ");
         }
         else{
             std::stringstream s;
-            const std::size_t found = help(argv[2], s, "");
+            const std::size_t found = help(argv[2], s, "    ");
+            std::cout << found << " matches for \"" << argv[2] << "\"";
             if (found){
-                std::cout << found << " matches:\n" << s.str() << std::flush;
+                std::cout << ":\n" << s.str() << std::flush;
+            }
+            else{
+                std::cout << std::endl;
             }
         }
         return 0;
@@ -88,9 +92,9 @@ int main(int argc, char * argv[]){
 
     // if module not found, try suggestions
     if (it == mapping.end()){
-        std::cerr << "Error: Function " << argv[1] << " not found." << std::endl;
+        std::cerr << "Error: Function \"" << argv[1] << "\" not found." << std::endl;
         std::stringstream s;
-        const std::size_t found = help(argv[1], s, "");
+        const std::size_t found = help(argv[1], s, "    ");
         if (found){
             std::cout << found << " matches:\n" << s.str() << std::flush;
         }
