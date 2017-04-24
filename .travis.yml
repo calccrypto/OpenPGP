@@ -5,6 +5,8 @@ language: cpp
 matrix:
   include:
     - os: linux
+      dist: trusty
+      sudo: false
       compiler: gcc
       addons:
         apt:
@@ -21,6 +23,8 @@ matrix:
         - ./tests
 
     - os: linux
+      dist: trusty
+      sudo: false
       compiler: gcc
       addons:
         apt:
@@ -37,6 +41,8 @@ matrix:
         - ./tests
 
     - os: linux
+      dist: trusty
+      sudo: false
       compiler: gcc
       addons:
         apt:
@@ -53,6 +59,8 @@ matrix:
         - ./tests
 
     - os: linux
+      dist: trusty
+      sudo: false
       compiler: gcc
       addons:
         apt:
@@ -69,6 +77,8 @@ matrix:
         - ./tests
 
     - os: linux
+      dist: trusty
+      sudo: false
       compiler: clang
       addons:
         apt:
@@ -86,6 +96,7 @@ matrix:
 
     - os: linux
       dist: trusty
+      sudo: false
       compiler: clang
       addons:
         apt:
@@ -103,6 +114,7 @@ matrix:
 
     - os: linux
       dist: trusty
+      sudo: false
       compiler: clang
       addons:
         apt:
