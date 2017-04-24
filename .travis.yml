@@ -14,7 +14,7 @@ matrix:
         - chmod +x tests/gtest.sh
         - export CC=gcc-4.8
         - export CXX=g++-4.8
-        - ./gtest.sh
+        - tests/gtest.h
         - cd tests
         - make gpg-debug
       script:
