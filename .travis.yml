@@ -36,7 +36,6 @@ matrix:
         - cd tests
         - chmod +x ./gtest.sh
         - ./gtest.sh
-        - cd tests
         - make gpg-debug
       script:
         - ./tests
