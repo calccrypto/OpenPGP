@@ -25,6 +25,10 @@ const uint8_t Tag2Subpacket::FEATURES                               = 30;
 const uint8_t Tag2Subpacket::SIGNATURE_TARGET                       = 31;
 const uint8_t Tag2Subpacket::EMBEDDED_SIGNATURE                     = 32;
 
+#ifdef GPG_COMPATIBLE
+const uint8_t Tag2Subpacket::ISSUER_FINGERPRINT                     = 33;
+#endif
+
 const std::map <uint8_t, std::string> Tag2Subpacket::NAME = {
     std::make_pair(0,                                               "Reserved"),
     std::make_pair(1,                                               "Reserved"),
@@ -59,6 +63,11 @@ const std::map <uint8_t, std::string> Tag2Subpacket::NAME = {
     std::make_pair(FEATURES,                                        "Features"),
     std::make_pair(SIGNATURE_TARGET,                                "Signature Target"),
     std::make_pair(EMBEDDED_SIGNATURE,                              "Embedded Signature"),
+
+    #ifdef GPG_COMPATIBLE
+    std::make_pair(ISSUER_FINGERPRINT,                              "Issuer Fingerprint (GPG extension)"),
+    #endif
+
     std::make_pair(100,                                             "Private/Experimental algorithm"),
     std::make_pair(101,                                             "Private/Experimental algorithm"),
     std::make_pair(102,                                             "Private/Experimental algorithm"),

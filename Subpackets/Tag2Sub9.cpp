@@ -14,6 +14,7 @@ Tag2Sub9::Tag2Sub9(const std::string & data)
 void Tag2Sub9::read(const std::string & data){
     dt = static_cast <uint32_t> (toint(data, 256));
 }
+
 std::string Tag2Sub9::show(const uint32_t create_time, const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');

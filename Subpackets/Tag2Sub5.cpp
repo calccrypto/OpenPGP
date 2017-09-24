@@ -13,8 +13,10 @@ Tag2Sub5::Tag2Sub5(const std::string & data)
 }
 
 void Tag2Sub5::read(const std::string & data){
-    level = data[0];
-    amount = data[1];
+    if (data.size()){
+        level = data[0];
+        amount = data[1];
+    }
 }
 
 std::string Tag2Sub5::show(const std::size_t indents, const std::size_t indent_size) const{

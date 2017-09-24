@@ -142,6 +142,11 @@ void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpacke
         else if (type == Tag2Subpacket::EMBEDDED_SIGNATURE){
             subpacket = std::make_shared <Tag2Sub32> ();
         }
+        #ifdef GPG_COMPATIBLE
+        else if (type == Tag2Subpacket::ISSUER_FINGERPRINT){
+            subpacket = std::make_shared <Tag2Sub33> ();
+        }
+        #endif
         else{
             throw std::runtime_error("Error: Tag 2 Subpacket tag not defined or reserved: " + std::to_string(type));
         }

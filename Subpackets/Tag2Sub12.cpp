@@ -14,10 +14,12 @@ Tag2Sub12::Tag2Sub12(const std::string & data)
 }
 
 void Tag2Sub12::read(const std::string & data){
-    _class = data[0];
-    pka = data[1];
-    fingerprint = data.substr(2, 20);
-    size = data.size();
+    if (data.size()){
+        _class = data[0];
+        pka = data[1];
+        fingerprint = data.substr(2, 20);
+        size = data.size();
+    }
 }
 
 std::string Tag2Sub12::show(const std::size_t indents, const std::size_t indent_size) const{

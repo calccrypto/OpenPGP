@@ -61,6 +61,11 @@ THE SOFTWARE.
 #include "Tag2Sub30.h"      // Features
 #include "Tag2Sub31.h"      // Signature Target
 #include "Tag2Sub32.h"      // Embedded Signature
+
+#ifdef GPG_COMPATIBLE
+#include "Tag2Sub33.h"      // Issuer Fingerprint (GPG extension)
+#endif
+
 // 100 To 110               // Private or experimental
 
 #endif

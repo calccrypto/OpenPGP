@@ -34,6 +34,7 @@ TAG2SUBPACKETS_OBJECTS= Tag2Subpacket.o             \
                         Tag2Sub30.o                 \
                         Tag2Sub31.o                 \
                         Tag2Sub32.o                 \
+                        Tag2Sub33.o                 \
 
 TAG17SUBPACKETS_OBJECTS=Tag17Subpacket.o            \
                         Tag17Sub1.o

@@ -119,7 +119,9 @@ class Tag2Subpacket: public Subpacket {
         static const uint8_t FEATURES;
         static const uint8_t SIGNATURE_TARGET;
         static const uint8_t EMBEDDED_SIGNATURE;
-
+        #ifdef GPG_COMPATIBLE
+        static const uint8_t ISSUER_FINGERPRINT;
+        #endif
         static const std::map <uint8_t, std::string> NAME;
 
     protected:

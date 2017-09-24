@@ -12,7 +12,9 @@ Tag2Sub7::Tag2Sub7(const std::string & data)
 }
 
 void Tag2Sub7::read(const std::string & data){
-    revocable = data[0];
+    if (data.size()){
+        revocable = data[0];
+    }
 }
 
 std::string Tag2Sub7::show(const std::size_t indents, const std::size_t indent_size) const{

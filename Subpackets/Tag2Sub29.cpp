@@ -18,9 +18,11 @@ Tag2Sub29::Tag2Sub29(const std::string & data)
 }
 
 void Tag2Sub29::read(const std::string & data){
-    code = data[0];
-    reason = data.substr(1, data.size() - 1);
-    size = data.size();
+    if (data.size()){
+        code = data[0];
+        reason = data.substr(1, data.size() - 1);
+        size = data.size();
+    }
 }
 
 std::string Tag2Sub29::show(const std::size_t indents, const std::size_t indent_size) const{

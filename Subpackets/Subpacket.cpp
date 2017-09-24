@@ -21,8 +21,8 @@ std::string Subpacket::show_title() const{
     return "";
 }
 
-Subpacket::Subpacket(uint8_t type, unsigned int size)
-    : critical(false),
+Subpacket::Subpacket(uint8_t type, unsigned int size, bool crit)
+    : critical(crit),
       type(type),
       size(size)
 {}

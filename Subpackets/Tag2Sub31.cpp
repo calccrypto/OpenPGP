@@ -13,10 +13,12 @@ Tag2Sub31::Tag2Sub31(const std::string & data)
 }
 
 void Tag2Sub31::read(const std::string & data){
-    pka = data[0];
-    hash_alg = data[1];
-    hash = data.substr(2, data.size() - 2);
-    size = data.size();
+    if (data.size()){
+        pka = data[0];
+        hash_alg = data[1];
+        hash = data.substr(2, data.size() - 2);
+        size = data.size();
+    }
 }
 
 std::string Tag2Sub31::show(const std::size_t indents, const std::size_t indent_size) const{

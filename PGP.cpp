@@ -111,7 +111,7 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
 
     return tag;
 }
-
+#include <iostream>
 Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const{
     Packet::Ptr out;
     if (partial > 1){
@@ -188,6 +188,8 @@ Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t &
             throw std::runtime_error("Error: Tag not defined: " + std::to_string(tag) + ".");
         }
     }
+
+    std::cout << "packet " << (int) tag << " " << length << std::endl;
 
     // fill in data
     out -> set_tag(tag);

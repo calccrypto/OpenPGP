@@ -14,12 +14,14 @@ Tag2Sub20::Tag2Sub20(const std::string & data)
 }
 
 void Tag2Sub20::read(const std::string & data){
-    flags = data.substr(0, 4);
-    mlen  = toint(data.substr(4, 2), 256);
-    nlen  = toint(data.substr(6, 2), 256);
-    m     = data.substr(8, mlen);
-    n     = data.substr(8 + mlen, nlen);
-    size  = 4 + mlen + nlen;
+    if (data.size()){
+        flags = data.substr(0, 4);
+        mlen  = toint(data.substr(4, 2), 256);
+        nlen  = toint(data.substr(6, 2), 256);
+        m     = data.substr(8, mlen);
+        n     = data.substr(8 + mlen, nlen);
+        size  = 4 + mlen + nlen;
+    }
 }
 
 std::string Tag2Sub20::show(const std::size_t indents, const std::size_t indent_size) const{

@@ -12,7 +12,9 @@ Tag2Sub4::Tag2Sub4(const std::string & data)
 }
 
 void Tag2Sub4::read(const std::string & data){
-    exportable = data[0];
+    if (data.size()){
+        exportable = data[0];
+    }
 }
 
 std::string Tag2Sub4::show(const std::size_t indents, const std::size_t indent_size) const{

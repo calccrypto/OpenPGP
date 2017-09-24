@@ -17,10 +17,12 @@ Tag17Sub1::Tag17Sub1(const std::string & data)
 }
 
 void Tag17Sub1::read(const std::string & data){
-    version = data[2];
-    encoding = data[3];
-    image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
-    size = image.size();
+    if (data.size()){
+        version = data[2];
+        encoding = data[3];
+        image = data.substr(16, data.size() - 16); // remove image header - 12 '\x00's
+        size = image.size();
+    }
 }
 
 std::string Tag17Sub1::show(const std::size_t indents, const std::size_t indent_size) const{
