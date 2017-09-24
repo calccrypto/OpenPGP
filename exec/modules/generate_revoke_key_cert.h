@@ -75,7 +75,7 @@ const Module generate_revoke_key_cert(
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
-        
+
         const PGPSecretKey pri(key);
         const RevArgs revargs(pri,
                               args.at("passphrase"),
@@ -84,17 +84,15 @@ const Module generate_revoke_key_cert(
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
-        std::string error;
 
-        const PGPRevocationCertificate cert = ::revoke_key_cert(revargs, error);
+        const PGPRevocationCertificate cert = ::revoke_key_cert(revargs);
 
-        if (cert.meaningful(error)){
-            out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (cert.meaningful()){
+            err << "Error: Generated bad key revocation certificate." << std::endl;
+            return -1;
         }
 
+        out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

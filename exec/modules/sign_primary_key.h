@@ -81,16 +81,14 @@ const Module sign_primary_key(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
-        std::string error;
-        const PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), args.at("-u"), mpitoulong(hextompi(args.at("-c"))), error);
+        const PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), args.at("-u"), mpitoulong(hextompi(args.at("-c"))));
 
-        if (key.meaningful(error)){
-            out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!key.meaningful()){
+            err << "Error: Generated bad primary key signature." << std::endl;
+            return -1;
         }
 
+        out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

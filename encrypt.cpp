@@ -1,11 +1,10 @@
 #include "encrypt.h"
 
 Packet::Ptr encrypt_data(const EncryptArgs & args,
-                         const std::string & session_key,
-                         std::string & error){
+                         const std::string & session_key){
 
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return nullptr;
     }
 
@@ -14,9 +13,9 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
     // if message is to be signed
     if (args.signer){
         const SignArgs signargs(*(args.signer), args.passphrase, 4, args.hash);
-        PGPMessage signed_message = sign_binary(signargs, args.filename, args.data, args.comp, error);
-        if (!signed_message.meaningful(error)){
-            error += "Error: Signing failure.\n";
+        PGPMessage signed_message = sign_binary(signargs, args.filename, args.data, args.comp);
+        if (!signed_message.meaningful()){
+            // "Error: Signing failure.\n";
             return nullptr;
         }
 
@@ -70,28 +69,27 @@ Packet::Ptr encrypt_data(const EncryptArgs & args,
 }
 
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPKey & pgpkey,
-                       std::string & error){
+                       const PGPKey & pgpkey){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return PGPMessage();
     }
 
-    if (!pgpkey.meaningful(error)){
-        error += "Error: Bad key.\n";
+    if (!pgpkey.meaningful()){
+        // "Error: Bad key.\n";
         return PGPMessage();
     }
 
     // Check if key has been revoked
-    const int rc = check_revoked(pgpkey, error);
+    const int rc = check_revoked(pgpkey);
     if (rc == true){
-        error += "Error: Key " + hexlify(pgpkey.keyid()) + " has been revoked. Nothing done.\n";
+        // "Error: Key " + hexlify(pgpkey.keyid()) + " has been revoked. Nothing done.\n";
         return PGPMessage();
     }
     else if (rc == -1){
-        error += "Error: check_revoked failed.\n";
+        // "Error: check_revoked failed.\n";
         return PGPMessage();
     }
 
@@ -109,7 +107,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     }
 
     if (!key){
-        error += "Error: No encrypting key found.\n";
+        // "Error: No encrypting key found.\n";
         return PGPMessage();
     }
 
@@ -132,7 +130,7 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 
     std::string nibbles = mpitohex(mpi[0]);        // get hex representation of modulus
     nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
-    PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, args.sym) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1, error)));
+    PGPMPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, args.sym) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)));
 
     // encrypt m
     if ((key -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
@@ -144,9 +142,9 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
     }
 
     // encrypt data and put it into a packet
-    Packet::Ptr encrypted = encrypt_data(args, session_key, error);
+    Packet::Ptr encrypted = encrypt_data(args, session_key);
     if (!encrypted){
-        error += "Error: Failed to encrypt data.\n";
+        // "Error: Failed to encrypt data.\n";
         return PGPMessage();
     }
 
@@ -160,12 +158,11 @@ PGPMessage encrypt_pka(const EncryptArgs & args,
 
 PGPMessage encrypt_sym(const EncryptArgs & args,
                        const std::string & passphrase,
-                       const uint8_t key_hash,
-                       std::string & error){
+                       const uint8_t key_hash){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return PGPMessage();
     }
 
@@ -186,9 +183,9 @@ PGPMessage encrypt_sym(const EncryptArgs & args,
     const std::string session_key = tag3 -> get_session_key(passphrase);
 
     // encrypt data
-    Packet::Ptr encrypted = encrypt_data(args, session_key.substr(1, session_key.size() - 1), error);
+    Packet::Ptr encrypted = encrypt_data(args, session_key.substr(1, session_key.size() - 1));
     if (!encrypted){
-        error += "Error: Failed to encrypt data.\n";
+        // "Error: Failed to encrypt data.\n";
         return PGPMessage();
     }
 

@@ -1,6 +1,6 @@
 # OpenPGP executable Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall
+CXXFLAGS=-std=c++11 -Wall -fPIC
 LDFLAGS=-lOpenPGP -lgmp -lgmpxx -lbz2 -lz -L..
 TARGET=OpenPGP
 

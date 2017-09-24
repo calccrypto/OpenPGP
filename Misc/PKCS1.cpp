@@ -1,9 +1,9 @@
 #include "PKCS1.h"
 
-std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k, std::string & error){
+std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){
     BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
     if (m.size() > (k - 11)){
-        error += "Error: EME-PKCS1 Message too long.\n";
+        // "Error: EME-PKCS1 Message too long.\n";
         return "";
     }
 
@@ -22,7 +22,7 @@ std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k, 
     return EM + zero + m;
 }
 
-std::string EME_PKCS1v1_5_DECODE(const std::string & m, std::string & error){
+std::string EME_PKCS1v1_5_DECODE(const std::string & m){
     if (m.size() > 11){
         if (!m[0]){
             if (m[1] == '\x02'){
@@ -35,7 +35,7 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m, std::string & error){
         }
     }
 
-    error += "Error: EME-PKCS1 Decryption Error.\n";
+    // "Error: EME-PKCS1 Decryption Error.\n";
     return "";
 }
 

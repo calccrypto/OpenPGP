@@ -98,8 +98,7 @@ const Module encrypt_sym(
 
             signer = std::make_shared <PGPSecretKey> (signing);
 
-            std::string error;
-            if (!signer -> meaningful(error)){
+            if (!signer -> meaningful()){
                 err << "Error: Bad signing key.\n";
                 return -1;
             }
@@ -113,10 +112,8 @@ const Module encrypt_sym(
                                       signer,
                                       args.at("-p"),
                                       Hash::NUMBER.at(args.at("--shash")));
-        std::string error;
 
-        out << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash")), error).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-
+        out << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

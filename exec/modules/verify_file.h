@@ -71,17 +71,15 @@ const Module verify_file(
         const PGPKey signer(key);
         const PGPMessage message(msg);
 
-        std::string error;
-        const int verified = ::verify_binary(signer, message, error);
+        const int verified = ::verify_binary(signer, message);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "The data in \"" << args.at("message") << "\" was" << ((verified == 1)?"": " not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "The data in \"" << args.at("message") << "\" was" << ((verified == 1)?"": " not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+        return !verified;
     }
 );
 

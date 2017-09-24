@@ -71,17 +71,15 @@ const Module verify_revoke(
         const PGPKey signer(key);
         const PGPRevocationCertificate rev(cert);
 
-        std::string error;
-        const int verified = ::verify_revoke(signer, rev, error);
+            const int verified = ::verify_revoke(signer, rev);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "The certificate in \"" << args.at("revocation-certificate") << "\" " << ((verified == 1)?std::string("revokes"):std::string("does not revoke")) << " key in \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "The certificate in \"" << args.at("revocation-certificate") << "\" " << ((verified == 1)?std::string("revokes"):std::string("does not revoke")) << " key in \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+        return !verified;
     }
 );
 

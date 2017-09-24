@@ -1,10 +1,10 @@
 #include "generatekey.h"
 
-bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, std::string & error){
+bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
-    if (!private_key.meaningful(error)){
-        error += "Error: Bad key.\n";
+    if (!private_key.meaningful()){
+        // "Error: Bad key.\n";
         return false;
     }
 
@@ -32,31 +32,31 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
                 if (Signature_Type::is_certification(sig -> get_type())){
                     if (key -> get_tag() == Packet::SECRET_KEY){
                         const Tag5::Ptr tag5 = std::static_pointer_cast <Tag5> (key);
-                        sig = sign_primary_key(primary, passphrase, tag5, user, sig, error);
+                        sig = sign_primary_key(primary, passphrase, tag5, user, sig);
                     }
                     else{
-                        error += "Error: Certification signature attempted to be made for a non-primary key.\n";
+                        // "Error: Certification signature attempted to be made for a non-primary key.\n";
                         return false;
                     }
                 }
                 else if (sig -> get_type() == Signature_Type::SUBKEY_BINDING_SIGNATURE){
                     if (key -> get_tag() == Packet::SECRET_SUBKEY){
                         const Tag7::Ptr tag7 = std::static_pointer_cast <Tag7> (key);
-                        sig = sign_subkey_binding(primary, passphrase, tag7, sig, error);
+                        sig = sign_subkey_binding(primary, passphrase, tag7, sig);
                     }
                     else{
-                        error += "Error: Subkey Binding signature attempted to be made for a non-subkey.\n";
+                        // "Error: Subkey Binding signature attempted to be made for a non-subkey.\n";
                         return false;
                     }
                 }
                 else if (sig -> get_type() == Signature_Type::KEY_REVOCATION_SIGNATURE){
-                    sig = revoke_sig(primary, passphrase, primary, sig, error);
+                    sig = revoke_sig(primary, passphrase, primary, sig);
                 }
                 else if (sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
-                    sig = revoke_sig(primary, passphrase, key, sig, error);
+                    sig = revoke_sig(primary, passphrase, key, sig);
                 }
                 else if (sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
-                    sig = revoke_uid_sig(primary, passphrase, user, sig, error);
+                    sig = revoke_uid_sig(primary, passphrase, user, sig);
                 }
                 else{
                     std::cerr << "Warning: Bad or unhandled signature type: 0x" << makehex(sig -> get_type(), 2) << std::endl;
@@ -65,7 +65,7 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
         }
         else{
             // should never come here
-            error += "Error: Random packet found.\n";
+            // "Error: Random packet found.\n";
             return false;
         }
     }
@@ -75,11 +75,11 @@ bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, s
     return true;
 }
 
-PGPSecretKey generate_key(KeyGen & config, std::string & error){
+PGPSecretKey generate_key(KeyGen & config){
     BBS(static_cast <PGPMPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
-    if (!config.valid(error)){
-        error += "Error: Bad key generation configuration.\n";
+    if (!config.valid()){
+        // "Error: Bad key generation configuration.\n";
         return PGPSecretKey();
     }
 
@@ -94,8 +94,8 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     // generate public key values for primary key
     PKA::Values pub;
     PKA::Values pri;
-    if (!generate_keypair(config.pka, generate_pka_params(config.pka, config.bits >> 1, error), pri, pub, error)){
-        error += "Error: Could not generate primary key pair.\n";
+    if (!generate_keypair(config.pka, generate_pka_params(config.pka, config.bits >> 1), pri, pub)){
+        // "Error: Could not generate primary key pair.\n";
         return PGPSecretKey();
     }
 
@@ -178,9 +178,9 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
         sig -> set_unhashed_subpackets({tag2sub16});
 
         // sign Primary Key and User ID
-        sig = sign_primary_key(primary, config.passphrase, primary, uid, sig, error);
+        sig = sign_primary_key(primary, config.passphrase, primary, uid, sig);
         if (!sig){
-            error += "Error: Failed to sign primary config.\n";
+            // "Error: Failed to sign primary config.\n";
             return PGPSecretKey();
         }
 
@@ -191,8 +191,8 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     for(KeyGen::SubkeyGen const & skey : config.subkeys){
         PKA::Values subkey_pub;
         PKA::Values subkey_pri;
-        if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits >> 1, error), subkey_pri, subkey_pub, error)){
-            error += "Error: Could not generate subkey pair.\n";
+        if (!generate_keypair(skey.pka, generate_pka_params(skey.pka, skey.bits >> 1), subkey_pri, subkey_pub)){
+            // "Error: Could not generate subkey pair.\n";
             return PGPSecretKey();
         }
 
@@ -264,9 +264,9 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
         subsig -> set_unhashed_subpackets({tag2sub16});
 
         // sign subkey
-        subsig = sign_subkey_binding(primary, config.passphrase, subkey, subsig, error);
+        subsig = sign_subkey_binding(primary, config.passphrase, subkey, subsig);
         if (!subsig){
-            error += "Error: Subkey signing failure.\n";
+            // "Error: Subkey signing failure.\n";
             return PGPSecretKey();
         }
 
@@ -280,6 +280,6 @@ PGPSecretKey generate_key(KeyGen & config, std::string & error){
     private_key.set_armored(true);
 
     // can call fill_key_sigs as well
-    // return fill_key_sigs(private_key, config.passphrase, error);
+    // return fill_key_sigs(private_key, config.passphrase);
     return private_key;
 }

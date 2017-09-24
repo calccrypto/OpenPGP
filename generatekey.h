@@ -42,7 +42,7 @@ THE SOFTWARE.
 
 // self-signs all signature packets whose Key ID is the given key's Key ID
 // not doing revocations for now
-bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase, std::string & error);
+bool fill_key_sigs(PGPSecretKey & private_key, const std::string & passphrase);
 
 struct KeyGen{
     std::string passphrase;
@@ -78,125 +78,125 @@ struct KeyGen{
     // 0 or more subkeys
     std::vector <SubkeyGen> subkeys;
 
-    bool valid(std::string & error) const{
+    bool valid() const{
         if (PKA::NAME.find(pka) == PKA::NAME.end()){
-            error += "Error: Bad Public Key Algorithm: " + std::to_string(pka);
+            // "Error: Bad Public Key Algorithm: " + std::to_string(pka);
             return false;
         }
 
         if (!(PKA::can_sign(pka))){
-            error += "Error: Primary key should be able to sign.\n";
+            // "Error: Primary key should be able to sign.\n";
             return false;
         }
 
         #ifdef GPG_COMPATIBLE
         if (PKA::is_RSA(pka)){
             if ((bits < 1024) || (bits > 4096)){
-                error += "Error: RSA key size should be between 1024 and 4096 bits.\n";
+                // "Error: RSA key size should be between 1024 and 4096 bits.\n";
                 return false;
             }
 
             if (bits % 32){
-                error += "Error: GPG only accepts keys whose size is a multiple of 32.\n";
+                // "Error: GPG only accepts keys whose size is a multiple of 32.\n";
                 return false;
             }
         }
         else if (PKA::DSA == pka){
             if ((bits < 1024) || (bits > 3072)){
-                error += "Error: DSA key size should be between 1024 and 3072 bits.\n";
+                // "Error: DSA key size should be between 1024 and 3072 bits.\n";
                 return false;
             }
 
             if (bits % 64){
-                error += "Error: GPG only accepts DSA keys whose size is a multiple of 64.\n";
+                // "Error: GPG only accepts DSA keys whose size is a multiple of 64.\n";
                 return false;
             }
         }
         else{
-            error += "Error: Unknown PKA " + std::to_string(pka) + " got through filter.\n";
+            // "Error: Unknown PKA " + std::to_string(pka) + " got through filter.\n";
             return false;
         }
         #endif
 
         if (Sym::NAME.find(sym) == Sym::NAME.end()){
-            error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
+            // "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
             return false;
         }
 
         if (Hash::NAME.find(hash) == Hash::NAME.end()){
-            error += "Error: Bad Hash Algorithm: " + std::to_string(hash);
+            // "Error: Bad Hash Algorithm: " + std::to_string(hash);
             return false;
         }
 
         if (!uids.size()){
-            error += "Error: Need at least 1 User ID.\n";
+            // "Error: Need at least 1 User ID.\n";
             return false;
         }
 
         for(UserID const & uid : uids){
             if (Hash::NAME.find(uid.sig) == Hash::NAME.end()){
-                error += "Error: Bad Hash Algorithm: " + std::to_string(uid.sig);
+                // "Error: Bad Hash Algorithm: " + std::to_string(uid.sig);
                 return false;
             }
 
             if ((pka == PKA::DSA) && (Hash::LENGTH.at(uid.sig) < 256)){
-                error += "Error: DSA needs a 256 bit or larger hash.\n";
+                // "Error: DSA needs a 256 bit or larger hash.\n";
                 return false;
             }
         }
 
         for(SubkeyGen const & subkey : subkeys){
             if (PKA::NAME.find(subkey.pka) == PKA::NAME.end()){
-                error += "Error: Bad Public Key Algorithm: " + std::to_string(subkey.pka);
+                // "Error: Bad Public Key Algorithm: " + std::to_string(subkey.pka);
                 return false;
             }
 
             #ifdef GPG_COMPATIBLE
             if (PKA::is_RSA(subkey.pka)){
                 if ((subkey.bits < 1024) || (subkey.bits > 4096)){
-                    error += "Error: RSA key size should be between 1024 and 4096 bits.\n";
+                    // "Error: RSA key size should be between 1024 and 4096 bits.\n";
                     return false;
                 }
 
                 if (subkey.bits % 32){
-                    error += "Error: GPG only accepts keys whose size is a multiple of 32.\n";
+                    // "Error: GPG only accepts keys whose size is a multiple of 32.\n";
                     return false;
                 }
             }
             else if ((PKA::DSA == subkey.pka) || (PKA::ELGAMAL == pka)){
                 if ((subkey.bits < 1024) || (subkey.bits > 3072)){
-                    error += "Error: DSA/ElGamal key size should be between 1024 and 3072 bits.\n";
+                    // "Error: DSA/ElGamal key size should be between 1024 and 3072 bits.\n";
                     return false;
                 }
 
                 if (subkey.bits % 64){
-                    error += "Error: GPG only accepts DSA/ElGamal keys whose size is a multiple of 64.\n";
+                    // "Error: GPG only accepts DSA/ElGamal keys whose size is a multiple of 64.\n";
                     return false;
                 }
             }
             else{
-                error += "Error: Unknown PKA " + std::to_string(subkey.pka) + " got through filter.\n";
+                // "Error: Unknown PKA " + std::to_string(subkey.pka) + " got through filter.\n";
                 return false;
             }
             #endif
 
             if (Sym::NAME.find(subkey.sym) == Sym::NAME.end()){
-                error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(subkey.sym);
+                // "Error: Bad Symmetric Key Algorithm: " + std::to_string(subkey.sym);
                 return false;
             }
 
             if (Hash::NAME.find(subkey.hash) == Hash::NAME.end()){
-                error += "Error: Bad Hash Algorithm: " + std::to_string(subkey.hash);
+                // "Error: Bad Hash Algorithm: " + std::to_string(subkey.hash);
                 return false;
             }
 
             if (Hash::NAME.find(subkey.sig) == Hash::NAME.end()){
-                error += "Error: Bad Hash Algorithm: " + std::to_string(subkey.sig);
+                // "Error: Bad Hash Algorithm: " + std::to_string(subkey.sig);
                 return false;
             }
 
             if ((subkey.pka == PKA::DSA) && (Hash::LENGTH.at(subkey.sig) < 256)){
-                error += "Error: DSA needs a 256 bit or larger hash.\n";
+                // "Error: DSA needs a 256 bit or larger hash.\n";
                 return false;
             }
         }
@@ -208,6 +208,6 @@ struct KeyGen{
 // key generation using config defined above
 // returns a private key
 // public key can be extracted from the private key
-PGPSecretKey generate_key(KeyGen & config, std::string & error);
+PGPSecretKey generate_key(KeyGen & config);
 
 #endif

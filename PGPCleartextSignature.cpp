@@ -20,9 +20,8 @@ PGPCleartextSignature::PGPCleartextSignature(const std::string & data)
     read(data);
 
     // warn if packet sequence is not meaningful
-    std::string error;
-    if (!meaningful(error)){
-        std::cerr << error << std::endl;
+    if (!meaningful()){
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Cleartext Signature");
     }
 }
 
@@ -32,9 +31,8 @@ PGPCleartextSignature::PGPCleartextSignature(std::istream & stream)
     read(stream);
 
     // warn if packet sequence is not meaningful
-    std::string error;
-    if (!meaningful(error)){
-        std::cerr << error << std::endl;
+    if (!meaningful()){
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Cleartext Signature");
     }
 }
 
@@ -224,8 +222,8 @@ std::string PGPCleartextSignature::data_to_text(const std::string & text){
     return out.substr(0, out.size() - 1);
 }
 
-bool PGPCleartextSignature::meaningful(std::string & error) const{
-    return sig.meaningful(error);
+bool PGPCleartextSignature::meaningful() const{
+    return sig.meaningful();
 }
 
 PGPCleartextSignature & PGPCleartextSignature::operator=(const PGPCleartextSignature & copy){

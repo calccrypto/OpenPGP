@@ -60,11 +60,10 @@ class PGPKey : public PGP {
         std::string list_keys(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
 
         // whether or not PGP data matches a Key format without constructing a new object
-        static bool meaningful(const PGP & pgp, std::string & error);
         static bool meaningful(const PGP & pgp);
 
         // whether or not *this data matches a Key format
-        virtual bool meaningful(std::string & error) const;
+        virtual bool meaningful() const;
 
         virtual PGP::Ptr clone() const;
 };
@@ -151,7 +150,7 @@ class PGPPublicKey : public PGPKey {
         ~PGPPublicKey();
 
         // whether or not data matches the Public Key format
-        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         PGPPublicKey & operator=(const PGPPublicKey & pub);
         PGPPublicKey & operator=(const PGPSecretKey & pri);
@@ -188,7 +187,7 @@ class PGPSecretKey : public PGPKey {
         PGPPublicKey get_public() const;
 
         // whether or not data matches Secret Key format
-        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

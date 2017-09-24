@@ -68,19 +68,19 @@ struct EncryptArgs{
           hash(hash_alg)
     {}
 
-    bool valid(std::string & error) const{
+    bool valid() const{
         if (Sym::NAME.find(sym) == Sym::NAME.end()){
-            error += "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
+            // "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
             return false;
         }
 
         if (Compression::NAME.find(comp) == Compression::NAME.end()){
-            error += "Error: Bad Compression Algorithm: " + std::to_string(comp);
+            // "Error: Bad Compression Algorithm: " + std::to_string(comp);
             return false;
         }
 
         if (Hash::NAME.find(hash) == Hash::NAME.end()){
-            error += "Error: Bad Hash Algorithm: " + std::to_string(hash);
+            // "Error: Bad Hash Algorithm: " + std::to_string(hash);
             return false;
         }
 
@@ -90,18 +90,15 @@ struct EncryptArgs{
 
 // encrypt data once session key has been generated
 Packet::Ptr encrypt_data(const EncryptArgs & args,
-                         const std::string & session_key,
-                         std::string & error);
+                         const std::string & session_key);
 
 // encrypt with public key
 PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPKey & pub,
-                       std::string & error);
+                       const PGPKey & pub);
 
 // encrypt with passphrase
 PGPMessage encrypt_sym(const EncryptArgs & args,
                        const std::string & passphrase,
-                       const uint8_t key_hash,
-                       std::string & error);
+                       const uint8_t key_hash);
 
 #endif

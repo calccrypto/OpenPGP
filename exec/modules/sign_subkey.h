@@ -82,17 +82,17 @@ const Module sign_subkey(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
-        // std::string error;
-        // PGPPublicKey key = ::sign_subkey(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))), error);
+        // PGPPublicKey key = ::sign_subkey(signargs, PGPPublicKey(signee_file), mpitoulong(hextompi(args.at("-c"))));
 
-        // if (key.meaningful(error)){
-            // out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        // }
-        // else{
-            // err << error << std::endl;
+        // if (!key.meaningful()){
+            // err << "Error: Generated bad subkey signature." << std::endl;
+            // return -1;
         // }
 
-        return 0;
+        // out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        // return 0;
+
+        return -1;
     }
 );
 

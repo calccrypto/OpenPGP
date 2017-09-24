@@ -1,6 +1,6 @@
 #include "sign.h"
 
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash, std::string & error){
+PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash){
     if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
         (pka == PKA::RSA_SIGN_ONLY)){
         // RFC 4880 sec 5.2.2
@@ -11,7 +11,7 @@ PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::V
         return DSA_sign(digest, pri, pub);
     }
 
-    error += "Error: Undefined or incorrect PKA number: " + std::to_string(pka) + "\n";
+    // "Error: Undefined or incorrect PKA number: " + std::to_string(pka) + "\n";
     return {};
 }
 
@@ -36,26 +36,26 @@ Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uin
     return tag2;
 }
 
-PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::string & data, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::string & data){
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return PGPDetachedSignature();
     }
 
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer){
-        error += "Error: No Private Key for signing found.\n";
+        // "Error: No Private Key for signing found.\n";
         return PGPDetachedSignature();
     }
 
     // Check if key has been revoked
-    const int rc = check_revoked(args.pri, error);
+    const int rc = check_revoked(args.pri);
     if (rc == true){
-        error += "Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.\n";
+        // "Error: Key " + hexlify(signer -> get_keyid()) + " has been revoked. Nothing done.\n";
         return PGPDetachedSignature();
     }
     else if (rc == true){
-        error += "Error: check_revoked failed.\n";
+        // "Error: check_revoked failed.\n";
         return PGPDetachedSignature();
     }
 
@@ -63,9 +63,9 @@ PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::s
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT, signer -> get_pka(), args.hash, signer -> get_keyid());
     const std::string digest = to_sign_00(binary_to_canonical(data), sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash, error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash);
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return PGPDetachedSignature();
     }
     sig -> set_mpi(vals);
@@ -78,16 +78,16 @@ PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::s
 }
 
 // 0x00: Signature of a binary document.
-PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress){
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return PGPDetachedSignature();
     }
 
     // find signing key
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer){
-        error += "Error: No signing key found.\n";
+        // "Error: No signing key found.\n";
         return PGPMessage();
     }
 
@@ -110,9 +110,9 @@ PGPMessage sign_binary(const SignArgs & args, const std::string & filename, cons
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT, signer -> get_pka(), args.hash, signer -> get_keyid());
     const std::string digest = to_sign_00(binary_to_canonical(tag11 -> get_literal()), sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash, error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash);
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return PGPMessage();
     }
     sig -> set_mpi(vals);
@@ -134,16 +134,16 @@ PGPMessage sign_binary(const SignArgs & args, const std::string & filename, cons
 }
 
 // 0x01: Signature of a canonical text document.
-PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad argument.\n";
+PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text){
+    if (!args.valid()){
+        // "Error: Bad argument.\n";
         return PGPCleartextSignature();
     }
 
     // find signing key
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer){
-        error += "Error: No signing key found.\n";
+        // "Error: No signing key found.\n";
         return PGPCleartextSignature();
     }
 
@@ -151,9 +151,9 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::SIGNATURE_OF_A_CANONICAL_TEXT_DOCUMENT, signer -> get_pka(), args.hash, signer -> get_keyid());
     const std::string digest = to_sign_01(PGPCleartextSignature::data_to_text(text), sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash, error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash);
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return PGPCleartextSignature();
     }
     sig -> set_mpi(vals);
@@ -178,42 +178,42 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig, std::string & error){
+Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig){
     if (!signer_signing_key){
-        error += "Error: No signing key given.\n";
+        // "Error: No signing key given.\n";
         return nullptr;
     }
 
     if (!signee_primary_key){
-        error += "Error: No signee primary key given.\n";
+        // "Error: No signee primary key given.\n";
         return nullptr;
     }
 
     if (!Packet::is_primary_key(signee_primary_key -> get_tag())){
-        error += "Error: signee key is not a primary key.\n";
+        // "Error: signee key is not a primary key.\n";
         return nullptr;
     }
 
     if (!signee_id){
-        error += "Error: No User Identifier given.\n";
+        // "Error: No User Identifier given.\n";
         return nullptr;
     }
 
     if (!sig){
-        error += "Error: No signature data given.\n";
+        // "Error: No signature data given.\n";
         return nullptr;
     }
 
     if (!Signature_Type::is_certification(sig -> get_type())){
-        error += "Error: Invalid Certification Value: 0x" + makehex(sig -> get_type(), 2) + "\n";
+        // "Error: Invalid Certification Value: 0x" + makehex(sig -> get_type(), 2) + "\n";
         return nullptr;
     }
 
     const std::string digest = to_sign_cert(sig -> get_type(), signee_primary_key, signee_id, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer_signing_key -> get_pka(), signer_signing_key -> decrypt_secret_keys(passphrase), signer_signing_key -> get_mpi(), sig -> get_hash(), error);
+    PKA::Values vals = pka_sign(digest, signer_signing_key -> get_pka(), signer_signing_key -> decrypt_secret_keys(passphrase), signer_signing_key -> get_mpi(), sig -> get_hash());
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return nullptr;
     }
     sig -> set_mpi(vals);
@@ -221,37 +221,37 @@ Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string
     return sig;
 }
 
-PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return PGPPublicKey();
     }
 
     // check if signer has already been revoked
-    if (check_revoked(args.pri, error)){
-        error += "Error: Signer key is revoked. Nothing done.\n";
+    if (check_revoked(args.pri)){
+        // "Error: Signer key is revoked. Nothing done.\n";
         return PGPPublicKey();
     }
 
-    if (!signee.meaningful(error)){
-        error += "Error: Bad signee key.\n";
+    if (!signee.meaningful()){
+        // "Error: Bad signee key.\n";
         return PGPPublicKey();
     }
 
-    if (check_revoked(signee, error)){
-        error += "Error: Signer key is revoked. Nothing done.\n";
+    if (check_revoked(signee)){
+        // "Error: Signer key is revoked. Nothing done.\n";
         return PGPPublicKey();
     }
 
     if (!Signature_Type::is_certification(cert)){
-        error += "Error: Invalid Certification Value: 0x" + makehex(cert, 2) + "\n";
+        // "Error: Invalid Certification Value: 0x" + makehex(cert, 2) + "\n";
         return PGPPublicKey();
     }
 
     // get signer's signing packet
     Tag5::Ptr signer_signing_key = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer_signing_key){
-        error += "Error: Signing key not found.\n";
+        // "Error: Signing key not found.\n";
         return PGPPublicKey();
     }
 
@@ -280,15 +280,15 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
     } while (i < signee_packets.size());
 
     if (!signee_id){
-        error += "Error: No Signee user ID found.\n";
+        // "Error: No Signee user ID found.\n";
         return PGPPublicKey();
     }
 
     // search through signatures to see signer has already certified this user
     while (i < signee_packets.size() && (signee_packets[i] -> get_tag() == Packet::SIGNATURE)){
-        const int rc = verify_primary_key(signer_signing_key, signee_primary_key, signee_id, std::static_pointer_cast <Tag2> (signee_packets[i]), error);
+        const int rc = verify_primary_key(signer_signing_key, signee_primary_key, signee_id, std::static_pointer_cast <Tag2> (signee_packets[i]));
         if (rc == -1){
-            error += "Error: Signature verification failure.\n";
+            // "Error: Signature verification failure.\n";
             return PGPPublicKey();
         }
         else if (rc == true){
@@ -302,13 +302,13 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
     // sign key
     Tag2::Ptr sig = create_sig_packet(args.version, cert, signer_signing_key -> get_pka(), args.hash, signer_signing_key -> get_keyid());
     if (!sig){
-        error += "Error: Signature packet generation failure.\n";
+        // "Error: Signature packet generation failure.\n";
         return PGPPublicKey();
     }
 
-    sig = sign_primary_key(signer_signing_key, args.passphrase, signee_primary_key, signee_id, sig, error);
+    sig = sign_primary_key(signer_signing_key, args.passphrase, signee_primary_key, signee_id, sig);
     if (!sig){
-        error += "Error: Signature calculation failure.\n";
+        // "Error: Signature calculation failure.\n";
         return PGPPublicKey();
     }
 
@@ -336,27 +336,27 @@ PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee
 }
 
 // 0x18: Subkey Binding Signature
-Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig, std::string & error){
+Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig){
     if (!primary){
-        error += "Error: No primary key.\n";
+        // "Error: No primary key.\n";
         return nullptr;
     }
 
     if (!sub){
-        error += "Error: No subkey.\n";
+        // "Error: No subkey.\n";
         return nullptr;
     }
 
     if (!sig){
-        error += "Error: No signature.\n";
+        // "Error: No signature.\n";
         return nullptr;
     }
 
     const std::string digest = to_sign_18(primary, sub, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, primary -> get_pka(), primary -> decrypt_secret_keys(passphrase), primary -> get_mpi(), sig -> get_hash(), error);
+    PKA::Values vals = pka_sign(digest, primary -> get_pka(), primary -> decrypt_secret_keys(passphrase), primary -> get_mpi(), sig -> get_hash());
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return nullptr;
     }
     sig -> set_mpi(vals);
@@ -365,16 +365,16 @@ Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & pas
 }
 
 // 0x19: Primary Key Binding Signature
-Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return nullptr;
     }
 
     // find signing subkey
     Tag5::Ptr subkey = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!subkey){
-        error += "Error: No Signing Subkey found.\n";
+        // "Error: No Signing Subkey found.\n";
         return nullptr;
     }
 
@@ -391,7 +391,7 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     }
 
     if (!signee_primary){
-        error += "Error: Signee Primary Key not found.\n";
+        // "Error: Signee Primary Key not found.\n";
         return nullptr;
     }
 
@@ -404,21 +404,21 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     }
 
     if (!signee_subkey){
-        error += "Error: Singee Subkey not found.\n";
+        // "Error: Singee Subkey not found.\n";
         return nullptr;
     }
 
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::PRIMARY_KEY_BINDING_SIGNATURE, signer_subkey -> get_pka(), args.hash, signer_subkey -> get_keyid());
     if (!sig){
-        error += "Error: Signature packet generation failure.\n";
+        // "Error: Signature packet generation failure.\n";
         return nullptr;
     }
 
     const std::string digest = to_sign_18(signee_primary, signer_subkey, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer_subkey -> get_pka(), signer_subkey -> decrypt_secret_keys(args.passphrase), signer_subkey -> get_mpi(), args.hash, error);
+    PKA::Values vals = pka_sign(digest, signer_subkey -> get_pka(), signer_subkey -> decrypt_secret_keys(args.passphrase), signer_subkey -> get_mpi(), args.hash);
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return nullptr;
     }
     sig -> set_mpi(vals);
@@ -426,21 +426,21 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
     return sig;
 }
 
-PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return PGPDetachedSignature();
     }
 
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.pri));
     if (!signer){
-        error += "Error: Signing key not found.\n";
+        // "Error: Signing key not found.\n";
         return PGPDetachedSignature();
     }
 
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::TIMESTAMP_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
     if (!sig){
-        error += "Error: Signature packet generation failure.\n";
+        // "Error: Signature packet generation failure.\n";
         return PGPDetachedSignature();
     }
 
@@ -450,9 +450,9 @@ PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time, 
 
     const std::string digest = to_sign_40(sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash, error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(args.passphrase), signer -> get_mpi(), args.hash);
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return PGPDetachedSignature();
     }
     sig -> set_mpi(vals);

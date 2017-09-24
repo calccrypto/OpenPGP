@@ -43,19 +43,16 @@ THE SOFTWARE.
 // decrypt data once session key is known
 PGPMessage decrypt_data(const uint8_t sym,
                         const PGPMessage & message,
-                        const std::string & session_key,
-                        std::string & error);
+                        const std::string & session_key);
 
 // called from outside
 // session key encrypted with public key algorithm
 PGPMessage decrypt_pka(const PGPSecretKey & pri,
                        const std::string & passphrase,
-                       const PGPMessage & message,
-                       std::string & error);
+                       const PGPMessage & message);
 
 // session key encrypted with symmetric algorithm
 PGPMessage decrypt_sym(const PGPMessage & message,
-                       const std::string & passphrase,
-                       std::string & error);
+                       const std::string & passphrase);
 
 #endif

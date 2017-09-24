@@ -97,7 +97,7 @@ class PGPMessage : public PGP {
 
         Tag8::Ptr comp;                                                                             // store tag8 data, if it exists
 
-        bool decompress(std::string & error);                                                       // decompress packet
+        bool decompress();                                                                          // decompress packet
 
     public:
         typedef std::shared_ptr <PGPMessage> Ptr;
@@ -118,18 +118,17 @@ class PGPMessage : public PGP {
         void set_comp(const uint8_t c);                                                             // set compression algorithm
 
         // whether or not PGP packet composition matches a OpenPGP Message grammar without constructing a new object
-        static bool match(const PGP & pgp, const Token & token, std::string & error);
         static bool match(const PGP & pgp, const Token & token);
 
         // whether or not the packet composition of *this matches a OpenPGP Message grammar without constructing a new object
-        bool match(const Token & token, std::string & error) const;
+        bool match(const Token & token) const;
 
         // check if packet sequence of PGP data is a meaningful and correct OpenPGP Message without constructing a new object
-        static bool meaningful(const PGP & pgp, std::string & error);
+        static bool meaningful(const PGP & pgp);
 
         // check if packet sequence of *this is a meaningful and correct OpenPGP Message
         // whether or not data matches Detached Signature format
-        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

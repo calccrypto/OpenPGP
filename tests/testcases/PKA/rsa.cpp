@@ -21,11 +21,10 @@ TEST(RSA, sign_pkcs1_v1_5) {
             int h = std::get<0>(msg);
             std::string data = unhexlify(std::get<1>(msg));
             std::string digest = use_hash(h, data);
-            std::string error;
-            auto ret = pka_sign(digest, PKA_RSA, {d}, {n, e}, h, error);
+                    auto ret = pka_sign(digest, PKA_RSA, {d}, {n, e}, h);
             ASSERT_EQ(ret.size(), (std::size_t) 1);
             EXPECT_EQ(mpitohex(ret[0]), RSA_SIGGEN_SIG[i][x]);
-            EXPECT_EQ(pka_verify(digest, h, PKA_RSA, {n, e}, {hextompi(RSA_SIGGEN_SIG[i][x])}, error), true);
+            EXPECT_EQ(pka_verify(digest, h, PKA_RSA, {n, e}, {hextompi(RSA_SIGGEN_SIG[i][x])}), true);
         }
     }
 }

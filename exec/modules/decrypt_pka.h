@@ -79,8 +79,7 @@ const Module decrypt_pka(
 
             signer = std::make_shared <PGPKey> (s);
 
-            std::string error;
-            if (!signer -> meaningful(error)){
+            if (!signer -> meaningful()){
                 err << "Error: Bad signing key.\n";
                 return -1;
             }
@@ -88,45 +87,43 @@ const Module decrypt_pka(
 
         PGPSecretKey pri(key);
         PGPMessage message(msg);
-        std::string error;
 
-        const PGPMessage decrypted = ::decrypt_pka(pri, args.at("passphrase"), message, error);
+        const PGPMessage decrypted = ::decrypt_pka(pri, args.at("passphrase"), message);
 
-        if (decrypted.meaningful(error)){
-            // extract data
-            std::string cleartext = "";
-            for(Packet::Ptr const & p : decrypted.get_packets()){
-                if (p -> get_tag() == Packet::LITERAL_DATA){
-                    cleartext += std::static_pointer_cast <Tag11> (p) -> out(false);
-                }
-            }
-
-            cleartext += "\n";
-
-            // if signing key provided, check the signature
-            if (signer){
-                const int verified = verify_binary(*signer, decrypted, error);
-                if (verified == -1){
-                    err << error << "Error: Verification failure.\n" << std::endl;
-                }
-
-                cleartext += "Message was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
-            }
-            // otherwise, just list attached signatures
-            else{
-                for(Packet::Ptr const & p : decrypted.get_packets()){
-                    if (p -> get_tag() == Packet::SIGNATURE){
-                        cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <Tag2> (p) -> get_keyid()) + " found.\n";
-                    }
-                }
-            }
-
-            out << cleartext << std::endl;
+        if (!decrypted.meaningful()){
+            err << "Error: Decrypted data is not meaningul." << std::endl;
+            return -1;
         }
+
+        // extract data
+        std::string cleartext = "";
+        for(Packet::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == Packet::LITERAL_DATA){
+                cleartext += std::static_pointer_cast <Tag11> (p) -> out(false);
+            }
+        }
+
+        cleartext += "\n";
+
+        // if signing key provided, check the signature
+        if (signer){
+            const int verified = verify_binary(*signer, decrypted);
+            if (verified == -1){
+                err << "Warning: Verification failure.\n" << std::endl;
+            }
+
+            cleartext += "Message was" + std::string((verified == 1)?"":" not") + " signed by \"" + args.at("-s") + "\" (" + hexlify(signer -> keyid()) + ").\n";
+        }
+        // otherwise, just list attached signatures
         else{
-            err << error << std::endl;
+            for(Packet::Ptr const & p : decrypted.get_packets()){
+                if (p -> get_tag() == Packet::SIGNATURE){
+                    cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <Tag2> (p) -> get_keyid()) + " found.\n";
+                }
+            }
         }
 
+        out << cleartext << std::endl;
         return 0;
     }
 );

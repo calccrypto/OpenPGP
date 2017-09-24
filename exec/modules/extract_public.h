@@ -37,15 +37,12 @@ const Module extract_public(
         }
 
         const PGPSecretKey pri(key);
-        std::string error;
-
-        if (pri.meaningful(error)){
-            out << pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!pri.meaningful()){
+            err << "Error: Key is not meaningful." << std::endl;
+            return -1;
         }
 
+        out << pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -22,9 +22,8 @@ PGPDetachedSignature::PGPDetachedSignature(const std::string & data)
     type = SIGNATURE;
 
     // warn if packet sequence is not meaningful
-    std::string error;
-    if (!meaningful(error)){
-        std::cerr << error << std::endl;
+    if (!meaningful()){
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Detached Signature");
     }
 }
 
@@ -34,40 +33,39 @@ PGPDetachedSignature::PGPDetachedSignature(std::istream & stream)
     type = SIGNATURE;
 
     // warn if packet sequence is not meaningful
-    std::string error;
-    if (!meaningful(error)){
-        std::cerr << error << std::endl;
+    if (!meaningful()){
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Detached Signature");
     }
 }
 
 PGPDetachedSignature::~PGPDetachedSignature(){}
 
-bool PGPDetachedSignature::meaningful(const PGP & pgp, std::string & error){
+bool PGPDetachedSignature::meaningful(const PGP & pgp){
     if (pgp.get_type() != SIGNATURE){
-        error += "Error: ASCII Armor type is not SIGNATURE.\n";
+        // "Error: ASCII Armor type is not SIGNATURE.\n";
         return false;
     }
 
     if (pgp.get_packets().size() != 1){
-        error += "Error: Wrong number of packets.\n";
+        // "Error: Wrong number of packets.\n";
         return false;
     }
 
     // if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
-        // error += "Error: Packet is not a signature packet.\n";
+        // // "Error: Packet is not a signature packet.\n";
         // return false;
     // }
 
     // if (!Signature_Type::is_signed_document(std::static_pointer_cast <Tag2> (pgp.get_packets()[0]) -> get_type())){
-        // error += "Error: Signature type is not over a document.\n";
+        // // "Error: Signature type is not over a document.\n";
         // return false;
     // }
 
     return true;
 }
 
-bool PGPDetachedSignature::meaningful(std::string & error) const{
-    return meaningful(*this, error);
+bool PGPDetachedSignature::meaningful() const{
+    return meaningful(*this);
 }
 
 PGP::Ptr PGPDetachedSignature::clone() const{

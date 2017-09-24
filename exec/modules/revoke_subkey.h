@@ -85,17 +85,15 @@ const Module revoke_subkey(
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
-        std::string error;
 
-        const PGPPublicKey revoked = ::revoke_subkey(revargs, args.at("-k"), error);
+        const PGPPublicKey revoked = ::revoke_subkey(revargs, args.at("-k"));
 
-        if (revoked.meaningful(error)){
-            out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!revoked.meaningful()){
+            err << "Error: Generated bad subkey revocation signature." << std::endl;
+            return -1;
         }
 
+        out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

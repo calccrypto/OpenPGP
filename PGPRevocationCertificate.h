@@ -42,10 +42,10 @@ class PGPRevocationCertificate : public PGP {
         uint8_t get_revoke_type() const;
 
         // whether or not PGP data matches Revocation Certificate format without constructing a new object
-        static bool meaningful(const PGP & pgp, std::string & error);
+        static bool meaningful(const PGP & pgp);
 
         // whether or not *this data matches Revocation Certificate format
-        bool meaningful(std::string & error) const;
+        bool meaningful() const;
 
         PGP::Ptr clone() const;
 };

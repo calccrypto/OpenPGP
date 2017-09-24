@@ -48,7 +48,7 @@ THE SOFTWARE.
 #include "verify.h"
 
 // internal functions
-PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash, std::string & error);
+PKA::Values pka_sign(const std::string & digest, const uint8_t pka, const PKA::Values & pri, const PKA::Values & pub, const uint8_t hash);
 
 // Generates a new signature packet without PKA values
 Tag2::Ptr create_sig_packet(const uint8_t version, const uint8_t type, const uint8_t pka, const uint8_t hash, const std::string & keyid);
@@ -71,19 +71,19 @@ struct SignArgs{
           hash(ha)
     {}
 
-    bool valid(std::string & error) const{
-        if (!pri.meaningful(error)){
-            error += "Error: Bad Private Key.\n";
+    bool valid() const{
+        if (!pri.meaningful()){
+            // "Error: Bad Private Key.\n";
             return false;
         }
 
         if ((version != 3) && (version != 4)){
-            error += "Error: Bad version: " + std::to_string(version) + "\n";
+            // "Error: Bad version: " + std::to_string(version) + "\n";
             return false;
         }
 
         if (Hash::NAME.find(hash) == Hash::NAME.end()){
-            error += "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
+            // "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
             return false;
         }
 
@@ -92,14 +92,14 @@ struct SignArgs{
 };
 
 // detached signatures (not a standalone signature)
-PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::string & data, std::string & error);
+PGPDetachedSignature sign_detached_signature(const SignArgs & args, const std::string & data);
 
 // 0x00: Signature of a binary document.
 // signed file is embedded into output
-PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress, std::string & error);
+PGPMessage sign_binary(const SignArgs & args, const std::string & filename, const std::string & data, const uint8_t compress);
 
 // 0x01: Signature of a canonical text document.
-PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text, std::string & error);
+PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std::string & text);
 
 // 0x02: Standalone signature.
 
@@ -107,14 +107,14 @@ PGPCleartextSignature sign_cleartext_signature(const SignArgs & args, const std:
 // 0x11: Persona certification of a User ID and Public-Key packet.
 // 0x12: Casual certification of a User ID and Public-Key packet.
 // 0x13: Positive certification of a User ID and Public-Key packet.
-Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig, std::string & error);
-PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert, std::string & error);
+Tag2::Ptr sign_primary_key(const Tag5::Ptr signer_signing_key, const std::string & passphrase, const Key::Ptr & signee_primary_key, const User::Ptr & signee_id, Tag2::Ptr & sig);
+PGPPublicKey sign_primary_key(const SignArgs & args, const PGPPublicKey & signee, const std::string & user, const uint8_t cert);
 
 // 0x18: Subkey Binding Signature
-Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig, std::string & error);
+Tag2::Ptr sign_subkey_binding(const Tag5::Ptr & primary, const std::string & passphrase, const Tag7::Ptr & sub, Tag2::Ptr & sig);
 
 // 0x19: Primary Key Binding Signature
-Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee, std::string & error);
+Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & signee);
 
 // 0x1F: Signature directly on a key
 
@@ -125,7 +125,7 @@ Tag2::Ptr sign_primary_key_binding(const SignArgs & args, const PGPPublicKey & s
 // /////////////////////////////////////////
 
 // 0x40: Timestamp signature.
-PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time, std::string & error);
+PGPDetachedSignature sign_timestamp(const SignArgs & args, const uint32_t time);
 
 // 0x50: Third-Party Confirmation signature.
 #endif

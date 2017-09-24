@@ -77,17 +77,15 @@ const Module generate_revoke_uid_cert(
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
-        std::string error;
 
-        const PGPRevocationCertificate cert = ::revoke_uid_cert(revargs, args.at("-u"), error);
+        const PGPRevocationCertificate cert = ::revoke_uid_cert(revargs, args.at("-u"));
 
-        if (cert.meaningful(error)){
-            out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!cert.meaningful()){
+            err << "Error: Generated bad UID revocation certificate." << std::endl;
+            return -1;
         }
 
+        out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -1,6 +1,6 @@
 # common testcases Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -I../../../../googletest/googletest/include -I../../../common
+CXXFLAGS=-std=c++11 -Wall -c -fPIC -I../../../../googletest/googletest/include -I../../../common
 
 all: $(COMMON_TESTCASES_OBJECTS)
 

@@ -18,8 +18,7 @@ bool read_pgp(const std::string & name, T & pgp, const std::string & directory =
 
     pgp.read(std::string(std::istreambuf_iterator <char> (file), {}));
 
-    std::string error;
-    return pgp.meaningful(error);
+    return pgp.meaningful();
 }
 
 #endif

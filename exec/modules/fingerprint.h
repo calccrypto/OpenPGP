@@ -69,40 +69,37 @@ const Module fingerprint(
             return -1;
         }
 
-        std::string error;
-
         const PGPKey key(f);
 
-        if (key.meaningful(error)){
-            const std::string fp = key.fingerprint();
+        if (!key.meaningful()){
+            err << "Error: Key is not meaningful." << std::endl;
+            return -1;
+        }
 
-            std::string separated;
+        const std::string fp = key.fingerprint();
 
-            if (split){
-                const std::string sep = args.at("-s");
+        std::string separated;
 
-                // insert separator
-                for(std::string::size_type i = 0; (i + split) < fp.size(); i += split){
-                    separated += hexlify(fp.substr(i, split)) + sep;
-                }
+        if (split){
+            const std::string sep = args.at("-s");
 
-                std::string::size_type rem = fp.size() % split;
-                if (!rem || (split == 1)){
-                    rem = split;
-                }
-
-                separated += hexlify(fp.substr(fp.size() - rem, rem));
-            }
-            else{
-                separated = hexlify(fp);
+            // insert separator
+            for(std::string::size_type i = 0; (i + split) < fp.size(); i += split){
+                separated += hexlify(fp.substr(i, split)) + sep;
             }
 
-            out << separated << std::endl;
+            std::string::size_type rem = fp.size() % split;
+            if (!rem || (split == 1)){
+                rem = split;
+            }
+
+            separated += hexlify(fp.substr(fp.size() - rem, rem));
         }
         else{
-            err << error << std::endl;
+            separated = hexlify(fp);
         }
 
+        out << separated << std::endl;
         return 0;
     }
 );

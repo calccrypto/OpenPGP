@@ -71,17 +71,15 @@ const Module verify_timestamp(
         const PGPKey signer(key);
         const PGPDetachedSignature signature(sig);
 
-        std::string error;
-        const int verified = ::verify_timestamp(signer, signature, error);
+        const int verified = ::verify_timestamp(signer, signature);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "Timestamp signature in \"" << args.at("signature") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "Timestamp signature in \"" << args.at("signature") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+        return !verified;
     }
 );
 

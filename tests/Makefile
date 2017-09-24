@@ -1,6 +1,6 @@
 # OpenPGP test Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -I../../googletest/googletest/include
+CXXFLAGS=-std=c++11 -Wall -fPIC -I../../googletest/googletest/include
 LDFLAGS=-lOpenPGP -lgmpxx -lgmp -lbz2 -lz -lgtest -lpthread -L../../googletest/googlemock/gtest -L..
 AR=ar
 TARGET=tests
@@ -25,13 +25,13 @@ gpg-debug: debug
 .PHONY: libs testcases modules run clean clean-testcases clean-lib clean-all
 
 libs:
-	$(MAKE) $(MAKECMDGOALS) -C ..
+	$(MAKE) -C ..
 
 testcases:
-	$(MAKE) $(MAKECMDGOALS) -C testcases
+	$(MAKE) -C testcases
 
 modules: ../exec/modules/module.o
-	$(MAKE) $(MAKECMDGOALS) -C ../exec/modules
+	$(MAKE) -C ../exec/modules
 
 $(TARGET): main.cc libs testcases
 	$(CXX) $(CXXFLAGS) main.cc $(addprefix testcases/, $(TESTCASES_OBJECTS)) $(addprefix testcases/common/, $(COMMON_TESTCASES_OBJECTS)) $(addprefix testcases/Compress/, $(COMPRESS_TESTCASES_OBJECTS)) $(addprefix testcases/Encryptions/, $(ENCRYPTIONS_TESTCASES_OBJECTS)) $(addprefix testcases/exec/, $(EXEC_TESTCASES_OBJECTS)) $(addprefix testcases/exec/modules/, $(MODULES_TESTCASES_OBJECTS)) $(addprefix testcases/Hashes/, $(HASHES_TESTCASES_OBJECTS)) $(addprefix testcases/Misc/, $(MISC_TESTCASES_OBJECTS)) $(addprefix testcases/PKA/, $(PKA_TESTCASES_OBJECTS)) ../exec/modules/module.o $(LDFLAGS) -o $(TARGET)

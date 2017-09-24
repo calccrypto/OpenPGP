@@ -84,17 +84,15 @@ const Module revoke_primary_key(
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
-        std::string error;
 
-        const PGPPublicKey revoked = ::revoke_key(revargs, error);
+        const PGPPublicKey revoked = ::revoke_key(revargs);
 
-        if (revoked.meaningful(error)){
-            out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!revoked.meaningful()){
+            err << "Error: Generated bad primary revocation signature." << std::endl;
+            return -1;
         }
 
+        out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

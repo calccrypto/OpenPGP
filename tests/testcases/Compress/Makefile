@@ -1,6 +1,6 @@
 # Compress testcases Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -I../../../../googletest/googletest/include -I../../..
+CXXFLAGS=-std=c++11 -Wall -c -fPIC -I../../../../googletest/googletest/include -I../../..
 
 include objects.mk
 

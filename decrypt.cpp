@@ -2,10 +2,9 @@
 
 PGPMessage decrypt_data(const uint8_t sym,
                         const PGPMessage & message,
-                        const std::string & session_key,
-                        std::string & error){
-    if (!message.meaningful(error)){
-        error += "Error: Bad message.\n";
+                        const std::string & session_key){
+    if (!message.meaningful()){
+        // "Error: Bad message.\n";
         return PGPMessage();
     }
 
@@ -17,7 +16,7 @@ PGPMessage decrypt_data(const uint8_t sym,
     }
 
     if (i == packets.size()){
-        error += "Error: No encrypted data found.\n";
+        // "Error: No encrypted data found.\n";
         return PGPMessage();
     }
 
@@ -35,7 +34,7 @@ PGPMessage decrypt_data(const uint8_t sym,
     }
 
     if (!data.size()){
-        error += "Error: No encrypted data packet(s) found.\n";
+        // "Error: No encrypted data packet(s) found.\n";
         return PGPMessage();
     }
 
@@ -50,7 +49,7 @@ PGPMessage decrypt_data(const uint8_t sym,
         const std::string checksum = data.substr(data.size() - 20, 20); // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);                        // remove SHA1 checksum
         if (use_hash(Hash::SHA1, data) != checksum){                    // check SHA1 checksum
-            error += "Error: Given checksum and calculated checksum do not match.";
+            // "Error: Given checksum and calculated checksum do not match.";
             return PGPMessage();
         }
 
@@ -65,15 +64,14 @@ PGPMessage decrypt_data(const uint8_t sym,
 
 PGPMessage decrypt_pka(const PGPSecretKey & pri,
                        const std::string & passphrase,
-                       const PGPMessage & message,
-                       std::string & error){
-    if (!pri.meaningful(error)){
-        error += "Error: Bad private key.\n";
+                       const PGPMessage & message){
+    if (!pri.meaningful()){
+        // "Error: Bad private key.\n";
         return PGPMessage();
     }
 
-    if (!message.meaningful(error)){
-        error += "Error: No encrypted message found.\n";
+    if (!message.meaningful()){
+        // "Error: No encrypted message found.\n";
         return PGPMessage();
     }
 
@@ -88,12 +86,12 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
     }
 
     if (!tag1){
-        error += "Error: No " + Packet::NAME.at(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
+        // "Error: No " + Packet::NAME.at(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
         return PGPMessage();
     }
 
     if (!PKA::can_encrypt(tag1 -> get_pka())){
-        error += "Error: Public Key Algorithm detected cannot be used to encrypt/decrypt.\n";
+        // "Error: Public Key Algorithm detected cannot be used to encrypt/decrypt.\n";
         return PGPMessage();
     }
 
@@ -116,7 +114,7 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
     }
 
     if (!sec){
-        error += "Error: Correct Private Key not found.\n";
+        // "Error: Correct Private Key not found.\n";
         return PGPMessage();
     }
 
@@ -133,8 +131,8 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
     // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
     symkey = zero + symkey;
 
-    if (!(symkey = EME_PKCS1v1_5_DECODE(symkey, error)).size()){            // remove EME_PKCS1 encoding
-        error += "Error: EME_PKCS1v1_5_DECODE failure.\n";
+    if (!(symkey = EME_PKCS1v1_5_DECODE(symkey)).size()){            // remove EME_PKCS1 encoding
+        // "Error: EME_PKCS1v1_5_DECODE failure.\n";
         return PGPMessage();
     }
 
@@ -148,19 +146,18 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
     }
 
     if (unhexlify(makehex(sum, 4)) != checksum){                            // check session key checksums
-        error += "Error: Calculated session key checksum does not match given checksum.\n";
+        // "Error: Calculated session key checksum does not match given checksum.\n";
         return PGPMessage();
     }
 
     // decrypt the data with the extracted key
-    return decrypt_data(sym, message, symkey, error);
+    return decrypt_data(sym, message, symkey);
 }
 
 PGPMessage decrypt_sym(const PGPMessage & message,
-                       const std::string & passphrase,
-                       std::string & error){
-    if (!message.meaningful(error)){
-        error += "Error: Bad message.\n";
+                       const std::string & passphrase){
+    if (!message.meaningful()){
+        // "Error: Bad message.\n";
         return PGPMessage();
     }
 
@@ -175,10 +172,10 @@ PGPMessage decrypt_sym(const PGPMessage & message,
     }
 
     if (!tag3){
-        error += "Error: No " + Packet::NAME.at(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
+        // "Error: No " + Packet::NAME.at(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
         return PGPMessage();
     }
 
     const std::string symkey = tag3 -> get_session_key(passphrase);
-    return decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1), error);
+    return decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1));
 }

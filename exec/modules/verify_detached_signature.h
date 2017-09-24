@@ -78,17 +78,15 @@ const Module verify_detached_signature(
         const PGPKey signer(key);
         const PGPDetachedSignature signature(sig);
 
-        std::string error;
-        const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature, error);
+            const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "File \"" << args.at("file") << "\" was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+        return !verified;
     }
 );
 

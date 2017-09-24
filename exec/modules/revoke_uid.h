@@ -85,23 +85,15 @@ const Module revoke_uid(
                               args.at("-r"),
                               4,
                               Hash::NUMBER.at(args.at("-h")));
-        std::string error;
 
-        const PGPPublicKey revoked = ::revoke_uid(revargs, args.at("-u"), error);
+        const PGPPublicKey revoked = ::revoke_uid(revargs, args.at("-u"));
 
-        #ifdef GPG_COMPATIBLE
-        if (revoked.meaningful(error)){
-        #endif
-            out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        #ifdef GPG_COMPATIBLE
+        if (!revoked.meaningful()){
+            err << "Error: Generated bad UID revocation signature." << std::endl;
+            return -1;
         }
-        else{
-        #endif
-            err << error << std::endl;
-        #ifdef GPG_COMPATIBLE
-        }
-        #endif
 
+        out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

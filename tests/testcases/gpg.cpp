@@ -45,7 +45,6 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second){
 }
 
 TEST(gpg, public_key){
-    std::string error;
 
     PGPPublicKey pub;
     ASSERT_EQ(read_pgp <PGPPublicKey> ("Alicepub", pub), true);
@@ -249,7 +248,6 @@ TEST(gpg, public_key){
 }
 
 TEST(gpg, private_key){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -478,7 +476,6 @@ TEST(gpg, private_key){
 }
 
 TEST(gpg, revoke){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -537,11 +534,10 @@ TEST(gpg, revoke){
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
 
-    EXPECT_EQ(verify_revoke(pri, rev, error), true);
+    EXPECT_EQ(verify_revoke(pri, rev), true);
 }
 
 TEST(gpg, decrypt_pka_mdc){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -578,7 +574,7 @@ TEST(gpg, decrypt_pka_mdc){
     }
 
     // decrypt data
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
@@ -589,15 +585,14 @@ TEST(gpg, decrypt_pka_mdc){
 }
 
 TEST(gpg, decrypt_pka_no_mdc){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
-    ASSERT_EQ(pri.meaningful(error), true);
+    ASSERT_EQ(pri.meaningful(), true);
 
     PGPMessage gpg_encrypted;
     ASSERT_EQ(read_pgp <PGPMessage> ("pkaencryptednomdc", gpg_encrypted), true);
-    ASSERT_EQ(gpg_encrypted.meaningful(error), true);
+    ASSERT_EQ(gpg_encrypted.meaningful(), true);
 
     // make sure data was read correctly
     const PGP::Packets packets = gpg_encrypted.get_packets();
@@ -626,7 +621,7 @@ TEST(gpg, decrypt_pka_no_mdc){
     }
 
     // decrypt data
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
@@ -637,7 +632,6 @@ TEST(gpg, decrypt_pka_no_mdc){
 }
 
 TEST(gpg, decrypt_symmetric_mdc){
-    std::string error;
 
     PGPMessage gpg_encrypted;
     ASSERT_EQ(read_pgp <PGPMessage> ("symencrypted", gpg_encrypted), true);
@@ -672,7 +666,7 @@ TEST(gpg, decrypt_symmetric_mdc){
     }
 
     // decrypt data
-    const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE, error);
+    const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE);
     std::string message = "";
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
@@ -683,7 +677,6 @@ TEST(gpg, decrypt_symmetric_mdc){
 }
 
 TEST(gpg, decrypt_symmetric_no_mdc){
-    std::string error;
 
     PGPMessage gpg_encrypted;
     ASSERT_EQ(read_pgp <PGPMessage> ("symencryptednomdc", gpg_encrypted), true);
@@ -717,7 +710,7 @@ TEST(gpg, decrypt_symmetric_no_mdc){
     }
 
     // decrypt data
-    const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE, error);
+    const PGPMessage decrypted = decrypt_sym(gpg_encrypted, PASSPHRASE);
     std::string message = "";
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
@@ -728,7 +721,6 @@ TEST(gpg, decrypt_symmetric_no_mdc){
 }
 
 TEST(gpg, decrypt_verify){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -765,7 +757,7 @@ TEST(gpg, decrypt_verify){
     }
 
     // decrypt data
-    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted, error);
+    const PGPMessage decrypted = decrypt_pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
     for(Packet::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == Packet::LITERAL_DATA){
@@ -839,11 +831,10 @@ TEST(gpg, decrypt_verify){
         EXPECT_EQ(mpitohex(mpi[0]), "193724362f327439896ac33b0bd2bcf9c19cf04a31d9648fb07fd202dbcf25020f21141298c4ca17f6be0173747d2b50c873975087674d84783d154de8d04de5df0be1751b85fc72cdbbc161486895d19b1cc6b2b2c95b1fa311b5e9c754a55c31ab7ef76c8b5390da3a9769d23cad70bdebc9c70ba8c4c7cff4f707f5e352aa4ea5f00cdcde3df5e8ba1e32af00c78cdd3a81051dc65b8456cd5d6fe4f56c6ca8710b194491d98f8dc4577a55785b3a1d64db15ea14818de5efbc7ef53cfe9749e09df019c9882b4462f7faf6b037612bfede6f07e7d67c109b49d504e32b9bcfac4bf8cf5da2baebf925f5c7d6d4990c84e107ec72c3d9e5782cff052d65c3");
     }
 
-    EXPECT_EQ(verify_binary(pri, decrypted, error), true);
+    EXPECT_EQ(verify_binary(pri, decrypted), true);
 }
 
 TEST(gpg, verify_detached){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -851,11 +842,10 @@ TEST(gpg, verify_detached){
     PGPDetachedSignature sig;
     ASSERT_EQ(read_pgp <PGPDetachedSignature> ("detached", sig), true);
 
-    EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig, error), true);
+    EXPECT_EQ(verify_detached_signature(pri, MESSAGE, sig), true);
 }
 
 TEST(gpg, verify_binary){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -863,11 +853,10 @@ TEST(gpg, verify_binary){
     PGPMessage sig;
     ASSERT_EQ(read_pgp <PGPMessage> ("signature", sig), true);
 
-    EXPECT_EQ(verify_binary(pri, sig, error), true);
+    EXPECT_EQ(verify_binary(pri, sig), true);
 }
 
 TEST(gpg, verify_cleartext){
-    std::string error;
 
     PGPSecretKey pri;
     ASSERT_EQ(read_pgp <PGPSecretKey> ("Alicepri", pri), true);
@@ -921,5 +910,5 @@ TEST(gpg, verify_cleartext){
         EXPECT_EQ(sub16 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
     }
 
-    EXPECT_EQ(verify_cleartext_signature(pri, clearsig, error), true);
+    EXPECT_EQ(verify_cleartext_signature(pri, clearsig), true);
 }

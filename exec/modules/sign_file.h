@@ -85,16 +85,14 @@ const Module sign_file(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
-        std::string error;
-        const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")), error);
+        const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")));
 
-        if (message.meaningful(error)){
-            out << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!message.meaningful()){
+            err << "Error: Generated bad file signature." << std::endl;
+            return -1;
         }
 
+        out << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

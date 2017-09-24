@@ -1,9 +1,9 @@
 #include "revoke.h"
 
 // this probably needs fixing
-int check_revoked(const PGPKey & key, std::string & error){
-    if (!key.meaningful(error)){
-        error += "Error: Bad Key.\n";
+int check_revoked(const PGPKey & key){
+    if (!key.meaningful()){
+        // "Error: Bad Key.\n";
         return -1;
     }
 
@@ -18,7 +18,7 @@ int check_revoked(const PGPKey & key, std::string & error){
             return true;
         }
 
-        error += "Error: Bad signature type.\n";
+        // "Error: Bad signature type.\n";
         return -1;
     }
 
@@ -40,28 +40,28 @@ int check_revoked(const PGPKey & key, std::string & error){
 }
 
 // Returns revocation signature packet
-Tag2::Ptr revoke_sig(const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig, std::string & error){
+Tag2::Ptr revoke_sig(const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig){
     if (!signer){
-        error += "Error: No key given.\n";
+        // "Error: No key given.\n";
         return nullptr;
     }
 
     // TODO check if the signer is allowed to sign the target
 
     if (!target){
-        error += "Error: No key given.\n";
+        // "Error: No key given.\n";
         return nullptr;
     }
 
     if (!sig){
-        error += "Error: No signature packet given.\n";
+        // "Error: No signature packet given.\n";
         return nullptr;
     }
 
     // only allow key and subkey revocation here
     if ((sig -> get_type() != Signature_Type::KEY_REVOCATION_SIGNATURE)   &&
         (sig -> get_type() != Signature_Type::SUBKEY_REVOCATION_SIGNATURE)){
-        error += "Error: Bad revocation type.\n";
+        // "Error: Bad revocation type.\n";
         return nullptr;
     }
 
@@ -75,9 +75,9 @@ Tag2::Ptr revoke_sig(const Tag5::Ptr & signer, const std::string & passphrase, c
     }
 
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(passphrase), signer -> get_mpi(), sig -> get_hash(), error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(passphrase), signer -> get_mpi(), sig -> get_hash());
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return nullptr;
     }
     sig -> set_mpi(vals);
@@ -85,23 +85,23 @@ Tag2::Ptr revoke_sig(const Tag5::Ptr & signer, const std::string & passphrase, c
     return sig;
 }
 
-Tag2::Ptr revoke_key_sig(const RevArgs & args, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+Tag2::Ptr revoke_key_sig(const RevArgs & args){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return nullptr;
     }
 
     // find signing key
     Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.signer));
     if (!signer){
-        error += "Error: No Secret Key packet found.\n";
+        // "Error: No Secret Key packet found.\n";
         return nullptr;
     }
 
     // create signature packet to sign
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::KEY_REVOCATION_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
     if (!sig){
-        error += "Error: Unable to create an empty signature packet.\n";
+        // "Error: Unable to create an empty signature packet.\n";
         return nullptr;
     }
 
@@ -114,19 +114,19 @@ Tag2::Ptr revoke_key_sig(const RevArgs & args, std::string & error){
     sig -> set_hashed_subpackets(hashed_subpackets);
 
 
-    return revoke_sig(signer, args.passphrase, signer, sig, error);
+    return revoke_sig(signer, args.passphrase, signer, sig);
 }
 
-Tag2::Ptr revoke_subkey_sig(const RevArgs & args, const std::string & keyid, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+Tag2::Ptr revoke_subkey_sig(const RevArgs & args, const std::string & keyid){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return nullptr;
     }
 
     // find signing key
     const Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.signer));
     if (!signer){
-        error += "Error: No Secret Key packet found.\n";
+        // "Error: No Secret Key packet found.\n";
         return nullptr;
     }
 
@@ -143,47 +143,47 @@ Tag2::Ptr revoke_subkey_sig(const RevArgs & args, const std::string & keyid, std
     }
 
     if (!target){
-        error += "Error: No subkey found.\n";
+        // "Error: No subkey found.\n";
         return nullptr;
     }
 
     // create signature packet to sign
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::SUBKEY_REVOCATION_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
     if (!sig){
-        error += "Error: Unable to create an empty signature packet.\n";
+        // "Error: Unable to create an empty signature packet.\n";
         return nullptr;
     }
 
-    return revoke_sig(signer, args.passphrase, target, sig, error);
+    return revoke_sig(signer, args.passphrase, target, sig);
 }
 
-Tag2::Ptr revoke_uid_sig(const Tag5::Ptr & signer, const std::string & passphrase, const User::Ptr & user, Tag2::Ptr & sig, std::string & error){
+Tag2::Ptr revoke_uid_sig(const Tag5::Ptr & signer, const std::string & passphrase, const User::Ptr & user, Tag2::Ptr & sig){
     if (!signer){
-        error += "Error: No signing key given.\n";
+        // "Error: No signing key given.\n";
         return nullptr;
     }
 
     if (!user){
-        error += "Error: No user packet given.\n";
+        // "Error: No user packet given.\n";
         return nullptr;
     }
 
     if (!sig){
-        error += "Error: No revocation signature packet given.\n";
+        // "Error: No revocation signature packet given.\n";
         return nullptr;
     }
 
     if (sig -> get_type() != Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
-        error += "Error: Revocation signature packet does not indicate a " + Signature_Type::NAME.at(Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE) + " (type " + std::to_string(Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE) + ").\n";
+        // "Error: Revocation signature packet does not indicate a " + Signature_Type::NAME.at(Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE) + " (type " + std::to_string(Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE) + ").\n";
         return nullptr;
     }
 
     // set signature data
     std::string digest = to_sign_30(signer, user, sig);
     sig -> set_left16(digest.substr(0, 2));
-    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(passphrase), signer -> get_mpi(), sig -> get_hash(), error);
+    PKA::Values vals = pka_sign(digest, signer -> get_pka(), signer -> decrypt_secret_keys(passphrase), signer -> get_mpi(), sig -> get_hash());
     if (!vals.size()){
-        error += "Error: PKA Signing failed.\n";
+        // "Error: PKA Signing failed.\n";
         return nullptr;
     }
     sig -> set_mpi(vals);
@@ -191,15 +191,15 @@ Tag2::Ptr revoke_uid_sig(const Tag5::Ptr & signer, const std::string & passphras
     return sig;
 }
 
-Tag2::Ptr revoke_uid_sig(const RevArgs & args, const std::string & ID, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+Tag2::Ptr revoke_uid_sig(const RevArgs & args, const std::string & ID){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return nullptr;
     }
 
     const Tag5::Ptr signer = std::static_pointer_cast <Tag5> (find_signing_key(args.signer));
     if (!signer){
-        error += "Error: Private signing key not found.\n";
+        // "Error: Private signing key not found.\n";
         return nullptr;
     }
 
@@ -221,13 +221,13 @@ Tag2::Ptr revoke_uid_sig(const RevArgs & args, const std::string & ID, std::stri
     }
 
     if (!user){
-        error += "Error: No user information matching \"" + ID + "\" found.\n";
+        // "Error: No user information matching \"" + ID + "\" found.\n";
         return nullptr;
     }
 
     Tag2::Ptr sig = create_sig_packet(args.version, Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE, signer -> get_pka(), args.hash, signer -> get_keyid());
     if (!sig){
-        error += "Error: Could not generate revocation signature packet.\n";
+        // "Error: Could not generate revocation signature packet.\n";
         return nullptr;
     }
 
@@ -239,14 +239,14 @@ Tag2::Ptr revoke_uid_sig(const RevArgs & args, const std::string & ID, std::stri
     hashed_subpackets.push_back(revoke);
     sig -> set_hashed_subpackets(hashed_subpackets);
 
-    return revoke_uid_sig(signer, args.passphrase, user, sig, error);
+    return revoke_uid_sig(signer, args.passphrase, user, sig);
 }
 
 // creates revocation certificate to be used later
-PGPRevocationCertificate revoke_key_cert(const RevArgs & args, std::string & error){
-    Tag2::Ptr sig = revoke_key_sig(args, error);
+PGPRevocationCertificate revoke_key_cert(const RevArgs & args){
+    Tag2::Ptr sig = revoke_key_sig(args);
     if (!sig){
-        error += "Error: Could not generate revocation signature packet.\n";
+        // "Error: Could not generate revocation signature packet.\n";
         return PGPRevocationCertificate();
     }
 
@@ -257,10 +257,10 @@ PGPRevocationCertificate revoke_key_cert(const RevArgs & args, std::string & err
     return signature;
 }
 
-PGPRevocationCertificate revoke_subkey_cert(const RevArgs & args, const std::string & keyid, std::string & error){
-    Tag2::Ptr sig = revoke_subkey_sig(args, keyid, error);
+PGPRevocationCertificate revoke_subkey_cert(const RevArgs & args, const std::string & keyid){
+    Tag2::Ptr sig = revoke_subkey_sig(args, keyid);
     if (!sig){
-        error += "Error: Could not generate revocation signature packet.\n";
+        // "Error: Could not generate revocation signature packet.\n";
         return PGPRevocationCertificate();
     }
 
@@ -271,10 +271,10 @@ PGPRevocationCertificate revoke_subkey_cert(const RevArgs & args, const std::str
     return signature;
 }
 
-PGPRevocationCertificate revoke_uid_cert(const RevArgs & args, const std::string & ID, std::string & error){
-    Tag2::Ptr sig = revoke_uid_sig(args, ID, error);
+PGPRevocationCertificate revoke_uid_cert(const RevArgs & args, const std::string & ID){
+    Tag2::Ptr sig = revoke_uid_sig(args, ID);
     if (!sig){
-        error += "Error: Could not generate revocation signature packet.\n";
+        // "Error: Could not generate revocation signature packet.\n";
         return PGPRevocationCertificate();
     }
 
@@ -286,25 +286,25 @@ PGPRevocationCertificate revoke_uid_cert(const RevArgs & args, const std::string
 }
 
 // Revoke with certificate
-PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error){
-    if (!key.meaningful(error)){
-        error += "Error: Bad key.\n";
+PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate & revoke){
+    if (!key.meaningful()){
+        // "Error: Bad key.\n";
         return PGPPublicKey();
     }
 
-    if (!revoke.meaningful(error)){
-        error += "Error: Bad revocation certificate.\n";
+    if (!revoke.meaningful()){
+        // "Error: Bad revocation certificate.\n";
         return PGPPublicKey();
     }
 
     // make sure that the revocation certificate is for the given key
-    const int rc = verify_revoke(key, revoke, error);
+    const int rc = verify_revoke(key, revoke);
     if (rc == false){
-        error += "Error: Revocation certificate is not for key " + hexlify(key.keyid()) + "\n";
+        // "Error: Revocation certificate is not for key " + hexlify(key.keyid()) + "\n";
         return PGPPublicKey();
     }
     else if (rc == -1){
-        error += "Error: verify_revoke failure.\n";
+        // "Error: verify_revoke failure.\n";
         return PGPPublicKey();
     }
 
@@ -341,7 +341,7 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
         const Key::Ptr signing_key = std::static_pointer_cast <Key> (old_packets[0]);
         while ((i < old_packets.size()) && Packet::is_user(old_packets[i] -> get_tag())){
             const User::Ptr user = std::static_pointer_cast <User> (old_packets[i]);
-            const int rc = pka_verify(to_sign_30(signing_key, user, revoke_sig), signing_key, revoke_sig, error);
+            const int rc = pka_verify(to_sign_30(signing_key, user, revoke_sig), signing_key, revoke_sig);
             if (rc == true){
                 new_packets.push_back(old_packets[i++] -> clone());
                 new_packets.push_back(revoke_sig -> clone());
@@ -349,7 +349,7 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
                 break;
             }
             else if (rc == -1){
-                error += "Error: pka_verify failure.\n";
+                // "Error: pka_verify failure.\n";
                 return PGPPublicKey();
             }
 
@@ -399,15 +399,15 @@ PGPPublicKey revoke_with_cert(const PGPKey & key, const PGPRevocationCertificate
 }
 
 // Directly Revoke (does not write to key; instead, returns new copy of public key)
-PGPPublicKey revoke_key(const RevArgs & args, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad key.\n";
+PGPPublicKey revoke_key(const RevArgs & args){
+    if (!args.valid()){
+        // "Error: Bad key.\n";
         return PGPPublicKey();
     }
 
-    const Tag2::Ptr revoke_sig = revoke_key_sig(args, error);
+    const Tag2::Ptr revoke_sig = revoke_key_sig(args);
     if (!revoke_sig){
-        error += "Error: Could not revoke primary key.\n";
+        // "Error: Could not revoke primary key.\n";
         return PGPPublicKey();
     }
 
@@ -445,15 +445,15 @@ PGPPublicKey revoke_key(const RevArgs & args, std::string & error){
     return revoked;
 }
 
-PGPPublicKey revoke_subkey(const RevArgs & args, const std::string & keyid, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad key.\n";
+PGPPublicKey revoke_subkey(const RevArgs & args, const std::string & keyid){
+    if (!args.valid()){
+        // "Error: Bad key.\n";
         return PGPPublicKey();
     }
 
-    const Tag2::Ptr revoke_sig = revoke_subkey_sig(args, keyid, error);
+    const Tag2::Ptr revoke_sig = revoke_subkey_sig(args, keyid);
     if (!revoke_sig){
-        error += "Error: Could not revoke primary key.\n";
+        // "Error: Could not revoke primary key.\n";
         return PGPPublicKey();
     }
 
@@ -510,20 +510,20 @@ PGPPublicKey revoke_subkey(const RevArgs & args, const std::string & keyid, std:
     return revoked;
 }
 
-PGPPublicKey revoke_uid(const RevArgs & args, const std::string & ID, std::string & error){
-    if (!args.valid(error)){
-        error += "Error: Bad arguments.\n";
+PGPPublicKey revoke_uid(const RevArgs & args, const std::string & ID){
+    if (!args.valid()){
+        // "Error: Bad arguments.\n";
         return PGPPublicKey();
     }
 
     if (args.signer.keyid() != args.target.keyid()){
-        error += "Error: Certification Revocation Signature should be issued to self.\n";
+        // "Error: Certification Revocation Signature should be issued to self.\n";
         return PGPPublicKey();
     }
 
-    const Tag2::Ptr revoke_cert = revoke_uid_sig(args, ID, error);
+    const Tag2::Ptr revoke_cert = revoke_uid_sig(args, ID);
     if (!revoke_cert){
-        error += "Error: Could not revoke certification.\n";
+        // "Error: Could not revoke certification.\n";
         return PGPPublicKey();
     }
 

@@ -70,17 +70,15 @@ const Module verify_primary_key(
 
         const PGPKey signerkey(signer), signeekey(signee);
 
-        std::string error;
-        const int verified = ::verify_primary_key(signerkey, signeekey, error);
+        const int verified = ::verify_primary_key(signerkey, signeekey);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "Key in \"" << args.at("signee-key") << "\" (" << signeekey << ") was" << ((verified == 1)?"":" not") << " signed by key in \"" << args.at("signer-key") << "\" (" << signerkey << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "Key in \"" << args.at("signee-key") << "\" (" << signeekey << ") was" << ((verified == 1)?"":" not") << " signed by key in \"" << args.at("signer-key") << "\" (" << signerkey << ")." << std::endl;
+        return !verified;
     }
 );
 

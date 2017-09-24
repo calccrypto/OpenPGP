@@ -80,16 +80,14 @@ const Module sign_timestamp(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
-        std::string error;
-        const PGPDetachedSignature timestamp = ::sign_timestamp(signargs, time, error);
+            const PGPDetachedSignature timestamp = ::sign_timestamp(signargs, time);
 
-        if (timestamp.meaningful(error)){
-            out << timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!timestamp.meaningful()){
+            err << "Error: Generated bad timestamp signature." << std::endl;
+            return -1;
         }
 
+        out << timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

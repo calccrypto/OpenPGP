@@ -79,16 +79,14 @@ const Module sign_detached_signature(
                                 4,
                                 Hash::NUMBER.at(args.at("-h")));
 
-        std::string error;
-        const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}), error);
+        const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}));
 
-        if (signature.meaningful(error)){
-            out << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!signature.meaningful()){
+            err << "Error: Generated bad detached signature." << std::endl;
+            return -1;
         }
 
+        out << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
         return 0;
     }
 );

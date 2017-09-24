@@ -71,17 +71,15 @@ const Module verify_cleartext_signature(
         const PGPKey signer(key);
         const PGPCleartextSignature signature(sig);
 
-        std::string error;
-        const int verified = ::verify_cleartext_signature(signer, signature, error);
+        const int verified = ::verify_cleartext_signature(signer, signature);
 
         if (verified == -1){
-            err << error << std::endl;
-        }
-        else{
-            out << "This message was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+            err << "Error: Bad PKA value" << std::endl;
+            return -1;
         }
 
-        return 0;
+        out << "This message was" << ((verified == 1)?"":" not") << " signed by \"" << args.at("key") << "\" (" << signer << ")." << std::endl;
+        return !verified;
     }
 );
 

@@ -136,36 +136,34 @@ const Module generate_keypair(
         subkey.sig        = Hash::NUMBER.at(args.at("--ssig"));
         config.subkeys.push_back(subkey);
 
-        std::string error;
-        const PGPSecretKey pri = ::generate_key(config, error);
+        const PGPSecretKey pri = ::generate_key(config);
 
-        if (pri.meaningful(error)){
-            const PGPPublicKey pub = pri.get_public();
-
-            const std::string pub_name = args.at("-o") + ".public";
-            const std::string pri_name = args.at("-o") + ".private";
-
-            std::ofstream pub_out(pub_name, std::ios::binary);
-            if (!pub_out){
-                err << "Error: Could not open public key file '" << pub_name << "' for writing." << std::endl;
-                return -1;
-            }
-
-            std::ofstream pri_out(pri_name, std::ios::binary);
-            if (!pri_out){
-                err << "Error: Could not open private key file '" << pri_name << "' for writing." << std::endl;
-                return -1;
-            }
-
-            pub_out << pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
-            pri_out << pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
-
-            out << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
-        }
-        else{
-            err << error << std::endl;
+        if (!pri.meaningful()){
+            err << "Error: Generated bad keypair." << std::endl;
+            return -1;
         }
 
+        const PGPPublicKey pub = pri.get_public();
+
+        const std::string pub_name = args.at("-o") + ".public";
+        const std::string pri_name = args.at("-o") + ".private";
+
+        std::ofstream pub_out(pub_name, std::ios::binary);
+        if (!pub_out){
+            err << "Error: Could not open public key file '" << pub_name << "' for writing." << std::endl;
+            return -1;
+        }
+
+        std::ofstream pri_out(pri_name, std::ios::binary);
+        if (!pri_out){
+            err << "Error: Could not open private key file '" << pri_name << "' for writing." << std::endl;
+            return -1;
+        }
+
+        pub_out << pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
+        pri_out << pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
+
+        out << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
         return 0;
     }
 );

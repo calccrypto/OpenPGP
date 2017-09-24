@@ -61,17 +61,14 @@ const Module list(
             return -1;
         }
 
-        std::string error;
-
         const PGPKey key(f);
 
-        if (key.meaningful(error)){
-            out << key.list_keys() << std::flush;
-        }
-        else{
-            err << error << std::endl;
+        if (!key.meaningful()){
+            err << "Warning: Provided key is not meaningful" << std::endl;
+            // display contents despite warning
         }
 
+        out << key.list_keys() << std::flush;
         return 0;
     }
 );

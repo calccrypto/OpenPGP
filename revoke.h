@@ -39,7 +39,7 @@ THE SOFTWARE.
 #include "verify.h"
 
 // check if a keyid has a revocation signature
-int check_revoked(const PGPKey & key, std::string & error);
+int check_revoked(const PGPKey & key);
 
 // common arguments for revoking
 struct RevArgs{
@@ -67,29 +67,29 @@ struct RevArgs{
           hash(ha)
     {}
 
-    bool valid(std::string & error) const{
-        if (!signer.meaningful(error)){
-            error += "Error: Bad Signing Key.\n";
+    bool valid() const{
+        if (!signer.meaningful()){
+            // "Error: Bad Signing Key.\n";
             return false;
         }
 
-        if (!target.meaningful(error)){
-            error += "Error: Bad Target Key.\n";
+        if (!target.meaningful()){
+            // "Error: Bad Target Key.\n";
             return false;
         }
 
         if (Revoke::NAME.find(code) == Revoke::NAME.end()){
-            error += "Error: Unknown revocation reason.\n";
+            // "Error: Unknown revocation reason.\n";
             return false;
         }
 
         if ((version != 3) && (version != 4)){
-            error += "Error: Bad version: " + std::to_string(version) + "\n";
+            // "Error: Bad version: " + std::to_string(version) + "\n";
             return false;
         }
 
         if (Hash::NAME.find(hash) == Hash::NAME.end()){
-            error += "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
+            // "Error: Hash algorithm number " + std::to_string(hash) + " not found.\n";
             return false;
         }
 
@@ -102,23 +102,23 @@ struct RevArgs{
 // 0x30: Certification revocation signature
 
 // Returns revocation signature packet
-Tag2::Ptr revoke_sig                        (const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig, std::string & error);
-Tag2::Ptr revoke_key_sig                    (const RevArgs & args, std::string & error);
-Tag2::Ptr revoke_subkey_sig                 (const RevArgs & args, const std::string & keyid, std::string & error);
-Tag2::Ptr revoke_uid_sig                    (const Tag5::Ptr & signer, const std::string & passphrase, const User::Ptr & user, Tag2::Ptr & sig, std::string & error);
-Tag2::Ptr revoke_uid_sig                    (const RevArgs & args, const std::string & ID, std::string & error);
+Tag2::Ptr revoke_sig                        (const Tag5::Ptr & signer, const std::string & passphrase, const Key::Ptr & target, Tag2::Ptr & sig);
+Tag2::Ptr revoke_key_sig                    (const RevArgs & args);
+Tag2::Ptr revoke_subkey_sig                 (const RevArgs & args, const std::string & keyid);
+Tag2::Ptr revoke_uid_sig                    (const Tag5::Ptr & signer, const std::string & passphrase, const User::Ptr & user, Tag2::Ptr & sig);
+Tag2::Ptr revoke_uid_sig                    (const RevArgs & args, const std::string & ID);
 
 // creates revocation certificate to be used later
-PGPRevocationCertificate revoke_key_cert    (const RevArgs & args, std::string & error);
-PGPRevocationCertificate revoke_subkey_cert (const RevArgs & args, const std::string & keyid, std::string & error);
-PGPRevocationCertificate revoke_uid_cert    (const RevArgs & args, const std::string & ID, std::string & error);
+PGPRevocationCertificate revoke_key_cert    (const RevArgs & args);
+PGPRevocationCertificate revoke_subkey_cert (const RevArgs & args, const std::string & keyid);
+PGPRevocationCertificate revoke_uid_cert    (const RevArgs & args, const std::string & ID);
 
-// Revoke with certificate 
-PGPPublicKey revoke_with_cert               (const PGPKey & key, const PGPRevocationCertificate & revoke, std::string & error);
+// Revoke with certificate
+PGPPublicKey revoke_with_cert               (const PGPKey & key, const PGPRevocationCertificate & revoke);
 
 // Directly Revoke (does not write to key; instead, returns new copy of public key)
-PGPPublicKey revoke_key                     (const RevArgs & args, std::string & error);
-PGPPublicKey revoke_subkey                  (const RevArgs & args, const std::string & keyid, std::string & error);
-PGPPublicKey revoke_uid                     (const RevArgs & args, const std::string & ID, std::string & error);
+PGPPublicKey revoke_key                     (const RevArgs & args);
+PGPPublicKey revoke_subkey                  (const RevArgs & args, const std::string & keyid);
+PGPPublicKey revoke_uid                     (const RevArgs & args, const std::string & ID);
 
 #endif

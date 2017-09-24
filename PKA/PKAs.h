@@ -110,7 +110,7 @@ params:
 
 pub and pri are destination containers
 */
-PKA::Params generate_pka_params(const uint8_t pka, const std::size_t bits, std::string & error);
-uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Values & pri, PKA::Values & pub, std::string & error);
+PKA::Params generate_pka_params(const uint8_t pka, const std::size_t bits);
+uint8_t generate_keypair(const uint8_t pka, const PKA::Params & params, PKA::Values & pri, PKA::Values & pub);
 
 #endif
