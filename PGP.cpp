@@ -284,7 +284,7 @@ void PGP::read(std::istream & stream){
         // parse entire stream
         read_raw(stream);
 
-        armored = Armored::NO;
+        armored = false;
         type = UNKNOWN;
     }
     else{
@@ -348,7 +348,7 @@ void PGP::read(std::istream & stream){
         // parse data
         read_raw(body);
 
-        armored = Armored::YES;
+        armored = true;
     }
 }
 
@@ -371,7 +371,7 @@ void PGP::read_raw(const std::string & data){
         }
     }
 
-    armored = Armored::NO;                    // assume data was not armored, since it was submitted through this function
+    armored = false;                          // assume data was not armored, since it was submitted through this function
 }
 
 void PGP::read_raw(std::istream & stream){
