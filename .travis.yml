@@ -79,6 +79,24 @@ matrix:
     - os: linux
       dist: trusty
       sudo: false
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+      before_script:
+        - export CC=gcc-7
+        - export CXX=g++-7
+        - cd tests
+        - chmod +x ./gtest.sh
+        - ./gtest.sh
+        - make gpg-debug
+      script:
+        - ./tests
+
+    - os: linux
+      dist: trusty
+      sudo: false
       compiler: clang
       addons:
         apt:
