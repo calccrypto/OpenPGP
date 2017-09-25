@@ -26,7 +26,7 @@ debug: all
 gpg-debug: CXXFLAGS += -DGPG_COMPATIBLE
 gpg-debug: debug
 
-.PHONY: ../libOpenPGP.a testcases modules run clean clean-testcases clean-lib clean-all
+.PHONY: testcases modules run clean clean-testcases clean-lib clean-all
 
 ../libOpenPGP.a:
 	$(MAKE) $(MAKECMDGOALS) -C ..
@@ -39,9 +39,6 @@ modules: ../exec/modules/module.o
 
 $(TARGET): main.cc ../libOpenPGP.a testcases
 	$(CXX) $(CXXFLAGS) main.cc $(addprefix testcases/, $(TESTCASES_OBJECTS)) $(addprefix testcases/common/, $(COMMON_TESTCASES_OBJECTS)) $(addprefix testcases/Compress/, $(COMPRESS_TESTCASES_OBJECTS)) $(addprefix testcases/Encryptions/, $(ENCRYPTIONS_TESTCASES_OBJECTS)) $(addprefix testcases/exec/, $(EXEC_TESTCASES_OBJECTS)) $(addprefix testcases/exec/modules/, $(MODULES_TESTCASES_OBJECTS)) $(addprefix testcases/Hashes/, $(HASHES_TESTCASES_OBJECTS)) $(addprefix testcases/Misc/, $(MISC_TESTCASES_OBJECTS)) $(addprefix testcases/PKA/, $(PKA_TESTCASES_OBJECTS)) ../exec/modules/module.o $(LDFLAGS) -o $(TARGET)
-
-run: $(TARGET)
-	./$(TARGET)
 
 clean:
 	rm -f $(TARGET)
