@@ -1,6 +1,6 @@
 # Packets Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c -fPIC
+CXXFLAGS=-std=c++11 -Wall -c
 
 include objects.mk
 
@@ -12,8 +12,8 @@ gpg-compatible: all
 debug: CXXFLAGS += -g
 debug: all
 
-gpg-debug: CXXFLAGS += -g -DGPG_COMPATIBLE
-gpg-debug: all
+gpg-debug: CXXFLAGS += -DGPG_COMPATIBLE
+gpg-debug: debug
 
 .PHONY: clean
 
