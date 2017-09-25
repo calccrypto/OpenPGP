@@ -29,10 +29,10 @@ gpg-debug: debug
 .PHONY: ../libOpenPGP.a testcases modules run clean clean-testcases clean-lib clean-all
 
 ../libOpenPGP.a:
-	$(MAKE) -C ..
+	$(MAKE) $(MAKECMDGOALS) -C ..
 
 testcases:
-	$(MAKE) -C testcases
+	$(MAKE) $(MAKECMDGOALS) -C testcases
 
 modules: ../exec/modules/module.o
 	$(MAKE) -C ../exec/modules
