@@ -1,4 +1,3 @@
-#include <iostream>
 #include <ctime>
 #include <sstream>
 
@@ -28,6 +27,13 @@ TEST(PGP, keygen){
     config.pka = 255;                           // invalid PKA
     EXPECT_EQ(config.valid(), false);
     for(std::pair <std::string const, uint8_t> const & pka : PKA::NUMBER){
+        // gpg only allows for RSA and DSA in the primary key
+        #ifdef GPG_COMPATIBLE
+        if (pka.second == PKA::ELGAMAL){
+            continue;
+        }
+        #endif
+
         config.pka = pka.second;
         EXPECT_EQ(config.valid(), PKA::can_sign(config.pka));
     }
@@ -59,7 +65,7 @@ TEST(PGP, keygen){
     config.subkeys[0].pka = 255;                // invalid PKA
     EXPECT_EQ(config.valid(), false);
     for(std::pair <std::string const, uint8_t> const & pka : PKA::NUMBER){
-        config.subkeys[0].pka = pka.second;
+        config.subkeys[0].pka = pka.second;     // valid PKA
         EXPECT_EQ(config.valid(), true);
     }
     config.subkeys[0].pka = PKA::RSA_ENCRYPT_OR_SIGN;

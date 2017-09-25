@@ -84,7 +84,7 @@ struct KeyGen{
             return false;
         }
 
-        if (!(PKA::can_sign(pka))){
+        if (!PKA::can_sign(pka)){
             // "Error: Primary key should be able to sign.\n";
             return false;
         }
@@ -163,7 +163,7 @@ struct KeyGen{
                     return false;
                 }
             }
-            else if ((PKA::DSA == subkey.pka) || (PKA::ELGAMAL == pka)){
+            else if ((PKA::DSA == subkey.pka) || (PKA::ELGAMAL == subkey.pka)){
                 if ((subkey.bits < 1024) || (subkey.bits > 3072)){
                     // "Error: DSA/ElGamal key size should be between 1024 and 3072 bits.\n";
                     return false;
