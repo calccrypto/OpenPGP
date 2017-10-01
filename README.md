@@ -55,14 +55,14 @@ is none of my concern or responsibility.
 This library should be relatively straightforward to use:
 Simply `#include` whatever functions needed:
 
- Feature        | Header
-----------------|----------------
- key generation | generatekey.h
- key revocation | revoke.h
- encrypt        | encrypt.h
- decrypt        | decrypt.h
- sign           | sign.h
- verify         | verify.h
+ Feature        | Header         | Namespace
+----------------|-----------------------------------
+ key generation | generatekey.h  | OpenPGP
+ key revocation | revoke.h       | OpenPGP::Revoke
+ encrypt        | encrypt.h      | OpenPGP::Encrypt
+ decrypt        | decrypt.h      | OpenPGP::Decrypt
+ sign           | sign.h         | OpenPGP::Sign
+ verify         | verify.h       | OpenPGP::Verify
 
 Multiple classes inherit from the abstract base class `PGP` in order
 to make differentiating PGP block types better in code:
