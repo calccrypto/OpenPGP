@@ -294,7 +294,7 @@ TEST(gpg, private_key){
         EXPECT_EQ(mpi[1], 0x10001);
         EXPECT_EQ(seckey -> get_sym(), OpenPGP::Sym::ID::CAST5);
         EXPECT_EQ(seckey -> get_IV(), "\x47\xdb\x0a\x37\x11\x76\xb3\x5d");
-        const OpenPGP::S2K::Base::Ptr secs2k = seckey -> get_s2k();
+        const OpenPGP::S2K::S2K::Ptr secs2k = seckey -> get_s2k();
         EXPECT_EQ(secs2k -> get_type(), OpenPGP::S2K::ID::ITERATED_AND_SALTED_S2K);
         EXPECT_EQ(secs2k -> get_hash(), OpenPGP::Hash::ID::SHA1);
         const OpenPGP::S2K::S2K3::Ptr secs2k3 = std::dynamic_pointer_cast <OpenPGP::S2K::S2K3> (secs2k);
@@ -418,7 +418,7 @@ TEST(gpg, private_key){
         EXPECT_EQ(mpi[1], 0x10001);
         EXPECT_EQ(subkey -> get_sym(), OpenPGP::Sym::ID::CAST5);
         EXPECT_EQ(subkey -> get_IV(), "\x22\x01\xe4\x2a\xc6\x81\x4d\x35");
-        const OpenPGP::S2K::Base::Ptr subs2k = subkey -> get_s2k();
+        const OpenPGP::S2K::S2K::Ptr subs2k = subkey -> get_s2k();
         EXPECT_EQ(subs2k -> get_type(), OpenPGP::S2K::ID::ITERATED_AND_SALTED_S2K);
         EXPECT_EQ(subs2k -> get_hash(), OpenPGP::Hash::ID::SHA1);
         const OpenPGP::S2K::S2K3::Ptr subs2k3 = std::dynamic_pointer_cast <OpenPGP::S2K::S2K3> (subs2k);
@@ -642,7 +642,7 @@ TEST(gpg, decrypt_symmetric_mdc){
         EXPECT_EQ(tag3 -> get_version(), 4);
         EXPECT_EQ(tag3 -> get_sym(), OpenPGP::Sym::ID::AES128);
 
-        const OpenPGP::S2K::Base::Ptr s2k = tag3 -> get_s2k();
+        const OpenPGP::S2K::S2K::Ptr s2k = tag3 -> get_s2k();
         EXPECT_NE(s2k, nullptr);
         ASSERT_EQ(s2k -> get_type(), OpenPGP::S2K::ID::ITERATED_AND_SALTED_S2K);
         EXPECT_EQ(s2k -> get_hash(), OpenPGP::Hash::ID::SHA1);
@@ -687,7 +687,7 @@ TEST(gpg, decrypt_symmetric_no_mdc){
         EXPECT_EQ(tag3 -> get_version(), 4);
         EXPECT_EQ(tag3 -> get_sym(), OpenPGP::Sym::ID::AES128);
 
-        const OpenPGP::S2K::Base::Ptr s2k = tag3 -> get_s2k();
+        const OpenPGP::S2K::S2K::Ptr s2k = tag3 -> get_s2k();
         EXPECT_NE(s2k, nullptr);
         ASSERT_EQ(s2k -> get_type(), OpenPGP::S2K::ID::ITERATED_AND_SALTED_S2K);
         EXPECT_EQ(s2k -> get_hash(), OpenPGP::Hash::ID::SHA1);
