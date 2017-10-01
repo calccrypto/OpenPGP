@@ -61,7 +61,7 @@ const Module list(
             return -1;
         }
 
-        const PGPKey key(f);
+        const OpenPGP::Key key(f);
 
         if (!key.meaningful()){
             err << "Warning: Provided key is not meaningful" << std::endl;

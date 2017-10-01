@@ -5,20 +5,20 @@
 #include "../testvectors/msg.h"
 
 TEST(Compress, deflate) {
-    auto compressed = PGP_compress(Compression::ZIP, MESSAGE);
-    auto decompressed = PGP_decompress(Compression::ZIP, compressed);
+    auto compressed = OpenPGP::Compression::compress(OpenPGP::Compression::ID::ZIP, MESSAGE);
+    auto decompressed = OpenPGP::Compression::decompress(OpenPGP::Compression::ID::ZIP, compressed);
     EXPECT_EQ(decompressed, MESSAGE);
 }
 
 TEST(Compress, zlib) {
-    auto compressed = PGP_compress(Compression::ZLIB, MESSAGE);
-    auto decompressed = PGP_decompress(Compression::ZLIB, compressed);
+    auto compressed = OpenPGP::Compression::compress(OpenPGP::Compression::ID::ZLIB, MESSAGE);
+    auto decompressed = OpenPGP::Compression::decompress(OpenPGP::Compression::ID::ZLIB, compressed);
     EXPECT_EQ(decompressed, MESSAGE);
 }
 
 TEST(Compress, bzip2) {
-    auto compressed = PGP_compress(Compression::BZIP2, MESSAGE);
-    auto decompressed = PGP_decompress(Compression::BZIP2, compressed);
+    auto compressed = OpenPGP::Compression::compress(OpenPGP::Compression::ID::BZIP2, MESSAGE);
+    auto decompressed = OpenPGP::Compression::decompress(OpenPGP::Compression::ID::BZIP2, compressed);
     EXPECT_EQ(decompressed, MESSAGE);
 }
 

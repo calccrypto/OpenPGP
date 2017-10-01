@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "HashAlg.h"
 
-class MerkleDamgard : public HashAlg{
+class MerkleDamgard : public HashAlg {
     protected:
         std::string stack;
         uint64_t clen;

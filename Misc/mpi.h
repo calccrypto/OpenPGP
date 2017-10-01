@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __PGPMPI__
-#define __PGPMPI__
+#ifndef __MPI__
+#define __MPI__
 
 #include <cstddef>
 
@@ -32,33 +32,36 @@ THE SOFTWARE.
 
 #include "../common/includes.h"
 
-typedef mpz_class PGPMPI;
+namespace OpenPGP {
+    typedef mpz_class MPI;
 
-PGPMPI rawtompi(const std::string & raw);
-PGPMPI hextompi(const std::string & hex);
-PGPMPI dectompi(const std::string & dec);
-PGPMPI bintompi(const std::string & bin);
+    MPI rawtompi(const std::string & raw);
+    MPI hextompi(const std::string & hex);
+    MPI dectompi(const std::string & dec);
+    MPI bintompi(const std::string & bin);
 
-std::string mpitoraw(const PGPMPI & a);
-std::string mpitohex(const PGPMPI & a);
-std::string mpitodec(const PGPMPI & a);
-std::string mpitobin(const PGPMPI & a);
+    std::string mpitoraw(const MPI & a);
+    std::string mpitohex(const MPI & a);
+    std::string mpitodec(const MPI & a);
+    std::string mpitobin(const MPI & a);
 
-unsigned long mpitoulong(const PGPMPI & a);
+    unsigned long mpitoulong(const MPI & a);
 
-std::size_t bitsize(const PGPMPI & a);
+    std::size_t bitsize(const MPI & a);
 
-bool knuth_prime_test(const PGPMPI & a, int test);
+    bool knuth_prime_test(const MPI & a, int test);
 
-void mpiswap(PGPMPI & a,PGPMPI & b);
-PGPMPI mpigcd(const PGPMPI & a, const PGPMPI & b);
-PGPMPI nextprime(const PGPMPI & a);
-PGPMPI powm(const PGPMPI & base, const PGPMPI & exp, const PGPMPI & mod);
-PGPMPI invert(const PGPMPI & a, const PGPMPI & b);
+    void mpiswap(MPI & a,MPI & b);
+    MPI mpigcd(const MPI & a, const MPI & b);
+    MPI nextprime(const MPI & a);
+    MPI powm(const MPI & base, const MPI & exp, const MPI & mod);
+    MPI invert(const MPI & a, const MPI & b);
 
-PGPMPI random(unsigned int bits);
+    MPI random(unsigned int bits);
 
-std::string write_MPI(const PGPMPI & data);                                 // given some value, return the formatted mpi
-PGPMPI read_MPI(const std::string & data, std::string::size_type & pos);    // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
+    std::string write_MPI(const MPI & data);                                 // given some value, return the formatted mpi
+    MPI read_MPI(const std::string & data, std::string::size_type & pos);    // remove mpi from data, returning mpi value. the rest of the data will be returned through pass-by-reference
+
+}
 
 #endif

@@ -36,13 +36,13 @@ const Module extract_public(
             return -1;
         }
 
-        const PGPSecretKey pri(key);
+        const OpenPGP::SecretKey pri(key);
         if (!pri.meaningful()){
             err << "Error: Key is not meaningful." << std::endl;
             return -1;
         }
 
-        out << pri.get_public().write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << pri.get_public().write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

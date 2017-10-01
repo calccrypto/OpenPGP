@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __PACKETS__
 #define __PACKETS__
 
-#include "packet.h"
+#include "Packet.h"
 #include "Partial.h"
 
 #include "Key.h"    // for Tags 5, 6, 7, and 14

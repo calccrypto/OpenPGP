@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "CAST_Const.h"
 #include "CAST128_Const.h"
 
-class CAST128 : public SymAlg{
+class CAST128 : public SymAlg {
     private:
         uint8_t rounds, kr[16];
         uint32_t km[16];

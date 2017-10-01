@@ -1,14 +1,17 @@
 #include "Tag19.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag19::Tag19()
-    : Packet(Packet::MODIFICATION_DETECTION_CODE),
+    : Base(MODIFICATION_DETECTION_CODE),
       hash()
 {
     size = 20;
 }
 
 Tag19::Tag19(const Tag19 & copy)
-    : Packet(copy),
+    : Base(copy),
       hash(copy.hash)
 {}
 
@@ -43,6 +46,10 @@ void Tag19::set_hash(const std::string & h){
     size = raw().size();
 }
 
-Packet::Ptr Tag19::clone() const{
-    return std::make_shared <Tag19> (*this);
+Base::Ptr Tag19::clone() const{
+    return std::make_shared <Packet::Tag19> (*this);
+}
+
+}
+
 }

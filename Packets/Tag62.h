@@ -26,27 +26,32 @@ THE SOFTWARE.
 #ifndef __TAG62__
 #define __TAG62__
 
-#include "packet.h"
+#include "Packet.h"
 
-class Tag62 : public Packet{
-    private:
-        std::string stream;
+namespace OpenPGP {
+    namespace Packet {
 
-    public:
-        typedef std::shared_ptr <Tag62> Ptr;
+        class Tag62 : public Base {
+            private:
+                std::string stream;
 
-        Tag62();
-        Tag62(const Tag62 & copy);
-        Tag62(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Packet::Tag62> Ptr;
 
-        std::string get_stream() const;
+                Tag62();
+                Tag62(const Tag62 & copy);
+                Tag62(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        void set_stream(const std::string & data);
+                std::string get_stream() const;
 
-        Packet::Ptr clone() const;
-};
+                void set_stream(const std::string & data);
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

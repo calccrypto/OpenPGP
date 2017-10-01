@@ -26,44 +26,49 @@ THE SOFTWARE.
 #ifndef __TAG10__
 #define __TAG10__
 
-#include "packet.h"
+#include "Packet.h"
 
-// 5.8.  Marker Packet (Obsolete Literal Packet) (Tag 10)
-//
-//    An experimental version of PGP used this packet as the Literal
-//    packet, but no released version of PGP generated Literal packets with
-//    this tag.  With PGP 5.x, this packet has been reassigned and is
-//    reserved for use as the Marker packet.
-//
-//    The body of this packet consists of:
-//
-//      - The three octets 0x50, 0x47, 0x50 (which spell "PGP" in UTF-8).
-//
-//    Such a packet MUST be ignored when received.  It may be placed at the
-//    beginning of a message that uses features not available in PGP 2.6.x
-//    in order to cause that version to report that newer software is
-//    necessary to process the message.
+namespace OpenPGP {
+    namespace Packet {
+
+        // 5.8.  Marker Packet (Obsolete Literal Packet) (Tag 10)
+        //
+        //    An experimental version of PGP used this packet as the Literal
+        //    packet, but no released version of PGP generated Literal packets with
+        //    this tag.  With PGP 5.x, this packet has been reassigned and is
+        //    reserved for use as the Marker packet.
+        //
+        //    The body of this packet consists of:
+        //
+        //      - The three octets 0x50, 0x47, 0x50 (which spell "PGP" in UTF-8).
+        //
+        //    Such a packet MUST be ignored when received.  It may be placed at the
+        //    beginning of a message that uses features not available in PGP 2.6.x
+        //    in order to cause that version to report that newer software is
+        //    necessary to process the message.
 
 
-class Tag10 : public Packet{
-    private:
-        std::string pgp; // "PGP"
+        class Tag10 : public Base {
+            private:
+                std::string pgp; // "PGP"
 
-    public:
-        typedef std::shared_ptr <Tag10> Ptr;
+            public:
+                typedef std::shared_ptr <Packet::Tag10> Ptr;
 
-        Tag10();
-        Tag10(const Tag10 & copy);
-        Tag10(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+                Tag10();
+                Tag10(const Tag10 & copy);
+                Tag10(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        std::string get_pgp() const;
+                std::string get_pgp() const;
 
-        void set_pgp(const std::string & s = "PGP");
+                void set_pgp(const std::string & s = "PGP");
 
-        Packet::Ptr clone() const;
-};
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

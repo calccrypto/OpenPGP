@@ -47,39 +47,43 @@ THE SOFTWARE.
 #include "pgpbzip2.h"
 #include "pgpzlib.h"
 
-namespace Compression{
-    const uint8_t UNCOMPRESSED          = 0;
-    const uint8_t ZIP                   = 1;
-    const uint8_t ZLIB                  = 2;
-    const uint8_t BZIP2                 = 3;
+namespace OpenPGP {
+    namespace Compression {
+        namespace ID {
+            const uint8_t UNCOMPRESSED          = 0;
+            const uint8_t ZIP                   = 1;
+            const uint8_t ZLIB                  = 2;
+            const uint8_t BZIP2                 = 3;
+        }
 
-    const std::map <uint8_t, std::string> NAME = {
-        std::make_pair(UNCOMPRESSED,    "UNCOMPRESSED"),
-        std::make_pair(ZIP,             "ZIP {RFC1951}"),
-        std::make_pair(ZLIB,            "ZLIB {RFC1950}"),
-        std::make_pair(BZIP2,           "BZip2 {BZ2}"),
-        std::make_pair(100,             "Private/Experimental algorithm"),
-        std::make_pair(101,             "Private/Experimental algorithm"),
-        std::make_pair(102,             "Private/Experimental algorithm"),
-        std::make_pair(103,             "Private/Experimental algorithm"),
-        std::make_pair(104,             "Private/Experimental algorithm"),
-        std::make_pair(105,             "Private/Experimental algorithm"),
-        std::make_pair(106,             "Private/Experimental algorithm"),
-        std::make_pair(107,             "Private/Experimental algorithm"),
-        std::make_pair(108,             "Private/Experimental algorithm"),
-        std::make_pair(109,             "Private/Experimental algorithm"),
-        std::make_pair(110,             "Private/Experimental algorithm"),
-    };
+        const std::map <uint8_t, std::string> NAME = {
+            std::make_pair(ID::UNCOMPRESSED,    "UNCOMPRESSED"),
+            std::make_pair(ID::ZIP,             "ZIP {RFC1951}"),
+            std::make_pair(ID::ZLIB,            "ZLIB {RFC1950}"),
+            std::make_pair(ID::BZIP2,           "BZip2 {BZ2}"),
+            std::make_pair(100,                 "Private/Experimental algorithm"),
+            std::make_pair(101,                 "Private/Experimental algorithm"),
+            std::make_pair(102,                 "Private/Experimental algorithm"),
+            std::make_pair(103,                 "Private/Experimental algorithm"),
+            std::make_pair(104,                 "Private/Experimental algorithm"),
+            std::make_pair(105,                 "Private/Experimental algorithm"),
+            std::make_pair(106,                 "Private/Experimental algorithm"),
+            std::make_pair(107,                 "Private/Experimental algorithm"),
+            std::make_pair(108,                 "Private/Experimental algorithm"),
+            std::make_pair(109,                 "Private/Experimental algorithm"),
+            std::make_pair(110,                 "Private/Experimental algorithm"),
+        };
 
-    const std::map <std::string, uint8_t> NUMBER = {
-        std::make_pair("UNCOMPRESSED",  UNCOMPRESSED),
-        std::make_pair("ZIP",           ZIP),
-        std::make_pair("ZLIB",          ZLIB),
-        std::make_pair("BZip2",         BZIP2),
-    };
+        const std::map <std::string, uint8_t> NUMBER = {
+            std::make_pair("UNCOMPRESSED",  ID::UNCOMPRESSED),
+            std::make_pair("ZIP",           ID::ZIP),
+            std::make_pair("ZLIB",          ID::ZLIB),
+            std::make_pair("BZip2",         ID::BZIP2),
+        };
+
+        std::string compress(const uint8_t alg, const std::string & data);
+        std::string decompress(const uint8_t alg, const std::string & data);
+    }
 }
-
-std::string PGP_compress(const uint8_t alg, const std::string & data);
-std::string PGP_decompress(const uint8_t alg, const std::string & data);
 
 #endif

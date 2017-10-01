@@ -1,18 +1,21 @@
 #include "Compress.h"
 
-std::string PGP_compress(const uint8_t alg, const std::string & src){
-    if ((alg != Compression::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
+namespace OpenPGP {
+namespace Compression {
+
+std::string compress(const uint8_t alg, const std::string & src){
+    if ((alg != ID::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
 
         switch (alg){
-            case Compression::ZIP:
+            case ID::ZIP:
                 good = (zlib_compress(src, dst, DEFLATE_WINDOWBITS, Z_DEFAULT_COMPRESSION) == Z_OK);
                 break;
-            case Compression::ZLIB:
+            case ID::ZLIB:
                 good = (zlib_compress(src, dst, ZLIB_WINDOWBITS, Z_DEFAULT_COMPRESSION) == Z_OK);
                 break;
-            case Compression::BZIP2:
+            case ID::BZIP2:
                 good = (bz2_compress(src, dst) == BZ_OK);
                 break;
             default:
@@ -29,18 +32,18 @@ std::string PGP_compress(const uint8_t alg, const std::string & src){
     return src; // 0: uncompressed
 }
 
-std::string PGP_decompress(const uint8_t alg, const std::string & src){
-    if ((alg != Compression::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
+std::string decompress(const uint8_t alg, const std::string & src){
+    if ((alg != ID::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
         switch (alg){
-            case Compression::ZIP:
+            case ID::ZIP:
                 good = (zlib_decompress(src, dst, DEFLATE_WINDOWBITS) == Z_OK);
                 break;
-            case Compression::ZLIB:
+            case ID::ZLIB:
                 good = (zlib_decompress(src, dst, ZLIB_WINDOWBITS) == Z_OK);
                 break;
-            case Compression::BZIP2:
+            case ID::BZIP2:
                 good = (bz2_decompress(src, dst) == BZ_OK);
                 break;
             default:
@@ -55,4 +58,7 @@ std::string PGP_decompress(const uint8_t alg, const std::string & src){
         return dst;
     }
     return src; // 0: uncompressed
+}
+
+}
 }

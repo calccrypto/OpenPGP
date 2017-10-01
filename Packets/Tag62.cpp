@@ -1,16 +1,19 @@
 #include "Tag62.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag62::Tag62()
     : Tag62(std::string())
 {}
 
 Tag62::Tag62(const Tag62 & copy)
-    : Packet(copy),
+    : Base(copy),
       stream(copy.stream)
 {}
 
 Tag62::Tag62(const std::string & data)
-    : Packet(62),
+    : Base(62),
       stream(data)
 {}
 
@@ -37,6 +40,9 @@ void Tag62::set_stream(const std::string & data){
     stream = data;
 }
 
-Packet::Ptr Tag62::clone() const{
-    return std::make_shared <Tag62> (*this);
+Base::Ptr Tag62::clone() const{
+    return std::make_shared <Packet::Tag62> (*this);
+}
+
+}
 }

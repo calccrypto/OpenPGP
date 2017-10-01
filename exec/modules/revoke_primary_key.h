@@ -66,33 +66,33 @@ const Module revoke_primary_key(
 
         unsigned int code;
         std::stringstream s(args.at("-c"));
-        if (!(s >> code) || !Revoke::is_key_revocation(code)){
+        if (!(s >> code) || !OpenPGP::Subpacket::Tag2::Revoke::is_key_revocation(code)){
             err << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const PGPSecretKey pri(key);
-        const RevArgs revargs(pri,
-                              args.at("passphrase"),
-                              pri,
-                              static_cast <uint8_t> (code),
-                              args.at("-r"),
-                              4,
-                              Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::SecretKey pri(key);
+        const OpenPGP::Revoke::Args revargs(pri,
+                                            args.at("passphrase"),
+                                            pri,
+                                            static_cast <uint8_t> (code),
+                                            args.at("-r"),
+                                            4,
+                                            OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPPublicKey revoked = ::revoke_key(revargs);
+        const OpenPGP::PublicKey revoked = OpenPGP::Revoke::key(revargs);
 
         if (!revoked.meaningful()){
             err << "Error: Generated bad primary revocation signature." << std::endl;
             return -1;
         }
 
-        out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << revoked.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

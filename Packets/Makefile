@@ -17,28 +17,31 @@ gpg-debug: debug
 
 .PHONY: clean
 
-%.o : %.cpp %.h packet.h
+%.o : %.cpp %.h Packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-packet.o: packet.cpp packet.h ../Hashes/Hashes.h ../Misc/mpi.h ../Misc/pgptime.h ../common/includes.h
+Packet.o: Packet.cpp Packet.h ../Hashes/Hashes.h ../Misc/mpi.h ../Misc/pgptime.h ../common/includes.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-packets.o: packets.cpp packets.h $(PACKETS_OBJECTS:.o=.h)
+Packets.o: Packets.cpp Packets.h $(PACKETS_OBJECTS:.o=.h)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-s2k.o: s2k.cpp s2k.h ../common/includes.h ../Hashes/Hashes.h
+Tag2.o: Tag2.cpp Tag2.h ../Hashes/Hashes.h ../Misc/sigtypes.h ../PKA/PKAs.h ../Subpackets/Tag2/Subpackets.h Packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2.o: Tag2.cpp Tag2.h ../Hashes/Hashes.h ../PKA/PKAs.h ../Subpackets/Tag2Subpackets.h packet.h sigtypes.h
+Tag3.o: Tag3.cpp Tag3.h ../Misc/cfb.h Packet.h ../Misc/s2k.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag3.o: Tag3.cpp Tag3.h ../Misc/cfb.h packet.h s2k.h
+Tag5.o: Tag5.cpp Tag5.h ../Misc/cfb.h ../Misc/mpi.h ../Misc/s2k.h Tag6.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag8.o: Tag8.cpp Tag8.h ../Compress/Compress.h ../PGPMessage.h packet.h
+Tag6.o: Tag6.cpp Tag6.h Key.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag17.o: Tag17.cpp Tag17.h ../Subpackets/Subpackets.h packet.h
+Tag8.o: Tag8.cpp Tag8.h ../Compress/Compress.h ../Message.h Packet.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+Tag17.o: Tag17.cpp Tag17.h ../Subpackets/Tag17/Subpacket.h Packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:

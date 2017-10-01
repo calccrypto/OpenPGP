@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "RIPEMD_Const.h"
 #include "RIPEMD160_Const.h"
 
-class RIPEMD160 : public MerkleDamgard{
+class RIPEMD160 : public MerkleDamgard {
     private:
         struct context{
             uint32_t h0, h1, h2, h3, h4;

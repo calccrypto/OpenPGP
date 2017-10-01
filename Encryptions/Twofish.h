@@ -8,7 +8,7 @@
 
 #include "Twofish_Const.h"
 
-class Twofish : public SymAlg{
+class Twofish : public SymAlg {
     private:
         std::vector<uint32_t> l_key;
         std::vector<std::vector<uint32_t>> mk_tab;

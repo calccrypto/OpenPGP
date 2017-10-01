@@ -32,73 +32,76 @@ THE SOFTWARE.
 #include "Compress/Compress.h"
 #include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
+#include "Key.h"
+#include "Message.h"
 #include "Misc/PKCS1.h"
 #include "Misc/cfb.h"
-#include "PGPKey.h"
-#include "PGPMessage.h"
 #include "PKA/PKAs.h"
 #include "revoke.h"
 #include "sign.h"
 
-struct EncryptArgs{
-    std::string filename;
-    std::string data;
-    uint8_t sym;                    // symmetric key algorithm used to encrypt data
-    uint8_t comp;                   // compression algorithm for encrypted data
-    bool mdc;
-    PGPSecretKey::Ptr signer;       // for signing data
-    std::string passphrase;         // only used when signer is present
-    uint8_t hash;                   // hash used to sign data
+namespace OpenPGP {
+    namespace Encrypt {
+        struct Args{
+            std::string filename;
+            std::string data;
+            uint8_t sym;                    // symmetric key algorithm used to encrypt data
+            uint8_t comp;                   // compression algorithm for encrypted data
+            bool mdc;
+            SecretKey::Ptr signer;          // for signing data
+            std::string passphrase;         // only used when signer is present
+            uint8_t hash;                   // hash used to sign data
 
-    EncryptArgs(const std::string & fname = "",
-                const std::string & dat = "",
-                const uint8_t sym_alg = Sym::AES256,
-                const uint8_t comp_alg = Compression::ZLIB,
-                const bool mod_detect = true,
-                const PGPSecretKey::Ptr & signing_key = nullptr,
-                const std::string & pass = "",
-                const uint8_t hash_alg = Hash::SHA1)
-        : filename(fname),
-          data(dat),
-          sym(sym_alg),
-          comp(comp_alg),
-          mdc(mod_detect),
-          signer(signing_key),
-          passphrase(pass),
-          hash(hash_alg)
-    {}
+            Args(const std::string & fname = "",
+                        const std::string & dat = "",
+                        const uint8_t sym_alg = Sym::ID::AES256,
+                        const uint8_t comp_alg = Compression::ID::ZLIB,
+                        const bool mod_detect = true,
+                        const SecretKey::Ptr & signing_key = nullptr,
+                        const std::string & pass = "",
+                        const uint8_t hash_alg = Hash::ID::SHA1)
+                : filename(fname),
+                  data(dat),
+                  sym(sym_alg),
+                  comp(comp_alg),
+                  mdc(mod_detect),
+                  signer(signing_key),
+                  passphrase(pass),
+                  hash(hash_alg)
+            {}
 
-    bool valid() const{
-        if (Sym::NAME.find(sym) == Sym::NAME.end()){
-            // "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
-            return false;
-        }
+            bool valid() const{
+                if (Sym::NAME.find(sym) == Sym::NAME.end()){
+                    // "Error: Bad Symmetric Key Algorithm: " + std::to_string(sym);
+                    return false;
+                }
 
-        if (Compression::NAME.find(comp) == Compression::NAME.end()){
-            // "Error: Bad Compression Algorithm: " + std::to_string(comp);
-            return false;
-        }
+                if (Compression::NAME.find(comp) == Compression::NAME.end()){
+                    // "Error: Bad Compression Algorithm: " + std::to_string(comp);
+                    return false;
+                }
 
-        if (Hash::NAME.find(hash) == Hash::NAME.end()){
-            // "Error: Bad Hash Algorithm: " + std::to_string(hash);
-            return false;
-        }
+                if (Hash::NAME.find(hash) == Hash::NAME.end()){
+                    // "Error: Bad Hash Algorithm: " + std::to_string(hash);
+                    return false;
+                }
 
-        return true;
+                return true;
+            }
+        };
+
+        // encrypt data once session key has been generated
+        Packet::Base::Ptr data(const Args & args,
+                               const std::string & session_key);
+
+        // encrypt with public key
+        Message pka(const Args & args,
+                    const Key & pub);
+
+        // encrypt with passphrase
+        Message sym(const Args & args,
+                    const std::string & passphrase,
+                    const uint8_t key_hash);
     }
-};
-
-// encrypt data once session key has been generated
-Packet::Ptr encrypt_data(const EncryptArgs & args,
-                         const std::string & session_key);
-
-// encrypt with public key
-PGPMessage encrypt_pka(const EncryptArgs & args,
-                       const PGPKey & pub);
-
-// encrypt with passphrase
-PGPMessage encrypt_sym(const EncryptArgs & args,
-                       const std::string & passphrase,
-                       const uint8_t key_hash);
-
+}
 #endif

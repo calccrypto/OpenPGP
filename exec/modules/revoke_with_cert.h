@@ -68,17 +68,17 @@ const Module revoke_with_cert(
             return -1;
         }
 
-        const PGPKey key(target);
-        const PGPRevocationCertificate rev(cert);
+        const OpenPGP::Key key(target);
+        const OpenPGP::RevocationCertificate rev(cert);
 
-        const PGPPublicKey revoked = ::revoke_with_cert(key, rev);
+        const OpenPGP::PublicKey revoked = OpenPGP::Revoke::with_cert(key, rev);
 
         if (!revoked.meaningful()){
             err << "Error: Generated bad revoked key." << std::endl;
             return -1;
         }
 
-        out << revoked.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << revoked.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

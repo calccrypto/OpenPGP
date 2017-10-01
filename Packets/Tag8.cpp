@@ -1,16 +1,19 @@
 #include "Tag8.h"
-#include "../PGPMessage.h"
+#include "../Message.h"
+
+namespace OpenPGP {
+namespace Packet {
 
 std::string Tag8::compress(const std::string & data) const{
-    return PGP_compress(comp, data);
+    return Compression::compress(comp, data);
 }
 
 std::string Tag8::decompress(const std::string & data) const{
-    return PGP_decompress(comp, data);
+    return Compression::decompress(comp, data);
 }
 
 std::string Tag8::show_title() const{
-    std::string out = std::string(format?"New":"Old") + ": " + Packet::NAME.at(8) + " (Tag 8)";   // display packet name and tag number
+    std::string out = std::string(format?"New":"Old") + ": " + NAME.at(8) + " (Tag 8)";   // display packet name and tag number
 
     switch (partial){
         case 0:
@@ -33,13 +36,13 @@ std::string Tag8::show_title() const{
 }
 
 Tag8::Tag8()
-    : Packet(Packet::COMPRESSED_DATA, 3),
-      comp(Compression::UNCOMPRESSED),
+    : Base(COMPRESSED_DATA, 3),
+      comp(Compression::ID::UNCOMPRESSED),
       compressed_data()
 {}
 
 Tag8::Tag8(const Tag8 & copy)
-    : Packet(copy),
+    : Base(copy),
       comp(copy.comp),
       compressed_data(copy.compressed_data)
 {}
@@ -60,7 +63,7 @@ std::string Tag8::show(const std::size_t indents, const std::size_t indent_size)
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
-    PGPMessage decompressed;
+    Message decompressed;
     decompressed.read_raw(get_data()); // do this in case decompressed data contains headers
 
     return indent + show_title() + "\n" +
@@ -104,6 +107,9 @@ void Tag8::set_compressed_data(const std::string & data){
     size = raw().size();
 }
 
-Packet::Ptr Tag8::clone() const{
-    return std::make_shared <Tag8> (*this);
+Base::Ptr Tag8::clone() const{
+    return std::make_shared <Packet::Tag8> (*this);
+}
+
+}
 }

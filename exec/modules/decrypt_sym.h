@@ -62,7 +62,7 @@ const Module decrypt_sym(
             return -1;
         }
 
-        PGPKey::Ptr signer = nullptr;
+        OpenPGP::Key::Ptr signer = nullptr;
         if (args.at("-s").size()){
             std::ifstream s(args.at("-s"), std::ios::binary);
             if (!s){
@@ -70,7 +70,7 @@ const Module decrypt_sym(
                 return -1;
             }
 
-            signer = std::make_shared <PGPPublicKey> (s);
+            signer = std::make_shared <OpenPGP::PublicKey> (s);
 
             if (!signer -> meaningful()){
                 err << "Error: Bad signing key.\n";
@@ -78,9 +78,8 @@ const Module decrypt_sym(
             }
         }
 
-        const PGPMessage message(msg);
-
-        const PGPMessage decrypted = ::decrypt_sym(message, args.at("passphrase"));
+        const OpenPGP::Message message(msg);
+        const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(message, args.at("passphrase"));
 
         if (!decrypted.meaningful()){
             err << "Error: Decrypted data is not meaningful." << std::endl;
@@ -89,9 +88,9 @@ const Module decrypt_sym(
 
         // extract data
         std::string cleartext = "";
-        for(Packet::Ptr const & p : decrypted.get_packets()){
-            if (p -> get_tag() == Packet::LITERAL_DATA){
-                cleartext += std::static_pointer_cast <Tag11> (p) -> out(false);
+        for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+            if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
+                cleartext += std::static_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
             }
         }
 
@@ -99,7 +98,7 @@ const Module decrypt_sym(
 
         // if signing key provided, check the signature
         if (signer){
-            const int verified = verify_binary(*signer, decrypted);
+            const int verified = OpenPGP::Verify::binary(*signer, decrypted);
             if (verified == -1){
                 err << "Warning: Verification failure.\n" << std::endl;
             }
@@ -108,9 +107,9 @@ const Module decrypt_sym(
         }
         // otherwise, just list attached signatures
         else{
-            for(Packet::Ptr const & p : decrypted.get_packets()){
-                if (p -> get_tag() == Packet::SIGNATURE){
-                    cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <Tag2> (p) -> get_keyid()) + " found.\n";
+            for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+                if (p -> get_tag() == OpenPGP::Packet::SIGNATURE){
+                    cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <OpenPGP::Packet::Tag2> (p) -> get_keyid()) + " found.\n";
                 }
             }
         }

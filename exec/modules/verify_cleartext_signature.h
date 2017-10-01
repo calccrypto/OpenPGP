@@ -68,10 +68,10 @@ const Module verify_cleartext_signature(
             return -1;
         }
 
-        const PGPKey signer(key);
-        const PGPCleartextSignature signature(sig);
+        const OpenPGP::Key signer(key);
+        const OpenPGP::CleartextSignature signature(sig);
 
-        const int verified = ::verify_cleartext_signature(signer, signature);
+        const int verified = OpenPGP::Verify::cleartext_signature(signer, signature);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

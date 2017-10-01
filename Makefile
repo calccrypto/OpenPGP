@@ -14,6 +14,8 @@ include Packets/objects.mk
 include PKA/objects.mk
 include RNG/objects.mk
 include Subpackets/objects.mk
+include Subpackets/Tag2/objects.mk
+include Subpackets/Tag17/objects.mk
 
 all: $(TARGET)
 
@@ -28,6 +30,7 @@ gpg-debug: debug
 
 .PHONY: common Compress Encryptions Hashes Misc Packets PKA RNG Subpackets clean clean-all
 
+# Subdirectories
 common:
 	$(MAKE) $(MAKECMDGOALS) -C common
 
@@ -55,49 +58,50 @@ RNG:
 Subpackets:
 	$(MAKE) $(MAKECMDGOALS) -C Subpackets
 
-decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h PGPKey.h PGPMessage.h PKA/PKA.h Packets/packets.h verify.h
-	$(CXX) $(CXXFLAGS) $< -o $@
-
-encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h Misc/PKCS1.h Misc/cfb.h PGPKey.h PGPMessage.h PKA/PKA.h revoke.h sign.h
-	$(CXX) $(CXXFLAGS) $< -o $@
-
-generatekey.o: generatekey.cpp generatekey.h Encryptions/Encryptions.h Hashes/Hashes.h PGPKey.h PKA/PKA.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h Misc/pgptime.h Misc/sigcalc.h sign.h
-	$(CXX) $(CXXFLAGS) $< -o $@
-
+# Top-level Types
 PGP.o: PGP.cpp PGP.h common/includes.h Misc/radix64.h Packets/packets.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPCleartextSignature.o: PGPCleartextSignature.cpp PGPCleartextSignature.h Misc/sigcalc.h PGP.h PGPDetachedSignature.h
+CleartextSignature.o: CleartextSignature.cpp CleartextSignature.h Misc/sigcalc.h PGP.h DetachedSignature.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPDetachedSignature.o: PGPDetachedSignature.cpp PGPDetachedSignature.h PGP.h
+DetachedSignature.o: DetachedSignature.cpp DetachedSignature.h PGP.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPKey.o: PGPKey.cpp PGPKey.h Packets/packets.h PKA/PKAs.h PGP.h
+Key.o: Key.cpp Key.h Packets/packets.h PKA/PKAs.h PGP.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPMessage.o: PGPMessage.cpp PGPMessage.h PGP.h
+Message.o: Message.cpp Message.h PGP.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PGPRevocationCertificate.o: PGPRevocationCertificate.cpp PGPRevocationCertificate.h PGP.h
+RevocationCertificate.o: RevocationCertificate.cpp RevocationCertificate.h PGP.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-revoke.o: revoke.cpp revoke.h Misc/mpi.h Misc/PKCS1.h PGPKey.h PGPRevocationCertificate.h sign.h verify.h
+# Utility Functions
+decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h Key.h Message.h PKA/PKA.h Packets/packets.h verify.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-sign.o: sign.cpp sign.h Compress/Compress.h Hashes/Hashes.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h PKA/PKA.h Packets/packets.h common/includes.h decrypt.h Misc/mpi.h Misc/pgptime.h revoke.h Misc/sigcalc.h verify.h
+encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h Misc/PKCS1.h Misc/cfb.h Key.h Message.h PKA/PKA.h revoke.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-verify.o: verify.cpp verify.h Misc/PKCS1.h Misc/mpi.h Misc/sigcalc.h PGPCleartextSignature.h PGPDetachedSignature.h PGPKey.h PGPMessage.h PGPRevocationCertificate.h PKA/PKA.h Packets/packets.h
+generatekey.o: generatekey.cpp generatekey.h Encryptions/Encryptions.h Hashes/Hashes.h Key.h PKA/PKA.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h Misc/pgptime.h Misc/sigcalc.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
+revoke.o: revoke.cpp revoke.h Misc/mpi.h Misc/PKCS1.h Key.h RevocationCertificate.h sign.h verify.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+sign.o: sign.cpp sign.h Compress/Compress.h Hashes/Hashes.h CleartextSignature.h DetachedSignature.h Key.h Message.h PKA/PKA.h Packets/packets.h common/includes.h decrypt.h Misc/mpi.h Misc/pgptime.h revoke.h Misc/sigcalc.h verify.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+verify.o: verify.cpp verify.h Misc/PKCS1.h Misc/mpi.h Misc/sigcalc.h CleartextSignature.h DetachedSignature.h Key.h Message.h RevocationCertificate.h PKA/PKA.h Packets/packets.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+# Library
 $(TARGET): $(OPENPGP_OBJECTS) common Compress Encryptions Hashes Misc Packets PKA RNG Subpackets
-	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(addprefix common/, $(COMMON_OBJECTS)) $(addprefix Compress/, $(COMPRESS_OBJECTS)) $(addprefix Encryptions/, $(ENCRYPTIONS_OBJECTS)) $(addprefix Hashes/, $(HASHES_OBJECTS)) $(addprefix Misc/, $(MISC_OBJECTS))  $(addprefix Packets/, $(PACKETS_OBJECTS)) $(addprefix PKA/, $(PKA_OBJECTS)) $(addprefix RNG/, $(RNG_OBJECTS)) $(addprefix Subpackets/, $(SUBPACKETS_OBJECTS))
+	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(addprefix common/, $(COMMON_OBJECTS)) $(addprefix Compress/, $(COMPRESS_OBJECTS)) $(addprefix Encryptions/, $(ENCRYPTIONS_OBJECTS)) $(addprefix Hashes/, $(HASHES_OBJECTS)) $(addprefix Misc/, $(MISC_OBJECTS)) $(addprefix Packets/, $(PACKETS_OBJECTS)) $(addprefix PKA/, $(PKA_OBJECTS)) $(addprefix RNG/, $(RNG_OBJECTS)) $(addprefix Subpackets/, $(SUBPACKET_OBJECTS)) $(addprefix Subpackets/Tag2/, $(TAG2_SUBPACKET_OBJECTS)) $(addprefix Subpackets/Tag17/, $(TAG17_SUBPACKET_OBJECTS))
 
 clean:
 	rm -f $(TARGET)
-
-clean-all: clean
 	rm -f $(OPENPGP_OBJECTS)
 	$(MAKE) clean -C common
 	$(MAKE) clean -C Compress

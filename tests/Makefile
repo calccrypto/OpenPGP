@@ -43,10 +43,6 @@ $(TARGET): main.cc ../libOpenPGP.a testcases
 clean:
 	rm -f $(TARGET)
 
-clean-testcases: clean
-	$(MAKE) clean-all -C testcases
-
-clean-lib: clean
-	$(MAKE) clean-all -C ..
-
-clean-all: clean clean-testcases clean-lib
+clean-all: clean
+	$(MAKE) clean -C testcases
+	$(MAKE) clean -C ..

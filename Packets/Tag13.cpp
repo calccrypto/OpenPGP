@@ -1,7 +1,10 @@
 #include "Tag13.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag13::Tag13()
-    : User(Packet::USER_ID),
+    : User(USER_ID),
       contents()
 {}
 
@@ -55,6 +58,9 @@ void Tag13::set_contents(const std::string & name, const std::string & comment, 
     size = raw().size();
 }
 
-Packet::Ptr Tag13::clone() const{
-    return std::make_shared <Tag13> (*this);
+Base::Ptr Tag13::clone() const{
+    return std::make_shared <Packet::Tag13> (*this);
+}
+
+}
 }

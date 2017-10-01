@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 #include "Camellia_Const.h"
 
-class Camellia : public SymAlg{
+class Camellia : public SymAlg {
     // Camellia is a CRYPTmetric key block cipher developed jointly in 2000 by
     // world top class encryption researchers at NTT and Mitsubishi Electric
     // Corporation. See:http://info.isl.ntt.co.jp/crypt/eng/camellia/index.html

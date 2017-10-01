@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "../common/includes.h"
 #include "SymAlg.h"
 
-class IDEA : public SymAlg{
+class IDEA : public SymAlg {
     private:
         std::vector <std::vector <uint16_t> > keys;
         std::vector <uint16_t> k;

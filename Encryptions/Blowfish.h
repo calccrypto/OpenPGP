@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "Blowfish_Const.h"
 
-class Blowfish : public SymAlg{
+class Blowfish : public SymAlg {
     private:
         bool settingkey;
         uint32_t p[18], sbox[4][512];        //Taken from a C file from the Blowfish site

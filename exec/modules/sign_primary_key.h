@@ -71,24 +71,24 @@ const Module sign_primary_key(
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(signer_file),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::Sign::Args signargs(OpenPGP::SecretKey(signer_file),
+                                           args.at("passphrase"),
+                                           4,
+                                           OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPPublicKey key = ::sign_primary_key(signargs, PGPPublicKey(signee_file), args.at("-u"), mpitoulong(hextompi(args.at("-c"))));
+        const OpenPGP::PublicKey key = OpenPGP::Sign::primary_key(signargs, OpenPGP::PublicKey(signee_file), args.at("-u"), OpenPGP::mpitoulong(OpenPGP::hextompi(args.at("-c"))));
 
         if (!key.meaningful()){
             err << "Error: Generated bad primary key signature." << std::endl;
             return -1;
         }
 
-        out << key.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << key.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

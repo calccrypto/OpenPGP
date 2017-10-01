@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "../common/includes.h"
 #include "MerkleDamgard.h"
 
-class SHA1 : public MerkleDamgard{
+class SHA1 : public MerkleDamgard {
     private:
         struct context{
             uint32_t h0, h1, h2, h3, h4;

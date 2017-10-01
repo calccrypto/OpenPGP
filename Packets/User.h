@@ -26,19 +26,24 @@ THE SOFTWARE.
 #ifndef __PACKET_USER__
 #define __PACKET_USER__
 
-#include "packet.h"
+#include "Packet.h"
 
-// For Tags 13 and 17
-class User : public Packet{
-    protected:
-        using Packet::Packet;
+namespace OpenPGP {
+    namespace Packet {
 
-    public:
-        typedef std::shared_ptr <User> Ptr;
+        // For Tags 13 and 17
+        class User : public Base {
+            protected:
+                using Base::Base;
 
-        virtual ~User();
+            public:
+                typedef std::shared_ptr <User> Ptr;
 
-        User & operator=(const User & copy);
-};
+                virtual ~User();
+
+                User & operator=(const User & copy);
+        };
+    }
+}
 
 #endif

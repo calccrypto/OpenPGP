@@ -1,30 +1,34 @@
 #include "DSA.h"
 
-PKA::Values new_DSA_public(const uint32_t & L, const uint32_t & N){
+namespace OpenPGP {
+namespace PKA {
+namespace DSA {
+
+Values new_public(const uint32_t & L, const uint32_t & N){
 //    L = 1024, N = 160
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     // random prime q
-    PGPMPI q = bintompi("1" + BBS().rand(N - 1));
+    MPI q = bintompi("1" + RNG::BBS().rand(N - 1));
     q = nextprime(q);
     while (bitsize(q) > N){
-        q = bintompi("1" + BBS().rand(N - 1));
+        q = bintompi("1" + RNG::BBS().rand(N - 1));
         q = nextprime(q);
     }
 
     // random prime p = kq + 1
-    PGPMPI p = bintompi("1" + BBS().rand(L - 1));                   // pick random starting point
-    p = ((p - 1) / q) * q + 1;                                      // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
+    MPI p = bintompi("1" + RNG::BBS().rand(L - 1));                   // pick random starting point
+    p = ((p - 1) / q) * q + 1;                                        // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!knuth_prime_test(p, 25)){
         p += q;
     }
 
     // generator g with order q
-    PGPMPI g = 1, h = 1;
-    PGPMPI exp = (p - 1) / q;
+    MPI g = 1, h = 1;
+    MPI exp = (p - 1) / q;
     while (g == 1){
         h++;
         g = powm(h, exp, p);
@@ -33,20 +37,20 @@ PKA::Values new_DSA_public(const uint32_t & L, const uint32_t & N){
     return {p, q, g};
 }
 
-PKA::Values DSA_keygen(PKA::Values & pub){
-    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+Values keygen(Values & pub){
+    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    PGPMPI x = 0;
+    MPI x = 0;
     std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesn't work for some reason
     unsigned int bits = bitsize(pub[1]) - 1;
     while (true){
         // 0 < x < q
         while ((x == 0) || (pub[1] <= x)){
-            x = bintompi(BBS().rand(bits));
+            x = bintompi(RNG::BBS().rand(bits));
         }
 
         // y = g^x mod p
-        PGPMPI y;
+        MPI y;
         y = powm(pub[2], x, pub[0]);
 
         // public key = p, q, g, y
@@ -54,10 +58,10 @@ PKA::Values DSA_keygen(PKA::Values & pub){
         pub.push_back(y);
 
         // check that this key works
-        PKA::Values rs = DSA_sign(test, {x}, pub);
+        Values rs = sign(test, {x}, pub);
 
         // if it works, break
-        if (DSA_verify(test, rs, pub)){
+        if (verify(test, rs, pub)){
             break;
         }
 
@@ -67,16 +71,16 @@ PKA::Values DSA_keygen(PKA::Values & pub){
     return {x};
 }
 
-PKA::Values DSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k){
-    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k){
+    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bool set_k = (k == 0);
 
-    PGPMPI r = 0, s = 0;
+    MPI r = 0, s = 0;
     while ((r == 0) || (s == 0)){
         // 0 < k < q
         if ( set_k ) {
-            k = bintompi(BBS().rand(bitsize(pub[1])));
+            k = bintompi(RNG::BBS().rand(bitsize(pub[1])));
             k %= pub[1];
         }
 
@@ -98,27 +102,27 @@ PKA::Values DSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Va
     return {r, s};
 }
 
-PKA::Values DSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k){
-    PGPMPI m(hexlify(data), 16);
-    return DSA_sign(rawtompi(data), pri, pub, k);
+Values sign(const std::string & data, const Values & pri, const Values & pub, MPI k){
+    MPI m(hexlify(data), 16);
+    return sign(rawtompi(data), pri, pub, k);
 }
 
-bool DSA_verify(const PGPMPI & data, const PKA::Values & sig, const PKA::Values & pub){
+bool verify(const MPI & data, const Values & sig, const Values & pub){
     // 0 < r < q or 0 < s < q
     if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))){
         return false;
     }
     // w = s^-1 mod q
-    PGPMPI w = invert(sig[1], pub[1]);
+    MPI w = invert(sig[1], pub[1]);
 
     // u1 = H(m) * w mod q
-    PGPMPI u1 = (data * w) % pub[1];
+    MPI u1 = (data * w) % pub[1];
 
     // u2 = r * w mod q
-    PGPMPI u2 = (sig[0] * w) % pub[1];
+    MPI u2 = (sig[0] * w) % pub[1];
 
     // v = ((g ^ u1 * y ^ u2) mod p) mod q
-    PGPMPI g, y;
+    MPI g, y;
     g = powm(pub[2], u1, pub[0]);
     y = powm(pub[3], u2, pub[0]);
 
@@ -126,6 +130,10 @@ bool DSA_verify(const PGPMPI & data, const PKA::Values & sig, const PKA::Values 
     return ((((g * y) % pub[0]) % pub[1]) == sig[0]);
 }
 
-bool DSA_verify(const std::string & data, const PKA::Values & sig, const PKA::Values & pub){
-    return DSA_verify(rawtompi(data), sig, pub);
+bool verify(const std::string & data, const Values & sig, const Values & pub){
+    return verify(rawtompi(data), sig, pub);
+}
+
+}
+}
 }

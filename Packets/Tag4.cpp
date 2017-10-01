@@ -1,14 +1,17 @@
 #include "Tag4.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag4::Tag4()
-    : Packet(Packet::ONE_PASS_SIGNATURE, 3),
+    : Base(ONE_PASS_SIGNATURE, 3),
       type(), hash(), pka(),
       keyid(),
       nested(1)
 {}
 
 Tag4::Tag4(const Tag4 & copy)
-    : Packet(copy)
+    : Base(copy)
 {
     type = copy.type;
     hash = copy.hash;
@@ -100,6 +103,9 @@ void Tag4::set_nested(const uint8_t n){
     size = raw().size();
 }
 
-Packet::Ptr Tag4::clone() const{
-    return std::make_shared <Tag4> (*this);
+Base::Ptr Tag4::clone() const{
+    return std::make_shared <Packet::Tag4> (*this);
+}
+
+}
 }

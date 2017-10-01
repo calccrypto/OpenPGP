@@ -61,7 +61,7 @@ const Module show_cleartext_signature(
             return -1;
         }
 
-        out << PGPCleartextSignature(file).show() << std::endl;
+        out << OpenPGP::CleartextSignature(file).show() << std::endl;
 
         return 0;
     }

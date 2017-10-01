@@ -1,7 +1,10 @@
 #include "Key.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Key::Key(uint8_t tag)
-    : Packet(tag),
+    : Base(tag),
       time(),
       pka(),
       mpi(),
@@ -13,7 +16,7 @@ Key::Key()
 {}
 
 Key::Key(const Key & copy)
-    : Packet(copy),
+    : Base(copy),
       time(copy.time),
       pka(copy.pka),
       mpi(copy.mpi),
@@ -63,12 +66,12 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
         mpi.push_back(read_MPI(data, pos));     // RSA e, DSA q, ELGAMAL g
 
         // DSA
-        if (pka == PKA::DSA){
+        if (pka == PKA::ID::DSA){
             mpi.push_back(read_MPI(data, pos)); //        DSA g
             mpi.push_back(read_MPI(data, pos)); //        DSA y
         }
         // ELGAMAL
-        else if (pka == PKA::ELGAMAL){
+        else if (pka == PKA::ID::ELGAMAL){
             mpi.push_back(read_MPI(data, pos)); //               ELGAMAL y
         }
     }
@@ -92,18 +95,16 @@ std::string Key::show_common(const std::size_t indents, const std::size_t indent
     }
     else if (version == 4){
         out += indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
-        if ((pka == PKA::RSA_ENCRYPT_OR_SIGN) ||
-            (pka == PKA::RSA_ENCRYPT_ONLY)    ||
-            (pka == PKA::RSA_SIGN_ONLY)){
+        if (PKA::is_RSA(pka)){
             out += indent + tab + "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
         }
-        else if (pka == PKA::ELGAMAL){
+        else if (pka == PKA::ID::ELGAMAL){
             out += indent + tab + "ELGAMAL p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "ELGAMAL g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
                    indent + tab + "ELGAMAL y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
         }
-        else if (pka == PKA::DSA){
+        else if (pka == PKA::ID::DSA){
             out += indent + tab + "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
                    indent + tab + "DSA g (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]) + "\n" +
@@ -122,7 +123,7 @@ std::string Key::raw_common() const{
 
     out += std::string(1, pka);
 
-    for(PGPMPI const m : mpi){
+    for(MPI const m : mpi){
         out += write_MPI(m);
     }
 
@@ -157,7 +158,7 @@ void Key::set_mpi(const PKA::Values & m){
 std::string Key::get_fingerprint() const{
     if (version == 3){
         std::string data = "";
-        for(PGPMPI const & i : mpi){
+        for(MPI const & i : mpi){
             std::string m = write_MPI(i);
             data += m.substr(2, m.size() - 2);
         }
@@ -187,16 +188,19 @@ std::string Key::get_keyid() const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-Packet::Ptr Key::clone() const{
+Base::Ptr Key::clone() const{
     return std::make_shared <Key> (*this);
 }
 
 Key & Key::operator=(const Key & copy)
 {
-    Packet::operator=(copy);
+    Base::operator=(copy);
     time = copy.time;
     pka = copy.pka;
     mpi = copy.mpi;
     expire = copy.expire;
     return *this;
+}
+
+}
 }

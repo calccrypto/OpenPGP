@@ -1,6 +1,8 @@
 #include "sigcalc.h"
 
-std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
+namespace OpenPGP {
+
+std::string addtrailer(const std::string & data, const Packet::Tag2::Ptr & sig){
     if (!sig){
         throw std::runtime_error("Error: No signature packet");
     }
@@ -19,16 +21,16 @@ std::string addtrailer(const std::string & data, const Tag2::Ptr & sig){
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::string overkey(const Key::Ptr & key){
+std::string overkey(const Packet::Key::Ptr & key){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     const std::string str = key -> raw_common();
     return "\x99" + unhexlify(makehex(str.size(), 4)) + str;
 }
 
-std::string certification(uint8_t version, const User::Ptr & id){
+std::string certification(uint8_t version, const Packet::User::Ptr & id){
     if (!id){
         throw std::runtime_error("Error: No ID packet.");
     }
@@ -56,12 +58,12 @@ const std::string & binary_to_canonical(const std::string & data){
     return data;
 }
 
-std::string to_sign_00(const std::string & data, const Tag2::Ptr & tag2){
+std::string to_sign_00(const std::string & data, const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(data, tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(data, tag2));
 }
 
 std::string text_to_canonical(const std::string & data){
@@ -85,16 +87,16 @@ std::string text_to_canonical(const std::string & data){
     return out;
 }
 
-std::string to_sign_01(const std::string & data, const Tag2::Ptr & tag2){
+std::string to_sign_01(const std::string & data, const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
 
     const std::string canonical = text_to_canonical(data); // still has trailing <CR><LF>
-    return use_hash(tag2 -> get_hash(), addtrailer(canonical.substr(0, canonical.size() - 2), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(canonical.substr(0, canonical.size() - 2), tag2));
 }
 
-std::string to_sign_02(const Tag2::Ptr & tag2){
+std::string to_sign_02(const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
@@ -102,12 +104,12 @@ std::string to_sign_02(const Tag2::Ptr & tag2){
     if (tag2 -> get_version() == 3){
         throw std::runtime_error("Error: It does not make sense to have a V3 standalone signature.");
     }
-    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
-std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_10(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -122,12 +124,12 @@ std::string to_sign_10(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_11(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -142,12 +144,12 @@ std::string to_sign_11(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_12(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -162,12 +164,12 @@ std::string to_sign_12(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_13(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -182,12 +184,12 @@ std::string to_sign_13(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_cert(const uint8_t cert, const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & sig){
+std::string to_sign_cert(const uint8_t cert, const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & sig){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -220,23 +222,23 @@ std::string to_sign_cert(const uint8_t cert, const Key::Ptr & key, const User::P
     return digest;
 }
 
-std::string to_sign_18(const Key::Ptr & primary, const Key::Ptr & key, const Tag2::Ptr & tag2){
+std::string to_sign_18(const Packet::Key::Ptr & primary, const Packet::Key::Ptr & key, const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(key), tag2));
 }
 
-std::string to_sign_19(const Key::Ptr & primary, const Key::Ptr & subkey, const Tag2::Ptr & tag2){
+std::string to_sign_19(const Packet::Key::Ptr & primary, const Packet::Key::Ptr & subkey, const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(subkey), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(subkey), tag2));
 }
 
-std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){
+std::string to_sign_1f(const Packet::Tag2::Ptr & /*tag2*/){
     // if (!tag2){
         // throw std::runtime_error("Error: No signature packet");
     // }
@@ -245,17 +247,17 @@ std::string to_sign_1f(const Tag2::Ptr & /*tag2*/){
         // throw std::runtime_error("Error: Bad signature type.");
     // }
 
-    // return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    // return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
     return "";
 }
 
-std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
+std::string to_sign_20(const Packet::Key::Ptr & key, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!Packet::is_primary_key(key -> get_tag())){
-        throw std::runtime_error("Error: Bad key packet.");
+        throw std::runtime_error("Error: Bad Packet::Key packet.");
     }
 
     if (!tag2){
@@ -266,10 +268,10 @@ std::string to_sign_20(const Key::Ptr & key, const Tag2::Ptr & tag2){
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key), tag2));
 }
 
-std::string to_sign_28(const Key::Ptr & subkey, const Tag2::Ptr & tag2){
+std::string to_sign_28(const Packet::Key::Ptr & subkey, const Packet::Tag2::Ptr & tag2){
     if (!subkey){
         throw std::runtime_error("Error: No subkey packet.");
     }
@@ -286,12 +288,12 @@ std::string to_sign_28(const Key::Ptr & subkey, const Tag2::Ptr & tag2){
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(subkey), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(subkey), tag2));
 }
 
-std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::Ptr & tag2){
+std::string to_sign_30(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2){
     if (!key){
-        throw std::runtime_error("Error: No key packet.");
+        throw std::runtime_error("Error: No Packet::Key packet.");
     }
 
     if (!id){
@@ -306,10 +308,10 @@ std::string to_sign_30(const Key::Ptr & key, const User::Ptr & id, const Tag2::P
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
 }
 
-std::string to_sign_40(const Tag2::Ptr & tag2){
+std::string to_sign_40(const Packet::Tag2::Ptr & tag2){
     if (!tag2){
         throw std::runtime_error("Error: No signature packet");
     }
@@ -318,10 +320,12 @@ std::string to_sign_40(const Tag2::Ptr & tag2){
         throw std::runtime_error("Error: Bad signature type.");
     }
 
-    return use_hash(tag2 -> get_hash(), addtrailer("", tag2));
+    return Hash::use(tag2 -> get_hash(), addtrailer("", tag2));
 }
 
-std::string to_sign_50(const Tag2 & sig, const Tag2::Ptr & /*tag2*/){
+std::string to_sign_50(const Packet::Tag2 & sig, const Packet::Tag2::Ptr & /*tag2*/){
     std::string data = sig.get_without_unhashed();
     return "\x88" + unhexlify(makehex(data.size(), 8)) + data;
+}
+
 }

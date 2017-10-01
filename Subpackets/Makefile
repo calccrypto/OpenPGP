@@ -4,7 +4,7 @@ CXXFLAGS=-std=c++11 -Wall -c
 
 include objects.mk
 
-all: $(SUBPACKET_OBJECTS) Tag2Sub Tag17Sub
+all: $(SUBPACKET_OBJECTS) Tag2 Tag17
 
 gpg-compatible: CXXFLAGS += -DGPG_COMPATIBLE
 gpg-compatible: all
@@ -15,20 +15,21 @@ debug: all
 gpg-debug: CXXFLAGS += -DGPG_COMPATIBLE
 gpg-debug: debug
 
-.PHONY: Tag2Sub Tag17Sub clean
+.PHONY: Tag2 Tag17 clean
 
 %.o : %.cpp %.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Tag2Sub:
-	$(MAKE) $(MAKECMDGOALS) -f Tag2SubMakefile
+Tag2:
+	$(MAKE) $(MAKECMDGOALS) -C Tag2
 
-Tag17Sub:
-	$(MAKE) $(MAKECMDGOALS) -f Tag17SubMakefile
+Tag17:
+	$(MAKE) $(MAKECMDGOALS) -C Tag17
 
 Subpacket.o: Subpacket.h Subpacket.cpp ../common/includes.h
 	$(CXX) $(CXXFLAGS) Subpacket.cpp
 
 clean:
-	rm -f $(SUBPACKETS_OBJECTS)
-
+	rm -f $(SUBPACKET_OBJECTS)
+	$(MAKE) clean -C Tag2
+	$(MAKE) clean -C Tag17

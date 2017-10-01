@@ -1,5 +1,8 @@
 #include "Tag17.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 // Extracts Subpacket data for figuring which subpacket type to create
 void Tag17::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
     length = 0;
@@ -20,7 +23,7 @@ void Tag17::read_subpacket(const std::string & data, std::string::size_type & po
 }
 
 Tag17::Tag17()
-    : User(Packet::USER_ATTRIBUTE),
+    : User(USER_ATTRIBUTE),
       length(),
       type(),
       attributes()
@@ -32,7 +35,7 @@ Tag17::Tag17(const Tag17 & copy)
       type(copy.type),
       attributes(copy.attributes)
 {
-    for(Tag17Subpacket::Ptr & s : attributes){
+    for(Subpacket::Tag17::Base::Ptr & s : attributes){
         s = s -> clone();
     }
 }
@@ -56,9 +59,9 @@ void Tag17::read(const std::string & data){
         std::string::size_type length;
         read_subpacket(data, pos, length);
 
-        Tag17Subpacket::Ptr subpacket = nullptr;
-        if (data[pos] == Tag17Subpacket::IMAGE_ATTRIBUTE){
-            subpacket = std::make_shared <Tag17Sub1> ();
+        Subpacket::Tag17::Base::Ptr subpacket = nullptr;
+        if (data[pos] == Subpacket::Tag17::IMAGE_ATTRIBUTE){
+            subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
         }
         else {
             throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
@@ -76,7 +79,7 @@ std::string Tag17::show(const std::size_t indents, const std::size_t indent_size
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     std::string out = indent + show_title();
-    for(Tag17Subpacket::Ptr const & attr : attributes){
+    for(Subpacket::Tag17::Base::Ptr const & attr : attributes){
         out += "\n" + indent + tab + attr -> show(indents, indent_size);
     }
     return out;
@@ -84,7 +87,7 @@ std::string Tag17::show(const std::size_t indents, const std::size_t indent_size
 
 std::string Tag17::raw() const{
     std::string out = "";
-    for(Tag17Subpacket::Ptr const & a : attributes){
+    for(Subpacket::Tag17::Base::Ptr const & a : attributes){
         out += a -> write();
     }
     return out;
@@ -96,7 +99,7 @@ Tag17::Attributes Tag17::get_attributes() const{
 
 Tag17::Attributes Tag17::get_attributes_clone() const{
     Attributes out;
-    for(Tag17Subpacket::Ptr const & s : attributes){
+    for(Subpacket::Tag17::Base::Ptr const & s : attributes){
         out.push_back(s -> clone());
     }
     return out;
@@ -104,12 +107,15 @@ Tag17::Attributes Tag17::get_attributes_clone() const{
 
 void Tag17::set_attributes(const Tag17::Attributes & a){
     attributes.clear();
-    for(Tag17Subpacket::Ptr const & s : a){
+    for(Subpacket::Tag17::Base::Ptr const & s : a){
         attributes.push_back(s -> clone());
     }
     size = raw().size();
 }
 
-Packet::Ptr Tag17::clone() const{
-    return std::make_shared <Tag17> (*this);
+Base::Ptr Tag17::clone() const{
+    return std::make_shared <Packet::Tag17> (*this);
+}
+
+}
 }

@@ -43,12 +43,10 @@ PKA:
 
 clean:
 	rm -f $(TESTCASES_OBJECTS)
-
-clean-all: clean
 	$(MAKE) clean -C common
 	$(MAKE) clean -C Compress
 	$(MAKE) clean -C Encryptions
-	$(MAKE) clean-all -C exec
+	$(MAKE) clean -C exec
 	$(MAKE) clean -C Hashes
 	$(MAKE) clean -C Misc
 	$(MAKE) clean -C PKA

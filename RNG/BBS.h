@@ -34,26 +34,30 @@ THE SOFTWARE.
 #include "../Misc/mpi.h"
 #include "../Misc/pgptime.h"
 
-class BBS{
-    private:
-        /*
-        Only one "real" instance of BBS exists at a time, since
-        seeding once will seed for the entire program.
-        */
-        static bool seeded;               // whether or not BBS is seeded
-        static PGPMPI state;              // current state
-        static PGPMPI m;                  // large integer
-        const static PGPMPI two;          // constant value of 2
-        std::string par;                  // even, odd, or least
+namespace OpenPGP {
+    namespace RNG {
+        class BBS{
+            private:
+                /*
+                Only one "real" instance of BBS exists at a time, since
+                seeding once will seed for the entire program.
+                */
+                static bool seeded;               // whether or not BBS is seeded
+                static MPI state;              // current state
+                static MPI m;                  // large integer
+                const static MPI two;          // constant value of 2
+                std::string par;                  // even, odd, or least
 
-        void init(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q);
-        void r_number();
-        bool parity(const std::string & par) const;
+                void init(const MPI & SEED, const unsigned int & bits, MPI p, MPI q);
+                void r_number();
+                bool parity(const std::string & par) const;
 
-    public:
-        BBS(...);
-        BBS(const PGPMPI & SEED, const unsigned int & bits = 1024, PGPMPI p = 0, PGPMPI q = 0);
-        std::string rand(const unsigned int & bits = 1, const std::string & par = "even");
-};
+            public:
+                BBS(...);
+                BBS(const MPI & SEED, const unsigned int & bits = 1024, MPI p = 0, MPI q = 0);
+                std::string rand(const unsigned int & bits = 1, const std::string & par = "even");
+        };
+    }
+}
 
 #endif

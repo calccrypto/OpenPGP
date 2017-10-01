@@ -29,25 +29,30 @@ THE SOFTWARE.
 #include "Tag5.h"
 #include "Tag14.h"
 
-// 5.5.1.4.  Secret-Subkey Packet (Tag 7)
-//
-//    A Secret-Subkey packet (tag 7) is the subkey analog of the Secret
-//    Key packet and has exactly the same format.
+namespace OpenPGP {
+    namespace Packet {
 
-class Tag7 : public Tag5{
-    public:
-        typedef std::shared_ptr <Tag7> Ptr;
+        // 5.5.1.4.  Secret-Subkey Packet (Tag 7)
+        //
+        //    A Secret-Subkey packet (tag 7) is the subkey analog of the Secret
+        //    Key packet and has exactly the same format.
 
-        Tag7();
-        Tag7(const Tag7 & copy);
-        Tag7(const std::string & data);
-        ~Tag7();
+        class Tag7 : public Tag5 {
+            public:
+                typedef std::shared_ptr <Packet::Tag7> Ptr;
 
-        Tag14 get_public_obj() const;       // extract public subkey from private key
-        Tag14::Ptr get_public_ptr() const;  // extract public subkey from private key into a pointer
+                Tag7();
+                Tag7(const Tag7 & copy);
+                Tag7(const std::string & data);
+                ~Tag7();
 
-        Packet::Ptr clone() const;
-        Tag7 & operator=(const Tag7 & copy);
-};
+                Tag14 get_public_obj() const;       // extract public subkey from private key
+                Tag14::Ptr get_public_ptr() const;  // extract public subkey from private key into a pointer
+
+                Base::Ptr clone() const;
+                Tag7 & operator=(const Tag7 & copy);
+        };
+    }
+}
 
 #endif

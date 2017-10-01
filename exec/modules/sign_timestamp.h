@@ -70,24 +70,24 @@ const Module sign_timestamp(
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(signer_file),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::Sign::Args signargs(OpenPGP::SecretKey(signer_file),
+                                           args.at("passphrase"),
+                                           4,
+                                           OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-            const PGPDetachedSignature timestamp = ::sign_timestamp(signargs, time);
+            const OpenPGP::DetachedSignature timestamp = OpenPGP::Sign::timestamp(signargs, time);
 
         if (!timestamp.meaningful()){
             err << "Error: Generated bad timestamp signature." << std::endl;
             return -1;
         }
 
-        out << timestamp.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << timestamp.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -75,10 +75,10 @@ const Module verify_detached_signature(
             return -1;
         }
 
-        const PGPKey signer(key);
-        const PGPDetachedSignature signature(sig);
+        const OpenPGP::Key signer(key);
+        const OpenPGP::DetachedSignature signature(sig);
 
-            const int verified = ::verify_detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature);
+            const int verified = OpenPGP::Verify::detached_signature(signer, std::string(std::istreambuf_iterator <char> (file), {}), signature);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

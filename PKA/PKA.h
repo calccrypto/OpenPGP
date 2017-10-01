@@ -30,9 +30,10 @@ THE SOFTWARE.
 
 #include "../Misc/mpi.h"
 
-namespace PKA{
-    typedef std::vector <std::size_t> Params;
-    typedef std::vector <PGPMPI> Values;
+namespace OpenPGP {
+    namespace PKA {
+        typedef std::vector <std::size_t> Params;
+        typedef std::vector <MPI> Values;
+    }
 }
-
 #endif

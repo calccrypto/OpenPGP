@@ -1,5 +1,8 @@
 #include "Partial.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 std::string Partial::show_title() const{
     std::stringstream out;
     out << (format?"New":"Old") << ": ";
@@ -26,7 +29,7 @@ Partial::Partial()
 {}
 
 Partial::Partial(const std::string & data)
-    : Packet(),
+    : Base(),
       stream(data)
 {}
 
@@ -51,6 +54,9 @@ void Partial::set_stream(const std::string & data){
     stream = data;
 }
 
-Packet::Ptr Partial::clone() const{
+Base::Ptr Partial::clone() const{
     return std::make_shared <Partial> (*this);
+}
+
+}
 }

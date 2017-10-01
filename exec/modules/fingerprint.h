@@ -69,7 +69,7 @@ const Module fingerprint(
             return -1;
         }
 
-        const PGPKey key(f);
+        const OpenPGP::Key key(f);
 
         if (!key.meaningful()){
             err << "Error: Key is not meaningful." << std::endl;

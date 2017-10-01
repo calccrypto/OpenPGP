@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 #include "AES_Const.h"
 
-class AES : public SymAlg{
+class AES : public SymAlg {
     private:
         uint8_t b, rounds, columns;
         std::vector <std::vector <uint32_t> > keys;

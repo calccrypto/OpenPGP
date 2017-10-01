@@ -1,13 +1,17 @@
 #include "BBS.h"
+
+namespace OpenPGP {
+namespace RNG {
+
 bool BBS::seeded = false;
 
-PGPMPI BBS::state = 0;
+MPI BBS::state = 0;
 
-PGPMPI BBS::m = 0;
+MPI BBS::m = 0;
 
-const PGPMPI BBS::two = 2;
+const MPI BBS::two = 2;
 
-void BBS::init(const PGPMPI & seed, const unsigned int & bits, PGPMPI p, PGPMPI q){
+void BBS::init(const MPI & seed, const unsigned int & bits, MPI p, MPI q){
     if (!seeded){
         /*
         p and q should be:
@@ -28,7 +32,7 @@ void BBS::init(const PGPMPI & seed, const unsigned int & bits, PGPMPI p, PGPMPI 
         if (q == 0){
             q = rng.get_z_bits(bits);
             q = nextprime(q);                                    // find closest prime
-            PGPMPI pq_gcd = 1025;
+            MPI pq_gcd = 1025;
             while (((q & 3) != 3) && (pq_gcd < 1024)){           // search for primes that are 3 = q mod 4 and gcd(p - 1, q - 1) is small
                 q += 1;
                 q = nextprime(q);                                // find next prime
@@ -46,7 +50,7 @@ void BBS::r_number(){
 }
 
 bool BBS::parity(const std::string & par) const{
-    PGPMPI value = state;
+    MPI value = state;
     if (par == "least"){
         return ((state & 1) == 1);
     }
@@ -69,7 +73,7 @@ BBS::BBS(...)
     }
 }
 
-BBS::BBS(const PGPMPI & SEED, const unsigned int & bits, PGPMPI p, PGPMPI q)
+BBS::BBS(const MPI & SEED, const unsigned int & bits, MPI p, MPI q)
     : par()
 {
     init(SEED, bits, p, q);
@@ -83,4 +87,7 @@ std::string BBS::rand(const unsigned int & bits, const std::string & par){
         c += parity(par);
     }
     return out;
+}
+
+}
 }

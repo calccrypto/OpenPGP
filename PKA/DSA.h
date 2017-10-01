@@ -32,18 +32,24 @@ THE SOFTWARE.
 #include "../Misc/pgptime.h"
 #include "PKA.h"
 
-// Generate new set of parameters
-PKA::Values new_DSA_public(const uint32_t & L = 2048, const uint32_t & N = 256);
+namespace OpenPGP {
+    namespace PKA {
+        namespace DSA{
+            // Generate new set of parameters
+            Values new_public(const uint32_t & L = 2048, const uint32_t & N = 256);
 
-// Generate new keypair with parameters
-PKA::Values DSA_keygen(PKA::Values & pub);
+            // Generate new keypair with parameters
+            Values keygen(Values & pub);
 
-// Sign hash of data
-PKA::Values DSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k = 0);
-PKA::Values DSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub, PGPMPI k = 0);
+            // Sign hash of data
+            Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k = 0);
+            Values sign(const std::string & data, const Values & pri, const Values & pub, MPI k = 0);
 
-// Verify signature on hash
-bool DSA_verify(const PGPMPI & data, const PKA::Values & sig, const PKA::Values & pub);
-bool DSA_verify(const std::string & data, const PKA::Values & sig, const PKA::Values & pub);
+            // Verify signature on hash
+            bool verify(const MPI & data, const Values & sig, const Values & pub);
+            bool verify(const std::string & data, const Values & sig, const Values & pub);
+        }
+    }
+}
 
 #endif

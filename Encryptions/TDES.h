@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #ifndef __TDES__
 #define __TDES__
-class TDES : public SymAlg{
+class TDES : public SymAlg {
     private:
         std::string k1, k2, k3;
         bool m1, m2, m3;

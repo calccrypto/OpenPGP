@@ -1,7 +1,10 @@
 #include "Tag2.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag2::Tag2()
-    : Packet(Packet::SIGNATURE),
+    : Base(SIGNATURE),
       type(0),
       pka(0),
       hash(0),
@@ -14,7 +17,7 @@ Tag2::Tag2()
 {}
 
 Tag2::Tag2(const Tag2 & copy)
-    : Packet(copy),
+    : Base(copy),
       type(copy.type),
       pka(copy.pka),
       hash(copy.hash),
@@ -65,86 +68,86 @@ void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpacke
         std::string::size_type length;
         read_subpacket(data, pos, length);  // pos moved past header to [length + data]
 
-        Tag2Subpacket::Ptr subpacket = nullptr;
+        Subpacket::Tag2::Base::Ptr subpacket = nullptr;
 
         // first octet of data is subpacket type
         // ignore critical bit until later
         const uint8_t type = data[pos] & 0x7f;
-        if (type == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-            subpacket = std::make_shared <Tag2Sub2> ();
+        if (type == Subpacket::Tag2::SIGNATURE_CREATION_TIME){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub2> ();
         }
-        else if (type == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
-            subpacket = std::make_shared <Tag2Sub3> ();
+        else if (type == Subpacket::Tag2::SIGNATURE_EXPIRATION_TIME){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub3> ();
         }
-        else if (type == Tag2Subpacket::EXPORTABLE_CERTIFICATION){
-            subpacket = std::make_shared <Tag2Sub4> ();
+        else if (type == Subpacket::Tag2::EXPORTABLE_CERTIFICATION){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub4> ();
         }
-        else if (type == Tag2Subpacket::TRUST_SIGNATURE){
-            subpacket = std::make_shared <Tag2Sub5> ();
+        else if (type == Subpacket::Tag2::TRUST_SIGNATURE){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub5> ();
         }
-        else if (type == Tag2Subpacket::REGULAR_EXPRESSION){
-            subpacket = std::make_shared <Tag2Sub6> ();
+        else if (type == Subpacket::Tag2::REGULAR_EXPRESSION){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub6> ();
         }
-        else if (type == Tag2Subpacket::REVOCABLE){
-            subpacket = std::make_shared <Tag2Sub7> ();
+        else if (type == Subpacket::Tag2::REVOCABLE){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub7> ();
         }
-        else if (type == Tag2Subpacket::KEY_EXPIRATION_TIME){
-            subpacket = std::make_shared <Tag2Sub9> ();
+        else if (type == Subpacket::Tag2::KEY_EXPIRATION_TIME){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub9> ();
         }
-        else if (type == Tag2Subpacket::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY){
-            subpacket = std::make_shared <Tag2Sub10> ();
+        else if (type == Subpacket::Tag2::PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub10> ();
         }
-        else if (type == Tag2Subpacket::PREFERRED_SYMMETRIC_ALGORITHMS){
-            subpacket = std::make_shared <Tag2Sub11> ();
+        else if (type == Subpacket::Tag2::PREFERRED_SYMMETRIC_ALGORITHMS){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub11> ();
         }
-        else if (type == Tag2Subpacket::REVOCATION_KEY){
-            subpacket = std::make_shared <Tag2Sub12> ();
+        else if (type == Subpacket::Tag2::REVOCATION_KEY){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub12> ();
         }
-        else if (type == Tag2Subpacket::ISSUER){
-            subpacket = std::make_shared <Tag2Sub16> ();
+        else if (type == Subpacket::Tag2::ISSUER){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub16> ();
         }
-        else if (type == Tag2Subpacket::NOTATION_DATA){
-            subpacket = std::make_shared <Tag2Sub20> ();
+        else if (type == Subpacket::Tag2::NOTATION_DATA){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub20> ();
         }
-        else if (type == Tag2Subpacket::PREFERRED_HASH_ALGORITHMS){
-            subpacket = std::make_shared <Tag2Sub21> ();
+        else if (type == Subpacket::Tag2::PREFERRED_HASH_ALGORITHMS){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub21> ();
         }
-        else if (type == Tag2Subpacket::PREFERRED_COMPRESSION_ALGORITHMS){
-            subpacket = std::make_shared <Tag2Sub22> ();
+        else if (type == Subpacket::Tag2::PREFERRED_COMPRESSION_ALGORITHMS){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub22> ();
         }
-        else if (type == Tag2Subpacket::KEY_SERVER_PREFERENCES){
-            subpacket = std::make_shared <Tag2Sub23> ();
+        else if (type == Subpacket::Tag2::KEY_SERVER_PREFERENCES){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub23> ();
         }
-        else if (type == Tag2Subpacket::PREFERRED_KEY_SERVER){
-            subpacket = std::make_shared <Tag2Sub24> ();
+        else if (type == Subpacket::Tag2::PREFERRED_KEY_SERVER){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub24> ();
         }
-        else if (type == Tag2Subpacket::PRIMARY_USER_ID){
-            subpacket = std::make_shared <Tag2Sub25> ();
+        else if (type == Subpacket::Tag2::PRIMARY_USER_ID){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub25> ();
         }
-        else if (type == Tag2Subpacket::POLICY_URI){
-            subpacket = std::make_shared <Tag2Sub26> ();
+        else if (type == Subpacket::Tag2::POLICY_URI){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub26> ();
         }
-        else if (type == Tag2Subpacket::KEY_FLAGS){
-            subpacket = std::make_shared <Tag2Sub27> ();
+        else if (type == Subpacket::Tag2::KEY_FLAGS){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub27> ();
         }
-        else if (type == Tag2Subpacket::SIGNERS_USER_ID){
-            subpacket = std::make_shared <Tag2Sub28> ();
+        else if (type == Subpacket::Tag2::SIGNERS_USER_ID){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub28> ();
         }
-        else if (type == Tag2Subpacket::REASON_FOR_REVOCATION){
-            subpacket = std::make_shared <Tag2Sub29> ();
+        else if (type == Subpacket::Tag2::REASON_FOR_REVOCATION){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub29> ();
         }
-        else if (type == Tag2Subpacket::FEATURES){
-            subpacket = std::make_shared <Tag2Sub30> ();
+        else if (type == Subpacket::Tag2::FEATURES){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub30> ();
         }
-        else if (type == Tag2Subpacket::SIGNATURE_TARGET){
-            subpacket = std::make_shared <Tag2Sub31> ();
+        else if (type == Subpacket::Tag2::SIGNATURE_TARGET){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub31> ();
         }
-        else if (type == Tag2Subpacket::EMBEDDED_SIGNATURE){
-            subpacket = std::make_shared <Tag2Sub32> ();
+        else if (type == Subpacket::Tag2::EMBEDDED_SIGNATURE){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub32> ();
         }
         #ifdef GPG_COMPATIBLE
-        else if (type == Tag2Subpacket::ISSUER_FINGERPRINT){
-            subpacket = std::make_shared <Tag2Sub33> ();
+        else if (type == Subpacket::Tag2::ISSUER_FINGERPRINT){
+            subpacket = std::make_shared <Subpacket::Tag2::Sub33> ();
         }
         #endif
         else{
@@ -181,7 +184,7 @@ void Tag2::read(const std::string & data){
         if (PKA::is_RSA(pka)){
             mpi.push_back(read_MPI(data, pos)); // RSA m**d mod n
         }
-        else if (pka == PKA::DSA){
+        else if (pka == PKA::ID::DSA){
             mpi.push_back(read_MPI(data, pos)); // DSA r
             mpi.push_back(read_MPI(data, pos)); // DSA s
         }
@@ -208,7 +211,7 @@ void Tag2::read(const std::string & data){
 //        if (PKA::is_RSA(PKA))
         std::string::size_type pos = hashed_size + 6 + 2 + unhashed_size + 2;
         mpi.push_back(read_MPI(data, pos));         // RSA m**d mod n
-        if (pka == PKA::DSA){
+        if (pka == PKA::ID::DSA){
 //            mpi.push_back(read_MPI(data, pos));   // DSA r
             mpi.push_back(read_MPI(data, pos));     // DSA s
         }
@@ -244,14 +247,14 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
             uint32_t create_time = 0;
 
             out += "\n" + indent + tab + "Hashed Sub:";
-            for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+            for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
                 // capture signature creation time to combine with expiration time
-                if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                    create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
+                if (s -> get_type() == Subpacket::Tag2::SIGNATURE_CREATION_TIME){
+                    create_time = std::static_pointer_cast <Subpacket::Tag2::Sub2> (s) -> get_time();
                 }
 
-                if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                    out += "\n" + std::static_pointer_cast <Tag2Sub9> (s) -> show(create_time, indents + 2, indent_size);
+                if (s -> get_type() == Subpacket::Tag2::KEY_EXPIRATION_TIME){
+                    out += "\n" + std::static_pointer_cast <Subpacket::Tag2::Sub9> (s) -> show(create_time, indents + 2, indent_size);
                 }
                 else{
                     out += "\n" + s -> show(indents + 2, indent_size);
@@ -263,14 +266,14 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
             uint32_t create_time = 0;
 
             out += "\n" + indent + tab + "Unhashed Sub:";
-            for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+            for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
                 // capture signature creation time to combine with expiration time
-                if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                    create_time = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
+                if (s -> get_type() == Subpacket::Tag2::SIGNATURE_CREATION_TIME){
+                    create_time = std::static_pointer_cast <Subpacket::Tag2::Sub2> (s) -> get_time();
                 }
 
-                if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                    out += "\n" + std::static_pointer_cast <Tag2Sub9> (s) -> show(create_time, indents + 2, indent_size);
+                if (s -> get_type() == Subpacket::Tag2::KEY_EXPIRATION_TIME){
+                    out += "\n" + std::static_pointer_cast <Subpacket::Tag2::Sub9> (s) -> show(create_time, indents + 2, indent_size);
                 }
                 else{
                     out += "\n" + s -> show(indents + 2, indent_size);
@@ -281,10 +284,10 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
 
     out += "\n" + indent + tab + "Hash Left 16 Bits: " + hexlify(left16);
 
-    if (pka < 4){
+    if (PKA::is_RSA(pka)){
         out += "\n" + indent + tab + "RSA m**d mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
     }
-    else if (pka == 17){
+    else if (pka == PKA::ID::DSA){
         out += "\n" + indent + tab + "DSA r (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
             += "\n" + indent + tab + "DSA s (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
     }
@@ -299,16 +302,16 @@ std::string Tag2::raw() const{
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+        for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         std::string unhashed_str = "";
-        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+        for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
             unhashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
     }
-    for(PGPMPI const & i : mpi){
+    for(MPI const & i : mpi){
         out += write_MPI(i);
     }
     return out;
@@ -341,28 +344,28 @@ std::array <uint32_t, 3> Tag2::get_times() const{
     }
     else if (version == 4){
         // usually found in hashed subpackets
-        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+        for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
             // 5.2.3.4. Signature Creation Time
             //    ...
             //    MUST be present in the hashed area.
-            if (s -> get_type() == Tag2Subpacket::SIGNATURE_CREATION_TIME){
-                times[0] = std::static_pointer_cast <Tag2Sub2> (s) -> get_time();
+            if (s -> get_type() == Subpacket::Tag2::SIGNATURE_CREATION_TIME){
+                times[0] = std::static_pointer_cast <Subpacket::Tag2::Sub2> (s) -> get_time();
             }
-            else if (s -> get_type() == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
-                times[1] = std::static_pointer_cast <Tag2Sub3> (s) -> get_dt();
+            else if (s -> get_type() == Subpacket::Tag2::SIGNATURE_EXPIRATION_TIME){
+                times[1] = std::static_pointer_cast <Subpacket::Tag2::Sub3> (s) -> get_dt();
             }
-            else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                times[2] = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
+            else if (s -> get_type() == Subpacket::Tag2::KEY_EXPIRATION_TIME){
+                times[2] = std::static_pointer_cast <Subpacket::Tag2::Sub9> (s) -> get_dt();
             }
         }
 
         // search unhashed subpackets
-        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
-            if (s -> get_type() == Tag2Subpacket::SIGNATURE_EXPIRATION_TIME){
-                times[1] = std::static_pointer_cast <Tag2Sub3> (s) -> get_dt();
+        for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
+            if (s -> get_type() == Subpacket::Tag2::SIGNATURE_EXPIRATION_TIME){
+                times[1] = std::static_pointer_cast <Subpacket::Tag2::Sub3> (s) -> get_dt();
             }
-            else if (s -> get_type() == Tag2Subpacket::KEY_EXPIRATION_TIME){
-                times[2] = std::static_pointer_cast <Tag2Sub9> (s) -> get_dt();
+            else if (s -> get_type() == Subpacket::Tag2::KEY_EXPIRATION_TIME){
+                times[2] = std::static_pointer_cast <Subpacket::Tag2::Sub9> (s) -> get_dt();
             }
         }
 
@@ -391,16 +394,16 @@ std::string Tag2::get_keyid() const{
     }
     else if (version == 4){
         // usually found in unhashed subpackets
-        for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
-            if (s -> get_type() == Tag2Subpacket::ISSUER){
-                return std::static_pointer_cast <Tag2Sub16> (s) -> get_keyid();
+        for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
+            if (s -> get_type() == Subpacket::Tag2::ISSUER){
+                return std::static_pointer_cast <Subpacket::Tag2::Sub16> (s) -> get_keyid();
             }
         }
 
         // search hashed subpackets if necessary
-        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
-            if (s -> get_type() == Tag2Subpacket::ISSUER){
-                return std::static_pointer_cast <Tag2Sub16> (s) -> get_keyid();
+        for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
+            if (s -> get_type() == Subpacket::Tag2::ISSUER){
+                return std::static_pointer_cast <Subpacket::Tag2::Sub16> (s) -> get_keyid();
             }
         }
     }
@@ -417,7 +420,7 @@ Tag2::Subpackets Tag2::get_hashed_subpackets() const{
 
 Tag2::Subpackets Tag2::get_hashed_subpackets_clone() const{
     Subpackets out;
-    for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+    for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -429,7 +432,7 @@ Tag2::Subpackets Tag2::get_unhashed_subpackets() const{
 
 Tag2::Subpackets Tag2::get_unhashed_subpackets_clone() const{
     Subpackets out;
-    for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+    for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
         out.push_back(s -> clone());
     }
     return out;
@@ -441,7 +444,7 @@ std::string Tag2::get_up_to_hashed() const{
     }
     else if (version == 4){
         std::string hashed = "";
-        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+        for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
             hashed += s -> write();
         }
         return "\x04" + std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed.size(), 4)) + hashed;
@@ -459,12 +462,12 @@ std::string Tag2::get_without_unhashed() const{
     }
     if (version == 4){
         std::string hashed_str = "";
-        for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+        for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
             hashed_str += s -> write();
         }
         out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + zero + zero + left16;
     }
-    for(PGPMPI const & i : mpi){
+    for(MPI const & i : mpi){
         out += write_MPI(i);
     }
     return out;
@@ -506,7 +509,7 @@ void Tag2::set_time(const uint32_t t){
                 break;
             }
         }
-        Tag2Sub2::Ptr sub2 = std::make_shared <Tag2Sub2> ();
+        Subpacket::Tag2::Sub2::Ptr sub2 = std::make_shared <Subpacket::Tag2::Sub2> ();
         sub2 -> set_time(t);
         if (i == hashed_subpackets.size()){ // not found
             hashed_subpackets.push_back(sub2);
@@ -533,7 +536,7 @@ void Tag2::set_keyid(const std::string & k){
                 break;
             }
         }
-        Tag2Sub16::Ptr sub16 = std::make_shared <Tag2Sub16> ();
+        Subpacket::Tag2::Sub16::Ptr sub16 = std::make_shared <Subpacket::Tag2::Sub16> ();
         sub16 -> set_keyid(k);
         if (i == unhashed_subpackets.size()){   // not found
             unhashed_subpackets.push_back(sub16);
@@ -547,7 +550,7 @@ void Tag2::set_keyid(const std::string & k){
 
 void Tag2::set_hashed_subpackets(const Tag2::Subpackets & h){
     hashed_subpackets.clear();
-    for(Tag2Subpacket::Ptr const & s : h){
+    for(Subpacket::Tag2::Base::Ptr const & s : h){
         hashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
@@ -555,7 +558,7 @@ void Tag2::set_hashed_subpackets(const Tag2::Subpackets & h){
 
 void Tag2::set_unhashed_subpackets(const Tag2::Subpackets & u){
     unhashed_subpackets.clear();
-    for(Tag2Subpacket::Ptr const & s : u){
+    for(Subpacket::Tag2::Base::Ptr const & s : u){
         unhashed_subpackets.push_back(s -> clone());
     }
     size = raw().size();
@@ -572,13 +575,13 @@ std::string Tag2::find_subpacket(const uint8_t sub) const{
     //   more sense.
 
     std::string out;
-    for(Tag2Subpacket::Ptr const & s : hashed_subpackets){
+    for(Subpacket::Tag2::Base::Ptr const & s : hashed_subpackets){
         if (s -> get_type() == sub){
             out = s -> raw();
             break;
         }
     }
-    for(Tag2Subpacket::Ptr const & s : unhashed_subpackets){
+    for(Subpacket::Tag2::Base::Ptr const & s : unhashed_subpackets){
         if (s -> get_type() == sub){
             out = s -> raw();
             break;
@@ -587,7 +590,7 @@ std::string Tag2::find_subpacket(const uint8_t sub) const{
     return out;
 }
 
-Packet::Ptr Tag2::clone() const{
+Base::Ptr Tag2::clone() const{
     Ptr out = std::make_shared <Tag2> (*this);
     out -> hashed_subpackets = get_hashed_subpackets_clone();
     out -> unhashed_subpackets = get_unhashed_subpackets_clone();
@@ -595,7 +598,7 @@ Packet::Ptr Tag2::clone() const{
 }
 
 Tag2 & Tag2::operator=(const Tag2 & copy){
-    Packet::operator=(copy);
+    Base::operator=(copy);
     type = copy.type;
     pka = copy.pka;
     hash = copy.hash;
@@ -606,4 +609,7 @@ Tag2 & Tag2::operator=(const Tag2 & copy){
     hashed_subpackets = copy.get_hashed_subpackets_clone();
     unhashed_subpackets = copy.get_unhashed_subpackets_clone();
     return *this;
+}
+
+}
 }

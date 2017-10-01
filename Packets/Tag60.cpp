@@ -1,16 +1,19 @@
 #include "Tag60.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag60::Tag60()
     : Tag60(std::string())
 {}
 
 Tag60::Tag60(const Tag60 & copy)
-    : Packet(copy),
+    : Base(copy),
       stream(copy.stream)
 {}
 
 Tag60::Tag60(const std::string & data)
-    : Packet(60),
+    : Base(60),
       stream(data)
 {}
 
@@ -21,7 +24,7 @@ void Tag60::read(const std::string & data){
 std::string Tag60::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" + 
+    return indent + show_title() + "\n" +
            indent + tab + hexlify(stream);
 }
 
@@ -37,6 +40,10 @@ void Tag60::set_stream(const std::string & data){
     stream = data;
 }
 
-Packet::Ptr Tag60::clone() const{
-    return std::make_shared <Tag60> (*this);
+Base::Ptr Tag60::clone() const{
+    return std::make_shared <Packet::Tag60> (*this);
+}
+
+}
+
 }

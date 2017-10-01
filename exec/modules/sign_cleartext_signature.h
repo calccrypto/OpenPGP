@@ -69,17 +69,17 @@ const Module sign_cleartext_signature(
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(key),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::Sign::Args signargs(OpenPGP::SecretKey(key),
+                                           args.at("passphrase"),
+                                           4,
+                                           OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPCleartextSignature signature = ::sign_cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}));
+        const OpenPGP::CleartextSignature signature = OpenPGP::Sign::cleartext_signature(signargs, std::string(std::istreambuf_iterator<char>(file), {}));
 
         if (!signature.meaningful()){
             err << "Error: Generated bad cleartext signature." << std::endl;

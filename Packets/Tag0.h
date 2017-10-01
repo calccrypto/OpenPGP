@@ -26,11 +26,16 @@ THE SOFTWARE.
 #ifndef __TAG0__
 #define __TAG0__
 
-#include "packet.h"
+#include "Packet.h"
 
-class Tag0 : public Packet{
-    public:
-        Tag0(...);
-};
+namespace OpenPGP {
+    namespace Packet {
+
+        class Tag0 : public Base {
+            public:
+                Tag0(...);
+        };
+    }
+}
 
 #endif

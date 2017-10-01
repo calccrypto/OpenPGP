@@ -1,10 +1,14 @@
 #include "RSA.h"
 
-PKA::Values RSA_keygen(const uint32_t & bits){
-    BBS(static_cast <PGPMPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+namespace OpenPGP {
+namespace PKA {
+namespace RSA {
 
-    PGPMPI p = 3;
-    PGPMPI q = 3;
+Values keygen(const uint32_t & bits){
+    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+
+    MPI p = 3;
+    MPI q = 3;
 
     #ifdef GPG_COMPATIBLE
     // gpg only accepts 'n's of certain sizes
@@ -15,10 +19,10 @@ PKA::Values RSA_keygen(const uint32_t & bits){
         return {};
     }
 
-    PGPMPI n;
+    MPI n;
     while (true){
-        p = nextprime(bintompi("1" + BBS().rand(bits - 1)));
-        q = nextprime(bintompi("1" + BBS().rand(bits - 1)));
+        p = nextprime(bintompi("1" + RNG::BBS().rand(bits - 1)));
+        q = nextprime(bintompi("1" + RNG::BBS().rand(bits - 1)));
         n = p * q;
 
         const std::size_t nbits = bitsize(n);
@@ -29,10 +33,10 @@ PKA::Values RSA_keygen(const uint32_t & bits){
     #else
     // don't check bitsize
     while (p == q){
-        p = nextprime(bintompi(BBS().rand(bits)));
-        q = nextprime(bintompi(BBS().rand(bits)));
+        p = nextprime(bintompi(RNG::BBS().rand(bits)));
+        q = nextprime(bintompi(RNG::BBS().rand(bits)));
     }
-    const PGPMPI n = p * q;
+    const MPI n = p * q;
     #endif
 
     // required by RFC 4880 sec 5.5.3
@@ -40,9 +44,9 @@ PKA::Values RSA_keygen(const uint32_t & bits){
         mpiswap(p, q);
     }
 
-    const PGPMPI tot = (p - 1) * (q - 1);
+    const MPI tot = (p - 1) * (q - 1);
 
-    PGPMPI e = bintompi(BBS().rand(bits));
+    MPI e = bintompi(RNG::BBS().rand(bits));
     e += ((e & 1) == 0);
     while (mpigcd(tot, e) != 1){
         e += 2;
@@ -52,30 +56,34 @@ PKA::Values RSA_keygen(const uint32_t & bits){
     return {n, e, invert(e, tot), p, q, invert(p, q)};
 }
 
-PGPMPI RSA_encrypt(const PGPMPI & data, const PKA::Values & pub){
+MPI encrypt(const MPI & data, const Values & pub){
     return powm(data, pub[1], pub[0]);
 }
 
-PGPMPI RSA_encrypt(const std::string & data, const PKA::Values & pub){
+MPI encrypt(const std::string & data, const Values & pub){
     return powm(rawtompi(data), pub[1], pub[0]);
 }
 
-PGPMPI RSA_decrypt(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub){
+MPI decrypt(const MPI & data, const Values & pri, const Values & pub){
     return powm(data, pri[0], pub[0]);
 }
 
-PGPMPI RSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub){
-    return RSA_decrypt(data, pri, pub);
+MPI sign(const MPI & data, const Values & pri, const Values & pub){
+    return decrypt(data, pri, pub);
 }
 
-PGPMPI RSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub){
-    return RSA_decrypt(rawtompi(data), pri, pub);
+MPI sign(const std::string & data, const Values & pri, const Values & pub){
+    return decrypt(rawtompi(data), pri, pub);
 }
 
-bool RSA_verify(const PGPMPI & data, const PKA::Values & signature, const PKA::Values & pub){
-    return (RSA_encrypt(signature[0], pub) == data);
+bool verify(const MPI & data, const Values & signature, const Values & pub){
+    return (encrypt(signature[0], pub) == data);
 }
 
-bool RSA_verify(const std::string & data, const PKA::Values & signature, const PKA::Values & pub){
-    return RSA_verify(rawtompi(data), signature, pub);
+bool verify(const std::string & data, const Values & signature, const Values & pub){
+    return verify(rawtompi(data), signature, pub);
+}
+
+}
+}
 }

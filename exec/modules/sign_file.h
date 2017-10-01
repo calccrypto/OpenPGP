@@ -70,29 +70,29 @@ const Module sign_file(
             return -1;
         }
 
-        if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
+        if (OpenPGP::Compression::NUMBER.find(args.at("-c")) == OpenPGP::Compression::NUMBER.end()){
             err << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(key),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::Sign::Args signargs(OpenPGP::SecretKey(key),
+                                           args.at("passphrase"),
+                                           4,
+                                           OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPMessage message = ::sign_binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), Compression::NUMBER.at(args.at("-c")));
+        const OpenPGP::Message message = OpenPGP::Sign::binary(signargs, args.at("file"), std::string(std::istreambuf_iterator <char> (file), {}), OpenPGP::Compression::NUMBER.at(args.at("-c")));
 
         if (!message.meaningful()){
             err << "Error: Generated bad file signature." << std::endl;
             return -1;
         }
 
-        out << message.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << message.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -27,52 +27,57 @@ THE SOFTWARE.
 #ifndef __TAG19__
 #define __TAG19__
 
-#include "packet.h"
+#include "Packet.h"
 
-// 5.14. Modification Detection Code Packet (Tag 19)
-//
-//    The Modification Detection Code packet contains a SHA-1 hash of
-//    plaintext data, which is used to detect message modification. It is
-//    only used with a Symmetrically Encrypted Integrity Protected Data
-//    packet. The Modification Detection Code packet MUST be the last
-//    packet in the plaintext data that is encrypted in the Symmetrically
-//    Encrypted Integrity Protected Data packet, and MUST appear in no
-//    other place.
-//
-//    A Modification Detection Code packet MUST have a length of 20 octets.
-//    The body of this packet consists of:
-//
-//      - A 20-octet SHA-1 hash of the preceding plaintext data of the
-//        Symmetrically Encrypted Integrity Protected Data packet,
-//        including prefix data, the tag octet, and length octet of the
-//        Modification Detection Code packet.
-//
-//    Note that the Modification Detection Code packet MUST always use a
-//    new format encoding of the packet tag, and a one-octet encoding of
-//    the packet length. The reason for this is that the hashing rules for
-//    modification detection include a one-octet tag and one-octet length
-//    in the data hash. While this is a bit restrictive, it reduces
-//    complexity.
+namespace OpenPGP {
+    namespace Packet {
 
-class Tag19 : public Packet{
-    private:
-        std::string hash;
+        // 5.14. Modification Detection Code Packet (Tag 19)
+        //
+        //    The Modification Detection Code packet contains a SHA-1 hash of
+        //    plaintext data, which is used to detect message modification. It is
+        //    only used with a Symmetrically Encrypted Integrity Protected Data
+        //    packet. The Modification Detection Code packet MUST be the last
+        //    packet in the plaintext data that is encrypted in the Symmetrically
+        //    Encrypted Integrity Protected Data packet, and MUST appear in no
+        //    other place.
+        //
+        //    A Modification Detection Code packet MUST have a length of 20 octets.
+        //    The body of this packet consists of:
+        //
+        //      - A 20-octet SHA-1 hash of the preceding plaintext data of the
+        //        Symmetrically Encrypted Integrity Protected Data packet,
+        //        including prefix data, the tag octet, and length octet of the
+        //        Modification Detection Code packet.
+        //
+        //    Note that the Modification Detection Code packet MUST always use a
+        //    new format encoding of the packet tag, and a one-octet encoding of
+        //    the packet length. The reason for this is that the hashing rules for
+        //    modification detection include a one-octet tag and one-octet length
+        //    in the data hash. While this is a bit restrictive, it reduces
+        //    complexity.
 
-    public:
-        typedef std::shared_ptr <Tag19> Ptr;
+        class Tag19 : public Base {
+            private:
+                std::string hash;
 
-        Tag19();
-        Tag19(const Tag19 & copy);
-        Tag19(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Packet::Tag19> Ptr;
 
-        std::string get_hash() const;
+                Tag19();
+                Tag19(const Tag19 & copy);
+                Tag19(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        void set_hash(const std::string & h);
+                std::string get_hash() const;
 
-        Packet::Ptr clone() const;
-};
+                void set_hash(const std::string & h);
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

@@ -1,14 +1,17 @@
 #include "Tag3.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag3::Tag3()
-    : Packet(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
+    : Base(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
       sym(),
       s2k(nullptr),
       esk(nullptr)
 {}
 
 Tag3::Tag3(const Tag3 & copy)
-    : Packet(copy),
+    : Base(copy),
       sym(copy.sym),
       s2k(copy.s2k -> clone()),
       esk(copy.get_esk_clone())
@@ -27,17 +30,17 @@ void Tag3::read(const std::string & data){
     version = data[0];                  // 4
     sym = data[1];
 
-    if (data[2] == S2K::SIMPLE_S2K){
-        s2k = std::make_shared <S2K0> ();
+    if (data[2] == S2K::ID::SIMPLE_S2K){
+        s2k = std::make_shared <S2K::S2K0> ();
     }
-    else if (data[2] == S2K::SALTED_S2K){
-        s2k = std::make_shared <S2K1> ();
+    else if (data[2] == S2K::ID::SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K1> ();
     }
     else if (data[2] == 2){
         throw std::runtime_error("S2K with ID 2 is reserved.");
     }
-    else if (data[2] == S2K::ITERATED_AND_SALTED_S2K){
-        s2k = std::make_shared <S2K3> ();
+    else if (data[2] == S2K::ID::ITERATED_AND_SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K3> ();
     }
     else{
         throw std::runtime_error("Unknown S2K ID encountered: " + std::to_string(data[0]));
@@ -73,11 +76,11 @@ uint8_t Tag3::get_sym() const{
     return sym;
 }
 
-S2K::Ptr Tag3::get_s2k() const{
+S2K::Base::Ptr Tag3::get_s2k() const{
     return s2k;
 }
 
-S2K::Ptr Tag3::get_s2k_clone() const{
+S2K::Base::Ptr Tag3::get_s2k_clone() const{
     return s2k -> clone();
 }
 
@@ -105,13 +108,13 @@ void Tag3::set_sym(const uint8_t s){
     size = raw().size();
 }
 
-void Tag3::set_s2k(const S2K::Ptr & s){
+void Tag3::set_s2k(const S2K::Base::Ptr & s){
     if (!s){
         throw std::runtime_error("Error: No S2K provided.\n");
     }
 
-    if ((s -> get_type() != S2K::SALTED_S2K)             &&
-        (s -> get_type() != S2K::ITERATED_AND_SALTED_S2K)){
+    if ((s -> get_type() != S2K::ID::SALTED_S2K)             &&
+        (s -> get_type() != S2K::ID::ITERATED_AND_SALTED_S2K)){
         throw std::runtime_error("Error: S2K must have a salt value.");
     }
 
@@ -139,8 +142,8 @@ void Tag3::set_session_key(const std::string & pass, const std::string & sk){
     size = raw().size();
 }
 
-Packet::Ptr Tag3::clone() const{
-    Ptr out = std::make_shared <Tag3> (*this);
+Base::Ptr Tag3::clone() const{
+    Ptr out = std::make_shared <Packet::Tag3> (*this);
     out -> sym = sym;
     out -> s2k = s2k?s2k -> clone():nullptr;
     out -> esk = esk?std::make_shared <std::string> (*esk):nullptr;
@@ -148,9 +151,12 @@ Packet::Ptr Tag3::clone() const{
 }
 
 Tag3 & Tag3::operator=(const Tag3 & copy){
-    Packet::operator=(copy);
+    Base::operator=(copy);
     sym = copy.sym;
     s2k = copy.s2k -> clone();
     esk = std::make_shared <std::string> (*copy.esk);
     return *this;
+}
+
+}
 }

@@ -32,22 +32,28 @@ THE SOFTWARE.
 #include "../Misc/pgptime.h"
 #include "PKA.h"
 
-// Generate RSA key values
-PKA::Values RSA_keygen(const uint32_t & bits = 2048);
+namespace OpenPGP {
+    namespace PKA {
+        namespace RSA {
+            // Generate RSA key values
+            Values keygen(const uint32_t & bits = 2048);
 
-// Encrypt data
-PGPMPI RSA_encrypt(const PGPMPI & data, const PKA::Values & pub);
-PGPMPI RSA_encrypt(const std::string & data, const PKA::Values & pub);
+            // Encrypt data
+            MPI encrypt(const MPI & data, const Values & pub);
+            MPI encrypt(const std::string & data, const Values & pub);
 
-// Decrypt data
-PGPMPI RSA_decrypt(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub);
+            // Decrypt data
+            MPI decrypt(const MPI & data, const Values & pri, const Values & pub);
 
-// Sign data
-PGPMPI RSA_sign(const PGPMPI & data, const PKA::Values & pri, const PKA::Values & pub);
-PGPMPI RSA_sign(const std::string & data, const PKA::Values & pri, const PKA::Values & pub);
+            // Sign data
+            MPI sign(const MPI & data, const Values & pri, const Values & pub);
+            MPI sign(const std::string & data, const Values & pri, const Values & pub);
 
-// Verify signature
-bool RSA_verify(const PGPMPI & data, const PKA::Values & signature, const PKA::Values & pub);
-bool RSA_verify(const std::string & data, const PKA::Values & signature, const PKA::Values & pub);
+            // Verify signature
+            bool verify(const MPI & data, const Values & signature, const Values & pub);
+            bool verify(const std::string & data, const Values & signature, const Values & pub);
+        }
+    }
+}
 
 #endif

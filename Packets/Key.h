@@ -29,53 +29,58 @@ THE SOFTWARE.
 #include "../Hashes/Hashes.h"
 #include "../PKA/PKAs.h"
 #include "../Misc/mpi.h"
-#include "packet.h"
+#include "Packet.h"
 
-// For Tags 5, 6, 7, and 14
-// Key is equivalent to Tag6 (but don't substitute Key for Tag6)
-class Key : public Packet{
-    protected:
-        uint32_t time;
-        uint8_t pka;
-        PKA::Values mpi;
+namespace OpenPGP {
+    namespace Packet {
 
-        // version 3
-        uint32_t expire;
+        // For Tags 5, 6, 7, and 14
+        // Key is equivalent to Tag6 (but don't substitute Key for Tag6)
+        class Key : public Base {
+            protected:
+                uint32_t time;
+                uint8_t pka;
+                PKA::Values mpi;
 
-        Key(uint8_t tag);
+                // version 3
+                uint32_t expire;
 
-    public:
-        typedef std::shared_ptr <Key> Ptr;
+                Key(uint8_t tag);
 
-        Key();
-        Key(const Key & copy);
-        Key(const std::string & data);
-        virtual ~Key();
+            public:
+                typedef std::shared_ptr <Key> Ptr;
 
-        virtual void read(const std::string & data);
-        virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        virtual std::string raw() const;
+                Key();
+                Key(const Key & copy);
+                Key(const std::string & data);
+                virtual ~Key();
 
-        // read, show, and raw functions common to all keys tags
-        // can't overload normal versions because the inherited versions are needed
-        void read_common(const std::string & data, std::string::size_type & pos);
-        std::string show_common(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw_common() const;
+                virtual void read(const std::string & data);
+                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                virtual std::string raw() const;
 
-        uint32_t get_time() const;
-        uint8_t get_pka() const;
-        PKA::Values get_mpi() const;
+                // read, show, and raw functions common to all keys tags
+                // can't overload normal versions because the inherited versions are needed
+                void read_common(const std::string & data, std::string::size_type & pos);
+                std::string show_common(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw_common() const;
 
-        void set_time(const uint32_t t);
-        void set_pka(const uint8_t p);
-        void set_mpi(const PKA::Values & m);
+                uint32_t get_time() const;
+                uint8_t get_pka() const;
+                PKA::Values get_mpi() const;
 
-        std::string get_fingerprint() const;    // binary
-        std::string get_keyid() const;          // binary
+                void set_time(const uint32_t t);
+                void set_pka(const uint8_t p);
+                void set_mpi(const PKA::Values & m);
 
-        virtual Packet::Ptr clone() const;
+                std::string get_fingerprint() const;    // binary
+                std::string get_keyid() const;          // binary
 
-        Key & operator=(const Key & copy);
-};
+                virtual Packet::Base::Ptr clone() const;
+
+                Key & operator=(const Key & copy);
+        };
+    }
+}
 
 #endif

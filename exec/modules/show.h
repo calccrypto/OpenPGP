@@ -61,7 +61,7 @@ const Module show(
             return -1;
         }
 
-        out << PGP(file).show() << std::flush;
+        out << OpenPGP::PGP(file).show() << std::flush;
         return 0;
     }
 );

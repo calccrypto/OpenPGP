@@ -68,27 +68,27 @@ const Module encrypt_sym(
             return -1;
         }
 
-        if (Compression::NUMBER.find(args.at("-c")) == Compression::NUMBER.end()){
+        if (OpenPGP::Compression::NUMBER.find(args.at("-c")) == OpenPGP::Compression::NUMBER.end()){
             err << "Error: Bad Compression Algorithm: " << args.at("-c") << std::endl;
             return -1;
         }
 
-        if (Sym::NUMBER.find(args.at("--sym")) == Sym::NUMBER.end()){
+        if (OpenPGP::Sym::NUMBER.find(args.at("--sym")) == OpenPGP::Sym::NUMBER.end()){
             err << "Error: Bad Symmetric Key Algorithm: " << args.at("--sym") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--khash")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--khash")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--khash") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--shash")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--shash")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
             return -1;
         }
 
-        PGPSecretKey::Ptr signer = nullptr;
+        OpenPGP::SecretKey::Ptr signer = nullptr;
         if (args.at("--sign").size()){
             std::ifstream signing(args.at("--sign"), std::ios::binary);
             if (!signing){
@@ -96,7 +96,7 @@ const Module encrypt_sym(
                 return -1;
             }
 
-            signer = std::make_shared <PGPSecretKey> (signing);
+            signer = std::make_shared <OpenPGP::SecretKey> (signing);
 
             if (!signer -> meaningful()){
                 err << "Error: Bad signing key.\n";
@@ -104,16 +104,16 @@ const Module encrypt_sym(
             }
         }
 
-        const EncryptArgs encryptargs(args.at("file"),
-                                      std::string(std::istreambuf_iterator <char> (file), {}),
-                                      Sym::NUMBER.at(args.at("--sym")),
-                                      Compression::NUMBER.at(args.at("-c")),
-                                      flags.at("--mdc"),
-                                      signer,
-                                      args.at("-p"),
-                                      Hash::NUMBER.at(args.at("--shash")));
+        const OpenPGP::Encrypt::Args encryptargs(args.at("file"),
+                                                 std::string(std::istreambuf_iterator <char> (file), {}),
+                                                 OpenPGP::Sym::NUMBER.at(args.at("--sym")),
+                                                 OpenPGP::Compression::NUMBER.at(args.at("-c")),
+                                                 flags.at("--mdc"),
+                                                 signer,
+                                                 args.at("-p"),
+                                                 OpenPGP::Hash::NUMBER.at(args.at("--shash")));
 
-        out << ::encrypt_sym(encryptargs, args.at("passphrase"), Hash::NUMBER.at(args.at("--khash"))).write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << OpenPGP::Encrypt::sym(encryptargs, args.at("passphrase"), OpenPGP::Hash::NUMBER.at(args.at("--khash"))).write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

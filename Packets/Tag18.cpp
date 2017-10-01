@@ -1,12 +1,15 @@
 #include "Tag18.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag18::Tag18()
-    : Packet(Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, 1),
+    : Base(SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, 1),
       protected_data()
 {}
 
 Tag18::Tag18(const Tag18 & copy)
-    : Packet(copy),
+    : Base(copy),
       protected_data(copy.protected_data)
 {}
 
@@ -43,6 +46,9 @@ void Tag18::set_protected_data(const std::string & p){
     size = raw().size();
 }
 
-Packet::Ptr Tag18::clone() const{
-    return std::make_shared <Tag18> (*this);
+Base::Ptr Tag18::clone() const{
+    return std::make_shared <Packet::Tag18> (*this);
+}
+
+}
 }

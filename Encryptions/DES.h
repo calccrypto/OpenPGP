@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "DES_Const.h"
 
-class DES : public SymAlg{
+class DES : public SymAlg {
     private:
         uint64_t keys[16];
         std::string run(const std::string & data);

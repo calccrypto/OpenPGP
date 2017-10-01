@@ -1,5 +1,8 @@
 #include "Tag5.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag5::Tag5(uint8_t tag)
     : Tag6(tag),
       s2k_con(0),
@@ -10,7 +13,7 @@ Tag5::Tag5(uint8_t tag)
 {}
 
 Tag5::Tag5()
-    : Tag5(Packet::SECRET_KEY)
+    : Tag5(SECRET_KEY)
 {}
 
 Tag5::Tag5(const Tag5 & copy)
@@ -23,7 +26,7 @@ Tag5::Tag5(const Tag5 & copy)
 {}
 
 Tag5::Tag5(const std::string & data)
-    : Tag5(Packet::SECRET_KEY)
+    : Tag5(SECRET_KEY)
 {
     read(data);
 }
@@ -33,14 +36,14 @@ Tag5::~Tag5(){}
 void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
     s2k.reset();
 
-    if (data[pos] == S2K::SIMPLE_S2K){
-        s2k = std::make_shared <S2K0> ();
+    if (data[pos] == S2K::ID::SIMPLE_S2K){
+        s2k = std::make_shared <S2K::S2K0> ();
     }
-    else if (data[pos] == S2K::SALTED_S2K){
-        s2k = std::make_shared <S2K1> ();
+    else if (data[pos] == S2K::ID::SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K1> ();
     }
-    else if (data[pos] == S2K::ITERATED_AND_SALTED_S2K){
-        s2k = std::make_shared <S2K3> ();
+    else if (data[pos] == S2K::ID::ITERATED_AND_SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K3> ();
     }
     else{
         throw std::runtime_error("Error: Bad S2K ID encountered: " + std::to_string(data[0]));
@@ -70,10 +73,10 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         if (PKA::is_RSA(pka)){
             out += "RSA d, p, q, u";
         }
-        else if (pka == PKA::ELGAMAL){
+        else if (pka == PKA::ID::ELGAMAL){
             out += "ELGAMAL x";
         }
-        else if (pka == PKA::DSA){
+        else if (pka == PKA::ID::DSA){
             out += "DSA x";
         }
         else{
@@ -94,21 +97,21 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         std::string::size_type pos = 0;
 
         if (PKA::is_RSA(pka)){
-            const PGPMPI d = read_MPI(secret, pos);
-            const PGPMPI p = read_MPI(secret, pos);
-            const PGPMPI q = read_MPI(secret, pos);
-            const PGPMPI u = read_MPI(secret, pos);
+            const MPI d = read_MPI(secret, pos);
+            const MPI p = read_MPI(secret, pos);
+            const MPI q = read_MPI(secret, pos);
+            const MPI u = read_MPI(secret, pos);
             out += indent + tab + "RSA d: (" + std::to_string(bitsize(d)) + ") bits: " + mpitohex(d) + "\n";
             out += indent + tab + "RSA p: (" + std::to_string(bitsize(p)) + ") bits: " + mpitohex(p) + "\n";
             out += indent + tab + "RSA q: (" + std::to_string(bitsize(q)) + ") bits: " + mpitohex(q) + "\n";
             out += indent + tab + "RSA u: (" + std::to_string(bitsize(u)) + ") bits: " + mpitohex(u) + "\n";
         }
-        else if (pka == PKA::ELGAMAL){
-            const PGPMPI x = read_MPI(secret, pos);
+        else if (pka == PKA::ID::ELGAMAL){
+            const MPI x = read_MPI(secret, pos);
             out += indent + tab + "ELGAMAL x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
         }
-        else if (pka == PKA::DSA){
-            const PGPMPI x = read_MPI(secret, pos);
+        else if (pka == PKA::ID::DSA){
+            const MPI x = read_MPI(secret, pos);
             out += indent + tab + "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
         }
         else{
@@ -199,11 +202,11 @@ uint8_t Tag5::get_sym() const{
     return sym;
 }
 
-S2K::Ptr Tag5::get_s2k() const{
+S2K::Base::Ptr Tag5::get_s2k() const{
     return s2k;
 }
 
-S2K::Ptr Tag5::get_s2k_clone() const{
+S2K::Base::Ptr Tag5::get_s2k_clone() const{
     return s2k -> clone();
 }
 
@@ -217,12 +220,12 @@ std::string Tag5::get_secret() const{
 
 Tag6 Tag5::get_public_obj() const{
     Tag6 out(raw());
-    out.set_tag(Packet::PUBLIC_KEY);
+    out.set_tag(PUBLIC_KEY);
     return out;
 }
 
 Tag6::Ptr Tag5::get_public_ptr() const{
-    return std::make_shared <Tag6> (raw());
+    return std::make_shared <Packet::Tag6> (raw());
 }
 
 void Tag5::set_s2k_con(const uint8_t c){
@@ -249,15 +252,15 @@ void Tag5::set_sym(const uint8_t s){
     size += secret.size();
 }
 
-void Tag5::set_s2k(const S2K::Ptr & s){
-    if (s -> get_type() == S2K::SIMPLE_S2K){
-        s2k = std::make_shared <S2K0> ();
+void Tag5::set_s2k(const S2K::Base::Ptr & s){
+    if (s -> get_type() == S2K::ID::SIMPLE_S2K){
+        s2k = std::make_shared <S2K::S2K0> ();
     }
-    else if (s -> get_type() == S2K::SALTED_S2K){
-        s2k = std::make_shared <S2K1> ();
+    else if (s -> get_type() == S2K::ID::SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K1> ();
     }
-    else if (s -> get_type() == S2K::ITERATED_AND_SALTED_S2K){
-        s2k = std::make_shared <S2K3> ();
+    else if (s -> get_type() == S2K::ID::ITERATED_AND_SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K3> ();
     }
     s2k = s -> clone();
     size = raw_common().size() + 1;
@@ -318,13 +321,13 @@ const std::string & Tag5::encrypt_secret_keys(const std::string & passphrase, co
     secret = "";
 
     // convert keys into string
-    for(PGPMPI const & mpi : keys){
+    for(MPI const & mpi : keys){
         secret += write_MPI(mpi);
     }
 
     // calculate checksum
     if(s2k_con == 254){
-        secret += use_hash(s2k -> get_hash(), secret); // SHA1
+        secret += Hash::use(s2k -> get_hash(), secret); // SHA1
     }
     else{
         uint16_t sum = 0;
@@ -369,7 +372,7 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
 
     // calculate and check checksum
     if(s2k_con == 254){
-        calculated_checksum = use_hash(Hash::SHA1, keys);
+        calculated_checksum = Hash::use(Hash::ID::SHA1, keys);
     }
     else{
         uint16_t sum = 0;
@@ -394,8 +397,8 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     return out;
 }
 
-Packet::Ptr Tag5::clone() const{
-    Ptr out = std::make_shared <Tag5> (*this);
+Base::Ptr Tag5::clone() const{
+    Ptr out = std::make_shared <Packet::Tag5> (*this);
     out -> s2k = s2k?s2k -> clone():nullptr;
     return out;
 }
@@ -408,4 +411,7 @@ Tag5 & Tag5::operator=(const Tag5 & copy){
     IV = copy.IV;
     secret = copy.secret;
     return *this;
+}
+
+}
 }

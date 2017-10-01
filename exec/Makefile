@@ -17,22 +17,20 @@ debug: all
 gpg-debug: CXXFLAGS += -DGPG_COMPATIBLE
 gpg-debug: debug
 
-.PHONY: lib modules clean clean-modules clean-all
+.PHONY: ../libOpenPGP.a modules clean clean-modules clean-all
 
-lib:
+../libOpenPGP.a:
 	$(MAKE) $(MAKECMDGOALS) -C ..
 
 modules:
 	$(MAKE) $(MAKECMDGOALS) -C modules
 
-$(TARGET): main.cpp ../OpenPGP.h lib modules
+$(TARGET): main.cpp ../OpenPGP.h ../libOpenPGP.a modules
 	$(CXX) $(CXXFLAGS) main.cpp $(addprefix modules/, $(MODULES_OBJECTS)) $(LDFLAGS) -o $(TARGET)
 
 clean:
 	rm -f $(TARGET)
 
-clean-modules:
+clean-all: clean
 	$(MAKE) clean -C modules
-
-clean-all: clean clean-modules
-	$(MAKE) clean-all -C ..
+	$(MAKE) clean -C ..

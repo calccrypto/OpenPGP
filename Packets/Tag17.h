@@ -31,69 +31,74 @@ THE SOFTWARE.
 #include <string>
 
 #include "../common/includes.h"
-#include "../Subpackets/Tag17Subpackets.h"
+#include "../Subpackets/Tag17/Subpackets.h"
 #include "User.h"
 
-// 5.12. User Attribute Packet (Tag 17)
-//
-//    The User Attribute packet is a variation of the User ID packet. It
-//    is capable of storing more types of data than the User ID packet,
-//    which is limited to text. Like the User ID packet, a User Attribute
-//    packet may be certified by the key owner ("self-signed") or any other
-//    key owner who cares to certify it. Except as noted, a User Attribute
-//    packet may be used anywhere that a User ID packet may be used.
-//
-//    While User Attribute packets are not a required part of the OpenPGP
-//    standard, implementations SHOULD provide at least enough
-//    compatibility to properly handle a certification signature on the
-//    User Attribute packet. A simple way to do this is by treating the
-//    User Attribute packet as a User ID packet with opaque contents, but
-//    an implementation may use any method desired.
-//
-//    The User Attribute packet is made up of one or more attribute
-//    subpackets. Each subpacket consists of a subpacket header and a
-//    body. The header consists of:
-//
-//      - the subpacket length (1, 2, or 5 octets)
-//
-//      - the subpacket type (1 octet)
-//
-//    and is followed by the subpacket specific data.
-//
-//    The only currently defined subpacket type is 1, signifying an image.
-//    An implementation SHOULD ignore any subpacket of a type that it does
-//    not recognize. Subpacket types 100 through 110 are reserved for
-//    private or experimental use.
+namespace OpenPGP {
+    namespace Packet {
 
-class Tag17 : public User{
-    public:
-        typedef std::vector <Tag17Subpacket::Ptr> Attributes;
+        // 5.12. User Attribute Packet (Tag 17)
+        //
+        //    The User Attribute packet is a variation of the User ID packet. It
+        //    is capable of storing more types of data than the User ID packet,
+        //    which is limited to text. Like the User ID packet, a User Attribute
+        //    packet may be certified by the key owner ("self-signed") or any other
+        //    key owner who cares to certify it. Except as noted, a User Attribute
+        //    packet may be used anywhere that a User ID packet may be used.
+        //
+        //    While User Attribute packets are not a required part of the OpenPGP
+        //    standard, implementations SHOULD provide at least enough
+        //    compatibility to properly handle a certification signature on the
+        //    User Attribute packet. A simple way to do this is by treating the
+        //    User Attribute packet as a User ID packet with opaque contents, but
+        //    an implementation may use any method desired.
+        //
+        //    The User Attribute packet is made up of one or more attribute
+        //    subpackets. Each subpacket consists of a subpacket header and a
+        //    body. The header consists of:
+        //
+        //      - the subpacket length (1, 2, or 5 octets)
+        //
+        //      - the subpacket type (1 octet)
+        //
+        //    and is followed by the subpacket specific data.
+        //
+        //    The only currently defined subpacket type is 1, signifying an image.
+        //    An implementation SHOULD ignore any subpacket of a type that it does
+        //    not recognize. Subpacket types 100 through 110 are reserved for
+        //    private or experimental use.
 
-    private:
-        uint64_t length;
-        uint8_t type;
+        class Tag17 : public User {
+            public:
+                typedef std::vector <Subpacket::Tag17::Base::Ptr> Attributes;
 
-        // only defined subpacket is 1
-        Attributes attributes;
+            private:
+                uint64_t length;
+                uint8_t type;
 
-        void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
+                // only defined subpacket is 1
+                Attributes attributes;
 
-    public:
-        typedef std::shared_ptr <Tag17> Ptr;
+                void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
 
-        Tag17();
-        Tag17(const Tag17 & copy);
-        Tag17(const std::string & data);
-        ~Tag17();
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Packet::Tag17> Ptr;
 
-        Attributes get_attributes() const;
-        Attributes get_attributes_clone() const;
-        void set_attributes(const Attributes & a);
+                Tag17();
+                Tag17(const Tag17 & copy);
+                Tag17(const std::string & data);
+                ~Tag17();
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        Packet::Ptr clone() const;
-};
+                Attributes get_attributes() const;
+                Attributes get_attributes_clone() const;
+                void set_attributes(const Attributes & a);
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

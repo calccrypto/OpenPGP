@@ -1,12 +1,15 @@
 #include "Tag9.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag9::Tag9()
-    : Packet(Packet::SYMMETRICALLY_ENCRYPTED_DATA),
+    : Base(SYMMETRICALLY_ENCRYPTED_DATA),
       encrypted_data()
 {}
 
 Tag9::Tag9(const Tag9 & copy)
-    : Packet(copy),
+    : Base(copy),
       encrypted_data(copy.encrypted_data)
 {}
 
@@ -41,6 +44,9 @@ void Tag9::set_encrypted_data(const std::string & e){
     size = raw().size();
 }
 
-Packet::Ptr Tag9::clone() const{
-    return std::make_shared <Tag9> (*this);
+Base::Ptr Tag9::clone() const{
+    return std::make_shared <Packet::Tag9> (*this);
+}
+
+}
 }

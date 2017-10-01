@@ -68,10 +68,10 @@ const Module verify_file(
             return -1;
         }
 
-        const PGPKey signer(key);
-        const PGPMessage message(msg);
+        const OpenPGP::Key signer(key);
+        const OpenPGP::Message message(msg);
 
-        const int verified = ::verify_binary(signer, message);
+        const int verified = OpenPGP::Verify::binary(signer, message);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

@@ -1,5 +1,7 @@
 #include "PGP.h"
 
+namespace OpenPGP {
+
 const PGP::Type_t PGP::UNKNOWN           = 0; // Default value
 const PGP::Type_t PGP::MESSAGE           = 1; // Used for signed, encrypted, or compressed files.
 const PGP::Type_t PGP::PUBLIC_KEY_BLOCK  = 2; // Used for armoring public keys.
@@ -112,77 +114,77 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
     return tag;
 }
 
-Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const{
-    Packet::Ptr out;
+Packet::Base::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const{
+    Packet::Base::Ptr out;
     if (partial > 1){
-        out = std::make_shared <Partial> ();
+        out = std::make_shared <Packet::Partial> ();
     }
     else{
         if (tag == Packet::RESERVED){
             throw std::runtime_error("Error: Tag number MUST NOT be 0.");
         }
         else if (tag == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
-            out = std::make_shared <Tag1> ();
+            out = std::make_shared <Packet::Tag1> ();
         }
         else if (tag == Packet::SIGNATURE){
-            out = std::make_shared <Tag2> ();
+            out = std::make_shared <Packet::Tag2> ();
         }
         else if (tag == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
-            out = std::make_shared <Tag3> ();
+            out = std::make_shared <Packet::Tag3> ();
         }
         else if (tag == Packet::ONE_PASS_SIGNATURE){
-            out = std::make_shared <Tag4> ();
+            out = std::make_shared <Packet::Tag4> ();
         }
         else if (tag == Packet::SECRET_KEY){
-            out = std::make_shared <Tag5> ();
+            out = std::make_shared <Packet::Tag5> ();
         }
         else if (tag == Packet::PUBLIC_KEY){
-            out = std::make_shared <Tag6> ();
+            out = std::make_shared <Packet::Tag6> ();
         }
         else if (tag == Packet::SECRET_SUBKEY){
-            out = std::make_shared <Tag7> ();
+            out = std::make_shared <Packet::Tag7> ();
         }
         else if (tag == Packet::COMPRESSED_DATA){
-            out = std::make_shared <Tag8> ();
+            out = std::make_shared <Packet::Tag8> ();
         }
         else if (tag == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
-            out = std::make_shared <Tag9> ();
+            out = std::make_shared <Packet::Tag9> ();
         }
         else if (tag == Packet::MARKER_PACKET){
-            out = std::make_shared <Tag10> ();
+            out = std::make_shared <Packet::Tag10> ();
         }
         else if (tag == Packet::LITERAL_DATA){
-            out = std::make_shared <Tag11> ();
+            out = std::make_shared <Packet::Tag11> ();
         }
         else if (tag == Packet::TRUST){
-            out = std::make_shared <Tag12> ();
+            out = std::make_shared <Packet::Tag12> ();
         }
         else if (tag == Packet::USER_ID){
-            out = std::make_shared <Tag13> ();
+            out = std::make_shared <Packet::Tag13> ();
         }
         else if (tag == Packet::PUBLIC_SUBKEY){
-            out = std::make_shared <Tag14> ();
+            out = std::make_shared <Packet::Tag14> ();
         }
         else if (tag == Packet::USER_ATTRIBUTE){
-            out = std::make_shared <Tag17> ();
+            out = std::make_shared <Packet::Tag17> ();
         }
         else if (tag == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
-            out = std::make_shared <Tag18> ();
+            out = std::make_shared <Packet::Tag18> ();
         }
         else if (tag == Packet::MODIFICATION_DETECTION_CODE){
-            out = std::make_shared <Tag19> ();
+            out = std::make_shared <Packet::Tag19> ();
         }
         else if (tag == 60){
-            out = std::make_shared <Tag60> ();
+            out = std::make_shared <Packet::Tag60> ();
         }
         else if (tag == 61){
-            out = std::make_shared <Tag61> ();
+            out = std::make_shared <Packet::Tag61> ();
         }
         else if (tag == 62){
-            out = std::make_shared <Tag62> ();
+            out = std::make_shared <Packet::Tag62> ();
         }
         else if (tag == 63){
-            out = std::make_shared <Tag63> ();
+            out = std::make_shared <Packet::Tag63> ();
         }
         else{
             throw std::runtime_error("Error: Tag not defined: " + std::to_string(tag) + ".");
@@ -206,7 +208,7 @@ Packet::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t &
     return out;
 }
 
-Packet::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const{
+Packet::Base::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const{
     if (pos >= data.size()){
         return nullptr;
     }
@@ -297,7 +299,7 @@ void PGP::read(std::istream & stream){
 
         // Cleartext Signature Framework
         if (type == SIGNED_MESSAGE){
-            throw std::runtime_error("Error: Data contains message section. Use PGPCleartextSignature to parse this data.");
+            throw std::runtime_error("Error: Data contains message section. Use CleartextSignature to parse this data.");
         }
 
         // read Armor Key(s)
@@ -359,7 +361,7 @@ void PGP::read_raw(const std::string & data){
     uint8_t partial = 0;
     std::string::size_type pos = 0;
     while (pos < data.size()){
-        Packet::Ptr packet = read_packet(data, pos, partial);
+        Packet::Base::Ptr packet = read_packet(data, pos, partial);
         if (packet){
             packets.push_back(packet);
         }
@@ -380,21 +382,21 @@ void PGP::read_raw(std::istream & stream){
 
 std::string PGP::show(const std::size_t indents, const std::size_t indent_size) const{
     std::string out;
-    for(Packet::Ptr const & p : packets){
+    for(Packet::Base::Ptr const & p : packets){
         out += p -> show(indents, indent_size) + "\n";
     }
     return out;
 }
 
-std::string PGP::raw(const Packet::Format header) const{
+std::string PGP::raw(const Packet::Base::Format header) const{
     std::string out = "";
-    for(Packet::Ptr const & p : packets){
+    for(Packet::Base::Ptr const & p : packets){
         out += p -> write(header);
     }
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor, const Packet::Format header) const{
+std::string PGP::write(const PGP::Armored armor, const Packet::Base::Format header) const{
     const std::string packet_string = raw(header);  // raw PGP data = binary, no ASCII headers
 
     if ((armor == Armored::NO)                   || // no armor
@@ -428,7 +430,7 @@ const PGP::Packets & PGP::get_packets() const{
 
 PGP::Packets PGP::get_packets_clone() const{
     Packets out = packets;
-    for(Packet::Ptr & p : out){
+    for(Packet::Base::Ptr & p : out){
         p = p -> clone();
     }
     return out;
@@ -452,7 +454,7 @@ void PGP::set_packets(const PGP::Packets & p){
 
 void PGP::set_packets_clone(const PGP::Packets & p){
     packets = p;
-    for(Packet::Ptr & p : packets){
+    for(Packet::Base::Ptr & p : packets){
         p = p -> clone();
     }
 }
@@ -467,4 +469,6 @@ PGP & PGP::operator=(const PGP & copy){
 
 PGP::Ptr PGP::clone() const{
     return std::make_shared <PGP> (*this);
+}
+
 }

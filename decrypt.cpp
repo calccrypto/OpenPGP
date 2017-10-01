@@ -1,11 +1,14 @@
 #include "decrypt.h"
 
-PGPMessage decrypt_data(const uint8_t sym,
-                        const PGPMessage & message,
-                        const std::string & session_key){
+namespace OpenPGP {
+namespace Decrypt {
+
+Message data(const uint8_t sym,
+             const Message & message,
+             const std::string & session_key){
     if (!message.meaningful()){
         // "Error: Bad message.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // find start of encrypted data
@@ -17,7 +20,7 @@ PGPMessage decrypt_data(const uint8_t sym,
 
     if (i == packets.size()){
         // "Error: No encrypted data found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     uint8_t tag;
@@ -25,17 +28,17 @@ PGPMessage decrypt_data(const uint8_t sym,
 
     // copy initial data to string
     if (packets[i] -> get_tag() == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
-        data = std::static_pointer_cast <Tag9> (packets[i]) -> get_encrypted_data();
+        data = std::static_pointer_cast <Packet::Tag9> (packets[i]) -> get_encrypted_data();
         tag = Packet::SYMMETRICALLY_ENCRYPTED_DATA;
     }
     else if (packets[i] -> get_tag() == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
-        data = std::static_pointer_cast <Tag18> (packets[i]) -> get_protected_data();
+        data = std::static_pointer_cast <Packet::Tag18> (packets[i]) -> get_protected_data();
         tag = Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA;
     }
 
     if (!data.size()){
         // "Error: No encrypted data packet(s) found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // decrypt data
@@ -48,9 +51,9 @@ PGPMessage decrypt_data(const uint8_t sym,
     if (tag == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
         const std::string checksum = data.substr(data.size() - 20, 20); // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);                        // remove SHA1 checksum
-        if (use_hash(Hash::SHA1, data) != checksum){                    // check SHA1 checksum
+        if (Hash::use(Hash::ID::SHA1, data) != checksum){                    // check SHA1 checksum
             // "Error: Given checksum and calculated checksum do not match.";
-            return PGPMessage();
+            return Message();
         }
 
         data = data.substr(0, data.size() - 2);                         // get rid of \xd3\x14
@@ -59,48 +62,48 @@ PGPMessage decrypt_data(const uint8_t sym,
     data = data.substr(BS + 2, data.size() - BS - 2);                   // get rid of prefix
 
     // decompress and parse decrypted data
-    return PGPMessage(data);
+    return Message(data);
 }
 
-PGPMessage decrypt_pka(const PGPSecretKey & pri,
-                       const std::string & passphrase,
-                       const PGPMessage & message){
+Message pka(const SecretKey & pri,
+            const std::string & passphrase,
+            const Message & message){
     if (!pri.meaningful()){
         // "Error: Bad private key.\n";
-        return PGPMessage();
+        return Message();
     }
 
     if (!message.meaningful()){
         // "Error: No encrypted message found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // find Public-Key Encrypted Session Key Packet (Tag 1)
     // should be first packet
-    Tag1::Ptr tag1 = nullptr;
-    for(Packet::Ptr const & p : message.get_packets()){
+    Packet::Tag1::Ptr tag1 = nullptr;
+    for(Packet::Base::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
-            tag1 = std::static_pointer_cast <Tag1> (p);
+            tag1 = std::static_pointer_cast <Packet::Tag1> (p);
             break;
         }
     }
 
     if (!tag1){
         // "Error: No " + Packet::NAME.at(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     if (!PKA::can_encrypt(tag1 -> get_pka())){
         // "Error: Public Key Algorithm detected cannot be used to encrypt/decrypt.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // find corresponding secret key
-    Tag5::Ptr sec = nullptr;
-    for(Packet::Ptr const & p : pri.get_packets()){
+    Packet::Tag5::Ptr sec = nullptr;
+    for(Packet::Base::Ptr const & p : pri.get_packets()){
         sec = nullptr;
         if (Packet::is_secret(p -> get_tag())){
-            sec = std::static_pointer_cast <Tag5> (p);
+            sec = std::static_pointer_cast <Packet::Tag5> (p);
             // encrypted packet Key ID has to match decrypting Key ID, not main Key ID
             if (sec -> get_public_ptr() -> get_keyid() != tag1 -> get_keyid()){
                 continue;
@@ -115,17 +118,17 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
 
     if (!sec){
         // "Error: Correct Private Key not found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // decrypt secret keys
     std::string symkey;
-    if ((tag1 -> get_pka() == PKA::RSA_ENCRYPT_OR_SIGN) ||
-        (tag1 -> get_pka() == PKA::RSA_ENCRYPT_ONLY)){
-        symkey = mpitoraw(RSA_decrypt(tag1 -> get_mpi()[0], sec -> decrypt_secret_keys(passphrase), sec -> get_mpi()));
+    if ((tag1 -> get_pka() == PKA::ID::RSA_ENCRYPT_OR_SIGN) ||
+        (tag1 -> get_pka() == PKA::ID::RSA_ENCRYPT_ONLY)){
+        symkey = mpitoraw(PKA::RSA::decrypt(tag1 -> get_mpi()[0], sec -> decrypt_secret_keys(passphrase), sec -> get_mpi()));
     }
-    else if (tag1 -> get_pka() == PKA::ELGAMAL){
-        symkey = ElGamal_decrypt(tag1 -> get_mpi(), sec -> decrypt_secret_keys(passphrase), sec -> get_mpi());
+    else if (tag1 -> get_pka() == PKA::ID::ELGAMAL){
+        symkey = PKA::ElGamal::decrypt(tag1 -> get_mpi(), sec -> decrypt_secret_keys(passphrase), sec -> get_mpi());
     }
 
     // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
@@ -133,7 +136,7 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
 
     if (!(symkey = EME_PKCS1v1_5_DECODE(symkey)).size()){            // remove EME_PKCS1 encoding
         // "Error: EME_PKCS1v1_5_DECODE failure.\n";
-        return PGPMessage();
+        return Message();
     }
 
     const uint8_t sym = symkey[0];                                          // get symmetric algorithm
@@ -147,35 +150,38 @@ PGPMessage decrypt_pka(const PGPSecretKey & pri,
 
     if (unhexlify(makehex(sum, 4)) != checksum){                            // check session key checksums
         // "Error: Calculated session key checksum does not match given checksum.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // decrypt the data with the extracted key
-    return decrypt_data(sym, message, symkey);
+    return data(sym, message, symkey);
 }
 
-PGPMessage decrypt_sym(const PGPMessage & message,
-                       const std::string & passphrase){
+Message sym(const Message & message,
+            const std::string & passphrase){
     if (!message.meaningful()){
         // "Error: Bad message.\n";
-        return PGPMessage();
+        return Message();
     }
 
     // find Symmetric Key Encrypted Session Key (Tag 3)
     // should be first packet
-    Tag3::Ptr tag3 = nullptr;
-    for(Packet::Ptr const & p : message.get_packets()){
+    Packet::Tag3::Ptr tag3 = nullptr;
+    for(Packet::Base::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
-            tag3 = std::static_pointer_cast <Tag3> (p);
+            tag3 = std::static_pointer_cast <Packet::Tag3> (p);
             break;
         }
     }
 
     if (!tag3){
         // "Error: No " + Packet::NAME.at(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + " (Tag " + std::to_string(Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY) + ") found.\n";
-        return PGPMessage();
+        return Message();
     }
 
     const std::string symkey = tag3 -> get_session_key(passphrase);
-    return decrypt_data(symkey[0], message, symkey.substr(1, symkey.size() - 1));
+    return data(symkey[0], message, symkey.substr(1, symkey.size() - 1));
+}
+
+}
 }

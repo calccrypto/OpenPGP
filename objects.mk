@@ -1,12 +1,12 @@
 OPENPGP_OBJECTS=decrypt.o                   \
                 encrypt.o                   \
                 generatekey.o               \
-                PGPCleartextSignature.o     \
+                CleartextSignature.o        \
                 PGP.o                       \
-                PGPDetachedSignature.o      \
-                PGPKey.o                    \
-                PGPMessage.o                \
-                PGPRevocationCertificate.o  \
+                DetachedSignature.o         \
+                Key.o                       \
+                Message.o                   \
+                RevocationCertificate.o     \
                 revoke.o                    \
                 sign.o                      \
                 verify.o

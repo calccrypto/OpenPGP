@@ -29,76 +29,81 @@ THE SOFTWARE.
 #include <string>
 
 #include "../Hashes/Hashes.h"
+#include "../Misc/sigtypes.h"
 #include "../PKA/PKAs.h"
-#include "packet.h"
-#include "sigtypes.h"
+#include "Packet.h"
 
-// 5.4.  One-Pass Signature Packets (Tag 4)
-//
-//    The One-Pass Signature packet precedes the signed data and contains
-//    enough information to allow the receiver to begin calculating any
-//    hashes needed to verify the signature.  It allows the Signature
-//    packet to be placed at the end of the message, so that the signer
-//    can compute the entire signed message in one pass.
-//
-//    A One-Pass Signature does not interoperate with PGP 2.6.x or
-//    earlier.
-//
-//    The body of this packet consists of:
-//
-//      - A one-octet version number.  The current version is 3.
-//
-//      - A one-octet signature type.  Signature types are described in
-//        Section 5.2.1.
-//
-//      - A one-octet number describing the hash algorithm used.
-//
-//      - A one-octet number describing the public-key algorithm used.
-//
-//      - An eight-octet number holding the Key ID of the signing key.
-//
-//      - A one-octet number holding a flag showing whether the signature
-//        is nested.  A zero value indicates that the next packet is
-//        another One-Pass Signature packet that describes another
-//        signature to be applied to the same message data.
-//
-//    Note that if a message contains more than one one-pass signature,
-//    then the Signature packets bracket the message; that is, the first
-//    Signature packet after the message corresponds to the last one-pass
-//    packet and the final Signature packet corresponds to the first
-//    one-pass packet.
+namespace OpenPGP {
+    namespace Packet {
 
-class Tag4 : public Packet{
-    private:
-        uint8_t type;
-        uint8_t hash;
-        uint8_t pka;
-        std::string keyid; // 8 octets
-        uint8_t nested;    // A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
+        // 5.4.  One-Pass Signature Packets (Tag 4)
+        //
+        //    The One-Pass Signature packet precedes the signed data and contains
+        //    enough information to allow the receiver to begin calculating any
+        //    hashes needed to verify the signature.  It allows the Signature
+        //    packet to be placed at the end of the message, so that the signer
+        //    can compute the entire signed message in one pass.
+        //
+        //    A One-Pass Signature does not interoperate with PGP 2.6.x or
+        //    earlier.
+        //
+        //    The body of this packet consists of:
+        //
+        //      - A one-octet version number.  The current version is 3.
+        //
+        //      - A one-octet signature type.  Signature types are described in
+        //        Section 5.2.1.
+        //
+        //      - A one-octet number describing the hash algorithm used.
+        //
+        //      - A one-octet number describing the public-key algorithm used.
+        //
+        //      - An eight-octet number holding the Key ID of the signing key.
+        //
+        //      - A one-octet number holding a flag showing whether the signature
+        //        is nested.  A zero value indicates that the next packet is
+        //        another One-Pass Signature packet that describes another
+        //        signature to be applied to the same message data.
+        //
+        //    Note that if a message contains more than one one-pass signature,
+        //    then the Signature packets bracket the message; that is, the first
+        //    Signature packet after the message corresponds to the last one-pass
+        //    packet and the final Signature packet corresponds to the first
+        //    one-pass packet.
 
-    public:
-        typedef std::shared_ptr <Tag4> Ptr;
+        class Tag4 : public Base {
+            private:
+                uint8_t type;
+                uint8_t hash;
+                uint8_t pka;
+                std::string keyid; // 8 octets
+                uint8_t nested;    // A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
 
-        Tag4();
-        Tag4(const Tag4 & copy);
-        Tag4(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Packet::Tag4> Ptr;
 
-        uint8_t get_type() const;
-        uint8_t get_hash() const;
-        uint8_t get_pka() const;
-        std::string get_keyid() const;
-        uint8_t get_nested() const;
+                Tag4();
+                Tag4(const Tag4 & copy);
+                Tag4(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        void set_type(const uint8_t t);
-        void set_hash(const uint8_t h);
-        void set_pka(const uint8_t p);
-        void set_keyid(const std::string & k);
-        void set_nested(const uint8_t n);
+                uint8_t get_type() const;
+                uint8_t get_hash() const;
+                uint8_t get_pka() const;
+                std::string get_keyid() const;
+                uint8_t get_nested() const;
 
-        Packet::Ptr clone() const;
-};
+                void set_type(const uint8_t t);
+                void set_hash(const uint8_t h);
+                void set_pka(const uint8_t p);
+                void set_keyid(const std::string & k);
+                void set_nested(const uint8_t n);
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

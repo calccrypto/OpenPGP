@@ -1,5 +1,7 @@
 #include "cfb.h"
 
+namespace OpenPGP {
+
 std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){
     const std::size_t BS = crypt -> blocksize() >> 3;
 
@@ -141,7 +143,7 @@ std::string use_OpenPGP_CFB_encrypt(const uint8_t sym_alg, const uint8_t packet,
         return data;
     }
 
-    const SymAlg::Ptr alg = setup_Sym(sym_alg, key);
+    const SymAlg::Ptr alg = Sym::setup(sym_alg, key);
     return OpenPGP_CFB_encrypt(alg, packet, data, prefix);
 }
 
@@ -150,7 +152,7 @@ std::string use_OpenPGP_CFB_decrypt(const uint8_t sym_alg, const uint8_t packet,
         return data;
     }
 
-    const SymAlg::Ptr alg = setup_Sym(sym_alg, key);
+    const SymAlg::Ptr alg = Sym::setup(sym_alg, key);
     return OpenPGP_CFB_decrypt(alg, packet, data);
 }
 
@@ -183,7 +185,7 @@ std::string use_normal_CFB_encrypt(const uint8_t sym_alg, const std::string & da
         return data;
     }
 
-    const SymAlg::Ptr alg = setup_Sym(sym_alg, key);
+    const SymAlg::Ptr alg = Sym::setup(sym_alg, key);
     return normal_CFB_encrypt(alg, data, IV);
 }
 
@@ -192,6 +194,8 @@ std::string use_normal_CFB_decrypt(const uint8_t sym_alg, const std::string & da
         return data;
     }
 
-    const SymAlg::Ptr alg = setup_Sym(sym_alg, key);
+    const SymAlg::Ptr alg = Sym::setup(sym_alg, key);
     return normal_CFB_decrypt(alg, data, IV);
+}
+
 }

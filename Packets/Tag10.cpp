@@ -1,12 +1,15 @@
 #include "Tag10.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag10::Tag10()
-    : Packet(Packet::MARKER_PACKET),
+    : Base(MARKER_PACKET),
       pgp("PGP")
 {}
 
 Tag10::Tag10(const Tag10 & copy)
-    : Packet(copy),
+    : Base(copy),
       pgp(copy.pgp)
 {}
 
@@ -46,6 +49,9 @@ void Tag10::set_pgp(const std::string & s){
     size = 3;
 }
 
-Packet::Ptr Tag10::clone() const{
-    return std::make_shared <Tag10> (*this);
+Base::Ptr Tag10::clone() const{
+    return std::make_shared <Packet::Tag10> (*this);
+}
+
+}
 }

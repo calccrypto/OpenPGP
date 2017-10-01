@@ -1,10 +1,14 @@
 #include "Tag6.h"
+
+namespace OpenPGP {
+namespace Packet {
+
 Tag6::Tag6(uint8_t tag)
     : Key(tag)
 {}
 
 Tag6::Tag6()
-    : Tag6(Packet::PUBLIC_KEY)
+    : Tag6(PUBLIC_KEY)
 {}
 
 Tag6::Tag6(const Tag6 & copy)
@@ -12,18 +16,21 @@ Tag6::Tag6(const Tag6 & copy)
 {}
 
 Tag6::Tag6(const std::string & data)
-    : Tag6(Packet::PUBLIC_KEY)
+    : Tag6(PUBLIC_KEY)
 {
     read(data);
 }
 
 Tag6::~Tag6(){}
 
-Packet::Ptr Tag6::clone() const{
-    return std::make_shared <Tag6> (*this);
+Base::Ptr Tag6::clone() const{
+    return std::make_shared <Packet::Tag6> (*this);
 }
 
 Tag6 & Tag6::operator=(const Tag6 & copy){
     Key::operator=(copy);
     return *this;
+}
+
+}
 }

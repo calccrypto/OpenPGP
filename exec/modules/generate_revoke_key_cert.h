@@ -66,33 +66,33 @@ const Module generate_revoke_key_cert(
 
         unsigned int code;
         std::stringstream s(args.at("-c"));
-        if (!(s >> code) || !Revoke::is_key_revocation(code)){
+        if (!(s >> code) || !OpenPGP::Subpacket::Tag2::Revoke::is_key_revocation(code)){
             err << "Error:: Bad Revocation Code: " << std::to_string(code) << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const PGPSecretKey pri(key);
-        const RevArgs revargs(pri,
-                              args.at("passphrase"),
-                              pri,
-                              static_cast <uint8_t> (code),
-                              args.at("-r"),
-                              4,
-                              Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::SecretKey pri(key);
+        const OpenPGP::Revoke::Args revargs(pri,
+                                             args.at("passphrase"),
+                                             pri,
+                                             static_cast <uint8_t> (code),
+                                             args.at("-r"),
+                                             4,
+                                             OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPRevocationCertificate cert = ::revoke_key_cert(revargs);
+        const OpenPGP::RevocationCertificate cert = OpenPGP::Revoke::key_cert(revargs);
 
         if (cert.meaningful()){
             err << "Error: Generated bad key revocation certificate." << std::endl;
             return -1;
         }
 
-        out << cert.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << cert.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

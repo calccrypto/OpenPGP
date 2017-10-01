@@ -68,10 +68,10 @@ const Module verify_timestamp(
             return -1;
         }
 
-        const PGPKey signer(key);
-        const PGPDetachedSignature signature(sig);
+        const OpenPGP::Key signer(key);
+        const OpenPGP::DetachedSignature signature(sig);
 
-        const int verified = ::verify_timestamp(signer, signature);
+        const int verified = OpenPGP::Verify::timestamp(signer, signature);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

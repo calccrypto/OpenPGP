@@ -17,6 +17,9 @@ gpg-debug: debug
 
 .PHONY: clean
 
+%.o : %.cpp %.h Packet.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
 cfb.o: cfb.cpp cfb.h ../Encryptions/Encryptions.h ../Packets/packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
@@ -30,6 +33,9 @@ PKCS1.o: PKCS1.cpp PKCS1.h ../common/includes.h ../Hashes/Hashes.h ../RNG/RNGs.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 radix64.o: radix64.cpp radix64.h ../common/includes.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+s2k.o: s2k.cpp s2k.h ../common/includes.h ../Hashes/Hashes.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 sigcalc.o: sigcalc.cpp sigcalc.h ../Hashes/Hashes.h ../Packets/packets.h pgptime.h

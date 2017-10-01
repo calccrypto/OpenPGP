@@ -1,5 +1,7 @@
 #include "pgptime.h"
 
+namespace OpenPGP {
+
 // get current time since epoch
 time_t now(){
     time_t rawtime;
@@ -74,4 +76,6 @@ std::string show_dt(time_t dt){
     }
 
     return out;
+}
+
 }

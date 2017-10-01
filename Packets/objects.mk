@@ -1,9 +1,7 @@
-PACKETS_OBJECTS=packet.o   \
+PACKETS_OBJECTS=Packet.o   \
                 Partial.o  \
                 Key.o      \
                 User.o     \
-                sigtypes.o \
-                s2k.o      \
                 Tag0.o     \
                 Tag1.o     \
                 Tag2.o     \

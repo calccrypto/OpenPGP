@@ -1,6 +1,9 @@
 #include "Subpacket.h"
 
-std::string Subpacket::write_subpacket(const std::string & data) const{
+namespace OpenPGP {
+namespace Subpacket {
+
+std::string Base::write_SUBPACKET(const std::string & data) const{
     if (data.size() < 192){
         return std::string(1, data.size()) + data;
     }
@@ -13,7 +16,7 @@ std::string Subpacket::write_subpacket(const std::string & data) const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::string Subpacket::show_title() const{
+std::string Base::show_title() const{
     if (critical){
         return "Critical: ";
     }
@@ -21,46 +24,49 @@ std::string Subpacket::show_title() const{
     return "";
 }
 
-Subpacket::Subpacket(uint8_t type, unsigned int size, bool crit)
+Base::Base(uint8_t type, unsigned int size, bool crit)
     : critical(crit),
       type(type),
       size(size)
 {}
 
-Subpacket::Subpacket(const Subpacket & copy)
+Base::Base(const Base & copy)
     : critical(copy.critical),
       type(copy.type),
       size(copy.size)
 {}
 
-Subpacket & Subpacket::operator=(const Subpacket & copy){
+Base & Base::operator=(const Base & copy){
     type = copy.type;
     size = copy.size;
     return *this;
 }
 
-Subpacket::~Subpacket(){}
+Base::~Base(){}
 
-std::string Subpacket::write() const{
-    return write_subpacket(std::string(1, type | (critical?0x80:0x00)) + raw());
+std::string Base::write() const{
+    return write_SUBPACKET(std::string(1, type | (critical?0x80:0x00)) + raw());
 }
 
-uint8_t Subpacket::get_type() const{
+uint8_t Base::get_type() const{
     return type;
 }
 
-std::size_t Subpacket::get_size() const{
+std::size_t Base::get_size() const{
     return size;
 }
 
-void Subpacket::set_critical(const bool c){
+void Base::set_critical(const bool c){
     critical = c;
 }
 
-void Subpacket::set_type(const uint8_t t){
+void Base::set_type(const uint8_t t){
     type = t;
 }
 
-void Subpacket::set_size(const std::size_t s){
+void Base::set_size(const std::size_t s){
     size = s;
+}
+
+}
 }

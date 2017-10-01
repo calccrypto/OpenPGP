@@ -28,7 +28,5 @@ testmodules:
 
 clean:
 	rm -f $(EXEC_TESTCASES_OBJECTS)
-
-clean-all: clean
 	$(MAKE) clean -C modules
 

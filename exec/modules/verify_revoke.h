@@ -68,10 +68,10 @@ const Module verify_revoke(
             return -1;
         }
 
-        const PGPKey signer(key);
-        const PGPRevocationCertificate rev(cert);
+        const OpenPGP::Key signer(key);
+        const OpenPGP::RevocationCertificate rev(cert);
 
-            const int verified = ::verify_revoke(signer, rev);
+            const int verified = OpenPGP::Verify::revoke(signer, rev);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

@@ -74,76 +74,76 @@ const Module generate_keypair(
        const std::map <std::string, bool>        & flags,
        std::ostream                              & out,
        std::ostream                              & err) -> int {
-        if (PKA::NUMBER.find(args.at("--ppka")) == PKA::NUMBER.end()){
+        if (OpenPGP::PKA::NUMBER.find(args.at("--ppka")) == OpenPGP::PKA::NUMBER.end()){
             err << "Error: Bad Public Key Algorithm: " << args.at("--pka") << std::endl;
             return -1;
         }
 
-        if (Sym::NUMBER.find(args.at("--psym")) == Sym::NUMBER.end()){
+        if (OpenPGP::Sym::NUMBER.find(args.at("--psym")) == OpenPGP::Sym::NUMBER.end()){
             err << "Error: Bad Symmetric Key Algorithm: " << args.at("--psym") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--phash")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--phash")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--phash") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--psig")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--psig")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--psig") << std::endl;
             return -1;
         }
 
-        if (PKA::NUMBER.find(args.at("--spka")) == PKA::NUMBER.end()){
+        if (OpenPGP::PKA::NUMBER.find(args.at("--spka")) == OpenPGP::PKA::NUMBER.end()){
             err << "Error: Bad Public Key Algorithm: " << args.at("--ska") << std::endl;
             return -1;
         }
 
-        if (Sym::NUMBER.find(args.at("--ssym")) == Sym::NUMBER.end()){
+        if (OpenPGP::Sym::NUMBER.find(args.at("--ssym")) == OpenPGP::Sym::NUMBER.end()){
             err << "Error: Bad Symmetric Key Algorithm: " << args.at("--ssym") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--shash")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--shash")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--shash") << std::endl;
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("--ssig")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("--ssig")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("--ssig") << std::endl;
             return -1;
         }
 
-        KeyGen config;
+        OpenPGP::KeyGen config;
         config.passphrase = args.at("-p");
-        config.pka        = PKA::NUMBER.at(args.at("--ppka"));
+        config.pka        = OpenPGP::PKA::NUMBER.at(args.at("--ppka"));
         config.bits       = std::strtoul(args.at("--pkeysize").c_str(), 0, 10);
-        config.sym        = Sym::NUMBER.at(args.at("--psym"));
-        config.hash       = Hash::NUMBER.at(args.at("--phash"));
+        config.sym        = OpenPGP::Sym::NUMBER.at(args.at("--psym"));
+        config.hash       = OpenPGP::Hash::NUMBER.at(args.at("--phash"));
 
-        KeyGen::UserID uid;
+        OpenPGP::KeyGen::UserID uid;
         uid.user          = args.at("-u");
         uid.comment       = args.at("-c");
         uid.email         = args.at("-e");
-        uid.sig           = Hash::NUMBER.at(args.at("--psig"));
+        uid.sig           = OpenPGP::Hash::NUMBER.at(args.at("--psig"));
         config.uids.push_back(uid);
 
-        KeyGen::SubkeyGen subkey;
-        subkey.pka        = PKA::NUMBER.at(args.at("--spka"));
+        OpenPGP::KeyGen::SubkeyGen subkey;
+        subkey.pka        = OpenPGP::PKA::NUMBER.at(args.at("--spka"));
         subkey.bits       = std::strtoul(args.at("--skeysize").c_str(), 0, 10);
-        subkey.sym        = Sym::NUMBER.at(args.at("--ssym"));
-        subkey.hash       = Hash::NUMBER.at(args.at("--shash"));
-        subkey.sig        = Hash::NUMBER.at(args.at("--ssig"));
+        subkey.sym        = OpenPGP::Sym::NUMBER.at(args.at("--ssym"));
+        subkey.hash       = OpenPGP::Hash::NUMBER.at(args.at("--shash"));
+        subkey.sig        = OpenPGP::Hash::NUMBER.at(args.at("--ssig"));
         config.subkeys.push_back(subkey);
 
-        const PGPSecretKey pri = ::generate_key(config);
+        const OpenPGP::SecretKey pri = OpenPGP::generate_key(config);
 
         if (!pri.meaningful()){
             err << "Error: Generated bad keypair." << std::endl;
             return -1;
         }
 
-        const PGPPublicKey pub = pri.get_public();
+        const OpenPGP::PublicKey pub = pri.get_public();
 
         const std::string pub_name = args.at("-o") + ".public";
         const std::string pri_name = args.at("-o") + ".private";
@@ -160,8 +160,8 @@ const Module generate_keypair(
             return -1;
         }
 
-        pub_out << pub.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
-        pri_out << pri.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::flush;
+        pub_out << pub.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::flush;
+        pri_out << pri.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::flush;
 
         out << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
         return 0;

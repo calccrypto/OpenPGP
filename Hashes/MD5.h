@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "MD5_Const.h"
 
-class MD5 : public MerkleDamgard{
+class MD5 : public MerkleDamgard {
     private:
         struct context{
             uint32_t h0, h1, h2, h3;

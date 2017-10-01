@@ -25,11 +25,11 @@ THE SOFTWARE.
 
 // OpenPGP Types
 #include "PGP.h"                        // abstract base class
-#include "PGPCleartextSignature.h"      // Cleartext Signatures
-#include "PGPDetachedSignature.h"       // Detached Signatures
-#include "PGPKey.h"                     // Transferable Keys
-#include "PGPMessage.h"                 // OpenPGP Messages
-#include "PGPRevocationCertificate.h"   // OpenPGP Messages
+#include "CleartextSignature.h"      // Cleartext Signatures
+#include "DetachedSignature.h"       // Detached Signatures
+#include "Key.h"                     // Transferable Keys
+#include "Message.h"                 // OpenPGP Messages
+#include "RevocationCertificate.h"   // OpenPGP Messages
 
 // OpenPGP Functions
 #include "decrypt.h"                    // decrypt stuff

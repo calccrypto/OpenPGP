@@ -68,9 +68,9 @@ const Module verify_primary_key(
             return -1;
         }
 
-        const PGPKey signerkey(signer), signeekey(signee);
+        const OpenPGP::Key signerkey(signer), signeekey(signee);
 
-        const int verified = ::verify_primary_key(signerkey, signeekey);
+        const int verified = OpenPGP::Verify::primary_key(signerkey, signeekey);
 
         if (verified == -1){
             err << "Error: Bad PKA value" << std::endl;

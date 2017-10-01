@@ -1,0 +1,35 @@
+TAG2_SUBPACKET_OBJECTS=Subpacket.o  \
+                       Sub0.o       \
+                       Sub1.o       \
+                       Sub2.o       \
+                       Sub3.o       \
+                       Sub4.o       \
+                       Sub5.o       \
+                       Sub6.o       \
+                       Sub7.o       \
+                       Sub8.o       \
+                       Sub9.o       \
+                       Sub10.o      \
+                       Sub11.o      \
+                       Sub12.o      \
+                       Sub13.o      \
+                       Sub14.o      \
+                       Sub15.o      \
+                       Sub16.o      \
+                       Sub17.o      \
+                       Sub18.o      \
+                       Sub19.o      \
+                       Sub20.o      \
+                       Sub21.o      \
+                       Sub22.o      \
+                       Sub23.o      \
+                       Sub24.o      \
+                       Sub25.o      \
+                       Sub26.o      \
+                       Sub27.o      \
+                       Sub28.o      \
+                       Sub29.o      \
+                       Sub30.o      \
+                       Sub31.o      \
+                       Sub32.o      \
+                       Sub33.o

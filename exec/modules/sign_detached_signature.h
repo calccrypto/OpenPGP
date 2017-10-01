@@ -69,24 +69,24 @@ const Module sign_detached_signature(
             return -1;
         }
 
-        if (Hash::NUMBER.find(args.at("-h")) == Hash::NUMBER.end()){
+        if (OpenPGP::Hash::NUMBER.find(args.at("-h")) == OpenPGP::Hash::NUMBER.end()){
             err << "Error: Bad Hash Algorithm: " << args.at("-h") << std::endl;
             return -1;
         }
 
-        const SignArgs signargs(PGPSecretKey(key),
-                                args.at("passphrase"),
-                                4,
-                                Hash::NUMBER.at(args.at("-h")));
+        const OpenPGP::Sign::Args signargs(OpenPGP::SecretKey(key),
+                                           args.at("passphrase"),
+                                           4,
+                                           OpenPGP::Hash::NUMBER.at(args.at("-h")));
 
-        const PGPDetachedSignature signature = ::sign_detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}));
+        const OpenPGP::DetachedSignature signature = OpenPGP::Sign::detached_signature(signargs, std::string(std::istreambuf_iterator <char> (file), {}));
 
         if (!signature.meaningful()){
             err << "Error: Generated bad detached signature." << std::endl;
             return -1;
         }
 
-        out << signature.write(flags.at("-a")?PGP::Armored::YES:PGP::Armored::NO, Packet::Format::NEW) << std::endl;
+        out << signature.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -31,28 +31,33 @@ THE SOFTWARE.
 #include "Compress/Compress.h"
 #include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
+#include "Key.h"
+#include "Message.h"
 #include "Misc/PKCS1.h"
 #include "Misc/cfb.h"
 #include "Misc/mpi.h"
-#include "PGPKey.h"
-#include "PGPMessage.h"
 #include "PKA/PKAs.h"
 #include "Packets/packets.h"
 #include "verify.h"
 
-// decrypt data once session key is known
-PGPMessage decrypt_data(const uint8_t sym,
-                        const PGPMessage & message,
-                        const std::string & session_key);
+namespace OpenPGP {
+    namespace Decrypt {
+        // decrypt data once session key is known
+        Message data(const uint8_t sym,
+                     const Message & message,
+                     const std::string & session_key);
 
-// called from outside
-// session key encrypted with public key algorithm
-PGPMessage decrypt_pka(const PGPSecretKey & pri,
-                       const std::string & passphrase,
-                       const PGPMessage & message);
+        // called from outside
+        // session key encrypted with public key algorithm
+        Message pka(const SecretKey & pri,
+                    const std::string & passphrase,
+                    const Message & message);
 
-// session key encrypted with symmetric algorithm
-PGPMessage decrypt_sym(const PGPMessage & message,
-                       const std::string & passphrase);
+        // session key encrypted with symmetric algorithm
+        Message sym(const Message & message,
+                    const std::string & passphrase);
+
+}
+}
 
 #endif

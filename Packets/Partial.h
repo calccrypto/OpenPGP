@@ -26,28 +26,33 @@ THE SOFTWARE.
 #ifndef __PARTIAL__
 #define __PARTIAL__
 
-#include "packet.h"
+#include "Packet.h"
 
-class Partial : public Packet{
-    private:
-        std::string stream;
+namespace OpenPGP {
+    namespace Packet {
 
-        std::string show_title() const;
+        class Partial : public Base {
+            private:
+                std::string stream;
 
-    public:
-        typedef std::shared_ptr <Partial> Ptr;
+                std::string show_title() const;
 
-        Partial();
-        Partial(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Partial> Ptr;
 
-        std::string get_stream() const;
+                Partial();
+                Partial(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        void set_stream(const std::string & data);
+                std::string get_stream() const;
 
-        Packet::Ptr clone() const;
-};
+                void set_stream(const std::string & data);
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

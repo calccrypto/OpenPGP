@@ -28,34 +28,39 @@ THE SOFTWARE.
 
 #include "User.h"
 
-// 5.11. User ID Packet (Tag 13)
-//
-//    A User ID packet consists of UTF-8 text that is intended to represent
-//    the name and email address of the key holder. By convention, it
-//    includes an RFC 2822 [RFC2822] mail name-addr, but there are no
-//    restrictions on its content. The packet length in the header
-//    specifies the length of the User ID.
+namespace OpenPGP {
+    namespace Packet {
 
-class Tag13 : public User{
-    private:
-        std::string contents;
+        // 5.11. User ID Packet (Tag 13)
+        //
+        //    A User ID packet consists of UTF-8 text that is intended to represent
+        //    the name and email address of the key holder. By convention, it
+        //    includes an RFC 2822 [RFC2822] mail name-addr, but there are no
+        //    restrictions on its content. The packet length in the header
+        //    specifies the length of the User ID.
 
-    public:
-        typedef std::shared_ptr <Tag13> Ptr;
+        class Tag13 : public User {
+            private:
+                std::string contents;
 
-        Tag13();
-        Tag13(const Tag13 & copy);
-        Tag13(const std::string & data);
-        void read(const std::string & data);
-        std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-        std::string raw() const;
+            public:
+                typedef std::shared_ptr <Packet::Tag13> Ptr;
 
-        std::string get_contents() const;
+                Tag13();
+                Tag13(const Tag13 & copy);
+                Tag13(const std::string & data);
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw() const;
 
-        void set_contents(const std::string & c);
-        void set_contents(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
+                std::string get_contents() const;
 
-        Packet::Ptr clone() const;
-};
+                void set_contents(const std::string & c);
+                void set_contents(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
+
+                Base::Ptr clone() const;
+        };
+    }
+}
 
 #endif

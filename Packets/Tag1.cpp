@@ -1,14 +1,17 @@
 #include "Tag1.h"
 
+namespace OpenPGP {
+namespace Packet {
+
 Tag1::Tag1()
-    : Packet(Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY, 3),
+    : Base(PUBLIC_KEY_ENCRYPTED_SESSION_KEY, 3),
       keyid(),
       pka(),
       mpi()
 {}
 
 Tag1::Tag1(const Tag1 & copy)
-    : Packet(copy),
+    : Base(copy),
       keyid(copy.keyid),
       pka(copy.pka),
       mpi(copy.mpi)
@@ -87,6 +90,9 @@ void Tag1::set_mpi(const PKA::Values & m){
     size = raw().size();
 }
 
-Packet::Ptr Tag1::clone() const{
-    return std::make_shared <Tag1> (*this);
+Base::Ptr Tag1::clone() const{
+    return std::make_shared <Packet::Tag1> (*this);
+}
+
+}
 }

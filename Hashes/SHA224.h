@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "SHA256.h"
 
-class SHA224 : public SHA256{
+class SHA224 : public SHA256 {
     private:
         void original_h();
 

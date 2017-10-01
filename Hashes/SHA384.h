@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "SHA512.h"
 
-class SHA384 : public SHA512{
+class SHA384 : public SHA512 {
     private:
         void original_h();
 
