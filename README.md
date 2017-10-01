@@ -56,7 +56,7 @@ This library should be relatively straightforward to use:
 Simply `#include` whatever functions needed:
 
  Feature        | Header         | Namespace
-----------------|-----------------------------------
+----------------|----------------|------------------
  key generation | generatekey.h  | OpenPGP
  key revocation | revoke.h       | OpenPGP::Revoke
  encrypt        | encrypt.h      | OpenPGP::Encrypt

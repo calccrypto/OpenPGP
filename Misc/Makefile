@@ -20,7 +20,7 @@ gpg-debug: debug
 %.o : %.cpp %.h Packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-cfb.o: cfb.cpp cfb.h ../Encryptions/Encryptions.h ../Packets/packet.h
+cfb.o: cfb.cpp cfb.h ../Encryptions/Encryptions.h ../Packets/Packet.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 mpi.o: mpi.cpp mpi.h ../common/includes.h
