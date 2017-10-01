@@ -36,9 +36,9 @@ the OpenPGP Message Format.
 
 The following are the libraries necessary to build OpenPGP:
 
-- GMP (<https://gmplib.org/>, `sudo apt-get install libgmp-dev`, etc)
-- bzip2 (<http://www.bzip.org/>, `sudo apt-get install libbz2-dev`, etc)
-- zlib (<http://www.zlib.net/>, `sudo apt-get install zlib1g-dev`, etc)
+- GMP (<https://gmplib.org/>)
+- bzip2 (<http://www.bzip.org/>)
+- zlib (<http://www.zlib.net/>)
 
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me
@@ -71,8 +71,8 @@ to make differentiating PGP block types better in code:
 -----------------------|-------------------------------------
  DetachedSignature     | detached signatures for files
  Key                   | base class for OpenPGP key types
- PublicKey             | holds public keys; inherits PGPKey
- SecretKey             | holds private keys; inherits PGPKey
+ PublicKey             | holds public keys; inherits Key
+ SecretKey             | holds private keys; inherits Key
  Message               | holds OpenPGP Messages
  RevocationCertificate | holds revocation certificates
 
@@ -81,7 +81,7 @@ will cause problems when used. The `meaningful` function in these
 PGP objects is provided to make sure that the data contained is
 meaningful.
 
-`PGPCleartextSignature` does not inherit from PGP and cannot
+`CleartextSignature` does not inherit from PGP and cannot
 read non-Cleartext Signature data.
 
 The `exec/main.cpp` file provides a simple command line tool that
