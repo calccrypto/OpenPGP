@@ -60,9 +60,9 @@ namespace OpenPGP {
         //    message that is encrypted to a V3 key, it is reasonable to create a
         //    V3 signature.
 
-        class Tag2 : public Base {
+        class Tag2 : public Tag {
             public:
-                typedef std::vector <Subpacket::Tag2::Base::Ptr> Subpackets;
+                typedef std::vector <Subpacket::Tag2::Sub::Ptr> Subpackets;
 
             private:
                 // common
@@ -129,7 +129,7 @@ namespace OpenPGP {
 
                 std::string find_subpacket(const uint8_t sub)   const;      // find a subpacket within Signature Packet; returns raw data of last subpacket found
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
                 Tag2 & operator=(const Tag2 & copy);
         };
     }

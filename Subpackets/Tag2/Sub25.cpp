@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub25::Sub25()
-    : Base(PRIMARY_USER_ID, 1),
+    : Sub(PRIMARY_USER_ID, 1),
       primary()
 {}
 
@@ -40,7 +40,7 @@ void Sub25::set_primary(const bool p){
     primary = p;
 }
 
-Base::Ptr Sub25::clone() const{
+Sub::Ptr Sub25::clone() const{
     return std::make_shared <Sub25> (*this);
 }
 

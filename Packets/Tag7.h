@@ -49,7 +49,7 @@ namespace OpenPGP {
                 Tag14 get_public_obj() const;       // extract public subkey from private key
                 Tag14::Ptr get_public_ptr() const;  // extract public subkey from private key into a pointer
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
                 Tag7 & operator=(const Tag7 & copy);
         };
     }

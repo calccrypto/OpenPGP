@@ -43,7 +43,7 @@ namespace OpenPGP {
             //    Algorithm numbers are in Section 9. This is only found on a self-
             //    signature.
 
-            class Sub11 : public Base {
+            class Sub11 : public Sub {
                 private:
                     std::string psa;
 
@@ -60,7 +60,7 @@ namespace OpenPGP {
 
                     void set_psa(const std::string & s);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

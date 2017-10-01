@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub21::Sub21()
-    : Base(PREFERRED_HASH_ALGORITHMS),
+    : Sub(PREFERRED_HASH_ALGORITHMS),
       pha()
 {}
 
@@ -45,7 +45,7 @@ void Sub21::set_pha(const std::string & p){
     pha = p;
 }
 
-Base::Ptr Sub21::clone() const{
+Sub::Ptr Sub21::clone() const{
     return std::make_shared <Sub21> (*this);
 }
 

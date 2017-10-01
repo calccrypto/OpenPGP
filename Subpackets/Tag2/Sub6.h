@@ -43,7 +43,7 @@ namespace OpenPGP {
             //    "almost public domain" regular expression [REGEX] package. A
             //    description of the syntax is found in Section 8 below.
 
-            class Sub6 : public Base {
+            class Sub6 : public Sub {
                 private:
                     std::string regex;
 
@@ -60,7 +60,7 @@ namespace OpenPGP {
 
                     void set_regex(const std::string & r);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

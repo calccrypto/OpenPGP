@@ -113,7 +113,7 @@ const Module encrypt_sym(
                                                  args.at("-p"),
                                                  OpenPGP::Hash::NUMBER.at(args.at("--shash")));
 
-        out << OpenPGP::Encrypt::sym(encryptargs, args.at("passphrase"), OpenPGP::Hash::NUMBER.at(args.at("--khash"))).write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
+        out << OpenPGP::Encrypt::sym(encryptargs, args.at("passphrase"), OpenPGP::Hash::NUMBER.at(args.at("--khash"))).write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
         return 0;
     }
 );

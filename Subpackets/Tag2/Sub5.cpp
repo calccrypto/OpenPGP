@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub5::Sub5()
-    : Base(TRUST_SIGNATURE, 2),
+    : Sub(TRUST_SIGNATURE, 2),
       level(),
       amount()
 {}
@@ -51,7 +51,7 @@ void Sub5::set_amount(const uint8_t a){
     amount = a;
 }
 
-Base::Base::Ptr Sub5::clone() const{
+Sub::Ptr Sub5::clone() const{
     return std::make_shared <Sub5> (*this);
 }
 

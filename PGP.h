@@ -63,7 +63,7 @@ namespace OpenPGP {
 
             typedef std::pair <std::string, std::string> Armor_Key;
             typedef std::vector <Armor_Key> Armor_Keys;
-            typedef std::vector <Packet::Base::Ptr> Packets;
+            typedef std::vector <Packet::Tag::Ptr> Packets;
 
         protected:
             bool armored;                                   // default true
@@ -79,11 +79,11 @@ namespace OpenPGP {
             uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, std::string::size_type & length, uint8_t & tag, bool & format, uint8_t & partial) const;
 
             // parses raw packet data
-            Packet::Base::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const;
+            Packet::Tag::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const;
 
             // parse packet with header; wrapper for read_packet_header and read_packet_raw
             // partial should be initialized with 0
-            Packet::Base::Ptr read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const;
+            Packet::Tag::Ptr read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const;
 
             // modifies output string so each line is no longer than MAX_LINE_SIZE long
             std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
@@ -106,8 +106,8 @@ namespace OpenPGP {
             void read_raw(std::istream & stream);
 
             virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-            virtual std::string raw(const Packet::Base::Format header = Packet::Base::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
-            virtual std::string write(const Armored armor = DEFAULT, const Packet::Base::Format header = Packet::Base::Format::DEFAULT) const;
+            virtual std::string raw(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
+            virtual std::string write(const Armored armor = DEFAULT, const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;
 
             // Accessors
             bool get_armored()              const;

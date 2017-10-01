@@ -177,18 +177,18 @@ namespace OpenPGP {
                 std::make_pair(110,                                             "Private/Experimental algorithm"),
             };
 
-            class Base: public Subpacket::Base {
+            class Sub: public Subpacket::Sub {
                 protected:
-                    using Subpacket::Base::Base;
+                    using Subpacket::Sub::Sub;
 
                     std::string show_title() const;
 
-                    Base & operator=(const Base & copy);
+                    Sub & operator=(const Sub & copy);
 
                 public:
-                    typedef std::shared_ptr <Base> Ptr;
+                    typedef std::shared_ptr <Sub> Ptr;
 
-                    virtual ~Base();
+                    virtual ~Sub();
 
                     virtual Ptr clone() const = 0;
             };

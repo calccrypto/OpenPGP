@@ -67,7 +67,7 @@ namespace OpenPGP {
                 };
             }
 
-            class Sub30 : public Base {
+            class Sub30 : public Sub {
                 private:
                     std::string flags;
 
@@ -84,7 +84,7 @@ namespace OpenPGP {
 
                     void set_flags(const std::string & f);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

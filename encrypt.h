@@ -91,7 +91,7 @@ namespace OpenPGP {
         };
 
         // encrypt data once session key has been generated
-        Packet::Base::Ptr data(const Args & args,
+        Packet::Tag::Ptr data(const Args & args,
                                const std::string & session_key);
 
         // encrypt with public key

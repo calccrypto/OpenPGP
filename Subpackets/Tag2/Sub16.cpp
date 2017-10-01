@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub16::Sub16()
-    : Base(ISSUER, 8),
+    : Sub(ISSUER, 8),
       keyid()
 {}
 
@@ -41,7 +41,7 @@ void Sub16::set_keyid(const std::string & k){
     keyid = k;
 }
 
-Base::Ptr Sub16::clone() const{
+Sub::Ptr Sub16::clone() const{
     return std::make_shared <Sub16> (*this);
 }
 

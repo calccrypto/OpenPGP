@@ -35,7 +35,7 @@ Tag17::Tag17(const Tag17 & copy)
       type(copy.type),
       attributes(copy.attributes)
 {
-    for(Subpacket::Tag17::Base::Ptr & s : attributes){
+    for(Subpacket::Tag17::Sub::Ptr & s : attributes){
         s = s -> clone();
     }
 }
@@ -59,7 +59,7 @@ void Tag17::read(const std::string & data){
         std::string::size_type length;
         read_subpacket(data, pos, length);
 
-        Subpacket::Tag17::Base::Ptr subpacket = nullptr;
+        Subpacket::Tag17::Sub::Ptr subpacket = nullptr;
         if (data[pos] == Subpacket::Tag17::IMAGE_ATTRIBUTE){
             subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
         }
@@ -79,7 +79,7 @@ std::string Tag17::show(const std::size_t indents, const std::size_t indent_size
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     std::string out = indent + show_title();
-    for(Subpacket::Tag17::Base::Ptr const & attr : attributes){
+    for(Subpacket::Tag17::Sub::Ptr const & attr : attributes){
         out += "\n" + indent + tab + attr -> show(indents, indent_size);
     }
     return out;
@@ -87,7 +87,7 @@ std::string Tag17::show(const std::size_t indents, const std::size_t indent_size
 
 std::string Tag17::raw() const{
     std::string out = "";
-    for(Subpacket::Tag17::Base::Ptr const & a : attributes){
+    for(Subpacket::Tag17::Sub::Ptr const & a : attributes){
         out += a -> write();
     }
     return out;
@@ -99,7 +99,7 @@ Tag17::Attributes Tag17::get_attributes() const{
 
 Tag17::Attributes Tag17::get_attributes_clone() const{
     Attributes out;
-    for(Subpacket::Tag17::Base::Ptr const & s : attributes){
+    for(Subpacket::Tag17::Sub::Ptr const & s : attributes){
         out.push_back(s -> clone());
     }
     return out;
@@ -107,13 +107,13 @@ Tag17::Attributes Tag17::get_attributes_clone() const{
 
 void Tag17::set_attributes(const Tag17::Attributes & a){
     attributes.clear();
-    for(Subpacket::Tag17::Base::Ptr const & s : a){
+    for(Subpacket::Tag17::Sub::Ptr const & s : a){
         attributes.push_back(s -> clone());
     }
     size = raw().size();
 }
 
-Base::Ptr Tag17::clone() const{
+Tag::Ptr Tag17::clone() const{
     return std::make_shared <Packet::Tag17> (*this);
 }
 

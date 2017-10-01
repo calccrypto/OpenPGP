@@ -81,7 +81,7 @@ Message pka(const SecretKey & pri,
     // find Public-Key Encrypted Session Key Packet (Tag 1)
     // should be first packet
     Packet::Tag1::Ptr tag1 = nullptr;
-    for(Packet::Base::Ptr const & p : message.get_packets()){
+    for(Packet::Tag::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
             tag1 = std::static_pointer_cast <Packet::Tag1> (p);
             break;
@@ -100,7 +100,7 @@ Message pka(const SecretKey & pri,
 
     // find corresponding secret key
     Packet::Tag5::Ptr sec = nullptr;
-    for(Packet::Base::Ptr const & p : pri.get_packets()){
+    for(Packet::Tag::Ptr const & p : pri.get_packets()){
         sec = nullptr;
         if (Packet::is_secret(p -> get_tag())){
             sec = std::static_pointer_cast <Packet::Tag5> (p);
@@ -167,7 +167,7 @@ Message sym(const Message & message,
     // find Symmetric Key Encrypted Session Key (Tag 3)
     // should be first packet
     Packet::Tag3::Ptr tag3 = nullptr;
-    for(Packet::Base::Ptr const & p : message.get_packets()){
+    for(Packet::Tag::Ptr const & p : message.get_packets()){
         if (p -> get_tag() == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
             tag3 = std::static_pointer_cast <Packet::Tag3> (p);
             break;

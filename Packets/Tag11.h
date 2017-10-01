@@ -91,7 +91,7 @@ namespace OpenPGP {
             };
         }
 
-        class Tag11 : public Base {
+        class Tag11 : public Tag {
             private:
                 uint8_t format;
                 std::string filename;
@@ -119,7 +119,7 @@ namespace OpenPGP {
                 void set_time(const uint32_t t);
                 void set_literal(const std::string & l);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

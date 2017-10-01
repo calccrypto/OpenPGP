@@ -4,12 +4,12 @@ namespace OpenPGP {
 namespace Packet {
 
 Tag12::Tag12()
-    : Base(TRUST),
+    : Tag(TRUST),
       trust()
 {}
 
 Tag12::Tag12(const Tag12 & copy)
-    : Base(copy),
+    : Tag(copy),
       trust(copy.trust)
 {}
 
@@ -44,7 +44,7 @@ void Tag12::set_trust(const std::string & t){
     size = raw().size();
 }
 
-Base::Ptr Tag12::clone() const{
+Tag::Ptr Tag12::clone() const{
     return std::make_shared <Packet::Tag12> (*this);
 }
 

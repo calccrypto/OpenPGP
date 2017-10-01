@@ -84,10 +84,10 @@ namespace OpenPGP {
         //    Iterated-Salted S2K.  The salt value will ensure that the decryption
         //    key is not repeated even if the passphrase is reused.
 
-        class Tag3 : public Base {
+        class Tag3 : public Tag {
             private:
                 uint8_t sym;
-                S2K::Base::Ptr s2k;
+                S2K::S2K::Ptr s2k;
                 std::shared_ptr <std::string> esk; // encrypted session key
 
             public:
@@ -102,19 +102,19 @@ namespace OpenPGP {
                 std::string raw() const;
 
                 uint8_t get_sym() const;
-                S2K::Base::Ptr get_s2k() const;
-                S2K::Base::Ptr get_s2k_clone() const;
+                S2K::S2K::Ptr get_s2k() const;
+                S2K::S2K::Ptr get_s2k_clone() const;
                 std::shared_ptr <std::string> get_esk() const;
                 std::shared_ptr <std::string> get_esk_clone() const;
                 std::string get_session_key(const std::string & pass) const;
 
                 void set_sym(const uint8_t s);
-                void set_s2k(const S2K::Base::Ptr & s);
+                void set_s2k(const S2K::S2K::Ptr & s);
                 void set_esk(std::string * s);
                 void set_esk(const std::string & s);
                 void set_session_key(const std::string & pass, const std::string & sk = "");    // passing in empty sk will erase esk
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
                 Tag3 & operator=(const Tag3 & tag3);
         };
     }

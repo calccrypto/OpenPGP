@@ -31,7 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
-            class Sub19 : public Base {
+            class Sub19 : public Sub {
                 public:
                     Sub19(...);
             };

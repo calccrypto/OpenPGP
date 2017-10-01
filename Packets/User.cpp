@@ -7,7 +7,7 @@ User::~User(){}
 
 User & User::operator=(const User & copy)
 {
-    Base::operator=(copy);
+    Tag::operator=(copy);
     return *this;
 }
 

@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub11::Sub11()
-    : Base(PREFERRED_SYMMETRIC_ALGORITHMS),
+    : Sub(PREFERRED_SYMMETRIC_ALGORITHMS),
       psa()
 {}
 
@@ -45,7 +45,7 @@ void Sub11::set_psa(const std::string & s){
     psa = s;
 }
 
-Base::Ptr Sub11::clone() const{
+Sub::Ptr Sub11::clone() const{
     return std::make_shared <Sub11> (*this);
 }
 

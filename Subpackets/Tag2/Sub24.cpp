@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub24::Sub24()
-    : Base(PREFERRED_KEY_SERVER),
+    : Sub(PREFERRED_KEY_SERVER),
       pks()
 {}
 
@@ -39,7 +39,7 @@ void Sub24::set_pks(const std::string & p){
     pks = p;
 }
 
-Base::Ptr Sub24::clone() const{
+Sub::Ptr Sub24::clone() const{
     return std::make_shared <Sub24> (*this);
 }
 

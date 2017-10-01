@@ -8,12 +8,12 @@ Tag61::Tag61()
 {}
 
 Tag61::Tag61(const Tag61 & copy)
-    : Base(copy),
+    : Tag(copy),
       stream(copy.stream)
 {}
 
 Tag61::Tag61(const std::string & data)
-    : Base(61),
+    : Tag(61),
       stream(data)
 {}
 
@@ -40,7 +40,7 @@ void Tag61::set_stream(const std::string & data){
     stream = data;
 }
 
-Base::Ptr Tag61::clone() const{
+Tag::Ptr Tag61::clone() const{
     return std::make_shared <Packet::Tag61> (*this);
 }
 

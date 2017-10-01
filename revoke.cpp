@@ -26,7 +26,7 @@ int check(const Key & key){
     }
 
     // UIDs and subkeys
-    for(Packet::Base::Ptr const & p: key.get_packets()){
+    for(Packet::Tag::Ptr const & p: key.get_packets()){
         // if a signature packet
         if (p -> get_tag() == Packet::SIGNATURE){
             const Packet::Tag2::Ptr tag2 = std::static_pointer_cast <Packet::Tag2> (p);
@@ -109,7 +109,7 @@ Packet::Tag2::Ptr key_sig(const Args & args){
     }
 
     // add revocation subpacket
-    std::vector <Subpacket::Tag2::Base::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
+    std::vector <Subpacket::Tag2::Sub::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
     Subpacket::Tag2::Sub29::Ptr revoke = std::make_shared <Subpacket::Tag2::Sub29> ();
     revoke -> set_code(args.code);
     revoke -> set_reason(args.reason);
@@ -135,7 +135,7 @@ Packet::Tag2::Ptr subkey_sig(const Args & args, const std::string & keyid){
 
     // find subkey to sign
     Packet::Tag7::Ptr target = nullptr;
-    for(Packet::Base::Ptr const & p : args.target.get_packets()){
+    for(Packet::Tag::Ptr const & p : args.target.get_packets()){
         if (p -> get_tag() == Packet::SECRET_SUBKEY){
             target = std::static_pointer_cast <Packet::Tag7> (p);
             if (target -> get_keyid().find(keyid) != std::string::npos){
@@ -208,7 +208,7 @@ Packet::Tag2::Ptr uid_sig(const Args & args, const std::string & ID){
 
     // find user information
     Packet::User::Ptr user = nullptr;
-    for(Packet::Base::Ptr const & p : args.target.get_packets()){
+    for(Packet::Tag::Ptr const & p : args.target.get_packets()){
         if (p -> get_tag() == Packet::USER_ID){
             Packet::Tag13::Ptr tag13 = std::static_pointer_cast <Packet::Tag13> (p);
 
@@ -235,7 +235,7 @@ Packet::Tag2::Ptr uid_sig(const Args & args, const std::string & ID){
     }
 
     // add revocation subpacket
-    std::vector <Subpacket::Tag2::Base::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
+    std::vector <Subpacket::Tag2::Sub::Ptr> hashed_subpackets = sig -> get_hashed_subpackets_clone();
     Subpacket::Tag2::Sub29::Ptr revoke = std::make_shared <Subpacket::Tag2::Sub29> ();
     revoke -> set_code(args.code);
     revoke -> set_reason(args.reason);

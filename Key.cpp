@@ -61,7 +61,7 @@ std::string Key::list_keys(const std::size_t indents, const std::size_t indent_s
 
     // print Key and User packets
     std::stringstream out;
-    for(Packet::Base::Ptr const & p : packets){
+    for(Packet::Tag::Ptr const & p : packets){
         // primary key/subkey
         if (Packet::is_key_packet(p -> get_tag())){
             const Packet::Key::Ptr key = std::static_pointer_cast <Packet::Key> (p);
@@ -82,7 +82,7 @@ std::string Key::list_keys(const std::size_t indents, const std::size_t indent_s
         }
         // User Attribute
         else if (p -> get_tag() == Packet::USER_ATTRIBUTE){
-            for(Subpacket::Tag17::Base::Ptr const & s : std::static_pointer_cast <Packet::Tag17> (p) -> get_attributes()){
+            for(Subpacket::Tag17::Sub::Ptr const & s : std::static_pointer_cast <Packet::Tag17> (p) -> get_attributes()){
                 // since only subpacket type 1 is defined
                 out << "\n"
                     << indent << "att  att  [jpeg image of size " << std::static_pointer_cast <Subpacket::Tag17::Sub1> (s) -> get_image().size() << "]";
@@ -362,7 +362,7 @@ PublicKey & PublicKey::operator=(const PublicKey & pub){
     keys = pub.keys;
     packets = pub.packets;
 
-    for(Packet::Base::Ptr & p : packets){
+    for(Packet::Tag::Ptr & p : packets){
         p = p -> clone();
     }
 
@@ -414,7 +414,7 @@ PublicKey SecretKey::get_public() const{
 
     // clone packets; convert secret packets into public ones
     Packets pub_packets;
-    for(Packet::Base::Ptr const & p : packets){
+    for(Packet::Tag::Ptr const & p : packets){
         if (p -> get_tag() == Packet::SECRET_KEY){
             pub_packets.push_back(std::static_pointer_cast <Packet::Tag5> (p) -> get_public_ptr());
         }
@@ -455,7 +455,7 @@ Packet::Key::Ptr find_signing_key(const Key & key){
         return nullptr;
     }
 
-    for(Packet::Base::Ptr const & p : key.get_packets()){
+    for(Packet::Tag::Ptr const & p : key.get_packets()){
         if (Packet::is_key_packet(p -> get_tag())){ // primary key or subkey
             Packet::Key::Ptr signing = std::static_pointer_cast <Packet::Key> (p);
 

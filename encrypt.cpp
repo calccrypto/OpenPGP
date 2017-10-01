@@ -3,7 +3,7 @@
 namespace OpenPGP {
 namespace Encrypt {
 
-Packet::Base::Ptr data(const Args & args,
+Packet::Tag::Ptr data(const Args & args,
                  const std::string & session_key){
 
     if (!args.valid()){
@@ -32,14 +32,14 @@ Packet::Base::Ptr data(const Args & args,
         tag11.set_time(0);
         tag11.set_literal(args.data);
 
-        to_encrypt = tag11.write(Packet::Base::Format::NEW);
+        to_encrypt = tag11.write(Packet::Tag::Format::NEW);
 
         if (args.comp){
             // Compressed Data Packet (Tag 8)
             Packet::Tag8 tag8;
             tag8.set_comp(args.comp);
             tag8.set_data(to_encrypt); // put source data into compressed packet
-            to_encrypt = tag8.write(Packet::Base::Format::NEW);
+            to_encrypt = tag8.write(Packet::Tag::Format::NEW);
         }
     }
 
@@ -48,7 +48,7 @@ Packet::Base::Ptr data(const Args & args,
     std::string prefix = unbinify(RNG::BBS().rand(BS));
     prefix += prefix.substr(prefix.size() - 2, 2);
 
-    Packet::Base::Ptr encrypted = nullptr;
+    Packet::Tag::Ptr encrypted = nullptr;
 
     if (!args.mdc){
         // Symmetrically Encrypted Data Packet (Tag 9)
@@ -97,7 +97,7 @@ Message pka(const Args & args,
     }
 
     Packet::Key::Ptr key = nullptr;
-    for(Packet::Base::Ptr const & p : pgpkey.get_packets()){
+    for(Packet::Tag::Ptr const & p : pgpkey.get_packets()){
         key = nullptr;
         if (Packet::is_key_packet(p -> get_tag())){
             key = std::static_pointer_cast <Packet::Key> (p);
@@ -145,7 +145,7 @@ Message pka(const Args & args,
     }
 
     // encrypt data and put it into a packet
-    Packet::Base::Ptr encrypted = data(args, session_key);
+    Packet::Tag::Ptr encrypted = data(args, session_key);
     if (!encrypted){
         // "Error: Failed to encrypt data.\n";
         return Message();
@@ -186,7 +186,7 @@ Message sym(const Args & args,
     const std::string session_key = tag3 -> get_session_key(passphrase);
 
     // encrypt data
-    Packet::Base::Ptr encrypted = data(args, session_key.substr(1, session_key.size() - 1));
+    Packet::Tag::Ptr encrypted = data(args, session_key.substr(1, session_key.size() - 1));
     if (!encrypted){
         // "Error: Failed to encrypt data.\n";
         return Message();

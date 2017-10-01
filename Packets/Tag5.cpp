@@ -202,11 +202,11 @@ uint8_t Tag5::get_sym() const{
     return sym;
 }
 
-S2K::Base::Ptr Tag5::get_s2k() const{
+S2K::S2K::Ptr Tag5::get_s2k() const{
     return s2k;
 }
 
-S2K::Base::Ptr Tag5::get_s2k_clone() const{
+S2K::S2K::Ptr Tag5::get_s2k_clone() const{
     return s2k -> clone();
 }
 
@@ -252,7 +252,7 @@ void Tag5::set_sym(const uint8_t s){
     size += secret.size();
 }
 
-void Tag5::set_s2k(const S2K::Base::Ptr & s){
+void Tag5::set_s2k(const S2K::S2K::Ptr & s){
     if (s -> get_type() == S2K::ID::SIMPLE_S2K){
         s2k = std::make_shared <S2K::S2K0> ();
     }
@@ -397,7 +397,7 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     return out;
 }
 
-Base::Ptr Tag5::clone() const{
+Tag::Ptr Tag5::clone() const{
     Ptr out = std::make_shared <Packet::Tag5> (*this);
     out -> s2k = s2k?s2k -> clone():nullptr;
     return out;

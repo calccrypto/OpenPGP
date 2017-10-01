@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub28::Sub28()
-    : Base(SIGNERS_USER_ID, 0),
+    : Sub(SIGNERS_USER_ID, 0),
       signer()
 {}
 
@@ -40,7 +40,7 @@ void Sub28::set_signer(const std::string & s){
     signer = s;
 }
 
-Base::Ptr Sub28::clone() const{
+Sub::Ptr Sub28::clone() const{
     return std::make_shared <Sub28> (*this);
 }
 

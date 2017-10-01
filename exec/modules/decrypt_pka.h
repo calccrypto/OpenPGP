@@ -97,7 +97,7 @@ const Module decrypt_pka(
 
         // extract data
         std::string cleartext = "";
-        for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+        for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
             if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
                 cleartext += std::static_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
             }
@@ -116,7 +116,7 @@ const Module decrypt_pka(
         }
         // otherwise, just list attached signatures
         else{
-            for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+            for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
                 if (p -> get_tag() == OpenPGP::Packet::SIGNATURE){
                     cleartext += "Unverified signature from " + hexlify(std::static_pointer_cast <OpenPGP::Packet::Tag2> (p) -> get_keyid()) + " found.\n";
                 }

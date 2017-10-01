@@ -99,7 +99,7 @@ namespace OpenPGP {
                 };
             }
 
-            class Sub27 : public Base {
+            class Sub27 : public Sub {
                 private:
                     std::string flags;
 
@@ -116,7 +116,7 @@ namespace OpenPGP {
 
                     void set_flags(const std::string & f);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

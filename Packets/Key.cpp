@@ -4,7 +4,7 @@ namespace OpenPGP {
 namespace Packet {
 
 Key::Key(uint8_t tag)
-    : Base(tag),
+    : Tag(tag),
       time(),
       pka(),
       mpi(),
@@ -16,7 +16,7 @@ Key::Key()
 {}
 
 Key::Key(const Key & copy)
-    : Base(copy),
+    : Tag(copy),
       time(copy.time),
       pka(copy.pka),
       mpi(copy.mpi),
@@ -188,13 +188,13 @@ std::string Key::get_keyid() const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-Base::Ptr Key::clone() const{
+Tag::Ptr Key::clone() const{
     return std::make_shared <Key> (*this);
 }
 
 Key & Key::operator=(const Key & copy)
 {
-    Base::operator=(copy);
+    Tag::operator=(copy);
     time = copy.time;
     pka = copy.pka;
     mpi = copy.mpi;

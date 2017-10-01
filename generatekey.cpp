@@ -17,7 +17,7 @@ bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase){
     Packet::Key::Ptr key = nullptr;
     Packet::User::Ptr user = nullptr;
 
-    for(Packet::Base::Ptr & p : packets){
+    for(Packet::Tag::Ptr & p : packets){
         if (Packet::is_key_packet(p -> get_tag())){
             key = std::static_pointer_cast <Packet::Key> (p);
             user = nullptr;

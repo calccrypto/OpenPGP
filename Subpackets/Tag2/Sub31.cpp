@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub31::Sub31()
-    : Base(SIGNATURE_TARGET),
+    : Sub(SIGNATURE_TARGET),
       pka(), hash_alg(),
       hash()
 {}
@@ -64,7 +64,7 @@ void Sub31::set_hash(const std::string & h){
     hash = h;
 }
 
-Base::Base::Ptr Sub31::clone() const{
+Sub::Ptr Sub31::clone() const{
     return std::make_shared <Sub31> (*this);
 }
 

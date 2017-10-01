@@ -93,7 +93,7 @@ const Module revoke_uid(
             return -1;
         }
 
-        out << revoked.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
+        out << revoked.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
         return 0;
     }
 );

@@ -36,13 +36,13 @@ std::string Tag8::show_title() const{
 }
 
 Tag8::Tag8()
-    : Base(COMPRESSED_DATA, 3),
+    : Tag(COMPRESSED_DATA, 3),
       comp(Compression::ID::UNCOMPRESSED),
       compressed_data()
 {}
 
 Tag8::Tag8(const Tag8 & copy)
-    : Base(copy),
+    : Tag(copy),
       comp(copy.comp),
       compressed_data(copy.compressed_data)
 {}
@@ -107,7 +107,7 @@ void Tag8::set_compressed_data(const std::string & data){
     size = raw().size();
 }
 
-Base::Ptr Tag8::clone() const{
+Tag::Ptr Tag8::clone() const{
     return std::make_shared <Packet::Tag8> (*this);
 }
 

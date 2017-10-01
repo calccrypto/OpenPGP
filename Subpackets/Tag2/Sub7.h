@@ -42,7 +42,7 @@ namespace OpenPGP {
             //    signature for the life of his key. If this packet is not present,
             //    the signature is revocable.
 
-            class Sub7 : public Base {
+            class Sub7 : public Sub {
                 private:
                     bool revocable;
 
@@ -59,7 +59,7 @@ namespace OpenPGP {
 
                     void set_revocable(const bool r);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

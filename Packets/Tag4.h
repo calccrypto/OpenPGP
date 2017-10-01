@@ -71,7 +71,7 @@ namespace OpenPGP {
         //    packet and the final Signature packet corresponds to the first
         //    one-pass packet.
 
-        class Tag4 : public Base {
+        class Tag4 : public Tag {
             private:
                 uint8_t type;
                 uint8_t hash;
@@ -101,7 +101,7 @@ namespace OpenPGP {
                 void set_keyid(const std::string & k);
                 void set_nested(const uint8_t n);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

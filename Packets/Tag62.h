@@ -31,7 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Packet {
 
-        class Tag62 : public Base {
+        class Tag62 : public Tag {
             private:
                 std::string stream;
 
@@ -49,7 +49,7 @@ namespace OpenPGP {
 
                 void set_stream(const std::string & data);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

@@ -4,14 +4,14 @@ namespace OpenPGP {
 namespace Packet {
 
 Tag4::Tag4()
-    : Base(ONE_PASS_SIGNATURE, 3),
+    : Tag(ONE_PASS_SIGNATURE, 3),
       type(), hash(), pka(),
       keyid(),
       nested(1)
 {}
 
 Tag4::Tag4(const Tag4 & copy)
-    : Base(copy)
+    : Tag(copy)
 {
     type = copy.type;
     hash = copy.hash;
@@ -103,7 +103,7 @@ void Tag4::set_nested(const uint8_t n){
     size = raw().size();
 }
 
-Base::Ptr Tag4::clone() const{
+Tag::Ptr Tag4::clone() const{
     return std::make_shared <Packet::Tag4> (*this);
 }
 

@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub20::Sub20()
-    : Base(NOTATION_DATA),
+    : Sub(NOTATION_DATA),
       flags(),
       mlen(), nlen(),
       m(), n()
@@ -76,7 +76,7 @@ void Sub20::set_n(const std::string & s){
     n = s;
 }
 
-Base::Ptr Sub20::clone() const{
+Sub::Ptr Sub20::clone() const{
     return std::make_shared <Sub20> (*this);
 }
 

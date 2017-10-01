@@ -58,7 +58,7 @@ void Tag13::set_contents(const std::string & name, const std::string & comment, 
     size = raw().size();
 }
 
-Base::Ptr Tag13::clone() const{
+Tag::Ptr Tag13::clone() const{
     return std::make_shared <Packet::Tag13> (*this);
 }
 

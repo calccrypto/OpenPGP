@@ -41,7 +41,7 @@ namespace OpenPGP {
             //    key server can actually be a copy of the key retrieved by ftp, http,
             //    finger, etc.
 
-            class Sub24 : public Base {
+            class Sub24 : public Sub {
                 private:
                     std::string pks;
 
@@ -58,7 +58,7 @@ namespace OpenPGP {
 
                     void set_pks(const std::string & p);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

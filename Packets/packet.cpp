@@ -42,7 +42,7 @@ bool is_sym_protected_data(const uint8_t t){
             (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
-std::string Base::write_old_length(const std::string & data) const{
+std::string Tag::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
     if (partial){
@@ -66,7 +66,7 @@ std::string Base::write_old_length(const std::string & data) const{
 }
 
 // returns formatted length string
-std::string Base::write_new_length(const std::string & data) const{
+std::string Tag::write_new_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b11000000 | tag);
     if (partial){                                           // partial
@@ -76,7 +76,7 @@ std::string Base::write_new_length(const std::string & data) const{
         }
         length = 224 + bits;
         if (length > 254){
-            throw std::runtime_error("Error: Data in partial Base too large.");
+            throw std::runtime_error("Error: Data in partial Tag too large.");
         }
 
         out += std::string(1, length);
@@ -96,7 +96,7 @@ std::string Base::write_new_length(const std::string & data) const{
     return out + data;
 }
 
-std::string Base::show_title() const{
+std::string Tag::show_title() const{
     std::string out = std::string(format?"New":"Old") + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 
     switch (partial){
@@ -118,11 +118,11 @@ std::string Base::show_title() const{
     return out;
 }
 
-Base::Base(const uint8_t t)
-    : Base(t, 0)
+Tag::Tag(const uint8_t t)
+    : Tag(t, 0)
 {}
 
-Base::Base(const uint8_t t, uint8_t ver)
+Tag::Tag(const uint8_t t, uint8_t ver)
     : tag(t),
       version(ver),
       format(true),
@@ -130,7 +130,7 @@ Base::Base(const uint8_t t, uint8_t ver)
       partial(0)
 {}
 
-Base::Base(const Base & copy)
+Tag::Tag(const Tag & copy)
     : tag(copy.tag),
       version(copy.version),
       format(copy.version),
@@ -138,13 +138,13 @@ Base::Base(const Base & copy)
       partial(copy.partial)
 {}
 
-Base::Base()
-    : Base(UNKNOWN)
+Tag::Tag()
+    : Tag(UNKNOWN)
 {}
 
-Base::~Base(){}
+Tag::~Tag(){}
 
-std::string Base::write(const Base::Format header) const{
+std::string Tag::write(const Tag::Format header) const{
     if ((header == NEW) ||      // specified new header
         (tag > 15)){            // tag > 15, so new header is required
         return write_new_length(raw());
@@ -152,47 +152,47 @@ std::string Base::write(const Base::Format header) const{
     return write_old_length(raw());
 }
 
-uint8_t Base::get_tag() const{
+uint8_t Tag::get_tag() const{
     return tag;
 }
 
-bool Base::get_format() const{
+bool Tag::get_format() const{
     return format;
 }
 
-uint8_t Base::get_version() const{
+uint8_t Tag::get_version() const{
     return version;
 }
 
-std::size_t Base::get_size() const{
+std::size_t Tag::get_size() const{
     return size;
 }
 
-uint8_t Base::get_partial() const{
+uint8_t Tag::get_partial() const{
     return partial;
 }
 
-void Base::set_tag(const uint8_t t){
+void Tag::set_tag(const uint8_t t){
     tag = t;
 }
 
-void Base::set_format(const bool f){
+void Tag::set_format(const bool f){
     format = f;
 }
 
-void Base::set_version(const uint8_t v){
+void Tag::set_version(const uint8_t v){
     version = v;
 }
 
-void Base::set_size(const std::size_t s){
+void Tag::set_size(const std::size_t s){
     size = s;
 }
 
-void Base::set_partial(const uint8_t p){
+void Tag::set_partial(const uint8_t p){
     partial = p;
 }
 
-Base & Base::operator=(const Base & copy)
+Tag & Tag::operator=(const Tag & copy)
 {
     tag = copy.tag;
     version = copy.version;

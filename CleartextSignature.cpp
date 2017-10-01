@@ -104,7 +104,7 @@ std::string CleartextSignature::show(const std::size_t indents, const std::size_
            sig.show(indents + 1, indent_size);
 }
 
-std::string CleartextSignature::write(const Packet::Base::Format header) const{
+std::string CleartextSignature::write(const Packet::Tag::Format header) const{
     std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
 
     // write Armor Header

@@ -129,7 +129,7 @@ namespace OpenPGP {
         //    rollback attacks since it will be possible for an attacker to change
         //    the version back to 1.
 
-        class Tag18 : public Base {
+        class Tag18 : public Tag {
             private:
                 std::string protected_data;
 
@@ -147,7 +147,7 @@ namespace OpenPGP {
 
                 void set_protected_data(const std::string & p);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

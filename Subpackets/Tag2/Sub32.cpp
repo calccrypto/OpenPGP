@@ -5,12 +5,12 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub32::Sub32()
-    : Base(EMBEDDED_SIGNATURE),
+    : Sub(EMBEDDED_SIGNATURE),
       embedded(nullptr)
 {}
 
 Sub32::Sub32(const Sub32 & copy)
-    : Base(copy),
+    : Sub(copy),
       embedded(std::static_pointer_cast <Packet::Tag2> (copy.embedded -> clone()))
 {}
 
@@ -38,7 +38,7 @@ std::string Sub32::raw() const{
     return embedded -> raw();
 }
 
-Packet::Tag2::Base::Ptr Sub32::get_embedded() const{
+Packet::Tag2::Tag::Ptr Sub32::get_embedded() const{
     return embedded;
 }
 
@@ -46,7 +46,7 @@ void Sub32::set_embedded(const Packet::Tag2::Ptr & e){
     embedded = std::static_pointer_cast <Packet::Tag2> (e -> clone());
 }
 
-Base::Ptr Sub32::clone() const{
+Sub::Ptr Sub32::clone() const{
     return std::make_shared <Sub32> (*this);
 }
 

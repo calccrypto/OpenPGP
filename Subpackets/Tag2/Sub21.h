@@ -41,7 +41,7 @@ namespace OpenPGP {
             //    algorithms, the list is ordered. Algorithm numbers are in Section 9.
             //    This is only found on a self-signature.
 
-            class Sub21 : public Base {
+            class Sub21 : public Sub {
                 private:
                     std::string pha;
 
@@ -58,7 +58,7 @@ namespace OpenPGP {
 
                     void set_pha(const std::string & p);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

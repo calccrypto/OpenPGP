@@ -299,7 +299,7 @@ int primary_key(const Key & signer, const Key & signee){
     Packet::User::Ptr signee_id = nullptr;
 
     // for each signature packet on the signee
-    for(Packet::Base::Ptr const & signee_packet : signee.get_packets()){
+    for(Packet::Tag::Ptr const & signee_packet : signee.get_packets()){
         if (Packet::is_primary_key(signee_packet -> get_tag())){
             signee_key = std::static_pointer_cast <Packet::Key> (signee_packet);
             signee_id = nullptr;        // need to find new User information
@@ -368,7 +368,7 @@ int revoke(const Key & key, const RevocationCertificate & revoke){
     }
     else if (revoke_sig -> get_type() == Signature_Type::SUBKEY_REVOCATION_SIGNATURE){
         // search each packet for a subkey
-        for(Packet::Base::Ptr const & p : key.get_packets()){
+        for(Packet::Tag::Ptr const & p : key.get_packets()){
             if (Packet::is_subkey(p -> get_tag())){
                 const int rc = with_pka(to_sign_28(std::static_pointer_cast <Packet::Key> (p), revoke_sig), signing_key, revoke_sig);
                 if (rc == true){
@@ -384,7 +384,7 @@ int revoke(const Key & key, const RevocationCertificate & revoke){
         return false;
     }
     else if (revoke_sig -> get_type() == Signature_Type::CERTIFICATION_REVOCATION_SIGNATURE){
-        for(Packet::Base::Ptr const & p : key.get_packets()){
+        for(Packet::Tag::Ptr const & p : key.get_packets()){
             if (Packet::is_user(p -> get_tag())){
                 const Packet::User::Ptr user = std::static_pointer_cast <Packet::User> (p);
                 const int rc = with_pka(to_sign_30(signing_key, user, revoke_sig), signing_key, revoke_sig);

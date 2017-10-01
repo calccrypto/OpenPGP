@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub6::Sub6()
-    : Base(REGULAR_EXPRESSION),
+    : Sub(REGULAR_EXPRESSION),
       regex()
 {}
 
@@ -39,7 +39,7 @@ void Sub6::set_regex(const std::string & r){
     regex = r;
 }
 
-Base::Ptr Sub6::clone() const{
+Sub::Ptr Sub6::clone() const{
     return std::make_shared <Sub6> (*this);
 }
 

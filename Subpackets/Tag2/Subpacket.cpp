@@ -4,14 +4,14 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-std::string Base::show_title() const{
-    return Base::show_title() + NAME.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
+std::string Sub::show_title() const{
+    return Subpacket::Sub::show_title() + NAME.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
 }
 
-Base::~Base(){}
+Sub::~Sub(){}
 
-Base & Base::operator=(const Base & copy){
-    Subpacket::Base::operator=(copy);
+Sub & Sub::operator=(const Sub & copy){
+    Subpacket::Sub::operator=(copy);
     return *this;
 }
 

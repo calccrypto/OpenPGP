@@ -48,7 +48,7 @@ namespace OpenPGP {
             //    signature. For example, a target signature with a SHA-1 hash MUST
             //    have 20 octets of hash data.
 
-            class Sub31 : public Base {
+            class Sub31 : public Sub {
                 private:
                     uint8_t pka;
                     uint8_t hash_alg;
@@ -71,7 +71,7 @@ namespace OpenPGP {
                     void set_hash_alg(const uint8_t h);
                     void set_hash(const std::string & h);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

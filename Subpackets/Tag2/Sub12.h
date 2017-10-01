@@ -53,7 +53,7 @@ namespace OpenPGP {
             //    isolate this Subpacket within a separate signature so that it is not
             //    combined with other Subpackets that need to be exported.
 
-            class Sub12 : public Base {
+            class Sub12 : public Sub {
                 private:
                     uint8_t _class;
                     uint8_t pka;
@@ -76,7 +76,7 @@ namespace OpenPGP {
                     void set_pka(const uint8_t p);
                     void set_fingerprint(const std::string & f);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

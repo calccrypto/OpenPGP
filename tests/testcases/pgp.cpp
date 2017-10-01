@@ -202,7 +202,7 @@ TEST(PGP, encrypt_decrypt_pka_mdc){
 
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -234,7 +234,7 @@ TEST(PGP, encrypt_decrypt_pka_no_mdc){
 
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -257,7 +257,7 @@ TEST(PGP, encrypt_decrypt_symmetric_mdc){
 
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(encrypted, PASSPHRASE);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -283,7 +283,7 @@ TEST(PGP, encrypt_decrypt_symmetric_no_mdc){
 
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(encrypted, PASSPHRASE);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -316,7 +316,7 @@ TEST(PGP, encrypt_sign_decrypt_verify){
 
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }

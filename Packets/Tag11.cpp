@@ -4,7 +4,7 @@ namespace OpenPGP {
 namespace Packet {
 
 Tag11::Tag11()
-    : Base(LITERAL_DATA),
+    : Tag(LITERAL_DATA),
       format(),
       filename(),
       time(),
@@ -12,7 +12,7 @@ Tag11::Tag11()
 {}
 
 Tag11::Tag11(const Tag11 & copy)
-    : Base(copy),
+    : Tag(copy),
       format(copy.format),
       filename(copy.filename),
       time(copy.time),
@@ -123,7 +123,7 @@ void Tag11::set_literal(const std::string & l){
     size = raw().size();
 }
 
-Base::Ptr Tag11::clone() const{
+Tag::Ptr Tag11::clone() const{
     return std::make_shared <Packet::Tag11> (*this);
 }
 

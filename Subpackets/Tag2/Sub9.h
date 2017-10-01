@@ -41,7 +41,7 @@ namespace OpenPGP {
             //    or has a value of zero, the key never expires. This is found only on
             //   a self-signature.
 
-            class Sub9 : public Base {
+            class Sub9 : public Sub {
                 private:
                     uint32_t dt;
 
@@ -59,7 +59,7 @@ namespace OpenPGP {
 
                     void set_dt(const uint32_t t);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

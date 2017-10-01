@@ -40,7 +40,7 @@ namespace OpenPGP {
             //    after the signature creation time that the signature expires. If
             //    this is not present or has a value of zero, it never expires.
 
-            class Sub3 : public Base {
+            class Sub3 : public Sub {
                 private:
                     uint32_t dt;
 
@@ -57,7 +57,7 @@ namespace OpenPGP {
 
                     void set_dt(const uint32_t t);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

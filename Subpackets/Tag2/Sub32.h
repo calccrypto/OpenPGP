@@ -40,7 +40,7 @@ namespace OpenPGP {
             //    specified in Section 5.2 above.  It is useful when one signature
             //    needs to refer to, or be incorporated in, another signature.
 
-            class Sub32 : public Base {
+            class Sub32 : public Sub {
                 private:
                     Packet::Tag2::Ptr embedded;
 
@@ -55,11 +55,11 @@ namespace OpenPGP {
                     std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
-                    Packet::Tag2::Base::Ptr get_embedded() const;
+                    Packet::Tag2::Tag::Ptr get_embedded() const;
 
                     void set_embedded(const Packet::Tag2::Ptr & e);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
                     Sub32 & operator=(const Sub32 & copy);
             };
         }

@@ -44,7 +44,7 @@ namespace OpenPGP {
             //    no compression software in that implementation. This is only found
             //    on a self-signature.
 
-            class Sub22 : public Base {
+            class Sub22 : public Sub {
                 private:
                     std::string pca;
 
@@ -61,7 +61,7 @@ namespace OpenPGP {
 
                     void set_pca(const std::string & c);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub12::Sub12()
-    : Base(REVOCATION_KEY),
+    : Sub(REVOCATION_KEY),
       _class(),
       pka(),
       fingerprint()
@@ -64,7 +64,7 @@ void Sub12::set_fingerprint(const std::string & f){
     fingerprint = f;
 }
 
-Base::Ptr Sub12::clone() const{
+Sub::Ptr Sub12::clone() const{
     return std::make_shared <Sub12> (*this);
 }
 

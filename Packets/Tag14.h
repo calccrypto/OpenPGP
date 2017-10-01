@@ -55,7 +55,7 @@ namespace OpenPGP {
                 Tag14(const std::string & data);
                 ~Tag14();
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

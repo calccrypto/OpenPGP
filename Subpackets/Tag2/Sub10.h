@@ -31,7 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
-            class Sub10 : public Base {
+            class Sub10 : public Sub {
                 private:
                     std::string stuff;
 
@@ -48,7 +48,7 @@ namespace OpenPGP {
 
                     void set_stuff(const std::string & s);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub10::Sub10()
-    : Base(PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY),
+    : Sub(PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY),
       stuff()
 {}
 
@@ -39,7 +39,7 @@ void Sub10::set_stuff(const std::string & s){
     stuff = s;
 }
 
-Base::Ptr Sub10::clone() const{
+Sub::Ptr Sub10::clone() const{
     return std::make_shared <Sub10> (*this);
 }
 

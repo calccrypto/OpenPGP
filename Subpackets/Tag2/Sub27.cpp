@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub27::Sub27()
-    : Base(KEY_FLAGS),
+    : Sub(KEY_FLAGS),
       flags()
 {}
 
@@ -49,7 +49,7 @@ void Sub27::set_flags(const std::string & f){
     flags = f;
 }
 
-Base::Ptr Sub27::clone() const{
+Sub::Ptr Sub27::clone() const{
     return std::make_shared <Sub27> (*this);
 }
 

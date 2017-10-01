@@ -81,19 +81,19 @@ namespace OpenPGP {
                     std::make_pair(110,                         "Private/Experimental S2K"),
         };
 
-        class Base{
+        class S2K{
             protected:
                 uint8_t type; // octet 0
                 uint8_t hash; // octet 1
 
                 std::string show_title() const;
 
-                Base(uint8_t uint8_t);
+                S2K(uint8_t uint8_t);
 
             public:
-                typedef std::shared_ptr <Base> Ptr;
+                typedef std::shared_ptr <S2K> Ptr;
 
-                virtual ~Base();
+                virtual ~S2K();
                 virtual void read(const std::string & data, std::string::size_type & pos) = 0;
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
                 virtual std::string raw() const = 0;
@@ -138,7 +138,7 @@ namespace OpenPGP {
         //    first hash leftmost, to produce the key data, with any excess octets
         //    on the right discarded.
 
-        class S2K0: public Base {
+        class S2K0: public S2K {
             protected:
                 S2K0(uint8_t t);
 
@@ -152,7 +152,7 @@ namespace OpenPGP {
                 virtual std::string raw() const;
                 virtual std::string run(const std::string & pass, unsigned int sym_key_len) const;
 
-                Base::Ptr clone() const;
+                S2K::Ptr clone() const;
         };
 
         // 3.7.1.2. Salted S2K
@@ -188,7 +188,7 @@ namespace OpenPGP {
 
                 void set_salt(const std::string & s);
 
-                Base::Ptr clone() const;
+                S2K::Ptr clone() const;
         };
 
         // 3.7.1.3. Iterated and Salted S2K
@@ -249,7 +249,7 @@ namespace OpenPGP {
 
                 void set_count(const uint8_t c);
 
-                Base::Ptr clone() const;
+                S2K::Ptr clone() const;
         };
 
         // 3.7.2. String-to-Key Usage

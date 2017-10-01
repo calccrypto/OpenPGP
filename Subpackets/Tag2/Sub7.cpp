@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub7::Sub7()
-    : Base(REVOCABLE, 1),
+    : Sub(REVOCABLE, 1),
       revocable()
 {}
 
@@ -40,7 +40,7 @@ void Sub7::set_revocable(const bool r){
     revocable = r;
 }
 
-Base::Ptr Sub7::clone() const{
+Sub::Ptr Sub7::clone() const{
     return std::make_shared <Sub7> (*this);
 }
 

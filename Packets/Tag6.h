@@ -133,7 +133,7 @@ namespace OpenPGP {
                 Tag6(const std::string & data);
                 virtual ~Tag6();
 
-                virtual Base::Ptr clone() const;
+                virtual Tag::Ptr clone() const;
                 Tag6 & operator=(const Tag6 & copy);
         };
     }

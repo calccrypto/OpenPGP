@@ -1,6 +1,6 @@
 /*
 User.h
-Base class for OpenPGP User packet types to inherit from
+Tag class for OpenPGP User packet types to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -32,9 +32,9 @@ namespace OpenPGP {
     namespace Packet {
 
         // For Tags 13 and 17
-        class User : public Base {
+        class User : public Tag {
             protected:
-                using Base::Base;
+                using Tag::Tag;
 
             public:
                 typedef std::shared_ptr <User> Ptr;

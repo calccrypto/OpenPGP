@@ -10,7 +10,7 @@ bool Revoke::is_key_revocation(const uint8_t code){
 }
 
 Sub29::Sub29()
-    : Base(REASON_FOR_REVOCATION),
+    : Sub(REASON_FOR_REVOCATION),
       code(),
       reason()
 {}
@@ -64,7 +64,7 @@ void Sub29::set_reason(const std::string & r){
     reason = r;
 }
 
-Base::Ptr Sub29::clone() const{
+Sub::Ptr Sub29::clone() const{
     return std::make_shared <Sub29> (*this);
 }
 

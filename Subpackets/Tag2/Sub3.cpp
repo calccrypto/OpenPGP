@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub3::Sub3()
-    : Base(SIGNATURE_EXPIRATION_TIME, 4),
+    : Sub(SIGNATURE_EXPIRATION_TIME, 4),
       dt(0)
 {}
 
@@ -38,7 +38,7 @@ void Sub3::set_dt(const uint32_t t){
     dt = t;
 }
 
-Base::Ptr Sub3::clone() const{
+Sub::Ptr Sub3::clone() const{
     return std::make_shared <Sub3> (*this);
 }
 

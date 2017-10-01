@@ -204,7 +204,7 @@ std::string Message::show(const std::size_t indents, const std::size_t indent_si
     return out.str();
 }
 
-std::string Message::raw(const Packet::Base::Format header) const{
+std::string Message::raw(const Packet::Tag::Format header) const{
     std::string out = PGP::raw(header);
     if (comp){                  // if compression was used; compress data
         comp -> set_data(out);
@@ -214,7 +214,7 @@ std::string Message::raw(const Packet::Base::Format header) const{
     return out;
 }
 
-std::string Message::write(const PGP::Armored armor, const Packet::Base::Format header) const{
+std::string Message::write(const PGP::Armored armor, const Packet::Tag::Format header) const{
     std::string packet_string = raw(header);
 
     // put data into a Compressed Data Packet if compression is used
@@ -274,7 +274,7 @@ bool Message::match(const PGP & pgp, const Message::Token & token){
 
     // get list of packets and convert them to Token
     std::list <Token> s;
-    for(Packet::Base::Ptr const & p : pgp.get_packets()){
+    for(Packet::Tag::Ptr const & p : pgp.get_packets()){
         Token push;
         if (p -> get_tag() == Packet::COMPRESSED_DATA){
             push = CDP;

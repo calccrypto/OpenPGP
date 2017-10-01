@@ -100,7 +100,7 @@ namespace OpenPGP {
             //    the employ of a business with an email address.  A revoked
             //    certification is no longer a part of validity calculations.
 
-            class Sub29 : public Base {
+            class Sub29 : public Sub {
                 private:
                     uint8_t code;
                     std::string reason;
@@ -120,7 +120,7 @@ namespace OpenPGP {
                     void set_code(const uint8_t c);
                     void set_reason(const std::string & r);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

@@ -58,7 +58,7 @@ namespace OpenPGP {
                 void set_contents(const std::string & c);
                 void set_contents(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

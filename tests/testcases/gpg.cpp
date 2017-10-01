@@ -181,7 +181,7 @@ TEST(gpg, public_key){
         // pubsig/unhashed
         const OpenPGP::Packet::Tag2::Subpackets uh_pubsub = pubsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_pubsub.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
-        const OpenPGP::Subpacket::Tag2::Base::Ptr uhps0 = uh_pubsub[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr uhps0 = uh_pubsub[0];
         ASSERT_EQ(uhps0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
         // pubsig/sub16
         {
@@ -231,7 +231,7 @@ TEST(gpg, public_key){
         // subsig/unhashed
         const OpenPGP::Packet::Tag2::Subpackets uh_subsub = subsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_subsub.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
-        const OpenPGP::Subpacket::Tag2::Base::Ptr uhss0 = uh_subsub[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr uhss0 = uh_subsub[0];
         ASSERT_EQ(uhss0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
 
         // subsig/sub16
@@ -397,7 +397,7 @@ TEST(gpg, private_key){
         // pubsig/unhashed
         const OpenPGP::Packet::Tag2::Subpackets uh_pubsub = pubsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_pubsub.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
-        const OpenPGP::Subpacket::Tag2::Base::Ptr uhps0 = uh_pubsub[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr uhps0 = uh_pubsub[0];
         ASSERT_EQ(uhps0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
 
         // pubsig/sub16
@@ -460,7 +460,7 @@ TEST(gpg, private_key){
         // subsig/unhashed
         const OpenPGP::Packet::Tag2::Subpackets uh_subsub = subsig -> get_unhashed_subpackets();
         ASSERT_EQ(uh_subsub.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
-        const OpenPGP::Subpacket::Tag2::Base::Ptr uhss0 = uh_subsub[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr uhss0 = uh_subsub[0];
         ASSERT_EQ(uhss0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
         // subsig/sub16
         {
@@ -522,7 +522,7 @@ TEST(gpg, revoke){
         const OpenPGP::Packet::Tag2::Subpackets unhashed = revsig -> get_unhashed_subpackets();
         ASSERT_EQ(unhashed.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
 
-        const OpenPGP::Subpacket::Tag2::Base::Ptr s0 = unhashed[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr s0 = unhashed[0];
         ASSERT_EQ(s0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
 
         const OpenPGP::Subpacket::Tag2::Sub16::Ptr sub16 = std::dynamic_pointer_cast <OpenPGP::Subpacket::Tag2::Sub16> (s0);
@@ -571,7 +571,7 @@ TEST(gpg, decrypt_pka_mdc){
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -618,7 +618,7 @@ TEST(gpg, decrypt_pka_no_mdc){
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -663,7 +663,7 @@ TEST(gpg, decrypt_symmetric_mdc){
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(gpg_encrypted, PASSPHRASE);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -707,7 +707,7 @@ TEST(gpg, decrypt_symmetric_no_mdc){
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(gpg_encrypted, PASSPHRASE);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -754,7 +754,7 @@ TEST(gpg, decrypt_verify){
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
     std::string message = "";
-    for(OpenPGP::Packet::Base::Ptr const & p : decrypted.get_packets()){
+    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
         if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
             message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
         }
@@ -887,7 +887,7 @@ TEST(gpg, verify_cleartext){
         const OpenPGP::Packet::Tag2::Subpackets hashed = tag2 -> get_hashed_subpackets();
         ASSERT_EQ(hashed.size(), (std::size_t) 1);
 
-        const OpenPGP::Subpacket::Tag2::Base::Ptr s0 = hashed[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr s0 = hashed[0];
         ASSERT_EQ(s0 -> get_type(), OpenPGP::Subpacket::Tag2::SIGNATURE_CREATION_TIME);
 
         const OpenPGP::Subpacket::Tag2::Sub2::Ptr sub2 = std::dynamic_pointer_cast <OpenPGP::Subpacket::Tag2::Sub2> (s0);
@@ -898,7 +898,7 @@ TEST(gpg, verify_cleartext){
         const OpenPGP::Packet::Tag2::Subpackets unhashed = tag2 -> get_unhashed_subpackets();
         ASSERT_EQ(unhashed.size(), (OpenPGP::Packet::Tag2::Subpackets::size_type) 1);
 
-        const OpenPGP::Subpacket::Tag2::Base::Ptr s0 = unhashed[0];
+        const OpenPGP::Subpacket::Tag2::Sub::Ptr s0 = unhashed[0];
         ASSERT_EQ(s0 -> get_type(), OpenPGP::Subpacket::Tag2::ISSUER);
 
         const OpenPGP::Subpacket::Tag2::Sub16::Ptr sub16 = std::dynamic_pointer_cast <OpenPGP::Subpacket::Tag2::Sub16> (s0);

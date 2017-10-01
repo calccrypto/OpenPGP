@@ -1,5 +1,5 @@
 /*
-Tag17Subpacket.h
+Subpacket.h
 Base class for OpenPGP Tag 17 Subpackets to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
@@ -40,20 +40,20 @@ namespace OpenPGP {
                 std::make_pair(IMAGE_ATTRIBUTE, "Image Attribite"),
             };
 
-            class Base: public Subpacket::Base {
+            class Sub: public Subpacket::Sub {
                 public:
 
                 protected:
-                    using Subpacket::Base::Base;
+                    using Subpacket::Sub::Sub;
 
                     std::string show_title() const;
 
-                    Base & operator=(const Base & copy);
+                    Sub & operator=(const Sub & copy);
 
                 public:
-                    typedef std::shared_ptr <Base> Ptr;
+                    typedef std::shared_ptr <Sub> Ptr;
 
-                    virtual ~Base();
+                    virtual ~Sub();
 
                     virtual Ptr clone() const = 0;
             };

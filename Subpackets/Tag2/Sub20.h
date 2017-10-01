@@ -84,7 +84,7 @@ namespace OpenPGP {
                 };
             }
 
-            class Sub20 : public Base {
+            class Sub20 : public Sub {
                 private:
                     std::string flags;  // 4 octets
                     uint16_t mlen;
@@ -109,7 +109,7 @@ namespace OpenPGP {
                     void set_m(const std::string & s);
                     void set_n(const std::string & s);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

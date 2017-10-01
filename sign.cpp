@@ -129,7 +129,7 @@ Message binary(const Args & args, const std::string & filename, const std::strin
         Packet::Tag8 tag8;
         tag8.set_data(signature.raw());
         tag8.set_comp(compress);
-        std::string raw = tag8.write(Packet::Base::Format::NEW);
+        std::string raw = tag8.write(Packet::Tag::Format::NEW);
         signature = Message(raw);
     }
 
@@ -386,7 +386,7 @@ Packet::Tag2::Ptr primary_key_binding(const Args & args, const PublicKey & signe
 
     // get signee primary and subkey
     Packet::Tag6::Ptr signee_primary = nullptr;
-    for(Packet::Base::Ptr const & p : args.pri.get_packets()){
+    for(Packet::Tag::Ptr const & p : args.pri.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_KEY){
             signee_primary = std::static_pointer_cast <Packet::Tag6> (p);
             break;
@@ -399,7 +399,7 @@ Packet::Tag2::Ptr primary_key_binding(const Args & args, const PublicKey & signe
     }
 
     Packet::Tag14::Ptr signee_subkey = nullptr;
-    for(Packet::Base::Ptr const & p : args.pri.get_packets()){
+    for(Packet::Tag::Ptr const & p : args.pri.get_packets()){
         if (p -> get_tag() == Packet::PUBLIC_SUBKEY){
             signee_subkey = std::static_pointer_cast <Packet::Tag14> (p);
             break;

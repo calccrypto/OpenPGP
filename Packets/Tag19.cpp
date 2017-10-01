@@ -4,14 +4,14 @@ namespace OpenPGP {
 namespace Packet {
 
 Tag19::Tag19()
-    : Base(MODIFICATION_DETECTION_CODE),
+    : Tag(MODIFICATION_DETECTION_CODE),
       hash()
 {
     size = 20;
 }
 
 Tag19::Tag19(const Tag19 & copy)
-    : Base(copy),
+    : Tag(copy),
       hash(copy.hash)
 {}
 
@@ -46,7 +46,7 @@ void Tag19::set_hash(const std::string & h){
     size = raw().size();
 }
 
-Base::Ptr Tag19::clone() const{
+Tag::Ptr Tag19::clone() const{
     return std::make_shared <Packet::Tag19> (*this);
 }
 

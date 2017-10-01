@@ -7,7 +7,7 @@ namespace Tag17 {
 unsigned int Sub1::count = 0;
 
 Sub1::Sub1()
-    : Base(IMAGE_ATTRIBUTE),
+    : Sub(IMAGE_ATTRIBUTE),
       version(),
       encoding(),
       image(),
@@ -70,7 +70,7 @@ void Sub1::set_image(const std::string & i){
     image = i;
 }
 
-Base::Base::Ptr Sub1::clone() const{
+Sub::Ptr Sub1::clone() const{
     return std::make_shared <Sub1> (*this);
 }
 

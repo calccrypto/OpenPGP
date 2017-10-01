@@ -40,7 +40,7 @@ namespace OpenPGP {
             //
             //    MUST be present in the hashed area.
 
-            class Sub2 : public Base {
+            class Sub2 : public Sub {
                 private:
                     uint32_t time;
 
@@ -57,7 +57,7 @@ namespace OpenPGP {
 
                     void set_time(const uint32_t t);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

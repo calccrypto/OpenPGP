@@ -92,7 +92,7 @@ const Module sign_file(
             return -1;
         }
 
-        out << message.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::endl;
+        out << message.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
         return 0;
     }
 );

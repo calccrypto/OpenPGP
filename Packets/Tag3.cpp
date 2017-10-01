@@ -4,14 +4,14 @@ namespace OpenPGP {
 namespace Packet {
 
 Tag3::Tag3()
-    : Base(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
+    : Tag(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
       sym(),
       s2k(nullptr),
       esk(nullptr)
 {}
 
 Tag3::Tag3(const Tag3 & copy)
-    : Base(copy),
+    : Tag(copy),
       sym(copy.sym),
       s2k(copy.s2k -> clone()),
       esk(copy.get_esk_clone())
@@ -76,11 +76,11 @@ uint8_t Tag3::get_sym() const{
     return sym;
 }
 
-S2K::Base::Ptr Tag3::get_s2k() const{
+S2K::S2K::Ptr Tag3::get_s2k() const{
     return s2k;
 }
 
-S2K::Base::Ptr Tag3::get_s2k_clone() const{
+S2K::S2K::Ptr Tag3::get_s2k_clone() const{
     return s2k -> clone();
 }
 
@@ -108,7 +108,7 @@ void Tag3::set_sym(const uint8_t s){
     size = raw().size();
 }
 
-void Tag3::set_s2k(const S2K::Base::Ptr & s){
+void Tag3::set_s2k(const S2K::S2K::Ptr & s){
     if (!s){
         throw std::runtime_error("Error: No S2K provided.\n");
     }
@@ -142,7 +142,7 @@ void Tag3::set_session_key(const std::string & pass, const std::string & sk){
     size = raw().size();
 }
 
-Base::Ptr Tag3::clone() const{
+Tag::Ptr Tag3::clone() const{
     Ptr out = std::make_shared <Packet::Tag3> (*this);
     out -> sym = sym;
     out -> s2k = s2k?s2k -> clone():nullptr;
@@ -151,7 +151,7 @@ Base::Ptr Tag3::clone() const{
 }
 
 Tag3 & Tag3::operator=(const Tag3 & copy){
-    Base::operator=(copy);
+    Tag::operator=(copy);
     sym = copy.sym;
     s2k = copy.s2k -> clone();
     esk = std::make_shared <std::string> (*copy.esk);

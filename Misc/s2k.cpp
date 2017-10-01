@@ -3,39 +3,39 @@
 namespace OpenPGP {
 namespace S2K {
 
-std::string Base::show_title() const{
+std::string S2K::show_title() const{
     return NAME.at(type) + " (s2k " + std::to_string(type) + "):";
 }
 
-Base::Base(uint8_t t)
+S2K::S2K(uint8_t t)
     : type(t),
       hash()
 {}
 
-Base::~Base(){}
+S2K::~S2K(){}
 
-std::string Base::write() const{
+std::string S2K::write() const{
     return raw();
 }
 
-uint8_t Base::get_type() const{
+uint8_t S2K::get_type() const{
     return type;
 }
 
-uint8_t Base::get_hash() const{
+uint8_t S2K::get_hash() const{
     return hash;
 }
 
-void Base::set_type(const uint8_t t){
+void S2K::set_type(const uint8_t t){
     type = t;
 }
 
-void Base::set_hash(const uint8_t h){
+void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
 S2K0::S2K0(uint8_t t)
-    : Base(t)
+    : S2K(t)
 {}
 
 S2K0::S2K0()
@@ -70,7 +70,7 @@ std::string S2K0::run(const std::string & pass, unsigned int sym_key_len) const{
     return out.substr(0, sym_key_len);
 }
 
-Base::Ptr S2K0::clone() const{
+S2K::Ptr S2K0::clone() const{
     return std::make_shared <S2K0> (*this);
 }
 
@@ -125,7 +125,7 @@ void S2K1::set_salt(const std::string & s){
     salt = s;
 }
 
-Base::Ptr S2K1::clone() const{
+S2K::Ptr S2K1::clone() const{
     return std::make_shared <S2K1> (*this);
 }
 
@@ -185,7 +185,7 @@ void S2K3::set_count(const uint8_t c){
     count = c;
 }
 
-Base::Ptr S2K3::clone() const{
+S2K::Ptr S2K3::clone() const{
     return std::make_shared <S2K3> (*this);
 }
 

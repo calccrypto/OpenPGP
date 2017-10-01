@@ -46,7 +46,7 @@ namespace OpenPGP {
             //     another value for N. Implementations should thus be prepared for
             //     other fingerprint lengths but honor this Subpacket only if N is 20.
 
-            class Sub33 : public Base {
+            class Sub33 : public Sub {
                 private:
                     uint8_t version;
                     std::string issuer_fingerprint;
@@ -66,7 +66,7 @@ namespace OpenPGP {
                     void set_version(const uint8_t ver);
                     void set_issuer_fingerprint(const std::string & fingerprint);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

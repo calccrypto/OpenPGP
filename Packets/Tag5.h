@@ -137,7 +137,7 @@ namespace OpenPGP {
             protected:
                 uint8_t s2k_con;
                 uint8_t sym;
-                S2K::Base::Ptr s2k;
+                S2K::S2K::Ptr s2k;
                 std::string IV;
                 std::string secret;
 
@@ -159,8 +159,8 @@ namespace OpenPGP {
 
                 uint8_t get_s2k_con() const;
                 uint8_t get_sym() const;
-                S2K::Base::Ptr get_s2k() const;
-                S2K::Base::Ptr get_s2k_clone() const;
+                S2K::S2K::Ptr get_s2k() const;
+                S2K::S2K::Ptr get_s2k_clone() const;
                 std::string get_IV() const;
                 std::string get_secret() const;
 
@@ -169,7 +169,7 @@ namespace OpenPGP {
 
                 void set_s2k_con(const uint8_t c);
                 void set_sym(const uint8_t s);
-                void set_s2k(const S2K::Base::Ptr & s);
+                void set_s2k(const S2K::S2K::Ptr & s);
                 void set_IV(const std::string & iv);
                 void set_secret(const std::string & s); // directly set the secret keys
 
@@ -182,7 +182,7 @@ namespace OpenPGP {
                 // decrypt the secret keys
                 PKA::Values decrypt_secret_keys(const std::string & passphrase) const;
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
                 Tag5 & operator=(const Tag5 & copy);
         };
     }

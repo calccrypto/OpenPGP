@@ -93,7 +93,7 @@ namespace OpenPGP {
         //    would try all available private keys, checking for a valid decrypted
         //    session key.  This format helps reduce traffic analysis of messages.
 
-        class Tag1 : public Base {
+        class Tag1 : public Tag {
             private:
                 std::string keyid;      // 8 octets
                 uint8_t pka;
@@ -117,7 +117,7 @@ namespace OpenPGP {
                 void set_pka(const uint8_t p);
                 void set_mpi(const PKA::Values & m);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

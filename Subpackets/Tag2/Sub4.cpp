@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub4::Sub4()
-    : Base(EXPORTABLE_CERTIFICATION, 1),
+    : Sub(EXPORTABLE_CERTIFICATION, 1),
       exportable()
 {}
 
@@ -40,7 +40,7 @@ void Sub4::set_exportable(const bool e){
     exportable = e;
 }
 
-Base::Ptr Sub4::clone() const{
+Sub::Ptr Sub4::clone() const{
     return std::make_shared <Sub4> (*this);
 }
 

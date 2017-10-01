@@ -3,7 +3,7 @@
 namespace OpenPGP {
 namespace Subpacket {
 
-std::string Base::write_SUBPACKET(const std::string & data) const{
+std::string Sub::write_SUBPACKET(const std::string & data) const{
     if (data.size() < 192){
         return std::string(1, data.size()) + data;
     }
@@ -16,7 +16,7 @@ std::string Base::write_SUBPACKET(const std::string & data) const{
     return ""; // should never reach here; mainly just to remove compiler warnings
 }
 
-std::string Base::show_title() const{
+std::string Sub::show_title() const{
     if (critical){
         return "Critical: ";
     }
@@ -24,47 +24,47 @@ std::string Base::show_title() const{
     return "";
 }
 
-Base::Base(uint8_t type, unsigned int size, bool crit)
+Sub::Sub(uint8_t type, unsigned int size, bool crit)
     : critical(crit),
       type(type),
       size(size)
 {}
 
-Base::Base(const Base & copy)
+Sub::Sub(const Sub & copy)
     : critical(copy.critical),
       type(copy.type),
       size(copy.size)
 {}
 
-Base & Base::operator=(const Base & copy){
+Sub & Sub::operator=(const Sub & copy){
     type = copy.type;
     size = copy.size;
     return *this;
 }
 
-Base::~Base(){}
+Sub::~Sub(){}
 
-std::string Base::write() const{
+std::string Sub::write() const{
     return write_SUBPACKET(std::string(1, type | (critical?0x80:0x00)) + raw());
 }
 
-uint8_t Base::get_type() const{
+uint8_t Sub::get_type() const{
     return type;
 }
 
-std::size_t Base::get_size() const{
+std::size_t Sub::get_size() const{
     return size;
 }
 
-void Base::set_critical(const bool c){
+void Sub::set_critical(const bool c){
     critical = c;
 }
 
-void Base::set_type(const uint8_t t){
+void Sub::set_type(const uint8_t t){
     type = t;
 }
 
-void Base::set_size(const std::size_t s){
+void Sub::set_size(const std::size_t s){
     size = s;
 }
 

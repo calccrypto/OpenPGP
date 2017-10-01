@@ -29,7 +29,7 @@ Partial::Partial()
 {}
 
 Partial::Partial(const std::string & data)
-    : Base(),
+    : Tag(),
       stream(data)
 {}
 
@@ -54,7 +54,7 @@ void Partial::set_stream(const std::string & data){
     stream = data;
 }
 
-Base::Ptr Partial::clone() const{
+Tag::Ptr Partial::clone() const{
     return std::make_shared <Partial> (*this);
 }
 

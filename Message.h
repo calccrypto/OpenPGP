@@ -113,8 +113,8 @@ namespace OpenPGP {
             ~Message();
 
             std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-            std::string raw(const Packet::Base::Format header = Packet::Base::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
-            std::string write(const Armored armor = DEFAULT, const Packet::Base::Format header = Packet::Base::Format::DEFAULT) const;
+            std::string raw(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
+            std::string write(const Armored armor = DEFAULT, const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;
 
             uint8_t get_comp() const;                                                                   // get compression algorithm
 

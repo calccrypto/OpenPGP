@@ -70,7 +70,7 @@ namespace OpenPGP {
 
         class Tag17 : public User {
             public:
-                typedef std::vector <Subpacket::Tag17::Base::Ptr> Attributes;
+                typedef std::vector <Subpacket::Tag17::Sub::Ptr> Attributes;
 
             private:
                 uint64_t length;
@@ -96,7 +96,7 @@ namespace OpenPGP {
                 Attributes get_attributes_clone() const;
                 void set_attributes(const Attributes & a);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

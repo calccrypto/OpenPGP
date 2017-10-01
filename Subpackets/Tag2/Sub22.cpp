@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub22::Sub22()
-    : Base(PREFERRED_COMPRESSION_ALGORITHMS),
+    : Sub(PREFERRED_COMPRESSION_ALGORITHMS),
       pca()
 {}
 
@@ -45,7 +45,7 @@ void Sub22::set_pca(const std::string & c){
     pca = c;
 }
 
-Base::Ptr Sub22::clone() const{
+Sub::Ptr Sub22::clone() const{
     return std::make_shared <Sub22> (*this);
 }
 

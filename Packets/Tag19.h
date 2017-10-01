@@ -57,7 +57,7 @@ namespace OpenPGP {
         //    in the data hash. While this is a bit restrictive, it reduces
         //    complexity.
 
-        class Tag19 : public Base {
+        class Tag19 : public Tag {
             private:
                 std::string hash;
 
@@ -75,7 +75,7 @@ namespace OpenPGP {
 
                 void set_hash(const std::string & h);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

@@ -48,7 +48,7 @@ namespace OpenPGP {
             //    greater indicate complete trust. Implementations SHOULD emit values
             //    of 60 for partial trust and 120 for complete trust.
 
-            class Sub5 : public Base {
+            class Sub5 : public Sub {
                 private:
                     uint8_t level;
                     uint8_t amount;
@@ -68,7 +68,7 @@ namespace OpenPGP {
                     void set_level(const uint8_t l);
                     void set_amount(const uint8_t a);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

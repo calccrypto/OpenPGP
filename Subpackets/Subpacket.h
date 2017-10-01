@@ -91,7 +91,7 @@ namespace OpenPGP {
         //    polite manner to respect the wishes of those users who do implement
         //    these preferences.
 
-        class Base{
+        class Sub {
             protected:
                 bool critical;
                 uint8_t type;
@@ -102,17 +102,17 @@ namespace OpenPGP {
                 // returns first line of show functions (no tab or newline)
                 virtual std::string show_title() const;
 
-                Base(uint8_t type = 0, unsigned int size = 0, bool crit = false);
-                Base(const Base & copy);
-                Base & operator=(const Base & copy);
+                Sub(uint8_t type = 0, unsigned int size = 0, bool crit = false);
+                Sub(const Sub & copy);
+                Sub & operator=(const Sub & copy);
 
             public:
-                typedef std::shared_ptr <Base> Ptr;
+                typedef std::shared_ptr <Sub> Ptr;
 
-                virtual ~Base();
+                virtual ~Sub();
                 virtual void read(const std::string & data) = 0;
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
-                virtual std::string raw()   const = 0; // returns raw Base data, with no header
+                virtual std::string raw()   const = 0; // returns raw subpacket data, with no header
                 std::string write()         const;
 
                 bool get_critical()         const;

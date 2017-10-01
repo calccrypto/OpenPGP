@@ -37,7 +37,7 @@ namespace OpenPGP {
             //
             //    The OpenPGP Key ID of the key issuing the signature.
 
-            class Sub16 : public Base {
+            class Sub16 : public Sub {
                 private:
                     std::string keyid; // 8 octets
 
@@ -54,7 +54,7 @@ namespace OpenPGP {
 
                     void set_keyid(const std::string & k);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

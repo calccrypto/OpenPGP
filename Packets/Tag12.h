@@ -43,7 +43,7 @@ namespace OpenPGP {
         //    transferred to other users, and they SHOULD be ignored on any input
         //    other than local keyring files.
 
-        class Tag12 : public Base {
+        class Tag12 : public Tag {
             private:
                 std::string trust;
 
@@ -62,7 +62,7 @@ namespace OpenPGP {
 
                 void set_trust(const std::string & t);
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

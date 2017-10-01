@@ -60,7 +60,7 @@ namespace OpenPGP {
         //    BZip2-compressed packets are compressed using the BZip2 [BZ2]
         //    algorithm.
 
-        class Tag8 : public Base {
+        class Tag8 : public Tag {
             private:
                 uint8_t comp;
                 std::string compressed_data;
@@ -89,7 +89,7 @@ namespace OpenPGP {
                 void set_data(const std::string & data);                // set uncompressed data
                 void set_compressed_data(const std::string & data);     // set compressed data
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

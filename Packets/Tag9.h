@@ -74,7 +74,7 @@ namespace OpenPGP {
         //    incorrect.  See the "Security Considerations" section for hints on
         //    the proper use of this "quick check".
 
-        class Tag9 : public Base {
+        class Tag9 : public Tag {
             private:
                 std::string encrypted_data;
 
@@ -88,7 +88,7 @@ namespace OpenPGP {
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
 
                 std::string get_encrypted_data() const;
 

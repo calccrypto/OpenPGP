@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub23::Sub23()
-    : Base(KEY_SERVER_PREFERENCES),
+    : Sub(KEY_SERVER_PREFERENCES),
       flags()
 {}
 
@@ -49,7 +49,7 @@ void Sub23::set_flags(const std::string & f){
     flags = f;
 }
 
-Base::Ptr Sub23::clone() const{
+Sub::Ptr Sub23::clone() const{
     return std::make_shared <Sub23> (*this);
 }
 

@@ -1,6 +1,6 @@
 /*
 Packet.h
-Base class for OpenPGP packet types to inherit from
+Tag class for OpenPGP packet types to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -118,8 +118,8 @@ namespace OpenPGP {
         bool is_session_key          (const uint8_t t);
         bool is_sym_protected_data   (const uint8_t t);
 
-        // Base class for all packet types
-        class Base {
+        // Tag class for all packet types
+        class Tag {
             public:
                 enum Format{
                     DEFAULT,
@@ -131,27 +131,27 @@ namespace OpenPGP {
                 uint8_t tag;        // RFC 4880 sec 4.3
                 uint8_t version;
                 bool format;        // OLD (false) or NEW (true); defaults to NEW
-                std::size_t size;   // This value is only correct when the Base was generated with the read() function
+                std::size_t size;   // This value is only correct when the Tag was generated with the read() function
                 uint8_t partial;    // 0-3; 0 = not partial, 1 = partial begin, 2 = partial continue, 3 = partial end
 
-                // returns Base data with old format Base length
+                // returns Tag data with old format Tag length
                 std::string write_old_length(const std::string & data) const;
 
-                // returns Base data with new format Base length
+                // returns Tag data with new format Tag length
                 std::string write_new_length(const std::string & data) const;
 
                 // returns first line of show functions (no tab or newline)
                 virtual std::string show_title() const; // virtual to allow for overriding for special cases
 
-                Base(const uint8_t t);
-                Base(const uint8_t t, const uint8_t ver);
-                Base(const Base & copy);
+                Tag(const uint8_t t);
+                Tag(const uint8_t t, const uint8_t ver);
+                Tag(const Tag & copy);
 
             public:
-                typedef std::shared_ptr <Base> Ptr;
+                typedef std::shared_ptr <Tag> Ptr;
 
-                Base();
-                virtual ~Base();
+                Tag();
+                virtual ~Tag();
                 virtual void read(const std::string & data) = 0;
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
                 virtual std::string raw() const = 0;
@@ -173,7 +173,7 @@ namespace OpenPGP {
 
                 virtual Ptr clone() const = 0;
 
-                Base & operator=(const Base & copy);
+                Tag & operator=(const Tag & copy);
         };
     }
 }

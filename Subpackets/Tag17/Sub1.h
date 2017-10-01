@@ -83,7 +83,7 @@ namespace OpenPGP {
                 };
             }
 
-            class Sub1 : public Base {
+            class Sub1 : public Sub {
                 private:
                     uint8_t version;
                     uint8_t encoding;
@@ -107,7 +107,7 @@ namespace OpenPGP {
                     void set_encoding(const uint8_t & enc);
                     void set_image(const std::string & i);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

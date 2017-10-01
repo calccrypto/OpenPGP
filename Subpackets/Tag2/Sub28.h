@@ -44,7 +44,7 @@ namespace OpenPGP {
             //    This Subpacket is not appropriate to use to refer to a User Attribute
             //    packet.
 
-            class Sub28 : public Base {
+            class Sub28 : public Sub {
                 private:
                     std::string signer;
 
@@ -61,7 +61,7 @@ namespace OpenPGP {
 
                     void set_signer(const std::string & s);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

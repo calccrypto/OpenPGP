@@ -114,8 +114,8 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
     return tag;
 }
 
-Packet::Base::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const{
-    Packet::Base::Ptr out;
+Packet::Tag::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const{
+    Packet::Tag::Ptr out;
     if (partial > 1){
         out = std::make_shared <Packet::Partial> ();
     }
@@ -208,7 +208,7 @@ Packet::Base::Ptr PGP::read_packet_raw(const bool format, const uint8_t tag, uin
     return out;
 }
 
-Packet::Base::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const{
+Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos, uint8_t & partial) const{
     if (pos >= data.size()){
         return nullptr;
     }
@@ -361,7 +361,7 @@ void PGP::read_raw(const std::string & data){
     uint8_t partial = 0;
     std::string::size_type pos = 0;
     while (pos < data.size()){
-        Packet::Base::Ptr packet = read_packet(data, pos, partial);
+        Packet::Tag::Ptr packet = read_packet(data, pos, partial);
         if (packet){
             packets.push_back(packet);
         }
@@ -382,21 +382,21 @@ void PGP::read_raw(std::istream & stream){
 
 std::string PGP::show(const std::size_t indents, const std::size_t indent_size) const{
     std::string out;
-    for(Packet::Base::Ptr const & p : packets){
+    for(Packet::Tag::Ptr const & p : packets){
         out += p -> show(indents, indent_size) + "\n";
     }
     return out;
 }
 
-std::string PGP::raw(const Packet::Base::Format header) const{
+std::string PGP::raw(const Packet::Tag::Format header) const{
     std::string out = "";
-    for(Packet::Base::Ptr const & p : packets){
+    for(Packet::Tag::Ptr const & p : packets){
         out += p -> write(header);
     }
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor, const Packet::Base::Format header) const{
+std::string PGP::write(const PGP::Armored armor, const Packet::Tag::Format header) const{
     const std::string packet_string = raw(header);  // raw PGP data = binary, no ASCII headers
 
     if ((armor == Armored::NO)                   || // no armor
@@ -430,7 +430,7 @@ const PGP::Packets & PGP::get_packets() const{
 
 PGP::Packets PGP::get_packets_clone() const{
     Packets out = packets;
-    for(Packet::Base::Ptr & p : out){
+    for(Packet::Tag::Ptr & p : out){
         p = p -> clone();
     }
     return out;
@@ -454,7 +454,7 @@ void PGP::set_packets(const PGP::Packets & p){
 
 void PGP::set_packets_clone(const PGP::Packets & p){
     packets = p;
-    for(Packet::Base::Ptr & p : packets){
+    for(Packet::Tag::Ptr & p : packets){
         p = p -> clone();
     }
 }

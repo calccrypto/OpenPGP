@@ -48,7 +48,7 @@ namespace OpenPGP {
         //    necessary to process the message.
 
 
-        class Tag10 : public Base {
+        class Tag10 : public Tag {
             private:
                 std::string pgp; // "PGP"
 
@@ -66,7 +66,7 @@ namespace OpenPGP {
 
                 void set_pgp(const std::string & s = "PGP");
 
-                Base::Ptr clone() const;
+                Tag::Ptr clone() const;
         };
     }
 }

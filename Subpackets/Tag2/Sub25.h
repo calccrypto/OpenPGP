@@ -51,7 +51,7 @@ namespace OpenPGP {
             //    different and independent "primaries" -- one for User IDs, and one
             //    for User Attributes.
 
-            class Sub25 : public Base {
+            class Sub25 : public Sub {
                 private:
                     bool primary;
 
@@ -68,7 +68,7 @@ namespace OpenPGP {
 
                     void set_primary(const bool p);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

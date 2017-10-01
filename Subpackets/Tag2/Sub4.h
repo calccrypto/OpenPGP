@@ -59,7 +59,7 @@ namespace OpenPGP {
             //    (for example, a key server). Such implementations always trim local
             //    certifications from any key they handle.
 
-            class Sub4 : public Base {
+            class Sub4 : public Sub {
                 private:
                     bool exportable;
 
@@ -76,7 +76,7 @@ namespace OpenPGP {
 
                     void set_exportable(const bool e);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

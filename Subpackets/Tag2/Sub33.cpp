@@ -7,7 +7,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub33::Sub33()
-    : Base(ISSUER_FINGERPRINT),
+    : Sub(ISSUER_FINGERPRINT),
       issuer_fingerprint()
 {}
 
@@ -53,7 +53,7 @@ void Sub33::set_issuer_fingerprint(const std::string & fingerprint){
     issuer_fingerprint = fingerprint;
 }
 
-Base::Ptr Sub33::clone() const{
+Sub::Ptr Sub33::clone() const{
     return std::make_shared <Sub33> (*this);
 }
 

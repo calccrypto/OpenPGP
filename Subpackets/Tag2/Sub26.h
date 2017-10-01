@@ -38,7 +38,7 @@ namespace OpenPGP {
             //    This Subpacket contains a URI of a document that describes the policy
             //    under which the signature was issued.
 
-            class Sub26 : public Base {
+            class Sub26 : public Sub {
                 private:
                     std::string uri;
 
@@ -55,7 +55,7 @@ namespace OpenPGP {
 
                     void set_uri(const std::string & u);
 
-                    Base::Ptr clone() const;
+                    Sub::Ptr clone() const;
             };
         }
     }

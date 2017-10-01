@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 Sub26::Sub26()
-    : Base(POLICY_URI),
+    : Sub(POLICY_URI),
       uri()
 {}
 
@@ -39,7 +39,7 @@ void Sub26::set_uri(const std::string & u){
     uri = u;
 }
 
-Base::Ptr Sub26::clone() const{
+Sub::Ptr Sub26::clone() const{
     return std::make_shared <Sub26> (*this);
 }
 

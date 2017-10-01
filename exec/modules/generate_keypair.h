@@ -160,8 +160,8 @@ const Module generate_keypair(
             return -1;
         }
 
-        pub_out << pub.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::flush;
-        pri_out << pri.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Base::Format::NEW) << std::flush;
+        pub_out << pub.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::flush;
+        pri_out << pri.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::flush;
 
         out << "Keys written to '" << pub_name << "' and '" << pri_name << "'." << std::endl;
         return 0;

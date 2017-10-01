@@ -1,6 +1,6 @@
 /*
 Key.h
-Base class for OpenPGP key packet types to inherit from
+Tag class for OpenPGP key packet types to inherit from
 
 Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
@@ -36,7 +36,7 @@ namespace OpenPGP {
 
         // For Tags 5, 6, 7, and 14
         // Key is equivalent to Tag6 (but don't substitute Key for Tag6)
-        class Key : public Base {
+        class Key : public Tag {
             protected:
                 uint32_t time;
                 uint8_t pka;
@@ -76,7 +76,7 @@ namespace OpenPGP {
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary
 
-                virtual Packet::Base::Ptr clone() const;
+                virtual Packet::Tag::Ptr clone() const;
 
                 Key & operator=(const Key & copy);
         };
