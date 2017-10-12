@@ -50,7 +50,7 @@ std::string Key::fingerprint() const{
     return std::static_pointer_cast <Packet::Key> (packets[0]) -> get_fingerprint();
 }
 
-int Key::version() const{
+uint8_t Key::version() const{
     std::string error;
     if (!meaningful(error)){
         throw std::runtime_error("Error: Bad Key.");
