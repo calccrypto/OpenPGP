@@ -57,6 +57,9 @@ namespace OpenPGP {
             // fingerprint of entire key (primary key packet)
             std::string fingerprint() const;
 
+            // version of entire key (primary key packet)
+            int version() const;
+
             // output style inspired by gpg and SKS Keyserver/pgp.mit.edu
             std::string list_keys(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
 

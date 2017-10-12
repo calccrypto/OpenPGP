@@ -50,6 +50,15 @@ std::string Key::fingerprint() const{
     return std::static_pointer_cast <Packet::Key> (packets[0]) -> get_fingerprint();
 }
 
+int Key::version() const{
+    std::string error;
+    if (!meaningful(error)){
+        throw std::runtime_error("Error: Bad Key.");
+    }
+
+    return std::static_pointer_cast <Packet::Key> (packets[0]) -> get_version();
+}
+
 // output style inspired by gpg and SKS Keyserver/pgp.mit.edu
 std::string Key::list_keys(const std::size_t indents, const std::size_t indent_size) const{
     if (!meaningful()){
