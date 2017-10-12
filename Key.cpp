@@ -51,8 +51,7 @@ std::string Key::fingerprint() const{
 }
 
 uint8_t Key::version() const{
-    std::string error;
-    if (!meaningful(error)){
+    if (!meaningful()){
         throw std::runtime_error("Error: Bad Key.");
     }
 
