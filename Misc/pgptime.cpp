@@ -29,7 +29,9 @@ std::string show_time(time_t time){
 std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t limit = 80){
         char *buffer = new char(limit);
         strftime (buffer, limit, format, localtime (&time));
-        return buffer;
+        std::string result(buffer);
+        delete(buffer);
+        return result;
 }
 
 std::string show_date(time_t time){
