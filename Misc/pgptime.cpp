@@ -25,6 +25,15 @@ std::string show_time(time_t time){
     return date.str();
 }
 
+// write a time following strftime format
+std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t limit = 80){
+        char *buffer = new char(limit);
+        strftime (buffer, limit, format, localtime (&time));
+        std::string result(buffer);
+        delete(buffer);
+        return result;
+}
+
 std::string show_date(time_t time){
     struct tm * gmt = gmtime(&time);
     std::stringstream date;
