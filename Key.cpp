@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <functional>
 #include "Key.h"
 
 namespace OpenPGP {
@@ -144,6 +146,42 @@ std::string Key::list_keys(const std::size_t indents, const std::size_t indent_s
     }
 
     return out.str();
+}
+
+Key::pkey Key::get_pkey() const {
+    pkey pk;
+    pk.key = packets[0];
+    Packet::Tag::Ptr lastUser = nullptr;
+    Packet::Tag::Ptr lastSubkey = nullptr;
+    for (unsigned int i = 1; i < packets.size(); i++){
+        switch(packets[i]->get_tag()){
+            case 2: // Signature found
+                if (lastUser == nullptr && lastSubkey == nullptr){
+                    pk.keySigs.push_back(std::make_pair(pk.key, packets[i]));
+                } else if (lastUser != nullptr && lastSubkey == nullptr){
+                    pk.uids.push_back(std::make_pair(lastUser, packets[i]));
+                } else if (lastUser == nullptr && lastSubkey != nullptr){
+                    pk.subKeys.push_back(std::make_pair(lastSubkey, packets[i]));
+                } else{ // this should never happen
+                    throw std::logic_error("Some subkey lost during merge");
+                }
+                break;
+            case 13:
+            case 17: // User found
+                lastUser = packets[i];
+                lastSubkey = nullptr;
+                break;
+            case 7:
+            case 14: // Subkey found
+                lastUser = nullptr;
+                lastSubkey = packets[i];
+                break;
+            default:
+                throw std::runtime_error("Packet not recognized during merge");
+                break;
+        }
+    }
+    return pk;
 }
 
 bool Key::meaningful(const PGP & pgp){
@@ -317,6 +355,80 @@ bool Key::meaningful(const PGP & pgp){
 bool Key::meaningful() const{
     return meaningful(*this);
 }
+
+std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, std::vector<Key::sigPairs> v2){
+    std::vector<sigPairs> result;
+    result.reserve(v1.size() + v2.size());
+    result.insert(result.end(), v1.begin(), v1.end());
+    result.insert(result.end(), v2.begin(), v2.end());
+
+    std::function<bool (sigPairs, sigPairs)> equality_test =
+            [&](sigPairs s1, sigPairs s2){return is_sigpairs_equals(s1, s2);};
+    std::vector<sigPairs>::iterator it = std::unique(result.begin(), result.end(), equality_test);
+    result.resize(std::distance(result.begin(), it));
+/*
+    for (unsigned int i = 0; i < result.size(); i++){
+        for (unsigned int j = i + 1; j < result.size(); j++){
+            if (is_sigpairs_equals(result[i], result[j])){
+                result.erase(result.begin() + j);
+            }
+        }
+    }*/
+    //result.resize(std::distance(result.begin(), new iterator(2)));
+    return result;
+}
+
+void Key::merge(const Key *k) {
+    pkey pk1 = this->get_pkey();
+    pkey pk2 = k->get_pkey();
+    if (!Packet::is_equals(pk1.key, pk2.key)){
+        throw std::runtime_error("Merge not possible between different keys");
+    }
+    pkey result;
+
+    result.key = pk1.key;
+    result.keySigs = merge_sigPairs(pk1.keySigs, pk2.keySigs);
+    result.uids = merge_sigPairs(pk1.uids, pk2.uids);
+    result.subKeys = merge_sigPairs(pk1.subKeys, pk2.subKeys);
+
+    set_packets_from_pkey(result);
+}
+
+void Key::set_packets_from_pkey(const Key::pkey pk){
+    Packets new_packets;
+    new_packets.push_back(pk.key);
+    flatten(pk.keySigs, &new_packets);
+    flatten(pk.uids, &new_packets);
+    flatten(pk.subKeys, &new_packets);
+
+    set_packets(new_packets);
+}
+
+void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
+    Packet::Tag::Ptr currentPriPacket;
+
+    while (!v.empty()){
+        currentPriPacket = v[0].first;
+        np -> push_back(currentPriPacket);
+        for (unsigned int j = 0; j < v.size(); j++){
+            if (Packet::is_equals(v[0].first, currentPriPacket)){
+                np->push_back(v[j].second);
+                v.erase(v.begin() + j);
+            }
+        }
+    }
+
+    /*
+    for (unsigned int i = 0; i < v.size();){
+        currentPriPacket = v[i].first;
+        np -> push_back(currentPriPacket);
+        while(i < v.size() && Packet::is_equals(v[i].first, currentPriPacket)){
+            np -> push_back(v[i].second);
+            i++;
+        }
+    }*/
+}
+
 
 PGP::Ptr Key::clone() const{
     return std::make_shared <Key> (*this);

@@ -118,7 +118,7 @@ namespace OpenPGP {
         bool is_session_key          (const uint8_t t);
         bool is_sym_protected_data   (const uint8_t t);
 
-        // Tag class for all packet types
+            // Tag class for all packet types
         class Tag {
             public:
                 enum Format{
@@ -157,6 +157,7 @@ namespace OpenPGP {
                 virtual std::string raw() const = 0;
                 std::string write(const Format header = DEFAULT) const;
 
+
                 // Accessors
                 uint8_t get_tag() const;
                 bool get_format() const;
@@ -174,7 +175,12 @@ namespace OpenPGP {
                 virtual Ptr clone() const = 0;
 
                 Tag & operator=(const Tag & copy);
+                bool operator==(Tag::Ptr p);
+
         };
+
+        bool is_equals(Tag::Ptr p1, Tag::Ptr p2);
+
     }
 }
 

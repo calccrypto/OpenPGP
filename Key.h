@@ -41,6 +41,26 @@ namespace OpenPGP {
                 std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
             };
 
+            typedef std::pair<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
+
+            struct pkey{
+                Packet::Tag::Ptr key;
+                std::vector<sigPairs> keySigs;
+                std::vector<sigPairs> uids;
+                std::vector<sigPairs> subKeys;
+            };
+
+            // return the pkey format of the key
+            pkey get_pkey() const;
+            std::vector<sigPairs> merge_sigPairs(std::vector<sigPairs> v1, std::vector<sigPairs> v2);
+            void set_packets_from_pkey(pkey pk);
+            void flatten(std::vector<Key::sigPairs> v, Packets *np);
+
+            // Return if the two sigpairs in input are equal or not
+            bool is_sigpairs_equals(sigPairs s1, sigPairs s2){
+                return Packet::is_equals(s1.first, s2.first) && Packet::is_equals(s1.second, s2.second);
+            }
+
         public:
             typedef std::shared_ptr <Key> Ptr;
 
@@ -68,6 +88,9 @@ namespace OpenPGP {
 
             // whether or not *this data matches a Key format
             virtual bool meaningful() const;
+
+            // Merge function ported from sks keyserver ocaml code
+            void merge(const Key *k);
 
             virtual PGP::Ptr clone() const;
         };
