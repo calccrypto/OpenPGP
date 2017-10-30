@@ -66,6 +66,7 @@ namespace OpenPGP {
                 std::string raw_common() const;
 
                 uint32_t get_time() const;
+                uint32_t get_exp_time() const;
                 uint8_t get_pka() const;
                 PKA::Values get_mpi() const;
 

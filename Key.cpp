@@ -226,7 +226,9 @@ bool Key::meaningful(const PGP & pgp){
         }
         else{
             // "Error: Packet " + std::to_string(i) + " following " + Packet::NAME.at(key) + " is not a key revocation signature.\n";
-            return false;
+            //return false;
+            i++;
+            continue;
         }
     }
 
@@ -307,7 +309,7 @@ bool Key::meaningful(const PGP & pgp){
             return false;
         }
 
-        if (primary_key_version == 3){
+        if (primary_key_version == 3 || primary_key_version == 2){
             // "Error: Version 3 keys MUST NOT have subkeys.\n";
             return false;
         }
@@ -366,19 +368,10 @@ std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, st
             [&](sigPairs s1, sigPairs s2){return is_sigpairs_equals(s1, s2);};
     std::vector<sigPairs>::iterator it = std::unique(result.begin(), result.end(), equality_test);
     result.resize(std::distance(result.begin(), it));
-/*
-    for (unsigned int i = 0; i < result.size(); i++){
-        for (unsigned int j = i + 1; j < result.size(); j++){
-            if (is_sigpairs_equals(result[i], result[j])){
-                result.erase(result.begin() + j);
-            }
-        }
-    }*/
-    //result.resize(std::distance(result.begin(), new iterator(2)));
     return result;
 }
 
-void Key::merge(const Key *k) {
+void Key::merge(const Key::Ptr k) {
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
     if (!Packet::is_equals(pk1.key, pk2.key)){
@@ -411,22 +404,12 @@ void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
         currentPriPacket = v[0].first;
         np -> push_back(currentPriPacket);
         for (unsigned int j = 0; j < v.size(); j++){
-            if (Packet::is_equals(v[0].first, currentPriPacket)){
+            if (Packet::is_equals(v[j].first, currentPriPacket)){
                 np->push_back(v[j].second);
                 v.erase(v.begin() + j);
             }
         }
     }
-
-    /*
-    for (unsigned int i = 0; i < v.size();){
-        currentPriPacket = v[i].first;
-        np -> push_back(currentPriPacket);
-        while(i < v.size() && Packet::is_equals(v[i].first, currentPriPacket)){
-            np -> push_back(v[i].second);
-            i++;
-        }
-    }*/
 }
 
 
