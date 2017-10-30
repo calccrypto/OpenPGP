@@ -66,12 +66,14 @@ namespace OpenPGP {
                 std::string raw_common() const;
 
                 uint32_t get_time() const;
+                uint32_t get_exp_time() const;
                 uint8_t get_pka() const;
                 PKA::Values get_mpi() const;
 
                 void set_time(const uint32_t t);
                 void set_pka(const uint8_t p);
                 void set_mpi(const PKA::Values & m);
+
 
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary

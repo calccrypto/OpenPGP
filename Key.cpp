@@ -417,16 +417,6 @@ void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
             }
         }
     }
-
-    /*
-    for (unsigned int i = 0; i < v.size();){
-        currentPriPacket = v[i].first;
-        np -> push_back(currentPriPacket);
-        while(i < v.size() && Packet::is_equals(v[i].first, currentPriPacket)){
-            np -> push_back(v[i].second);
-            i++;
-        }
-    }*/
 }
 
 
