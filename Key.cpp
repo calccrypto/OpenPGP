@@ -149,32 +149,43 @@ std::string Key::list_keys(const std::size_t indents, const std::size_t indent_s
 }
 
 Key::pkey Key::get_pkey() const {
+    if (!meaningful()){
+        throw std::runtime_error("Error: Bad Key.");
+    }
     pkey pk;
     pk.key = packets[0];
-    Packet::Tag::Ptr lastUser = nullptr;
-    Packet::Tag::Ptr lastSubkey = nullptr;
+    Packet::Tag::Ptr lastUserPkt = nullptr;
+    Packet::Tag::Ptr lastSubkeyPkt = nullptr;
+
     for (unsigned int i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
-            case 2: // Signature found
-                if (lastUser == nullptr && lastSubkey == nullptr){
-                    pk.keySigs.push_back(std::make_pair(pk.key, packets[i]));
-                } else if (lastUser != nullptr && lastSubkey == nullptr){
-                    pk.uids.push_back(std::make_pair(lastUser, packets[i]));
-                } else if (lastUser == nullptr && lastSubkey != nullptr){
-                    pk.subKeys.push_back(std::make_pair(lastSubkey, packets[i]));
+            case 2:
+                if (lastUserPkt == nullptr && lastSubkeyPkt == nullptr){ // Primary Key Signature
+                    pk.keySigs.insert(pk.key, packets[i]);
+                } else if (lastUserPkt != nullptr && lastSubkeyPkt == nullptr){ // UserID/UserAtt Signature
+                    pk.uids.insert(lastUserPkt, packets[i]);
+                } else if (lastUserPkt == nullptr && lastSubkeyPkt != nullptr){ // Subkey Signature
+                    pk.subkeys.insert(lastSubkeyPkt, packets[i]);
                 } else{ // this should never happen
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
-            case 13:
-            case 17: // User found
-                lastUser = packets[i];
-                lastSubkey = nullptr;
+            case 17: // User attribute found
+                if (lastUserPkt == nullptr) {
+                    throw std::runtime_error("Found user attribute without corresponding userID packet");
+                }
+                pk.uid_att.insert(
+                        static_pointer_cast<Packet::Tag13::Ptr>(lastUserPkt),
+                        static_pointer_cast<Packet::Tag17::Ptr>(packets[i]));
+            case 13: // User found
+                lastUserPkt = packets[i];
+                lastSubkeyPkt = nullptr;
                 break;
-            case 7:
-            case 14: // Subkey found
-                lastUser = nullptr;
-                lastSubkey = packets[i];
+
+            case 7:  // Secret subkey found
+            case 14: // Public subkey found
+                lastUserPkt = nullptr;
+                lastSubkeyPkt = packets[i];
                 break;
             default:
                 throw std::runtime_error("Packet not recognized during merge");
@@ -372,6 +383,7 @@ std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, st
 }
 
 void Key::merge(const Key::Ptr k) {
+
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
     if (!Packet::is_equals(pk1.key, pk2.key)){
@@ -407,6 +419,14 @@ void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
             if (Packet::is_equals(v[j].first, currentPriPacket)){
                 np->push_back(v[j].second);
                 v.erase(v.begin() + j);
+                if (v[j].first == Packet::USER_ATTRIBUTE){
+                    np->push_back(v[j].first);
+                    while (v[j].first == Packet::USER_ATTRIBUTE) {
+                        np->push_back(v[j].second);
+                        v.erase(v.begin() + j);
+                    }
+                }
+                j--;
             }
         }
     }

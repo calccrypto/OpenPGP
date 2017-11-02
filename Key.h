@@ -33,12 +33,17 @@ THE SOFTWARE.
 namespace OpenPGP {
     class Key : public PGP {
         public:
-            typedef std::pair<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
+            typedef std::multimap<const Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
             struct pkey{
                 Packet::Tag::Ptr key;
-                std::vector<sigPairs> keySigs;
-                std::vector<sigPairs> uids;
-                std::vector<sigPairs> subKeys;
+                sigPairs keySigs;
+                sigPairs uids;
+                sigPairs subkeys;
+                std::map<Packet::Tag13::Ptr, Packet::Tag17::Ptr> uid_att;
+
+                //std::vector<sigPairs> keySigs;
+                //std::vector<sigPairs> uids;
+                //std::vector<sigPairs> subKeys;
             };
 
         private:
