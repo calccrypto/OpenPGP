@@ -139,7 +139,6 @@ uint32_t Key::get_exp_time() const {
         return expire;
     }else{
         throw std::runtime_error("Expiration time is defined only for version 3");
-
     }
 }
 
@@ -166,7 +165,7 @@ void Key::set_mpi(const PKA::Values & m){
 }
 
 std::string Key::get_fingerprint() const{
-    if (version == 3){
+    if (version == 3 || version == 2){
         std::string data = "";
         for(MPI const & i : mpi){
             std::string m = write_MPI(i);
@@ -185,7 +184,7 @@ std::string Key::get_fingerprint() const{
 }
 
 std::string Key::get_keyid() const{
-    if (version == 3){
+    if (version == 3 || version == 2){
         std::string data = write_MPI(mpi[0]);
         return data.substr(data.size() - 8, 8);
     }

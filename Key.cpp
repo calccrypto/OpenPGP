@@ -154,30 +154,38 @@ Key::pkey Key::get_pkey() const {
     }
     pkey pk;
     pk.key = packets[0];
-    Packet::Tag::Ptr lastUser = nullptr;
-    Packet::Tag::Ptr lastSubkey = nullptr;
+    Packet::Tag::Ptr lastUserPkt = nullptr;
+    Packet::Tag::Ptr lastSubkeyPkt = nullptr;
+
     for (unsigned int i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
-            case 2: // Signature found
-                if (lastUser == nullptr && lastSubkey == nullptr){
-                    pk.keySigs.push_back(std::make_pair(pk.key, packets[i]));
-                } else if (lastUser != nullptr && lastSubkey == nullptr){
-                    pk.uids.push_back(std::make_pair(lastUser, packets[i]));
-                } else if (lastUser == nullptr && lastSubkey != nullptr){
-                    pk.subKeys.push_back(std::make_pair(lastSubkey, packets[i]));
+            case 2:
+                if (lastUserPkt == nullptr && lastSubkeyPkt == nullptr){ // Primary Key Signature
+                    pk.keySigs.insert(pk.key, packets[i]);
+                } else if (lastUserPkt != nullptr && lastSubkeyPkt == nullptr){ // UserID/UserAtt Signature
+                    pk.uids.insert(lastUserPkt, packets[i]);
+                } else if (lastUserPkt == nullptr && lastSubkeyPkt != nullptr){ // Subkey Signature
+                    pk.subkeys.insert(lastSubkeyPkt, packets[i]);
                 } else{ // this should never happen
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
-            case 13:
-            case 17: // User found
-                lastUser = packets[i];
-                lastSubkey = nullptr;
+            case 17: // User attribute found
+                if (lastUserPkt == nullptr) {
+                    throw std::runtime_error("Found user attribute without corresponding userID packet");
+                }
+                pk.uid_att.insert(
+                        static_pointer_cast<Packet::Tag13::Ptr>(lastUserPkt),
+                        static_pointer_cast<Packet::Tag17::Ptr>(packets[i]));
+            case 13: // User found
+                lastUserPkt = packets[i];
+                lastSubkeyPkt = nullptr;
                 break;
-            case 7:
-            case 14: // Subkey found
-                lastUser = nullptr;
-                lastSubkey = packets[i];
+
+            case 7:  // Secret subkey found
+            case 14: // Public subkey found
+                lastUserPkt = nullptr;
+                lastSubkeyPkt = packets[i];
                 break;
             default:
                 throw std::runtime_error("Packet not recognized during merge");
@@ -229,7 +237,9 @@ bool Key::meaningful(const PGP & pgp){
         }
         else{
             // "Error: Packet " + std::to_string(i) + " following " + Packet::NAME.at(key) + " is not a key revocation signature.\n";
-            return false;
+            //return false;
+            i++;
+            continue;
         }
     }
 
@@ -310,7 +320,7 @@ bool Key::meaningful(const PGP & pgp){
             return false;
         }
 
-        if (primary_key_version == 3){
+        if (primary_key_version == 3 || primary_key_version == 2){
             // "Error: Version 3 keys MUST NOT have subkeys.\n";
             return false;
         }
@@ -370,12 +380,12 @@ std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, st
             [&](sigPairs s1, sigPairs s2){return is_sigpairs_equals(s1, s2);};
     std::vector<sigPairs>::iterator it = std::unique(result.begin(), result.end(), equality_test);
     result.resize(std::distance(result.begin(), it));
-     */
-
+    */
     return result;
 }
 
-void Key::merge(Key::Ptr k) {
+void Key::merge(const Key::Ptr k) {
+
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
     if (pk1.key != pk2.key){
@@ -409,6 +419,7 @@ void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
         currentPriPacket = v[0].first;
         np -> push_back(currentPriPacket);
         for (unsigned int j = 0; j < v.size(); j++){
+<<<<<<< HEAD
             if (v[0].first == currentPriPacket){
                 np->push_back(v[j].second);
                 v.erase(v.begin() + j);
@@ -416,11 +427,22 @@ void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
                 if (v[j].first->get_tag() == Packet::USER_ATTRIBUTE){
                     np->push_back(v[j].first);
                     while (v[j].first->get_tag() == Packet::USER_ATTRIBUTE) {
+=======
+            if (Packet::is_equals(v[j].first, currentPriPacket)){
+                np->push_back(v[j].second);
+                v.erase(v.begin() + j);
+                if (v[j].first == Packet::USER_ATTRIBUTE){
+                    np->push_back(v[j].first);
+                    while (v[j].first == Packet::USER_ATTRIBUTE) {
+>>>>>>> 0de0994054a845a3a9f342353ed9d559016b13c5
                         np->push_back(v[j].second);
                         v.erase(v.begin() + j);
                     }
                 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0de0994054a845a3a9f342353ed9d559016b13c5
                 j--;
             }
         }

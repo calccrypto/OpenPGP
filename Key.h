@@ -32,6 +32,20 @@ THE SOFTWARE.
 
 namespace OpenPGP {
     class Key : public PGP {
+        public:
+            typedef std::multimap<const Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
+            struct pkey{
+                Packet::Tag::Ptr key;
+                sigPairs keySigs;
+                sigPairs uids;
+                sigPairs subkeys;
+                std::map<Packet::Tag13::Ptr, Packet::Tag17::Ptr> uid_att;
+
+                //std::vector<sigPairs> keySigs;
+                //std::vector<sigPairs> uids;
+                //std::vector<sigPairs> subKeys;
+            };
+
         private:
             // for listing keys
             const std::map <uint8_t, std::string> Public_Key_Type = {
@@ -41,17 +55,7 @@ namespace OpenPGP {
                 std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
             };
 
-            typedef std::pair<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
 
-            struct pkey{
-                Packet::Tag::Ptr key;
-                std::vector<sigPairs> keySigs;
-                std::vector<sigPairs> uids;
-                std::vector<sigPairs> subKeys;
-            };
-
-            // return the pkey format of the key
-            pkey get_pkey() const;
             std::vector<sigPairs> merge_sigPairs(std::vector<sigPairs> v1, std::vector<sigPairs> v2);
             void set_packets_from_pkey(pkey pk);
             void flatten(std::vector<Key::sigPairs> v, Packets *np);
@@ -65,12 +69,16 @@ namespace OpenPGP {
         public:
             typedef std::shared_ptr <Key> Ptr;
 
+
             Key();
             Key(const PGP & copy);
             Key(const Key & copy);
             Key(const std::string & data);
             Key(std::istream & stream);
             ~Key();
+
+            // return the pkey format of the key
+            pkey get_pkey() const;
 
             // keyid that is searched for on keyservers
             std::string keyid() const;
@@ -91,7 +99,7 @@ namespace OpenPGP {
             virtual bool meaningful() const;
 
             // Merge function ported from sks keyserver ocaml code
-            void merge(Key::Ptr k);
+            void merge(const Key::Ptr k);
 
             virtual PGP::Ptr clone() const;
         };
