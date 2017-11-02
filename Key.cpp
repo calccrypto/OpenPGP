@@ -365,13 +365,6 @@ std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, st
     result.insert(result.end(), v1.begin(), v1.end());
     result.insert(result.end(), v2.begin(), v2.end());
 
-    /*
-    std::function<bool (sigPairs, sigPairs)> equality_test =
-            [&](sigPairs s1, sigPairs s2){return is_sigpairs_equals(s1, s2);};
-    std::vector<sigPairs>::iterator it = std::unique(result.begin(), result.end(), equality_test);
-    result.resize(std::distance(result.begin(), it));
-     */
-
     return result;
 }
 

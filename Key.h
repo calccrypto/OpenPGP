@@ -56,12 +56,6 @@ namespace OpenPGP {
             void set_packets_from_pkey(pkey pk);
             void flatten(std::vector<Key::sigPairs> v, Packets *np);
 
-            // Return if the two sigpairs in input are equal or not
-            /*
-            bool is_sigpairs_equals(sigPairs s1, sigPairs s2){
-                return Packet::is_equals(s1.first, s2.first) && Packet::is_equals(s1.second, s2.second);
-            }*/
-
         public:
             typedef std::shared_ptr <Key> Ptr;
 
