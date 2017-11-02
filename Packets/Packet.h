@@ -175,12 +175,11 @@ namespace OpenPGP {
                 virtual Ptr clone() const = 0;
 
                 Tag & operator=(const Tag & copy);
-                bool operator==(Tag::Ptr p);
+            };
 
-        };
-
-        bool is_equals(Tag::Ptr p1, Tag::Ptr p2);
-
+        inline bool operator==(Tag::Ptr lhs, Tag::Ptr rhs){
+            return lhs->raw() == rhs->raw();
+        }
     }
 }
 

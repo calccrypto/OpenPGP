@@ -206,11 +206,5 @@ Tag & Tag::operator=(const Tag & copy)
     return *this;
 }
 
-bool Tag::operator==(Tag::Ptr p){
-    return true;
-    //return raw() == p->raw();
-}
-
-
 }
 }

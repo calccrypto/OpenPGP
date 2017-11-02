@@ -57,9 +57,10 @@ namespace OpenPGP {
             void flatten(std::vector<Key::sigPairs> v, Packets *np);
 
             // Return if the two sigpairs in input are equal or not
+            /*
             bool is_sigpairs_equals(sigPairs s1, sigPairs s2){
                 return Packet::is_equals(s1.first, s2.first) && Packet::is_equals(s1.second, s2.second);
-            }
+            }*/
 
         public:
             typedef std::shared_ptr <Key> Ptr;
@@ -90,7 +91,7 @@ namespace OpenPGP {
             virtual bool meaningful() const;
 
             // Merge function ported from sks keyserver ocaml code
-            void merge(const Key *k);
+            void merge(Key::Ptr k);
 
             virtual PGP::Ptr clone() const;
         };
