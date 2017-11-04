@@ -33,15 +33,7 @@ THE SOFTWARE.
 
 namespace OpenPGP {
     class Key : public PGP {
-        private:
-            // for listing keys
-            const std::map <uint8_t, std::string> Public_Key_Type = {
-                std::make_pair(Packet::SECRET_KEY,    "sec"),
-                std::make_pair(Packet::PUBLIC_KEY,    "pub"),
-                std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
-                std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
-            };
-
+        public:
             typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
 
             struct pkey{
@@ -51,10 +43,15 @@ namespace OpenPGP {
                 sigPairs subKeys;
                 sigPairs uid_userAtt;
             };
+        private:
+            // for listing keys
+            const std::map <uint8_t, std::string> Public_Key_Type = {
+                std::make_pair(Packet::SECRET_KEY,    "sec"),
+                std::make_pair(Packet::PUBLIC_KEY,    "pub"),
+                std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
+                std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
+            };
 
-            // return the pkey format of the key
-            pkey get_pkey() const;
-            void set_packets_from_pkey(pkey pk);
             void flatten(sigPairs sp, Packets *np, sigPairs ua_table);
 
         public:
@@ -84,6 +81,9 @@ namespace OpenPGP {
 
             // whether or not *this data matches a Key format
             virtual bool meaningful() const;
+
+            // return the pkey format of the key
+            pkey get_pkey() const;
 
             // Merge function ported from sks keyserver ocaml code
             void merge(Key::Ptr k);
