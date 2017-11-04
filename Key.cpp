@@ -160,22 +160,26 @@ Key::pkey Key::get_pkey() const {
         switch(packets[i]->get_tag()){
             case 2: // Signature found
                 if (lastUser == nullptr && lastSubkey == nullptr){
-                    pk.keySigs.push_back(std::make_pair(pk.key, packets[i]));
+                    pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
                 } else if (lastUser != nullptr && lastSubkey == nullptr){
-                    pk.uids.push_back(std::make_pair(lastUser, packets[i]));
+                    pk.uids.insert(std::make_pair(lastUser, packets[i]));
                 } else if (lastUser == nullptr && lastSubkey != nullptr){
-                    pk.subKeys.push_back(std::make_pair(lastSubkey, packets[i]));
+                    pk.subKeys.insert(std::make_pair(lastSubkey, packets[i]));
                 } else{ // this should never happen
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
-            case 13:
-            case 17: // User found
+            case 17: // UserAttributes found
+                if (lastUser == nullptr){
+                    throw std::runtime_error("User attribute found without a UserID packet");
+                }
+                pk.uid_userAtt.insert(std::make_pair(lastUser, packets[i]));
+            case 13: // UserID found
                 lastUser = packets[i];
                 lastSubkey = nullptr;
                 break;
-            case 7:
-            case 14: // Subkey found
+            case 7:  // Secret subkey found
+            case 14: // Public subkey found
                 lastUser = nullptr;
                 lastSubkey = packets[i];
                 break;
@@ -359,15 +363,6 @@ bool Key::meaningful() const{
     return meaningful(*this);
 }
 
-std::vector<Key::sigPairs> Key::merge_sigPairs(std::vector<Key::sigPairs> v1, std::vector<Key::sigPairs> v2){
-    std::vector<sigPairs> result;
-    result.reserve(v1.size() + v2.size());
-    result.insert(result.end(), v1.begin(), v1.end());
-    result.insert(result.end(), v2.begin(), v2.end());
-
-    return result;
-}
-
 void Key::merge(Key::Ptr k) {
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
@@ -376,45 +371,43 @@ void Key::merge(Key::Ptr k) {
     }
 
     pk1.key = pk1.key;
-    pk1.keySigs = merge_sigPairs(pk1.keySigs, pk2.keySigs);
-    pk1.uids = merge_sigPairs(pk1.uids, pk2.uids);
-    pk1.subKeys = merge_sigPairs(pk1.subKeys, pk2.subKeys);
+    pk1.keySigs.insert(pk2.keySigs.begin(), pk2.keySigs.end());
+    pk1.uids.insert(pk2.uids.begin(), pk2.uids.end());
+    pk1.subKeys.insert(pk2.subKeys.begin(), pk2.subKeys.end());
+    pk1.uid_userAtt.insert(pk2.uid_userAtt.begin(), pk2.uid_userAtt.end());
 
     Packets new_packets;
     new_packets.push_back(pk1.key);
-    flatten(pk1.keySigs, &new_packets);
-    flatten(pk1.uids, &new_packets);
-    flatten(pk1.subKeys, &new_packets);
+    flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
+    flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
+    flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
-    std::function<bool (Packet::Tag::Ptr, Packet::Tag::Ptr)> equality_test =
-            [&](Packet::Tag::Ptr p1, Packet::Tag::Ptr p2){return p1 == p2;};
-    Packets::iterator it = std::unique(new_packets.begin(), new_packets.end());
-    new_packets.resize(std::distance(new_packets.begin(), it));
-
-    set_packets(new_packets);
+    set_packets_clone(new_packets);
 }
 
 
-void Key::flatten(std::vector<Key::sigPairs> v, Packets *np){
-    Packet::Tag::Ptr currentPriPacket;
+void Key::flatten(sigPairs sp, Packets *np, sigPairs ua_table){
+    for(auto i = sp.begin(); i != sp.end(); i++){
+        if (i->first->get_tag() == Packet::USER_ATTRIBUTE){
+            continue;
+        }
+        if (std::find(np->begin(), np->end(), i->first) != np->end()){
+            continue;
+        }
 
-    while (!v.empty()){
-        currentPriPacket = v[0].first;
-        np -> push_back(currentPriPacket);
-        for (unsigned int j = 0; j < v.size(); j++){
-            if (v[0].first == currentPriPacket){
-                np->push_back(v[j].second);
-                v.erase(v.begin() + j);
+        np->push_back(i->first);
+        auto range = sp.equal_range(i->first);
 
-                if (v[j].first->get_tag() == Packet::USER_ATTRIBUTE){
-                    np->push_back(v[j].first);
-                    while (v[j].first->get_tag() == Packet::USER_ATTRIBUTE) {
-                        np->push_back(v[j].second);
-                        v.erase(v.begin() + j);
-                    }
-                }
+        for(auto j = range.first; j != range.second; ++j){
+            np->push_back(j->second);
+        }
 
-                j--;
+        // If inserting UID search also user attributes
+        if (i->first->get_tag() == Packet::USER_ID && ua_table.find(i->first) != ua_table.end()){
+            auto ua_range = sp.equal_range(ua_table.find(i->first)->second);
+            np->push_back(ua_range.first->first);
+            for (auto j = ua_range.first; j != ua_range.second; j++){
+                np->push_back(j->second);
             }
         }
     }

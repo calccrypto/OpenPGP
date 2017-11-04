@@ -180,6 +180,9 @@ namespace OpenPGP {
         inline bool operator==(Tag::Ptr lhs, Tag::Ptr rhs){
             return lhs->raw() == rhs->raw();
         }
+        inline bool operator!=(Tag::Ptr lhs, Tag::Ptr rhs){
+            return !(lhs == rhs);
+        }
     }
 }
 

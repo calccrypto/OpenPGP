@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef __OPENPGP_KEY__
 #define __OPENPGP_KEY__
 
+#include <set>
 #include "Packets/packets.h"
 #include "PKA/PKAs.h"
 #include "PGP.h"
@@ -41,20 +42,20 @@ namespace OpenPGP {
                 std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
             };
 
-            typedef std::pair<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
+            typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
 
             struct pkey{
                 Packet::Tag::Ptr key;
-                std::vector<sigPairs> keySigs;
-                std::vector<sigPairs> uids;
-                std::vector<sigPairs> subKeys;
+                sigPairs keySigs;
+                sigPairs uids;
+                sigPairs subKeys;
+                sigPairs uid_userAtt;
             };
 
             // return the pkey format of the key
             pkey get_pkey() const;
-            std::vector<sigPairs> merge_sigPairs(std::vector<sigPairs> v1, std::vector<sigPairs> v2);
             void set_packets_from_pkey(pkey pk);
-            void flatten(std::vector<Key::sigPairs> v, Packets *np);
+            void flatten(sigPairs sp, Packets *np, sigPairs ua_table);
 
         public:
             typedef std::shared_ptr <Key> Ptr;
