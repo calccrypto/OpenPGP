@@ -370,7 +370,7 @@ void Key::merge(Key::Ptr k) {
         throw std::runtime_error("Merge not possible between different keys");
     }
 
-    pk1.key = pk1.key;
+    //pk1.key = pk2.key;
     pk1.keySigs.insert(pk2.keySigs.begin(), pk2.keySigs.end());
     pk1.uids.insert(pk2.uids.begin(), pk2.uids.end());
     pk1.subKeys.insert(pk2.subKeys.begin(), pk2.subKeys.end());
@@ -383,6 +383,10 @@ void Key::merge(Key::Ptr k) {
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
     set_packets_clone(new_packets);
+
+    if (!meaningful()){
+        throw std::logic_error("Key no more meaningful after merge");
+    }
 }
 
 
