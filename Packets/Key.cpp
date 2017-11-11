@@ -137,9 +137,9 @@ uint32_t Key::get_time() const{
 uint32_t Key::get_exp_time() const {
     if (version < 4){
         return expire;
-    }else{
+    }
+    else{
         throw std::runtime_error("Expiration time is defined only for version 3");
-
     }
 }
 

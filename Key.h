@@ -34,14 +34,14 @@ THE SOFTWARE.
 namespace OpenPGP {
     class Key : public PGP {
         public:
-            typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> sigPairs;
+            typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> SigPairs; // Map between two packets
 
-            struct pkey{
-                Packet::Tag::Ptr key;
-                sigPairs keySigs;
-                sigPairs uids;
-                sigPairs subKeys;
-                sigPairs uid_userAtt;
+            struct pkey{ // struct contains mapping between packets and relative signatures
+                Packet::Tag::Ptr key;   // Primary Key
+                SigPairs keySigs;       // Map between Primary Key and Signatures
+                SigPairs uids;          // Map between User (include UserID and User Attributes) and Signatures
+                SigPairs subKeys;       // Map between Subkeys and Signatures
+                SigPairs uid_userAtt;   // Map between UserID and User Attributes
             };
         private:
             // for listing keys
@@ -52,7 +52,8 @@ namespace OpenPGP {
                 std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
             };
 
-            void flatten(sigPairs sp, Packets *np, sigPairs ua_table);
+            // Extract Packet from sp pushing them in np
+            void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
 
         public:
             typedef std::shared_ptr <Key> Ptr;

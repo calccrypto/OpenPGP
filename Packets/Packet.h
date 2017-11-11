@@ -177,6 +177,8 @@ namespace OpenPGP {
                 Tag & operator=(const Tag & copy);
             };
 
+        // These two functions override the operators only with Tag::Ptr.
+        // They don't work with Ptr of types different than Tag (Tag1, Tag2, ecc)
         inline bool operator==(Tag::Ptr lhs, Tag::Ptr rhs){
             return lhs->raw() == rhs->raw();
         }

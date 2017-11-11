@@ -158,7 +158,7 @@ Key::pkey Key::get_pkey() const {
     Packet::Tag::Ptr lastSubkey = nullptr;
     for (unsigned int i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
-            case 2: // Signature found
+            case Packet::SIGNATURE: // Signature found
                 if (lastUser == nullptr && lastSubkey == nullptr){
                     pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
                 } else if (lastUser != nullptr && lastSubkey == nullptr){
@@ -169,17 +169,17 @@ Key::pkey Key::get_pkey() const {
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
-            case 17: // UserAttributes found
+            case Packet::USER_ATTRIBUTE: // UserAttributes found
                 if (lastUser == nullptr){
                     throw std::runtime_error("User attribute found without a UserID packet");
                 }
                 pk.uid_userAtt.insert(std::make_pair(lastUser, packets[i]));
-            case 13: // UserID found
+            case Packet::USER_ID: // UserID found
                 lastUser = packets[i];
                 lastSubkey = nullptr;
                 break;
-            case 7:  // Secret subkey found
-            case 14: // Public subkey found
+            case Packet::SECRET_SUBKEY:  // Secret subkey found
+            case Packet::PUBLIC_SUBKEY: // Public subkey found
                 lastUser = nullptr;
                 lastSubkey = packets[i];
                 break;
@@ -291,6 +291,7 @@ bool Key::meaningful(const PGP & pgp){
                     // "Warning: Revocation Signature found on UID.\n";
                 }
                 else{
+                    std::cout << sig->show() << std::endl;
                     // "Error: Signature is not a certification or revocation.\n";
                     return false;
                 }
@@ -364,24 +365,28 @@ bool Key::meaningful() const{
 }
 
 void Key::merge(Key::Ptr k) {
+    // Get pkey version from each key
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
+    // Verify that the primary keys are equals
     if (pk1.key != pk2.key){
         throw std::runtime_error("Merge not possible between different keys");
     }
 
-    //pk1.key = pk2.key;
+    // Join the sigpair list of the keys
     pk1.keySigs.insert(pk2.keySigs.begin(), pk2.keySigs.end());
     pk1.uids.insert(pk2.uids.begin(), pk2.uids.end());
     pk1.subKeys.insert(pk2.subKeys.begin(), pk2.subKeys.end());
     pk1.uid_userAtt.insert(pk2.uid_userAtt.begin(), pk2.uid_userAtt.end());
 
+    // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
     new_packets.push_back(pk1.key);
     flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
+    // Set the new packets list
     set_packets_clone(new_packets);
 
     if (!meaningful()){
@@ -390,27 +395,32 @@ void Key::merge(Key::Ptr k) {
 }
 
 
-void Key::flatten(sigPairs sp, Packets *np, sigPairs ua_table){
-    for(auto i = sp.begin(); i != sp.end(); i++){
+void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
+    for(SigPairs::iterator i = sp.begin(); i != sp.end(); i++){
         if (i->first->get_tag() == Packet::USER_ATTRIBUTE){
+            // The user attribute is handled below
             continue;
         }
         if (std::find(np->begin(), np->end(), i->first) != np->end()){
+            // if the packet is already in the list, it is already handled (with all the correlated signatures)
             continue;
         }
 
+        // Push back the "key" of the map and get all the referred objects
         np->push_back(i->first);
-        auto range = sp.equal_range(i->first);
+        std::pair<SigPairs::iterator, SigPairs::iterator> range = sp.equal_range(i->first);
 
-        for(auto j = range.first; j != range.second; ++j){
+        for(SigPairs::iterator j = range.first; j != range.second; ++j){
+            // insert the referred object
             np->push_back(j->second);
         }
 
-        // If inserting UID search also user attributes
+        // If inserting UID search (and insert) also user attributes and its signatures
         if (i->first->get_tag() == Packet::USER_ID && ua_table.find(i->first) != ua_table.end()){
-            auto ua_range = sp.equal_range(ua_table.find(i->first)->second);
+            std::pair<SigPairs::iterator, SigPairs::iterator> ua_range = sp.equal_range(ua_table.find(i->first)->second);
+
             np->push_back(ua_range.first->first);
-            for (auto j = ua_range.first; j != ua_range.second; j++){
+            for (SigPairs::iterator j = ua_range.first; j != ua_range.second; j++){
                 np->push_back(j->second);
             }
         }
