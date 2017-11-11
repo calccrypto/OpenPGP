@@ -42,10 +42,6 @@ bool is_sym_protected_data(const uint8_t t){
             (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
-bool is_equals(Tag::Ptr p1, Tag::Ptr p2){
-    return p1->raw() == p2->raw();
-}
-
 std::string Tag::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
     std::string out(1, 0b10000000 | (tag << 2));
