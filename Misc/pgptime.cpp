@@ -27,10 +27,10 @@ std::string show_time(time_t time){
 
 // write a time following strftime format
 std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t limit = 80){
-        char *buffer = new char(limit);
+        char *buffer = new char[limit];
         strftime (buffer, limit, format, localtime (&time));
         std::string result(buffer);
-        delete(buffer);
+        delete [] buffer;
         return result;
 }
 
