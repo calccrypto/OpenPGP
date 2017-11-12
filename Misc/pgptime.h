@@ -49,7 +49,6 @@ namespace OpenPGP {
     // show time difference as Y Years D Days H Hours M Minutes S Seconds
     // Only if the field is not zero. If a field is 0, it will not show.
     std::string show_dt(time_t dt);
-
 }
 
 #endif

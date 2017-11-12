@@ -74,7 +74,6 @@ namespace OpenPGP {
                 void set_pka(const uint8_t p);
                 void set_mpi(const PKA::Values & m);
 
-
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary
 
