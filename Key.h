@@ -26,12 +26,23 @@ THE SOFTWARE.
 #ifndef __OPENPGP_KEY__
 #define __OPENPGP_KEY__
 
+#include <set>
 #include "Packets/packets.h"
 #include "PKA/PKAs.h"
 #include "PGP.h"
 
 namespace OpenPGP {
     class Key : public PGP {
+        public:
+            typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> SigPairs; // Map between two packets
+
+            struct pkey{ // struct contains mapping between packets and relative signatures
+                Packet::Tag::Ptr key;   // Primary Key
+                SigPairs keySigs;       // Map between Primary Key and Signatures
+                SigPairs uids;          // Map between User (include UserID and User Attributes) and Signatures
+                SigPairs subKeys;       // Map between Subkeys and Signatures
+                SigPairs uid_userAtt;   // Map between UserID and User Attributes
+            };
         private:
             // for listing keys
             const std::map <uint8_t, std::string> Public_Key_Type = {
@@ -40,6 +51,9 @@ namespace OpenPGP {
                 std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
                 std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
             };
+
+            // Extract Packet from sp pushing them in np
+            void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
 
         public:
             typedef std::shared_ptr <Key> Ptr;
@@ -68,6 +82,12 @@ namespace OpenPGP {
 
             // whether or not *this data matches a Key format
             virtual bool meaningful() const;
+
+            // return the pkey format of the key
+            pkey get_pkey() const;
+
+            // Merge function ported from sks keyserver ocaml code
+            void merge(Key::Ptr k);
 
             virtual PGP::Ptr clone() const;
         };

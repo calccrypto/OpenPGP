@@ -37,7 +37,7 @@ std::string Sub12::show(const std::size_t indents, const std::size_t indent_size
 }
 
 std::string Sub12::raw() const{
-    return std::string(1, _class) + std::string(1, pka) + unhexlify(fingerprint);
+    return std::string(1, _class) + std::string(1, pka) + fingerprint;
 }
 
 uint8_t Sub12::get_class() const{
