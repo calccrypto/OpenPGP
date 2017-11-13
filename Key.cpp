@@ -291,7 +291,6 @@ bool Key::meaningful(const PGP & pgp){
                     // "Warning: Revocation Signature found on UID.\n";
                 }
                 else{
-                    std::cout << sig->show() << std::endl;
                     // "Error: Signature is not a certification or revocation.\n";
                     return false;
                 }
