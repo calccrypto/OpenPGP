@@ -154,38 +154,44 @@ Key::pkey Key::get_pkey() const {
     }
     pkey pk;
     pk.key = packets[0];
-    Packet::Tag::Ptr lastUser = nullptr;
+    Packet::Tag::Ptr lastUser_userAtt = nullptr;
+    Packet::Tag::Ptr lastUserID = nullptr;
     Packet::Tag::Ptr lastSubkey = nullptr;
     for (unsigned int i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
             case Packet::SIGNATURE: // Signature found
-                if (lastUser == nullptr && lastSubkey == nullptr){
+                if (lastUser_userAtt == nullptr && lastSubkey == nullptr){
                     pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
-                } else if (lastUser != nullptr && lastSubkey == nullptr){
-                    pk.uids.insert(std::make_pair(lastUser, packets[i]));
-                } else if (lastUser == nullptr && lastSubkey != nullptr){
+                } else if (lastUser_userAtt != nullptr && lastSubkey == nullptr){
+                    pk.uids.insert(std::make_pair(lastUser_userAtt, packets[i]));
+                } else if (lastUser_userAtt == nullptr && lastSubkey != nullptr){
                     pk.subKeys.insert(std::make_pair(lastSubkey, packets[i]));
                 } else{ // this should never happen
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
             case Packet::USER_ATTRIBUTE: // UserAttributes found
-                if (lastUser == nullptr){
+                if (lastUserID == nullptr){
                     throw std::runtime_error("User attribute found without a UserID packet");
                 }
-                pk.uid_userAtt.insert(std::make_pair(lastUser, packets[i]));
+                pk.uid_userAtt.insert(std::make_pair(lastUserID, packets[i]));
+                lastUser_userAtt = packets[i];
+                lastSubkey = nullptr;
+                break;
             case Packet::USER_ID: // UserID found
-                lastUser = packets[i];
+                lastUserID = packets[i];
+                lastUser_userAtt = packets[i];
                 lastSubkey = nullptr;
                 break;
             case Packet::SECRET_SUBKEY:  // Secret subkey found
             case Packet::PUBLIC_SUBKEY: // Public subkey found
-                lastUser = nullptr;
+                lastUser_userAtt = nullptr;
+                lastUserID = nullptr;
                 lastSubkey = packets[i];
                 break;
             default:
                 throw std::runtime_error("Packet not recognized during merge");
-                break;
+                // break;
         }
     }
     return pk;

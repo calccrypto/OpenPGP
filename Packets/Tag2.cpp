@@ -184,10 +184,17 @@ void Tag2::read(const std::string & data){
         if (PKA::is_RSA(pka)){
             mpi.push_back(read_MPI(data, pos)); // RSA m**d mod n
         }
+#ifdef GPG_COMPATIBLE
+        else if(pka == PKA::ID::DSA || pka == PKA::ID::ECDSA){
+            mpi.push_back(read_MPI(data, pos)); // r
+            mpi.push_back(read_MPI(data, pos)); // s
+        }
+#else
         else if (pka == PKA::ID::DSA){
             mpi.push_back(read_MPI(data, pos)); // DSA r
             mpi.push_back(read_MPI(data, pos)); // DSA s
         }
+#endif
         else{
             throw std::runtime_error("Error: Unknown PKA type: " + std::to_string(pka));
         }
@@ -211,10 +218,17 @@ void Tag2::read(const std::string & data){
 //        if (PKA::is_RSA(PKA))
         std::string::size_type pos = hashed_size + 6 + 2 + unhashed_size + 2;
         mpi.push_back(read_MPI(data, pos));         // RSA m**d mod n
-        if (pka == PKA::ID::DSA){
-//            mpi.push_back(read_MPI(data, pos));   // DSA r
-            mpi.push_back(read_MPI(data, pos));     // DSA s
+#ifdef GPG_COMPATIBLE
+        if(pka == PKA::ID::DSA || pka == PKA::ID::ECDSA || pka == PKA::ID::EdDSA){
+            // mpi.push_back(read_MPI(data, pos)); // r
+            mpi.push_back(read_MPI(data, pos)); // s
         }
+#else
+        if (pka == PKA::ID::DSA){
+            // mpi.push_back(read_MPI(data, pos)); // DSA r
+            mpi.push_back(read_MPI(data, pos)); // DSA s
+        }
+#endif
     }
     else{
         throw std::runtime_error("Error: Tag2 Unknown version: " + std::to_string(static_cast <unsigned int> (version)));

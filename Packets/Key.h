@@ -42,6 +42,10 @@ namespace OpenPGP {
                 uint8_t pka;
                 PKA::Values mpi;
 
+#ifdef GPG_COMPATIBLE
+                std::string curve;
+                std::string kdf_params;
+#endif
                 // version 3
                 uint32_t expire;
 
@@ -74,6 +78,10 @@ namespace OpenPGP {
                 void set_pka(const uint8_t p);
                 void set_mpi(const PKA::Values & m);
 
+#ifdef GPG_COMPATIBLE
+                std::string get_curve() const;
+                void set_curve(const std::string c);
+#endif
 
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary
