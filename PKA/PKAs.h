@@ -98,14 +98,24 @@ namespace OpenPGP {
 
 #ifdef GPG_COMPATIBLE
         namespace CURVE_OID {
-            const std::string NIST_256          = "1.2.840.10045.3.1.7";
-            const std::string NIST_384          = "1.3.132.0.34";
-            const std::string NIST_521          = "1.3.132.0.35";
-            const std::string BRAINPOOL_256     = "1.3.36.3.3.2.8.1.1.7";
-            const std::string BRAINPOOL_512     = "1.3.36.3.3.2.8.1.1.13";
-            const std::string ED_255            = "1.3.6.1.4.1.11591.15.1";
-            const std::string CURVE_255         = "1.3.6.1.4.1.3029.1.5.1";
+            const std::string NIST_256          = "2A8648CE3D030107";
+            const std::string NIST_384          = "2B81040022";
+            const std::string NIST_521          = "2B81040023";
+            const std::string BRAINPOOL_256     = "2B2403030208010107";
+            const std::string BRAINPOOL_512     = "2B240303020801010D";
+            const std::string ED_255            = "2B06010401DA470F01";
+            const std::string CURVE_255         = "2B060104019755010501";
         }
+
+        const std::map <std::string, std::string> CURVE_OID_STRING = {
+            std::make_pair(CURVE_OID::NIST_256,         "1.2.840.10045.3.1.7"),
+            std::make_pair(CURVE_OID::NIST_384,         "1.3.132.0.34"),
+            std::make_pair(CURVE_OID::NIST_521,         "1.3.132.0.35"),
+            std::make_pair(CURVE_OID::BRAINPOOL_256,    "1.3.36.3.3.2.8.1.1.7"),
+            std::make_pair(CURVE_OID::BRAINPOOL_512,    "1.3.36.3.3.2.8.1.1.13"),
+            std::make_pair(CURVE_OID::ED_255,           "1.3.6.1.4.1.11591.15.1"),
+            std::make_pair(CURVE_OID::CURVE_255,        "1.3.6.1.4.1.3029.1.5.1")
+        };
 
         const std::map <std::string, std::string> CURVE_NAME = {
                 std::make_pair(CURVE_OID::NIST_256,      "NIST P-256"),
