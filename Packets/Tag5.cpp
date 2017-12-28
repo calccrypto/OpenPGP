@@ -79,6 +79,17 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
         else if (pka == PKA::ID::DSA){
             out += "DSA x";
         }
+#ifdef GPG_COMPATIBLE
+        else if (pka == PKA::ID::ECDSA){
+            out += "ECDSA x";
+        }
+        else if (pka == PKA::ID::EdDSA){
+            out += "EdDSA x";
+        }
+        else if (pka == PKA::ID::ECDH){
+            out += "ECDH x";
+        }
+#endif
         else{
             out += "Unknown";
         }
@@ -114,6 +125,20 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
             const MPI x = read_MPI(secret, pos);
             out += indent + tab + "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
         }
+#ifdef GPG_COMPATIBLE
+        else if (pka == PKA::ID::ECDSA){
+            const MPI x = read_MPI(secret, pos);
+            out += indent + tab + "ECDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
+        }
+        else if (pka == PKA::ID::DSA){
+            const MPI x = read_MPI(secret, pos);
+            out += indent + tab + "EdDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
+        }
+        else if (pka == PKA::ID::ECDH){
+            const MPI x = read_MPI(secret, pos);
+            out += indent + tab + "ECDH x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
+        }
+#endif
         else{
             out += "Unknown";
         }

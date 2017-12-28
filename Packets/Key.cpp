@@ -10,7 +10,8 @@ Key::Key(uint8_t tag)
       mpi(),
       expire()
 #ifdef GPG_COMPATIBLE
-      ,curve(),
+      ,
+      curve(),
       kdf_size(),
       kdf_hash(),
       kdf_alg()
@@ -28,7 +29,8 @@ Key::Key(const Key & copy)
       mpi(copy.mpi),
       expire(copy.expire)
 #ifdef GPG_COMPATIBLE
-      ,curve(copy.curve),
+      ,
+      curve(copy.curve),
       kdf_size(copy.kdf_size),
       kdf_hash(copy.kdf_hash),
       kdf_alg(copy.kdf_alg)
@@ -187,6 +189,7 @@ std::string Key::raw_common() const{
 #ifdef GPG_COMPATIBLE
     if (pka == PKA::ID::ECDSA || pka == PKA::ID::EdDSA || pka == PKA::ID::ECDH){
         out += std::string(1, PKA::CURVE_OID_LENGTH.at(hexlify(curve, true)));
+        //out += curve.size();
         out += curve;
     }
 #endif
@@ -197,8 +200,8 @@ std::string Key::raw_common() const{
 
 #ifdef GPG_COMPATIBLE
     if (pka == PKA::ID::ECDH){
-        out += kdf_size;
-        out += "1";
+        out += kdf_size; // Should be one
+        out += std::string(1, 1);
         out += kdf_hash;
         out += kdf_alg;
     }
