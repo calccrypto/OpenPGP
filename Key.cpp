@@ -158,13 +158,13 @@ Key::pkey Key::get_pkey() const{
     for(Packets::size_type i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
             case Packet::SIGNATURE:
-                if (!lastUser && !lastSubkey){
+                if (!lastUser_userAtt && !lastSubkey){
                     pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
                 }
-                else if (lastUser && !lastSubkey){
+                else if (lastUser_userAtt && !lastSubkey){
                     pk.uids.insert(std::make_pair(lastUser, packets[i]));
                 }
-                else if (!lastUser && lastSubkey){
+                else if (!lastUser_userAtt && lastSubkey){
                     pk.subKeys.insert(std::make_pair(lastSubkey, packets[i]));
                 }
                 else{ // this should never happen
