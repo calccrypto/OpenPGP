@@ -6,13 +6,22 @@ namespace PKA {
 bool can_encrypt(const uint8_t alg){
     return ((alg == ID::RSA_ENCRYPT_OR_SIGN) ||
             (alg == ID::RSA_ENCRYPT_ONLY)    ||
-            (alg == ID::ELGAMAL));
+            (alg == ID::ELGAMAL)
+#ifdef GPG_COMPATIBLE
+         || (alg == ID::ECDH)
+#endif
+    );
 }
 
 bool can_sign(const uint8_t alg){
     return ((alg == ID::RSA_ENCRYPT_OR_SIGN) ||
             (alg == ID::RSA_SIGN_ONLY)       ||
-            (alg == ID::DSA));
+            (alg == ID::DSA)
+#ifdef GPG_COMPATIBLE
+         || (alg == ID::ECDSA)
+         || (alg == ID::EdDSA)
+#endif
+    );
 }
 
 bool is_RSA(const uint8_t alg){
