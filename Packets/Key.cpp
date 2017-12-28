@@ -214,7 +214,7 @@ uint32_t Key::get_time() const{
     return time;
 }
 
-uint32_t Key::get_exp_time() const {
+uint32_t Key::get_exp_time() const{
     if (version < 4){
         return expire;
     }
@@ -222,7 +222,6 @@ uint32_t Key::get_exp_time() const {
         throw std::runtime_error("Expiration time is defined only for version 3");
     }
 }
-
 
 uint8_t Key::get_pka() const{
     return pka;

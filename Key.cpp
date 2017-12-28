@@ -1,5 +1,3 @@
-#include <algorithm>
-#include <functional>
 #include "Key.h"
 
 namespace OpenPGP {
@@ -148,7 +146,7 @@ std::string Key::list_keys(const std::size_t indents, const std::size_t indent_s
     return out.str();
 }
 
-Key::pkey Key::get_pkey() const {
+Key::pkey Key::get_pkey() const{
     if (!meaningful()){
         throw std::runtime_error("Error: Bad Key.");
     }
@@ -157,34 +155,37 @@ Key::pkey Key::get_pkey() const {
     Packet::Tag::Ptr lastUser_userAtt = nullptr;
     Packet::Tag::Ptr lastUserID = nullptr;
     Packet::Tag::Ptr lastSubkey = nullptr;
-    for (unsigned int i = 1; i < packets.size(); i++){
+    for(Packets::size_type i = 1; i < packets.size(); i++){
         switch(packets[i]->get_tag()){
-            case Packet::SIGNATURE: // Signature found
-                if (lastUser_userAtt == nullptr && lastSubkey == nullptr){
+            case Packet::SIGNATURE:
+                if (!lastUser && !lastSubkey){
                     pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
-                } else if (lastUser_userAtt != nullptr && lastSubkey == nullptr){
-                    pk.uids.insert(std::make_pair(lastUser_userAtt, packets[i]));
-                } else if (lastUser_userAtt == nullptr && lastSubkey != nullptr){
+                }
+                else if (lastUser && !lastSubkey){
+                    pk.uids.insert(std::make_pair(lastUser, packets[i]));
+                }
+                else if (!lastUser && lastSubkey){
                     pk.subKeys.insert(std::make_pair(lastSubkey, packets[i]));
-                } else{ // this should never happen
+                }
+                else{ // this should never happen
                     throw std::logic_error("Some subkey lost during merge");
                 }
                 break;
-            case Packet::USER_ATTRIBUTE: // UserAttributes found
-                if (lastUserID == nullptr){
+            case Packet::USER_ATTRIBUTE:
+                if (!lastUserID){
                     throw std::runtime_error("User attribute found without a UserID packet");
                 }
                 pk.uid_userAtt.insert(std::make_pair(lastUserID, packets[i]));
                 lastUser_userAtt = packets[i];
                 lastSubkey = nullptr;
                 break;
-            case Packet::USER_ID: // UserID found
+            case Packet::USER_ID:
                 lastUserID = packets[i];
                 lastUser_userAtt = packets[i];
                 lastSubkey = nullptr;
                 break;
-            case Packet::SECRET_SUBKEY:  // Secret subkey found
-            case Packet::PUBLIC_SUBKEY: // Public subkey found
+            case Packet::SECRET_SUBKEY:
+            case Packet::PUBLIC_SUBKEY:
                 lastUser_userAtt = nullptr;
                 lastUserID = nullptr;
                 lastSubkey = packets[i];
@@ -398,7 +399,6 @@ void Key::merge(Key::Ptr k) {
         throw std::logic_error("Key no more meaningful after merge");
     }
 }
-
 
 void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
     for(SigPairs::iterator i = sp.begin(); i != sp.end(); i++){

@@ -118,7 +118,7 @@ namespace OpenPGP {
         bool is_session_key          (const uint8_t t);
         bool is_sym_protected_data   (const uint8_t t);
 
-            // Tag class for all packet types
+        // Tag class for all packet types
         class Tag {
             public:
                 enum Format{
@@ -157,7 +157,6 @@ namespace OpenPGP {
                 virtual std::string raw() const = 0;
                 std::string write(const Format header = DEFAULT) const;
 
-
                 // Accessors
                 uint8_t get_tag() const;
                 bool get_format() const;
@@ -180,8 +179,9 @@ namespace OpenPGP {
         // These two functions override the operators only with Tag::Ptr.
         // They don't work with Ptr of types different than Tag (Tag1, Tag2, ecc)
         inline bool operator==(Tag::Ptr lhs, Tag::Ptr rhs){
-            return lhs->raw() == rhs->raw();
+            return lhs -> raw() == rhs -> raw();
         }
+
         inline bool operator!=(Tag::Ptr lhs, Tag::Ptr rhs){
             return !(lhs == rhs);
         }

@@ -26,7 +26,10 @@ THE SOFTWARE.
 #ifndef __OPENPGP_KEY__
 #define __OPENPGP_KEY__
 
+#include <algorithm>
+#include <functional>
 #include <set>
+
 #include "Packets/packets.h"
 #include "PKA/PKAs.h"
 #include "PGP.h"
@@ -34,15 +37,18 @@ THE SOFTWARE.
 namespace OpenPGP {
     class Key : public PGP {
         public:
-            typedef std::multimap<Packet::Tag::Ptr, Packet::Tag::Ptr> SigPairs; // Map between two packets
+            // Map between two packets
+            typedef std::multimap <Packet::Tag::Ptr, Packet::Tag::Ptr> SigPairs;
 
-            struct pkey{ // struct contains mapping between packets and relative signatures
+            // struct contains mapping between packets and relative signatures
+            struct pkey{
                 Packet::Tag::Ptr key;   // Primary Key
                 SigPairs keySigs;       // Map between Primary Key and Signatures
                 SigPairs uids;          // Map between User (include UserID and User Attributes) and Signatures
                 SigPairs subKeys;       // Map between Subkeys and Signatures
                 SigPairs uid_userAtt;   // Map between UserID and User Attributes
             };
+
         private:
             // for listing keys
             const std::map <uint8_t, std::string> Public_Key_Type = {
