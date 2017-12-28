@@ -162,7 +162,7 @@ Key::pkey Key::get_pkey() const{
                     pk.keySigs.insert(std::make_pair(pk.key, packets[i]));
                 }
                 else if (lastUser_userAtt && !lastSubkey){
-                    pk.uids.insert(std::make_pair(lastUser, packets[i]));
+                    pk.uids.insert(std::make_pair(lastUser_userAtt, packets[i]));
                 }
                 else if (!lastUser_userAtt && lastSubkey){
                     pk.subKeys.insert(std::make_pair(lastSubkey, packets[i]));
