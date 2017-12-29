@@ -182,7 +182,7 @@ namespace OpenPGP {
                         return false;
                     }
                 }
-                else if (PKA::ID::ECDSA == pka || PKA::ID::EdDSA == pka || PKA::ID::ECDH == pka){
+                else if (PKA::ID::ECDSA == subkey.pka || PKA::ID::EdDSA == subkey.pka || PKA::ID::ECDH == subkey.pka){
                     if ((bits < 160) || (bits > 1024)){ // [WARNING] THIS VALUE ARE NOT VERIFIED!!
                         // "Error: ECDSA/EdDSA/ECDH key size should be between 160 and 1024 bits.\n";
                         return false;

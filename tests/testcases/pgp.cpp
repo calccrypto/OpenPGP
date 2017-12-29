@@ -32,6 +32,13 @@ TEST(PGP, keygen){
         if (pka.second == OpenPGP::PKA::ID::ELGAMAL){
             continue;
         }
+        // ECDH cannot sign
+        if (pka.second == OpenPGP::PKA::ID::ECDH){
+            continue;
+        }
+        if (pka.second == OpenPGP::PKA::ID::ECDSA || pka.second == OpenPGP::PKA::ID::EdDSA){
+            config.bits = 1024;
+        }
         #endif
 
         config.pka = pka.second;
@@ -65,6 +72,11 @@ TEST(PGP, keygen){
     config.subkeys[0].pka = 255;                // invalid PKA
     EXPECT_EQ(config.valid(), false);
     for(std::pair <std::string const, uint8_t> const & pka : OpenPGP::PKA::NUMBER){
+        #ifdef GPG_COMPATIBLE
+        if (pka.second == OpenPGP::PKA::ID::ECDSA || pka.second == OpenPGP::PKA::ID::EdDSA || pka.second == OpenPGP::PKA::ID::ECDH){
+            config.subkeys[0].bits = 1024;
+        }
+        #endif
         config.subkeys[0].pka = pka.second;     // valid PKA
         EXPECT_EQ(config.valid(), true);
     }
