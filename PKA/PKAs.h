@@ -72,14 +72,14 @@ namespace OpenPGP {
             std::make_pair(ID::RSA_SIGN_ONLY,       "RSA Sign-Only"),          // deprecated
             std::make_pair(ID::ELGAMAL,             "ELGAMAL (Encrypt-Only)"),
             std::make_pair(ID::DSA,                 "DSA"),
-#ifdef GPG_COMPATIBLE
+            #ifdef GPG_COMPATIBLE
             std::make_pair(ID::ECDH,                 "ECDH"),
             std::make_pair(ID::ECDSA,                 "ECDSA"),
             std::make_pair(ID::EdDSA,                 "EdDSA"),
-#else
+            #else
             std::make_pair(18,                      "Reserved for Elliptic Curve"),
             std::make_pair(19,                      "Reserved for ECDSA"),
-#endif
+            #endif
             std::make_pair(20,                      "Reserved (formerly ELGAMAL Encrypt or Sign)"),
             std::make_pair(21,                      "Reserved for Diffie-Hellman (X9.42), as defined for IETF-S / MIME)"),
             std::make_pair(100,                     "Private/Experimental algorithm"),
@@ -96,7 +96,7 @@ namespace OpenPGP {
         };
 
 
-#ifdef GPG_COMPATIBLE
+        #ifdef GPG_COMPATIBLE
         namespace CURVE_OID {
             const std::string NIST_256          = "2A8648CE3D030107";
             const std::string NIST_384          = "2B81040022";
@@ -136,7 +136,7 @@ namespace OpenPGP {
                 std::make_pair(CURVE_OID::ED_255,        9),
                 std::make_pair(CURVE_OID::CURVE_255,     10)
         };
-#endif
+        #endif
 
         const std::map <std::string, uint8_t> NUMBER = {
             std::make_pair("RSA_ENCRYPT_OR_SIGN",   ID::RSA_ENCRYPT_OR_SIGN),
@@ -144,11 +144,11 @@ namespace OpenPGP {
             std::make_pair("RSA_SIGN_ONLY",         ID::RSA_SIGN_ONLY),
             std::make_pair("ELGAMAL",               ID::ELGAMAL),
             std::make_pair("DSA",                   ID::DSA),
-#ifdef GPG_COMPATIBLE
+            #ifdef GPG_COMPATIBLE
             std::make_pair("ECDH",                      ID::ECDH),
             std::make_pair("ECDSA",                     ID::ECDSA),
             std::make_pair("EdDSA",                     ID::EdDSA),
-#endif
+            #endif
         };
 
         const std::map <uint8_t, char> SHORT = {
@@ -157,11 +157,11 @@ namespace OpenPGP {
             std::make_pair(ID::RSA_SIGN_ONLY,       'R'),
             std::make_pair(ID::ELGAMAL,             'g'),
             std::make_pair(ID::DSA,                 'D'),
-#ifdef GPG_COMPATIBLE
+            #ifdef GPG_COMPATIBLE
             std::make_pair(ID::ECDH,                 'e'),
             std::make_pair(ID::ECDSA,                'e'),
             std::make_pair(ID::EdDSA,                'e'),
-#endif
+            #endif
         };
 
         bool can_encrypt(const uint8_t alg);

@@ -9,13 +9,13 @@ Key::Key(uint8_t tag)
       pka(),
       mpi(),
       expire()
-#ifdef GPG_COMPATIBLE
+      #ifdef GPG_COMPATIBLE
       ,
       curve(),
       kdf_size(),
       kdf_hash(),
       kdf_alg()
-#endif
+      #endif
 {}
 
 Key::Key()
@@ -28,13 +28,13 @@ Key::Key(const Key & copy)
       pka(copy.pka),
       mpi(copy.mpi),
       expire(copy.expire)
-#ifdef GPG_COMPATIBLE
+      #ifdef GPG_COMPATIBLE
       ,
       curve(copy.curve),
       kdf_size(copy.kdf_size),
       kdf_hash(copy.kdf_hash),
       kdf_alg(copy.kdf_alg)
-#endif
+      #endif
 {}
 
 Key::Key(const std::string & data)
@@ -93,7 +93,7 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
             mpi.push_back(read_MPI(data, pos));     // ELGAMAL g
             mpi.push_back(read_MPI(data, pos));     // ELGAMAL y
         }
-#ifdef GPG_COMPATIBLE
+        #ifdef GPG_COMPATIBLE
         //ECDSA
         else if(pka == PKA::ID::ECDSA){
             uint8_t curve_dim = data[pos];
@@ -119,7 +119,7 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
             kdf_alg = data[pos + 3];
             pos += 4; // Jump over the KDF parameters
         }
-#endif
+        #endif
         else{
             throw std::runtime_error("Algorithm not found");
         }
@@ -153,7 +153,7 @@ std::string Key::show_common(const std::size_t indents, const std::size_t indent
                    indent + tab + "ELGAMAL g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
                    indent + tab + "ELGAMAL y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
         }
-#ifdef GPG_COMPATIBLE
+        #ifdef GPG_COMPATIBLE
         else if (pka == PKA::ID::ECDSA){
             out += indent + tab + "ECDSA " + PKA::CURVE_NAME.at(hexlify(curve, true)) + "\n" +
                    indent + tab + "ECDSA ec point: " + mpitohex(mpi[0]);
@@ -166,7 +166,7 @@ std::string Key::show_common(const std::size_t indents, const std::size_t indent
             out += indent + tab + "ECDH " + PKA::CURVE_NAME.at(hexlify(curve, true)) + "\n" +
                    indent + tab + "ECDH ec point: " + mpitohex(mpi[0]);
         }
-#endif
+        #endif
         else if (pka == PKA::ID::DSA){
             out += indent + tab + "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
                    indent + tab + "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
@@ -186,26 +186,26 @@ std::string Key::raw_common() const{
 
     out += std::string(1, pka);
 
-#ifdef GPG_COMPATIBLE
+    #ifdef GPG_COMPATIBLE
     if (pka == PKA::ID::ECDSA || pka == PKA::ID::EdDSA || pka == PKA::ID::ECDH){
         out += std::string(1, PKA::CURVE_OID_LENGTH.at(hexlify(curve, true)));
         //out += curve.size();
         out += curve;
     }
-#endif
+    #endif
 
     for(MPI const m : mpi){
         out += write_MPI(m);
     }
 
-#ifdef GPG_COMPATIBLE
+    #ifdef GPG_COMPATIBLE
     if (pka == PKA::ID::ECDH){
         out += kdf_size; // Should be one
         out += std::string(1, 1);
         out += kdf_hash;
         out += kdf_alg;
     }
-#endif
+    #endif
 
     return out;
 }
