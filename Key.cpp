@@ -370,53 +370,6 @@ bool Key::meaningful() const{
     return meaningful(*this);
 }
 
-bool Key::verifica(SigPairs sp, Packets *p){
-    for (auto i = sp.begin(); i != sp.end(); i++){
-        if (std::find(p->begin(), p->end(), i->first) == p->end()){
-            std::cout << "Manca: " << Packet::NAME.at(i->first->get_tag()) << std::endl;
-            //return false;
-        }
-        if (std::find(p->begin(), p->end(), i->second) == p->end()){
-            std::cout << "Manca: " << Packet::NAME.at(i->second->get_tag()) << " di " << Packet::NAME.at(i->first->get_tag()) << std::endl;
-            //return false;
-        }
-    }
-
-
-    for (Packets::iterator it_1 = p->begin(); it_1 != p->end(); it_1++){
-        for (Packets::iterator it_2 = p->begin(); it_2 != p->end(); it_2++){
-            if (it_1.operator*() == it_2.operator*() && it_1 != it_2){
-                //p->erase(it_2);
-            }
-        }
-    }
-    for (unsigned int i_1 = 0; i_1 < p->size(); i_1++){
-        for (unsigned int i_2 = i_1 + 1; i_2 < p->size(); i_2++){
-            //assert (p[i_1] != p[i_2] || i_1 == i_2);
-        }
-    }
-
-    return true;
-}
-
-Key::Packets::iterator Key::find_in_packets(Packets::iterator first, Packets::iterator last, const Packet::Tag::Ptr &obj){
-    for (Packets::iterator it = first; it != last; it++){
-        if (it.operator*() == obj){
-            return it;
-        }
-    }
-    return last;
-}
-
-Key::SigPairs::iterator Key::find_in_sigpairs(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key){
-    for (SigPairs::iterator it = first; it != last; it++){
-        if (it->first == key){
-            return it;
-        }
-    }
-    return last;
-}
-
 Key::Packets Key::get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key){
     Packets ps;
     for (SigPairs::iterator it = first; it != last; it++){
@@ -426,7 +379,6 @@ Key::Packets Key::get_elements_by_key(SigPairs::iterator first, SigPairs::iterat
     }
     return ps;
 }
-
 
 void Key::merge(Key::Ptr k) {
     // Get pkey version from each key
@@ -446,21 +398,9 @@ void Key::merge(Key::Ptr k) {
     // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
     new_packets.push_back(pk1.key);
-    //flatten(pk1.keySigs, pk2.keySigs, &new_packets);
-    //flatten(pk1.uids, pk2.uids, &new_packets, pk1.uid_userAtt, pk2.uid_userAtt);
-    //flatten(pk1.subKeys, pk2.subKeys, &new_packets);
-
     flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
-
-    std::cout << "keySigs result: " << verifica(pk1.keySigs, &new_packets) << std::endl;
-    std::cout << "uids result: " << verifica(pk1.uids, &new_packets) << std::endl;
-    std::cout << "subKeys result: " << verifica(pk1.subKeys, &new_packets) << std::endl;
-
-    //std::cout << "keySigs result: " << verifica(pk2.keySigs, &new_packets) << std::endl;
-    //std::cout << "uids result: " << verifica(pk2.uids, &new_packets) << std::endl;
-    //std::cout << "subKeys result: " << verifica(pk2.subKeys, &new_packets) << std::endl;
 
     // Set the new packets list
     set_packets(new_packets);
@@ -519,212 +459,6 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
         }
     }
 }
-
-/*
-void Key::flatten(SigPairs sp_1, SigPairs sp_2, Packets *np){
-    for (SigPairs::iterator it = sp_1.begin(); it != sp_1.end(); it = sp_1.begin()) {
-        Packet::Tag::Ptr current_elem = it->first;
-        if (std::find(np->begin(), np->end(), it->first) == np->end()) {
-            np->push_back(it->first);
-            np->push_back(it->second);
-            sp_1.erase(it);
-
-            for (SigPairs::iterator element = find_in_sigpairs(sp_1.begin(), sp_1.end(), current_elem);
-                 element != sp_1.end();
-                 element = find_in_sigpairs(sp_1.begin(), sp_1.end(), current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_1.erase(element);
-            }
-
-            for (SigPairs::iterator element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem);
-                 element != sp_2.end();
-                 element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_2.erase(element);
-            }
-        }
-        else{
-            sp_1.erase(it);
-        }
-    }
-
-    for (SigPairs::iterator it = sp_2.begin(); it != sp_2.end(); it = sp_2.begin()) {
-        Packet::Tag::Ptr current_elem = it->first;
-        if (std::find(np->begin(), np->end(), it->first) == np->end()) {
-            np->push_back(it->first);
-            np->push_back(it->second);
-            sp_2.erase(it);
-
-            for (SigPairs::iterator element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem);
-                 element != sp_2.end();
-                 element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_2.erase(element);
-            }
-        }
-        else{
-            sp_2.erase(it);
-        }
-    }
-}
-
-
-void Key::flatten(SigPairs sp_1, SigPairs sp_2, Packets *np, SigPairs ua_table_1, SigPairs ua_table_2) {
-    for (SigPairs::iterator it = sp_1.begin(); it != sp_1.end(); it = sp_1.begin()){
-        Packet::Tag::Ptr current_elem = it->first;
-        if (std::find(np->begin(), np->end(), it->first) == np->end()) {
-            np->push_back(it->first);
-            np->push_back(it->second);
-            sp_1.erase(it);
-
-            for (SigPairs::iterator element = find_in_sigpairs(sp_1.begin(), sp_1.end(), current_elem);
-                 element != sp_1.end();
-                 element = find_in_sigpairs(sp_1.begin(), sp_1.end(), current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_1.erase(element);
-            }
-
-            for (SigPairs::iterator element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem);
-                 element != sp_2.end();
-                 element = find_in_sigpairs(sp_2.begin(), sp_2.end(), current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_2.erase(element);
-            }
-
-            if (current_elem->get_tag() == Packet::USER_ID){
-                for (SigPairs::iterator current_ua_pair = find_in_sigpairs(ua_table_1.begin(), ua_table_1.end(), current_elem);
-                     current_ua_pair != ua_table_1.end();
-                     current_ua_pair = find_in_sigpairs(ua_table_1.begin(), ua_table_1.end(), current_elem)){
-                    Packet::Tag::Ptr current_ua = current_ua_pair->second;
-                    ua_table_1.erase(current_ua_pair);
-                    if (std::find(np->begin(), np->end(), current_ua) == np->end()) {
-                        np->push_back(current_ua);
-
-                        for (SigPairs::iterator element = sp_1.find(current_ua); element != sp_1.end(); element = sp_1.find(current_ua)) {
-                            if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                                np->push_back(element->second);
-                            }
-                            sp_1.erase(element);
-                        }
-
-                        for (SigPairs::iterator element = sp_2.find(current_ua); element != sp_2.end(); element = sp_2.find(current_ua)) {
-                            if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                                np->push_back(element->second);
-                            }
-                            sp_2.erase(element);
-                        }
-                    }
-                }
-
-                for (SigPairs::iterator current_ua_pair = ua_table_2.find(current_elem); current_ua_pair != ua_table_2.end(); current_ua_pair = ua_table_2.find(current_elem)){
-                    Packet::Tag::Ptr current_ua = current_ua_pair->second;
-                    ua_table_2.erase(current_ua_pair);
-                    if (std::find(np->begin(), np->end(), current_ua) == np->end()) {
-                        np->push_back(current_ua);
-
-                        for (SigPairs::iterator element = sp_1.find(current_ua); element != sp_1.end(); element = sp_1.find(current_ua)) {
-                            if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                                np->push_back(element->second);
-                            }
-                            sp_1.erase(element);
-                        }
-
-                        for (SigPairs::iterator element = sp_2.find(current_ua); element != sp_2.end(); element = sp_2.find(current_ua)) {
-                            if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                                np->push_back(element->second);
-                            }
-                            sp_2.erase(element);
-                        }
-                    }
-
-                }
-            }
-        }
-        else{
-            sp_1.erase(it);
-        }
-    }
-
-    for (SigPairs::iterator it = sp_2.begin(); it != sp_2.end(); it = sp_2.begin()){
-        Packet::Tag::Ptr current_elem = it->first;
-        if (std::find(np->begin(), np->end(), it->first) == np->end()) {
-            np->push_back(it->first);
-            np->push_back(it->second);
-            sp_2.erase(it);
-
-            for (SigPairs::iterator element = sp_2.find(current_elem); element != sp_2.end(); element = sp_2.find(current_elem)) {
-                if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                    np->push_back(element->second);
-                }
-                sp_2.erase(element);
-            }
-
-            if (current_elem->get_tag() == Packet::USER_ID){
-                for (SigPairs::iterator current_ua_pair = ua_table_2.find(current_elem); current_ua_pair != ua_table_2.end(); current_ua_pair = ua_table_2.find(current_elem)){
-                    Packet::Tag::Ptr current_ua = current_ua_pair->second;
-                    ua_table_2.erase(current_ua_pair);
-                    if (std::find(np->begin(), np->end(), current_ua) == np->end()) {
-                        np->push_back(current_ua);
-
-                        for (SigPairs::iterator element = sp_2.find(current_ua); element != sp_2.end(); element = sp_2.find(current_ua)) {
-                            if (std::find(np->begin(), np->end(), element->second) == np->end()) {
-                                np->push_back(element->second);
-                            }
-                            sp_2.erase(element);
-                        }
-                    }
-                }
-            }
-        }
-        else{
-            sp_2.erase(it);
-        }
-    }
-}
-*/
-/*
-void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
-    for(SigPairs::iterator i = sp.begin(); i != sp.end(); i++){
-        if (i->first->get_tag() == Packet::USER_ATTRIBUTE){
-            // The user attribute is handled below
-            continue;
-        }
-        if (std::find(np->begin(), np->end(), i->first) != np->end()){
-            // if the packet is already in the list, it is already handled (with all the correlated signatures)
-            continue;
-        }
-
-        // Push back the "key" of the map and get all the referred objects
-        np->push_back(i->first);
-        std::pair<SigPairs::iterator, SigPairs::iterator> range = sp.equal_range(i->first);
-
-        for(SigPairs::iterator j = range.first; j != range.second; ++j){
-            // insert the referred object
-            np->push_back(j->second);
-        }
-
-        // If inserting UID search (and insert) also user attributes and its signatures
-        if (i->first->get_tag() == Packet::USER_ID && ua_table.find(i->first) != ua_table.end()){
-            std::pair<SigPairs::iterator, SigPairs::iterator> ua_range = sp.equal_range(ua_table.find(i->first)->second);
-
-            np->push_back(ua_range.first->first);
-            for (SigPairs::iterator j = ua_range.first; j != ua_range.second; j++){
-                np->push_back(j->second);
-            }
-        }
-    }
-}*/
-
 
 PGP::Ptr Key::clone() const{
     return std::make_shared <Key> (*this);
