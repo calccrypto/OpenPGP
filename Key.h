@@ -60,8 +60,14 @@ namespace OpenPGP {
 
             // Extract Packet from sp pushing them in np
             void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
+            void flatten(SigPairs sp_1, SigPairs sp_2, Packets *np);
+            void flatten(SigPairs sp_1, SigPairs sp_2, Packets *np, SigPairs ua_table_1, SigPairs ua_table_2);
+            Packets::iterator find_in_packets(Packets::iterator first, Packets::iterator last, const Packet::Tag::Ptr &obj);
+            SigPairs::iterator find_in_sigpairs(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key);
+            Packets get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key);
+        bool verifica(SigPairs sp, Packets *p);
 
-        public:
+            public:
             typedef std::shared_ptr <Key> Ptr;
 
             Key();
