@@ -398,7 +398,12 @@ void Key::merge(Key::Ptr k) {
     // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
     new_packets.push_back(pk1.key);
-    flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
+    for (std::pair<const Packet::Tag::Ptr, Packet::Tag::Ptr> ks: pk1.keySigs){
+        if (std::find(new_packets.begin(), new_packets.end(), ks.second) == new_packets.end()){
+            new_packets.push_back(ks.second);
+        }
+    }
+    //flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
@@ -429,16 +434,6 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
             // insert the referred object
             if (std::find(np->begin(), np->end(), p) == np->end()){
                 np->push_back(p);
-            }
-        }
-
-        // If inserting UID search (and insert) also user attributes and its signatures
-        if (i->first->get_tag() == Packet::USER_ID && ua_table.find(i->first) != ua_table.end()){
-            std::pair<SigPairs::iterator, SigPairs::iterator> ua_range = sp.equal_range(ua_table.find(i->first)->second);
-
-            np->push_back(ua_range.first->first);
-            for (SigPairs::iterator j = ua_range.first; j != ua_range.second; j++){
-                np->push_back(j->second);
             }
         }
 

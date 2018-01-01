@@ -500,6 +500,15 @@ OpenPGP::Key::Packets create_partial_packets(OpenPGP::Key::Packets ps){
     return partial_ps;
 }
 
+OpenPGP::Packet::Tag::Ptr find_key_from_obj(OpenPGP::Key::SigPairs sp, OpenPGP::Packet::Tag::Ptr p){
+    for (OpenPGP::Key::SigPairs::iterator it = sp.begin(); it != sp.end(); it++){
+        if (it->second == p){
+            return it->first;
+        }
+    }
+    return nullptr;
+}
+
 TEST(Key, merge){
     srand(time(0));
     OpenPGP::Key::Ptr main_key (new OpenPGP::Key(arm));
@@ -513,30 +522,112 @@ TEST(Key, merge){
         partial_key_2 ->
         set_packets_clone(create_partial_packets(main_key->get_packets()));
     }while(!partial_key_2 -> meaningful());
-    OpenPGP::Key::Packets original_packets1_list = partial_key_1 -> get_packets_clone();
+
+    OpenPGP::Key::pkey pk_1 = partial_key_1->get_pkey();
+    OpenPGP::Key::pkey pk_2 = partial_key_2->get_pkey();
     partial_key_1 -> merge(partial_key_2);
 
-    //ASSERT_TRUE(partial_key_1 -> get_packets().size() != original_packets1_list.size());
+    // The merged the must be meaningful
+    ASSERT_TRUE(partial_key_1->meaningful());
 
-    for (const OpenPGP::Packet::Tag::Ptr &p: partial_key_1 -> get_packets()){
-        bool cond_1 = std::find(original_packets1_list.begin(), original_packets1_list.end(), p) != original_packets1_list.end();
-        bool cond_2 = std::find(partial_key_2 -> get_packets().begin(), partial_key_2 -> get_packets().end(), p) != partial_key_2 -> get_packets().end();
-        ASSERT_TRUE(cond_1 || cond_2);
+    // Each packet in pkey must be in the new packets list
+    OpenPGP::Key::Packets ps = partial_key_1->get_packets();
+    std::find(ps.begin(), ps.end(), pk_1.key);
+    for(OpenPGP::Key::SigPairs::iterator it = pk_1.keySigs.begin(); it != pk_1.keySigs.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
     }
-    for (const OpenPGP::Packet::Tag::Ptr &p: partial_key_2 -> get_packets()){
-        bool found = false;
-        for (unsigned int z = 0; z < partial_key_1 -> get_packets().size(); z++){
-            if(p -> raw() == partial_key_1 -> get_packets()[z] -> raw())
-                found = true;
-        }
-        if (!found){
-            std::cerr << "[          ] packet tag = " << OpenPGP::Packet::NAME.at(p->get_tag()) << std::endl;
-        }
-        ASSERT_TRUE(found);
-        //ASSERT_TRUE(std::find(partial_key_1 -> get_packets().begin(), partial_key_1 -> get_packets().end(), p) != partial_key_1 -> get_packets().end());
+    for(OpenPGP::Key::SigPairs::iterator it = pk_1.uids.begin(); it != pk_1.uids.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
     }
-    for (const OpenPGP::Packet::Tag::Ptr &p: original_packets1_list){
-        ASSERT_TRUE(std::find(partial_key_1 -> get_packets().begin(), partial_key_1 -> get_packets().end(), p) != partial_key_1 -> get_packets().end());
+    for(OpenPGP::Key::SigPairs::iterator it = pk_1.subKeys.begin(); it != pk_1.subKeys.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
     }
 
+    // Same for pkey_2
+    for(OpenPGP::Key::SigPairs::iterator it = pk_2.keySigs.begin(); it != pk_2.keySigs.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
+    }
+    for(OpenPGP::Key::SigPairs::iterator it = pk_2.uids.begin(); it != pk_2.uids.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
+    }
+    for(OpenPGP::Key::SigPairs::iterator it = pk_2.subKeys.begin(); it != pk_2.subKeys.end(); it++){
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->first) != ps.end());
+        ASSERT_TRUE(std::find(ps.begin(), ps.end(), it->second) != ps.end());
+    }
+
+    // Each packet in the new key must be in the correct position
+    OpenPGP::Packet::Tag::Ptr last_pri_packet = ps[0];
+    for (const OpenPGP::Packet::Tag::Ptr &p: ps){
+        switch (p->get_tag()){
+            case OpenPGP::Packet::PUBLIC_KEY:
+            case OpenPGP::Packet::SECRET_KEY:
+            case OpenPGP::Packet::USER_ID:
+            case OpenPGP::Packet::USER_ATTRIBUTE:
+            case OpenPGP::Packet::PUBLIC_SUBKEY:
+            case OpenPGP::Packet::SECRET_SUBKEY:
+                last_pri_packet = p;
+                break;
+            case OpenPGP::Packet::SIGNATURE:
+                switch (last_pri_packet->get_tag()){
+                    case OpenPGP::Packet::PUBLIC_KEY:
+                    case OpenPGP::Packet::SECRET_KEY: {
+                        OpenPGP::Packet::Tag::Ptr mm_key_1 = find_key_from_obj(pk_1.keySigs, p);
+                        OpenPGP::Packet::Tag::Ptr mm_key_2 = find_key_from_obj(pk_2.keySigs, p);
+                        bool cond_1 = false;
+                        bool cond_2 = false;
+                        if (mm_key_1){
+                            cond_1 = mm_key_1 == last_pri_packet;
+                        }
+                        if (mm_key_2){
+                            cond_2 = mm_key_2 == last_pri_packet;
+                        }
+                        ASSERT_TRUE(cond_1 || cond_2);
+                        break;
+                    }
+                    case OpenPGP::Packet::USER_ID:
+                    case OpenPGP::Packet::USER_ATTRIBUTE: {
+                        OpenPGP::Packet::Tag::Ptr mm_key_1 = find_key_from_obj(pk_1.uids, p);
+                        OpenPGP::Packet::Tag::Ptr mm_key_2 = find_key_from_obj(pk_2.uids, p);
+                        bool cond_1 = false;
+                        bool cond_2 = false;
+                        if (mm_key_1){
+                            cond_1 = mm_key_1 == last_pri_packet;
+                        }
+                        if (mm_key_2){
+                            cond_2 = mm_key_2 == last_pri_packet;
+                        }
+                        ASSERT_TRUE(cond_1 || cond_2);
+                        break;
+                    }
+                    case OpenPGP::Packet::PUBLIC_SUBKEY:
+                    case OpenPGP::Packet::SECRET_SUBKEY: {
+                        OpenPGP::Packet::Tag::Ptr mm_key_1 = find_key_from_obj(pk_1.subKeys, p);
+                        OpenPGP::Packet::Tag::Ptr mm_key_2 = find_key_from_obj(pk_2.subKeys, p);
+                        bool cond_1 = false;
+                        bool cond_2 = false;
+                        if (mm_key_1){
+                            cond_1 = mm_key_1 == last_pri_packet;
+                        }
+                        if (mm_key_2){
+                            cond_2 = mm_key_2 == last_pri_packet;
+                        }
+                        ASSERT_TRUE(cond_1 || cond_2);
+                        break;
+                    }
+                    default:
+                        ASSERT_TRUE(false); // This should never happen
+                        break;
+                }
+                break;
+            default:
+                ASSERT_TRUE(false); // This should never happen
+                break;
+        }
+
+    }
 }
