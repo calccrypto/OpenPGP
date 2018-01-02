@@ -370,7 +370,7 @@ bool Key::meaningful() const{
     return meaningful(*this);
 }
 
-Key::Packets Key::get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key){
+Key::Packets Key::get_elements_by_key (const SigPairs::iterator first, const SigPairs::iterator last, const Packet::Tag::Ptr &key) const{
     Packets ps;
     for (SigPairs::iterator it = first; it != last; it++){
         if (it->first == key){
@@ -380,7 +380,7 @@ Key::Packets Key::get_elements_by_key(SigPairs::iterator first, SigPairs::iterat
     return ps;
 }
 
-void Key::merge(Key::Ptr k) {
+void Key::merge(const Key::Ptr &k) {
     // Get pkey version from each key
     pkey pk1 = this->get_pkey();
     pkey pk2 = k->get_pkey();
