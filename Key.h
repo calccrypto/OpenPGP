@@ -60,6 +60,7 @@ namespace OpenPGP {
 
             // Extract Packet from sp pushing them in np
             void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
+            Packets get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key) const;
 
         public:
             typedef std::shared_ptr <Key> Ptr;
@@ -93,7 +94,7 @@ namespace OpenPGP {
             pkey get_pkey() const;
 
             // Merge function ported from sks keyserver ocaml code
-            void merge(Key::Ptr k);
+            void merge(const Key::Ptr &k);
 
             virtual PGP::Ptr clone() const;
         };

@@ -114,6 +114,12 @@ namespace OpenPGP {
                     return false;
                 }
             }
+            else if (PKA::ID::ECDSA == pka || PKA::ID::EdDSA == pka){
+                if ((bits < 160) || (bits > 1024)){ // [WARNING] THIS VALUE ARE NOT VERIFIED!!
+                    // "Error: ECDSA/EdDSA key size should be between 160 and 1024 bits.\n";
+                    return false;
+                }
+            }
             else{
                 // "Error: Unknown PKA " + std::to_string(pka) + " got through filter.\n";
                 return false;
@@ -173,6 +179,12 @@ namespace OpenPGP {
 
                     if (subkey.bits % 64){
                         // "Error: GPG only accepts DSA/ElGamal keys whose size is a multiple of 64.\n";
+                        return false;
+                    }
+                }
+                else if (PKA::ID::ECDSA == subkey.pka || PKA::ID::EdDSA == subkey.pka || PKA::ID::ECDH == subkey.pka){
+                    if ((bits < 160) || (bits > 1024)){ // [WARNING] THIS VALUE ARE NOT VERIFIED!!
+                        // "Error: ECDSA/EdDSA/ECDH key size should be between 160 and 1024 bits.\n";
                         return false;
                     }
                 }
