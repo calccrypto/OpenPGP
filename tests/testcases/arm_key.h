@@ -1,6 +1,7 @@
 #ifndef OPENPGP_KEY_H
 #define OPENPGP_KEY_H
 
+
 const std::string arm = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
         "\n"
         "mQGiBDT0S80RBADBDVlCobWTUSECryPLF8EsqoOBk+mVDTXM4C+JdVRO9loYIVNDWr87pT5/\n"
