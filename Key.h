@@ -62,7 +62,7 @@ namespace OpenPGP {
             void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
             Packets get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key) const;
 
-            public:
+        public:
             typedef std::shared_ptr <Key> Ptr;
 
             Key();

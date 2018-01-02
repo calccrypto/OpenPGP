@@ -372,7 +372,7 @@ bool Key::meaningful() const{
 
 Key::Packets Key::get_elements_by_key (const SigPairs::iterator first, const SigPairs::iterator last, const Packet::Tag::Ptr &key) const{
     Packets ps;
-    for (SigPairs::iterator it = first; it != last; it++){
+    for(SigPairs::iterator it = first; it != last; it++){
         if (it->first == key){
             ps.push_back(it->second);
         }
@@ -398,7 +398,7 @@ void Key::merge(const Key::Ptr &k) {
     // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
     new_packets.push_back(pk1.key);
-    for (std::pair<const Packet::Tag::Ptr, Packet::Tag::Ptr> ks: pk1.keySigs){
+    for(std::pair<const Packet::Tag::Ptr, Packet::Tag::Ptr> ks: pk1.keySigs){
         if (std::find(new_packets.begin(), new_packets.end(), ks.second) == new_packets.end()){
             new_packets.push_back(ks.second);
         }
@@ -430,7 +430,7 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
         np->push_back(i->first);
         Packets elements = get_elements_by_key(sp.begin(), sp.end(), i->first);
 
-        for(const Packet::Tag::Ptr &p : elements){
+        for(Packet::Tag::Ptr const &p : elements){
             // insert the referred object
             if (std::find(np->begin(), np->end(), p) == np->end()){
                 np->push_back(p);
@@ -439,12 +439,12 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
 
         if (i->first->get_tag() == Packet::USER_ID){
             Packets ua_list = get_elements_by_key(ua_table.begin(), ua_table.end(), i->first);
-            for (const Packet::Tag::Ptr &ua: ua_list){
+            for(Packet::Tag::Ptr const &ua: ua_list){
                 if (std::find(np->begin(), np->end(), ua) == np->end()){
                     np->push_back(ua);
 
                     Packets ua_elements = get_elements_by_key(sp.begin(), sp.end(), ua);
-                    for (const Packet::Tag::Ptr &p: ua_elements){
+                    for(Packet::Tag::Ptr const &p: ua_elements){
                         if (std::find(np->begin(), np->end(), p) == np->end()){
                             np->push_back(p);
                         }
