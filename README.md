@@ -10,6 +10,7 @@ Please see LICENSE file for license.
 
 - Alex Stapleton (OpenPGP-SDK)
 - Auston Sterling - Massive amounts of debugging and programming help
+- D-o-c Key merging and elliptic curve parsing
 - Jon Callas (RFC 4880)
 - Herbert Hanewinkel (hanewin.net)
 - Many people on the StackExchange network

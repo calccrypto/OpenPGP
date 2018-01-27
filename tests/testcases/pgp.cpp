@@ -1,16 +1,16 @@
+#include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <cstdlib>
 
 #include <gtest/gtest.h>
 
+#include "arm_key.h"
 #include "decrypt.h"
 #include "encrypt.h"
 #include "generatekey.h"
 #include "revoke.h"
 #include "sign.h"
 #include "verify.h"
-#include "arm_key.h"
 
 #include "testvectors/msg.h"
 #include "testvectors/pass.h"
@@ -385,7 +385,6 @@ TEST(PGP, verify_primary_key){
 }
 
 TEST(Key, get_pkey){
-
     OpenPGP::Key::Ptr k (new OpenPGP::Key(arm));
     OpenPGP::Key::pkey pk = k->get_pkey();
     for (OpenPGP::Key::SigPairs::iterator it = pk.keySigs.begin(); it != pk.keySigs.end(); it++){
@@ -423,15 +422,15 @@ TEST(Key, get_pkey){
     ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), pk.key) != k->get_packets().end());
     for (OpenPGP::Key::SigPairs::iterator it = pk.keySigs.begin(); it != pk.keySigs.end(); it++){
         ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->first) != k->get_packets().end());
-        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end());        
+        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end());
     }
     for (OpenPGP::Key::SigPairs::iterator it = pk.uids.begin(); it != pk.uids.end(); it++){
         ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->first) != k->get_packets().end());
-        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end()); 
+        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end());
     }
     for (OpenPGP::Key::SigPairs::iterator it = pk.subKeys.begin(); it != pk.subKeys.end(); it++){
         ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->first) != k->get_packets().end());
-        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end()); 
+        ASSERT_TRUE(std::find(k->get_packets().begin(), k->get_packets().end(), it->second) != k->get_packets().end());
     }
 }
 
