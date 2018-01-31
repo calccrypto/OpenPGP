@@ -405,7 +405,6 @@ void Key::merge(const Key::Ptr &k) {
             new_packets.push_back(ks.second);
         }
     }
-    // flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt); ALREADY DONE
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
     // Inserting remaining userID (the one without signatures) and the relative user attributes
     for (const Packet::Tag::Ptr &p: pk1.uid_list){
