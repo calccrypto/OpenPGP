@@ -180,6 +180,7 @@ Key::pkey Key::get_pkey() const{
                 lastSubkey = nullptr;
                 break;
             case Packet::USER_ID:
+                pk.uid_list.push_back(packets[i]);
                 lastUserID = packets[i];
                 lastUser_userAtt = packets[i];
                 lastSubkey = nullptr;
@@ -394,6 +395,7 @@ void Key::merge(const Key::Ptr &k) {
     pk1.uids.insert(pk2.uids.begin(), pk2.uids.end());
     pk1.subKeys.insert(pk2.subKeys.begin(), pk2.subKeys.end());
     pk1.uid_userAtt.insert(pk2.uid_userAtt.begin(), pk2.uid_userAtt.end());
+    pk1.uid_list.insert(pk1.uid_list.end(), pk2.uid_list.begin(), pk2.uid_list.end());
 
     // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
@@ -403,8 +405,28 @@ void Key::merge(const Key::Ptr &k) {
             new_packets.push_back(ks.second);
         }
     }
-    //flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
+    // Inserting remaining userID (the one without signatures) and the relative user attributes
+    for (const Packet::Tag::Ptr &p: pk1.uid_list){
+        if (std::find(new_packets.begin(), new_packets.end(), p) == new_packets.end()){
+            new_packets.push_back(p);
+            // Insert the relative user attributes with its signatures
+            Packets ua_list = get_elements_by_key(pk1.uid_userAtt.begin(), pk1.uid_userAtt.end(), p);
+            for (const Packet::Tag::Ptr &ua: ua_list){
+                if (std::find(new_packets.begin(), new_packets.end(), ua) == new_packets.end()){
+                    new_packets.push_back(ua);
+
+                    Packets ua_signatures = get_elements_by_key(pk1.uids.begin(), pk1.uids.end(), ua);
+                    for (const Packet::Tag::Ptr &s: ua_signatures){
+                        if (std::find(new_packets.begin(), new_packets.end(), s) == new_packets.end()){
+                            new_packets.push_back(s);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
     // Set the new packets list
@@ -443,8 +465,8 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
                 if (std::find(np->begin(), np->end(), ua) == np->end()){
                     np->push_back(ua);
 
-                    Packets ua_elements = get_elements_by_key(sp.begin(), sp.end(), ua);
-                    for(Packet::Tag::Ptr const &p: ua_elements){
+                    Packets ua_signatures = get_elements_by_key(sp.begin(), sp.end(), ua);
+                    for (const Packet::Tag::Ptr &p: ua_signatures){
                         if (std::find(np->begin(), np->end(), p) == np->end()){
                             np->push_back(p);
                         }

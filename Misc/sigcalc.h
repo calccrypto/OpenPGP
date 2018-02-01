@@ -171,7 +171,7 @@ namespace OpenPGP {
     //    appropriate for statements that non-self certifiers want to make
     //    about the Packet::Key itself, rather than the binding between a Packet::Key and a
     //    name.
-    std::string to_sign_1f(const Packet::Key::Ptr & key, const Packet::User::Ptr & id, const Packet::Tag2::Ptr & tag2);
+    std::string to_sign_1f(const Packet::Key::Ptr & k, const Packet::Tag2::Ptr & tag2);
 
     // 0x20: Packet::Key revocation signature
     //    The signature is calculated directly on the Packet::Key being revoked. A

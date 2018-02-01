@@ -238,17 +238,12 @@ std::string to_sign_19(const Packet::Key::Ptr & primary, const Packet::Key::Ptr 
     return Hash::use(tag2 -> get_hash(), addtrailer(overkey(primary) + overkey(subkey), tag2));
 }
 
-std::string to_sign_1f(const Packet::Tag2::Ptr & /*tag2*/){
-    // if (!tag2){
-        // throw std::runtime_error("Error: No signature packet");
-    // }
+std::string to_sign_1f(const Packet::Key::Ptr & k, const Packet::Tag2::Ptr & tag2){
+    if (!tag2){
+        throw std::runtime_error("Error: No signature packet");
+    }
 
-    // if (tag2 -> get_type() != Signature_Type::POSITIVE_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET){
-        // throw std::runtime_error("Error: Bad signature type.");
-    // }
-
-    // return Hash::use(tag2 -> get_hash(), addtrailer(overkey(key) + certification(tag2 -> get_version(), id), tag2));
-    return "";
+    return Hash::use(tag2 -> get_hash(), addtrailer(overkey(k), tag2));
 }
 
 std::string to_sign_20(const Packet::Key::Ptr & key, const Packet::Tag2::Ptr & tag2){
