@@ -68,24 +68,24 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
         expire = (data[pos + 5] << 8) + data[pos + 6];
         pka = data[pos + 7];
         pos += 8;
-        mpi.push_back(read_MPI(data, pos));     // RSA n
-        mpi.push_back(read_MPI(data, pos));     // RSA e
+        mpi.push_back(read_MPI(data, pos));         // RSA n
+        mpi.push_back(read_MPI(data, pos));         // RSA e
     }
     else if (version == 4){
         pka = data[pos + 5];
         pos += 6;
 
         // RSA
-        if(pka == PKA::ID::RSA_ENCRYPT_ONLY || pka == PKA::ID::RSA_ENCRYPT_OR_SIGN || pka == PKA::ID::RSA_SIGN_ONLY){
+        if(PKA::is_RSA(pka)){
             mpi.push_back(read_MPI(data, pos));     // RSA n
             mpi.push_back(read_MPI(data, pos));     // RSA e
         }
         // DSA
         else if (pka == PKA::ID::DSA){
-            mpi.push_back(read_MPI(data, pos)); //        DSA p
-            mpi.push_back(read_MPI(data, pos)); //        DSA q
-            mpi.push_back(read_MPI(data, pos)); //        DSA g
-            mpi.push_back(read_MPI(data, pos)); //        DSA y
+            mpi.push_back(read_MPI(data, pos));     // DSA p
+            mpi.push_back(read_MPI(data, pos));     // DSA q
+            mpi.push_back(read_MPI(data, pos));     // DSA g
+            mpi.push_back(read_MPI(data, pos));     // DSA y
         }
         // ELGAMAL
         else if (pka == PKA::ID::ELGAMAL){
@@ -94,21 +94,21 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
             mpi.push_back(read_MPI(data, pos));     // ELGAMAL y
         }
         #ifdef GPG_COMPATIBLE
-        //ECDSA
+        // ECDSA
         else if(pka == PKA::ID::ECDSA){
             uint8_t curve_dim = data[pos];
             curve = data.substr(pos + 1, curve_dim);
             pos += curve_dim + 1;
             mpi.push_back(read_MPI(data, pos));
         }
-        //EdDSA
+        // EdDSA
         else if (pka == PKA::ID::EdDSA){
             uint8_t curve_dim = data[pos];
             curve = data.substr(pos + 1, curve_dim);
             pos += curve_dim + 1;
             mpi.push_back(read_MPI(data, pos));
         }
-        //ECDH
+        // ECDH
         else if (pka == PKA::ID::ECDH){
             uint8_t curve_dim = data[pos];
             curve = data.substr(pos + 1, curve_dim);

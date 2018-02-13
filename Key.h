@@ -47,6 +47,7 @@ namespace OpenPGP {
                 SigPairs uids;          // Map between User (include UserID and User Attributes) and Signatures
                 SigPairs subKeys;       // Map between Subkeys and Signatures
                 SigPairs uid_userAtt;   // Map between UserID and User Attributes
+                Packets uid_list;       // Vector with all the userID
             };
 
         private:
@@ -62,7 +63,7 @@ namespace OpenPGP {
             void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
             Packets get_elements_by_key(SigPairs::iterator first, SigPairs::iterator last, const Packet::Tag::Ptr &key) const;
 
-            public:
+        public:
             typedef std::shared_ptr <Key> Ptr;
 
             Key();

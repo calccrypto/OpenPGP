@@ -180,6 +180,7 @@ Key::pkey Key::get_pkey() const{
                 lastSubkey = nullptr;
                 break;
             case Packet::USER_ID:
+                pk.uid_list.push_back(packets[i]);
                 lastUserID = packets[i];
                 lastUser_userAtt = packets[i];
                 lastSubkey = nullptr;
@@ -372,7 +373,7 @@ bool Key::meaningful() const{
 
 Key::Packets Key::get_elements_by_key (const SigPairs::iterator first, const SigPairs::iterator last, const Packet::Tag::Ptr &key) const{
     Packets ps;
-    for (SigPairs::iterator it = first; it != last; it++){
+    for(SigPairs::iterator it = first; it != last; it++){
         if (it->first == key){
             ps.push_back(it->second);
         }
@@ -394,17 +395,38 @@ void Key::merge(const Key::Ptr &k) {
     pk1.uids.insert(pk2.uids.begin(), pk2.uids.end());
     pk1.subKeys.insert(pk2.subKeys.begin(), pk2.subKeys.end());
     pk1.uid_userAtt.insert(pk2.uid_userAtt.begin(), pk2.uid_userAtt.end());
+    pk1.uid_list.insert(pk1.uid_list.end(), pk2.uid_list.begin(), pk2.uid_list.end());
 
     // Building the new packets list extracting the packet from the joined sigpairs
     Packets new_packets;
     new_packets.push_back(pk1.key);
-    for (std::pair<const Packet::Tag::Ptr, Packet::Tag::Ptr> ks: pk1.keySigs){
+    for(std::pair<const Packet::Tag::Ptr, Packet::Tag::Ptr> ks: pk1.keySigs){
         if (std::find(new_packets.begin(), new_packets.end(), ks.second) == new_packets.end()){
             new_packets.push_back(ks.second);
         }
     }
-    //flatten(pk1.keySigs, &new_packets, pk1.uid_userAtt);
     flatten(pk1.uids, &new_packets, pk1.uid_userAtt);
+    // Inserting remaining userID (the one without signatures) and the relative user attributes
+    for (const Packet::Tag::Ptr &p: pk1.uid_list){
+        if (std::find(new_packets.begin(), new_packets.end(), p) == new_packets.end()){
+            new_packets.push_back(p);
+            // Insert the relative user attributes with its signatures
+            Packets ua_list = get_elements_by_key(pk1.uid_userAtt.begin(), pk1.uid_userAtt.end(), p);
+            for (const Packet::Tag::Ptr &ua: ua_list){
+                if (std::find(new_packets.begin(), new_packets.end(), ua) == new_packets.end()){
+                    new_packets.push_back(ua);
+
+                    Packets ua_signatures = get_elements_by_key(pk1.uids.begin(), pk1.uids.end(), ua);
+                    for (const Packet::Tag::Ptr &s: ua_signatures){
+                        if (std::find(new_packets.begin(), new_packets.end(), s) == new_packets.end()){
+                            new_packets.push_back(s);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     flatten(pk1.subKeys, &new_packets, pk1.uid_userAtt);
 
     // Set the new packets list
@@ -430,7 +452,7 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
         np->push_back(i->first);
         Packets elements = get_elements_by_key(sp.begin(), sp.end(), i->first);
 
-        for(const Packet::Tag::Ptr &p : elements){
+        for(Packet::Tag::Ptr const &p : elements){
             // insert the referred object
             if (std::find(np->begin(), np->end(), p) == np->end()){
                 np->push_back(p);
@@ -439,12 +461,12 @@ void Key::flatten(SigPairs sp, Packets *np, SigPairs ua_table){
 
         if (i->first->get_tag() == Packet::USER_ID){
             Packets ua_list = get_elements_by_key(ua_table.begin(), ua_table.end(), i->first);
-            for (const Packet::Tag::Ptr &ua: ua_list){
+            for(Packet::Tag::Ptr const &ua: ua_list){
                 if (std::find(np->begin(), np->end(), ua) == np->end()){
                     np->push_back(ua);
 
-                    Packets ua_elements = get_elements_by_key(sp.begin(), sp.end(), ua);
-                    for (const Packet::Tag::Ptr &p: ua_elements){
+                    Packets ua_signatures = get_elements_by_key(sp.begin(), sp.end(), ua);
+                    for (const Packet::Tag::Ptr &p: ua_signatures){
                         if (std::find(np->begin(), np->end(), p) == np->end()){
                             np->push_back(p);
                         }

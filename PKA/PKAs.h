@@ -73,9 +73,9 @@ namespace OpenPGP {
             std::make_pair(ID::ELGAMAL,             "ELGAMAL (Encrypt-Only)"),
             std::make_pair(ID::DSA,                 "DSA"),
             #ifdef GPG_COMPATIBLE
-            std::make_pair(ID::ECDH,                 "ECDH"),
-            std::make_pair(ID::ECDSA,                 "ECDSA"),
-            std::make_pair(ID::EdDSA,                 "EdDSA"),
+            std::make_pair(ID::ECDH,                "ECDH"),
+            std::make_pair(ID::ECDSA,               "ECDSA"),
+            std::make_pair(ID::EdDSA,               "EdDSA"),
             #else
             std::make_pair(18,                      "Reserved for Elliptic Curve"),
             std::make_pair(19,                      "Reserved for ECDSA"),
@@ -158,9 +158,9 @@ namespace OpenPGP {
             std::make_pair(ID::ELGAMAL,             'g'),
             std::make_pair(ID::DSA,                 'D'),
             #ifdef GPG_COMPATIBLE
-            std::make_pair(ID::ECDH,                 'e'),
-            std::make_pair(ID::ECDSA,                'e'),
-            std::make_pair(ID::EdDSA,                'e'),
+            std::make_pair(ID::ECDH,                'e'),
+            std::make_pair(ID::ECDSA,               'e'),
+            std::make_pair(ID::EdDSA,               'e'),
             #endif
         };
 
