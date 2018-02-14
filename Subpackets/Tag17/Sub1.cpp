@@ -51,7 +51,7 @@ std::string Sub1::show(const std::size_t indents, const std::size_t indent_size)
 }
 
 std::string Sub1::raw() const{
-    return "\x01" + zero + "\x01\x01" + std::string(12, 0) + image;
+    return "\x10" + zero + "\x01\x01" + std::string(12, 0) + image;
 }
 
 uint8_t Sub1::get_encoding() const{
