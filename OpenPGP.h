@@ -1,5 +1,5 @@
 /*
-OpenPGP.harderr
+OpenPGP.h
 Single file to include to get all of OpenPGP
 
 Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
@@ -24,17 +24,17 @@ THE SOFTWARE.
 */
 
 // OpenPGP Types
-#include "PGP.h"                        // abstract base class
-#include "CleartextSignature.h"      // Cleartext Signatures
-#include "DetachedSignature.h"       // Detached Signatures
-#include "Key.h"                     // Transferable Keys
-#include "Message.h"                 // OpenPGP Messages
-#include "RevocationCertificate.h"   // OpenPGP Messages
+#include "PGP.h"                   // abstract base class
+#include "CleartextSignature.h"    // Cleartext Signatures
+#include "DetachedSignature.h"     // Detached Signatures
+#include "Key.h"                   // Transferable Keys
+#include "Message.h"               // OpenPGP Messages
+#include "RevocationCertificate.h" // OpenPGP Messages
 
 // OpenPGP Functions
-#include "decrypt.h"                    // decrypt stuff
-#include "encrypt.h"                    // encrypt stuff
-#include "generatekey.h"                // generate OpenPGP keys
-#include "revoke.h"                     // revoke OpenPGP keys
-#include "sign.h"                       // sign stuff
-#include "verify.h"                     // verify signatures
+#include "decrypt.h"               // decrypt stuff
+#include "encrypt.h"               // encrypt stuff
+#include "keygen.h"                // generate OpenPGP keys
+#include "revoke.h"                // revoke OpenPGP keys
+#include "sign.h"                  // sign stuff
+#include "verify.h"                // verify signatures

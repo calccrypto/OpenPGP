@@ -7,7 +7,7 @@
 #include "arm_key.h"
 #include "decrypt.h"
 #include "encrypt.h"
-#include "generatekey.h"
+#include "keygen.h"
 #include "revoke.h"
 #include "sign.h"
 #include "verify.h"
@@ -18,11 +18,11 @@
 
 TEST(PGP, keygen){
 
-    OpenPGP::KeyGen config;
+    OpenPGP::KeyGen::Config config;
 
     // no starting user ID packet
     EXPECT_EQ(config.valid(), false);
-    config.uids.push_back(OpenPGP::KeyGen::UserID());
+    config.uids.push_back(OpenPGP::KeyGen::Config::UserID());
     EXPECT_EQ(config.valid(), true);
 
     // PKA
@@ -67,7 +67,7 @@ TEST(PGP, keygen){
     config.sym = OpenPGP::Hash::ID::SHA256;
 
     // add subkey
-    config.subkeys.push_back(OpenPGP::KeyGen::SubkeyGen());
+    config.subkeys.push_back(OpenPGP::KeyGen::Config::SubkeyGen());
     EXPECT_EQ(config.valid(), true);
 
     // subkey PKA
@@ -114,7 +114,7 @@ TEST(PGP, keygen){
     EXPECT_EQ(config.valid(), true);
 
     // generate private key
-    const OpenPGP::SecretKey pri = generate_key(config);
+    const OpenPGP::SecretKey pri = OpenPGP::KeyGen::generate_key(config);
     EXPECT_EQ(pri.meaningful(), true);
 
     // extract public key from private

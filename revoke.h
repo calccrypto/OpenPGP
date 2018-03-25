@@ -47,19 +47,19 @@ namespace OpenPGP {
         struct Args{
             SecretKey signer;
             std::string passphrase;
-            Key target;              // normally is the same key as signer
+            Key target;                 // normally is the same key as signer
             uint8_t code;               // RFC 4880 sec 5.2.3.23. Reason for Revocation
             std::string reason;
             uint8_t version;            // 3 or 4
             uint8_t hash;
 
             Args(const SecretKey & sign,
-                    const std::string & pass,
-                    const Key & tar,
-                    const uint8_t rev_code = Subpacket::Tag2::Revoke::NO_REASON_SPECIFIED,
-                    const std::string & rev_reason = "",
-                    const uint8_t ver = 4,
-                    const uint8_t ha = Hash::ID::SHA1)
+                 const std::string & pass,
+                 const Key & tar,
+                 const uint8_t rev_code = Subpacket::Tag2::Revoke::NO_REASON_SPECIFIED,
+                 const std::string & rev_reason = "",
+                 const uint8_t ver = 4,
+                 const uint8_t ha = Hash::ID::SHA1)
                 : signer(sign),
                   passphrase(pass),
                   target(tar),

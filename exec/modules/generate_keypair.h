@@ -114,21 +114,21 @@ const Module generate_keypair(
             return -1;
         }
 
-        OpenPGP::KeyGen config;
+        OpenPGP::KeyGen::Config config;
         config.passphrase = args.at("-p");
         config.pka        = OpenPGP::PKA::NUMBER.at(args.at("--ppka"));
         config.bits       = std::strtoul(args.at("--pkeysize").c_str(), 0, 10);
         config.sym        = OpenPGP::Sym::NUMBER.at(args.at("--psym"));
         config.hash       = OpenPGP::Hash::NUMBER.at(args.at("--phash"));
 
-        OpenPGP::KeyGen::UserID uid;
+        OpenPGP::KeyGen::Config::UserID uid;
         uid.user          = args.at("-u");
         uid.comment       = args.at("-c");
         uid.email         = args.at("-e");
         uid.sig           = OpenPGP::Hash::NUMBER.at(args.at("--psig"));
         config.uids.push_back(uid);
 
-        OpenPGP::KeyGen::SubkeyGen subkey;
+        OpenPGP::KeyGen::Config::SubkeyGen subkey;
         subkey.pka        = OpenPGP::PKA::NUMBER.at(args.at("--spka"));
         subkey.bits       = std::strtoul(args.at("--skeysize").c_str(), 0, 10);
         subkey.sym        = OpenPGP::Sym::NUMBER.at(args.at("--ssym"));
@@ -136,7 +136,7 @@ const Module generate_keypair(
         subkey.sig        = OpenPGP::Hash::NUMBER.at(args.at("--ssig"));
         config.subkeys.push_back(subkey);
 
-        const OpenPGP::SecretKey pri = OpenPGP::generate_key(config);
+        const OpenPGP::SecretKey pri = OpenPGP::KeyGen::generate_key(config);
 
         if (!pri.meaningful()){
             err << "Error: Generated bad keypair." << std::endl;

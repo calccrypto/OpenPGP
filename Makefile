@@ -84,7 +84,7 @@ decrypt.o: decrypt.cpp decrypt.h Compress/Compress.h Encryptions/Encryptions.h H
 encrypt.o: encrypt.cpp encrypt.h Compress/Compress.h Encryptions/Encryptions.h Hashes/Hashes.h Misc/PKCS1.h Misc/cfb.h Key.h Message.h PKA/PKA.h revoke.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-generatekey.o: generatekey.cpp generatekey.h Encryptions/Encryptions.h Hashes/Hashes.h Key.h PKA/PKA.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h Misc/pgptime.h Misc/sigcalc.h sign.h
+keygen.o: keygen.cpp keygen.h Encryptions/Encryptions.h Hashes/Hashes.h Key.h PKA/PKA.h Misc/PKCS1.h Misc/cfb.h Misc/mpi.h Misc/pgptime.h Misc/sigcalc.h sign.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 revoke.o: revoke.cpp revoke.h Misc/mpi.h Misc/PKCS1.h Key.h RevocationCertificate.h sign.h verify.h

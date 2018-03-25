@@ -58,7 +58,7 @@ Simply `#include` whatever functions needed:
 
  Feature        | Header         | Namespace
 ----------------|----------------|------------------
- key generation | generatekey.h  | OpenPGP
+ key generation | keygen.h       | OpenPGP::KeyGen
  key revocation | revoke.h       | OpenPGP::Revoke
  encrypt        | encrypt.h      | OpenPGP::Encrypt
  decrypt        | decrypt.h      | OpenPGP::Decrypt

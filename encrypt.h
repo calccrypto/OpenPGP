@@ -53,13 +53,13 @@ namespace OpenPGP {
             uint8_t hash;                   // hash used to sign data
 
             Args(const std::string & fname = "",
-                        const std::string & dat = "",
-                        const uint8_t sym_alg = Sym::ID::AES256,
-                        const uint8_t comp_alg = Compression::ID::ZLIB,
-                        const bool mod_detect = true,
-                        const SecretKey::Ptr & signing_key = nullptr,
-                        const std::string & pass = "",
-                        const uint8_t hash_alg = Hash::ID::SHA1)
+                 const std::string & dat = "",
+                 const uint8_t sym_alg = Sym::ID::AES256,
+                 const uint8_t comp_alg = Compression::ID::ZLIB,
+                 const bool mod_detect = true,
+                 const SecretKey::Ptr & signing_key = nullptr,
+                 const std::string & pass = "",
+                 const uint8_t hash_alg = Hash::ID::SHA1)
                 : filename(fname),
                   data(dat),
                   sym(sym_alg),

@@ -1,6 +1,7 @@
-#include "generatekey.h"
+#include "keygen.h"
 
 namespace OpenPGP {
+namespace KeyGen {
 
 bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase){
     RNG::BBS(static_cast <MPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
@@ -77,7 +78,7 @@ bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase){
     return true;
 }
 
-SecretKey generate_key(KeyGen & config){
+SecretKey generate_key(Config & config){
     RNG::BBS(static_cast <MPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
 
     if (!config.valid()){
@@ -156,7 +157,7 @@ SecretKey generate_key(KeyGen & config){
     const std::string keyid = primary -> get_keyid();
 
     // generate User ID and Signature packets
-    for(KeyGen::UserID const & id : config.uids){
+    for(Config::UserID const & id : config.uids){
         // User ID
         Packet::Tag13::Ptr uid = std::make_shared <Packet::Tag13> ();
         uid -> set_contents(id.user, id.comment, id.email);
@@ -190,7 +191,7 @@ SecretKey generate_key(KeyGen & config){
     }
 
     // generate 0 or more subkeys and associated signature packet
-    for(KeyGen::SubkeyGen const & skey : config.subkeys){
+    for(Config::SubkeyGen const & skey : config.subkeys){
         PKA::Values subkey_pub;
         PKA::Values subkey_pri;
         if (!PKA::generate_keypair(skey.pka, PKA::generate_params(skey.pka, skey.bits >> 1), subkey_pri, subkey_pub)){
@@ -286,4 +287,5 @@ SecretKey generate_key(KeyGen & config){
     return private_key;
 }
 
+}
 }

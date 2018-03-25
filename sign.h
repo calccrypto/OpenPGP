@@ -58,15 +58,15 @@ namespace OpenPGP {
 
         // commmon arguments for signing
         struct Args{
-            SecretKey pri;                           // private key
+            SecretKey pri;                              // private key
             std::string passphrase;                     // passphrase for a key on the private key
             uint8_t version;                            // 3 or 4
             uint8_t hash;                               // hash algorithm to use for signing
 
             Args(const SecretKey & key,
-                     const std::string & pass,
-                     const uint8_t ver = 4,
-                     const uint8_t ha = Hash::ID::SHA1)
+                 const std::string & pass,
+                 const uint8_t ver = 4,
+                 const uint8_t ha = Hash::ID::SHA1)
                 : pri(key),
                   passphrase(pass),
                   version(ver),
