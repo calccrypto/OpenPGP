@@ -2,7 +2,7 @@
 sigcalc.h
 Calculates signature data as described in RFC 4880 sec 5.2.1 and 5.2.4
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

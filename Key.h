@@ -2,7 +2,7 @@
 Key.h
 OpenPGP Transferable key data structure (RFC 4880 sec 11.1 and 11.2)
 
-Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
