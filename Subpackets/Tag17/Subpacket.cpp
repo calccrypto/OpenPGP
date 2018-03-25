@@ -5,7 +5,7 @@ namespace Subpacket {
 namespace Tag17 {
 
 std::string Sub::show_title() const{
-    return Sub::show_title() + NAME.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
+    return Subpacket::Sub::show_title() + NAME.at(type) + " Subpacket (sub " + std::to_string(type) + ") (" + std::to_string(size) + " octets)";
 }
 
 Sub::~Sub(){}
