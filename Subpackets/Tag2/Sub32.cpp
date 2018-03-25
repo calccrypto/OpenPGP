@@ -51,7 +51,7 @@ Sub::Ptr Sub32::clone() const{
 }
 
 Sub32 & Sub32::operator=(const Sub32 & copy){
-    operator=(copy);
+    Sub::operator=(copy);
     embedded = std::static_pointer_cast <Packet::Tag2> (copy.embedded -> clone());
     return *this;
 }
