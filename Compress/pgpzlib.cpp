@@ -1,5 +1,7 @@
 #include "pgpzlib.h"
 
+#include "../common/compiler.h"
+
 /* Compress from file source to file dest until EOF on source.
    def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
    allocated for processing, Z_STREAM_ERROR if an invalid compression
@@ -129,7 +131,9 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
             switch (ret) {
             case Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
+                FALL_THROUGH;
             case Z_DATA_ERROR:
+                FALL_THROUGH;
             case Z_MEM_ERROR:
                 (void)inflateEnd(&strm);
                 return ret;
