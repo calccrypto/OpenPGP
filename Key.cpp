@@ -17,6 +17,23 @@ Key::Key(const Key & copy)
 Key::Key(const std::string & data)
     : PGP(data)
 {
+    // got binary data
+    if (type == UNKNOWN){
+        if (packets.size() < 2){
+            throw std::runtime_error("Error: Not enough packets in given key");
+        }
+
+        if (packets[0] -> get_tag() == Packet::PUBLIC_KEY){
+            type = PUBLIC_KEY_BLOCK;
+        }
+        else if (packets[0] -> get_tag() == Packet::SECRET_KEY){
+            type = PRIVATE_KEY_BLOCK;
+        }
+        else{
+            throw std::runtime_error("Error: First packet is neither a Public Key or a Secret Key");
+        }
+    }
+
     // warn if packet sequence is not meaningful
     if (!meaningful()){
         throw std::runtime_error("Error: Data does not form a meaningful PGP Key");
@@ -26,6 +43,23 @@ Key::Key(const std::string & data)
 Key::Key(std::istream & stream)
     : PGP(stream)
 {
+    // got binary data
+    if (type == UNKNOWN){
+        if (packets.size() < 2){
+            throw std::runtime_error("Error: Not enough packets in given key");
+        }
+
+        if (packets[0] -> get_tag() == Packet::PUBLIC_KEY){
+            type = PUBLIC_KEY_BLOCK;
+        }
+        else if (packets[0] -> get_tag() == Packet::SECRET_KEY){
+            type = PRIVATE_KEY_BLOCK;
+        }
+        else{
+            throw std::runtime_error("Error: First packet is neither a Public Key or a Secret Key");
+        }
+    }
+
     // warn if packet sequence is not meaningful
     if (!meaningful()){
         throw std::runtime_error("Error: Data does not form a meaningful PGP Key");
