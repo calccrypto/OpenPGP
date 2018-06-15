@@ -1,6 +1,6 @@
 # Subpackets Makefile
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -c
+CXXFLAGS=-std=c++11 -Wall -Wextra -c
 
 include objects.mk
 
