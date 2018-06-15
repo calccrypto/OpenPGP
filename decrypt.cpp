@@ -23,7 +23,7 @@ Message data(const uint8_t sym,
         return Message();
     }
 
-    uint8_t tag;
+    uint8_t tag = Packet::RESERVED;
     std::string data = "";
 
     // copy initial data to string
