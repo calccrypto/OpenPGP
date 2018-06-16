@@ -5,8 +5,7 @@ namespace Subpacket {
 namespace Tag2 {
 
 bool Revoke::is_key_revocation(const uint8_t code){
-    return ((NO_REASON_SPECIFIED <= code) &&
-            (code <= KEY_IS_NO_LONGER_USED));
+    return code <= KEY_IS_NO_LONGER_USED;
 }
 
 Sub29::Sub29()
