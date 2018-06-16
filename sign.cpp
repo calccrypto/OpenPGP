@@ -368,7 +368,7 @@ Packet::Tag2::Ptr subkey_binding(const Packet::Tag5::Ptr & primary, const std::s
 }
 
 // 0x19: Primary Key Binding Signature
-Packet::Tag2::Ptr primary_key_binding(const Args & args, const PublicKey & signee){
+Packet::Tag2::Ptr primary_key_binding(const Args & args, const PublicKey &){
     if (!args.valid()){
         // "Error: Bad arguments.\n";
         return nullptr;

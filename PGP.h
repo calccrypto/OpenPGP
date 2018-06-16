@@ -95,7 +95,7 @@ namespace OpenPGP {
             PGP(const PGP & copy);                          // clone another PGP instance
             PGP(const std::string & data);
             PGP(std::istream & stream);
-            ~PGP();
+            virtual ~PGP();
 
             // Read ASCII Header + Base64 data
             void read(const std::string & data);

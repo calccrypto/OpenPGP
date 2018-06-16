@@ -3,7 +3,7 @@
 namespace OpenPGP {
 
 // OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
-bool Message::OpenMessage(std::list <Token>::iterator it, std::list <Token> & s){
+bool Message::OpenMessage(std::list <Token>::iterator it, std::list <Token> &){
     if ((*it == ENCRYPTEDMESSAGE) || (*it == SIGNEDMESSAGE) || (*it == COMPRESSEDMESSAGE) || (*it == LITERALMESSAGE)){
         *it = OPENMessage;
         return true;
@@ -12,7 +12,7 @@ bool Message::OpenMessage(std::list <Token>::iterator it, std::list <Token> & s)
 }
 
 // Compressed Message :- Compressed Data Packet.
-bool Message::CompressedMessage(std::list <Token>::iterator it, std::list <Token> & s){
+bool Message::CompressedMessage(std::list <Token>::iterator it, std::list <Token> &){
     if (*it == CDP){
         *it = COMPRESSEDMESSAGE;
         return true;
@@ -21,7 +21,7 @@ bool Message::CompressedMessage(std::list <Token>::iterator it, std::list <Token
 }
 
 // Literal Message :- Literal Data Packet.
-bool Message::LiteralMessage(std::list <Token>::iterator it, std::list <Token> & s){
+bool Message::LiteralMessage(std::list <Token>::iterator it, std::list <Token> &){
     if (*it == LDP){
         *it = LITERALMESSAGE;
         return true;
@@ -30,7 +30,7 @@ bool Message::LiteralMessage(std::list <Token>::iterator it, std::list <Token> &
 }
 
 // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
-bool Message::EncryptedSessionKey(std::list <Token>::iterator it, std::list <Token> & s){
+bool Message::EncryptedSessionKey(std::list <Token>::iterator it, std::list <Token> &){
     if ((*it == PKESKP) || (*it == SKESKP)){
         *it = ESK;
         return true;
@@ -56,7 +56,7 @@ bool Message::ESKSequence(std::list <Token>::iterator it, std::list <Token> & s)
 }
 
 // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
-bool Message::EncryptedData(std::list <Token>::iterator it, std::list <Token> & s){
+bool Message::EncryptedData(std::list <Token>::iterator it, std::list <Token> &){
     if ((*it == SEDP) || (*it == SEIPDP)){
         *it = ENCRYPTEDDATA;
         return true;
