@@ -1,149 +1,119 @@
 # from <https://github.com/taocpp/PEGTL/blob/master/.travis.yml>
 
+os: linux
+dist: trusty
+sudo: false
+
 language: cpp
 
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
+    - compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=gcc-4.8
-        - export CXX=g++-4.8
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=gcc-4.8
+        - CXX_COMPILER=g++-4.8
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
+    - compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=gcc-4.9
-        - export CXX=g++-4.9
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=gcc-4.9
+        - CXX_COMPILER=g++-4.9
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
+    - compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=gcc-5
-        - export CXX=g++-5
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=gcc-5
+        - CXX_COMPILER=g++-5
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
+    - compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=gcc-6
-        - export CXX=g++-6
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=gcc-6
+        - CXX_COMPILER=g++-6
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
+    - compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=gcc-7
-        - export CXX=g++-7
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=gcc-7
+        - CXX_COMPILER=g++-7
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: clang
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+      env:
+        - C_COMPILER=gcc-8
+        - CXX_COMPILER=g++-8
+
+    - compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=clang-3.8
-        - export CXX=clang++-3.8
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=clang-3.8
+        - CXX_COMPILER=clang++-3.8
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: clang
+    - compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=clang-3.9
-        - export CXX=clang++-3.9
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=clang-3.9
+        - CXX_COMPILER=clang++-3.9
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: clang
+    - compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      before_script:
-        - export CC=clang-4.0
-        - export CXX=clang++-4.0
-        - cd tests
-        - chmod +x ./gtest.sh
-        - ./gtest.sh
-        - make gpg-debug
-      script:
-        - ./tests
+      env:
+        - C_COMPILER=clang-4.0
+        - CXX_COMPILER=clang++-4.0
+
+    - compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+      env:
+        - C_COMPILER=clang-5.0
+        - CXX_COMPILER=clang++-5.0
+
+    - compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
+          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+      env:
+        - C_COMPILER=clang-6.0
+        - CXX_COMPILER=clang++-6.0
+
+before_script:
+  - export CC=${C_COMPILER}
+  - export CXX=${CXX_COMPILER}
+  - cd tests
+  - chmod +x ./gtest.sh
+  - ./gtest.sh
+  - make gpg-debug
+
+script:
+  - ./tests
