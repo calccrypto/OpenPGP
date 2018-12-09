@@ -10,16 +10,17 @@
    an error reading or writing the files. */
 int zlib_compress(const std::string & src, std::string & dst, int windowBits, int level)
 {
-    dst = ""; // clear out destination
-
     int ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char in[ZLIB_CHUNK];
+    unsigned char *in = nullptr;
     unsigned char out[ZLIB_CHUNK];
 
     unsigned int index = 0;
     unsigned int len = src.size();
+
+    dst.clear();      // clear out destination
+    dst.reserve(len); // reserve space to try to reduce reallocations
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
@@ -39,9 +40,7 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
         // flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
 
         strm.avail_in = ((index + ZLIB_CHUNK) < len)?ZLIB_CHUNK:(len - index);
-        for(unsigned int i = 0; i < strm.avail_in; i++){
-            in[i] = src[i + index];
-        }
+        in = (unsigned char *) &src[index];
         index += strm.avail_in;
         flush = (index == len)? Z_FINISH : Z_NO_FLUSH;
 
@@ -59,10 +58,7 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
                 // (void)deflateEnd(&strm);
                 // return Z_ERRNO;
             // }
-            for(unsigned int i = 0; i < have; i++){
-                dst += std::string(1, out[i]);
-            }
-
+            dst += std::string((char *) out, have);
         } while (strm.avail_out == 0);
         assert(strm.avail_in == 0);     /* all input will be used */
 
@@ -83,16 +79,17 @@ int zlib_compress(const std::string & src, std::string & dst, int windowBits, in
    is an error reading or writing the files. */
 int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
 {
-    dst = ""; // clear out destination
-
     int ret;
     unsigned have;
     z_stream strm;
-    unsigned char in[ZLIB_CHUNK];
+    unsigned char *in = nullptr;
     unsigned char out[ZLIB_CHUNK];
 
     unsigned int index = 0;
     unsigned int len = src.size();
+
+    dst.clear();      // clear out destination
+    dst.reserve(len); // reserve space to try to reduce reallocations
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
@@ -113,9 +110,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
         // }
 
         strm.avail_in = ((index + ZLIB_CHUNK) < len)?ZLIB_CHUNK:(len - index);
-        for(unsigned int i = 0; i < strm.avail_in; i++){
-            in[i] = src[i + index];
-        }
+        in = (unsigned char *) &src[index];
         index += strm.avail_in;
 
         if (strm.avail_in == 0)
@@ -145,9 +140,7 @@ int zlib_decompress(const std::string & src, std::string & dst, int windowBits)
                 // return Z_ERRNO;
             // }
 
-            for(unsigned int i = 0; i < have; i++){
-                dst += std::string(1, out[i]);
-            }
+            dst += std::string((char *) out, have);
         } while (strm.avail_out == 0);
 
         /* done when inflate() says it's done */
