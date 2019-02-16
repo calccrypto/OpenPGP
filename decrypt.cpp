@@ -51,7 +51,7 @@ Message data(const uint8_t sym,
     if (tag == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
         const std::string checksum = data.substr(data.size() - 20, 20); // get given SHA1 checksum
         data = data.substr(0, data.size() - 20);                        // remove SHA1 checksum
-        if (Hash::use(Hash::ID::SHA1, data) != checksum){                    // check SHA1 checksum
+        if (Hash::use(Hash::ID::SHA1, data) != checksum){               // check SHA1 checksum
             // "Error: Given checksum and calculated checksum do not match.";
             return Message();
         }
@@ -134,7 +134,7 @@ Message pka(const SecretKey & pri,
     // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE
     symkey = zero + symkey;
 
-    if (!(symkey = EME_PKCS1v1_5_DECODE(symkey)).size()){            // remove EME_PKCS1 encoding
+    if (!(symkey = EME_PKCS1v1_5_DECODE(symkey)).size()){                   // remove EME_PKCS1 encoding
         // "Error: EME_PKCS1v1_5_DECODE failure.\n";
         return Message();
     }

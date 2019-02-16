@@ -97,24 +97,29 @@ std::string Tag::write_new_length(const std::string & data) const{
 }
 
 std::string Tag::show_title() const{
-    std::string out = std::string(format?"New":"Old") + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
+    std::string out = (format?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 
-    switch (partial){
-        case 0:
-            break;
-        case 1:
-            out += " (partial start)";
-            break;
-        case 2:
-            out += " (partial continue)";
-            break;
-        case 3:
-            out += " (partial end)";
-            break;
-        default:
-            throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
-            break;
+    if (partial != NOT_PARTIAL) {
+        out += " (partial ";
+
+        switch (partial){
+            case PARTIAL_START:
+                out += "start";
+                break;
+            case PARTIAL_CONTINUE:
+                out += "continue";
+                break;
+            case PARTIAL_END:
+                out += "end";
+                break;
+            default:
+                throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
+                break;
+        }
+
+        out += ")";
     }
+
     return out;
 }
 
@@ -127,7 +132,7 @@ Tag::Tag(const uint8_t t, uint8_t ver)
       version(ver),
       format(true),
       size(0),
-      partial(0)
+      partial(NOT_PARTIAL)
 {}
 
 Tag::Tag(const Tag & copy)
@@ -145,11 +150,29 @@ Tag::Tag()
 Tag::~Tag(){}
 
 std::string Tag::write(const Tag::Format header) const{
+    const std::string data = raw();
+
+    // make sure RFC 4880 sec 4.2.2.4 is followed
+    if (partial == PARTIAL_START){
+        if (data.size() < 512) {
+            throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
+        }
+
+        if ((tag != LITERAL_DATA)                           &&
+            (tag != COMPRESSED_DATA)                        &&
+            (tag != SYMMETRICALLY_ENCRYPTED_DATA)           &&
+            (tag != SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA)) {
+            throw std::runtime_error("An implementation MAY use Partial Body Lengths for data packets, be "
+                                     "they literal, compressed, or encrypted. ... Partial Body Lengths MUST NOT be "
+                                     "used for any other packet types.");
+        }
+    }
+
     if ((header == NEW) ||      // specified new header
         (tag > 15)){            // tag > 15, so new header is required
-        return write_new_length(raw());
+        return write_new_length(data);
     }
-    return write_old_length(raw());
+    return write_old_length(data);
 }
 
 uint8_t Tag::get_tag() const{
@@ -190,6 +213,15 @@ void Tag::set_size(const std::size_t s){
 
 void Tag::set_partial(const uint8_t p){
     partial = p;
+}
+
+bool Tag::valid() const{
+    return (partial == NOT_PARTIAL) || ((partial != NOT_PARTIAL)                        &&
+                                        // should check for length >= 512 here, but length is not stored
+                                        ((tag == LITERAL_DATA)                          ||
+                                         (tag == COMPRESSED_DATA)                       ||
+                                         (tag == SYMMETRICALLY_ENCRYPTED_DATA)          ||
+                                         (tag == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA)));
 }
 
 Tag & Tag::operator=(const Tag & copy)

@@ -55,7 +55,7 @@ namespace OpenPGP {
             static const std::string ASCII_Armor_Key[];     // ASCII descriptor of OpenPGP packet
 
             // used for write function
-            enum Armored{
+            enum Armored {
                 DEFAULT,                                    // use value stored in PGP::armored
                 YES,                                        // write ASCII version
                 NO,                                         // write binary version
@@ -106,7 +106,7 @@ namespace OpenPGP {
             void read_raw(std::istream & stream);
 
             virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-            virtual std::string raw(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;               // write packets only; header is for writing default (0), old (1) or new (2) header formats
+            virtual std::string raw(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;     // write packets only; header is for writing default (0), old (1) or new (2) header formats
             virtual std::string write(const Armored armor = DEFAULT, const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;
 
             // Accessors
@@ -127,6 +127,7 @@ namespace OpenPGP {
             virtual Ptr clone() const;                      // get deep copy pointer
     };
 
+    std::ostream & operator<<(std::ostream & stream, const PGP & pgp);
 }
 
 #endif

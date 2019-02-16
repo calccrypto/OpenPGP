@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define __PACKETS__
 
 #include "Packet.h"
-#include "Partial.h"
 
 #include "Key.h"    // for Tags 5, 6, 7, and 14
 #include "User.h"   // for Tags 13 and 17

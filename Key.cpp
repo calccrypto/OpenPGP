@@ -516,8 +516,7 @@ PGP::Ptr Key::clone() const{
 }
 
 std::ostream & operator<<(std::ostream & stream, const Key & pgp){
-    stream << hexlify(pgp.keyid());
-    return stream;
+    return stream << hexlify(pgp.keyid());
 }
 
 PublicKey::PublicKey()

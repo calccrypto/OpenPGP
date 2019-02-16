@@ -262,7 +262,7 @@ bool Message::match(const PGP & pgp, const Message::Token & token){
         return false;
     }
 
-    if ((token != OPENMessage)       &&
+    if ((token != OPENMessage)          &&
         (token != ENCRYPTEDMESSAGE)     &&
         (token != SIGNEDMESSAGE)        &&
         // (token != ONEPASSSIGNEDMESSAGE) &&  // special case of Signed Message
@@ -300,7 +300,7 @@ bool Message::match(const PGP & pgp, const Message::Token & token){
         else if (p -> get_tag() == Packet::SIGNATURE){
             push = SP;
         }
-        else{
+        else {
             // "Error: Non-Message packet found.\n";
             return false;
         }
@@ -312,7 +312,7 @@ bool Message::match(const PGP & pgp, const Message::Token & token){
         bool reduced = false;
         for(std::list <Token>::iterator it = s.begin(); it != s.end(); it++){ // for each token
             // make sure the sentence continues to fit at least one of the rules at least once per loop over the sentence
-            if (OpenMessage       (it, s) ||
+            if (OpenMessage          (it, s) ||
                 CompressedMessage    (it, s) ||
                 LiteralMessage       (it, s) ||
                 EncryptedSessionKey  (it, s) ||

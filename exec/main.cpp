@@ -39,9 +39,9 @@ std::ostream & show_header(std::ostream & stream = std::cout,
                   << std::endl;
 }
 
-std::size_t help(const std::string & match        = "",
-                            std::ostream & stream = std::cout,
-                            std::string indent    = ""){
+std::size_t help(const std::string & match = "",
+                 std::ostream & stream     = std::cout,
+                 std::string indent        = ""){
     const std::regex regex(match);
     std::size_t found = 0;
     for(module::Module const & cmd : module::ordered){

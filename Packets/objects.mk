@@ -1,5 +1,4 @@
 PACKETS_OBJECTS=Packet.o   \
-                Partial.o  \
                 Key.o      \
                 User.o     \
                 Tag0.o     \

@@ -98,7 +98,6 @@ verify.o: verify.cpp verify.h Misc/PKCS1.h Misc/mpi.h Misc/sigcalc.h CleartextSi
 
 # Library
 $(TARGET): $(OPENPGP_OBJECTS) common Compress Encryptions Hashes Misc Packets PKA RNG Subpackets
-	rm -f $(TARGET)
 	$(AR) -r $(TARGET) $(OPENPGP_OBJECTS) $(addprefix common/, $(COMMON_OBJECTS)) $(addprefix Compress/, $(COMPRESS_OBJECTS)) $(addprefix Encryptions/, $(ENCRYPTIONS_OBJECTS)) $(addprefix Hashes/, $(HASHES_OBJECTS)) $(addprefix Misc/, $(MISC_OBJECTS)) $(addprefix Packets/, $(PACKETS_OBJECTS)) $(addprefix PKA/, $(PKA_OBJECTS)) $(addprefix RNG/, $(RNG_OBJECTS)) $(addprefix Subpackets/, $(SUBPACKET_OBJECTS)) $(addprefix Subpackets/Tag2/, $(TAG2_SUBPACKET_OBJECTS)) $(addprefix Subpackets/Tag17/, $(TAG17_SUBPACKET_OBJECTS))
 
 clean:
