@@ -2,7 +2,7 @@
 SHA224.h
 The SHA2 algorithm SHA-224
 
-Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
