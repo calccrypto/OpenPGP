@@ -12,12 +12,18 @@ add_subdirectory(RNG)
 add_subdirectory(Subpackets)
 
 install(FILES
+    # main header file
+    OpenPGP.h
+
+    # OpenPGP Types
     CleartextSignature.h
     DetachedSignature.h
     Key.h
     Message.h
     PGP.h
     RevocationCertificate.h
+
+    # OpenPGP Functions
     decrypt.h
     encrypt.h
     keygen.h

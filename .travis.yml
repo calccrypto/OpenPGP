@@ -1,7 +1,7 @@
 # from <https://github.com/taocpp/PEGTL/blob/master/.travis.yml>
 
 os: linux
-dist: trusty
+dist: xenial
 sudo: false
 
 language: cpp
@@ -74,7 +74,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-3.9']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-3.9
@@ -83,7 +83,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-4.0
@@ -92,7 +92,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
           packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-5.0
@@ -101,7 +101,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
           packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-6.0
@@ -110,11 +110,11 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-7.0']
-          packages: ['clang-7.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
+          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-7.0
-        - CXX_COMPILER=clang++-7.0
+        - C_COMPILER=clang-7
+        - CXX_COMPILER=clang++-7
 
 before_script:
   - export CC=${C_COMPILER}

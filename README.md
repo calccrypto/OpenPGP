@@ -2,9 +2,11 @@
 
 Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
-Please see LICENSE file for the license.
-cmake/FindGMP.cmake is by Jack Poulson from Elemental(https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
-Some of CMakeLists.txt was taken from the Kitware CMake wiki at https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling.
+Please see [LICENSE](LICENSE) file for the license.
+
+Also:
+ - cmake/FindGMP.cmake is by Jack Poulson from [Elemental](https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
+ - Some of CMakeLists.txt was taken from the [Kitware CMake wiki RPath handling page](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#always-full-rpath).
 
 [![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
 
@@ -37,12 +39,6 @@ Some of CMakeLists.txt was taken from the Kitware CMake wiki at https://gitlab.k
 This is a C++ implementation of the majority of RFC 4880,
 the OpenPGP Message Format.
 
-The following are the libraries necessary to build OpenPGP:
-
-- GMP (<https://gmplib.org/>)
-- bzip2 (<http://www.bzip.org/>)
-- zlib (<http://www.zlib.net/>)
-
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me
 a long time to figure out most of it. No one should have to go
@@ -55,8 +51,35 @@ was done on purpose. I used it to test keys I created with
 known working values. What others do with this capability
 is none of my concern or responsibility.
 
-This library should be relatively straightforward to use:
-Simply `#include` whatever functions needed:
+## Building
+
+### Tools
+- A C++ compiler with C++11 support
+- CMake 3
+
+### Libraries
+- GMP (<https://gmplib.org/>)
+- bzip2 (<http://www.bzip.org/>)
+- zlib (<http://www.zlib.net/>)
+
+### Build
+```bash
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=<prefix> -DGPG_COMPATIBLE=<True/False> ..
+make
+<make test>
+make install
+```
+
+The GPG_COMPATIBLE flag is used to make this library gpg compatible
+when gpg does not follow the standard. By default this is set to False.
+
+## Usage
+
+This library should be relatively straightforward to use: Simply `#include "OpenPGP.h"`.
+
+If you do not wish to include everything at once, `#include` whatever functions are needed:
 
  Feature        | Header         | Namespace
 ----------------|----------------|------------------
@@ -87,12 +110,6 @@ meaningful.
 `CleartextSignature` does not inherit from PGP and cannot
 read non-Cleartext Signature data.
 
-The `exec/main.cpp` file provides a simple command line tool that
-uses modules from the exec/modules directory to provide functionality.
-These can be used as examples on how to use the functions. A lot
-of the output was based on/inspired by pgpdump.net and GPG. The command
-line program can be built with make.
-
 All data structures have some standard functions:
 
 Function | Description
@@ -107,12 +124,13 @@ Function | Description
 `operator=` and the copy constructor have been overloaded
 for the data structures that need deep copy.
 
-To build just the library, run make in `OpenPGP/`.
+### Command Line Interface
+The `exec/main.cpp` file provides a simple command line tool that
+uses modules from the exec/modules directory to provide functionality.
+These can be used as examples on how to use the functions. A lot
+of the output was based on/inspired by pgpdump.net and GPG.
 
 ## Notes:
 
 Keyrings were not implemented. Rather, individual keys are
 read from the directory used as arguments to functions.
-
-gpg sometimes does weird things, so if gpg compatibility is
-desired, define the macro `GPG_COMPATIBLE` when compiling.
