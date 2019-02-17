@@ -7,4 +7,4 @@ install(FILES
     Subpacket.h
     Subpackets.h
 
-    DESTINATION include/PKA)
+    DESTINATION include/Subpackets)

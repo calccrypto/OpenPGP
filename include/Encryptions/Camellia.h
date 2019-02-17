@@ -28,8 +28,8 @@ THE SOFTWARE.
 #include <algorithm>
 #include <vector>
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 #include "Camellia_Const.h"

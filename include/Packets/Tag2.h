@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "../Subpackets/Tag2/Subpackets.h"
+#include "Subpackets/Tag2/Subpackets.h"
 
 #ifndef __TAG2__
 #define __TAG2__
@@ -33,10 +33,10 @@ THE SOFTWARE.
 #include <string>
 #include <vector>
 
-#include "../Hashes/Hashes.h"
-#include "../Misc/sigtypes.h"
-#include "../PKA/PKAs.h"
-#include "../Subpackets/Tag2/Subpackets.h"
+#include "Hashes/Hashes.h"
+#include "Misc/sigtypes.h"
+#include "PKA/PKAs.h"
+#include "Subpackets/Tag2/Subpackets.h"
 #include "Packet.h"
 
 namespace OpenPGP {

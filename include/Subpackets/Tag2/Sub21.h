@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB21__
 #define __TAG2_SUB21__
 
-#include "../../Hashes/Hashes.h"
+#include "Hashes/Hashes.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

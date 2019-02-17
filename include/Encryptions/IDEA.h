@@ -27,8 +27,8 @@ THE SOFTWARE.
 
 #include <vector>
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 class IDEA : public SymAlg {

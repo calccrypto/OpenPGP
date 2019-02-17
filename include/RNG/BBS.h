@@ -30,9 +30,9 @@ THE SOFTWARE.
 #include <ctime>
 #include <iostream>
 
-#include "../common/cryptomath.h"
-#include "../Misc/mpi.h"
-#include "../Misc/pgptime.h"
+#include "common/cryptomath.h"
+#include "Misc/mpi.h"
+#include "Misc/pgptime.h"
 
 namespace OpenPGP {
     namespace RNG {

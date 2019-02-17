@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <fstream>
 #include <sstream>
 
-#include "../Misc/pgptime.h"
+#include "Misc/pgptime.h"
 #include "Packet.h"
 
 namespace OpenPGP {

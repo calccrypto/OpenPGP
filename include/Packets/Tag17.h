@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "../common/includes.h"
-#include "../Subpackets/Tag17/Subpackets.h"
+#include "common/includes.h"
+#include "Subpackets/Tag17/Subpackets.h"
 #include "User.h"
 
 namespace OpenPGP {

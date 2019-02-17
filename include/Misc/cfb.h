@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include <stdexcept>
 
-#include "../Encryptions/Encryptions.h"
-#include "../Packets/Packet.h"
+#include "Encryptions/Encryptions.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     // OpenPGP CFB as described in RFC 4880 section 13.9

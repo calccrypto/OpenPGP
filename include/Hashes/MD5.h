@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __MD5__
 #define __MD5__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "MerkleDamgard.h"
 
 #include "MD5_Const.h"

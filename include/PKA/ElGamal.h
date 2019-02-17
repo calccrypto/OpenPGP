@@ -26,10 +26,10 @@ THE SOFTWARE.
 #ifndef __ELGAMAL__
 #define __ELGAMAL__
 
-#include "../RNG/RNGs.h"
-#include "../common/includes.h"
-#include "../Misc/mpi.h"
-#include "../Misc/pgptime.h"
+#include "RNG/RNGs.h"
+#include "common/includes.h"
+#include "Misc/mpi.h"
+#include "Misc/pgptime.h"
 #include "PKA.h"
 
 namespace OpenPGP {

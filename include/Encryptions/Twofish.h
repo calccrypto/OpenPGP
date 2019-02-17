@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 #include "Twofish_Const.h"

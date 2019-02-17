@@ -27,8 +27,8 @@ THE SOFTWARE.
 #ifndef __RIPEMD160__
 #define __RIPEMD160__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "MerkleDamgard.h"
 
 #include "RIPEMD_Const.h"

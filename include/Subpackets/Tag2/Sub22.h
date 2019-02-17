@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB22__
 #define __TAG2_SUB22__
 
-#include "../../Compress/Compress.h"
+#include "Compress/Compress.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

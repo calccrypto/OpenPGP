@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <vector>
 
-#include "../Misc/mpi.h"
+#include "Misc/mpi.h"
 
 namespace OpenPGP {
     namespace PKA {

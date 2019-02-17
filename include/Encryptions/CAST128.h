@@ -25,8 +25,8 @@ THE SOFTWARE.
 #ifndef __CAST128__
 #define __CAST128__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 #include "CAST_Const.h"

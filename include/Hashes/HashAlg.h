@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <iostream>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 
 class HashAlg{
     public:

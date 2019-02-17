@@ -28,8 +28,8 @@ THE SOFTWARE.
 #ifndef __AES__
 #define __AES__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 #include "AES_Const.h"

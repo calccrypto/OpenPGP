@@ -4,4 +4,4 @@ install(FILES
     BBS.h
     RNGs.h
 
-    DESTINATION include/PKA)
+    DESTINATION include/RNG)

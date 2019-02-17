@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <memory>
 #include <string>
 
-#include "../Hashes/Hashes.h"
+#include "Hashes/Hashes.h"
 
 namespace OpenPGP {
     namespace S2K {

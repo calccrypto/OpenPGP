@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "../Misc/cfb.h"
-#include "../Misc/mpi.h"
-#include "../Misc/s2k.h"
+#include "Misc/cfb.h"
+#include "Misc/mpi.h"
+#include "Misc/s2k.h"
 #include "Tag6.h"
 
 namespace OpenPGP {

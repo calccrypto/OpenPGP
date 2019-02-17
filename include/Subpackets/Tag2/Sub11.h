@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB11__
 #define __TAG2_SUB11__
 
-#include "../../Encryptions/Encryptions.h"
+#include "Encryptions/Encryptions.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

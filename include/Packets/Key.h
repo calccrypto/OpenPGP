@@ -26,9 +26,9 @@ THE SOFTWARE.
 #ifndef __PACKET_KEY__
 #define __PACKET_KEY__
 
-#include "../Hashes/Hashes.h"
-#include "../PKA/PKAs.h"
-#include "../Misc/mpi.h"
+#include "Hashes/Hashes.h"
+#include "PKA/PKAs.h"
+#include "Misc/mpi.h"
 #include "Packet.h"
 
 namespace OpenPGP {
@@ -89,7 +89,7 @@ namespace OpenPGP {
                 uint8_t get_kdf_alg() const;
                 void set_kdf_alg(const uint8_t a);
                 #endif
-          
+
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary
 

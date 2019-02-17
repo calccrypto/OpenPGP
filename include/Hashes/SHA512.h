@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __SHA512__
 #define __SHA512__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "MerkleDamgard.h"
 
 #include "SHA2_Functions.h"

@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include <algorithm>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 #include "SymAlg.h"
 
 #include "Blowfish_Const.h"

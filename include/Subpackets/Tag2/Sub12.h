@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB12__
 #define __TAG2_SUB12__
 
-#include "../../PKA/PKAs.h"
+#include "PKA/PKAs.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

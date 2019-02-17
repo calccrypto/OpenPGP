@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB31__
 #define __TAG2_SUB31__
 
-#include "../../Hashes/Hashes.h"
-#include "../../PKA/PKAs.h"
+#include "Hashes/Hashes.h"
+#include "PKA/PKAs.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

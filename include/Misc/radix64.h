@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 
 namespace OpenPGP {
     // 6.3.  Encoding Binary in Radix-64

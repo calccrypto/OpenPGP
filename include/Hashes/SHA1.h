@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __SHA1__
 #define __SHA1__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "MerkleDamgard.h"
 
 class SHA1 : public MerkleDamgard {

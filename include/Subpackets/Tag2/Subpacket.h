@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <map>
 #include <string>
 
-#include "../Subpacket.h"
+#include "Subpackets/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {

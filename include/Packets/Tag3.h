@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "../Misc/cfb.h"
-#include "../Misc/s2k.h"
+#include "Misc/cfb.h"
+#include "Misc/s2k.h"
 #include "Packet.h"
 
 namespace OpenPGP {

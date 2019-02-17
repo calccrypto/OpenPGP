@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 
 namespace OpenPGP {
     namespace Packet {

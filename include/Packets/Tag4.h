@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "../Hashes/Hashes.h"
-#include "../Misc/sigtypes.h"
-#include "../PKA/PKAs.h"
+#include "Hashes/Hashes.h"
+#include "Misc/sigtypes.h"
+#include "PKA/PKAs.h"
 #include "Packet.h"
 
 namespace OpenPGP {

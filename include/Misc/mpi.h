@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 #include <gmpxx.h>
 
-#include "../common/includes.h"
+#include "common/includes.h"
 
 namespace OpenPGP {
     typedef mpz_class MPI;

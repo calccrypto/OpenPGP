@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __SHA256__
 #define __SHA256__
 
-#include "../common/cryptomath.h"
-#include "../common/includes.h"
+#include "common/cryptomath.h"
+#include "common/includes.h"
 #include "MerkleDamgard.h"
 
 #include "SHA2_Functions.h"

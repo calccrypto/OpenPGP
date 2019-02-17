@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG8__
 #define __TAG8__
 
-#include "../Compress/Compress.h"
+#include "Compress/Compress.h"
 #include "Packet.h"
 
 namespace OpenPGP {
