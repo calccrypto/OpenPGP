@@ -16,6 +16,8 @@
 #include "testvectors/pass.h"
 #include "testvectors/read_pgp.h"
 
+static const std::string GPG_DIR = "tests/testvectors/gpg/";
+
 TEST(PGP, keygen){
 
     OpenPGP::KeyGen::Config config;
@@ -128,7 +130,7 @@ TEST(PGP, keygen){
 TEST(PGP, revoke_key){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Revoke::Args revargs(pri, PASSPHRASE, pri);
     const OpenPGP::RevocationCertificate rev = OpenPGP::Revoke::key_cert(revargs);
@@ -151,7 +153,7 @@ TEST(PGP, revoke_key){
 TEST(PGP, revoke_subkey){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Revoke::Args revargs(pri, PASSPHRASE, pri);
     const OpenPGP::RevocationCertificate rev = OpenPGP::Revoke::subkey_cert(revargs, unhexlify("d27061e1"));
@@ -175,7 +177,7 @@ TEST(PGP, revoke_subkey){
 TEST(PGP, revoke_uid){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Revoke::Args revargs(pri, PASSPHRASE, pri);
     const OpenPGP::RevocationCertificate rev = OpenPGP::Revoke::uid_cert(revargs, "alice");
@@ -198,7 +200,7 @@ TEST(PGP, revoke_uid){
 TEST(PGP, encrypt_decrypt_pka_mdc){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Encrypt::Args encrypt_args("", MESSAGE);
     const OpenPGP::Message encrypted = OpenPGP::Encrypt::pka(encrypt_args, pri);
@@ -227,7 +229,7 @@ TEST(PGP, encrypt_decrypt_pka_mdc){
 TEST(PGP, encrypt_decrypt_pka_no_mdc){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::Encrypt::Args encrypt_args;
     encrypt_args.data = MESSAGE;
@@ -308,7 +310,7 @@ TEST(PGP, encrypt_decrypt_symmetric_no_mdc){
 TEST(PGP, encrypt_sign_decrypt_verify){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::Encrypt::Args encrypt_args;
     encrypt_args.data = MESSAGE;
@@ -343,7 +345,7 @@ TEST(PGP, encrypt_sign_decrypt_verify){
 TEST(PGP, sign_verify_detached){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Sign::Args sign_args(pri, PASSPHRASE);
     const OpenPGP::DetachedSignature sig = OpenPGP::Sign::detached_signature(sign_args, MESSAGE);
@@ -353,7 +355,7 @@ TEST(PGP, sign_verify_detached){
 TEST(PGP, sign_verify_binary){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Sign::Args sign_args(pri, PASSPHRASE);
     const OpenPGP::Message sig = OpenPGP::Sign::binary(sign_args, "", MESSAGE, OpenPGP::Compression::ID::ZLIB);
@@ -363,7 +365,7 @@ TEST(PGP, sign_verify_binary){
 TEST(PGP, sign_verify_cleartext){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     const OpenPGP::Sign::Args sign_args(pri, PASSPHRASE);
     const OpenPGP::CleartextSignature sig = OpenPGP::Sign::cleartext_signature(sign_args, MESSAGE);
@@ -373,10 +375,10 @@ TEST(PGP, sign_verify_cleartext){
 TEST(PGP, verify_primary_key){
 
     OpenPGP::PublicKey pub;
-    ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub), true);
+    ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub, GPG_DIR), true);
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     EXPECT_EQ(OpenPGP::Verify::primary_key(pub, pub), true);
     EXPECT_EQ(OpenPGP::Verify::primary_key(pub, pri), true);

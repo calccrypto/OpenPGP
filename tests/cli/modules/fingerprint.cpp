@@ -3,7 +3,9 @@
 #include <gtest/gtest.h>
 
 #include "cli/modules/fingerprint.h"
-#include "../../testvectors/read_pgp.h"
+#include "tests/testvectors/read_pgp.h"
+
+#define GPG_DIR "tests/testvectors/gpg/"
 
 TEST(Module, fingerprint){
     // default arguments
@@ -66,3 +68,5 @@ TEST(Module, fingerprint){
         EXPECT_EQ(out.str(), "4b32::92e9::56b5::77ad::7034::43f4::d5d7::da71::c354::960e\n");
     }
 }
+
+#undef GPG_DIR

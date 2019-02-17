@@ -62,5 +62,4 @@ add_executable(tests
 
 target_link_libraries(tests gtest gtest_main OpenPGP_shared)
 
-add_test(NAME tests COMMAND tests)
-
+add_test(NAME tests COMMAND tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

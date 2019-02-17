@@ -10,6 +10,8 @@
 #include "testvectors/pass.h"
 #include "testvectors/read_pgp.h"
 
+static const std::string GPG_DIR = "tests/testvectors/gpg/";
+
 time_t get_utc(int year, int month, int day, int hour, int minute, int second){
     tm in;
     in.tm_year = year - 1900;
@@ -42,12 +44,12 @@ time_t get_utc(int year, int month, int day, int hour, int minute, int second){
 TEST(gpg, public_key){
 
     OpenPGP::PublicKey pub;
-    ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub), true);
+    ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub, GPG_DIR), true);
 
     // read public key into SecretKey
     {
         OpenPGP::SecretKey pri;
-        EXPECT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepub", pri), false);
+        EXPECT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepub", pri, GPG_DIR), false);
     }
 
     ASSERT_EQ(pub.keyid(), unhexlify("d5d7da71c354960e"));
@@ -245,12 +247,12 @@ TEST(gpg, public_key){
 TEST(gpg, private_key){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     // read private key into OpenPGP::PublicKey::
     {
         OpenPGP::PublicKey pub;
-        EXPECT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepri", pub), false);
+        EXPECT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepri", pub, GPG_DIR), false);
     }
 
     ASSERT_EQ(pri.keyid(), unhexlify("d5d7da71c354960e"));
@@ -473,10 +475,10 @@ TEST(gpg, private_key){
 TEST(gpg, revoke){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::RevocationCertificate rev;
-    ASSERT_EQ(read_pgp <OpenPGP::RevocationCertificate> ("revoke", rev), true);
+    ASSERT_EQ(read_pgp <OpenPGP::RevocationCertificate> ("revoke", rev, GPG_DIR), true);
 
     const OpenPGP::PGP::Packets packets = rev.get_packets();
     ASSERT_EQ(packets.size(), (OpenPGP::PGP::Packets::size_type) 1);
@@ -535,10 +537,10 @@ TEST(gpg, revoke){
 TEST(gpg, decrypt_pka_mdc){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::Message gpg_encrypted;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("pkaencrypted", gpg_encrypted), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("pkaencrypted", gpg_encrypted, GPG_DIR), true);
 
     // make sure data was read correctly
     const OpenPGP::PGP::Packets packets = gpg_encrypted.get_packets();
@@ -582,11 +584,11 @@ TEST(gpg, decrypt_pka_mdc){
 TEST(gpg, decrypt_pka_no_mdc){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
     ASSERT_EQ(pri.meaningful(), true);
 
     OpenPGP::Message gpg_encrypted;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("pkaencryptednomdc", gpg_encrypted), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("pkaencryptednomdc", gpg_encrypted, GPG_DIR), true);
     ASSERT_EQ(gpg_encrypted.meaningful(), true);
 
     // make sure data was read correctly
@@ -629,7 +631,7 @@ TEST(gpg, decrypt_pka_no_mdc){
 TEST(gpg, decrypt_symmetric_mdc){
 
     OpenPGP::Message gpg_encrypted;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencrypted", gpg_encrypted), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencrypted", gpg_encrypted, GPG_DIR), true);
 
     // make sure data was read correctly
     const OpenPGP::PGP::Packets packets = gpg_encrypted.get_packets();
@@ -674,7 +676,7 @@ TEST(gpg, decrypt_symmetric_mdc){
 TEST(gpg, decrypt_symmetric_no_mdc){
 
     OpenPGP::Message gpg_encrypted;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencryptednomdc", gpg_encrypted), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencryptednomdc", gpg_encrypted, GPG_DIR), true);
 
     // make sure data was read correctly
     const OpenPGP::PGP::Packets packets = gpg_encrypted.get_packets();
@@ -718,10 +720,10 @@ TEST(gpg, decrypt_symmetric_no_mdc){
 TEST(gpg, decrypt_verify){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::Message gpg_encrypted;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("encryptsign", gpg_encrypted), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("encryptsign", gpg_encrypted, GPG_DIR), true);
 
     // make sure data was read correctly
     OpenPGP::PGP::Packets packets = gpg_encrypted.get_packets();
@@ -832,10 +834,10 @@ TEST(gpg, decrypt_verify){
 TEST(gpg, verify_detached){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::DetachedSignature sig;
-    ASSERT_EQ(read_pgp <OpenPGP::DetachedSignature> ("detached", sig), true);
+    ASSERT_EQ(read_pgp <OpenPGP::DetachedSignature> ("detached", sig, GPG_DIR), true);
 
     EXPECT_EQ(OpenPGP::Verify::detached_signature(pri, MESSAGE, sig), true);
 }
@@ -843,10 +845,10 @@ TEST(gpg, verify_detached){
 TEST(gpg, verify_binary){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::Message sig;
-    ASSERT_EQ(read_pgp <OpenPGP::Message> ("signature", sig), true);
+    ASSERT_EQ(read_pgp <OpenPGP::Message> ("signature", sig, GPG_DIR), true);
 
     EXPECT_EQ(OpenPGP::Verify::binary(pri, sig), true);
 }
@@ -854,10 +856,10 @@ TEST(gpg, verify_binary){
 TEST(gpg, verify_cleartext){
 
     OpenPGP::SecretKey pri;
-    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri), true);
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
 
     OpenPGP::CleartextSignature clearsig;
-    ASSERT_EQ(read_pgp <OpenPGP::CleartextSignature> ("clearsign", clearsig), true);
+    ASSERT_EQ(read_pgp <OpenPGP::CleartextSignature> ("clearsign", clearsig, GPG_DIR), true);
 
     EXPECT_EQ(clearsig.get_message(), MESSAGE.substr(0, MESSAGE.size() - 1)); // final newline is removed
 
