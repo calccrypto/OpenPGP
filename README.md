@@ -125,8 +125,8 @@ Function | Description
 for the data structures that need deep copy.
 
 ### Command Line Interface
-The `exec/main.cpp` file provides a simple command line tool that
-uses modules from the exec/modules directory to provide functionality.
+The `cli/main.cpp` file provides a simple command line tool that
+uses modules from the `cli/modules` directory to provide functionality.
 These can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 

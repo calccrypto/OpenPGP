@@ -34,10 +34,10 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
   include_directories("${gtest_SOURCE_DIR}/include")
 # endif()
 
+add_subdirectory(cli)
 add_subdirectory(common)
 add_subdirectory(Compress)
 add_subdirectory(Encryptions)
-add_subdirectory(exec)
 add_subdirectory(Hashes)
 add_subdirectory(Misc)
 add_subdirectory(PKA)
@@ -55,7 +55,7 @@ add_executable(tests
     $<TARGET_OBJECTS:CompressTests>
     $<TARGET_OBJECTS:EncryptionTests>
     # $<TARGET_OBJECTS:ExecTests>
-    $<TARGET_OBJECTS:ModulesTests>
+    $<TARGET_OBJECTS:ModuleTests>
     $<TARGET_OBJECTS:HashTests>
     $<TARGET_OBJECTS:MiscTests>
     $<TARGET_OBJECTS:PKATests>)

@@ -67,6 +67,7 @@ include_directories(include)
 
 enable_testing()
 
+add_subdirectory(cli)
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
