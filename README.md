@@ -1,5 +1,7 @@
 # OpenPGP in C++
 
+[![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
+
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
 Please see [LICENSE](LICENSE) file for the license.
@@ -7,8 +9,7 @@ Please see [LICENSE](LICENSE) file for the license.
 Also:
  - cmake/FindGMP.cmake is by Jack Poulson from [Elemental](https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
  - Some of CMakeLists.txt was taken from the [Kitware CMake wiki RPath handling page](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#always-full-rpath).
-
-[![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
+ - The code for incorporating Google Test into CMake was taken from the [Google Test README](https://github.com/google/googletest/blob/master/googletest/README.md).
 
 ### With much help from
 
@@ -50,6 +51,8 @@ as providing incorrect checksums and public key values. That
 was done on purpose. I used it to test keys I created with
 known working values. What others do with this capability
 is none of my concern or responsibility.
+
+--------------------------------------------------------------------------------
 
 ## Building
 
@@ -130,7 +133,7 @@ uses modules from the `cli/modules` directory to provide functionality.
 These can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 
-## Notes:
+#### Note:
 
 Keyrings were not implemented. Rather, individual keys are
 read from the directory used as arguments to functions.
