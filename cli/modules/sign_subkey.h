@@ -44,7 +44,7 @@ const Module sign_subkey(
 
     // optional arguments
     {
-        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 with; '0x')",   "13")),
+        std::make_pair("-c", std::make_pair("certification level (0x10 - 0x13 without '0x')",   "13")),
         std::make_pair("-h", std::make_pair("hash algorithm",                                 "SHA1")),
         std::make_pair("-u", std::make_pair("Signer's User Identifier",                           "")),
         std::make_pair("-v", std::make_pair("Signee's User Identifier",                           "")),

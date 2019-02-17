@@ -251,10 +251,19 @@ before_script:
   - export CC=${C_COMPILER}
   - export CXX=${CXX_COMPILER}
   - export GTEST_COLOR=1
+  - export OPENPGP_PATH=/tmp/OpenPGP
 
 script:
   - mkdir build
   - cd build
-  - cmake .. -DGPG_COMPATIBLE="${GPG_COMPATIBLE}"
+  - cmake .. -DCMAKE_INSTALL_PREFIX=${OPENPGP_PATH} -DGPG_COMPATIBLE="${GPG_COMPATIBLE}"
   - make
   - ctest --verbose
+
+after_success:
+  - make install
+
+  # rebuild the cli as a standalone application using the installed files
+  - ${CXX} -Wall -std=c++11 -I${OPENPGP_PATH}/include ../cli/main.cpp ../cli/modules/module.cpp -L${OPENPGP_PATH}/lib -lOpenPGP -lgmp -lgmpxx -lbz2 -lz -o OpenPGP
+  - export LD_LIBRARY_PATH=${OPENPGP_PATH}/lib:$LD_LIBRARY_PATH
+  - ./OpenPGP
