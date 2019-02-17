@@ -1,1 +1,0 @@
-MODULES_OBJECTS=module.o

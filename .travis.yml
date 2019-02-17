@@ -107,13 +107,23 @@ matrix:
         - C_COMPILER=clang-6.0
         - CXX_COMPILER=clang++-6.0
 
+    - compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-7.0']
+          packages: ['clang-7.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
+      env:
+        - C_COMPILER=clang-7.0
+        - CXX_COMPILER=clang++-7.0
+
 before_script:
   - export CC=${C_COMPILER}
   - export CXX=${CXX_COMPILER}
-  - cd tests
-  - chmod +x ./gtest.sh
-  - ./gtest.sh
-  - make gpg-debug
+  - export GTEST_COLOR=1
 
 script:
-  - ./tests
+  - mkdir build
+  - cd build
+  - cmake .. -DGPG_COMPATIBLE=TRUE
+  - make
+  - ctest --verbose

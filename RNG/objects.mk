@@ -1,1 +1,0 @@
-RNG_OBJECTS=BBS.o

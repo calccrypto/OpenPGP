@@ -5,9 +5,9 @@ CONFIG -= qt
 include($$PWD/OpenPGP.pri)
 
 SOURCES += \
-    $$PWD/../exec/*.cpp \
-    $$PWD/../exec/modules/*.cpp
+    $$PWD/../src/exec/*.cpp \
+    $$PWD/../src/exec/modules/*.cpp
 
 HEADERS += \
-    $$PWD/../exec/modules/*.h
+    $$PWD/../include/exec/modules/*.h
 

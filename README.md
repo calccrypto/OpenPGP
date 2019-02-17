@@ -2,7 +2,9 @@
 
 Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
-Please see LICENSE file for license.
+Please see LICENSE file for the license.
+cmake/FindGMP.cmake is by Jack Poulson from Elemental(https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
+Some of CMakeLists.txt was taken from the Kitware CMake wiki at https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling.
 
 [![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
 
