@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.0)
 project(OpenPGP LANGUAGES CXX)
 
 # require C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # add extra warnings in debug mode
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
 
 # GPG compatible mode
 set(GPG_COMPATIBLE NO CACHE BOOL "Build with GPG compatibility")
@@ -63,8 +63,10 @@ message(STATUS "zlib libraries:  ${ZLIB_LIBRARIES}")
 include_directories(${ZLIB_INCLUDE_DIR})
 link_libraries     (${ZLIB_LIBRARIES})
 
+# -Iinclude
 include_directories(include)
 
+# create the test target
 enable_testing()
 
 add_subdirectory(cli)
@@ -72,6 +74,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
 
+# build the static library
 add_library(OpenPGP_static STATIC
     $<TARGET_OBJECTS:TopLevel>
     $<TARGET_OBJECTS:common>
@@ -89,6 +92,7 @@ add_library(OpenPGP_static STATIC
 set_target_properties(OpenPGP_static PROPERTIES OUTPUT_NAME "OpenPGP")
 install(TARGETS OpenPGP_static DESTINATION lib)
 
+# build the shared library
 add_library(OpenPGP_shared SHARED
     $<TARGET_OBJECTS:TopLevel>
     $<TARGET_OBJECTS:common>

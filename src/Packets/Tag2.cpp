@@ -362,7 +362,7 @@ PKA::Values Tag2::get_mpi() const{
 }
 
 std::array <uint32_t, 3> Tag2::get_times() const{
-    std::array <uint32_t, 3> times = {0, 0, 0};
+    std::array <uint32_t, 3> times = {{0, 0, 0}};
     if (version == 3){
         times[0] = time;
     }

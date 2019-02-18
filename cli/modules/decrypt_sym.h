@@ -53,7 +53,7 @@ const Module decrypt_sym(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags,
+       const std::map <std::string, bool>        & /* flags */,
        std::ostream                              & out,
        std::ostream                              & err) -> int {
         std::ifstream msg(args.at("file"), std::ios::binary);

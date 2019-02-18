@@ -61,7 +61,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-3.8
@@ -171,7 +171,7 @@ matrix:
     - compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=clang-3.8
@@ -237,7 +237,7 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_INSTALL_PREFIX=${OPENPGP_PATH} -DGPG_COMPATIBLE="${GPG_COMPATIBLE}"
+  - cmake .. -DCMAKE_INSTALL_PREFIX=${OPENPGP_PATH} -DCMAKE_BUILD_TYPE=Debug -DGPG_COMPATIBLE="${GPG_COMPATIBLE}"
   - make
   - ctest --verbose
 

@@ -13,10 +13,10 @@ TEST(Module, module){
                                     {},
                                     {},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -29,10 +29,10 @@ TEST(Module, module){
                                     {std::make_pair("bad optional argument", std::make_pair("", ""))},
                                     {},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -45,10 +45,10 @@ TEST(Module, module){
                                     {},
                                     {std::make_pair("bad flag", std::make_pair("", false))},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -61,10 +61,10 @@ TEST(Module, module){
                                     {},
                                     {},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -77,10 +77,10 @@ TEST(Module, module){
                                     {std::make_pair("optional", std::make_pair("", ""))},
                                     {},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -93,10 +93,10 @@ TEST(Module, module){
                                     {},
                                     {std::make_pair("flag", std::make_pair("", false))},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -109,10 +109,10 @@ TEST(Module, module){
                                     {std::make_pair("optional", std::make_pair("",    ""))},
                                     {std::make_pair("optional", std::make_pair("", false))},
                                     // function to run
-                                    [](const std::map <std::string, std::string> & args,
-                                       const std::map <std::string, bool>        & flags,
-                                       std::ostream                              & out,
-                                       std::ostream                              & err) -> int {
+                                    [](const std::map <std::string, std::string> & /* args  */,
+                                       const std::map <std::string, bool>        & /* flags */,
+                                       std::ostream                              & /* out   */,
+                                       std::ostream                              & /* err   */) -> int {
 
                                         return 0;
                                     }), std::runtime_error);
@@ -125,10 +125,10 @@ TEST(Module, module){
                                        {std::make_pair("optional", std::make_pair("", "")), std::make_pair("optional", std::make_pair("", ""))},
                                        {std::make_pair("flag", std::make_pair("", false)),  std::make_pair("flag", std::make_pair("", false))},
                                        // function to run
-                                       [](const std::map <std::string, std::string> & args,
-                                          const std::map <std::string, bool>        & flags,
-                                          std::ostream                              & out,
-                                          std::ostream                              & err) -> int {
+                                       [](const std::map <std::string, std::string> & /* args  */,
+                                          const std::map <std::string, bool>        & /* flags */,
+                                          std::ostream                              & /* out   */,
+                                          std::ostream                              & /* err   */) -> int {
 
                                            return 0;
                                        })
@@ -145,10 +145,10 @@ TEST(Module, module){
                                        {},
                                        {},
                                        // function to run
-                                       [](const std::map <std::string, std::string> & args,
-                                          const std::map <std::string, bool>        & flags,
-                                          std::ostream                              & out,
-                                          std::ostream                              & err) -> int {
+                                       [](const std::map <std::string, std::string> & /* args  */,
+                                          const std::map <std::string, bool>        & /* flags */,
+                                          std::ostream                              & /* out   */,
+                                          std::ostream                              & /* err   */) -> int {
 
                                            return 0;
                                        })(argc, argv, out, err)
@@ -162,10 +162,10 @@ TEST(Module, module){
                                        {std::make_pair("opt1", std::make_pair("optional argument 1", "1")), std::make_pair("opt2", std::make_pair("optional argument 2", "2"))},
                                        {std::make_pair("flag1", std::make_pair("flag 1", true)), std::make_pair("flag2", std::make_pair("flag 2", false))},
                                        // function to run
-                                       [](const std::map <std::string, std::string> & args,
-                                          const std::map <std::string, bool>        & flags,
-                                          std::ostream                              & out,
-                                          std::ostream                              & err) -> int {
+                                       [](const std::map <std::string, std::string> & /* args  */,
+                                          const std::map <std::string, bool>        & /* flags */,
+                                          std::ostream                              & /* out   */,
+                                          std::ostream                              & /* err   */) -> int {
 
                                            return 0;
                                        })

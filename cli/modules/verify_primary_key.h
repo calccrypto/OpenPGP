@@ -53,7 +53,7 @@ const Module verify_primary_key(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags,
+       const std::map <std::string, bool>        & /* flags */,
        std::ostream                              & out,
        std::ostream                              & err) -> int {
         std::ifstream signer(args.at("signer-key"), std::ios::binary);

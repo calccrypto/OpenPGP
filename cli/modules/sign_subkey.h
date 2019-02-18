@@ -57,8 +57,8 @@ const Module sign_subkey(
 
     // function to run
     [](const std::map <std::string, std::string> & args,
-       const std::map <std::string, bool>        & flags,
-       std::ostream                              & out,
+       const std::map <std::string, bool>        & /* flags */,
+       std::ostream                              & /* out   */,
        std::ostream                              & err) -> int {
         std::ifstream signer_file(args.at("signer-key"), std::ios::binary);
         if (!signer_file){

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.0)
 
 add_executable(cli main.cpp $<TARGET_OBJECTS:Modules>)
 target_link_libraries(cli OpenPGP_shared)

@@ -57,8 +57,8 @@ is none of my concern or responsibility.
 ## Building
 
 ### Tools
-- A C++ compiler with C++11 support
-- CMake 3
+- A C++ compiler with C++14 support
+- CMake 3.2+
 
 ### Libraries
 - GMP (<https://gmplib.org/>)
