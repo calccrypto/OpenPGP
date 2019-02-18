@@ -12,16 +12,6 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      env:
-        - C_COMPILER=gcc-4.8
-        - CXX_COMPILER=g++-4.8
-        - GPG_COMPATIBLE=False
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
         - C_COMPILER=gcc-4.9
@@ -127,15 +117,6 @@ matrix:
         - C_COMPILER=clang-7
         - CXX_COMPILER=clang++-7
         - GPG_COMPATIBLE=False
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
-      env:
-        - C_COMPILER=gcc-4.8
-        - CXX_COMPILER=g++-4.8
-        - GPG_COMPATIBLE=True
 
     - compiler: gcc
       addons:
