@@ -57,7 +57,7 @@ is none of my concern or responsibility.
 ## Building
 
 ### Tools
-- A C++ compiler with C++14 support
+- A C++ compiler with C++11 support
 - CMake 3.2+
 
 ### Libraries
@@ -133,7 +133,5 @@ uses modules from the `cli/modules` directory to provide functionality.
 These can be used as examples on how to use the functions. A lot
 of the output was based on/inspired by pgpdump.net and GPG.
 
-#### Note:
-
-Keyrings were not implemented. Rather, individual keys are
+Note: Keyrings were not implemented. Rather, individual keys are
 read from the directory used as arguments to functions.

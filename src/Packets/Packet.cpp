@@ -44,7 +44,7 @@ bool is_sym_protected_data(const uint8_t t){
 
 std::string Tag::write_old_length(const std::string & data) const{
     std::string::size_type length = data.size();
-    std::string out(1, 0b10000000 | (tag << 2));
+    std::string out(1, 0x80 | (tag << 2));                  // old header: 10TT TTLL
     if (partial){
         out[0] |= 3;                                        // partial
     }
@@ -68,7 +68,7 @@ std::string Tag::write_old_length(const std::string & data) const{
 // returns formatted length string
 std::string Tag::write_new_length(const std::string & data) const{
     std::string::size_type length = data.size();
-    std::string out(1, 0b11000000 | tag);
+    std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
     if (partial){                                           // partial
         uint8_t bits = 0;
         while (length > (1u << bits)){
