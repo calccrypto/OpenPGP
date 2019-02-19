@@ -1,3 +1,4 @@
+
 #include "Packets/Tag8.h"
 #include "Message.h"
 
@@ -15,21 +16,8 @@ std::string Tag8::decompress(const std::string & data) const{
 std::string Tag8::show_title() const{
     std::string out = std::string(format?"New":"Old") + ": " + NAME.at(8) + " (Tag 8)";   // display packet name and tag number
 
-    switch (partial){
-        case Tag::NOT_PARTIAL:
-            break;
-        case Tag::PARTIAL_START:
-            out += " (partial start)";
-            break;
-        case Tag::PARTIAL_CONTINUE:
-            out += " (partial continue)";
-            break;
-        case Tag::PARTIAL_END:
-            out += " (partial end)";
-            break;
-        default:
-            throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
-            break;
+    if (partial == PARTIAL) {
+        out += " (partial)";
     }
 
     return out;

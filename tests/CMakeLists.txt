@@ -59,4 +59,4 @@ add_executable(OpenPGPTests
 target_link_libraries(OpenPGPTests gtest gtest_main OpenPGP_shared)
 set_target_properties(OpenPGPTests PROPERTIES OUTPUT_NAME "tests")
 
-add_test(NAME OpenPGPTests COMMAND tests/tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+add_test(NAME libOpenPGP COMMAND tests/tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

@@ -9,4 +9,4 @@ add_executable(clitests
 target_link_libraries(clitests gtest gtest_main OpenPGP_shared)
 set_target_properties(clitests PROPERTIES OUTPUT_NAME "tests")
 
-add_test(NAME clitests COMMAND cli/tests/tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+add_test(NAME cli COMMAND cli/tests/tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

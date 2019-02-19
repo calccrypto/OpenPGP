@@ -42,11 +42,12 @@ bool is_sym_protected_data(const uint8_t t){
             (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
-std::string Tag::write_old_length(const std::string & data) const{
+// returns formatted length string
+std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const uint8_t part){
     std::string::size_type length = data.size();
     std::string out(1, 0x80 | (tag << 2));                  // old header: 10TT TTLL
-    if (partial){
-        out[0] |= 3;                                        // partial
+    if (part == PARTIAL){                                   // partial
+        out[0] |= 3;
     }
     else{
         if (length < 256){
@@ -66,20 +67,39 @@ std::string Tag::write_old_length(const std::string & data) const{
 }
 
 // returns formatted length string
-std::string Tag::write_new_length(const std::string & data) const{
+std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const uint8_t part){
     std::string::size_type length = data.size();
     std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
-    if (partial){                                           // partial
-        uint8_t bits = 0;
-        while (length > (1u << bits)){
-            bits++;
-        }
-        length = 224 + bits;
-        if (length > 254){
-            throw std::runtime_error("Error: Data in partial Tag too large.");
+    if (part == PARTIAL){                                   // partial
+        if (length < 512) {
+            throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
         }
 
-        out += std::string(1, length);
+        // get the lowest 9 bits worth of octets to use as the last body length header
+        const uint32_t non_partial = length & 511;
+
+        // zero out the lowest 9 bits
+        length &= ~511;
+
+        // get the remaining bits that are set
+        std::list <uint8_t> set_bits;
+        for(uint8_t i = 9; i < 31; i++) {
+            if (length & (1u << i)) {
+                set_bits.push_front(i);
+            }
+        }
+
+        // write partial body lengths
+        uint32_t pos = 0;
+        for(uint8_t const bit : set_bits) {
+            const uint32_t partial_length = 1 << bit;
+            out += std::string(1, bit + 0x1f);              // length with mask
+            out += data.substr(pos, partial_length);        // data
+            pos += partial_length;                          // increment offset
+        }
+
+        // write the last length header, which should not be a partial body length header
+        out += write_new_length(tag, data.substr(pos, non_partial), NOT_PARTIAL);
     }
     else{
         if (length < 192){                                  // 1 octet
@@ -99,25 +119,8 @@ std::string Tag::write_new_length(const std::string & data) const{
 std::string Tag::show_title() const{
     std::string out = (format?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 
-    if (partial != NOT_PARTIAL) {
-        out += " (partial ";
-
-        switch (partial){
-            case PARTIAL_START:
-                out += "start";
-                break;
-            case PARTIAL_CONTINUE:
-                out += "continue";
-                break;
-            case PARTIAL_END:
-                out += "end";
-                break;
-            default:
-                throw std::runtime_error("Error: Unknown partial type: " + std::to_string(partial));
-                break;
-        }
-
-        out += ")";
+    if (partial == PARTIAL) {
+        out += " (partial)";
     }
 
     return out;
@@ -130,7 +133,7 @@ Tag::Tag(const uint8_t t)
 Tag::Tag(const uint8_t t, uint8_t ver)
     : tag(t),
       version(ver),
-      format(true),
+      format(NEW),
       size(0),
       partial(NOT_PARTIAL)
 {}
@@ -153,9 +156,9 @@ std::string Tag::write(const Tag::Format header) const{
     const std::string data = raw();
 
     // make sure RFC 4880 sec 4.2.2.4 is followed
-    if (partial == PARTIAL_START){
+    if (partial == PARTIAL){
         if (data.size() < 512) {
-            throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
+            throw std::runtime_error("The first partial length MUST be at least 512 octets long (Got " + std::to_string(data.size()) + ").");
         }
 
         if ((tag != LITERAL_DATA)                           &&
@@ -170,9 +173,9 @@ std::string Tag::write(const Tag::Format header) const{
 
     if ((header == NEW) ||      // specified new header
         (tag > 15)){            // tag > 15, so new header is required
-        return write_new_length(data);
+        return write_new_length(tag, data, partial);
     }
-    return write_old_length(data);
+    return write_old_length(tag, data, partial);
 }
 
 uint8_t Tag::get_tag() const{
@@ -216,11 +219,11 @@ void Tag::set_partial(const uint8_t p){
 }
 
 bool Tag::valid() const{
-    return (partial == NOT_PARTIAL) || ((partial != NOT_PARTIAL)                        &&
+    return (partial == NOT_PARTIAL) || ((partial == PARTIAL)                             &&
                                         // should check for length >= 512 here, but length is not stored
-                                        ((tag == LITERAL_DATA)                          ||
-                                         (tag == COMPRESSED_DATA)                       ||
-                                         (tag == SYMMETRICALLY_ENCRYPTED_DATA)          ||
+                                        ((tag == LITERAL_DATA)                           ||
+                                         (tag == COMPRESSED_DATA)                        ||
+                                         (tag == SYMMETRICALLY_ENCRYPTED_DATA)           ||
                                          (tag == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA)));
 }
 

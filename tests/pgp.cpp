@@ -342,6 +342,70 @@ TEST(PGP, encrypt_sign_decrypt_verify){
     EXPECT_EQ(OpenPGP::Verify::binary(pri, decrypted), true);
 }
 
+TEST(PGP, partial_body_length) {
+
+    // fixed literal data packet values
+    const uint8_t format = OpenPGP::Packet::Literal::TEXT;
+    const std::string filename = "filename";
+    const uint32_t time = OpenPGP::now();
+    std::string literal = "";
+    while (literal.size() < 512) {
+        literal += MESSAGE;
+    }
+
+    OpenPGP::Packet::Tag8::Ptr tag8 = std::make_shared <OpenPGP::Packet::Tag8> ();
+    tag8 -> set_partial(OpenPGP::Packet::PARTIAL);
+    tag8 -> set_comp(OpenPGP::Compression::ID::UNCOMPRESSED);
+
+    // "compress" a literal data packet into it
+    {
+        // create the literal data packet
+        OpenPGP::Packet::Tag11::Ptr tag11 = std::make_shared <OpenPGP::Packet::Tag11> ();
+        tag11 -> set_partial(OpenPGP::Packet::PARTIAL);
+        tag11 -> set_format(format);
+        tag11 -> set_filename(filename);
+        tag11 -> set_time(time);
+        tag11 -> set_literal(literal);
+
+        OpenPGP::Message literal_msg;
+        literal_msg.set_packets({tag11});
+        EXPECT_EQ(literal_msg.meaningful(), true);
+
+        const std::string literal_str = literal_msg.raw();
+        ASSERT_GT(literal_str.size(), (std::string::size_type) 0);
+
+        tag8 -> set_data(literal_str);
+    }
+
+    // create a "compressed" literal message
+    OpenPGP::Message out_msg;
+    out_msg.set_packets({tag8});
+    EXPECT_EQ(out_msg.meaningful(), true);
+
+    // write out the "compressed" literal message
+    const std::string out_str = out_msg.raw();
+    ASSERT_GT(out_str.size(), (std::string::size_type) 0);
+
+    // read the "compressed" literal message back in
+    OpenPGP::Message in_msg(out_str);
+    ASSERT_EQ(in_msg.meaningful(), true);
+
+    // extract the packets
+    std::vector <OpenPGP::Packet::Tag::Ptr> packets = in_msg.get_packets();
+    ASSERT_EQ(packets.size(), (std::vector <OpenPGP::Packet::Tag::Ptr>::size_type) 1);
+    ASSERT_EQ(packets[0] -> get_tag(), OpenPGP::Packet::LITERAL_DATA);
+
+    // expect a partial body length literal data packet
+    EXPECT_EQ(packets[0] -> get_partial(), OpenPGP::Packet::PARTIAL);
+
+    // should get the same literal data back
+    OpenPGP::Packet::Tag11::Ptr tag11 = std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (packets[0]);
+    EXPECT_EQ(tag11 -> get_format(), format);
+    EXPECT_EQ(tag11 -> get_filename(), filename);
+    EXPECT_EQ(tag11 -> get_time(), time);
+    EXPECT_EQ(tag11 -> get_literal(), literal);
+}
+
 TEST(PGP, sign_verify_detached){
 
     OpenPGP::SecretKey pri;
