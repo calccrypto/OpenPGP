@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2.0)
 
+include_directories("${gtest_SOURCE_DIR}/include")
+
 add_library(ModuleTests OBJECT
     fingerprint.cpp
     module.cpp)

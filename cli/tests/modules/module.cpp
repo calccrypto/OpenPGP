@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "cli/modules/module.h"
-#include "../../testvectors/read_pgp.h"
+#include "tests/testvectors/read_pgp.h"
 
 TEST(Module, module){
     // bad name

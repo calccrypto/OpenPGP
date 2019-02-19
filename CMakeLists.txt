@@ -69,10 +69,10 @@ include_directories(include)
 # create the test target
 enable_testing()
 
-add_subdirectory(cli)
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(cli)
 
 # build the static library
 add_library(OpenPGP_static STATIC

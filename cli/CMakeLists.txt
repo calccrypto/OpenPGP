@@ -6,3 +6,5 @@ install(TARGETS cli DESTINATION bin)
 set_target_properties(cli PROPERTIES OUTPUT_NAME "OpenPGP")
 
 add_subdirectory(modules)
+add_subdirectory(tests)
+
