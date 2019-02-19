@@ -71,15 +71,16 @@ namespace OpenPGP {
             Armor_Keys keys;                                // key-value pairs in the ASCII header
             Packets packets;                                // main data
 
-            // calculates the length of a partial body
-            unsigned int partialBodyLen(uint8_t first_octet) const;
+            // reads just the packet length and whether or not the packet length is partial, starting at pos
+            // pos is updated
+            std::size_t read_packet_length(const std::string & data, const uint8_t ctb, std::string::size_type & pos, std::size_t & length, const uint8_t tag, const bool format, uint8_t & partial) const;
 
-            // figures out where packet data starts and updates pos arguments
-            // length, tag, format and partial arguments also filled
-            uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, std::string::size_type & length, uint8_t & tag, bool & format, uint8_t & partial) const;
+            // figures out where packet data starts and updates the tag and format arguments
+            // length, and partial arguments also filled (this function calls read_packet_length)
+            uint8_t read_packet_header(const std::string & data, uint8_t &ctb, std::string::size_type & pos, std::size_t & length, uint8_t & tag, bool & format, uint8_t & partial) const;
 
             // parses raw packet data
-            Packet::Tag::Ptr read_packet_raw(const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::string::size_type & length) const;
+            Packet::Tag::Ptr read_packet_raw(const uint8_t ctb, const bool format, const uint8_t tag, uint8_t & partial, const std::string & data, std::string::size_type & pos, const std::size_t & length) const;
 
             // parse packet with header; wrapper for read_packet_header and read_packet_raw
             // partial should be initialized with 0

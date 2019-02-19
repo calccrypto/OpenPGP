@@ -16,15 +16,15 @@ std::string Tag8::show_title() const{
     std::string out = std::string(format?"New":"Old") + ": " + NAME.at(8) + " (Tag 8)";   // display packet name and tag number
 
     switch (partial){
-        case 0:
+        case Tag::NOT_PARTIAL:
             break;
-        case 1:
+        case Tag::PARTIAL_START:
             out += " (partial start)";
             break;
-        case 2:
+        case Tag::PARTIAL_CONTINUE:
             out += " (partial continue)";
             break;
-        case 3:
+        case Tag::PARTIAL_END:
             out += " (partial end)";
             break;
         default:
@@ -63,8 +63,7 @@ std::string Tag8::show(const std::size_t indents, const std::size_t indent_size)
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
-    Message decompressed;
-    decompressed.read_raw(get_data()); // do this in case decompressed data contains headers
+    Message decompressed(get_data());
 
     return indent + show_title() + "\n" +
            indent + tab + "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")\n" +
