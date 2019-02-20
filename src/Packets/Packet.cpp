@@ -46,7 +46,7 @@ bool is_sym_protected_data(const uint8_t t){
 std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const uint8_t part){
     std::string::size_type length = data.size();
     std::string out(1, 0x80 | (tag << 2));                  // old header: 10TT TTLL
-    if (part == Packet::Partial::PARTIAL){                  // partial
+    if (part == Packet::PARTIAL){                           // partial
         out[0] |= 3;
     }
     else{
@@ -70,7 +70,7 @@ std::string Tag::write_old_length(const uint8_t tag, const std::string & data, c
 std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const uint8_t part){
     std::string::size_type length = data.size();
     std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
-    if (part == Packet::Partial::PARTIAL){                  // partial
+    if (part == Packet::PARTIAL){                           // partial
         if (length < 512) {
             throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
         }
@@ -99,7 +99,7 @@ std::string Tag::write_new_length(const uint8_t tag, const std::string & data, c
         }
 
         // write the last length header, which should not be a partial body length header
-        out += write_new_length(tag, data.substr(pos, non_partial), Packet::Partial::NOT_PARTIAL);
+        out += write_new_length(tag, data.substr(pos, non_partial), Packet::NOT_PARTIAL);
     }
     else{
         if (length < 192){                                  // 1 octet
@@ -148,9 +148,9 @@ std::string Tag::write(const Tag::Format header) const{
     const std::string data = raw();
     if ((header == NEW) ||      // specified new header
         (tag > 15)){            // tag > 15, so new header is required
-        return write_new_length(tag, data, Packet::Partial::NOT_PARTIAL);
+        return write_new_length(tag, data, Packet::NOT_PARTIAL);
     }
-    return write_old_length(tag, data, Packet::Partial::NOT_PARTIAL);
+    return write_old_length(tag, data, Packet::NOT_PARTIAL);
 }
 
 uint8_t Tag::get_tag() const{

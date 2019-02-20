@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <functional>
 #include <set>
 
-#include "Packets/packets.h"
+#include "Packets/Packets.h"
 #include "PKA/PKAs.h"
 #include "PGP.h"
 

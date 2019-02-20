@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "Misc/cfb.h"
 #include "Misc/mpi.h"
 #include "PKA/PKAs.h"
-#include "Packets/packets.h"
+#include "Packets/Packets.h"
 #include "verify.h"
 
 namespace OpenPGP {

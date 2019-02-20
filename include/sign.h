@@ -41,7 +41,7 @@ THE SOFTWARE.
 #include "Misc/pgptime.h"
 #include "Misc/sigcalc.h"
 #include "PKA/PKAs.h"
-#include "Packets/packets.h"
+#include "Packets/Packets.h"
 #include "common/includes.h"
 #include "decrypt.h"
 #include "revoke.h"

@@ -354,14 +354,14 @@ TEST(PGP, partial_body_length) {
     }
 
     OpenPGP::Packet::Tag8::Ptr tag8 = std::make_shared <OpenPGP::Packet::Tag8> ();
-    tag8 -> set_partial(OpenPGP::Packet::Partial::PARTIAL);
+    tag8 -> set_partial(OpenPGP::Packet::PARTIAL);
     tag8 -> set_comp(OpenPGP::Compression::ID::UNCOMPRESSED);
 
     // "compress" a literal data packet into it
     {
         // create the literal data packet
         OpenPGP::Packet::Tag11::Ptr tag11 = std::make_shared <OpenPGP::Packet::Tag11> ();
-        tag11 -> set_partial(OpenPGP::Packet::Partial::PARTIAL);
+        tag11 -> set_partial(OpenPGP::Packet::PARTIAL);
         tag11 -> set_format(format);
         tag11 -> set_filename(filename);
         tag11 -> set_time(time);
@@ -398,7 +398,7 @@ TEST(PGP, partial_body_length) {
     OpenPGP::Packet::Tag11::Ptr tag11 = std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (packets[0]);
 
     // expect a partial body length literal data packet
-    EXPECT_EQ(tag11 -> get_partial(), OpenPGP::Packet::Partial::PARTIAL);
+    EXPECT_EQ(tag11 -> get_partial(), OpenPGP::Packet::PARTIAL);
 
     // should get the same literal data back
     EXPECT_EQ(tag11 -> get_format(), format);

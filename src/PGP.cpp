@@ -118,63 +118,90 @@ static std::size_t partialBodyLen(uint8_t first_octet){
 // tag should have been set to a valid packet type
 // format should have been set to OLD or NEW
 // returns length of length section
-std::size_t PGP::read_packet_length(const std::string & data, const uint8_t ctb, std::string::size_type & pos, std::size_t & length, const bool format, Packet::Partial::PartialBodyLength & partial) const{
+std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const bool format, std::string & packet_data, Packet::PartialBodyLength & partial) const{
     std::size_t hl = 0;
-    length = 0;
+    std::size_t length = 0;
     if (!format){                                                           // Old length type RFC4880 sec 4.2.1
         if ((ctb & 3) == 0){                                                // 0 - The packet has a one-octet length. The header is 2 octets long.
-            hl = one_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = one_octet_lengths(src, pos, length);
+            partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 1){                                           // 1 - The packet has a two-octet length. The header is 3 octets long.
-            hl = two_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = two_octet_lengths(src, pos, length);
+            partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 2){                                           // 2 - The packet has a four-octet length. The header is 5 octets long.
-            hl = five_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = five_octet_lengths(src, pos, length);
+            partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 3){                                           // The packet is of indeterminate length. The header is 1 octet long, and the implementation must determine how long the packet is.
-            length = data.size() - pos;                                     // header is one octet long
+            length = src.size() - pos;                                      // header is one octet long
             hl = 0;
             pos += hl;
-            partial = Packet::Partial::PARTIAL;
+            partial = Packet::PARTIAL;
         }
+        packet_data = src.substr(pos, length);
+        pos += length;
     }
     else{                                                                   // New length type RFC4880 sec 4.2.2
-        const uint8_t first_octet = static_cast <unsigned char> (data[pos]);
+        const uint8_t first_octet = static_cast <unsigned char> (src[pos]);
         if (first_octet < 192){                                             // 0 - 191; A one-octet Body Length header encodes packet lengths of up to 191 octets.
-            hl = one_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = one_octet_lengths(src, pos, length);
+            packet_data = src.substr(pos, length);
+            pos += length;
+            partial = Packet::NOT_PARTIAL;
         }
         else if ((192 <= first_octet) & (first_octet < 223)){               // 192 - 8383; A two-octet Body Length header encodes packet lengths of 192 to 8383 octets.
-            hl = two_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = two_octet_lengths(src, pos, length);
+            packet_data = src.substr(pos, length);
+            pos += length;
+            partial = Packet::NOT_PARTIAL;
         }
         else if (first_octet == 255){                                       // 8384 - 4294967295; A five-octet Body Length header encodes packet lengths of up to 4,294,967,295 (0xFFFFFFFF) octets in length.
-            hl = five_octet_lengths(data, pos, length);
-            partial = Packet::Partial::NOT_PARTIAL;
+            hl = five_octet_lengths(src, pos, length);
+            packet_data = src.substr(pos, length);
+            pos += length;
+            partial = Packet::NOT_PARTIAL;
         }
-        else if (Packet::Partial::BODY_LENGTH_START <= first_octet){        // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
+        else if (Packet::PARTIAL_BODY_LENGTH_START <= first_octet){        // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
             length = partialBodyLen(first_octet);
 
-            if (partial == Packet::Partial::NOT_PARTIAL) {
-                // make sure RFC 4880 sec 4.2.2.4 is followed
-                if (length < 512) {
-                    throw std::runtime_error("The first partial length MUST be at least 512 octets long (Got " + std::to_string(length) + ").");
-                }
+            // warn if RFC 4880 sec 4.2.2.4 is not followed
+            if (length < 512) {
+                std::cerr << "Warning: The first partial length MUST be at least 512 octets long (Got " << length << ")" << std::endl;
             }
 
             hl = 1;
             pos += hl;
-            partial = Packet::Partial::PARTIAL;
+            packet_data = src.substr(pos, length);
+            pos += length;
+
+            // don't recurse
+            if (partial == Packet::PARTIAL) {
+                return hl;
+            }
+
+            partial = Packet::PARTIAL;
+
+            // keep reading until it hits a non partial packet length
+            Packet::PartialBodyLength curr = Packet::PARTIAL;
+            while ((pos < src.size()) &&
+                   (curr == Packet::PARTIAL)) {
+                std::string piece;
+                read_packet_unformatted(src, ctb, pos, format, piece, curr);
+                packet_data += piece;
+            }
+
+            if (curr == Packet::PARTIAL) {
+                std::cerr << "Warning: Reached end of data, but did not complete partial packet sequence" << std::endl;
+            }
         }
     }
 
     return hl;
 }
 
-uint8_t PGP::read_packet_header(const std::string & data, uint8_t &ctb, std::string::size_type & pos, std::size_t & length, uint8_t & tag, bool & format, Packet::Partial::PartialBodyLength & partial) const{
+uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, bool & format, uint8_t & tag) const{
     ctb = data[pos];               // Name "ctb" came from Version 2 [RFC 1991]
     format = ctb & 0x40;           // get packet length type (OLD = false; NEW = true)
     tag = Packet::RESERVED;        // default value (error)
@@ -192,13 +219,11 @@ uint8_t PGP::read_packet_header(const std::string & data, uint8_t &ctb, std::str
 
     pos++;                         // move the position to the length section of the header
 
-    read_packet_length(data, ctb, pos, length, format, partial);
-
     return tag;
 }
 
-Packet::Tag::Ptr PGP::read_packet_raw(const uint8_t ctb, const bool format, const uint8_t tag, Packet::Partial::PartialBodyLength & partial, const std::string & data, std::string::size_type & pos, const std::size_t & length) const{
-    if ((partial == Packet::Partial::PARTIAL) &&
+Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const bool format, Packet::PartialBodyLength & partial) const{
+    if ((partial == Packet::PARTIAL)                              &&
         ((tag != Packet::LITERAL_DATA)                            &&
          (tag != Packet::COMPRESSED_DATA)                         &&
          (tag != Packet::SYMMETRICALLY_ENCRYPTED_DATA)            &&
@@ -283,46 +308,37 @@ Packet::Tag::Ptr PGP::read_packet_raw(const uint8_t ctb, const bool format, cons
     // fill in data
     out -> set_tag(tag);
     out -> set_format(format);
-
-    // get the main chunk of data out
-    std::string pieces = data.substr(pos, length);
-
-    // update position to end of packet
-    pos += length;
-
-    // if the current packet has a partial length, continue reading it
-    while ((pos < data.size()) &&
-           (partial == Packet::Partial::PARTIAL)) {
-        std::size_t partial_length = 0;
-        read_packet_length(data, ctb, pos, partial_length, format, partial);
-        pieces += data.substr(pos, partial_length);
-        pos += partial_length;
-    }
-
-    // complete the reading of the data
-    out -> set_size(pieces.size());
-    out -> read(pieces);
+    out -> set_size(data.size());
+    out -> read(data);
 
     return out;
 }
 
-Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos, Packet::Partial::PartialBodyLength & partial) const{
+Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos) const{
     if (pos >= data.size()){
         return nullptr;
     }
 
-    // set in read_packet_header, used in read_packet_raw
+    // get the header data
     uint8_t ctb = 0;
     bool format = false;
     uint8_t tag = Packet::RESERVED;
-    std::string::size_type length = 0;
+    read_packet_header(data, pos, ctb, format, tag);
 
-    read_packet_header(data, ctb, pos, length, tag, format, partial);    // pos is moved past header
-    return read_packet_raw(ctb, format, tag, partial, data, pos, length);
+    // read out the packet data
+    std::string packet_data;
+    Packet::PartialBodyLength partial = Packet::NOT_PARTIAL;
+    read_packet_unformatted(data, ctb, pos, format, packet_data, partial);
+
+    // convert the packet data into an object
+    return read_packet_raw(packet_data, tag, format, partial);
 }
 
 std::string PGP::format_string(std::string data, uint8_t line_length) const{
-    std::string out = "";
+    std::string out;
+    const std::div_t res = div(data.size(), line_length);
+    out.reserve(res.quot + static_cast <bool> (res.rem));
+    out.clear();
     for(unsigned int i = 0; i < data.size(); i += line_length){
         out += data.substr(i, line_length) + "\n";
     }
@@ -457,10 +473,9 @@ void PGP::read_raw(const std::string & data){
     packets.clear();
 
     // read each packet
-    Packet::Partial::PartialBodyLength partial = Packet::Partial::NOT_PARTIAL;
     std::string::size_type pos = 0;
     while (pos < data.size()){
-        Packet::Tag::Ptr packet = read_packet(data, pos, partial);
+        Packet::Tag::Ptr packet = read_packet(data, pos);
         if (packet){
             packets.push_back(packet);
         }

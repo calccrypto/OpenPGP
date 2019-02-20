@@ -4,6 +4,7 @@ install(FILES
     Key.h
     Packet.h
     Packets.h
+    Partial.h
     Tag0.h
     Tag10.h
     Tag11.h

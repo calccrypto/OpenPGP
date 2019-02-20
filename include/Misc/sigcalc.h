@@ -31,8 +31,8 @@ THE SOFTWARE.
 #include <string>
 
 #include "Hashes/Hashes.h"
-#include "Packets/packets.h"
-#include "pgptime.h"
+#include "Packets/Packets.h"
+#include "Misc/pgptime.h"
 
 namespace OpenPGP {
     // Modify data for signature version 3 or 4

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef __OPENPGP_BASE__
 #define __OPENPGP_BASE__
 
+#include <cstdlib>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -71,20 +72,19 @@ namespace OpenPGP {
             Armor_Keys keys;                                // key-value pairs in the ASCII header
             Packets packets;                                // main data
 
-            // reads just the packet length and whether or not the packet length is partial, starting at pos
-            // pos is updated
-            std::size_t read_packet_length(const std::string & data, const uint8_t ctb, std::string::size_type & pos, std::size_t & length, const bool format, Packet::Partial::PartialBodyLength & partial) const;
+            // reads the length of the packet data and extracts the packet data into packet_data
+            // this was done because partial packet lengths are not simply substrings
+            std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const bool format, std::string & packet_data, Packet::PartialBodyLength & partial) const;
 
-            // figures out where packet data starts and updates the tag and format arguments
-            // length, and partial arguments also filled (this function calls read_packet_length)
-            uint8_t read_packet_header(const std::string & data, uint8_t &ctb, std::string::size_type & pos, std::size_t & length, uint8_t & tag, bool & format, Packet::Partial::PartialBodyLength & partial) const;
+            // reads the data starting at pos, and gets the ctb, format, and tag
+            // pos is shifted up by 1
+            uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, bool & format, uint8_t & tag) const;
 
             // parses raw packet data
-            Packet::Tag::Ptr read_packet_raw(const uint8_t ctb, const bool format, const uint8_t tag, Packet::Partial::PartialBodyLength & partial, const std::string & data, std::string::size_type & pos, const std::size_t & length) const;
+            Packet::Tag::Ptr read_packet_raw(const std::string & data, const uint8_t tag, const bool format, Packet::PartialBodyLength & partial) const;
 
-            // parse packet with header; wrapper for read_packet_header and read_packet_raw
-            // partial should be initialized with 0
-            Packet::Tag::Ptr read_packet(const std::string & data, std::string::size_type & pos, Packet::Partial::PartialBodyLength & partial) const;
+            // parse packet with header; wrapper for read_packet_header and read_packet_unformatted
+            Packet::Tag::Ptr read_packet(const std::string & data, std::string::size_type & pos) const;
 
             // modifies output string so each line is no longer than MAX_LINE_SIZE long
             std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;

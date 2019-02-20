@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 #include <cstdint>
 #include <memory>
-#include <set>
 #include <string>
 
 namespace OpenPGP {
@@ -77,20 +76,17 @@ namespace OpenPGP {
         //     MUST be at least 512 octets long.  Partial Body Lengths MUST NOT be
         //     used for any other packet types.
 
+        enum PartialBodyLength {
+            NOT_PARTIAL,
+            PARTIAL
+        };
+
+        static const uint8_t PARTIAL_BODY_LENGTH_START = 224;
+        static const uint8_t PARTIAL_BODY_LENGTH_END   = 254;
+
         class Partial {
-            public:
-                enum PartialBodyLength {
-                    NOT_PARTIAL,
-                    PARTIAL
-                };
-
-                static const uint8_t BODY_LENGTH_START = 224;
-                static const uint8_t BODY_LENGTH_END   = 254;
-
             protected:
                 PartialBodyLength partial;  // whether or not this packet has a partial body length
-                std::set <uint8_t> bits;    // the bits that are set for the partial body length
-                std::size_t last;           // the size of the last chunk of data (less than 512 octets)
 
                 std::string show_title() const;
 

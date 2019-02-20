@@ -36,7 +36,7 @@ THE SOFTWARE.
 #include "Misc/mpi.h"
 #include "Misc/sigcalc.h"
 #include "PKA/PKAs.h"
-#include "Packets/packets.h"
+#include "Packets/Packets.h"
 #include "RevocationCertificate.h"
 
 namespace OpenPGP {

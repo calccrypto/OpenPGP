@@ -1,5 +1,5 @@
 /*
-packets.h
+Packets.h
 Main packets and related functions include file
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
