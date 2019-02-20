@@ -31,8 +31,8 @@ THE SOFTWARE.
 #include <string>
 
 #include "common/includes.h"
+#include "Packets/User.h"
 #include "Subpackets/Tag17/Subpackets.h"
-#include "User.h"
 
 namespace OpenPGP {
     namespace Packet {

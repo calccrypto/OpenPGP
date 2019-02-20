@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __TAG1__
 
 #include "PKA/PKAs.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {

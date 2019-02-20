@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.2.0)
 install(FILES
     Key.h
     Packet.h
-    packets.h
+    Packets.h
     Tag0.h
     Tag10.h
     Tag11.h

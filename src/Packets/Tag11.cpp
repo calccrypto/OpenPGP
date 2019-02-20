@@ -3,8 +3,13 @@
 namespace OpenPGP {
 namespace Packet {
 
-Tag11::Tag11()
+std::string Tag11::show_title() const {
+    return Tag::show_title() + Partial::show_title();
+}
+
+Tag11::Tag11(const PartialBodyLength & part)
     : Tag(LITERAL_DATA),
+      Partial(part),
       format(),
       filename(),
       time(),
@@ -13,6 +18,7 @@ Tag11::Tag11()
 
 Tag11::Tag11(const Tag11 & copy)
     : Tag(copy),
+      Partial(copy),
       format(copy.format),
       filename(copy.filename),
       time(copy.time),
@@ -53,6 +59,15 @@ std::string Tag11::show(const std::size_t indents, const std::size_t indent_size
 
 std::string Tag11::raw() const{
     return std::string(1, format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
+}
+
+std::string Tag11::write(const Tag::Format header) const{
+    const std::string data = raw();
+    if ((header == NEW) ||      // specified new header
+        (tag > 15)){            // tag > 15, so new header is required
+        return write_new_length(tag, data, partial);
+    }
+    return write_old_length(tag, data, partial);
 }
 
 uint8_t Tag11::get_format() const{
@@ -125,6 +140,12 @@ void Tag11::set_literal(const std::string & l){
 
 Tag::Ptr Tag11::clone() const{
     return std::make_shared <Packet::Tag11> (*this);
+}
+
+Tag11 & Tag11::operator=(const Tag11 &copy){
+    Tag::operator=(copy);
+    Partial::operator=(copy);
+    return *this;
 }
 
 }

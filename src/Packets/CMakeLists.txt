@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2.0)
 
 add_library(Packets OBJECT
     Packet.cpp
+    Partial.cpp
     Key.cpp
     User.cpp
     Tag0.cpp
@@ -26,5 +27,5 @@ add_library(Packets OBJECT
     Tag61.cpp
     Tag62.cpp
     Tag63.cpp)
-    
+
 set_property(TARGET Packets PROPERTY POSITION_INDEPENDENT_CODE ON)

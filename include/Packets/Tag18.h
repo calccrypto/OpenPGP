@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG18__
 #define __TAG18__
 
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -129,14 +129,16 @@ namespace OpenPGP {
         //    rollback attacks since it will be possible for an attacker to change
         //    the version back to 1.
 
-        class Tag18 : public Tag {
+        class Tag18 : public Tag, public Partial {
             private:
                 std::string protected_data;
+
+                std::string show_title() const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag18> Ptr;
 
-                Tag18();
+                Tag18(const PartialBodyLength & part = NOT_PARTIAL);
                 Tag18(const Tag18 & copy);
                 Tag18(const std::string & data);
                 void read(const std::string & data);
@@ -148,6 +150,8 @@ namespace OpenPGP {
                 void set_protected_data(const std::string & p);
 
                 Tag::Ptr clone() const;
+
+                Tag18 & operator=(const Tag18 & copy);
         };
     }
 }

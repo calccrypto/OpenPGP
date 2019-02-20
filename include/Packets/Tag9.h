@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG9__
 #define __TAG9__
 
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -74,14 +74,16 @@ namespace OpenPGP {
         //    incorrect.  See the "Security Considerations" section for hints on
         //    the proper use of this "quick check".
 
-        class Tag9 : public Tag {
+        class Tag9 : public Tag, public Partial {
             private:
                 std::string encrypted_data;
+
+                std::string show_title() const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag9> Ptr;
 
-                Tag9();
+                Tag9(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag9(const Tag9 & copy);
                 Tag9(const std::string & data);
                 void read(const std::string & data);
@@ -93,6 +95,8 @@ namespace OpenPGP {
                 std::string get_encrypted_data() const;
 
                 void set_encrypted_data(const std::string & e);
+
+                Tag9 & operator=(const Tag9 & copy);
         };
     }
 }

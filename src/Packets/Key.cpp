@@ -1,4 +1,4 @@
-#include "Key.h"
+#include "Packets/Key.h"
 
 namespace OpenPGP {
 namespace Packet {

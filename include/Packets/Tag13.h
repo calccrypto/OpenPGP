@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG13__
 #define __TAG13__
 
-#include "User.h"
+#include "Packets/User.h"
 
 namespace OpenPGP {
     namespace Packet {

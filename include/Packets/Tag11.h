@@ -30,7 +30,8 @@ THE SOFTWARE.
 #include <sstream>
 
 #include "Misc/pgptime.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
+#include "Packets/Partial.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -91,22 +92,25 @@ namespace OpenPGP {
             };
         }
 
-        class Tag11 : public Tag {
+        class Tag11 : public Tag, public Partial {
             private:
                 uint8_t format;
                 std::string filename;
                 uint32_t time;
                 std::string literal;    // source data; no line ending conversion
 
+                std::string show_title() const;
+
             public:
                 typedef std::shared_ptr <Packet::Tag11> Ptr;
 
-                Tag11();
+                Tag11(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag11(const Tag11 & copy);
                 Tag11(const std::string & data);
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
+                std::string write(const Format header = DEFAULT) const;
 
                 uint8_t get_format() const;
                 std::string get_filename() const;
@@ -120,6 +124,8 @@ namespace OpenPGP {
                 void set_literal(const std::string & l);
 
                 Tag::Ptr clone() const;
+
+                Tag11 & operator=(const Tag11 & copy);
         };
     }
 }

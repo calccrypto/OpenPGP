@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __TAG8__
 
 #include "Compress/Compress.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -60,7 +60,7 @@ namespace OpenPGP {
         //    BZip2-compressed packets are compressed using the BZip2 [BZ2]
         //    algorithm.
 
-        class Tag8 : public Tag {
+        class Tag8 : public Tag, public Partial {
             private:
                 uint8_t comp;
                 std::string compressed_data;
@@ -74,12 +74,13 @@ namespace OpenPGP {
             public:
                 typedef std::shared_ptr <Packet::Tag8> Ptr;
 
-                Tag8();
+                Tag8(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag8(const Tag8 & copy);
                 Tag8(const std::string & data);
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
+                std::string write(const Format header = DEFAULT) const;
 
                 uint8_t get_comp() const;
                 std::string get_data() const;                           // get uncompressed data
@@ -90,6 +91,8 @@ namespace OpenPGP {
                 void set_compressed_data(const std::string & data);     // set compressed data
 
                 Tag::Ptr clone() const;
+
+                Tag8 & operator=(const Tag8 & copy);
         };
     }
 }

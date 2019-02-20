@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 #include "Misc/cfb.h"
 #include "Misc/s2k.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {

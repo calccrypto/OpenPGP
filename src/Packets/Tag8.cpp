@@ -1,4 +1,3 @@
-
 #include "Packets/Tag8.h"
 #include "Message.h"
 
@@ -13,24 +12,20 @@ std::string Tag8::decompress(const std::string & data) const{
     return Compression::decompress(comp, data);
 }
 
-std::string Tag8::show_title() const{
-    std::string out = std::string(format?"New":"Old") + ": " + NAME.at(8) + " (Tag 8)";   // display packet name and tag number
-
-    if (partial == PARTIAL) {
-        out += " (partial)";
-    }
-
-    return out;
+std::string Tag8::show_title() const {
+    return Tag::show_title() + Partial::show_title();
 }
 
-Tag8::Tag8()
+Tag8::Tag8(const PartialBodyLength & part)
     : Tag(COMPRESSED_DATA, 3),
+      Partial(part),
       comp(Compression::ID::UNCOMPRESSED),
       compressed_data()
 {}
 
 Tag8::Tag8(const Tag8 & copy)
     : Tag(copy),
+      Partial(copy),
       comp(copy.comp),
       compressed_data(copy.compressed_data)
 {}
@@ -61,6 +56,15 @@ std::string Tag8::show(const std::size_t indents, const std::size_t indent_size)
 
 std::string Tag8::raw() const{
     return std::string(1, comp) + compressed_data;
+}
+
+std::string Tag8::write(const Tag::Format header) const{
+    const std::string data = raw();
+    if ((header == NEW) ||      // specified new header
+        (tag > 15)){            // tag > 15, so new header is required
+        return write_new_length(tag, data, partial);
+    }
+    return write_old_length(tag, data, partial);
 }
 
 uint8_t Tag8::get_comp() const{
@@ -96,6 +100,12 @@ void Tag8::set_compressed_data(const std::string & data){
 
 Tag::Ptr Tag8::clone() const{
     return std::make_shared <Packet::Tag8> (*this);
+}
+
+Tag8 & Tag8::operator=(const Tag8 &copy){
+    Tag::operator=(copy);
+    Partial::operator=(copy);
+    return *this;
 }
 
 }

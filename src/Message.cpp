@@ -119,7 +119,7 @@ bool Message::decompress() {
         comp = std::static_pointer_cast <Packet::Tag8> (packets[0]);
         const std::string compressed = comp -> get_data();
         comp -> set_data("");
-        comp -> set_partial(packets[0] -> get_partial());
+        comp -> set_partial(comp -> get_partial());
         packets.clear();
         read(compressed);
 

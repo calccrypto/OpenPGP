@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG60__
 #define __TAG60__
 
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {

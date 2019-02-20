@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "Hashes/Hashes.h"
 #include "Misc/sigtypes.h"
 #include "PKA/PKAs.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {

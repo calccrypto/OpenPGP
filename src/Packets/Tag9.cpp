@@ -3,13 +3,19 @@
 namespace OpenPGP {
 namespace Packet {
 
-Tag9::Tag9()
+std::string Tag9::show_title() const {
+    return Tag::show_title() + Partial::show_title();
+}
+
+Tag9::Tag9(const PartialBodyLength &part)
     : Tag(SYMMETRICALLY_ENCRYPTED_DATA),
+      Partial(part),
       encrypted_data()
 {}
 
 Tag9::Tag9(const Tag9 & copy)
     : Tag(copy),
+      Partial(copy),
       encrypted_data(copy.encrypted_data)
 {}
 
@@ -46,6 +52,12 @@ void Tag9::set_encrypted_data(const std::string & e){
 
 Tag::Ptr Tag9::clone() const{
     return std::make_shared <Packet::Tag9> (*this);
+}
+
+Tag9 & Tag9::operator=(const Tag9 &copy){
+    Tag::operator=(copy);
+    Partial::operator=(copy);
+    return *this;
 }
 
 }
