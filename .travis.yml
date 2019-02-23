@@ -14,7 +14,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-4.9
         - CXX_COMPILER=g++-4.9
         - GPG_COMPATIBLE=False
 
@@ -24,7 +23,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-5
         - CXX_COMPILER=g++-5
         - GPG_COMPATIBLE=False
 
@@ -34,7 +32,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-6
         - CXX_COMPILER=g++-6
         - GPG_COMPATIBLE=False
 
@@ -44,7 +41,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-7
         - CXX_COMPILER=g++-7
         - GPG_COMPATIBLE=False
 
@@ -54,7 +50,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-8
         - CXX_COMPILER=g++-8
         - GPG_COMPATIBLE=False
 
@@ -64,7 +59,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-3.8
         - CXX_COMPILER=clang++-3.8
         - GPG_COMPATIBLE=False
 
@@ -74,7 +68,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-3.9
         - CXX_COMPILER=clang++-3.9
         - GPG_COMPATIBLE=False
 
@@ -84,7 +77,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-4.0
         - CXX_COMPILER=clang++-4.0
         - GPG_COMPATIBLE=False
 
@@ -94,7 +86,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
           packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-5.0
         - CXX_COMPILER=clang++-5.0
         - GPG_COMPATIBLE=False
 
@@ -104,7 +95,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
           packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-6.0
         - CXX_COMPILER=clang++-6.0
         - GPG_COMPATIBLE=False
 
@@ -114,7 +104,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
           packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-7
         - CXX_COMPILER=clang++-7
         - GPG_COMPATIBLE=False
 
@@ -124,7 +113,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-4.9
         - CXX_COMPILER=g++-4.9
         - GPG_COMPATIBLE=True
 
@@ -134,7 +122,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-5
         - CXX_COMPILER=g++-5
         - GPG_COMPATIBLE=True
 
@@ -144,7 +131,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-6
         - CXX_COMPILER=g++-6
         - GPG_COMPATIBLE=True
 
@@ -154,7 +140,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-7
         - CXX_COMPILER=g++-7
         - GPG_COMPATIBLE=True
 
@@ -164,7 +149,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=gcc-8
         - CXX_COMPILER=g++-8
         - GPG_COMPATIBLE=True
 
@@ -174,7 +158,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
           packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-3.8
         - CXX_COMPILER=clang++-3.8
         - GPG_COMPATIBLE=True
 
@@ -184,7 +167,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
           packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-3.9
         - CXX_COMPILER=clang++-3.9
         - GPG_COMPATIBLE=True
 
@@ -194,7 +176,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
           packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-4.0
         - CXX_COMPILER=clang++-4.0
         - GPG_COMPATIBLE=True
 
@@ -204,7 +185,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
           packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-5.0
         - CXX_COMPILER=clang++-5.0
         - GPG_COMPATIBLE=True
 
@@ -214,7 +194,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
           packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-6.0
         - CXX_COMPILER=clang++-6.0
         - GPG_COMPATIBLE=True
 
@@ -224,12 +203,10 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
           packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake']
       env:
-        - C_COMPILER=clang-7
         - CXX_COMPILER=clang++-7
         - GPG_COMPATIBLE=True
 
 before_script:
-  - export CC=${C_COMPILER}
   - export CXX=${CXX_COMPILER}
   - export GTEST_COLOR=1
   - export OPENPGP_PATH=/tmp/OpenPGP
