@@ -118,10 +118,10 @@ static std::size_t partialBodyLen(uint8_t first_octet){
 // tag should have been set to a valid packet type
 // format should have been set to OLD or NEW
 // returns length of length section
-std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const bool format, std::string & packet_data, Packet::PartialBodyLength & partial) const{
+std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial) const{
     std::size_t hl = 0;
     std::size_t length = 0;
-    if (!format){                                                           // Old length type RFC4880 sec 4.2.1
+    if (format == Packet::HeaderFormat::OLD){                               // Old length type RFC4880 sec 4.2.1
         if ((ctb & 3) == 0){                                                // 0 - The packet has a one-octet length. The header is 2 octets long.
             hl = one_octet_lengths(src, pos, length);
             partial = Packet::NOT_PARTIAL;
@@ -201,20 +201,20 @@ std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t 
     return hl;
 }
 
-uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, bool & format, uint8_t & tag) const{
+uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, Packet::HeaderFormat & format, uint8_t & tag) const{
     ctb = data[pos];               // Name "ctb" came from Version 2 [RFC 1991]
-    format = ctb & 0x40;           // get packet length type (OLD = false; NEW = true)
-    tag = Packet::RESERVED;        // default value (error)
 
     if (!(ctb & 0x80)){
        throw std::runtime_error("Error: First bit of packet header MUST be 1 (octet " + std::to_string(pos) + ": 0x" + makehex(ctb, 2) + ").");
     }
 
-    if (!format){                  // Old length type RFC4880 sec 4.2.1
-        tag = (ctb >> 2) & 0xf;    // get tag value
+    if (ctb & 0x40){               // New length type RFC4880 sec 4.2.2
+        format = Packet::HeaderFormat::NEW;
+        tag = ctb & 0x3f;
     }
-    else{                          // New length type RFC4880 sec 4.2.2
-        tag = ctb & 0x3f;          // get tag value
+    else{                          // Old length type RFC4880 sec 4.2.1
+        format = Packet::HeaderFormat::OLD;
+        tag = (ctb >> 2) & 0xf;
     }
 
     pos++;                         // move the position to the length section of the header
@@ -222,7 +222,7 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
     return tag;
 }
 
-Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const bool format, Packet::PartialBodyLength & partial) const{
+Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const{
     if ((partial == Packet::PARTIAL)                              &&
         ((tag != Packet::LITERAL_DATA)                            &&
          (tag != Packet::COMPRESSED_DATA)                         &&
@@ -307,7 +307,7 @@ Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t ta
 
     // fill in data
     out -> set_tag(tag);
-    out -> set_format(format);
+    out -> set_header_format(format);
     out -> set_size(data.size());
     out -> read(data);
 
@@ -321,7 +321,7 @@ Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_ty
 
     // get the header data
     uint8_t ctb = 0;
-    bool format = false;
+    Packet::HeaderFormat format = Packet::HeaderFormat::NEW;
     uint8_t tag = Packet::RESERVED;
     read_packet_header(data, pos, ctb, format, tag);
 
@@ -497,16 +497,16 @@ std::string PGP::show(const std::size_t indents, const std::size_t indent_size) 
     return out;
 }
 
-std::string PGP::raw(const Packet::Tag::Format header) const{
+std::string PGP::raw() const{
     std::string out = "";
     for(Packet::Tag::Ptr const & p : packets){
-        out += p -> write(header);
+        out += p -> write();
     }
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor, const Packet::Tag::Format header) const{
-    const std::string packet_string = raw(header);  // raw PGP data = binary, no ASCII headers
+std::string PGP::write(const PGP::Armored armor) const{
+    const std::string packet_string = raw();        // raw PGP data = binary, no ASCII headers
 
     if ((armor == Armored::NO)                   || // no armor
         ((armor == Armored::DEFAULT) && !armored)){ // or use stored value, and stored value is no

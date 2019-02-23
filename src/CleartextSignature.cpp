@@ -104,7 +104,7 @@ std::string CleartextSignature::show(const std::size_t indents, const std::size_
            sig.show(indents + 1, indent_size);
 }
 
-std::string CleartextSignature::write(const Packet::Tag::Format header) const{
+std::string CleartextSignature::write() const{
     std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
 
     // write Armor Header
@@ -118,7 +118,7 @@ std::string CleartextSignature::write(const Packet::Tag::Format header) const{
     // only add "- " to front of message
     out += dash_escape(message);
 
-    return out + "\n" + sig.write(PGP::Armored::YES, header);
+    return out + "\n" + sig.write(PGP::Armored::YES);
 }
 
 PGP::Armor_Keys CleartextSignature::get_hash_armor_header() const{

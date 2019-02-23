@@ -104,7 +104,7 @@ Message binary(const Args & args, const std::string & filename, const std::strin
 
     // put source data into Literal Data Packet
     Packet::Tag11::Ptr tag11 = std::make_shared <Packet::Tag11> ();
-    tag11 -> set_format('b');
+    tag11 -> set_data_format('b');
     tag11 -> set_filename(filename);
     tag11 -> set_time(now());
     tag11 -> set_literal(data);
@@ -127,9 +127,10 @@ Message binary(const Args & args, const std::string & filename, const std::strin
 
     if (compress){ // only use a Compressed Data Packet if compression was used; don't bother for uncompressed data
         Packet::Tag8 tag8;
+        tag8.set_header_format(Packet::HeaderFormat::NEW);
         tag8.set_data(signature.raw());
         tag8.set_comp(compress);
-        std::string raw = tag8.write(Packet::Tag::Format::NEW);
+        std::string raw = tag8.write();
         signature = Message(raw);
     }
 

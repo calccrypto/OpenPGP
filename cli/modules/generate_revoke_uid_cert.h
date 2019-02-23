@@ -85,7 +85,7 @@ const Module generate_revoke_uid_cert(
             return -1;
         }
 
-        out << cert.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
+        out << cert.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO) << std::endl;
         return 0;
     }
 );

@@ -204,23 +204,23 @@ std::string Message::show(const std::size_t indents, const std::size_t indent_si
     return out.str();
 }
 
-std::string Message::raw(const Packet::Tag::Format header) const{
-    std::string out = PGP::raw(header);
+std::string Message::raw() const{
+    std::string out = PGP::raw();
     if (comp){                  // if compression was used; compress data
         comp -> set_data(out);
-        out = comp -> write(header);
+        out = comp -> write();
         comp -> set_data("");   // hold compressed data for as little time as possible
     }
     return out;
 }
 
-std::string Message::write(const PGP::Armored armor, const Packet::Tag::Format header) const{
-    std::string packet_string = raw(header);
+std::string Message::write(const PGP::Armored armor) const{
+    std::string packet_string = raw();
 
     // put data into a Compressed Data Packet if compression is used
     if (comp){
         comp -> set_data(packet_string);
-        packet_string = comp -> write(header);
+        packet_string = comp -> write();
     }
 
     if ((armor == Armored::NO)                   || // no armor

@@ -94,7 +94,7 @@ namespace OpenPGP {
 
         class Tag11 : public Tag, public Partial {
             private:
-                uint8_t format;
+                uint8_t data_format;
                 std::string filename;
                 uint32_t time;
                 std::string literal;    // source data; no line ending conversion
@@ -110,15 +110,15 @@ namespace OpenPGP {
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
-                std::string write(const Format header = DEFAULT) const;
+                std::string write() const;
 
-                uint8_t get_format() const;
+                uint8_t get_data_format() const;
                 std::string get_filename() const;
                 uint32_t get_time() const;
                 std::string get_literal() const;
                 std::string out(const bool writefile = true); // send data to
 
-                void set_format(const uint8_t f);
+                void set_data_format(const uint8_t f);
                 void set_filename(const std::string & f);
                 void set_time(const uint32_t t);
                 void set_literal(const std::string & l);

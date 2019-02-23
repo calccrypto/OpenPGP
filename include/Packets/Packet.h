@@ -120,20 +120,19 @@ namespace OpenPGP {
         bool is_session_key          (const uint8_t t);
         bool is_sym_protected_data   (const uint8_t t);
 
+        // Packet Header Format
+        enum class HeaderFormat : bool {
+            OLD,
+            NEW
+        };
+
         // Tag class for all packet types
         class Tag {
-            public:
-                enum Format {
-                    DEFAULT,
-                    OLD,
-                    NEW,
-                };
-
             protected:
-                uint8_t tag;        // RFC 4880 sec 4.3
+                uint8_t tag;                  // RFC 4880 sec 4.3
                 uint8_t version;
-                bool format;        // OLD (false) or NEW (true); defaults to NEW
-                std::size_t size;   // This value is only correct when the Tag was generated with the read() function
+                HeaderFormat header_format;
+                std::size_t size;             // This value is only correct when the Tag was generated with the read() function
 
                 // returns Tag data with old format Tag length
                 static std::string write_old_length(const uint8_t tag, const std::string & data, const uint8_t part);
@@ -156,17 +155,17 @@ namespace OpenPGP {
                 virtual void read(const std::string & data) = 0;
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
                 virtual std::string raw() const = 0;
-                virtual std::string write(const Format header = DEFAULT) const;
+                virtual std::string write() const;
 
                 // Accessors
                 uint8_t get_tag() const;
-                bool get_format() const;
+                HeaderFormat get_header_format() const;
                 uint8_t get_version() const;
                 std::size_t get_size() const;
 
                 // Modifiers
                 void set_tag(const uint8_t t);
-                void set_format(const bool f);
+                void set_header_format(const HeaderFormat hf);
                 void set_version(const uint8_t v);
                 void set_size(const std::size_t s);
 

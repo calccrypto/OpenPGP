@@ -58,10 +58,10 @@ std::string Tag8::raw() const{
     return std::string(1, comp) + compressed_data;
 }
 
-std::string Tag8::write(const Tag::Format header) const{
+std::string Tag8::write() const{
     const std::string data = raw();
-    if ((header == NEW) ||      // specified new header
-        (tag > 15)){            // tag > 15, so new header is required
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)){                            // tag > 15, so new header is required
         return write_new_length(tag, data, partial);
     }
     return write_old_length(tag, data, partial);

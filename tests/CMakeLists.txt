@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2.0)
 
-set(INSTALL_GTEST OFF)
+set(INSTALL_GTEST OFF CACHE BOOL "")
 
 # Download and unpack googletest at configure time
 configure_file(${CMAKE_SOURCE_DIR}/cmake/GoogleTest.txt.in ${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt)

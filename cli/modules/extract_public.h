@@ -42,7 +42,7 @@ const Module extract_public(
             return -1;
         }
 
-        out << pri.get_public().write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
+        out << pri.get_public().write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO) << std::endl;
         return 0;
     }
 );

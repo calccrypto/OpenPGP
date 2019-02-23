@@ -35,8 +35,8 @@ std::string little_end(const std::string & str, const unsigned int & base){
     // Changes a string to its little endian form
     int s = 8 * (base == 2) + 2 * (base == 16) + (base == 256);
     std::string t = "";
-    for (uint32_t x = 0; x < str.size() / s; x++){
-        t = str.substr(s * x, s)+ t;
+    for (uint32_t x = 0; x < str.size(); x += s){
+        t = str.substr(x, s) + t;
     }
     return t;
 }

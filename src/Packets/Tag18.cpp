@@ -43,6 +43,15 @@ std::string Tag18::raw() const{
     return std::string(1, version) + protected_data;
 }
 
+std::string Tag18::write() const{
+    const std::string data = raw();
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)){                            // tag > 15, so new header is required
+        return write_new_length(tag, data, partial);
+    }
+    return write_old_length(tag, data, partial);
+}
+
 std::string Tag18::get_protected_data() const{
     return protected_data;
 }

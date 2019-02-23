@@ -89,6 +89,7 @@ namespace OpenPGP {
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
+                std::string write() const;
 
                 Tag::Ptr clone() const;
 

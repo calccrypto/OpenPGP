@@ -86,7 +86,7 @@ const Module sign_detached_signature(
             return -1;
         }
 
-        out << signature.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
+        out << signature.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO) << std::endl;
         return 0;
     }
 );

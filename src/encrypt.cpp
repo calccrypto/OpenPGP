@@ -27,19 +27,21 @@ Packet::Tag::Ptr data(const Args & args,
     else{
         // put data in Literal Data Packet
         Packet::Tag11 tag11;
-        tag11.set_format('b');
+        tag11.set_header_format(Packet::HeaderFormat::NEW);
+        tag11.set_data_format('b');
         tag11.set_filename(args.filename);
         tag11.set_time(0);
         tag11.set_literal(args.data);
 
-        to_encrypt = tag11.write(Packet::Tag::Format::NEW);
+        to_encrypt = tag11.write();
 
         if (args.comp){
             // Compressed Data Packet (Tag 8)
             Packet::Tag8 tag8;
+            tag8.set_header_format(Packet::HeaderFormat::NEW);
             tag8.set_comp(args.comp);
             tag8.set_data(to_encrypt); // put source data into compressed packet
-            to_encrypt = tag8.write(Packet::Tag::Format::NEW);
+            to_encrypt = tag8.write();
         }
     }
 

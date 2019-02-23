@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "DetachedSignature.h"
 
 namespace OpenPGP {
+
     // 7. Cleartext Signature Framework
     //
     //   It is desirable to be able to sign a textual octet stream without
@@ -85,7 +86,7 @@ namespace OpenPGP {
             void read(const std::string & data);
             void read(std::istream & stream);
             std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-            std::string write(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;
+            std::string write() const;
 
             PGP::Armor_Keys get_hash_armor_header() const;
             std::string get_message() const;

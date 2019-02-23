@@ -74,14 +74,14 @@ namespace OpenPGP {
 
             // reads the length of the packet data and extracts the packet data into packet_data
             // this was done because partial packet lengths are not simply substrings
-            std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const bool format, std::string & packet_data, Packet::PartialBodyLength & partial) const;
+            std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial) const;
 
             // reads the data starting at pos, and gets the ctb, format, and tag
             // pos is shifted up by 1
-            uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, bool & format, uint8_t & tag) const;
+            uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, Packet::HeaderFormat & format, uint8_t & tag) const;
 
             // parses raw packet data
-            Packet::Tag::Ptr read_packet_raw(const std::string & data, const uint8_t tag, const bool format, Packet::PartialBodyLength & partial) const;
+            Packet::Tag::Ptr read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const;
 
             // parse packet with header; wrapper for read_packet_header and read_packet_unformatted
             Packet::Tag::Ptr read_packet(const std::string & data, std::string::size_type & pos) const;
@@ -107,8 +107,8 @@ namespace OpenPGP {
             void read_raw(std::istream & stream);
 
             virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-            virtual std::string raw(const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;     // write packets only; header is for writing default (0), old (1) or new (2) header formats
-            virtual std::string write(const Armored armor = DEFAULT, const Packet::Tag::Format header = Packet::Tag::Format::DEFAULT) const;
+            virtual std::string raw() const;                                                                    // write packets only
+            virtual std::string write(const Armored armor = DEFAULT) const;
 
             // Accessors
             bool get_armored()              const;

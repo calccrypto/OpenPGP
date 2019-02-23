@@ -785,7 +785,7 @@ TEST(gpg, decrypt_verify){
     {
         ASSERT_EQ(packets[1] -> get_tag(), OpenPGP::Packet::LITERAL_DATA);
         const OpenPGP::Packet::Tag11::Ptr tag11 = std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (packets[1]);
-        EXPECT_EQ(tag11 -> get_format(), OpenPGP::Packet::Literal::BINARY);
+        EXPECT_EQ(tag11 -> get_data_format(), OpenPGP::Packet::Literal::BINARY);
         EXPECT_EQ(tag11 -> get_filename(), "msg");
         EXPECT_EQ(tag11 -> get_time(), gen_time);
         EXPECT_EQ(tag11 -> get_literal(), MESSAGE);

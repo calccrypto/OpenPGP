@@ -93,7 +93,7 @@ std::string Tag::write_new_length(const uint8_t tag, const std::string & data, c
         uint32_t pos = 0;
         for(uint8_t const bit : set_bits) {
             const uint32_t partial_length = 1 << bit;
-            out += std::string(1, bit + 0x1f);              // length with mask
+            out += std::string(1, bit | 0xe0);              // length with mask
             out += data.substr(pos, partial_length);        // data
             pos += partial_length;                          // increment offset
         }
@@ -112,12 +112,14 @@ std::string Tag::write_new_length(const uint8_t tag, const std::string & data, c
         else if (length > 8383){                            // 3 octets
             out += std::string(1, '\xff') + unhexlify(makehex(length, 8));
         }
+
+        out += data;
     }
-    return out + data;
+    return out;
 }
 
 std::string Tag::show_title() const{
-    return (format?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
+    return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 }
 
 Tag::Tag(const uint8_t t)
@@ -127,14 +129,14 @@ Tag::Tag(const uint8_t t)
 Tag::Tag(const uint8_t t, uint8_t ver)
     : tag(t),
       version(ver),
-      format(NEW),
+      header_format(HeaderFormat::NEW),
       size(0)
 {}
 
 Tag::Tag(const Tag & copy)
     : tag(copy.tag),
       version(copy.version),
-      format(copy.version),
+      header_format(copy.header_format),
       size(copy.size)
 {}
 
@@ -144,10 +146,10 @@ Tag::Tag()
 
 Tag::~Tag(){}
 
-std::string Tag::write(const Tag::Format header) const{
+std::string Tag::write() const{
     const std::string data = raw();
-    if ((header == NEW) ||      // specified new header
-        (tag > 15)){            // tag > 15, so new header is required
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)){                            // tag > 15, so new header is required
         return write_new_length(tag, data, Packet::NOT_PARTIAL);
     }
     return write_old_length(tag, data, Packet::NOT_PARTIAL);
@@ -157,8 +159,8 @@ uint8_t Tag::get_tag() const{
     return tag;
 }
 
-bool Tag::get_format() const{
-    return format;
+Packet::HeaderFormat Tag::get_header_format() const{
+    return header_format;
 }
 
 uint8_t Tag::get_version() const{
@@ -173,8 +175,8 @@ void Tag::set_tag(const uint8_t t){
     tag = t;
 }
 
-void Tag::set_format(const bool f){
-    format = f;
+void Tag::set_header_format(const HeaderFormat hf){
+    header_format = hf;
 }
 
 void Tag::set_version(const uint8_t v){
@@ -189,7 +191,7 @@ Tag & Tag::operator=(const Tag & copy)
 {
     tag = copy.tag;
     version = copy.version;
-    format = copy.format;
+    header_format = copy.header_format;
     size = copy.size;
     return *this;
 }

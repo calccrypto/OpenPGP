@@ -87,7 +87,7 @@ const Module sign_timestamp(
             return -1;
         }
 
-        out << timestamp.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
+        out << timestamp.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO) << std::endl;
         return 0;
     }
 );

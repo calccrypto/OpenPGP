@@ -41,6 +41,15 @@ std::string Tag9::raw() const{
     return encrypted_data;
 }
 
+std::string Tag9::write() const{
+    const std::string data = raw();
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)){                            // tag > 15, so new header is required
+        return write_new_length(tag, data, partial);
+    }
+    return write_old_length(tag, data, partial);
+}
+
 std::string Tag9::get_encrypted_data() const{
     return encrypted_data;
 }

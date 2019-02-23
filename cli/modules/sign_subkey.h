@@ -89,7 +89,7 @@ const Module sign_subkey(
             // return -1;
         // }
 
-        // out << key.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO, OpenPGP::Packet::Tag::Format::NEW) << std::endl;
+        // out << key.write(flags.at("-a")?OpenPGP::PGP::Armored::YES:OpenPGP::PGP::Armored::NO) << std::endl;
         // return 0;
 
         return -1;
