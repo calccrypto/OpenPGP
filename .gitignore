@@ -10,6 +10,7 @@ build/
 *.a
 *.exe
 *.so
+libOpenPGP.*
 OpenPGP
 
 #############
