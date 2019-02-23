@@ -9,7 +9,7 @@ Please see [LICENSE](LICENSE) file for the license.
 Also:
  - cmake/FindGMP.cmake is by Jack Poulson from [Elemental](https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
  - Some of CMakeLists.txt was taken from the [Kitware CMake wiki RPath handling page](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#always-full-rpath).
- - The code for incorporating Google Test into CMake was taken from the [Google Test README](https://github.com/google/googletest/blob/master/googletest/README.md).
+ - The code for incorporating Google Test into CMake was taken from the [Google Test README](https://github.com/google/googletest/blob/master/googletest/README.md), and modified slightly.
 
 ### With much help from
 
@@ -58,7 +58,7 @@ is none of my concern or responsibility.
 
 ### Tools
 - A C++ compiler with C++11 support
-- CMake 3.2+
+- CMake 3.6+
 
 ### Libraries
 - GMP (<https://gmplib.org/>)

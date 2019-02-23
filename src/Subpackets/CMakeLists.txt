@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.6.0)
 
 add_subdirectory(Tag2)
 add_subdirectory(Tag17)

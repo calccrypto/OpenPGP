@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.6.0)
 
 add_library(Misc OBJECT
     cfb.cpp
@@ -10,5 +10,5 @@ add_library(Misc OBJECT
     s2k.cpp
     sigcalc.cpp
     sigtypes.cpp)
-    
+
 set_property(TARGET Misc PROPERTY POSITION_INDEPENDENT_CODE ON)
