@@ -73,13 +73,9 @@ link_libraries     (${ZLIB_LIBRARIES})
 # -Iinclude
 include_directories(include)
 
-# create the test target
-enable_testing()
-
+# add library directories
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tests)
-add_subdirectory(cli)
 
 # build the static library
 add_library(OpenPGP_static STATIC
@@ -116,3 +112,12 @@ add_library(OpenPGP_shared SHARED
 )
 set_target_properties(OpenPGP_shared PROPERTIES OUTPUT_NAME "OpenPGP")
 install(TARGETS OpenPGP_shared DESTINATION lib)
+
+# create the test target
+enable_testing()
+
+# add tests
+add_subdirectory(tests)
+
+# add cli
+add_subdirectory(cli)
