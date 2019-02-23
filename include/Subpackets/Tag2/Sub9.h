@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB9__
 #define __TAG2_SUB9__
 
-#include "Misc/pgptime.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {

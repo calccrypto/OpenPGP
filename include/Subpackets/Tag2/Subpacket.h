@@ -34,6 +34,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.1. Signature Subpacket Specification
             //
             //    ...

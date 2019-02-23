@@ -33,6 +33,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // This is not official (yet)
             // http://gnupg-devel.gnupg.narkive.com/Z0EFUBU7/issuer-fingerprint-was-vanity-keys
             //

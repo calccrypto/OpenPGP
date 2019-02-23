@@ -29,7 +29,6 @@ THE SOFTWARE.
 #define __TAG2__
 
 #include <array>
-#include <stdexcept>
 #include <string>
 #include <vector>
 

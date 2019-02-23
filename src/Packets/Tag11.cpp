@@ -1,5 +1,12 @@
 #include "Packets/Tag11.h"
 
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+#include "common/includes.h"
+#include "Misc/pgptime.h"
+
 namespace OpenPGP {
 namespace Packet {
 

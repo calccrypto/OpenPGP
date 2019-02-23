@@ -30,7 +30,6 @@ THE SOFTWARE.
 
 namespace OpenPGP {
     namespace Packet {
-
         class Tag0 : public Tag {
             public:
                 Tag0(...);

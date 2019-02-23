@@ -32,6 +32,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.8. Preferred Hash Algorithms
             //
             //    (array of one-octet values)

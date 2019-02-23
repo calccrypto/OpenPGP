@@ -1,5 +1,7 @@
 #include "Packets/Tag62.h"
 
+#include "common/includes.h"
+
 namespace OpenPGP {
 namespace Packet {
 
@@ -24,7 +26,7 @@ void Tag62::read(const std::string & data){
 std::string Tag62::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" + 
+    return indent + show_title() + "\n" +
            indent + tab + hexlify(stream);
 }
 

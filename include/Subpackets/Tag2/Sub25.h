@@ -31,6 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.19. Primary User ID
             //
             //    (1 octet, Boolean)

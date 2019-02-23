@@ -26,12 +26,12 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB2__
 #define __TAG2_SUB2__
 
-#include "Misc/pgptime.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.4. Signature Creation Time
             //
             //    (4-octet time field)

@@ -26,10 +26,6 @@ THE SOFTWARE.
 #ifndef __TAG11__
 #define __TAG11__
 
-#include <fstream>
-#include <sstream>
-
-#include "Misc/pgptime.h"
 #include "Packets/Packet.h"
 #include "Packets/Partial.h"
 

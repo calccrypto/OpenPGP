@@ -32,6 +32,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.26.  Embedded Signature
             //
             //    (1 signature packet body)

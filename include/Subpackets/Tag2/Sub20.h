@@ -31,6 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.16. Notation Data
             //
             //    (4 octets of flags, 2 octets of name length (M),

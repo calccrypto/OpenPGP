@@ -31,6 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.11. Exportable Certification
             //
             //    (1 octet of exportability, 0 for not, 1 for exportable)

@@ -49,7 +49,7 @@ file(COPY testvectors DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(OpenPGPTests
     $<TARGET_OBJECTS:TopLevelTests>
-    # $<TARGET_OBJECTS:CommonTests>
+    $<TARGET_OBJECTS:CommonTests>
     $<TARGET_OBJECTS:CompressTests>
     $<TARGET_OBJECTS:EncryptionTests>
     $<TARGET_OBJECTS:HashTests>

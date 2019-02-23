@@ -1,4 +1,6 @@
 #include "Packets/Tag8.h"
+
+#include "Compress/Compress.h"
 #include "Message.h"
 
 namespace OpenPGP {

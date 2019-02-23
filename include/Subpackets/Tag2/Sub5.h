@@ -31,6 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.13. Trust Signature
             //
             //    (1 octet "level" (depth), 1 octet of trust amount)

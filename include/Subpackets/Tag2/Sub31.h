@@ -33,6 +33,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.25. Signature Target
             //
             //    (1 octet public-key algorithm, 1 octet hash algorithm, N octets hash)

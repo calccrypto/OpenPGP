@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __TAG18__
 
 #include "Packets/Packet.h"
+#include "Packets/Partial.h"
 
 namespace OpenPGP {
     namespace Packet {

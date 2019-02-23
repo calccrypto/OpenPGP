@@ -1,12 +1,15 @@
 #include "common/includes.h"
 
 uint64_t toint(const std::string & s, const int & base){
-    // Changees strings to uint64_t
+    // Changes strings to uint64_t
     uint64_t value = 0;
     switch (base){
         case 2:
             for(const unsigned char & c : s){
-                value = (value << 1) + (static_cast <uint8_t> (c) - '\x30');
+                if ((c != '0') && (c != '1')) {
+                    break;
+                }
+                value = (value << 1) + (static_cast <uint8_t> (c) - '0');
             }
             break;
         case 8:
@@ -20,12 +23,11 @@ uint64_t toint(const std::string & s, const int & base){
             break;
         case 256:
             for(const unsigned char & c : s){
-                value = (value << 8) + static_cast <uint8_t> (c);
+                value = (value << 8) | static_cast <uint8_t> (c);
             }
             break;
         default:
-            std::stringstream s; s << std::dec << base;
-            throw std::runtime_error("Error: toint() undefined for base: " + s.str());
+            throw std::runtime_error("Error: toint() undefined for base: " + std::to_string(base));
             break;
     };
     return value;
@@ -33,12 +35,14 @@ uint64_t toint(const std::string & s, const int & base){
 
 std::string little_end(const std::string & str, const unsigned int & base){
     // Changes a string to its little endian form
-    int s = 8 * (base == 2) + 2 * (base == 16) + (base == 256);
-    std::string t = "";
-    for (uint32_t x = 0; x < str.size(); x += s){
-        t = str.substr(x, s) + t;
+    if (const uint32_t s = 8 * (base == 2) + 2 * (base == 16) + (base == 256)) {
+        std::string t = "";
+        for (uint32_t x = 0; x < str.size(); x += s){
+            t = str.substr(x, s) + t;
+        }
+        return t;
     }
-    return t;
+    throw std::runtime_error("Error: little_end() undefined for base: " + std::to_string(base));
 }
 
 // Changes a binary string to its hexadecimal equivalent
@@ -161,14 +165,14 @@ std::string unhexlify(const std::string & in){
 
 std::string pkcs5(const std::string & data, const unsigned int & blocksize){
     // Adds PKCS5 Padding
-    int pad = ((blocksize - data.size()) % blocksize) % blocksize;
+    const std::size_t pad = ((blocksize - data.size()) % blocksize) % blocksize;
     std::string padding(pad, static_cast <char> (pad));
     return data + padding;
 }
 
 std::string remove_pkcs5(std::string data){
     // Removes PKCS Padding
-    uint8_t pad = static_cast <uint8_t> (data[data.size() - 1]);
+    const std::size_t pad = static_cast <uint8_t> (data[data.size() - 1]);
     std::string padding(pad, static_cast <char> (pad));
     if ((pad < data.size()) && (padding == data.substr(data.size() - pad, pad)))
         data = data.substr(0, data.size() - pad);

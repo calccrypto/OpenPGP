@@ -26,14 +26,9 @@ THE SOFTWARE.
 #ifndef __PACKET__
 #define __PACKET__
 
-#include <list>
 #include <map>
 #include <memory>
-#include <stdexcept>
 #include <string>
-
-#include "Packets/Partial.h"
-#include "common/includes.h"
 
 namespace OpenPGP {
     namespace Packet {

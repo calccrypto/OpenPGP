@@ -31,6 +31,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.12. Revocable
             //
             //    (1 octet of revocability, 0 for not, 1 for revocable)

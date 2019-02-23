@@ -9,6 +9,7 @@ build/
 *.o
 *.a
 *.exe
+*.so
 OpenPGP
 
 #############

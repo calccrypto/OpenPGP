@@ -1,5 +1,7 @@
 #include "Packets/Tag2.h"
 
+#include <stdexcept>
+
 namespace OpenPGP {
 namespace Packet {
 

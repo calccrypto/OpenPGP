@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define __PKAS__
 
 #include <map>
-#include <stdexcept>
 
 #include "PKA.h"
 

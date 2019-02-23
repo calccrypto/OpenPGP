@@ -1,5 +1,7 @@
 #include "Subpackets/Tag2/Sub2.h"
 
+#include "Misc/pgptime.h"
+
 namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {

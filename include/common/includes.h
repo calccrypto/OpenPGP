@@ -7,7 +7,6 @@ Some functions were heavily influenced by python 2.7.2
 #define __INCLUDES__
 
 #include <cstdint>
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 

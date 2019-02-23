@@ -26,12 +26,12 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB3__
 #define __TAG2_SUB3__
 
-#include "Misc/pgptime.h"
 #include "Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.10. Signature Expiration Time
             //
             //    (4-octet time field)

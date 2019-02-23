@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "Compress/Compress.h"
 #include "Packets/Packet.h"
+#include "Packets/Partial.h"
 
 namespace OpenPGP {
     namespace Packet {

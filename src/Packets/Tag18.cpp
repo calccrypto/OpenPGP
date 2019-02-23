@@ -1,5 +1,7 @@
 #include "Packets/Tag18.h"
 
+#include "common/includes.h"
+
 namespace OpenPGP {
 namespace Packet {
 

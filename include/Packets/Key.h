@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 #include "Hashes/Hashes.h"
 #include "PKA/PKAs.h"
-#include "Misc/mpi.h"
 #include "Packet.h"
 
 namespace OpenPGP {

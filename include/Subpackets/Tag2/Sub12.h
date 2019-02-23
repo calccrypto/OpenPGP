@@ -32,6 +32,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.15. Revocation Key
             //
             //    (1 octet of class, 1 octet of public-key algorithm ID, 20 octets of
