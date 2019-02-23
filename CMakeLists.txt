@@ -9,8 +9,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # add extra warnings in debug mode
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
 
+# turns on code coverage (implies debug build)
+set(CODE_COVERAGE OFF CACHE BOOL "Build with code coverage (implies debug build)")
+if (CODE_COVERAGE)
+   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
+   set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
 # GPG compatible mode
-set(GPG_COMPATIBLE NO CACHE BOOL "Build with GPG compatibility")
+set(GPG_COMPATIBLE OFF CACHE BOOL "Build with GPG compatibility")
 if (GPG_COMPATIBLE)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DGPG_COMPATIBLE")
     set(CMAKE_CXX_FLAGS       "${CMAKE_CXX_FLAGS}       -DGPG_COMPATIBLE")
