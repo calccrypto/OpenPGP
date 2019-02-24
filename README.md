@@ -1,13 +1,14 @@
 # OpenPGP in C++
 
 [![Build Status](https://travis-ci.org/calccrypto/OpenPGP.svg?branch=master)](https://travis-ci.org/calccrypto/OpenPGP)
+[![Coverage Status](https://coveralls.io/repos/github/calccrypto/OpenPGP/badge.svg)](https://coveralls.io/github/calccrypto/OpenPGP)
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
 Please see [LICENSE](LICENSE) file for the license.
 
 Also:
- - cmake/FindGMP.cmake is by Jack Poulson from [Elemental](https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
+ - contrib/cmake/FindGMP.cmake is by Jack Poulson from [Elemental](https://github.com/elemental/Elemental) and is licened under the BSD License. It was changed slightly to remove a debug message.
  - Some of CMakeLists.txt was taken from the [Kitware CMake wiki RPath handling page](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#always-full-rpath).
  - The code for incorporating Google Test into CMake was taken from the [Google Test README](https://github.com/google/googletest/blob/master/googletest/README.md), and modified slightly.
 

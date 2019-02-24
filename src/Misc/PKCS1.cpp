@@ -42,7 +42,7 @@ std::string EME_PKCS1v1_5_DECODE(const std::string & m){
 }
 
 std::string EMSA_PKCS1_v1_5(const uint8_t & hash, const std::string & hashed_data, const unsigned int & keylength){
-    return zero + "\x01" + std::string(keylength - (Hash::ASN1_DER.at(hash).size() >> 1) - 3 - (Hash::LENGTH.at(hash) >> 3), 0xff) + zero + unhexlify(Hash::ASN1_DER.at(hash)) + hashed_data;
+    return zero + "\x01" + std::string(keylength - (Hash::ASN1_DER.at(hash).size() >> 1) - 3 - (Hash::LENGTH.at(hash) >> 3), (char) 0xffU) + zero + unhexlify(Hash::ASN1_DER.at(hash)) + hashed_data;
 }
 
 }

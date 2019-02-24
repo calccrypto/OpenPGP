@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # add extra warnings in debug mode
-include(cmake/enable_cxx_compiler_flag_if_supported.cmake)
+include(contrib/cmake/enable_cxx_compiler_flag_if_supported.cmake)
 enable_cxx_compiler_flag_if_supported(CMAKE_CXX_FLAGS_DEBUG "-Wall")
 enable_cxx_compiler_flag_if_supported(CMAKE_CXX_FLAGS_DEBUG "-Wextra")
 enable_cxx_compiler_flag_if_supported(CMAKE_CXX_FLAGS_DEBUG "-pedantic")
@@ -50,7 +50,7 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 # ########################################################
 
 # GMP is not a built-in module, so it needs FindGMP.cmake to be available
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/contrib/cmake)
 
 # GNU Multiple Precision Arithmetic Library
 find_package(GMP 5.0.0 REQUIRED)
