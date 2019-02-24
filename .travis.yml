@@ -8,208 +8,43 @@ sudo: false
 git:
   depth: 1
 
-matrix:
-  include:
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-4.9
-        - GPG_COMPATIBLE=False
+env:
+  - CXX_COMPILER=g++-4.9     GPG_COMPATIBLE=False
+  - CXX_COMPILER=g++-5       GPG_COMPATIBLE=False
+  - CXX_COMPILER=g++-6       GPG_COMPATIBLE=False
+  - CXX_COMPILER=g++-7       GPG_COMPATIBLE=False
+  - CXX_COMPILER=g++-8       GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-3.8 GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-3.9 GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-4.0 GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-5.0 GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-6.0 GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-7   GPG_COMPATIBLE=False
+  - CXX_COMPILER=clang++-8   GPG_COMPATIBLE=False
+  - CXX_COMPILER=g++-4.9     GPG_COMPATIBLE=True
+  - CXX_COMPILER=g++-5       GPG_COMPATIBLE=True
+  - CXX_COMPILER=g++-6       GPG_COMPATIBLE=True
+  - CXX_COMPILER=g++-7       GPG_COMPATIBLE=True
+  - CXX_COMPILER=g++-8       GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-3.8 GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-3.9 GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-4.0 GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-5.0 GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-6.0 GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-7   GPG_COMPATIBLE=True
+  - CXX_COMPILER=clang++-8   GPG_COMPATIBLE=True
 
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-5
-        - GPG_COMPATIBLE=False
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-6
-        - GPG_COMPATIBLE=False
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-7
-        - GPG_COMPATIBLE=False
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-8
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
-          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-3.8
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
-          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-3.9
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
-          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-4.0
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
-          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-5.0
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
-          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-6.0
-        - GPG_COMPATIBLE=False
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
-          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-7
-        - GPG_COMPATIBLE=False
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-4.9
-        - GPG_COMPATIBLE=True
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-5
-        - GPG_COMPATIBLE=True
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-6
-        - GPG_COMPATIBLE=True
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-7
-        - GPG_COMPATIBLE=True
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=g++-8
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
-          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-3.8
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
-          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-3.9
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
-          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-4.0
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
-          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-5.0
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
-          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-6.0
-        - GPG_COMPATIBLE=True
-
-    - compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
-          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
-      env:
-        - CXX_COMPILER=clang++-7
-        - GPG_COMPATIBLE=True
+addons:
+  apt:
+    update: false
 
 before_install:
-  - pip install --user cpp-coveralls
+  # ubuntu toolchain is always required
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -; sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-${CXX_COMPILER##*-} main" -y; fi
+  - sudo apt-get update
+  - sudo apt-get install "${CXX_COMPILER}" libgmp-dev libbz2-dev zlib1g-dev cmake lcov pkg-config python-pip $(if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then echo llvm; fi) -y
+  - sudo pip install cpp-coveralls
 
 before_script:
   - export CXX="${CXX_COMPILER}"
@@ -233,4 +68,4 @@ script:
 after_success:
   - if [[ "${CXX_COMPILER}" =~ "g++-"     ]]; then export GCOV_TOOL="gcov-${CXX_COMPILER##*-}"; fi
   - if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then export GCOV_TOOL="$(realpath ../contrib/lcov/clang.sh)"; fi
-  - ~/.local/bin/cpp-coveralls --gcov "${GCOV_TOOL}" --root .. --build-root . --include include --include src --include cli --exclude usr --exclude tests --exclude cli/tests --gcov-options '\-lp' &> /dev/null
+  - cpp-coveralls --gcov "${GCOV_TOOL}" --root .. --build-root . --include include --include src --include cli --exclude usr --exclude tests --exclude cli/tests --gcov-options '\-lp' &> /dev/null
