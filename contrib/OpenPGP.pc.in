@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}/bin
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenPGP Library
+Description: A C++ Implementation of RFC 4880
+Version:
+URL: https://github.com/calccrypto/OpenPGP
+Libs: -L${libdir} -lOpenPGP -lgmp -lgmpxx -lbz2 -lz
+Cflags: -I${includedir}

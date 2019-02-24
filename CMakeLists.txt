@@ -124,3 +124,7 @@ add_subdirectory(tests)
 
 # add cli
 add_subdirectory(cli)
+
+# add pkg-config
+configure_file("contrib/OpenPGP.pc.in" "OpenPGP.pc" @ONLY)
+install(FILES "${CMAKE_BINARY_DIR}/OpenPGP.pc" DESTINATION lib/pkgconfig)

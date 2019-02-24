@@ -14,7 +14,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-4.9
         - GPG_COMPATIBLE=False
@@ -23,7 +23,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-5
         - GPG_COMPATIBLE=False
@@ -32,7 +32,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-6
         - GPG_COMPATIBLE=False
@@ -41,7 +41,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-7
         - GPG_COMPATIBLE=False
@@ -50,7 +50,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-8
         - GPG_COMPATIBLE=False
@@ -59,7 +59,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
-          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-3.8
         - GPG_COMPATIBLE=False
@@ -68,7 +68,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
-          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-3.9
         - GPG_COMPATIBLE=False
@@ -77,7 +77,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
-          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-4.0
         - GPG_COMPATIBLE=False
@@ -86,7 +86,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
-          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-5.0
         - GPG_COMPATIBLE=False
@@ -95,7 +95,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
-          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-6.0
         - GPG_COMPATIBLE=False
@@ -104,7 +104,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
-          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-7
         - GPG_COMPATIBLE=False
@@ -113,7 +113,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-4.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-4.9
         - GPG_COMPATIBLE=True
@@ -122,7 +122,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-5', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-5
         - GPG_COMPATIBLE=True
@@ -131,7 +131,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-6', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-6
         - GPG_COMPATIBLE=True
@@ -140,7 +140,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-7
         - GPG_COMPATIBLE=True
@@ -149,7 +149,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov']
+          packages: ['g++-8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=g++-8
         - GPG_COMPATIBLE=True
@@ -158,7 +158,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.8']
-          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-3.8', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-3.8
         - GPG_COMPATIBLE=True
@@ -167,7 +167,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-3.9']
-          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-3.9', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-3.9
         - GPG_COMPATIBLE=True
@@ -176,7 +176,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-4.0']
-          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-4.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-4.0
         - GPG_COMPATIBLE=True
@@ -185,7 +185,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-5.0']
-          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-5.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-5.0
         - GPG_COMPATIBLE=True
@@ -194,7 +194,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-6.0']
-          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-6.0', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-6.0
         - GPG_COMPATIBLE=True
@@ -203,7 +203,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-7']
-          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'python-pip', 'lcov', 'llvm']
+          packages: ['clang-7', 'libgmp-dev', 'libbz2-dev', 'zlib1g-dev', 'cmake', 'lcov', 'llvm', 'pkg-config', 'python-pip']
       env:
         - CXX_COMPILER=clang++-7
         - GPG_COMPATIBLE=True
@@ -212,9 +212,10 @@ before_install:
   - pip install --user cpp-coveralls
 
 before_script:
-  - export CXX=${CXX_COMPILER}
+  - export CXX="${CXX_COMPILER}"
   - export GTEST_COLOR=1
-  - export OPENPGP_PATH=/tmp/OpenPGP
+  - export OPENPGP_PATH="/tmp/OpenPGP"
+  - export PKG_CONFIG_PATH="${OPENPGP_PATH}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
 script:
   # normal build and test
@@ -226,7 +227,7 @@ script:
 
   # rebuild the cli as a standalone application using the installed files
   - make install
-  - ${CXX} -Wall -std=c++11 -I${OPENPGP_PATH}/include ../cli/main.cpp ../cli/modules/module.cpp -L${OPENPGP_PATH}/lib -lOpenPGP -lgmp -lgmpxx -lbz2 -lz -o OpenPGP -Wl,-rpath="$(realpath ${OPENPGP_PATH}/lib)"
+  - ${CXX} -Wall -std=c++11 ../cli/main.cpp ../cli/modules/module.cpp $(pkg-config --cflags --libs OpenPGP) -Wl,-rpath="$(pkg-config --variable=libdir OpenPGP)" -o OpenPGP
   - ./OpenPGP
 
 after_success:
