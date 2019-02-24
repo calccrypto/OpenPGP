@@ -56,21 +56,21 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/contrib/cmake)
 find_package(GMP 5.0.0 REQUIRED)
 message(STATUS "GMP headers:     ${GMP_INCLUDES}")
 message(STATUS "GMP libraries:   ${GMP_LIBRARIES}")
-include_directories(${GMP_INCLUDES})
+include_directories(SYSTEM ${GMP_INCLUDES})
 link_libraries     (${GMP_LIBRARIES} gmpxx)
 
 # BZip2
 find_package(BZip2 1.0.6 REQUIRED)
 message(STATUS "BZip2 headers:   ${BZIP2_INCLUDE_DIR}")
 message(STATUS "BZip2 libraries: ${BZIP2_LIBRARIES}")
-include_directories(${BZIP2_INCLUDE_DIR})
+include_directories(SYSTEM ${BZIP2_INCLUDE_DIR})
 link_libraries     (${BZIP2_LIBRARIES})
 
 # zlib
 find_package(ZLIB 1.2.8 REQUIRED)
 message(STATUS "zlib headers:    ${ZLIB_INCLUDE_DIR}")
 message(STATUS "zlib libraries:  ${ZLIB_LIBRARIES}")
-include_directories(${ZLIB_INCLUDE_DIR})
+include_directories(SYSTEM ${ZLIB_INCLUDE_DIR})
 link_libraries     (${ZLIB_LIBRARIES})
 
 # -Iinclude
@@ -91,7 +91,6 @@ add_library(OpenPGP_static STATIC
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>
     $<TARGET_OBJECTS:RNG>
-    $<TARGET_OBJECTS:Subpackets>
     $<TARGET_OBJECTS:Tag2Subpackets>
     $<TARGET_OBJECTS:Tag17Subpackets>
 )
@@ -109,7 +108,6 @@ add_library(OpenPGP_shared SHARED
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>
     $<TARGET_OBJECTS:RNG>
-    $<TARGET_OBJECTS:Subpackets>
     $<TARGET_OBJECTS:Tag2Subpackets>
     $<TARGET_OBJECTS:Tag17Subpackets>
 )

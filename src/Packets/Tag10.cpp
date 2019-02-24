@@ -3,9 +3,11 @@
 namespace OpenPGP {
 namespace Packet {
 
+const std::string Tag10::body = "PGP";
+
 Tag10::Tag10()
     : Tag(MARKER_PACKET),
-      pgp("PGP")
+      pgp(body)
 {}
 
 Tag10::Tag10(const Tag10 & copy)
@@ -21,20 +23,20 @@ Tag10::Tag10(const std::string & data)
 
 void Tag10::read(const std::string & data){
     size = data.size();
-    if (data != "PGP"){
-        throw std::runtime_error("Error: Tag 10 packet did not contain data \"PGP\".");
+    if (data != body){
+        throw std::runtime_error("Error: Tag 10 packet did not contain data \"" + body + "\".");
     }
 }
 
 std::string Tag10::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" + 
-           indent + tab + "PGP";
+    return indent + show_title() + "\n" +
+           indent + tab + pgp;
 }
 
 std::string Tag10::raw() const{
-    return "PGP";
+    return pgp;
 }
 
 std::string Tag10::get_pgp() const{
@@ -42,8 +44,8 @@ std::string Tag10::get_pgp() const{
 }
 
 void Tag10::set_pgp(const std::string & s){
-    if (s != "PGP"){
-        throw std::runtime_error("Error: Tag 10 input data not string \x5cPGP\x5c.");
+    if (s != body){
+        throw std::runtime_error("Error: Tag 10 input data not string \"" + body + "\".");
     }
     pgp = s;
     size = 3;

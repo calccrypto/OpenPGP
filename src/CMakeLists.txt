@@ -8,7 +8,6 @@ add_subdirectory(Misc)
 add_subdirectory(Packets)
 add_subdirectory(PKA)
 add_subdirectory(RNG)
-add_subdirectory(Subpackets)
 
 add_library(TopLevel OBJECT
     CleartextSignature.cpp

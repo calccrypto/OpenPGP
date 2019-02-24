@@ -47,10 +47,12 @@ namespace OpenPGP {
         //    in order to cause that version to report that newer software is
         //    necessary to process the message.
 
-
         class Tag10 : public Tag {
+            public:
+                static const std::string body; // "PGP"
+
             private:
-                std::string pgp; // "PGP"
+                std::string pgp; // should always be "PGP"
 
             public:
                 typedef std::shared_ptr <Packet::Tag10> Ptr;
@@ -64,7 +66,7 @@ namespace OpenPGP {
 
                 std::string get_pgp() const;
 
-                void set_pgp(const std::string & s = "PGP");
+                void set_pgp(const std::string & s = body);
 
                 Tag::Ptr clone() const;
         };

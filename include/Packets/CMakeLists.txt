@@ -29,4 +29,10 @@ install(FILES
     Tag9.h
     User.h
 
+    Subpacket.h
+    Subpackets.h
+
     DESTINATION include/Packets)
+
+add_subdirectory(Tag2)
+add_subdirectory(Tag17)

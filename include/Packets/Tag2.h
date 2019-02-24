@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "Subpackets/Tag2/Subpackets.h"
+#include "Packets/Tag2/Sub32.h"
 
 #ifndef __TAG2__
 #define __TAG2__
@@ -36,7 +36,7 @@ THE SOFTWARE.
 #include "Misc/sigtypes.h"
 #include "PKA/PKAs.h"
 #include "Packets/Packet.h"
-#include "Subpackets/Tag2/Subpackets.h"
+#include "Packets/Tag2/Subpackets.h"
 
 namespace OpenPGP {
     namespace Packet {

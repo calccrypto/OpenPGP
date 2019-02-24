@@ -26,6 +26,11 @@ add_library(Packets OBJECT
     Tag60.cpp
     Tag61.cpp
     Tag62.cpp
-    Tag63.cpp)
+    Tag63.cpp
+
+    Subpacket.cpp)
 
 set_property(TARGET Packets PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+add_subdirectory(Tag2)
+add_subdirectory(Tag17)
