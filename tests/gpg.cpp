@@ -13,7 +13,7 @@
 static const std::string GPG_DIR = "tests/testvectors/gpg/";
 
 static time_t get_utc(int year, int month, int day, int hour, int minute, int second){
-    tm in = {};
+    tm in;
     in.tm_year = year - 1900;
     in.tm_mon  = month - 1;
     in.tm_mday = day;
