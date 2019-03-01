@@ -125,6 +125,74 @@ TEST(PGP, keygen){
 
     EXPECT_EQ(pri.keyid(), pub.keyid());
     EXPECT_EQ(pri.fingerprint(), pub.fingerprint());
+
+    // writing the private key with armor and reading it back results in the same private key
+    {
+        const std::string pri_str = pri.write(OpenPGP::PGP::Armored::YES);
+        const OpenPGP::SecretKey pri_parsed(pri_str);
+        ASSERT_EQ(pri_parsed.meaningful(), true);
+
+        const OpenPGP::PGP::Packets pri_packets        = pri.get_packets();
+        const OpenPGP::PGP::Packets pri_parsed_packets = pri_parsed.get_packets();
+        EXPECT_EQ(pri_packets.size(), pri_parsed_packets.size());
+
+        // not the most strict check
+        for(OpenPGP::PGP::Packets::size_type i = 0; i < pri_packets.size(); i++) {
+            EXPECT_EQ(pri_packets[i] -> get_tag(), pri_parsed_packets[i] -> get_tag());
+            EXPECT_EQ(pri_packets[i] -> raw(),     pri_parsed_packets[i] -> raw());
+        }
+    }
+
+    // writing the private key without armor and reading it back results in the same private key
+    {
+        const std::string pri_str = pri.write(OpenPGP::PGP::Armored::NO);
+        const OpenPGP::SecretKey pri_parsed(pri_str);
+        ASSERT_EQ(pri_parsed.meaningful(), true);
+
+        const OpenPGP::PGP::Packets pri_packets        = pri.get_packets();
+        const OpenPGP::PGP::Packets pri_parsed_packets = pri_parsed.get_packets();
+        EXPECT_EQ(pri_packets.size(), pri_parsed_packets.size());
+
+        // not the most strict check
+        for(OpenPGP::PGP::Packets::size_type i = 0; i < pri_packets.size(); i++) {
+            EXPECT_EQ(pri_packets[i] -> get_tag(), pri_parsed_packets[i] -> get_tag());
+            EXPECT_EQ(pri_packets[i] -> raw(),     pri_parsed_packets[i] -> raw());
+        }
+    }
+
+    // writing the public key with armor and reading it back results in the same public key
+    {
+        const std::string pub_str = pub.write(OpenPGP::PGP::Armored::YES);
+        const OpenPGP::PublicKey pub_parsed(pub_str);
+        ASSERT_EQ(pub_parsed.meaningful(), true);
+
+        const OpenPGP::PGP::Packets pub_packets        = pub.get_packets();
+        const OpenPGP::PGP::Packets pub_parsed_packets = pub_parsed.get_packets();
+        EXPECT_EQ(pub_packets.size(), pub_parsed_packets.size());
+
+        // not the most strict check
+        for(OpenPGP::PGP::Packets::size_type i = 0; i < pub_packets.size(); i++) {
+            EXPECT_EQ(pub_packets[i] -> get_tag(), pub_parsed_packets[i] -> get_tag());
+            EXPECT_EQ(pub_packets[i] -> raw(),     pub_parsed_packets[i] -> raw());
+        }
+    }
+
+    // writing the public key without armor and reading it back results in the same public key
+    {
+        const std::string pub_str = pub.write(OpenPGP::PGP::Armored::NO);
+        const OpenPGP::PublicKey pub_parsed(pub_str);
+        ASSERT_EQ(pub_parsed.meaningful(), true);
+
+        const OpenPGP::PGP::Packets pub_packets        = pub.get_packets();
+        const OpenPGP::PGP::Packets pub_parsed_packets = pub_parsed.get_packets();
+        EXPECT_EQ(pub_packets.size(), pub_parsed_packets.size());
+
+        // not the most strict check
+        for(OpenPGP::PGP::Packets::size_type i = 0; i < pub_packets.size(); i++) {
+            EXPECT_EQ(pub_packets[i] -> get_tag(), pub_parsed_packets[i] -> get_tag());
+            EXPECT_EQ(pub_packets[i] -> raw(),     pub_parsed_packets[i] -> raw());
+        }
+    }
 }
 
 TEST(PGP, revoke_key){
