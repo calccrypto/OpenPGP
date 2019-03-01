@@ -16,9 +16,10 @@ Also:
 
 - Alex Stapleton (OpenPGP-SDK)
 - Auston Sterling - Massive amounts of debugging and programming help
-- D-o-c Key merging and elliptic curve parsing
-- Jon Callas (RFC 4880)
+- D-o-c - Key merging and elliptic curve parsing
 - Herbert Hanewinkel (hanewin.net)
+- Jon Callas (RFC 4880)
+- kaie - Found lots of bugs that were caused by knowledge gaps ([#43](https://github.com/calccrypto/OpenPGP/issues/43))
 - Many people on the StackExchange network
 - mugwort-rc - Tons of testing code, code style updates, and bugfixes
 - pgpdump.net
