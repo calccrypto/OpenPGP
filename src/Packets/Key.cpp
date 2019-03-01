@@ -18,6 +18,11 @@ Key::Key(uint8_t tag)
       #endif
 {}
 
+void Key::actual_read(const std::string & data){
+    std::string::size_type pos = 0;
+    read_common(data, pos);
+}
+
 Key::Key()
     : Key(0)
 {}
@@ -44,11 +49,6 @@ Key::Key(const std::string & data)
 }
 
 Key::~Key(){}
-
-void Key::read(const std::string & data){
-    std::string::size_type pos = 0;
-    read_common(data, pos);
-}
 
 std::string Key::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string tab(indents * indent_size, ' ');

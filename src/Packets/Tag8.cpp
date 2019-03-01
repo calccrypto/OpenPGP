@@ -14,6 +14,13 @@ std::string Tag8::decompress(const std::string & data) const{
     return Compression::decompress(comp, data);
 }
 
+void Tag8::actual_read(const std::string & data){
+    if (size > 1) {
+        comp = data[0];
+        compressed_data = data.substr(1, size - 1);
+    }
+}
+
 std::string Tag8::show_title() const {
     return Tag::show_title() + Partial::show_title();
 }
@@ -38,17 +45,12 @@ Tag8::Tag8(const std::string & data)
     read(data);
 }
 
-void Tag8::read(const std::string & data){
-    size = data.size();
-    comp = data[0];
-    compressed_data = data.substr(1, size - 1);
-}
-
 std::string Tag8::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');
     const std::string tab(indent_size, ' ');
     const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
-    Message decompressed(get_data());
+    Message decompressed;
+    decompressed.read_raw(get_data());
 
     return indent + show_title() + "\n" +
            indent + tab + "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")\n" +
@@ -73,12 +75,18 @@ uint8_t Tag8::get_comp() const{
     return comp;
 }
 
-std::string Tag8::get_compressed_data() const{
-    return compressed_data;
-}
-
 std::string Tag8::get_data() const{
     return decompress(compressed_data);
+}
+
+Message Tag8::get_body() const {
+    Message msg;
+    msg.read_raw(get_data());           // "A Compressed Data Packet’s body contains an block that compresses some set of packets."
+    return msg;
+}
+
+std::string Tag8::get_compressed_data() const{
+    return compressed_data;
 }
 
 void Tag8::set_comp(const uint8_t alg){
@@ -93,6 +101,11 @@ void Tag8::set_comp(const uint8_t alg){
 void Tag8::set_data(const std::string & data){
     compressed_data = compress(data);
     size = raw().size();
+}
+
+void Tag8::set_body(const Message & msg) {
+    // set the decompressed data to the raw packets of the message
+    set_data(msg.raw());
 }
 
 void Tag8::set_compressed_data(const std::string & data){

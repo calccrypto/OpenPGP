@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <list>
 
 #include "PGP.h"
+#include "Packets/Tag8.h"
 
 namespace OpenPGP {
 
@@ -112,6 +113,9 @@ namespace OpenPGP {
             Message(const std::string & data);
             Message(std::istream & stream);
             ~Message();
+
+            // Read Binary data
+            void read_raw(const std::string & data);
 
             std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
             std::string raw() const;                                                                    // write packets only

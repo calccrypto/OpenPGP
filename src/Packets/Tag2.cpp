@@ -5,43 +5,6 @@
 namespace OpenPGP {
 namespace Packet {
 
-Tag2::Tag2()
-    : Tag(SIGNATURE),
-      type(0),
-      pka(0),
-      hash(0),
-      mpi(),
-      left16(),
-      time(0),
-      keyid(),
-      hashed_subpackets(),
-      unhashed_subpackets()
-{}
-
-Tag2::Tag2(const Tag2 & copy)
-    : Tag(copy),
-      type(copy.type),
-      pka(copy.pka),
-      hash(copy.hash),
-      mpi(copy.mpi),
-      left16(copy.left16),
-      time(copy.time),
-      keyid(copy.keyid),
-      hashed_subpackets(copy.get_hashed_subpackets_clone()),
-      unhashed_subpackets(copy.get_unhashed_subpackets_clone())
-{}
-
-Tag2::Tag2(const std::string & data)
-    : Tag2()
-{
-    read(data);
-}
-
-Tag2::~Tag2(){
-    hashed_subpackets.clear();
-    unhashed_subpackets.clear();
-}
-
 // Extracts Subpacket data for figuring which subpacket type to create
 void Tag2::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
     length = 0;
@@ -166,9 +129,8 @@ void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpacke
     }
 }
 
-void Tag2::read(const std::string & data){
-    size = data.size();
-    tag = 2;
+void Tag2::actual_read(const std::string & data){
+    tag = Packet::SIGNATURE;
     version = data[0];
     if (version < 4){
         if (data[1] != 5){
@@ -217,7 +179,7 @@ void Tag2::read(const std::string & data){
         // get left 16 bits
         left16 = data.substr(hashed_size + 6 + 2 + unhashed_size, 2);
 
-//        if (PKA::is_RSA(PKA))
+        // if (PKA::is_RSA(PKA))
         std::string::size_type pos = hashed_size + 6 + 2 + unhashed_size + 2;
         mpi.push_back(read_MPI(data, pos));         // RSA m**d mod n
         #ifdef GPG_COMPATIBLE
@@ -319,6 +281,43 @@ std::string Tag2::show(const std::size_t indents, const std::size_t indent_size)
     }
 
     return out;
+}
+
+Tag2::Tag2()
+    : Tag(SIGNATURE),
+      type(0),
+      pka(0),
+      hash(0),
+      mpi(),
+      left16(),
+      time(0),
+      keyid(),
+      hashed_subpackets(),
+      unhashed_subpackets()
+{}
+
+Tag2::Tag2(const Tag2 & copy)
+    : Tag(copy),
+      type(copy.type),
+      pka(copy.pka),
+      hash(copy.hash),
+      mpi(copy.mpi),
+      left16(copy.left16),
+      time(copy.time),
+      keyid(copy.keyid),
+      hashed_subpackets(copy.get_hashed_subpackets_clone()),
+      unhashed_subpackets(copy.get_unhashed_subpackets_clone())
+{}
+
+Tag2::Tag2(const std::string & data)
+    : Tag2()
+{
+    read(data);
+}
+
+Tag2::~Tag2(){
+    hashed_subpackets.clear();
+    unhashed_subpackets.clear();
 }
 
 std::string Tag2::raw() const{

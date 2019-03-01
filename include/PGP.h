@@ -52,8 +52,11 @@ namespace OpenPGP {
             static const Type_t SIGNATURE;                  // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
             static const Type_t SIGNED_MESSAGE;             // Used for cleartext signatures; Bad PGP type.
 
+            static const std::string ASCII_Armor_5_Dashes;  // "-----";
+            static const std::string ASCII_Armor_Begin;     // "-----BEGIN PGP ";
             static const std::string ASCII_Armor_Header[];  // ASCII data at beginning and end of OpenPGP packet
             static const std::string ASCII_Armor_Key[];     // ASCII descriptor of OpenPGP packet
+            static const std::string ASCII_Armor_End;       // "-----END PGP ";
 
             // used for write function
             enum Armored {
@@ -103,7 +106,7 @@ namespace OpenPGP {
             void read(std::istream & stream);
 
             // Read Binary data
-            void read_raw(const std::string & data);
+            virtual void read_raw(const std::string & data);
             void read_raw(std::istream & stream);
 
             virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired

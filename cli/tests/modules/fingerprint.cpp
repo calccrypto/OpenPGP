@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "cli/modules/fingerprint.h"
-#include "tests/testvectors/read_pgp.h"
+#include "tests/read_pgp.h"
 
 #define GPG_DIR "tests/testvectors/gpg/"
 

@@ -237,3 +237,30 @@ std::string xor_strings(const std::string & str1, const std::string & str2){
     }
     return out;
 }
+
+// remove leading and trailing whitespace from a string
+std::string trim_whitespace(const std::string & src, const bool trim_front, const bool trim_back, const std::string & ws) {
+    if (!src.size()) {
+        return src;
+    }
+
+    std::string::size_type front = 0;
+    if (trim_front) {
+        front = src.find_first_not_of(ws);
+
+        if (front == std::string::npos) {
+            return "";
+        }
+    }
+
+    std::string::size_type back = src.size();
+    if (trim_back) {
+        back = src.find_last_not_of(ws);
+
+        if (back == std::string::npos) {
+            back = src.size() - 1;
+        }
+    }
+
+    return src.substr(front, back - front + 1);
+}

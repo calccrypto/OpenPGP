@@ -3,6 +3,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag19::actual_read(const std::string & data){
+    hash = data;
+}
+
 Tag19::Tag19()
     : Tag(MODIFICATION_DETECTION_CODE),
       hash()
@@ -19,11 +23,6 @@ Tag19::Tag19(const std::string & data)
     : Tag19()
 {
     read(data);
-}
-
-void Tag19::read(const std::string & data){
-    size = data.size();
-    hash = data;
 }
 
 std::string Tag19::show(const std::size_t indents, const std::size_t indent_size) const{

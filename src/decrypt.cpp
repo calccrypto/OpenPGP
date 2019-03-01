@@ -62,7 +62,9 @@ Message data(const uint8_t sym,
     data = data.substr(BS + 2, data.size() - BS - 2);                   // get rid of prefix
 
     // decompress and parse decrypted data
-    return Message(data);
+    Message msg;
+    msg.read_raw(data);
+    return msg;
 }
 
 Message pka(const SecretKey & pri,

@@ -232,7 +232,7 @@ TEST(ROL, good) {
     }
 }
 
-TEST(and_strings, good) {
+TEST(strings, and) {
     const uint64_t val1 = 0x05050505a5a5a5a5ULL;
     const uint64_t val2 = 0xa0a0a0a05a5a5a5aULL;
 
@@ -242,7 +242,7 @@ TEST(and_strings, good) {
     EXPECT_EQ(and_strings(str1, str2), std::string("\x00\x00\x00\x00\x00\x00\x00\x00", 8));
 }
 
-TEST(or_strings, good) {
+TEST(strings, or) {
     const uint64_t val1 = 0x05050505a5a5a5a5ULL;
     const uint64_t val2 = 0xa0a0a0a05a5a5a5aULL;
 
@@ -252,7 +252,7 @@ TEST(or_strings, good) {
     EXPECT_EQ(or_strings(str1, str2), std::string("\xa5\xa5\xa5\xa5\xff\xff\xff\xff", 8));
 }
 
-TEST(xor_strings, good) {
+TEST(strings, xor) {
     const uint64_t val1 = 0x05050505a5a5a5a5ULL;
     const uint64_t val2 = 0xa0a0a0a05a5a5a5aULL;
 
@@ -260,4 +260,39 @@ TEST(xor_strings, good) {
     const std::string str2 = unhexlify(makehex(val2, 16));
 
     EXPECT_EQ(xor_strings(str1, str2), std::string("\xa5\xa5\xa5\xa5\xff\xff\xff\xff", 8));
+}
+
+TEST(trim_whitespace, empty) {
+    const std::string str = "";
+    EXPECT_EQ(trim_whitespace(str, true, true), str);
+}
+
+TEST(trim_whitespace, no_whitespace) {
+    const std::string str = "string";
+    EXPECT_EQ(trim_whitespace(str, true, true), str);
+}
+
+TEST(trim_whitespace, only_whitespace) {
+    const std::string str = whitespace;
+    EXPECT_EQ(trim_whitespace(str, true, true), "");
+}
+
+TEST(trim_whitespace, remove_leading) {
+    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
+    EXPECT_EQ(trim_whitespace(str, true, false), str.substr(whitespace.size(), str.size() - whitespace.size()));
+}
+
+TEST(trim_whitespace, remove_trailing) {
+    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
+    EXPECT_EQ(trim_whitespace(str, false, true), str.substr(0, str.size() - whitespace.size()));
+}
+
+TEST(trim_whitespace, remove_both) {
+    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
+    EXPECT_EQ(trim_whitespace(str, true, true), str.substr(whitespace.size(), str.size() - whitespace.size() - whitespace.size()));
+}
+
+TEST(trim_whitespace, remove_none) {
+    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
+    EXPECT_EQ(trim_whitespace(str, false, false), str);
 }

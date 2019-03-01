@@ -8,7 +8,8 @@
 
 #include "testvectors/msg.h"
 #include "testvectors/pass.h"
-#include "testvectors/read_pgp.h"
+#include "extract_decrypted.h"
+#include "read_pgp.h"
 
 static const std::string GPG_DIR = "tests/testvectors/gpg/";
 
@@ -572,13 +573,7 @@ TEST(gpg, decrypt_pka_mdc){
 
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
-    std::string message = "";
-    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
-        }
-    }
-    EXPECT_EQ(message, MESSAGE);
+    EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
 TEST(gpg, decrypt_pka_no_mdc){
@@ -619,13 +614,7 @@ TEST(gpg, decrypt_pka_no_mdc){
 
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
-    std::string message = "";
-    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
-        }
-    }
-    EXPECT_EQ(message, MESSAGE);
+    EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
 TEST(gpg, decrypt_symmetric_mdc){
@@ -664,13 +653,7 @@ TEST(gpg, decrypt_symmetric_mdc){
 
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(gpg_encrypted, PASSPHRASE);
-    std::string message = "";
-    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
-        }
-    }
-    EXPECT_EQ(message, MESSAGE);
+    EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
 TEST(gpg, decrypt_symmetric_no_mdc){
@@ -708,13 +691,7 @@ TEST(gpg, decrypt_symmetric_no_mdc){
 
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::sym(gpg_encrypted, PASSPHRASE);
-    std::string message = "";
-    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
-        }
-    }
-    EXPECT_EQ(message, MESSAGE);
+    EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
 TEST(gpg, decrypt_verify){
@@ -755,13 +732,7 @@ TEST(gpg, decrypt_verify){
 
     // decrypt data
     const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, PASSPHRASE, gpg_encrypted);
-    std::string message = "";
-    for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-        if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-            message += std::dynamic_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
-        }
-    }
-    EXPECT_EQ(message, MESSAGE);
+    EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 
     EXPECT_EQ(decrypted.get_comp(), OpenPGP::Compression::ID::ZLIB);
 

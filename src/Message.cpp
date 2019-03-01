@@ -112,16 +112,15 @@ bool Message::SignedMessage(std::list <Token>::iterator it, std::list <Token> & 
 }
 
 bool Message::decompress() {
-    comp.reset();
-
     // check if compressed
     if ((packets.size() == 1) && (packets[0] -> get_tag() == Packet::COMPRESSED_DATA)){
+        comp.reset();
         comp = std::static_pointer_cast <Packet::Tag8> (packets[0]);
         const std::string compressed = comp -> get_data();
         comp -> set_data("");
         comp -> set_partial(comp -> get_partial());
         packets.clear();
-        read(compressed);
+        read_raw(compressed);
 
         type = MESSAGE;
 
@@ -195,6 +194,21 @@ Message::Message(std::istream & stream)
 
 Message::~Message(){}
 
+void Message::read_raw(const std::string & data){
+    PGP::read_raw(data);
+
+    type = MESSAGE;
+
+    // throw if packet sequence is not meaningful
+    if (!meaningful()){
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Message");
+    }
+
+    if (!decompress()){
+        throw std::runtime_error("Error: Failed to decompress data");
+    }
+}
+
 std::string Message::show(const std::size_t indents, const std::size_t indent_size) const{
     std::stringstream out;
     if (comp){                  // if compression was used, add a header
@@ -228,12 +242,14 @@ std::string Message::write(const PGP::Armored armor) const{
         return packet_string;
     }
 
-    std::string out = "-----BEGIN PGP MESSAGE-----\n";
+    std::string out = ASCII_Armor_Begin + ASCII_Armor_Header[MESSAGE] + ASCII_Armor_5_Dashes + "\n";
     for(Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
     out += "\n";
-    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP MESSAGE-----\n";
+    return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH)
+        + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n"
+        + ASCII_Armor_End + ASCII_Armor_Header[MESSAGE] + ASCII_Armor_5_Dashes + "\n";
 }
 
 uint8_t Message::get_comp() const{

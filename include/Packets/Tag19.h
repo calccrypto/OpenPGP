@@ -60,13 +60,14 @@ namespace OpenPGP {
             private:
                 std::string hash;
 
+                void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Packet::Tag19> Ptr;
 
                 Tag19();
                 Tag19(const Tag19 & copy);
                 Tag19(const std::string & data);
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 

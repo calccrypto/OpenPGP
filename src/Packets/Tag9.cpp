@@ -5,6 +5,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag9::actual_read(const std::string & data){
+    encrypted_data = data;
+}
+
 std::string Tag9::show_title() const {
     return Tag::show_title() + Partial::show_title();
 }
@@ -25,11 +29,6 @@ Tag9::Tag9(const std::string & data)
     : Tag9()
 {
     read(data);
-}
-
-void Tag9::read(const std::string & data){
-    size = data.size();
-    encrypted_data = data;
 }
 
 std::string Tag9::show(const std::size_t indents, const std::size_t indent_size) const{

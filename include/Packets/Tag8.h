@@ -31,6 +31,10 @@ THE SOFTWARE.
 #include "Packets/Partial.h"
 
 namespace OpenPGP {
+
+    // declare Message here to prevent include loop
+    class Message;
+
     namespace Packet {
 
         // 5.6.  Compressed Data Packet (Tag 8)
@@ -70,6 +74,7 @@ namespace OpenPGP {
                 std::string compress(const std::string & data) const;
                 std::string decompress(const std::string & data) const;
 
+                void actual_read(const std::string & data);
                 std::string show_title() const;
 
             public:
@@ -78,17 +83,18 @@ namespace OpenPGP {
                 Tag8(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag8(const Tag8 & copy);
                 Tag8(const std::string & data);
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string write() const;
 
                 uint8_t get_comp() const;
                 std::string get_data() const;                           // get uncompressed data
+                Message get_body() const;                               // get parsed uncompressed data
                 std::string get_compressed_data() const;                // get compressed data
 
                 void set_comp(const uint8_t alg);
                 void set_data(const std::string & data);                // set uncompressed data
+                void set_body(const Message & msg);                     // set parsed uncompressed data
                 void set_compressed_data(const std::string & data);     // set compressed data
 
                 Tag::Ptr clone() const;

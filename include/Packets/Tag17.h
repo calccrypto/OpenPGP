@@ -78,6 +78,7 @@ namespace OpenPGP {
                 Attributes attributes;
 
                 void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
+                void actual_read(const std::string & data);
 
             public:
                 typedef std::shared_ptr <Packet::Tag17> Ptr;
@@ -86,7 +87,6 @@ namespace OpenPGP {
                 Tag17(const Tag17 & copy);
                 Tag17(const std::string & data);
                 ~Tag17();
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 

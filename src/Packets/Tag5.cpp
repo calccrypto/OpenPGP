@@ -3,6 +3,38 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag5::actual_read(const std::string & data){
+    std::string::size_type pos = 0;
+
+    // public data
+    read_common(data, pos);
+
+    // S2K usage octet
+    s2k_con = data[pos++];
+    if ((s2k_con != 0) && (s2k_con != 254) && (s2k_con != 255)){
+        sym = s2k_con;
+    }
+
+    // one octet symmetric key encryption algorithm
+    if ((s2k_con == 254) || (s2k_con == 255)){
+        sym = data[pos++];
+    }
+
+    // S2K specifier
+    if ((s2k_con == 254) || (s2k_con == 255)){
+        read_s2k(data, pos);
+    }
+
+    // IV
+    if (s2k_con){
+        IV = data.substr(pos, Sym::BLOCK_LENGTH.at(sym) >> 3);
+        pos += IV.size();
+    }
+
+    // plaintex or encrypted data
+    secret = data.substr(pos, data.size() - pos);
+}
+
 Tag5::Tag5(uint8_t tag)
     : Tag6(tag),
       s2k_con(0),
@@ -152,39 +184,6 @@ std::string Tag5::show_private(const std::size_t indents, const std::size_t inde
     }
 
     return out;
-}
-
-void Tag5::read(const std::string & data){
-    size = data.size();
-    std::string::size_type pos = 0;
-
-    // public data
-    read_common(data, pos);
-
-    // S2K usage octet
-    s2k_con = data[pos++];
-    if ((s2k_con != 0) && (s2k_con != 254) && (s2k_con != 255)){
-        sym = s2k_con;
-    }
-
-    // one octet symmetric key encryption algorithm
-    if ((s2k_con == 254) || (s2k_con == 255)){
-        sym = data[pos++];
-    }
-
-    // S2K specifier
-    if ((s2k_con == 254) || (s2k_con == 255)){
-        read_s2k(data, pos);
-    }
-
-    // IV
-    if (s2k_con){
-        IV = data.substr(pos, Sym::BLOCK_LENGTH.at(sym) >> 3);
-        pos += IV.size();
-    }
-
-    // plaintex or encrypted data
-    secret = data.substr(pos, data.size() - pos);
 }
 
 std::string Tag5::show(const std::size_t indents, const std::size_t indent_size) const{

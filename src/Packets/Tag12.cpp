@@ -3,6 +3,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag12::actual_read(const std::string & data){
+    trust = data;
+}
+
 Tag12::Tag12()
     : Tag(TRUST),
       trust()
@@ -17,11 +21,6 @@ Tag12::Tag12(const std::string & data)
     : Tag12()
 {
     read(data);
-}
-
-void Tag12::read(const std::string & data){
-    size = data.size();
-    trust = data;
 }
 
 std::string Tag12::show(const std::size_t indents, const std::size_t indent_size) const{

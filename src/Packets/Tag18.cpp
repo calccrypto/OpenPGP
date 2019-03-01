@@ -5,6 +5,11 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag18::actual_read(const std::string & data){
+    version = data[0];
+    protected_data = data.substr(1, data.size() - 1);
+}
+
 std::string Tag18::show_title() const {
     return Tag::show_title() + Partial::show_title();
 }
@@ -25,12 +30,6 @@ Tag18::Tag18(const std::string & data)
     : Tag18()
 {
     read(data);
-}
-
-void Tag18::read(const std::string & data){
-    size = data.size();
-    version = data[0];
-    protected_data = data.substr(1, data.size() - 1);
 }
 
 std::string Tag18::show(const std::size_t indents, const std::size_t indent_size) const{

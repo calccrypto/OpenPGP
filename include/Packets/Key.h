@@ -53,6 +53,8 @@ namespace OpenPGP {
 
                 Key(uint8_t tag);
 
+                virtual void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Key> Ptr;
 
@@ -61,7 +63,6 @@ namespace OpenPGP {
                 Key(const std::string & data);
                 virtual ~Key();
 
-                virtual void read(const std::string & data);
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
 

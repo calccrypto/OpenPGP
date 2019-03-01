@@ -5,6 +5,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag61::actual_read(const std::string & data){
+    stream = data;
+}
+
 Tag61::Tag61()
     : Tag61(std::string())
 {}
@@ -18,10 +22,6 @@ Tag61::Tag61(const std::string & data)
     : Tag(61),
       stream(data)
 {}
-
-void Tag61::read(const std::string & data){
-    stream = data;
-}
 
 std::string Tag61::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');

@@ -90,6 +90,8 @@ namespace OpenPGP {
                 S2K::S2K::Ptr s2k;
                 std::shared_ptr <std::string> esk; // encrypted session key
 
+                void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Packet::Tag3> Ptr;
 
@@ -97,7 +99,6 @@ namespace OpenPGP {
                 Tag3(const Tag3 & copy);
                 Tag3(const std::string & data);
                 ~Tag3();
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 

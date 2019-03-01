@@ -16,6 +16,7 @@ static const uint8_t  mod8  = 0xffU;
 static const uint16_t mod16 = 0xffffU;
 static const uint32_t mod32 = 0xffffffffUL;
 static const uint64_t mod64 = 0xffffffffffffffffULL;
+static const std::string whitespace = "\x20\x09\x0a\x0b\x0c\x0d";
 
 // string to integer
 uint64_t toint(const std::string & s, const int & base = 10);
@@ -111,5 +112,8 @@ std::string or_strings(const std::string & str1, const std::string & str2);
 
 // xor the contents of 2 strings, up to the last character of the shorter string
 std::string xor_strings(const std::string & str1, const std::string & str2);
+
+// remove leading and trailing whitespace from a string
+std::string trim_whitespace(const std::string & src, const bool trim_front = true, const bool trim_back = true, const std::string & ws = whitespace);
 
 #endif

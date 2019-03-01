@@ -21,4 +21,3 @@ TEST(Compress, bzip2) {
     auto decompressed = OpenPGP::Compression::decompress(OpenPGP::Compression::ID::BZIP2, compressed);
     EXPECT_EQ(decompressed, MESSAGE);
 }
-

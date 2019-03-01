@@ -22,6 +22,29 @@ void Tag17::read_subpacket(const std::string & data, std::string::size_type & po
     }
 }
 
+void Tag17::actual_read(const std::string & data){
+    // read subpackets
+    std::string::size_type pos = 0;
+    while (pos < size){
+        std::string::size_type length;
+        read_subpacket(data, pos, length);
+
+        Subpacket::Tag17::Sub::Ptr subpacket = nullptr;
+        if (data[pos] == Subpacket::Tag17::IMAGE_ATTRIBUTE){
+            subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
+        }
+        else {
+            throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
+        }
+
+        subpacket -> read(data.substr(pos + 1, length - 1));
+        attributes.push_back(subpacket);
+
+        // go to end of current subpacket
+        pos += length;
+    }
+}
+
 Tag17::Tag17()
     : User(USER_ATTRIBUTE),
       length(),
@@ -48,31 +71,6 @@ Tag17::Tag17(const std::string & data)
 
 Tag17::~Tag17(){
     attributes.clear();
-}
-
-void Tag17::read(const std::string & data){
-    size = data.size();
-
-    // read subpackets
-    std::string::size_type pos = 0;
-    while (pos < size){
-        std::string::size_type length;
-        read_subpacket(data, pos, length);
-
-        Subpacket::Tag17::Sub::Ptr subpacket = nullptr;
-        if (data[pos] == Subpacket::Tag17::IMAGE_ATTRIBUTE){
-            subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
-        }
-        else {
-            throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
-        }
-
-        subpacket -> read(data.substr(pos + 1, length - 1));
-        attributes.push_back(subpacket);
-
-        // go to end of current subpacket
-        pos += length;
-    }
 }
 
 std::string Tag17::show(const std::size_t indents, const std::size_t indent_size) const{

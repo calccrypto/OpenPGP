@@ -99,13 +99,14 @@ namespace OpenPGP {
                 uint8_t pka;
                 PKA::Values mpi;        // algorithm specific fields
 
+                void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Packet::Tag1> Ptr;
 
                 Tag1();
                 Tag1(const Tag1 & copy);
                 Tag1(const std::string & data);
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 

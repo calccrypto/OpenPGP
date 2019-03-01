@@ -85,6 +85,8 @@ namespace OpenPGP {
                 // Function to parse all subpackets
                 void read_subpackets(const std::string & data, Subpackets & subpackets);
 
+                void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Packet::Tag2> Ptr;
 
@@ -92,7 +94,6 @@ namespace OpenPGP {
                 Tag2(const Tag2 & copy);
                 Tag2(const std::string & data);
                 ~Tag2();
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw()                               const;
 

@@ -1,5 +1,11 @@
 #include "Misc/sigcalc.h"
 
+#include <sstream>
+#include <stdexcept>
+
+#include "Hashes/Hashes.h"
+#include "Misc/pgptime.h"
+
 namespace OpenPGP {
 
 std::string addtrailer(const std::string & data, const Packet::Tag2::Ptr & sig){

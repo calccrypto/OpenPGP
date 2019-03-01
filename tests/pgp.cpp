@@ -14,7 +14,7 @@
 
 #include "testvectors/msg.h"
 #include "testvectors/pass.h"
-#include "testvectors/read_pgp.h"
+#include "read_pgp.h"
 
 static const std::string GPG_DIR = "tests/testvectors/gpg/";
 

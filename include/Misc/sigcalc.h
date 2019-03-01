@@ -26,15 +26,12 @@ THE SOFTWARE.
 #ifndef __SIGNATURE__
 #define __SIGNATURE__
 
-#include <sstream>
-#include <stdexcept>
 #include <string>
 
-#include "Hashes/Hashes.h"
 #include "Packets/Packets.h"
-#include "Misc/pgptime.h"
 
 namespace OpenPGP {
+
     // Modify data for signature version 3 or 4
     //
     //    Once the data body is hashed, then a trailer is hashed. A V3

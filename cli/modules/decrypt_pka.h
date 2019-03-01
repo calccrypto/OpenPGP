@@ -91,19 +91,23 @@ const Module decrypt_pka(
         const OpenPGP::Message decrypted = OpenPGP::Decrypt::pka(pri, args.at("passphrase"), message);
 
         if (!decrypted.meaningful()){
-            err << "Error: Decrypted data is not meaningul." << std::endl;
+            err << "Error: Decrypted data is not meaningful." << std::endl;
             return -1;
         }
 
         // extract data
         std::string cleartext = "";
         for(OpenPGP::Packet::Tag::Ptr const & p : decrypted.get_packets()){
-            if (p -> get_tag() == OpenPGP::Packet::LITERAL_DATA){
-                cleartext += std::static_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
+            switch (p -> get_tag()) {
+                case OpenPGP::Packet::LITERAL_DATA:
+                    cleartext += std::static_pointer_cast <OpenPGP::Packet::Tag11> (p) -> out(false);
+                    break;
+                default:
+                    continue;
             }
-        }
 
-        cleartext += "\n";
+            cleartext += "\n";
+        }
 
         // if signing key provided, check the signature
         if (signer){

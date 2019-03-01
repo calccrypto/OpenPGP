@@ -1,5 +1,9 @@
 #include "PGP.h"
 
+#include "Misc/CRC-24.h"
+#include "Packets/Packets.h"
+#include "common/includes.h"
+
 namespace OpenPGP {
 
 const PGP::Type_t PGP::UNKNOWN           = 0; // Default value
@@ -11,6 +15,8 @@ const PGP::Type_t PGP::MESSAGE_PART_X    = 5; // Used for multi-part messages, w
 const PGP::Type_t PGP::SIGNATURE         = 6; // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
 const PGP::Type_t PGP::SIGNED_MESSAGE    = 7; // Used for cleartext signatures; header not really part of RFC 4880.
 
+const std::string PGP::ASCII_Armor_5_Dashes = "-----";
+const std::string PGP::ASCII_Armor_Begin  = PGP::ASCII_Armor_5_Dashes + "BEGIN PGP ";
 const std::string PGP::ASCII_Armor_Header[] = {
    "",                  // Unknown type
    "MESSAGE",           // Used for signed, encrypted, or compressed files.
@@ -39,6 +45,8 @@ const std::string PGP::ASCII_Armor_Key[] = {
 
     "Charset",          // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
 };
+
+const std::string PGP::ASCII_Armor_End = PGP::ASCII_Armor_5_Dashes + "END PGP ";
 
 // 4.2.2.1. One-Octet Lengths
 //     A one-octet Body Length header encodes a length of 0 to 191 octets.
@@ -308,7 +316,6 @@ Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t ta
     // fill in data
     out -> set_tag(tag);
     out -> set_header_format(format);
-    out -> set_size(data.size());
     out -> read(data);
 
     return out;
@@ -391,7 +398,14 @@ void PGP::read(std::istream & stream){
     //     line. These line endings are considered a part of the Armor Header
     //     Line for the purposes of determining the content they delimit.
     std::string line;
-    while (std::getline(stream, line) && line.substr(0, 15) != "-----BEGIN PGP ");
+    while (std::getline(stream, line)) {
+        // get rid of whitespace on either side
+        line = trim_whitespace(line, true, true);
+
+        if (line.substr(0, ASCII_Armor_Begin.size()) == ASCII_Armor_Begin) {
+            break;
+        }
+    }
 
     // if no armor header found, assume entire stream is binary data
     if (!stream){
@@ -407,7 +421,7 @@ void PGP::read(std::istream & stream){
     else{
         // parse armor header
         for(type = MESSAGE; type != SIGNED_MESSAGE; type++){
-            if (("-----BEGIN PGP " + ASCII_Armor_Header[type] + "-----") == line){
+            if ((ASCII_Armor_Begin + ASCII_Armor_Header[type] + ASCII_Armor_5_Dashes) == line){
                 break;
             }
         }
@@ -419,6 +433,14 @@ void PGP::read(std::istream & stream){
 
         // read Armor Key(s)
         while (std::getline(stream, line) && line.size()){
+            // get rid of whitespace on either side
+            line = trim_whitespace(line, true, true);
+
+            // if now there is nothing, stop
+            if (!line.size()) {
+                break;
+            }
+
             std::stringstream s(line);
             std::string key, value;
 
@@ -443,8 +465,14 @@ void PGP::read(std::istream & stream){
         }
 
         // read up to tail
-        std::string body;
-        while (std::getline(stream, line) && (line.substr(0, 13) != "-----END PGP ")){
+        std::string body = "";
+        while (std::getline(stream, line)) {
+            line = trim_whitespace(line, true, true);
+
+            if (line.substr(0, ASCII_Armor_End.size()) == ASCII_Armor_End){
+                break;
+            }
+
             body += line;
         }
 
@@ -513,12 +541,12 @@ std::string PGP::write(const PGP::Armored armor) const{
         return packet_string;
     }
 
-    std::string out = "-----BEGIN PGP " + ASCII_Armor_Header[type] + "-----\n";
+    std::string out = PGP::ASCII_Armor_Begin + ASCII_Armor_Header[type] + PGP::ASCII_Armor_5_Dashes + "\n";
     for(Armor_Key const & key : keys){
         out += key.first + ": " + key.second + "\n";
     }
 
-    return out + "\n" + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n-----END PGP " + ASCII_Armor_Header[type] + "-----\n";
+    return out + "\n" + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n" + PGP::ASCII_Armor_End + ASCII_Armor_Header[type] + PGP::ASCII_Armor_5_Dashes + "\n";
 }
 
 bool PGP::get_armored() const{

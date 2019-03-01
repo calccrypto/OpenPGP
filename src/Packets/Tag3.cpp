@@ -3,30 +3,7 @@
 namespace OpenPGP {
 namespace Packet {
 
-Tag3::Tag3()
-    : Tag(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
-      sym(),
-      s2k(nullptr),
-      esk(nullptr)
-{}
-
-Tag3::Tag3(const Tag3 & copy)
-    : Tag(copy),
-      sym(copy.sym),
-      s2k(copy.s2k -> clone()),
-      esk(copy.get_esk_clone())
-{}
-
-Tag3::Tag3(const std::string & data)
-    : Tag3()
-{
-    read(data);
-}
-
-Tag3::~Tag3(){}
-
-void Tag3::read(const std::string & data){
-    size = data.size();
+void Tag3::actual_read(const std::string & data){
     version = data[0];                  // 4
     sym = data[1];
 
@@ -53,6 +30,28 @@ void Tag3::read(const std::string & data){
         esk = std::make_shared <std::string> (data.substr(pos, data.size() - pos));
     }
 }
+
+Tag3::Tag3()
+    : Tag(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
+      sym(),
+      s2k(nullptr),
+      esk(nullptr)
+{}
+
+Tag3::Tag3(const Tag3 & copy)
+    : Tag(copy),
+      sym(copy.sym),
+      s2k(copy.s2k -> clone()),
+      esk(copy.get_esk_clone())
+{}
+
+Tag3::Tag3(const std::string & data)
+    : Tag3()
+{
+    read(data);
+}
+
+Tag3::~Tag3(){}
 
 std::string Tag3::show(const std::size_t indents, const std::size_t indent_size) const{
     const std::string indent(indents * indent_size, ' ');

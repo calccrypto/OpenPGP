@@ -152,6 +152,11 @@ Tag::Tag()
 
 Tag::~Tag(){}
 
+void Tag::read(const std::string &data) {
+    set_size(data.size());
+    actual_read(data);
+}
+
 std::string Tag::write() const{
     const std::string data = raw();
     if ((header_format == HeaderFormat::NEW) || // specified new header

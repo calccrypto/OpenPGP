@@ -79,6 +79,7 @@ namespace OpenPGP {
             private:
                 std::string encrypted_data;
 
+                void actual_read(const std::string & data);
                 std::string show_title() const;
 
             public:
@@ -87,7 +88,6 @@ namespace OpenPGP {
                 Tag9(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag9(const Tag9 & copy);
                 Tag9(const std::string & data);
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string write() const;

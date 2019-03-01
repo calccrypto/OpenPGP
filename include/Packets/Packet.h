@@ -135,6 +135,9 @@ namespace OpenPGP {
                 // returns Tag data with new format Tag length
                 static std::string write_new_length(const uint8_t tag, const std::string & data, const uint8_t part);
 
+                // the public read() wraps actual_read()
+                virtual void actual_read(const std::string & data) = 0;
+
                 // returns first line of show functions (no tab or newline)
                 virtual std::string show_title() const; // virtual to allow for overriding for special cases
 
@@ -147,7 +150,7 @@ namespace OpenPGP {
 
                 Tag();
                 virtual ~Tag();
-                virtual void read(const std::string & data) = 0;
+                void read(const std::string & data);
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
                 virtual std::string raw() const = 0;
                 virtual std::string write() const;

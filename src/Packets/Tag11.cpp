@@ -10,6 +10,19 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag11::actual_read(const std::string & data){
+    data_format = data[0];
+    uint8_t len = data[1];
+    filename    = data.substr(2, len);
+
+    if (filename == "_CONSOLE"){
+        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"." << std::endl;
+    }
+
+    time    = toint(data.substr(2 + len, 4), 256);
+    literal = data.substr(len + 6, data.size() - len - 6);
+}
+
 std::string Tag11::show_title() const {
     return Tag::show_title() + Partial::show_title();
 }
@@ -36,20 +49,6 @@ Tag11::Tag11(const std::string & data)
     : Tag11()
 {
     read(data);
-}
-
-void Tag11::read(const std::string & data){
-    size        = data.size();
-    data_format = data[0];
-    uint8_t len = data[1];
-    filename    = data.substr(2, len);
-
-    if (filename == "_CONSOLE"){
-        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"." << std::endl;
-    }
-
-    time    = toint(data.substr(2 + len, 4), 256);
-    literal = data.substr(len + 6, data.size() - len - 6);
 }
 
 std::string Tag11::show(const std::size_t indents, const std::size_t indent_size) const{
@@ -107,7 +106,8 @@ std::string Tag11::out(const bool writefile){
             case Literal::BINARY:
                 f.open(filename.c_str(), std::ios::binary);
                 break;
-            case Literal::TEXT: case Literal::UTF8_TEXT:
+            case Literal::TEXT:
+            case Literal::UTF8_TEXT:
                 f.open(filename.c_str());
                 break;
             default:

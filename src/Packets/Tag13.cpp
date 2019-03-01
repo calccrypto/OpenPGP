@@ -3,6 +3,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag13::actual_read(const std::string & data){
+    contents = data;
+}
+
 Tag13::Tag13()
     : User(USER_ID),
       contents()
@@ -17,11 +21,6 @@ Tag13::Tag13(const std::string & data)
     : Tag13()
 {
     read(data);
-}
-
-void Tag13::read(const std::string & data){
-    size = data.size();
-    contents = data;
 }
 
 std::string Tag13::show(const std::size_t indents, const std::size_t indent_size) const{

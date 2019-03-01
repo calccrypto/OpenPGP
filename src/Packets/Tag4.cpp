@@ -3,6 +3,15 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag4::actual_read(const std::string & data){
+    version = data[0];                  // 3
+    type    = data[1];
+    hash    = data[2];
+    pka     = data[3];
+    keyid   = data.substr(4, 8);
+    nested  = data[12];
+}
+
 Tag4::Tag4()
     : Tag(ONE_PASS_SIGNATURE, 3),
       type(), hash(), pka(),
@@ -24,16 +33,6 @@ Tag4::Tag4(const std::string & data)
     : Tag4()
 {
     read(data);
-}
-
-void Tag4::read(const std::string & data){
-    size    = data.size();
-    version = data[0];                  // 3
-    type    = data[1];
-    hash    = data[2];
-    pka     = data[3];
-    keyid   = data.substr(4, 8);
-    nested  = data[12];
 }
 
 std::string Tag4::show(const std::size_t indents, const std::size_t indent_size) const{

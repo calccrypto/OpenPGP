@@ -146,6 +146,8 @@ namespace OpenPGP {
 
                 Tag5(uint8_t tag);
 
+                void actual_read(const std::string & data);
+
             public:
                 typedef std::shared_ptr <Packet::Tag5> Ptr;
 
@@ -153,7 +155,6 @@ namespace OpenPGP {
                 Tag5(const Tag5 & copy);
                 Tag5(const std::string & data);
                 virtual ~Tag5();
-                void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
