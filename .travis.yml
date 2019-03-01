@@ -6,7 +6,7 @@ dist: xenial
 sudo: false
 
 git:
-  depth: 1
+  depth: 5
 
 env:
   - CXX_COMPILER=g++-4.9     GPG_COMPATIBLE=False
