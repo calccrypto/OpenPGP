@@ -48,18 +48,26 @@ const std::string PGP::ASCII_Armor_Key[] = {
 
 const std::string PGP::ASCII_Armor_End = PGP::ASCII_Armor_5_Dashes + "END PGP ";
 
+// 4.2.1. Old Format Packet Lengths
+//
+//     0 - The packet has a one-octet length. The header is 2 octets long.
+//
 // 4.2.2.1. One-Octet Lengths
 //     A one-octet Body Length header encodes a length of 0 to 191 octets.
 //     This type of length header is recognized because the one octet value
 //     is less than 192. The body length is equal to:
 //     bodyLen = 1st_octet;
 //
-static std::size_t one_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length) {
+static std::size_t read_one_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length, const Packet::HeaderFormat) {
     length = static_cast <uint8_t> (data[pos]);
     pos += 1;
     return 1;
 }
 
+// 4.2.1. Old Format Packet Lengths
+//
+//     1 - The packet has a two-octet length. The header is 3 octets long.
+//
 // 4.2.2.2. Two-Octet Lengths
 //
 //     A two-octet Body Length header encodes a length of 192 to 8383
@@ -68,11 +76,21 @@ static std::size_t one_octet_lengths(const std::string & data, std::string::size
 //
 //         bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
 //
-static std::size_t two_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length) {
-    length = toint(data.substr(pos, 2), 256);
+static std::size_t read_two_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length, const Packet::HeaderFormat format) {
+    if (format == Packet::HeaderFormat::OLD) {
+        length = toint(data.substr(pos, 2), 256);
+    }
+    else {
+        length = ((((uint8_t) data[pos]) - 192) << 8) + ((uint8_t) data[pos + 1]) + 192;
+    }
     pos += 2;
     return 2;
 }
+
+// 4.2.1. Old Format Packet Lengths
+//
+//     2 - The packet has a four-octet length. The header is 5 octets long.
+//
 // 4.2.2.3. Five-Octet Lengths
 //
 //     A five-octet Body Length header consists of a single octet holding
@@ -85,12 +103,24 @@ static std::size_t two_octet_lengths(const std::string & data, std::string::size
 //     This basic set of one, two, and five-octet lengths is also used
 //     internally to some packets.
 //
-static std::size_t five_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length) {
+static std::size_t read_five_octet_lengths(const std::string & data, std::string::size_type & pos, std::size_t &length, const Packet::HeaderFormat) {
     length = toint(data.substr(pos + 1, 4), 256);
     pos += 5;
     return 5;
 }
 
+// 4.2.1. Old Format Packet Lengths
+//
+//     3 - The packet is of indeterminate length. The header is 1 octet
+//         long, and the implementation must determine how long the packet
+//         is. If the packet is in a file, this means that the packet
+//         extends until the end of the file. In general, an implementation
+//         SHOULD NOT use indeterminate-length packets except where the end
+//         of the data will be clear from the context, and even then it is
+//         better to use a definite length, or a new format header. The new
+//         format headers described below have a mechanism for precisely
+//         encoding data of indeterminate length.
+//
 // 4.2.2.4. Partial Body Lengths
 //
 //     A Partial Body Length header is one octet long and encodes the length
@@ -117,7 +147,7 @@ static std::size_t five_octet_lengths(const std::string & data, std::string::siz
 //     MUST be at least 512 octets long. Partial Body Lengths MUST NOT be
 //     used for any other packet types.
 //
-static std::size_t partialBodyLen(uint8_t first_octet){
+static std::size_t read_partialBodyLen(uint8_t first_octet, const Packet::HeaderFormat){
     return 1ULL << (first_octet & 0x1fU);
 }
 
@@ -131,15 +161,15 @@ std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t 
     std::size_t length = 0;
     if (format == Packet::HeaderFormat::OLD){                               // Old length type RFC4880 sec 4.2.1
         if ((ctb & 3) == 0){                                                // 0 - The packet has a one-octet length. The header is 2 octets long.
-            hl = one_octet_lengths(src, pos, length);
+            hl = read_one_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 1){                                           // 1 - The packet has a two-octet length. The header is 3 octets long.
-            hl = two_octet_lengths(src, pos, length);
+            hl = read_two_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 2){                                           // 2 - The packet has a four-octet length. The header is 5 octets long.
-            hl = five_octet_lengths(src, pos, length);
+            hl = read_five_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
         else if ((ctb & 3) == 3){                                           // The packet is of indeterminate length. The header is 1 octet long, and the implementation must determine how long the packet is.
@@ -153,26 +183,27 @@ std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t 
     }
     else{                                                                   // New length type RFC4880 sec 4.2.2
         const uint8_t first_octet = static_cast <unsigned char> (src[pos]);
+
         if (first_octet < 192){                                             // 0 - 191; A one-octet Body Length header encodes packet lengths of up to 191 octets.
-            hl = one_octet_lengths(src, pos, length);
+            hl = read_one_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
         else if ((192 <= first_octet) & (first_octet < 223)){               // 192 - 8383; A two-octet Body Length header encodes packet lengths of 192 to 8383 octets.
-            hl = two_octet_lengths(src, pos, length);
+            hl = read_two_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
         else if (first_octet == 255){                                       // 8384 - 4294967295; A five-octet Body Length header encodes packet lengths of up to 4,294,967,295 (0xFFFFFFFF) octets in length.
-            hl = five_octet_lengths(src, pos, length);
+            hl = read_five_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
         else if (Packet::PARTIAL_BODY_LENGTH_START <= first_octet){        // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
-            length = partialBodyLen(first_octet);
+            length = read_partialBodyLen(first_octet, format);
 
             // warn if RFC 4880 sec 4.2.2.4 is not followed
             if (length < 512) {
@@ -231,14 +262,11 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
 }
 
 Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const{
-    if ((partial == Packet::PARTIAL)                              &&
-        ((tag != Packet::LITERAL_DATA)                            &&
-         (tag != Packet::COMPRESSED_DATA)                         &&
-         (tag != Packet::SYMMETRICALLY_ENCRYPTED_DATA)            &&
-         (tag != Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA))) {
-            throw std::runtime_error("An implementation MAY use Partial Body Lengths for data packets, be "
-                                     "they literal, compressed, or encrypted. ... Partial Body Lengths MUST NOT be "
-                                     "used for any other packet types.");
+    if ((partial == Packet::PARTIAL) &&
+        !Packet::Partial::can_be(tag)) {
+        throw std::runtime_error("An implementation MAY use Partial Body Lengths for data packets, be "
+                                 "they literal, compressed, or encrypted. ... Partial Body Lengths MUST NOT be "
+                                 "used for any other packet types.");
     }
 
     Packet::Tag::Ptr out = nullptr;
@@ -312,6 +340,7 @@ Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t ta
             throw std::runtime_error("Error: Tag not defined: " + std::to_string(tag) + ".");
             break;
     }
+
 
     // fill in data
     out -> set_tag(tag);

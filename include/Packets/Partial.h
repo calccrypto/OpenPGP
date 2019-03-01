@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include <memory>
 #include <string>
 
+#include "Packets/Packet.h"
+
 namespace OpenPGP {
     namespace Packet {
 
@@ -100,6 +102,9 @@ namespace OpenPGP {
                 PartialBodyLength get_partial() const;
 
                 void set_partial(const PartialBodyLength & part);
+
+                static bool can_be(const uint8_t tag);              // check if a packet type can have partial body lengths
+                static bool can_be(const Tag::Ptr & packet);        // check if a packet can have partial body lengths
 
                 Partial & operator=(const Partial &copy);
         };
