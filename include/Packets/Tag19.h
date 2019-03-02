@@ -26,6 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG19__
 #define __TAG19__
 
+#include "Hashes/Hashes.h"
 #include "Packets/Packet.h"
 
 namespace OpenPGP {
@@ -61,14 +62,13 @@ namespace OpenPGP {
                 std::string hash;
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag19> Ptr;
 
                 Tag19();
-                Tag19(const Tag19 & copy);
                 Tag19(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
                 std::string get_hash() const;

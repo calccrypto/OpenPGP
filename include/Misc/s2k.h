@@ -2,7 +2,7 @@
 s2k.h
 String-to-Key Specifiers data structures as described in RFC 4880 sec 3.7
 
-Copyright (c) 2013 Jason Lee
+Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,9 +32,11 @@ THE SOFTWARE.
 #include <string>
 
 #include "Hashes/Hashes.h"
+#include "common/HumanReadable.h"
 
 namespace OpenPGP {
     namespace S2K {
+
         // 3.7. String-to-Key (S2K) Specifiers
         //
         //    String-to-key (S2K) specifiers are used to convert passphrase strings
@@ -88,6 +90,7 @@ namespace OpenPGP {
                 uint8_t hash; // octet 1
 
                 std::string show_title() const;
+                virtual void show_contents(HumanReadable & hr) const = 0;
 
                 S2K(uint8_t uint8_t);
 
@@ -95,8 +98,9 @@ namespace OpenPGP {
                 typedef std::shared_ptr <S2K> Ptr;
 
                 virtual ~S2K();
-                virtual void read(const std::string & data, std::string::size_type & pos) = 0;
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
+                        void read(const std::string & data);
+                virtual void read(const std::string & data, std::string::size_type & pos);
+                        void show(HumanReadable & hr) const;
                 virtual std::string raw() const = 0;
                 std::string write() const;
                 virtual std::string run(const std::string & pass, unsigned int sym_key_len) const = 0;
@@ -141,15 +145,17 @@ namespace OpenPGP {
 
         class S2K0: public S2K {
             protected:
+                virtual void show_contents(HumanReadable & hr) const;
+
                 S2K0(uint8_t t);
 
             public:
                 typedef std::shared_ptr <S2K0> Ptr;
 
                 S2K0();
+                S2K0(const std::string & data);
                 virtual ~S2K0();
                 virtual void read(const std::string & data, std::string::size_type & pos);
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
                 virtual std::string run(const std::string & pass, unsigned int sym_key_len) const;
 
@@ -173,15 +179,17 @@ namespace OpenPGP {
             protected:
                 std::string salt;   // 8 octets
 
+                virtual void show_contents(HumanReadable & hr) const;
+
                 S2K1(uint8_t t);
 
             public:
                 typedef std::shared_ptr <S2K1> Ptr;
 
                 S2K1();
+                S2K1(const std::string & data);
                 virtual ~S2K1();
                 virtual void read(const std::string & data, std::string::size_type & pos);
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
                 virtual std::string run(const std::string & pass, unsigned int sym_key_len) const;
 
@@ -236,13 +244,15 @@ namespace OpenPGP {
             private:
                 uint8_t count;
 
+                void show_contents(HumanReadable & hr) const;
+
             public:
                 typedef std::shared_ptr <S2K3> Ptr;
 
                 S2K3();
+                S2K3(const std::string & data);
                 ~S2K3();
                 void read(const std::string & data, std::string::size_type & pos);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string run(const std::string & pass, unsigned int sym_key_len) const;
 

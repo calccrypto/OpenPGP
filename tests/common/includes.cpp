@@ -6,34 +6,41 @@
 
 #include "common/includes.h"
 
+#define LOOP_UINT8(VAR, CMD)  \
+    uint8_t VAR = 0;          \
+    do {                      \
+        CMD;                  \
+        VAR++;                \
+    } while(VAR)
+
 TEST(toint, 2) {
-    for(uint64_t i = 0; i < 256; i++) {
-        EXPECT_EQ(toint(makebin(i), 2), i);
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(toint(makebin(i), 2), i);
+        );
 }
 
 TEST(toint, 8) {
-    for(uint64_t i = 0; i < 256; i++) {
-        std::stringstream s;
-        s << std::oct << i;
-        EXPECT_EQ(toint(s.str(), 8), i);
-    }
+    LOOP_UINT8(i,
+             std::stringstream s;
+             s << std::oct << (uint64_t) i;
+             EXPECT_EQ(toint(s.str(), 8), i);
+        );
 }
 
 TEST(toint, 10) {
-    for(uint64_t i = 0; i < 256; i++) {
-        std::stringstream s;
-        s << std::dec << i;
-        EXPECT_EQ(toint(s.str(), 10), i);
-    }
+    LOOP_UINT8(i,
+             std::stringstream s;
+             s << std::dec << (uint64_t) i;
+             EXPECT_EQ(toint(s.str(), 10), i);
+        );
 }
 
 TEST(toint, 16) {
-    for(uint64_t i = 0; i < 256; i++) {
-        std::stringstream s;
-        s << std::hex << i;
-        EXPECT_EQ(toint(s.str(), 16), i);
-    }
+    LOOP_UINT8(i,
+             std::stringstream s;
+             s << std::hex << (uint64_t) i;
+             EXPECT_EQ(toint(s.str(), 16), i);
+        );
 }
 
 TEST(toint, 256) {
@@ -70,10 +77,10 @@ TEST(toint, bad_base) {
 TEST(little_end, 2) {
     std::string src = "";
     std::string expected = "";
-    for(std::size_t i = 0; i < 256; i++) {
-        src += makebin((char) i, 8);
-        expected += makebin((char) (255 - i), 8);
-    }
+    LOOP_UINT8(i,
+             src += makebin((char) i, 8);
+             expected += makebin((char) (255 - i), 8);
+        );
 
     EXPECT_EQ(little_end(src, 2), expected);
 }
@@ -81,10 +88,10 @@ TEST(little_end, 2) {
 TEST(little_end, 16) {
     std::string src = "";
     std::string expected = "";
-    for(std::size_t i = 0; i < 256; i++) {
-        src += makehex((char) i, 2);
-        expected += makehex((char) (255 - i), 2);
-    }
+    LOOP_UINT8(i,
+             src += makehex((char) i, 2);
+             expected += makehex((char) (255 - i), 2);
+        );
 
     EXPECT_EQ(little_end(src, 16), expected);
 }
@@ -92,10 +99,10 @@ TEST(little_end, 16) {
 TEST(little_end, 256) {
     std::string src(256, 0);
     std::string expected(256, 0);
-    for(std::size_t i = 0; i < 256; i++) {
-        src[i] = i;
-        expected[i] = 255 - i;
-    }
+    LOOP_UINT8(i,
+             src[i] = i;
+             expected[i] = 255 - i;
+        );
 
     EXPECT_EQ(little_end(src, 256), expected);
 }
@@ -105,35 +112,35 @@ TEST(little_end, bad_base) {
 }
 
 TEST(makebin, good) {
-    for(uint16_t i = 0; i < 256; i++) {
-        const std::string bin = std::string(1, ((((char) i) >> 7) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 6) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 5) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 4) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 3) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 2) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 1) & 1) | '0') +
-                                std::string(1, ((((char) i) >> 0) & 1) | '0');
-        EXPECT_EQ(makebin((uint8_t) i, 8),               bin);
-        EXPECT_EQ(makebin((uint8_t) i, 16), "00000000" + bin);
-    }
+    LOOP_UINT8(i,
+             const std::string bin = std::string(1, ((((char) i) >> 7) & 1) | '0') +
+             std::string(1, ((((char) i) >> 6) & 1) | '0') +
+             std::string(1, ((((char) i) >> 5) & 1) | '0') +
+             std::string(1, ((((char) i) >> 4) & 1) | '0') +
+             std::string(1, ((((char) i) >> 3) & 1) | '0') +
+             std::string(1, ((((char) i) >> 2) & 1) | '0') +
+             std::string(1, ((((char) i) >> 1) & 1) | '0') +
+             std::string(1, ((((char) i) >> 0) & 1) | '0');
+             EXPECT_EQ(makebin((uint8_t) i, 8),               bin);
+             EXPECT_EQ(makebin((uint8_t) i, 16), "00000000" + bin);
+        );
 }
 
 TEST(makehex, good) {
-    for(uint16_t i = 0; i < 256; i++) {
-        std::stringstream s;
-        s << std::setw(2) << std::setfill('0') << std::hex << i;
-        const std::string hex = s.str();
-        EXPECT_EQ(makehex((uint8_t) i, 2),        hex);
-        EXPECT_EQ(makehex((uint8_t) i, 4), "00" + hex);
-    }
+    LOOP_UINT8(i,
+             std::stringstream s;
+             s << std::setw(2) << std::setfill('0') << std::hex << (uint16_t) i;
+             const std::string hex = s.str();
+             EXPECT_EQ(makehex((uint8_t) i, 2),        hex);
+             EXPECT_EQ(makehex((uint8_t) i, 4), "00" + hex);
+        );
 }
 
 TEST(byte, good) {
-    for(uint16_t i = 0; i < 256; i++) {
-        EXPECT_EQ(byte((- (i << 8)) | i, 0), (uint8_t)  i);
-        EXPECT_EQ(byte((- (i << 8)) | i, 1), (uint8_t) -i);
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(byte((- (i << 8)) | i, 0), (uint8_t)  i);
+             EXPECT_EQ(byte((- (i << 8)) | i, 1), (uint8_t) -i);
+        );
 }
 
 TEST(bintohex, lower) {
@@ -155,43 +162,54 @@ TEST(bintohex, bad_bits) {
 }
 
 TEST(binify, string) {
-    for(uint16_t i = 0; i < 256; i++) {
-        const std::string bin = makebin(i, 8);
+    LOOP_UINT8(i,
+             const std::string bin = makebin(i, 8);
 
-        // no leading 0s
-        EXPECT_EQ(binify(std::string(1, (char) i), 0), bin);
+             // no leading 0s
+             EXPECT_EQ(binify(std::string(1, (char) i), 0), bin);
 
-        // 8 leading 0s
-        EXPECT_EQ(binify(std::string(1, (char) i), 16), std::string(8, '0') + bin);
-    }
+             // 8 leading 0s
+             EXPECT_EQ(binify(std::string(1, (char) i), 16), std::string(8, '0') + bin);
+        );
 }
 
 TEST(binify, char) {
-    for(uint16_t i = 0; i < 256; i++) {
-        EXPECT_EQ(binify((char) i), makebin(i, 8));
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(binify((char) i), makebin(i, 8));
+        );
+}
+
+TEST(unbinify, string) {
+    LOOP_UINT8(i,
+             const std::string bin = makebin(i, 8);
+             EXPECT_EQ(unbinify(bin), std::string(1, (uint8_t) i));
+        );
+
+    EXPECT_THROW(unbinify(zero), std::runtime_error);
+    EXPECT_EQ(unbinify(""), "");
+    EXPECT_EQ(unbinify("22222222"), zero);
 }
 
 TEST(hexlify, string) {
-    for(uint16_t i = 0; i < 256; i++) {
-        const std::string hex = makehex(i, 2);
+    LOOP_UINT8(i,
+             const std::string hex = makehex(i, 2);
 
-        // no leading 0s
-        EXPECT_EQ(hexlify(std::string(1, (char) i), false), hex);
-    }
+             // no leading 0s
+             EXPECT_EQ(hexlify(std::string(1, (char) i), false), hex);
+        );
 }
 
 TEST(hexlify, char) {
-    for(uint16_t i = 0; i < 256; i++) {
-        EXPECT_EQ(hexlify((char) i), makehex(i, 2));
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(hexlify((char) i), makehex(i, 2));
+        );
 }
 
 TEST(unhexlify, good) {
-    for(uint16_t i = 0; i < 256; i++) {
-        const std::string orig(1, (char) i);
-        EXPECT_EQ(unhexlify(hexlify(orig)), orig);
-    }
+    LOOP_UINT8(i,
+             const std::string orig(1, (char) i);
+             EXPECT_EQ(unhexlify(hexlify(orig)), orig);
+        );
 }
 
 TEST(unhexlify, bad_size) {
@@ -211,16 +229,16 @@ TEST(pkcs5, good) {
 }
 
 TEST(zfill, good) {
-    for(unsigned int i = 0; i < 256; i++) {
-        EXPECT_EQ(zfill("", i, '0'), std::string(i, '0'));
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(zfill("", i, '0'), std::string(i, '0'));
+        );
 }
 
 TEST(zfill, length_reached) {
     const std::string str(256, 0);
-    for(unsigned int i = 0; i < 256; i++) {
-        EXPECT_EQ(zfill(str, i, '0'), str);
-    }
+    LOOP_UINT8(i,
+             EXPECT_EQ(zfill(str, i, '0'), str);
+        );
 }
 
 TEST(ROL, good) {

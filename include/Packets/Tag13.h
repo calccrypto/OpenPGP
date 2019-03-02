@@ -44,20 +44,19 @@ namespace OpenPGP {
                 std::string contents;
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag13> Ptr;
 
                 Tag13();
-                Tag13(const Tag13 & copy);
                 Tag13(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
                 std::string get_contents() const;
 
                 void set_contents(const std::string & c);
-                void set_contents(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
+                void set_info(const std::string & name = "", const std::string & comment = "", const std::string & email = "");
 
                 Tag::Ptr clone() const;
         };

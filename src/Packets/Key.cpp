@@ -3,7 +3,7 @@
 namespace OpenPGP {
 namespace Packet {
 
-Key::Key(uint8_t tag)
+Key::Key(const uint8_t tag)
     : Tag(tag),
       time(),
       pka(),
@@ -23,23 +23,12 @@ void Key::actual_read(const std::string & data){
     read_common(data, pos);
 }
 
-Key::Key()
-    : Key(0)
-{}
+void Key::show_contents(HumanReadable & hr) const{
+    show_common(hr);
+}
 
-Key::Key(const Key & copy)
-    : Tag(copy),
-      time(copy.time),
-      pka(copy.pka),
-      mpi(copy.mpi),
-      expire(copy.expire)
-      #ifdef GPG_COMPATIBLE
-      ,
-      curve(copy.curve),
-      kdf_size(copy.kdf_size),
-      kdf_hash(copy.kdf_hash),
-      kdf_alg(copy.kdf_alg)
-      #endif
+Key::Key()
+    : Key(UNKNOWN)
 {}
 
 Key::Key(const std::string & data)
@@ -50,29 +39,23 @@ Key::Key(const std::string & data)
 
 Key::~Key(){}
 
-std::string Key::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" + show_common(indents, indent_size);
-}
-
 std::string Key::raw() const{
     return raw_common();
 }
 
 void Key::read_common(const std::string & data, std::string::size_type & pos){
-    size = data.size();
-    version = data[pos];
-    time = toint(data.substr(pos + 1, 4), 256);
+    set_version(data[pos]);
+    set_time(toint(data.substr(pos + 1, 4), 256));
 
     if (version < 4){
-        expire = (data[pos + 5] << 8) + data[pos + 6];
-        pka = data[pos + 7];
+        set_expire((data[pos + 5] << 8) + data[pos + 6]);
+        set_pka(data[pos + 7]);
         pos += 8;
         mpi.push_back(read_MPI(data, pos));         // RSA n
         mpi.push_back(read_MPI(data, pos));         // RSA e
     }
     else if (version == 4){
-        pka = data[pos + 5];
+        set_pka(data[pos + 5]);
         pos += 6;
 
         // RSA
@@ -126,56 +109,51 @@ void Key::read_common(const std::string & data, std::string::size_type & pos){
     }
 }
 
-std::string Key::show_common(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-
-    std::string out = indent + tab + "Version: " + std::to_string(version) + " - " + ((version < 4)?"Old":"New") + "\n" +
-                      indent + tab + "Creation Time: " + show_time(time) + "\n";
+void Key::show_common(HumanReadable & hr) const{
+    hr << "Version: " + std::to_string(version) + " - " + ((version < 4)?"Old":"New")
+       << "Creation Time: " + show_time(time);
 
     if (version < 4){
-        out += indent + tab + "Expiration Time (Days): " + std::to_string(expire) + "\n";
+        hr << "Expiration Time (Days): " + std::to_string(expire);
         if (!expire){
-            out += " (Never)\n";
+            hr << " (Never)";
         }
-        out += indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n" +
-               indent + tab + "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)\n" +
-               indent + tab + "RSA e: " + mpitohex(mpi[1]);
+        hr << "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")"
+           << "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)"
+           << "RSA e: " + mpitohex(mpi[1]);
     }
     else if (version == 4){
-        out += indent + tab + "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")\n";
+        hr << "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")";
         if (PKA::is_RSA(pka)){
-            out += indent + tab + "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
-                   indent + tab + "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
+            hr << "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
+               << "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
         }
         else if (pka == PKA::ID::ELGAMAL){
-            out += indent + tab + "ELGAMAL p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
-                   indent + tab + "ELGAMAL g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
-                   indent + tab + "ELGAMAL y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
+            hr << "ELGAMAL p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
+               << "ELGAMAL g (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1])
+               << "ELGAMAL y (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]);
         }
         #ifdef GPG_COMPATIBLE
         else if (pka == PKA::ID::ECDSA){
-            out += indent + tab + "ECDSA " + PKA::CURVE_NAME.at(hexlify(curve, true)) + "\n" +
-                   indent + tab + "ECDSA ec point: " + mpitohex(mpi[0]);
+            hr << "ECDSA " + PKA::CURVE_NAME.at(hexlify(curve, true))
+               << "ECDSA ec point: " + mpitohex(mpi[0]);
         }
         else if (pka == PKA::ID::EdDSA){
-            out += indent + tab + "EdDSA " + PKA::CURVE_NAME.at(hexlify(curve, true)) + "\n" +
-                   indent + tab + "EdDSA ec point: " + mpitohex(mpi[0]);
+            hr << "EdDSA " + PKA::CURVE_NAME.at(hexlify(curve, true))
+               << "EdDSA ec point: " + mpitohex(mpi[0]);
         }
         else if (pka == PKA::ID::ECDH){
-            out += indent + tab + "ECDH " + PKA::CURVE_NAME.at(hexlify(curve, true)) + "\n" +
-                   indent + tab + "ECDH ec point: " + mpitohex(mpi[0]);
+            hr << "ECDH " + PKA::CURVE_NAME.at(hexlify(curve, true))
+               << "ECDH ec point: " + mpitohex(mpi[0]);
         }
         #endif
         else if (pka == PKA::ID::DSA){
-            out += indent + tab + "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n" +
-                   indent + tab + "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]) + "\n" +
-                   indent + tab + "DSA g (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2]) + "\n" +
-                   indent + tab + "DSA y (" + std::to_string(bitsize(mpi[3])) + " bits): " + mpitohex(mpi[3]);
+            hr << "DSA p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
+               << "DSA q (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1])
+               << "DSA g (" + std::to_string(bitsize(mpi[2])) + " bits): " + mpitohex(mpi[2])
+               << "DSA y (" + std::to_string(bitsize(mpi[3])) + " bits): " + mpitohex(mpi[3]);
         }
     }
-
-    return out;
 }
 
 std::string Key::raw_common() const{
@@ -214,7 +192,7 @@ uint32_t Key::get_time() const{
     return time;
 }
 
-uint32_t Key::get_exp_time() const{
+uint32_t Key::get_expire() const{
     if (version < 4){
         return expire;
     }
@@ -235,17 +213,20 @@ void Key::set_time(uint32_t t){
     time = t;
 }
 
+void Key::set_expire(const uint32_t t) {
+    expire = t;
+}
+
 void Key::set_pka(uint8_t p){
     pka = p;
 }
 
 void Key::set_mpi(const PKA::Values & m){
     mpi = m;
-    size = raw().size();
 }
 
 std::string Key::get_fingerprint() const{
-    if (version == 3){
+    if (version < 4){
         std::string data = "";
         for(MPI const & i : mpi){
             std::string m = write_MPI(i);
@@ -254,7 +235,7 @@ std::string Key::get_fingerprint() const{
         return MD5(data).digest();
     }
     else if (version == 4){
-        std::string packet = raw_common();
+        const std::string packet = raw_common();
         return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
@@ -264,7 +245,7 @@ std::string Key::get_fingerprint() const{
 }
 
 std::string Key::get_keyid() const{
-    if (version == 3){
+    if (version < 4){
         std::string data = write_MPI(mpi[0]);
         return data.substr(data.size() - 8, 8);
     }
@@ -300,16 +281,6 @@ void Key::set_kdf_alg(const uint8_t a){
 
 Tag::Ptr Key::clone() const{
     return std::make_shared <Key> (*this);
-}
-
-Key & Key::operator=(const Key & copy)
-{
-    Tag::operator=(copy);
-    time = copy.time;
-    pka = copy.pka;
-    mpi = copy.mpi;
-    expire = copy.expire;
-    return *this;
 }
 
 }

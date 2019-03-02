@@ -28,15 +28,15 @@ void Partial::set_partial(const PartialBodyLength & part) {
     partial = part;
 }
 
-bool Partial::can_be(const uint8_t tag){
+bool Partial::can_have_partial_length(const uint8_t tag){
     return ((tag == LITERAL_DATA)                          ||
             (tag == COMPRESSED_DATA)                       ||
             (tag == SYMMETRICALLY_ENCRYPTED_DATA)          ||
             (tag == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
-bool Partial::can_be(const Tag::Ptr & packet){
-    return packet?can_be(packet -> get_tag()):false;
+bool Partial::can_have_partial_length(const Tag::Ptr & packet){
+    return packet?can_have_partial_length(packet -> get_tag()):false;
 }
 
 Partial & Partial::operator=(const Partial &copy) {

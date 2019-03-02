@@ -55,6 +55,7 @@ namespace OpenPGP {
                 std::string pgp; // should always be "PGP"
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag10> Ptr;
@@ -62,7 +63,6 @@ namespace OpenPGP {
                 Tag10();
                 Tag10(const Tag10 & copy);
                 Tag10(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
                 std::string get_pgp() const;

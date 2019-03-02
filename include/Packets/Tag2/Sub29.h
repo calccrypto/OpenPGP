@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB29__
 #define __TAG2_SUB29__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -79,7 +79,7 @@ namespace OpenPGP {
             //    100-110 - Private Use
             //
             //    Following the revocation code is a string of octets that gives
-            //    information about the Reason for Revocation in human-readable form
+            //    information about the Reason for Revocation in Human-readable form
             //    (UTF-8).  The string may be null, that is, of zero length.  The
             //    length of the Subpacket is the length of the reason string plus one.
             //    An implementation SHOULD implement this Subpacket, include it in all
@@ -105,13 +105,14 @@ namespace OpenPGP {
                     uint8_t code;
                     std::string reason;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub29> Ptr;
 
                     Sub29();
                     Sub29(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     uint8_t get_code() const;

@@ -5,6 +5,7 @@ install(FILES
     Packet.h
     Packets.h
     Partial.h
+    PartialBodyLengthEnums.h
     Tag0.h
     Tag10.h
     Tag11.h
@@ -30,7 +31,6 @@ install(FILES
     User.h
 
     Subpacket.h
-    Subpackets.h
 
     DESTINATION include/Packets)
 

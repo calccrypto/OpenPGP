@@ -123,18 +123,16 @@ namespace OpenPGP {
 
         class Tag6: public Key {
             protected:
-                Tag6(uint8_t tag);
+                Tag6(const uint8_t tag);
 
             public:
                 typedef std::shared_ptr <Packet::Tag6> Ptr;
 
                 Tag6();
-                Tag6(const Tag6 & copy);
                 Tag6(const std::string & data);
                 virtual ~Tag6();
 
                 virtual Tag::Ptr clone() const;
-                Tag6 & operator=(const Tag6 & copy);
         };
     }
 }

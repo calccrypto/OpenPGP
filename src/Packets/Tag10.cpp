@@ -6,9 +6,11 @@ namespace Packet {
 const std::string Tag10::body = "PGP";
 
 void Tag10::actual_read(const std::string & data){
-    if (data != body){
-        throw std::runtime_error("Error: Tag 10 packet did not contain data \"" + body + "\".");
-    }
+    set_pgp(data);
+}
+
+void Tag10::show_contents(HumanReadable & hr) const{
+    hr << pgp;
 }
 
 Tag10::Tag10()
@@ -27,13 +29,6 @@ Tag10::Tag10(const std::string & data)
     read(data);
 }
 
-std::string Tag10::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + pgp;
-}
-
 std::string Tag10::raw() const{
     return pgp;
 }
@@ -43,11 +38,7 @@ std::string Tag10::get_pgp() const{
 }
 
 void Tag10::set_pgp(const std::string & s){
-    if (s != body){
-        throw std::runtime_error("Error: Tag 10 input data not string \"" + body + "\".");
-    }
     pgp = s;
-    size = 3;
 }
 
 Tag::Ptr Tag10::clone() const{

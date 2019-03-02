@@ -3,38 +3,20 @@
 namespace OpenPGP {
 namespace Packet {
 
-// Extracts Subpacket data for figuring which subpacket type to create
-void Tag17::read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length){
-    length = 0;
-
-    const uint8_t first_octet = static_cast <unsigned char> (data[pos]);
-    if (first_octet < 192){
-        length = first_octet;
-        pos += 1;
-    }
-    else if ((192 <= first_octet) && (first_octet < 255)){
-        length = toint(data.substr(pos, 2), 256) - (192 << 8) + 192;
-        pos += 2;
-    }
-    else if (first_octet == 255){
-        length = toint(data.substr(pos + 1, 4), 256);
-        pos += 5;
-    }
-}
-
 void Tag17::actual_read(const std::string & data){
     // read subpackets
     std::string::size_type pos = 0;
     while (pos < size){
         std::string::size_type length;
-        read_subpacket(data, pos, length);
+        Subpacket::Sub::read_subpacket(data, pos, length);
 
         Subpacket::Tag17::Sub::Ptr subpacket = nullptr;
-        if (data[pos] == Subpacket::Tag17::IMAGE_ATTRIBUTE){
-            subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
-        }
-        else {
-            throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(data[pos]));
+        switch (const uint8_t type = data[pos]) {
+            case Subpacket::Tag17::IMAGE_ATTRIBUTE:
+                subpacket = std::make_shared <Subpacket::Tag17::Sub1> ();
+                break;
+            default:
+                throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(type));
         }
 
         subpacket -> read(data.substr(pos + 1, length - 1));
@@ -42,6 +24,12 @@ void Tag17::actual_read(const std::string & data){
 
         // go to end of current subpacket
         pos += length;
+    }
+}
+
+void Tag17::show_contents(HumanReadable & hr) const{
+    for(Subpacket::Tag17::Sub::Ptr const & attr : attributes){
+        attr -> show(hr);
     }
 }
 
@@ -71,16 +59,6 @@ Tag17::Tag17(const std::string & data)
 
 Tag17::~Tag17(){
     attributes.clear();
-}
-
-std::string Tag17::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    std::string out = indent + show_title();
-    for(Subpacket::Tag17::Sub::Ptr const & attr : attributes){
-        out += "\n" + indent + tab + attr -> show(indents, indent_size);
-    }
-    return out;
 }
 
 std::string Tag17::raw() const{
@@ -113,6 +91,19 @@ void Tag17::set_attributes(const Tag17::Attributes & a){
 
 Tag::Ptr Tag17::clone() const{
     return std::make_shared <Packet::Tag17> (*this);
+}
+
+Tag17 & Tag17::operator=(const Tag17 & tag17) {
+    User::operator=(tag17);
+    length = tag17.length;
+    type = tag17.type;
+    attributes = tag17.attributes;
+
+    for(Subpacket::Tag17::Sub::Ptr & s : attributes){
+        s = s -> clone();
+    }
+
+    return *this;
 }
 
 }

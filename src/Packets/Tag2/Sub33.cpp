@@ -6,8 +6,21 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub33::actual_read(const std::string & data){
+    if (data.size()){
+        set_version(data[0]);
+        set_issuer_fingerprint(data.substr(1, size - 1));
+    }
+}
+
+void Sub33::show_contents(HumanReadable & hr) const{
+    hr << "Version: " + std::to_string(version) + "\n"
+       << "Fingerprint: " + hexlify(issuer_fingerprint) + " (" + std::to_string(issuer_fingerprint.size()) + " octets)";
+}
+
 Sub33::Sub33()
     : Sub(ISSUER_FINGERPRINT),
+      version(0),
       issuer_fingerprint()
 {}
 
@@ -15,22 +28,6 @@ Sub33::Sub33(const std::string & data)
     : Sub33()
 {
     read(data);
-}
-
-void Sub33::read(const std::string & data){
-    if (data.size()){
-        size = data.size();
-        version = data[0];
-        issuer_fingerprint = data.substr(1, size - 1);
-    }
-}
-
-std::string Sub33::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Version: " + std::to_string(version) + "\n" +
-           indent + tab + "Fingerprint: " + hexlify(issuer_fingerprint) + " (" + std::to_string(issuer_fingerprint.size()) + " octets)";
 }
 
 std::string Sub33::raw() const{

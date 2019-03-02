@@ -142,11 +142,12 @@ namespace OpenPGP {
                 std::string secret;
 
                 void read_s2k(const std::string & data, std::string::size_type & pos);
-                std::string show_private(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-
-                Tag5(uint8_t tag);
-
                 void actual_read(const std::string & data);
+
+                void show_private(HumanReadable & hr) const;
+                void show_contents(HumanReadable & hr) const;
+
+                Tag5(const uint8_t tag);
 
             public:
                 typedef std::shared_ptr <Packet::Tag5> Ptr;
@@ -155,7 +156,6 @@ namespace OpenPGP {
                 Tag5(const Tag5 & copy);
                 Tag5(const std::string & data);
                 virtual ~Tag5();
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
                 uint8_t get_s2k_con() const;

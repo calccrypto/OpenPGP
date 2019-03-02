@@ -1,7 +1,7 @@
 #include "Message.h"
 
 #include "Misc/CRC-24.h"
-
+#include <iostream>
 namespace OpenPGP {
 
 // OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
@@ -118,11 +118,11 @@ bool Message::decompress() {
     if ((packets.size() == 1) && (packets[0] -> get_tag() == Packet::COMPRESSED_DATA)){
         comp.reset();
         comp = std::static_pointer_cast <Packet::Tag8> (packets[0]);
-        const std::string compressed = comp -> get_data();
+        const std::string data = comp -> get_data();
         comp -> set_data("");
         comp -> set_partial(comp -> get_partial());
         packets.clear();
-        read_raw(compressed);
+        read_raw(data);
 
         type = MESSAGE;
 
@@ -170,7 +170,7 @@ Message::Message(const std::string & data)
 
     // throw if decompressed packet sequence is not meaningful
     if (!meaningful()){
-        throw std::runtime_error("Error: Data does not form a meaningful PGP Message");
+        throw std::runtime_error("Error: AData does not form a meaningful PGP Message");
     }
 
     if (!decompress()){
@@ -212,12 +212,20 @@ void Message::read_raw(const std::string & data){
 }
 
 std::string Message::show(const std::size_t indents, const std::size_t indent_size) const{
+    return PGP::show(indents, indent_size);
+}
+
+void Message::show(HumanReadable & hr) const{
     std::stringstream out;
     if (comp){                  // if compression was used, add a header
-        out << comp -> show(indents, indent_size);
+        hr << comp -> show_title() << HumanReadable::DOWN;
     }
-    out << PGP::show(indents + static_cast <bool> (comp), indent_size);
-    return out.str();
+
+    PGP::show(hr);
+
+    if (comp) {
+        hr << HumanReadable::UP;
+    }
 }
 
 std::string Message::raw() const{
@@ -251,7 +259,7 @@ std::string Message::write(const PGP::Armored armor) const{
     out += "\n";
     return out + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH)
         + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) +  "\n"
-        + ASCII_Armor_End + ASCII_Armor_Header[MESSAGE] + ASCII_Armor_5_Dashes + "\n";
+        + ASCII_Armor_End + ASCII_Armor_Header[MESSAGE] + ASCII_Armor_5_Dashes;
 }
 
 uint8_t Message::get_comp() const{
@@ -294,35 +302,35 @@ bool Message::match(const PGP & pgp, const Message::Token & token){
     std::list <Token> s;
     for(Packet::Tag::Ptr const & p : pgp.get_packets()){
         Token push;
-        if (p -> get_tag() == Packet::COMPRESSED_DATA){
-            push = CDP;
+        switch (p -> get_tag()) {
+            case Packet::COMPRESSED_DATA:
+                push = CDP;
+                break;
+            case Packet::LITERAL_DATA:
+                push = LDP;
+                break;
+            case Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY:
+                push = PKESKP;
+                break;
+            case Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY:
+                push = SKESKP;
+                break;
+            case Packet::SYMMETRICALLY_ENCRYPTED_DATA:
+                push = SEDP;
+                break;
+            case Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA:
+                push = SEIPDP;
+                break;
+            case Packet::ONE_PASS_SIGNATURE:
+                push = OPSP;
+                break;
+            case Packet::SIGNATURE:
+                push = SP;
+                break;
+            default:
+                // "Error: Non-Message packet found.\n";
+                return false;
         }
-        else if (p -> get_tag() == Packet::LITERAL_DATA){
-            push = LDP;
-        }
-        else if (p -> get_tag() == Packet::PUBLIC_KEY_ENCRYPTED_SESSION_KEY){
-            push = PKESKP;
-        }
-        else if (p -> get_tag() == Packet::SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY){
-            push = SKESKP;
-        }
-        else if (p -> get_tag() == Packet::SYMMETRICALLY_ENCRYPTED_DATA){
-            push = SEDP;
-        }
-        else if (p -> get_tag() == Packet::SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA){
-            push = SEIPDP;
-        }
-        else if (p -> get_tag() == Packet::ONE_PASS_SIGNATURE){
-            push = OPSP;
-        }
-        else if (p -> get_tag() == Packet::SIGNATURE){
-            push = SP;
-        }
-        else {
-            // "Error: Non-Message packet found.\n";
-            return false;
-        }
-
         s.push_back(push);
     }
 

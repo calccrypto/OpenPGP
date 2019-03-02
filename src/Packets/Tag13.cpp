@@ -4,7 +4,11 @@ namespace OpenPGP {
 namespace Packet {
 
 void Tag13::actual_read(const std::string & data){
-    contents = data;
+    set_contents(data);
+}
+
+void Tag13::show_contents(HumanReadable & hr) const{
+    hr << "User ID: " + contents;
 }
 
 Tag13::Tag13()
@@ -12,22 +16,10 @@ Tag13::Tag13()
       contents()
 {}
 
-Tag13::Tag13(const Tag13 & copy)
-    : User(copy),
-      contents(copy.contents)
-{}
-
 Tag13::Tag13(const std::string & data)
     : Tag13()
 {
     read(data);
-}
-
-std::string Tag13::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "User ID: " + contents;
 }
 
 std::string Tag13::raw() const{
@@ -40,21 +32,24 @@ std::string Tag13::get_contents() const{
 
 void Tag13::set_contents(const std::string & c){
     contents = c;
-    size = raw().size();
 }
 
-void Tag13::set_contents(const std::string & name, const std::string & comment, const std::string & email){
+void Tag13::set_info(const std::string & name, const std::string & comment, const std::string & email){
     contents = name;
 
     if (comment != ""){
+        if (contents.size()) {
+            contents += " ";
+        }
         contents += "(" + comment + ")";
     }
 
     if (email != ""){
+        if (contents.size()) {
+            contents += " ";
+        }
         contents += "<" + email + ">";
     }
-
-    size = raw().size();
 }
 
 Tag::Ptr Tag13::clone() const{

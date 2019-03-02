@@ -67,6 +67,8 @@ namespace OpenPGP {
 
         class Tag8 : public Tag, public Partial {
             private:
+                friend Message;
+
                 uint8_t comp;
                 std::string compressed_data;
 
@@ -76,14 +78,13 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 std::string show_title() const;
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag8> Ptr;
 
                 Tag8(const PartialBodyLength &part = NOT_PARTIAL);
-                Tag8(const Tag8 & copy);
                 Tag8(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string write() const;
 
@@ -98,8 +99,6 @@ namespace OpenPGP {
                 void set_compressed_data(const std::string & data);     // set compressed data
 
                 Tag::Ptr clone() const;
-
-                Tag8 & operator=(const Tag8 & copy);
         };
     }
 }

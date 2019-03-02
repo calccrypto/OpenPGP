@@ -39,11 +39,16 @@ add_subdirectory(Compress)
 add_subdirectory(Encryptions)
 add_subdirectory(Hashes)
 add_subdirectory(Misc)
+add_subdirectory(Packets)
 add_subdirectory(PKA)
 
 add_library(TopLevelTests OBJECT
     gpg.cpp
-    pgp.cpp)
+    pgp.cpp
+    cleartextsignature.cpp
+    key.cpp
+    message.cpp
+    revocationcertificate.cpp)
 
 file(COPY testvectors DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -54,6 +59,9 @@ add_executable(OpenPGPTests
     $<TARGET_OBJECTS:EncryptionTests>
     $<TARGET_OBJECTS:HashTests>
     $<TARGET_OBJECTS:MiscTests>
+    $<TARGET_OBJECTS:PacketTests>
+    $<TARGET_OBJECTS:Tag2SubpacketTests>
+    $<TARGET_OBJECTS:Tag17SubpacketTests>
     $<TARGET_OBJECTS:PKATests>)
 
 target_link_libraries(OpenPGPTests gtest gtest_main OpenPGP_shared)

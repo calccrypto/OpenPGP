@@ -30,6 +30,9 @@ THE SOFTWARE.
 #include <memory>
 #include <string>
 
+#include "Packets/PartialBodyLengthEnums.h"
+#include "common/HumanReadable.h"
+
 namespace OpenPGP {
     namespace Packet {
 
@@ -114,6 +117,7 @@ namespace OpenPGP {
         bool is_user                 (const uint8_t t);
         bool is_session_key          (const uint8_t t);
         bool is_sym_protected_data   (const uint8_t t);
+        bool can_have_partial_length (const uint8_t t);
 
         // Packet Header Format
         enum class HeaderFormat : bool {
@@ -129,21 +133,22 @@ namespace OpenPGP {
                 HeaderFormat header_format;
                 std::size_t size;             // This value is only correct when the Tag was generated with the read() function
 
-                // returns Tag data with old format Tag length
-                static std::string write_old_length(const uint8_t tag, const std::string & data, const uint8_t part);
-
-                // returns Tag data with new format Tag length
-                static std::string write_new_length(const uint8_t tag, const std::string & data, const uint8_t part);
-
                 // the public read() wraps actual_read()
                 virtual void actual_read(const std::string & data) = 0;
 
-                // returns first line of show functions (no tab or newline)
-                virtual std::string show_title() const; // virtual to allow for overriding for special cases
+                // the functions that are called by the public show()
+                virtual std::string show_title() const;                        // virtual to allow for overriding for special cases
+                virtual void        show_contents(HumanReadable & hr) const;   // defined here to provide default; child class should override
+                // returns Tag data with old format Tag length
+                // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
+                static std::string write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets = 0);
+
+                // returns Tag data with new format Tag length
+                // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
+                static std::string write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets = 0);
 
                 Tag(const uint8_t t);
                 Tag(const uint8_t t, const uint8_t ver);
-                Tag(const Tag & copy);
 
             public:
                 typedef std::shared_ptr <Tag> Ptr;
@@ -151,7 +156,8 @@ namespace OpenPGP {
                 Tag();
                 virtual ~Tag();
                 void read(const std::string & data);
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                void show(HumanReadable & hr) const;
                 virtual std::string raw() const = 0;
                 virtual std::string write() const;
 
@@ -167,20 +173,17 @@ namespace OpenPGP {
                 void set_version(const uint8_t v);
                 void set_size(const std::size_t s);
 
-                bool valid() const;
-
                 virtual Ptr clone() const = 0;
-
-                virtual Tag & operator=(const Tag & copy);
-            };
+        };
 
         // These two functions override the operators only with Tag::Ptr.
         // They don't work with Ptr of types different than Tag (Tag1, Tag2, etc.)
-        inline bool operator==(Tag::Ptr lhs, Tag::Ptr rhs){
-            return lhs -> raw() == rhs -> raw();
+        inline bool operator==(const Tag::Ptr & lhs, const Tag::Ptr & rhs){
+            return (lhs -> get_tag() == rhs -> get_tag()) &&
+                   (lhs -> raw()     == rhs -> raw());
         }
 
-        inline bool operator!=(Tag::Ptr lhs, Tag::Ptr rhs){
+        inline bool operator!=(const Tag::Ptr & lhs, const Tag::Ptr & rhs){
             return !(lhs == rhs);
         }
     }

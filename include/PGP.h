@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 #include "Misc/radix64.h"
 #include "Packets/Packets.h"
+#include "common/HumanReadable.h"
 
 namespace OpenPGP {
     class PGP {
@@ -72,7 +73,7 @@ namespace OpenPGP {
 
             // reads the length of the packet data and extracts the packet data into packet_data
             // this was done because partial packet lengths are not simply substrings
-            std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial) const;
+            static std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial);
 
             // reads the data starting at pos, and gets the ctb, format, and tag
             // pos is shifted up by 1
@@ -104,8 +105,12 @@ namespace OpenPGP {
             virtual void read_raw(const std::string & data);
             void read_raw(std::istream & stream);
 
-            virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
-            virtual std::string raw() const;                                                                    // write packets only
+            // show the contents in a human readable format
+            std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // less efficient method
+            virtual void show(HumanReadable & hr) const;                                                // more efficient method
+
+            // write data out
+            virtual std::string raw() const;                                                            // write packets only
             virtual std::string write(const Armored armor = DEFAULT) const;
 
             // Accessors

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.6.0)
 add_library(Misc OBJECT
     cfb.cpp
     CRC-24.cpp
+    Length.cpp
     mpi.cpp
     pgptime.cpp
     PKCS1.cpp

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "Hashes/Hashes.h"
 #include "PKA/PKAs.h"
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -51,33 +51,33 @@ namespace OpenPGP {
                 uint8_t kdf_alg;
                 #endif
 
-                Key(uint8_t tag);
+                Key(const uint8_t tag);
 
                 virtual void actual_read(const std::string & data);
+                virtual void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Key> Ptr;
 
                 Key();
-                Key(const Key & copy);
                 Key(const std::string & data);
                 virtual ~Key();
 
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
 
                 // read, show, and raw functions common to all keys tags
                 // can't overload normal versions because the inherited versions are needed
                 void read_common(const std::string & data, std::string::size_type & pos);
-                std::string show_common(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                void show_common(HumanReadable & hr) const;
                 std::string raw_common() const;
 
                 uint32_t get_time() const;
-                uint32_t get_exp_time() const;
+                uint32_t get_expire() const;
                 uint8_t get_pka() const;
                 PKA::Values get_mpi() const;
 
                 void set_time(const uint32_t t);
+                void set_expire(const uint32_t t);
                 void set_pka(const uint8_t p);
                 void set_mpi(const PKA::Values & m);
 
@@ -94,8 +94,6 @@ namespace OpenPGP {
                 std::string get_keyid() const;          // binary
 
                 virtual Packet::Tag::Ptr clone() const;
-
-                Key & operator=(const Key & copy);
         };
     }
 }

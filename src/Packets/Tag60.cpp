@@ -9,25 +9,19 @@ void Tag60::actual_read(const std::string & data){
     stream = data;
 }
 
+void Tag60::show_contents(HumanReadable & hr) const{
+    hr << hexlify(stream);
+}
+
 Tag60::Tag60()
     : Tag60(std::string())
 {}
 
-Tag60::Tag60(const Tag60 & copy)
-    : Tag(copy),
-      stream(copy.stream)
-{}
-
 Tag60::Tag60(const std::string & data)
     : Tag(60),
-      stream(data)
-{}
-
-std::string Tag60::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + hexlify(stream);
+      stream()
+{
+    read(data);
 }
 
 std::string Tag60::raw() const{

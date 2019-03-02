@@ -1,5 +1,7 @@
 #include "sign.h"
 
+#include <iostream>
+
 namespace OpenPGP {
 namespace Sign {
 
@@ -100,7 +102,7 @@ Message binary(const Args & args, const std::string & filename, const std::strin
     tag4 -> set_hash(args.hash);
     tag4 -> set_pka(signer -> get_pka());
     tag4 -> set_keyid(signer -> get_keyid());
-    tag4 -> set_nested(1); // 1 for no nesting
+    tag4 -> set_last(1); // 1 for no nesting
 
     // put source data into Literal Data Packet
     Packet::Tag11::Ptr tag11 = std::make_shared <Packet::Tag11> ();

@@ -1,5 +1,9 @@
 #include "PKA/ElGamal.h"
 
+#include "Misc/pgptime.h"
+#include "RNG/RNGs.h"
+#include "common/includes.h"
+
 namespace OpenPGP {
 namespace PKA {
 namespace ElGamal {

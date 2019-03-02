@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB7__
 #define __TAG2_SUB7__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -47,13 +47,14 @@ namespace OpenPGP {
                 private:
                     bool revocable;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub7> Ptr;
 
                     Sub7();
                     Sub7(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     bool get_revocable() const;

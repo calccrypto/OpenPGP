@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "Hashes/Hashes.h"
 #include "PKA/PKAs.h"
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -55,13 +55,14 @@ namespace OpenPGP {
                     uint8_t hash_alg;
                     std::string hash;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub31> Ptr;
 
                     Sub31();
                     Sub31(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     uint8_t get_pka() const;

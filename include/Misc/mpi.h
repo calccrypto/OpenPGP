@@ -49,7 +49,7 @@ namespace OpenPGP {
 
     bool knuth_prime_test(const MPI & a, int test);
 
-    void mpiswap(MPI & a,MPI & b);
+    void mpiswap(MPI & a, MPI & b);
     MPI mpigcd(const MPI & a, const MPI & b);
     MPI nextprime(const MPI & a);
     MPI powm(const MPI & base, const MPI & exp, const MPI & mod);

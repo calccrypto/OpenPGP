@@ -34,12 +34,10 @@ TEST(RSA, keygen) {
     OpenPGP::PKA::Values pub = {key[0], key[1]};
     OpenPGP::PKA::Values pri = {key[2], key[3], key[4], key[5]};
 
-    OpenPGP::MPI message = OpenPGP::rawtompi(MESSAGE);
-
-    auto encrypted = OpenPGP::PKA::RSA::encrypt(message, pub);
+    auto encrypted = OpenPGP::PKA::RSA::encrypt(MESSAGE, pub);
     auto decrypted = OpenPGP::PKA::RSA::decrypt(encrypted, pri, pub);
-    EXPECT_EQ(decrypted, message);
+    EXPECT_EQ(decrypted, OpenPGP::rawtompi(MESSAGE));
 
-    auto signature = OpenPGP::PKA::RSA::sign(message, pri, pub);
-    EXPECT_TRUE(OpenPGP::PKA::RSA::verify(message, {signature}, pub));
+    auto signature = OpenPGP::PKA::RSA::sign(MESSAGE, pri, pub);
+    EXPECT_TRUE(OpenPGP::PKA::RSA::verify(MESSAGE, {signature}, pub));
 }

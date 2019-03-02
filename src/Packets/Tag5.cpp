@@ -3,6 +3,25 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
+    s2k.reset();
+
+    if (data[pos] == S2K::ID::SIMPLE_S2K){
+        s2k = std::make_shared <S2K::S2K0> ();
+    }
+    else if (data[pos] == S2K::ID::SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K1> ();
+    }
+    else if (data[pos] == S2K::ID::ITERATED_AND_SALTED_S2K){
+        s2k = std::make_shared <S2K::S2K3> ();
+    }
+    else{
+        throw std::runtime_error("Error: Bad S2K ID encountered: " + std::to_string(data[0]));
+    }
+
+    s2k -> read(data, pos);
+}
+
 void Tag5::actual_read(const std::string & data){
     std::string::size_type pos = 0;
 
@@ -35,7 +54,111 @@ void Tag5::actual_read(const std::string & data){
     secret = data.substr(pos, data.size() - pos);
 }
 
-Tag5::Tag5(uint8_t tag)
+void Tag5::show_private(HumanReadable & hr) const{
+    if (s2k_con > 253){
+        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
+        hr << "String-to-Key Usage Conventions: " + std::to_string(s2k_con)
+           << "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")";
+        s2k -> show(hr);
+        if (s2k -> get_type()){
+            hr << "IV: " + hexlify(IV);
+        }
+    }
+
+    if (s2k_con){
+        hr << "Encrypted Data (" + std::to_string(secret.size()) + " octets):"
+           << HumanReadable::DOWN;
+
+        std::string line = "";
+        if (PKA::is_RSA(pka)){
+            line += "RSA d, p, q, u";
+        }
+        else if (pka == PKA::ID::ELGAMAL){
+            line += "ELGAMAL x";
+        }
+        else if (pka == PKA::ID::DSA){
+            line += "DSA x";
+        }
+        #ifdef GPG_COMPATIBLE
+        else if (pka == PKA::ID::ECDSA){
+            line += "ECDSA x";
+        }
+        else if (pka == PKA::ID::EdDSA){
+            line += "EdDSA x";
+        }
+        else if (pka == PKA::ID::ECDH){
+            line += "ECDH x";
+        }
+        #endif
+        else{
+            line += "Unknown";
+        }
+        line += " + ";
+
+        if (s2k_con == 254){
+            line += "SHA1 hash";
+        }
+        else{
+            line += "2 Octet Checksum";
+        }
+
+        line += ": " + hexlify(secret);
+        hr << line << HumanReadable::UP;
+    }
+    else{
+        std::string::size_type pos = 0;
+
+        if (PKA::is_RSA(pka)){
+            const MPI d = read_MPI(secret, pos);
+            const MPI p = read_MPI(secret, pos);
+            const MPI q = read_MPI(secret, pos);
+            const MPI u = read_MPI(secret, pos);
+            hr << "RSA d: (" + std::to_string(bitsize(d)) + ") bits: " + mpitohex(d)
+               << "RSA p: (" + std::to_string(bitsize(p)) + ") bits: " + mpitohex(p)
+               << "RSA q: (" + std::to_string(bitsize(q)) + ") bits: " + mpitohex(q)
+               << "RSA u: (" + std::to_string(bitsize(u)) + ") bits: " + mpitohex(u);
+        }
+        else if (pka == PKA::ID::ELGAMAL){
+            const MPI x = read_MPI(secret, pos);
+            hr << "ELGAMAL x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x);
+        }
+        else if (pka == PKA::ID::DSA){
+            const MPI x = read_MPI(secret, pos);
+            hr << "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x);
+        }
+        #ifdef GPG_COMPATIBLE
+        else if (pka == PKA::ID::ECDSA){
+            const MPI x = read_MPI(secret, pos);
+            hr << "ECDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x);
+        }
+        else if (pka == PKA::ID::DSA){
+            const MPI x = read_MPI(secret, pos);
+            hr << "EdDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x);
+        }
+        else if (pka == PKA::ID::ECDH){
+            const MPI x = read_MPI(secret, pos);
+            hr << "ECDH x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x);
+        }
+        #endif
+        else{
+            hr << "Unknown";
+        }
+
+        if (s2k_con == 254){
+            hr << "SHA1 hash: " + hexlify(secret.substr(pos, 20));
+        }
+        else{
+            hr << "2 Octet Checksum : " + hexlify(secret.substr(pos, 2));
+        }
+    }
+}
+
+void Tag5::show_contents(HumanReadable & hr) const{
+    show_common(hr);
+    show_private(hr);
+}
+
+Tag5::Tag5(const uint8_t tag)
     : Tag6(tag),
       s2k_con(0),
       sym(0),
@@ -64,135 +187,6 @@ Tag5::Tag5(const std::string & data)
 }
 
 Tag5::~Tag5(){}
-
-void Tag5::read_s2k(const std::string & data, std::string::size_type & pos){
-    s2k.reset();
-
-    if (data[pos] == S2K::ID::SIMPLE_S2K){
-        s2k = std::make_shared <S2K::S2K0> ();
-    }
-    else if (data[pos] == S2K::ID::SALTED_S2K){
-        s2k = std::make_shared <S2K::S2K1> ();
-    }
-    else if (data[pos] == S2K::ID::ITERATED_AND_SALTED_S2K){
-        s2k = std::make_shared <S2K::S2K3> ();
-    }
-    else{
-        throw std::runtime_error("Error: Bad S2K ID encountered: " + std::to_string(data[0]));
-    }
-
-    s2k -> read(data, pos);
-}
-
-std::string Tag5::show_private(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    std::string out;
-    if (s2k_con > 253){
-        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
-        out += indent + tab + "String-to-Key Usage Conventions: " + std::to_string(s2k_con) + "\n" +
-               indent + tab + "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")\n" +
-               s2k -> show(indents, indent_size) + "\n";
-        if (s2k -> get_type()){
-            out += indent + tab + "IV: " + hexlify(IV) + "\n";
-        }
-    }
-
-    if (s2k_con){
-        out += indent + tab + "Encrypted Data (" + std::to_string(secret.size()) + " octets):\n" +
-               indent + tab + tab;
-
-        if (PKA::is_RSA(pka)){
-            out += "RSA d, p, q, u";
-        }
-        else if (pka == PKA::ID::ELGAMAL){
-            out += "ELGAMAL x";
-        }
-        else if (pka == PKA::ID::DSA){
-            out += "DSA x";
-        }
-        #ifdef GPG_COMPATIBLE
-        else if (pka == PKA::ID::ECDSA){
-            out += "ECDSA x";
-        }
-        else if (pka == PKA::ID::EdDSA){
-            out += "EdDSA x";
-        }
-        else if (pka == PKA::ID::ECDH){
-            out += "ECDH x";
-        }
-        #endif
-        else{
-            out += "Unknown";
-        }
-        out += " + ";
-
-        if (s2k_con == 254){
-            out += "SHA1 hash";
-        }
-        else{
-            out += "2 Octet Checksum";
-        }
-
-        out += ": " + hexlify(secret);
-    }
-    else{
-        std::string::size_type pos = 0;
-
-        if (PKA::is_RSA(pka)){
-            const MPI d = read_MPI(secret, pos);
-            const MPI p = read_MPI(secret, pos);
-            const MPI q = read_MPI(secret, pos);
-            const MPI u = read_MPI(secret, pos);
-            out += indent + tab + "RSA d: (" + std::to_string(bitsize(d)) + ") bits: " + mpitohex(d) + "\n";
-            out += indent + tab + "RSA p: (" + std::to_string(bitsize(p)) + ") bits: " + mpitohex(p) + "\n";
-            out += indent + tab + "RSA q: (" + std::to_string(bitsize(q)) + ") bits: " + mpitohex(q) + "\n";
-            out += indent + tab + "RSA u: (" + std::to_string(bitsize(u)) + ") bits: " + mpitohex(u) + "\n";
-        }
-        else if (pka == PKA::ID::ELGAMAL){
-            const MPI x = read_MPI(secret, pos);
-            out += indent + tab + "ELGAMAL x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
-        }
-        else if (pka == PKA::ID::DSA){
-            const MPI x = read_MPI(secret, pos);
-            out += indent + tab + "DSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
-        }
-        #ifdef GPG_COMPATIBLE
-        else if (pka == PKA::ID::ECDSA){
-            const MPI x = read_MPI(secret, pos);
-            out += indent + tab + "ECDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
-        }
-        else if (pka == PKA::ID::DSA){
-            const MPI x = read_MPI(secret, pos);
-            out += indent + tab + "EdDSA x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
-        }
-        else if (pka == PKA::ID::ECDH){
-            const MPI x = read_MPI(secret, pos);
-            out += indent + tab + "ECDH x: (" + std::to_string(bitsize(x)) + ") bits: " + mpitohex(x) + "\n";
-        }
-        #endif
-        else{
-            out += "Unknown";
-        }
-
-        if (s2k_con == 254){
-            out += indent + tab + "SHA1 hash: " + hexlify(secret.substr(pos, 20));
-        }
-        else{
-            out += indent + tab + "2 Octet Checksum : " + hexlify(secret.substr(pos, 2));
-        }
-    }
-
-    return out;
-}
-
-std::string Tag5::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           show_common(indents, indent_size) + "\n" +
-           show_private(indents, indent_size);
-}
 
 std::string Tag5::raw() const{
     std::string out = raw_common() +            // public data

@@ -4,6 +4,16 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub7::actual_read(const std::string & data){
+    if (data.size()){
+        set_revocable(data[0]);
+    }
+}
+
+void Sub7::show_contents(HumanReadable & hr) const{
+    hr << std::string("Revocable: ") + (revocable?"True":"False");
+}
+
 Sub7::Sub7()
     : Sub(REVOCABLE, 1),
       revocable()
@@ -15,21 +25,8 @@ Sub7::Sub7(const std::string & data)
     read(data);
 }
 
-void Sub7::read(const std::string & data){
-    if (data.size()){
-        revocable = data[0];
-    }
-}
-
-std::string Sub7::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Revocable: " + (revocable?"True":"False");
-}
-
 std::string Sub7::raw() const{
-    return (revocable?"\x01":zero);
+    return std::string(1, revocable);
 }
 
 bool Sub7::get_revocable() const{

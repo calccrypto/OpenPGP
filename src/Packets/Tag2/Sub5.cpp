@@ -4,6 +4,18 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub5::actual_read(const std::string & data){
+    if (data.size() >= 2){
+        set_level(data[0]);
+        set_amount(data[1]);
+    }
+}
+
+void Sub5::show_contents(HumanReadable & hr) const{
+    hr << "Trust Level: " + std::to_string(level)
+       << "Trust Amount: " + std::to_string(amount);
+}
+
 Sub5::Sub5()
     : Sub(TRUST_SIGNATURE, 2),
       level(),
@@ -14,21 +26,6 @@ Sub5::Sub5(const std::string & data)
     : Sub5()
 {
     read(data);
-}
-
-void Sub5::read(const std::string & data){
-    if (data.size()){
-        level = data[0];
-        amount = data[1];
-    }
-}
-
-std::string Sub5::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Trust Level: " + std::to_string(level) + "\n" +
-           indent + tab + "Trust Amount: " + std::to_string(amount);
 }
 
 std::string Sub5::raw() const{

@@ -4,6 +4,22 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub31::actual_read(const std::string & data){
+    if (data.size() > 2){
+        set_pka(data[0]);
+        set_hash_alg(data[1]);
+        set_hash(data.substr(2, data.size() - 2));
+    }
+}
+
+void Sub31::show_contents(HumanReadable & hr) const{
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
+    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash_alg);
+    hr << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
+       << "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash_alg) + ")"
+       << "Hash: " + hexlify(hash);
+}
+
 Sub31::Sub31()
     : Sub(SIGNATURE_TARGET),
       pka(), hash_alg(),
@@ -14,26 +30,6 @@ Sub31::Sub31(const std::string & data)
     : Sub31()
 {
     read(data);
-}
-
-void Sub31::read(const std::string & data){
-    if (data.size()){
-        pka = data[0];
-        hash_alg = data[1];
-        hash = data.substr(2, data.size() - 2);
-        size = data.size();
-    }
-}
-
-std::string Sub31::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
-    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash_alg);
-    return indent + show_title() + "\n" +
-           indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n" +
-           indent + tab + "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash_alg) + ")\n" +
-           indent + tab + "Hash: " + hexlify(hash);
 }
 
 std::string Sub31::raw() const{

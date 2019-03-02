@@ -4,8 +4,8 @@ namespace OpenPGP {
 namespace Packet {
 
 void Tag3::actual_read(const std::string & data){
-    version = data[0];                  // 4
-    sym = data[1];
+    set_version(data[0]);  // 4
+    set_sym(data[1]);
 
     if (data[2] == S2K::ID::SIMPLE_S2K){
         s2k = std::make_shared <S2K::S2K0> ();
@@ -31,6 +31,21 @@ void Tag3::actual_read(const std::string & data){
     }
 }
 
+void Tag3::show_contents(HumanReadable & hr) const{
+    const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
+    hr << "Version: " + std::to_string(version)
+       << "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")";
+    if (s2k){
+        s2k -> show(hr);
+    }
+    else {
+        hr << "";
+    }
+    if (esk){
+        hr << "Encrypted Session Key: " + hexlify(*esk);
+    }
+}
+
 Tag3::Tag3()
     : Tag(SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY, 4),
       sym(),
@@ -41,7 +56,7 @@ Tag3::Tag3()
 Tag3::Tag3(const Tag3 & copy)
     : Tag(copy),
       sym(copy.sym),
-      s2k(copy.s2k -> clone()),
+      s2k(copy.s2k?copy.s2k -> clone():nullptr),
       esk(copy.get_esk_clone())
 {}
 
@@ -52,20 +67,6 @@ Tag3::Tag3(const std::string & data)
 }
 
 Tag3::~Tag3(){}
-
-std::string Tag3::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
-    std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Version: " + std::to_string(version) + "\n" +
-                      indent + tab + "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")\n" +
-                      s2k -> show(indents, indent_size);
-    if (esk){
-        out += "\n" + indent + tab + "Encrypted Session Key: " + hexlify(*esk);
-    }
-    return out;
-}
 
 std::string Tag3::raw() const{
     return std::string(1, version) + std::string(1, sym) + (s2k?s2k -> write():"") + (esk?*esk:"");
@@ -104,7 +105,6 @@ std::string Tag3::get_session_key(const std::string & pass) const{
 
 void Tag3::set_sym(const uint8_t s){
     sym = s;
-    size = raw().size();
 }
 
 void Tag3::set_s2k(const S2K::S2K::Ptr & s){
@@ -118,7 +118,6 @@ void Tag3::set_s2k(const S2K::S2K::Ptr & s){
     }
 
     s2k = s -> clone();
-    size = raw().size();
 }
 
 void Tag3::set_esk(std::string * s){
@@ -129,7 +128,6 @@ void Tag3::set_esk(std::string * s){
 
 void Tag3::set_esk(const std::string & s){
     esk = std::make_shared <std::string> (s);
-    size = raw().size();
 }
 
 void Tag3::set_session_key(const std::string & pass, const std::string & sk){
@@ -138,7 +136,6 @@ void Tag3::set_session_key(const std::string & pass, const std::string & sk){
     if (s2k && (sk.size() > 1)){
         esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sym, sk, s2k -> run(pass, Sym::KEY_LENGTH.at(sym) >> 3), std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0)));
     }
-    size = raw().size();
 }
 
 Tag::Ptr Tag3::clone() const{
@@ -149,11 +146,11 @@ Tag::Ptr Tag3::clone() const{
     return out;
 }
 
-Tag3 & Tag3::operator=(const Tag3 & copy){
-    Tag::operator=(copy);
-    sym = copy.sym;
-    s2k = copy.s2k -> clone();
-    esk = std::make_shared <std::string> (*copy.esk);
+Tag3 & Tag3::operator=(const Tag3 & tag3){
+    Tag::operator=(tag3);
+    sym = tag3.sym;
+    s2k = tag3.s2k -> clone();
+    esk = std::make_shared <std::string> (*tag3.esk);
     return *this;
 }
 

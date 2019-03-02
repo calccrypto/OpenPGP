@@ -73,7 +73,7 @@ MPI sign(const MPI & data, const Values & pri, const Values & pub){
 }
 
 MPI sign(const std::string & data, const Values & pri, const Values & pub){
-    return decrypt(rawtompi(data), pri, pub);
+    return sign(rawtompi(data), pri, pub);
 }
 
 bool verify(const MPI & data, const Values & signature, const Values & pub){

@@ -26,13 +26,12 @@ THE SOFTWARE.
 #ifndef __TAG17_SUB1__
 #define __TAG17_SUB1__
 
-#include <fstream>
-
 #include "Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag17 {
+
             // 5.12.1. The Image Attribute Subpacket
             //    The Image Attribute Subpacket is used to encode an image, presumably
             //    (but not required to be) that of the key owner.
@@ -92,18 +91,21 @@ namespace OpenPGP {
                     static unsigned int count;  // count of all images found; incremented by creating new instances of Sub1
                     unsigned int current;       // which image this instance is
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub1> Ptr;
 
                     Sub1();
                     Sub1(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
+                    uint8_t get_version() const;
                     uint8_t get_encoding() const;
                     std::string get_image() const;
 
+                    void set_version(const uint8_t & v);
                     void set_encoding(const uint8_t & enc);
                     void set_image(const std::string & i);
 

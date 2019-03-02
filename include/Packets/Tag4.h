@@ -76,31 +76,32 @@ namespace OpenPGP {
                 uint8_t type;
                 uint8_t hash;
                 uint8_t pka;
-                std::string keyid; // 8 octets
-                uint8_t nested;    // A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
+                std::string keyid;
+                uint8_t last;
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag4> Ptr;
 
                 Tag4();
-                Tag4(const Tag4 & copy);
                 Tag4(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
+                uint8_t get_ops_version() const;
                 uint8_t get_type() const;
                 uint8_t get_hash() const;
                 uint8_t get_pka() const;
                 std::string get_keyid() const;
-                uint8_t get_nested() const;
+                uint8_t get_last() const;
 
+                void set_ops_version(const uint8_t v);
                 void set_type(const uint8_t t);
                 void set_hash(const uint8_t h);
                 void set_pka(const uint8_t p);
                 void set_keyid(const std::string & k);
-                void set_nested(const uint8_t n);
+                void set_last(const uint8_t n);
 
                 Tag::Ptr clone() const;
         };

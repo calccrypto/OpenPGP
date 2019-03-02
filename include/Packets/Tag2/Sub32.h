@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __TAG2_SUB32__
 
 #include "Packets/Tag2.h"
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -45,6 +45,9 @@ namespace OpenPGP {
                 private:
                     Packet::Tag2::Ptr embedded;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub32> Ptr;
 
@@ -52,13 +55,11 @@ namespace OpenPGP {
                     Sub32(const Sub32 & Sub32);
                     Sub32(const std::string & data);
                     ~Sub32();
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     Packet::Tag2::Tag::Ptr get_embedded() const;
 
-                    void set_embedded(const Packet::Tag2::Ptr & e);
+                    void set_embedded(const Packet::Tag2::Ptr & e, const bool copy = false);
 
                     Sub::Ptr clone() const;
                     Sub32 & operator=(const Sub32 & copy);

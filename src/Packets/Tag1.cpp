@@ -4,12 +4,26 @@ namespace OpenPGP {
 namespace Packet {
 
 void Tag1::actual_read(const std::string & data){
-    version = data[0];
-    keyid = data.substr(1, 8);
-    pka = data[9];
+    set_version(data[0]);
+    set_keyid(data.substr(1, 8));
+    set_pka(data[9]);
     std::string::size_type pos = 10;
     while (pos < data.size()){
         mpi.push_back(read_MPI(data, pos));
+    }
+}
+
+void Tag1::show_contents(HumanReadable & hr) const{
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
+    hr << "Version: " + std::to_string(version)
+       << "KeyID: " + hexlify(keyid)
+       << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")";
+    if (pka <= PKA::ID::RSA_SIGN_ONLY){
+        hr << "RSA m**e mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
+    }
+    else if (pka == PKA::ID::ELGAMAL){
+        hr << "ELGAMAL g**k mod p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
+           << "ELGAMAL m * y**k mod p (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
     }
 }
 
@@ -20,35 +34,10 @@ Tag1::Tag1()
       mpi()
 {}
 
-Tag1::Tag1(const Tag1 & copy)
-    : Tag(copy),
-      keyid(copy.keyid),
-      pka(copy.pka),
-      mpi(copy.mpi)
-{}
-
 Tag1::Tag1(const std::string & data)
     : Tag1()
 {
     read(data);
-}
-
-std::string Tag1::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
-    std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Version: " + std::to_string(version) + "\n" +
-                      indent + tab + "KeyID: " + hexlify(keyid) + "\n" +
-                      indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n";
-    if (pka < 4){
-        out += indent + tab + "RSA m**e mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
-    }
-    else if (pka == 16){
-        out += indent + tab + "ELGAMAL g**k mod p (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]) + "\n"
-            += indent + tab + "ELGAMAL m * y**k mod p (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);
-    }
-    return out;
 }
 
 std::string Tag1::raw() const{
@@ -72,21 +61,15 @@ PKA::Values Tag1::get_mpi() const{
 }
 
 void Tag1::set_keyid(const std::string & k){
-    if (k.size() != 8){
-        throw std::runtime_error("Error: Key ID must be 8 octets.");
-    }
     keyid = k;
-    size = raw().size();
 }
 
 void Tag1::set_pka(const uint8_t p){
     pka = p;
-    size = raw().size();
 }
 
 void Tag1::set_mpi(const PKA::Values & m){
     mpi = m;
-    size = raw().size();
 }
 
 Tag::Ptr Tag1::clone() const{

@@ -28,7 +28,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB33__
 #define __TAG2_SUB33__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -52,13 +52,14 @@ namespace OpenPGP {
                     uint8_t version;
                     std::string issuer_fingerprint;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub33> Ptr;
 
                     Sub33();
                     Sub33(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     uint8_t get_version() const;

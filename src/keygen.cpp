@@ -1,5 +1,7 @@
 #include "keygen.h"
 
+#include <iostream>
+
 namespace OpenPGP {
 namespace KeyGen {
 
@@ -160,7 +162,7 @@ SecretKey generate_key(Config & config){
     for(Config::UserID const & id : config.uids){
         // User ID
         Packet::Tag13::Ptr uid = std::make_shared <Packet::Tag13> ();
-        uid -> set_contents(id.user, id.comment, id.email);
+        uid -> set_info(id.user, id.comment, id.email);
 
         packets.push_back(uid);
 
