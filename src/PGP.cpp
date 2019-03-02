@@ -6,47 +6,47 @@
 
 namespace OpenPGP {
 
-const PGP::Type_t PGP::UNKNOWN           = 0; // Default value
-const PGP::Type_t PGP::MESSAGE           = 1; // Used for signed, encrypted, or compressed files.
-const PGP::Type_t PGP::PUBLIC_KEY_BLOCK  = 2; // Used for armoring public keys.
-const PGP::Type_t PGP::PRIVATE_KEY_BLOCK = 3; // Used for armoring private keys.
-const PGP::Type_t PGP::MESSAGE_PART_XY   = 4; // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-const PGP::Type_t PGP::MESSAGE_PART_X    = 5; // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
-const PGP::Type_t PGP::SIGNATURE         = 6; // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-const PGP::Type_t PGP::SIGNED_MESSAGE    = 7; // Used for cleartext signatures; header not really part of RFC 4880.
+const PGP::Type_t PGP::UNKNOWN              = 0; // Default value
+const PGP::Type_t PGP::MESSAGE              = 1; // Used for signed, encrypted, or compressed files.
+const PGP::Type_t PGP::PUBLIC_KEY_BLOCK     = 2; // Used for armoring public keys.
+const PGP::Type_t PGP::PRIVATE_KEY_BLOCK    = 3; // Used for armoring private keys.
+const PGP::Type_t PGP::MESSAGE_PART_XY      = 4; // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+const PGP::Type_t PGP::MESSAGE_PART_X       = 5; // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+const PGP::Type_t PGP::SIGNATURE            = 6; // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+const PGP::Type_t PGP::SIGNED_MESSAGE       = 7; // Used for cleartext signatures; header not really part of RFC 4880.
 
 const std::string PGP::ASCII_Armor_5_Dashes = "-----";
-const std::string PGP::ASCII_Armor_Begin  = PGP::ASCII_Armor_5_Dashes + "BEGIN PGP ";
+const std::string PGP::ASCII_Armor_Begin    = PGP::ASCII_Armor_5_Dashes + "BEGIN PGP ";
 const std::string PGP::ASCII_Armor_Header[] = {
-   "",                  // Unknown type
-   "MESSAGE",           // Used for signed, encrypted, or compressed files.
-   "PUBLIC KEY BLOCK",  // Used for armoring public keys.
-   "PRIVATE KEY BLOCK", // Used for armoring private keys.
-   "MESSAGE, PART X/Y", // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-   "MESSAGE, PART X",   // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
-   "SIGNATURE",         // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
-   "SIGNED MESSAGE",    // Used for cleartext signatures; header not really part of RFC 4880.
+   "",                                           // Unknown type
+   "MESSAGE",                                    // Used for signed, encrypted, or compressed files.
+   "PUBLIC KEY BLOCK",                           // Used for armoring public keys.
+   "PRIVATE KEY BLOCK",                          // Used for armoring private keys.
+   "MESSAGE, PART X/Y",                          // Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
+   "MESSAGE, PART X",                            // Used for multi-part messages, where this is the Xth part of an unspecified number of parts. Requires the MESSAGE-ID Armor Header to be used.
+   "SIGNATURE",                                  // Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures. Note that PGP 2.x uses BEGIN PGP MESSAGE for detached signatures.
+   "SIGNED MESSAGE",                             // Used for cleartext signatures; header not really part of RFC 4880.
 };
 
 // ASCII descriptor of OpenPGP packet
-const std::string PGP::ASCII_Armor_Key[] = {
-    "Version",          // which states the OpenPGP implementation and version used to encode the message.
+const std::string PGP::ASCII_Armor_Key[]    = {
+    "Version",                                   // which states the OpenPGP implementation and version used to encode the message.
 
-    "Comment",          // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.
-                        // Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
+    "Comment",                                   // a user-defined comment. OpenPGP defines all text to be in UTF-8. A comment may be any UTF-8 string. However, the whole point of armoring is to provide seven-bit-clean data.
+                                                 // Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
 
-    "MessageID",        // a 32-character string of printable characters. The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header. MessageID strings should be
-                        // unique enough that the recipient of the mail can associate all the parts of a message with each other. A good checksum or cryptographic hash function is sufficient.
-                        // The MessageID SHOULD NOT appear unless it is in a multi-part message. If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic
-                        // fashion, rather than contain a purely random value. This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key
-                        // information.
+    "MessageID",                                 // a 32-character string of printable characters. The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header. MessageID strings should be
+                                                 // unique enough that the recipient of the mail can associate all the parts of a message with each other. A good checksum or cryptographic hash function is sufficient.
+                                                 // The MessageID SHOULD NOT appear unless it is in a multi-part message. If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic
+                                                 // fashion, rather than contain a purely random value. This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key
+                                                 // information.
 
-    "Hash",             // a comma-separated list of hash algorithms used in this message. This is used only in cleartext signed messages.
+    "Hash",                                      // a comma-separated list of hash algorithms used in this message. This is used only in cleartext signed messages.
 
-    "Charset",          // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
+    "Charset",                                   // a description of the character set that the plaintext is in. Please note that OpenPGP defines text to be in UTF-8. An implementation will get best results by translating into and out
 };
 
-const std::string PGP::ASCII_Armor_End = PGP::ASCII_Armor_5_Dashes + "END PGP ";
+const std::string PGP::ASCII_Armor_End      = PGP::ASCII_Armor_5_Dashes + "END PGP ";
 
 // 4.2.1. Old Format Packet Lengths
 //
@@ -415,6 +415,7 @@ void PGP::read(const std::string & data){
 }
 
 void PGP::read(std::istream & stream){
+
     // find armor header
     //
     // 6.2. Forming ASCII Armor
@@ -426,10 +427,25 @@ void PGP::read(std::istream & stream){
     //     MUST NOT have text other than whitespace following them on the same
     //     line. These line endings are considered a part of the Armor Header
     //     Line for the purposes of determining the content they delimit.
+    //
+    // 6.6. Example of an ASCII Armored Message
+    //
+    //    -----BEGIN PGP MESSAGE-----
+    //    Version: OpenPrivacy 0.99
+    //
+    //    yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
+    //    vBSFjNSiVHsuAA==
+    //    =njUN
+    //    -----END PGP MESSAGE-----
+    //
+    //    Note that this example has extra indenting; an actual armored message
+    //    would have no leading whitespace.
+    //
+
     std::string line;
     while (std::getline(stream, line)) {
-        // get rid of whitespace on either side
-        line = trim_whitespace(line, true, true);
+        // get rid of trailing whitespace
+        line = trim_whitespace(line, false, true);
 
         if (line.substr(0, ASCII_Armor_Begin.size()) == ASCII_Armor_Begin) {
             break;
@@ -462,8 +478,8 @@ void PGP::read(std::istream & stream){
 
         // read Armor Key(s)
         while (std::getline(stream, line) && line.size()){
-            // get rid of whitespace on either side
-            line = trim_whitespace(line, true, true);
+            // get rid of trailing whitespace
+            line = trim_whitespace(line, false, true);
 
             // if now there is nothing, stop
             if (!line.size()) {
@@ -496,7 +512,8 @@ void PGP::read(std::istream & stream){
         // read up to tail
         std::string body = "";
         while (std::getline(stream, line)) {
-            line = trim_whitespace(line, true, true);
+            // get rid of trailing whitespace
+            line = trim_whitespace(line, false, true);
 
             if (line.substr(0, ASCII_Armor_End.size()) == ASCII_Armor_End){
                 break;

@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __OPENPGP_CLEARTEXT_SIGNATURE__
 #define __OPENPGP_CLEARTEXT_SIGNATURE__
 
-#include "Misc/sigcalc.h"
 #include "PGP.h"
 #include "DetachedSignature.h"
 

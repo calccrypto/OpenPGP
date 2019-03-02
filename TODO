@@ -1,5 +1,4 @@
 Find PGP keys with formats/packets I have never seen before
-deal with partial packets properly
 finish sign functions
 encrypt for multiple recipients
 sign with multiple keys

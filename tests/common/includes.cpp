@@ -264,35 +264,32 @@ TEST(strings, xor) {
 
 TEST(trim_whitespace, empty) {
     const std::string str = "";
-    EXPECT_EQ(trim_whitespace(str, true, true), str);
+    EXPECT_EQ(trim_whitespace(str, false, false), str);
+    EXPECT_EQ(trim_whitespace(str, false, true),  str);
+    EXPECT_EQ(trim_whitespace(str, true,  false), str);
+    EXPECT_EQ(trim_whitespace(str, true,  true),  str);
 }
 
 TEST(trim_whitespace, no_whitespace) {
     const std::string str = "string";
-    EXPECT_EQ(trim_whitespace(str, true, true), str);
+    EXPECT_EQ(trim_whitespace(str, false, false), str);
+    EXPECT_EQ(trim_whitespace(str, false, true),  str);
+    EXPECT_EQ(trim_whitespace(str, true,  false), str);
+    EXPECT_EQ(trim_whitespace(str, true,  true),  str);
 }
 
 TEST(trim_whitespace, only_whitespace) {
     const std::string str = whitespace;
-    EXPECT_EQ(trim_whitespace(str, true, true), "");
+    EXPECT_EQ(trim_whitespace(str, false, false), str);
+    EXPECT_EQ(trim_whitespace(str, false, true),  "");
+    EXPECT_EQ(trim_whitespace(str, true,  false), "");
+    EXPECT_EQ(trim_whitespace(str, true,  true),  "");
 }
 
-TEST(trim_whitespace, remove_leading) {
-    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
-    EXPECT_EQ(trim_whitespace(str, true, false), str.substr(whitespace.size(), str.size() - whitespace.size()));
-}
-
-TEST(trim_whitespace, remove_trailing) {
-    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
-    EXPECT_EQ(trim_whitespace(str, false, true), str.substr(0, str.size() - whitespace.size()));
-}
-
-TEST(trim_whitespace, remove_both) {
-    const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
-    EXPECT_EQ(trim_whitespace(str, true, true), str.substr(whitespace.size(), str.size() - whitespace.size() - whitespace.size()));
-}
-
-TEST(trim_whitespace, remove_none) {
+TEST(trim_whitespace, mixed) {
     const std::string str = whitespace + "str" + whitespace + "ing" + whitespace;
     EXPECT_EQ(trim_whitespace(str, false, false), str);
+    EXPECT_EQ(trim_whitespace(str, false, true),  str.substr(0, str.size() - whitespace.size()));
+    EXPECT_EQ(trim_whitespace(str, true,  false), str.substr(whitespace.size(), str.size() - whitespace.size()));
+    EXPECT_EQ(trim_whitespace(str, true,  true),  str.substr(whitespace.size(), str.size() - whitespace.size() - whitespace.size()));
 }

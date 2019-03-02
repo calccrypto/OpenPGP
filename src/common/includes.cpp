@@ -258,7 +258,7 @@ std::string trim_whitespace(const std::string & src, const bool trim_front, cons
         back = src.find_last_not_of(ws);
 
         if (back == std::string::npos) {
-            back = src.size() - 1;
+            back = static_cast<std::string::size_type>(-1);
         }
     }
 

@@ -1,5 +1,8 @@
 #include "CleartextSignature.h"
 
+#include "Misc/sigcalc.h"
+#include "common/includes.h"
+
 namespace OpenPGP {
 
 CleartextSignature::CleartextSignature()
@@ -47,8 +50,16 @@ void CleartextSignature::read(std::istream & stream){
     // find cleartext header
     //     - The cleartext header ’-----BEGIN PGP SIGNED MESSAGE-----’ on a
     //       single line,
+    static const std::string BEGIN_PGP_SIGNED_MESSAGE = PGP::ASCII_Armor_Begin + PGP::ASCII_Armor_Header[PGP::SIGNED_MESSAGE] + PGP::ASCII_Armor_5_Dashes;
     std::string line;
-    while (std::getline(stream, line) && (line != "-----BEGIN PGP SIGNED MESSAGE-----"));
+    while (std::getline(stream, line)){
+        // get rid of trailing whitespace
+        line = trim_whitespace(line, false, true);
+
+        if (line.substr(0, BEGIN_PGP_SIGNED_MESSAGE.size()) == BEGIN_PGP_SIGNED_MESSAGE) {
+            break;
+        }
+    }
 
     if (!stream){
         throw std::runtime_error("Error: Data does not contain message section. Use PGP to parse this data.");
@@ -58,6 +69,14 @@ void CleartextSignature::read(std::istream & stream){
     //     - One or more "Hash" Armor Headers,
     //     - Exactly one empty line not included into the message digest,
     while (std::getline(stream, line) && line.size()){
+        // get rid of trailing whitespace
+        line = trim_whitespace(line, false, true);
+
+        // if now there is nothing, stop
+        if (!line.size()) {
+            break;
+        }
+
         std::stringstream s(line);
         std::string key, value;
 
@@ -77,8 +96,16 @@ void CleartextSignature::read(std::istream & stream){
     //     - The dash-escaped cleartext that is included into the message
     //       digest,
     //
+    static const std::string BEGIN_PGP_SIGNATURE = PGP::ASCII_Armor_Begin + PGP::ASCII_Armor_Header[PGP::SIGNATURE] + PGP::ASCII_Armor_5_Dashes;
     message = "";
-    while (std::getline(stream, line) && (line.substr(0, 29) != "-----BEGIN PGP SIGNATURE-----")){
+    while (std::getline(stream, line)){
+        // get rid of trailing whitespace
+        line = trim_whitespace(line, false, true);
+
+        if (line.substr(0, BEGIN_PGP_SIGNATURE.size()) == BEGIN_PGP_SIGNATURE){
+            break;
+        }
+
         message += line + "\n";
     }
     message = reverse_dash_escape(message.substr(0, message.size() - 1));
@@ -86,11 +113,19 @@ void CleartextSignature::read(std::istream & stream){
     // read signature into string
     //     - The ASCII armored signature(s) including the ’-----BEGIN PGP
     //       SIGNATURE-----’ Armor Header and Armor Tail Lines.
+    static const std::string END_PGP_SIGNATURE = PGP::ASCII_Armor_End + PGP::ASCII_Armor_Header[PGP::SIGNATURE] + PGP::ASCII_Armor_5_Dashes;
     std::string ASCII_signature = line + "\n";
-    while (std::getline(stream, line) && (line.substr(0, 27) != "-----END PGP SIGNATURE-----")){
+    while (std::getline(stream, line)){
+        // get rid of trailing whitespace
+        line = trim_whitespace(line, false, true);
+
+        if (line.substr(0, END_PGP_SIGNATURE.size()) == END_PGP_SIGNATURE){
+            break;
+        }
+
         ASCII_signature += line + "\n";
     }
-    ASCII_signature += line;
+    ASCII_signature += line; // add the "-----END PGP SIGNATURE-----" back in
 
     // parse signature
     sig.read(ASCII_signature);
@@ -105,7 +140,8 @@ std::string CleartextSignature::show(const std::size_t indents, const std::size_
 }
 
 std::string CleartextSignature::write() const{
-    std::string out = "-----BEGIN PGP SIGNED MESSAGE-----\n";
+    static const std::string BEGIN_PGP_SIGNED_MESSAGE = PGP::ASCII_Armor_Begin + PGP::ASCII_Armor_Header[PGP::SIGNED_MESSAGE] + PGP::ASCII_Armor_5_Dashes;
+    std::string out = BEGIN_PGP_SIGNED_MESSAGE + "\n";
 
     // write Armor Header
     for(PGP::Armor_Key const & k : hash_armor_header){
