@@ -15,12 +15,15 @@ static const std::string GPG_DIR = "tests/testvectors/gpg/";
 
 static time_t get_utc(int year, int month, int day, int hour, int minute, int second){
     tm in;
-    in.tm_year = year - 1900;
-    in.tm_mon  = month - 1;
-    in.tm_mday = day;
-    in.tm_hour = hour;
-    in.tm_min  = minute;
-    in.tm_sec  = second;
+    in.tm_isdst = -1;
+    in.tm_yday  = -1;
+    in.tm_wday  = -1;
+    in.tm_year  = year - 1900;
+    in.tm_mon   = month - 1;
+    in.tm_mday  = day;
+    in.tm_hour  = hour;
+    in.tm_min   = minute;
+    in.tm_sec   = second;
     time_t result = mktime(&in); // generate by local timezone
 
     // detect timezone
