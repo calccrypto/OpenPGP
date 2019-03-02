@@ -26,13 +26,9 @@ THE SOFTWARE.
 #ifndef __BBS__
 #define __BBS__
 
-#include <algorithm>
-#include <ctime>
-#include <iostream>
+#include <string>
 
-#include "common/cryptomath.h"
 #include "Misc/mpi.h"
-#include "Misc/pgptime.h"
 
 namespace OpenPGP {
     namespace RNG {
@@ -43,9 +39,9 @@ namespace OpenPGP {
                 seeding once will seed for the entire program.
                 */
                 static bool seeded;               // whether or not BBS is seeded
-                static MPI state;              // current state
-                static MPI m;                  // large integer
-                const static MPI two;          // constant value of 2
+                static MPI state;                 // current state
+                static MPI m;                     // large integer
+                const static MPI two;             // constant value of 2
                 std::string par;                  // even, odd, or least
 
                 void init(const MPI & SEED, const unsigned int & bits, MPI p, MPI q);

@@ -1,5 +1,7 @@
 #include "Message.h"
 
+#include "Misc/CRC-24.h"
+
 namespace OpenPGP {
 
 // OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.

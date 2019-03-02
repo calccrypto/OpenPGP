@@ -28,16 +28,11 @@ THE SOFTWARE.
 
 #include <cstdlib>
 #include <memory>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vector>
-#include <utility>
 
-#include "Misc/CRC-24.h"
 #include "Misc/radix64.h"
 #include "Packets/Packets.h"
-#include "common/includes.h"
 
 namespace OpenPGP {
     class PGP {

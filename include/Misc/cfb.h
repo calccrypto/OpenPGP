@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __OPENPGP_CFB__
 #define __OPENPGP_CFB__
 
-#include <stdexcept>
-
 #include "Encryptions/Encryptions.h"
 #include "Packets/Packet.h"
 

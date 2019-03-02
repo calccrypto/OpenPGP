@@ -1,6 +1,8 @@
 #include "Misc/mpi.h"
 
+#include "Misc/pgptime.h"
 #include "RNG/BBS.h"
+#include "common/includes.h"
 
 namespace OpenPGP {
 

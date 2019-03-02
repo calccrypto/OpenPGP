@@ -26,9 +26,8 @@ THE SOFTWARE.
 #ifndef __OPENPGP_KEY__
 #define __OPENPGP_KEY__
 
-#include <algorithm>
-#include <functional>
-#include <set>
+#include <map>
+#include <string>
 
 #include "Packets/Packets.h"
 #include "PKA/PKAs.h"

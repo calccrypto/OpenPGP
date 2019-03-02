@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef __ENCRYPT__
 #define __ENCRYPT__
 
-#include <stdexcept>
 #include <string>
 
 #include "Compress/Compress.h"

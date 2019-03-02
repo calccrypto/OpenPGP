@@ -1,5 +1,10 @@
 #include "RNG/BBS.h"
 
+#include <stdexcept>
+
+#include "common/cryptomath.h"
+#include "Misc/pgptime.h"
+
 namespace OpenPGP {
 namespace RNG {
 

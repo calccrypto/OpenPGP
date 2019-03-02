@@ -1,5 +1,8 @@
 #include "Misc/pgptime.h"
 
+#include <iomanip>
+#include <sstream>
+
 namespace OpenPGP {
 
 // get current time since epoch

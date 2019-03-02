@@ -1,5 +1,7 @@
 #include "Compress/pgpbzip2.h"
 
+#include <assert.h>
+
 int bz2_compress(const std::string & src, std::string & dst){
     int rc, flush;
     bz_stream strm;

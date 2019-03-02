@@ -26,15 +26,10 @@ THE SOFTWARE.
 #ifndef __PKCS1__
 #define __PKCS1__
 
-#include <stdexcept>
-
 #include "Hashes/Hashes.h"
-#include "RNG/RNGs.h"
-#include "common/includes.h"
-#include "mpi.h"
-#include "pgptime.h"
 
 namespace OpenPGP {
+
     // 13.1.1.  EME-PKCS1-v1_5-ENCODE
     //
     //    Input:
@@ -63,6 +58,7 @@ namespace OpenPGP {
     //         EM = 0x00 || 0x02 || PS || 0x00 || M.
     //
     //      4. Output EM.
+
     std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k);
 
     // 13.1.2.  EME-PKCS1-v1_5-DECODE
@@ -89,6 +85,7 @@ namespace OpenPGP {
     //    length of PS is less than 8 octets, output "decryption error" and
     //    stop.  See also the security note in Section 14 regarding differences
     //    in reporting between a decryption error and a padding error.
+
     std::string EME_PKCS1v1_5_DECODE(const std::string & m);
 
     // 13.1.3.  EMSA-PKCS1-v1_5
@@ -143,6 +140,7 @@ namespace OpenPGP {
     //         EM = 0x00 || 0x01 || PS || 0x00 || T.
     //
     //      6. Output EM.
+
     std::string EMSA_PKCS1_v1_5(const uint8_t & hash, const std::string & hashed_data, const unsigned int & keylength);
 
 }

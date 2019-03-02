@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define __OPENPGP_COMPRESS__
 
 #include <map>
-#include <stdexcept>
 #include <string>
 
 // 9.3. Compression Algorithms

@@ -1,5 +1,7 @@
 #include "Misc/cfb.h"
 
+#include <stdexcept>
+
 namespace OpenPGP {
 
 std::string OpenPGP_CFB_encrypt(const SymAlg::Ptr & crypt, const uint8_t packet, const std::string & data, std::string prefix){

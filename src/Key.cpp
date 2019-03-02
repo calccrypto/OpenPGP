@@ -1,5 +1,8 @@
 #include "Key.h"
 
+#include <iomanip>
+#include <stdexcept>
+
 namespace OpenPGP {
 
 Key::Key()

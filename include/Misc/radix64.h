@@ -29,9 +29,8 @@ THE SOFTWARE.
 #include <stdexcept>
 #include <string>
 
-#include "common/includes.h"
-
 namespace OpenPGP {
+
     // 6.3.  Encoding Binary in Radix-64
     //
     //    The encoding process represents 24-bit groups of input bits as output
@@ -92,6 +91,7 @@ namespace OpenPGP {
     //       is processed as above.  The second (incomplete) data group has
     //       four zero-value bits added to it, and is processed as above.  Two
     //       pad characters (=) are added to the output.
+
     const unsigned int MAX_LINE_LENGTH = 64;
 
     std::string ascii2radix64(std::string str, const unsigned char char62 = '+', const unsigned char char63 = '/');
@@ -110,6 +110,7 @@ namespace OpenPGP {
     //    such assurance is possible, however, when the number of octets
     //    transmitted was a multiple of three and no "=" characters are
     //    present.
+
     std::string radix642ascii(std::string str, const unsigned char char62 = '+', const unsigned char char63 = '/');
 
 }

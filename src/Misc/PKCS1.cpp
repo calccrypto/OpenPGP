@@ -1,5 +1,10 @@
 #include "Misc/PKCS1.h"
 
+#include "Misc/mpi.h"
+#include "Misc/pgptime.h"
+#include "RNG/RNGs.h"
+#include "common/includes.h"
+
 namespace OpenPGP {
 
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k){

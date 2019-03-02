@@ -1,5 +1,7 @@
 #include "Compress/Compress.h"
 
+#include <stdexcept>
+
 namespace OpenPGP {
 namespace Compression {
 

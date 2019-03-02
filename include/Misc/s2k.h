@@ -26,7 +26,8 @@ THE SOFTWARE.
 #ifndef __S2K__
 #define __S2K__
 
-#include <iostream>
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 

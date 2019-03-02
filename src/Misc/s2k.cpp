@@ -1,5 +1,7 @@
 #include "Misc/s2k.h"
 
+#include <memory>
+
 namespace OpenPGP {
 namespace S2K {
 

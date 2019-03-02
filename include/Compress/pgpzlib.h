@@ -1,9 +1,7 @@
 // Adapted from the public domain file http://www.zlib.net/zpipe.c
 
-#include <assert.h>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
+#include <string>
+
 #include <zlib.h>
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
@@ -24,5 +22,5 @@
 //      0 = no compression
 //      9 = slowest compression
 
-int zlib_compress(const std::string & src, std::string & dst, int windowBits, int level = Z_DEFAULT_COMPRESSION);
+int zlib_compress  (const std::string & src, std::string & dst, int windowBits, int level = Z_DEFAULT_COMPRESSION);
 int zlib_decompress(const std::string & src, std::string & dst, int windowBits);

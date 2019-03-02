@@ -1,5 +1,8 @@
 #include "PGP.h"
 
+#include <sstream>
+#include <stdexcept>
+
 #include "Misc/CRC-24.h"
 #include "Packets/Packets.h"
 #include "common/includes.h"

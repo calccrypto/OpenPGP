@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __SIGNATURE__
 #define __SIGNATURE__
 
-#include <string>
-
 #include "Packets/Packets.h"
 
 namespace OpenPGP {

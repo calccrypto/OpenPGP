@@ -1,5 +1,7 @@
 #include "Misc/radix64.h"
 
+#include "common/includes.h"
+
 namespace OpenPGP {
 
 std::string ascii2radix64(std::string str, const unsigned char char62, const unsigned char char63){

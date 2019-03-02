@@ -26,8 +26,6 @@ THE SOFTWARE.
 #define __PGP_TIME__
 
 #include <ctime>
-#include <iomanip>
-#include <sstream>
 #include <string>
 
 namespace OpenPGP {

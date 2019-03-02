@@ -1,5 +1,7 @@
 #include "Compress/pgpzlib.h"
 
+#include <assert.h>
+
 #include "common/compiler.h"
 
 /* Compress from file source to file dest until EOF on source.
