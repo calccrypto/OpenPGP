@@ -164,18 +164,27 @@ std::string S2K3::raw() const{
 }
 
 std::string S2K3::run(const std::string & pass, unsigned int sym_key_len) const{
+    const std::size_t coded = coded_count(count);
+    const std::string combined = salt + pass;
+
     // get string to hash
     std::string to_hash = "";
-    while (to_hash.size() < S2K3::coded_count(count)){// coded count is count of octets, not iterations
-        to_hash += salt + pass;
+    to_hash.reserve(coded + combined.size());
+    while (to_hash.size() < coded){  // coded count is count of octets, not iterations
+        to_hash += combined;
     }
-    to_hash = to_hash.substr(0, S2K3::coded_count(count));
+    to_hash = to_hash.substr(0, coded);
+
     // hash string
     std::string out = "";
+    out.reserve(sym_key_len + (Hash::LENGTH.at(hash) >> 3));
     unsigned int context = 0;
     while (out.size() < sym_key_len){
-        out += Hash::use(hash, std::string(context++, 0) + to_hash);
+        Hash::Instance h = Hash::get_instance(hash, std::string(context++, '\x00'));
+        h -> update(to_hash);
+        out += h -> digest();
     }
+
     return out.substr(0, sym_key_len);
 }
 

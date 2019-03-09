@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define HASHES_H
 
 #include <map>
+#include <memory>
 #include <stdexcept>
 
 #include "HashAlg.h"
@@ -127,7 +128,10 @@ namespace OpenPGP {
             std::make_pair(ID::SHA224,      224),
         };
 
-        std::string use(const uint8_t alg, const std::string & data);
+        std::string use(const uint8_t alg, const std::string & data = "");
+
+        typedef std::shared_ptr <HashAlg> Instance;
+        Instance get_instance(const uint8_t alg, const std::string & data = "");
     }
 }
 
