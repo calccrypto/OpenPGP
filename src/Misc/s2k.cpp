@@ -63,9 +63,9 @@ std::string S2K0::raw() const{
     return "\x00" + std::string(1, hash);
 }
 
-std::string S2K0::run(const std::string & pass, unsigned int sym_key_len) const{
+std::string S2K0::run(const std::string & pass, const std::size_t sym_key_len) const{
     std::string out = "";
-    unsigned int counter = 0;
+    std::size_t counter = 0;
     while (out.size() < sym_key_len){
         out += Hash::use(hash, std::string(counter++, 0) + pass);
     }
@@ -106,9 +106,9 @@ std::string S2K1::raw() const{
     return "\x01" + std::string(1, hash) + salt;
 }
 
-std::string S2K1::run(const std::string & pass, unsigned int sym_key_len) const{
+std::string S2K1::run(const std::string & pass, const std::size_t sym_key_len) const{
     std::string out = "";
-    unsigned int counter = 0;
+    std::size_t counter = 0;
     while (out.size() < sym_key_len){
         out += Hash::use(hash, std::string(counter++, 0) + salt + pass);
     }
@@ -163,25 +163,26 @@ std::string S2K3::raw() const{
     return "\x03" + std::string(1, hash) + salt + unhexlify(makehex(count, 2));
 }
 
-std::string S2K3::run(const std::string & pass, unsigned int sym_key_len) const{
+std::string S2K3::run(const std::string & pass, const std::size_t sym_key_len) const{
     const std::size_t coded = coded_count(count);
     const std::string combined = salt + pass;
 
-    // get string to hash
-    std::string to_hash = "";
-    to_hash.reserve(coded + combined.size());
-    while (to_hash.size() < coded){  // coded count is count of octets, not iterations
-        to_hash += combined;
-    }
-    to_hash = to_hash.substr(0, coded);
+    const std::size_t digest_octets = Hash::LENGTH.at(hash) >> 3;
+    const std::size_t contexts = (digest_octets / sym_key_len) + (bool) (digest_octets % sym_key_len);
 
-    // hash string
     std::string out = "";
-    out.reserve(sym_key_len + (Hash::LENGTH.at(hash) >> 3));
-    unsigned int context = 0;
-    while (out.size() < sym_key_len){
+    for(std::size_t context = 0; context < contexts; context++) {
         Hash::Instance h = Hash::get_instance(hash, std::string(context++, '\x00'));
-        h -> update(to_hash);
+
+        std::size_t hashed = 0;
+        do {
+            h -> update(combined);
+            hashed += combined.size();
+        } while ((hashed + combined.size()) < coded);
+
+        if (hashed < coded) {
+            h -> update(combined.substr(0, coded - hashed));
+        }
         out += h -> digest();
     }
 

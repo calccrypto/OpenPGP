@@ -99,7 +99,7 @@ namespace OpenPGP {
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
                 virtual std::string raw() const = 0;
                 std::string write() const;
-                virtual std::string run(const std::string & pass, unsigned int sym_key_len) const = 0;
+                virtual std::string run(const std::string & pass, const std::size_t sym_key_len) const = 0;
 
                 uint8_t get_type() const;
                 uint8_t get_hash() const;
@@ -151,7 +151,7 @@ namespace OpenPGP {
                 virtual void read(const std::string & data, std::string::size_type & pos);
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
-                virtual std::string run(const std::string & pass, unsigned int sym_key_len) const;
+                virtual std::string run(const std::string & pass, const std::size_t sym_key_len) const;
 
                 S2K::Ptr clone() const;
         };
@@ -183,7 +183,7 @@ namespace OpenPGP {
                 virtual void read(const std::string & data, std::string::size_type & pos);
                 virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const;
-                virtual std::string run(const std::string & pass, unsigned int sym_key_len) const;
+                virtual std::string run(const std::string & pass, const std::size_t sym_key_len) const;
 
                 std::string get_salt() const;
 
@@ -244,7 +244,7 @@ namespace OpenPGP {
                 void read(const std::string & data, std::string::size_type & pos);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
-                std::string run(const std::string & pass, unsigned int sym_key_len) const;
+                std::string run(const std::string & pass, const std::size_t sym_key_len) const;
 
                 uint8_t get_count() const;
 
