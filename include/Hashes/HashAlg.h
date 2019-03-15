@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __HASH__
 #define __HASH__
 
-#include <iostream>
-
 #include "common/includes.h"
 
 class HashAlg{

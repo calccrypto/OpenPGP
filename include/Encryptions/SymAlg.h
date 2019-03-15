@@ -25,7 +25,6 @@ THE SOFTWARE.
 #ifndef __SYMALG__
 #define __SYMALG__
 
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 

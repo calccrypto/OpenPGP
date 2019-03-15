@@ -6,9 +6,17 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub2::actual_read(const std::string & data){
+    set_time(toint(data, 256));
+}
+
+void Sub2::show_contents(HumanReadable & hr) const{
+    hr << "Creation Time: " + show_time(timestamp);
+}
+
 Sub2::Sub2()
     : Sub(SIGNATURE_CREATION_TIME, 4),
-      time()
+      timestamp()
 {}
 
 Sub2::Sub2(const std::string & data)
@@ -17,27 +25,16 @@ Sub2::Sub2(const std::string & data)
     read(data);
 }
 
-void Sub2::read(const std::string & data){
-    time = toint(data, 256);
-}
-
-std::string Sub2::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Creation Time: " + show_time(time);
-}
-
 std::string Sub2::raw() const{
-    return unhexlify(makehex(static_cast <uint32_t> (time), 8));
+    return unhexlify(makehex(static_cast <uint32_t> (timestamp), 8));
 }
 
 uint32_t Sub2::get_time() const{
-    return time;
+    return timestamp;
 }
 
 void Sub2::set_time(const uint32_t t){
-    time = t;
+    timestamp = t;
 }
 
 Sub::Ptr Sub2::clone() const{

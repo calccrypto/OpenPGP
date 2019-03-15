@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB2__
 #define __TAG2_SUB2__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -42,15 +42,16 @@ namespace OpenPGP {
 
             class Sub2 : public Sub {
                 private:
-                    uint32_t time;
+                    uint32_t timestamp;
+
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
 
                 public:
                     typedef std::shared_ptr <Sub2> Ptr;
 
                     Sub2();
                     Sub2(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     uint32_t get_time() const;

@@ -136,14 +136,13 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 std::string show_title() const;
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag18> Ptr;
 
                 Tag18(const PartialBodyLength & part = NOT_PARTIAL);
-                Tag18(const Tag18 & copy);
                 Tag18(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string write() const;
 
@@ -152,8 +151,6 @@ namespace OpenPGP {
                 void set_protected_data(const std::string & p);
 
                 Tag::Ptr clone() const;
-
-                Tag18 & operator=(const Tag18 & copy);
         };
     }
 }

@@ -4,6 +4,14 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub10::actual_read(const std::string & data){
+    set_stuff(data);
+}
+
+void Sub10::show_contents(HumanReadable & hr) const{
+    hr << stuff;
+}
+
 Sub10::Sub10()
     : Sub(PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY),
       stuff()
@@ -13,18 +21,6 @@ Sub10::Sub10(const std::string & data)
     : Sub10()
 {
     read(data);
-}
-
-void Sub10::read(const std::string & data){
-    stuff = data;
-    size = data.size();
-}
-
-std::string Sub10::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + stuff;
 }
 
 std::string Sub10::raw() const{

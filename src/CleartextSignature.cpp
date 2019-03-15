@@ -1,5 +1,7 @@
 #include "CleartextSignature.h"
 
+#include <iostream>
+
 #include "Misc/sigcalc.h"
 #include "common/includes.h"
 
@@ -89,7 +91,7 @@ void CleartextSignature::read(std::istream & stream){
             std::cerr << "Warning: Hash Armor Header Key is not \"HASH\": \"" << key << "\"." << std::endl;
         }
 
-        hash_armor_header.push_back(PGP::Armor_Key(key, value));
+        hash_armor_header.push_back(PGP::Armor_Key(key, trim_whitespace(value, true, true)));
     }
 
     // read message

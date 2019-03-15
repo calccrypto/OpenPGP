@@ -58,6 +58,94 @@ namespace OpenPGP {
         //    Note that if an implementation is creating an encrypted and signed
         //    message that is encrypted to a V3 key, it is reasonable to create a
         //    V3 signature.
+        //
+        // 5.2.2. Version 3 Signature Packet Format
+        //
+        //    The body of a version 3 Signature Packet contains:
+        //
+        //      - One-octet version number (3).
+        //
+        //      - One-octet length of following hashed material. MUST be 5.
+        //
+        //      - One-octet signature type.
+        //
+        //      - Four-octet creation time.
+        //
+        //      - Eight-octet Key ID of signer.
+        //
+        //      - One-octet public-key algorithm.
+        //
+        //      - One-octet hash algorithm.
+        //
+        //      - Two-octet field holding left 16 bits of signed hash value.
+        //
+        //      - One or more multiprecision integers comprising the signature.
+        //        This portion is algorithm specific, as described below.
+        //
+        //    The concatenation of the data to be signed, the signature type, and
+        //    creation time from the Signature packet (5 additional octets) is
+        //    hashed. The resulting hash value is used in the signature algorithm.
+        //    The high 16 bits (first two octets) of the hash are included in the
+        //    Signature packet to provide a quick test to reject some invalid
+        //    signatures.
+        //
+        //    Algorithm-Specific Fields for RSA signatures:
+        //
+        //      - multiprecision integer (MPI) of RSA signature value m**d mod n.
+        //
+        //    Algorithm-Specific Fields for DSA signatures:
+        //
+        //      - MPI of DSA value r.
+        //
+        //      - MPI of DSA value s.
+        //
+        //    The signature calculation is based on a hash of the signed data, as
+        //    described above. The details of the calculation are different for
+        //    DSA signatures than for RSA signatures.
+        //
+        // 5.2.3. Version 4 Signature Packet Format
+        //
+        //    The body of a version 4 Signature packet contains:
+        //
+        //      - One-octet version number (4).
+        //
+        //      - One-octet signature type.
+        //
+        //      - One-octet public-key algorithm.
+        //
+        //      - One-octet hash algorithm.
+        //
+        //      - Two-octet scalar octet count for following hashed subpacket data.
+        //        Note that this is the length in octets of all of the hashed
+        //        subpackets; a pointer incremented by this number will skip over
+        //        the hashed subpackets.
+        //
+        //      - Hashed subpacket data set (zero or more subpackets).
+        //
+        //      - Two-octet scalar octet count for the following unhashed subpacket
+        //        data. Note that this is the length in octets of all of the
+        //        unhashed subpackets; a pointer incremented by this number will
+        //        skip over the unhashed subpackets.
+        //
+        //      - Unhashed subpacket data set (zero or more subpackets).
+        //
+        //      - Two-octet field holding the left 16 bits of the signed hash
+        //        value.
+        //
+        //      - One or more multiprecision integers comprising the signature.
+        //        This portion is algorithm specific, as described above.
+        //
+        //    The concatenation of the data being signed and the signature data
+        //    from the version number through the hashed subpacket data (inclusive)
+        //    is hashed. The resulting hash value is what is signed. The left 16
+        //    bits of the hash are included in the Signature packet to provide a
+        //    quick test to reject some invalid signatures.
+        //
+        //    There are two fields consisting of Signature subpackets. The first
+        //    field is hashed with the rest of the signature data, while the second
+        //    is unhashed. The second set of subpackets is not cryptographically
+        //    protected by the signature and should include only advisory
+        //    information.
 
         class Tag2 : public Tag {
             public:
@@ -86,6 +174,7 @@ namespace OpenPGP {
                 void read_subpackets(const std::string & data, Subpackets & subpackets);
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag2> Ptr;
@@ -94,7 +183,6 @@ namespace OpenPGP {
                 Tag2(const Tag2 & copy);
                 Tag2(const std::string & data);
                 ~Tag2();
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw()                               const;
 
                 uint8_t get_type()                              const;
@@ -130,7 +218,7 @@ namespace OpenPGP {
                 std::string find_subpacket(const uint8_t sub)   const;      // find a subpacket within Signature Packet; returns raw data of last subpacket found
 
                 Tag::Ptr clone() const;
-                Tag2 & operator=(const Tag2 & copy);
+                Tag2 & operator=(const Tag2 & tag2);
         };
     }
 }

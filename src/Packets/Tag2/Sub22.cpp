@@ -4,6 +4,17 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub22::actual_read(const std::string & data){
+    set_pca(data);
+}
+
+void Sub22::show_contents(HumanReadable & hr) const{
+    for(char const & c : pca){
+        const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(c);
+        hr << "comp alg - " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (comp " + std::to_string(c) + ")";
+    }
+}
+
 Sub22::Sub22()
     : Sub(PREFERRED_COMPRESSION_ALGORITHMS),
       pca()
@@ -13,24 +24,6 @@ Sub22::Sub22(const std::string & data)
     : Sub22()
 {
     read(data);
-}
-
-void Sub22::read(const std::string & data){
-    pca = data;
-    size = data.size();
-}
-
-std::string Sub22::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-
-    std::string out = indent + show_title();
-    for(char const & c : pca){
-        const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(c);
-        out += "\n" + indent + tab + "comp alg - " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (comp " + std::to_string(c) + ")";
-    }
-
-    return out;
 }
 
 std::string Sub22::raw() const{

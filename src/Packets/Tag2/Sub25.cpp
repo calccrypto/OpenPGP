@@ -4,6 +4,16 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub25::actual_read(const std::string & data){
+    if (data.size()){
+        set_primary(data[0]);
+    }
+}
+
+void Sub25::show_contents(HumanReadable & hr) const{
+    hr << std::string("Primary: ") + + (primary?"True":"False");
+}
+
 Sub25::Sub25()
     : Sub(PRIMARY_USER_ID, 1),
       primary()
@@ -15,21 +25,8 @@ Sub25::Sub25(const std::string & data)
     read(data);
 }
 
-void Sub25::read(const std::string & data){
-    if (data.size()){
-        primary = data[0];
-    }
-}
-
-std::string Sub25::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Primary: " + + (primary?"True":"False");
-}
-
 std::string Sub25::raw() const{
-    return (primary?"\x01":zero);
+    return std::string(1, primary);
 }
 
 bool Sub25::get_primary() const{

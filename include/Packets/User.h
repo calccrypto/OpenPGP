@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __PACKET_USER__
 #define __PACKET_USER__
 
-#include "Packet.h"
+#include "Packets/Packet.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -40,8 +40,6 @@ namespace OpenPGP {
                 typedef std::shared_ptr <User> Ptr;
 
                 virtual ~User();
-
-                User & operator=(const User & copy);
         };
     }
 }

@@ -1,6 +1,6 @@
 /*
-Subpackets.h
-List of all Subpacket headers
+PartialBodyLengthEnums.h
+Defines enums for Partial Body Lengths so that Partial.h does not have to be included until later
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,11 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SUBPACKETS__
-#define __SUBPACKETS__
+#ifndef __PARTIAL_BODY_LENGTH_ENUMS__
+#define __PARTIAL_BODY_LENGTH_ENUMS__
 
-#include "Subpacket.h"          // 5.2.3.1 Signature Subpacket Specification
-#include "Tag2/Subpackets.h"    // 5.2.3.4 - 5.2.3.26
-#include "Tag17/Subpackets.h"   // 5.12. User Attribute Packet (Tag 17)
+namespace OpenPGP {
+    namespace Packet {
+        enum PartialBodyLength {
+            NOT_PARTIAL,
+            PARTIAL
+        };
+    }
+}
 
 #endif

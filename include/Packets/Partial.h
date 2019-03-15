@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <string>
 
 #include "Packets/Packet.h"
+#include "Packets/PartialBodyLengthEnums.h"
 
 namespace OpenPGP {
     namespace Packet {
@@ -78,11 +79,6 @@ namespace OpenPGP {
         //     MUST be at least 512 octets long.  Partial Body Lengths MUST NOT be
         //     used for any other packet types.
 
-        enum PartialBodyLength {
-            NOT_PARTIAL,
-            PARTIAL
-        };
-
         static const uint8_t PARTIAL_BODY_LENGTH_START = 224;
         static const uint8_t PARTIAL_BODY_LENGTH_END   = 254;
 
@@ -103,8 +99,8 @@ namespace OpenPGP {
 
                 void set_partial(const PartialBodyLength & part);
 
-                static bool can_be(const uint8_t tag);              // check if a packet type can have partial body lengths
-                static bool can_be(const Tag::Ptr & packet);        // check if a packet can have partial body lengths
+                static bool can_have_partial_length(const uint8_t tag);       // check if a packet type can have partial body lengths
+                static bool can_have_partial_length(const Tag::Ptr & packet); // check if a packet can have partial body lengths
 
                 Partial & operator=(const Partial &copy);
         };

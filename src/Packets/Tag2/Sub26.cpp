@@ -4,6 +4,14 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub26::actual_read(const std::string & data){
+    set_uri(data);
+}
+
+void Sub26::show_contents(HumanReadable & hr) const{
+    hr << "Policy - " + uri;
+}
+
 Sub26::Sub26()
     : Sub(POLICY_URI),
       uri()
@@ -13,18 +21,6 @@ Sub26::Sub26(const std::string & data)
     : Sub26()
 {
     read(data);
-}
-
-void Sub26::read(const std::string & data){
-    uri = data;
-    size = data.size();
-}
-
-std::string Sub26::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Policy - " + uri;
 }
 
 std::string Sub26::raw() const{

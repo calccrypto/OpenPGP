@@ -2,3 +2,4 @@ Find PGP keys with formats/packets I have never seen before
 finish sign functions
 encrypt for multiple recipients
 sign with multiple keys
+Fix relationship between Message and Tag8

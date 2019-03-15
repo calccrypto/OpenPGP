@@ -4,6 +4,21 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub12::actual_read(const std::string & data){
+    if (data.size() >= 22){
+        set_class(data[0]);
+        set_pka(data[1]);
+        set_fingerprint(data.substr(2, 20));
+    }
+}
+
+void Sub12::show_contents(HumanReadable & hr) const{
+    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
+    hr << std::string("Class: ") + std::to_string(_class)
+       << std::string("Public Key Algorithm: ") + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
+       << std::string("Fingerprint: ") + fingerprint;
+}
+
 Sub12::Sub12()
     : Sub(REVOCATION_KEY),
       _class(),
@@ -15,25 +30,6 @@ Sub12::Sub12(const std::string & data)
     : Sub12()
 {
     read(data);
-}
-
-void Sub12::read(const std::string & data){
-    if (data.size()){
-        _class = data[0];
-        pka = data[1];
-        fingerprint = data.substr(2, 20);
-        size = data.size();
-    }
-}
-
-std::string Sub12::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
-    return indent + show_title() + "\n" +
-           indent + tab + "Class: " + std::to_string(_class) + "\n" +
-           indent + tab + "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")\n" +
-           indent + tab + "Fingerprint: " + fingerprint;
 }
 
 std::string Sub12::raw() const{

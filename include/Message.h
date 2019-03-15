@@ -117,7 +117,8 @@ namespace OpenPGP {
             // Read Binary data
             void read_raw(const std::string & data);
 
-            std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // display information; indents is used to tab the output if desired
+            std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // not inherited from PGP?
+            void show(HumanReadable & hr) const;                                                        // display information
             std::string raw() const;                                                                    // write packets only
             std::string write(const Armored armor = DEFAULT) const;
 

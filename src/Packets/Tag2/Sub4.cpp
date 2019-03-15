@@ -4,6 +4,16 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub4::actual_read(const std::string & data){
+    if (data.size()){
+        set_exportable(data[0]);
+    }
+}
+
+void Sub4::show_contents(HumanReadable & hr) const{
+    hr << std::string("Exportable: ") + (exportable?"True":"False");
+}
+
 Sub4::Sub4()
     : Sub(EXPORTABLE_CERTIFICATION, 1),
       exportable()
@@ -13,19 +23,6 @@ Sub4::Sub4(const std::string & data)
     : Sub4()
 {
     read(data);
-}
-
-void Sub4::read(const std::string & data){
-    if (data.size()){
-        exportable = data[0];
-    }
-}
-
-std::string Sub4::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "Exportable: " + (exportable?"True":"False");
 }
 
 std::string Sub4::raw() const{

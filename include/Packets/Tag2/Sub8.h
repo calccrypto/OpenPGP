@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB8__
 #define __TAG2_SUB8__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -34,6 +34,8 @@ namespace OpenPGP {
             class Sub8 : public Sub {
                 public:
                     Sub8(...);
+
+                    Sub::Ptr clone() const;
             };
         }
     }

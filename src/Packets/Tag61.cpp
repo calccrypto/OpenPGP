@@ -9,25 +9,19 @@ void Tag61::actual_read(const std::string & data){
     stream = data;
 }
 
+void Tag61::show_contents(HumanReadable & hr) const{
+    hr << hexlify(stream);
+}
+
 Tag61::Tag61()
     : Tag61(std::string())
 {}
 
-Tag61::Tag61(const Tag61 & copy)
-    : Tag(copy),
-      stream(copy.stream)
-{}
-
 Tag61::Tag61(const std::string & data)
     : Tag(61),
-      stream(data)
-{}
-
-std::string Tag61::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + hexlify(stream);
+      stream()
+{
+    read(data);
 }
 
 std::string Tag61::raw() const{
@@ -47,4 +41,5 @@ Tag::Ptr Tag61::clone() const{
 }
 
 }
+
 }

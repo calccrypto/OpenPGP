@@ -180,11 +180,11 @@ namespace OpenPGP {
 
             class Sub: public Subpacket::Sub {
                 protected:
-                    using Subpacket::Sub::Sub;
+                    virtual void actual_read(const std::string & data);
+                    std::string show_type() const;
+                    virtual void show_contents(HumanReadable & hr) const;
 
-                    std::string show_title() const;
-
-                    Sub & operator=(const Sub & copy);
+                    Sub(uint8_t type = 0, unsigned int size = 0, bool crit = false);
 
                 public:
                     typedef std::shared_ptr <Sub> Ptr;

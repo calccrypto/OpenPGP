@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB20__
 #define __TAG2_SUB20__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -48,7 +48,7 @@ namespace OpenPGP {
             //
             //    All undefined flags MUST be zero. Defined flags are as follows:
             //
-            //        First octet: 0x80 = human-readable. This note value is text.
+            //        First octet: 0x80 = Human-readable. This note value is text.
             //        Other octets: none.
             //
             //    Notation names are arbitrary strings encoded in UTF-8. They reside
@@ -88,18 +88,17 @@ namespace OpenPGP {
             class Sub20 : public Sub {
                 private:
                     std::string flags;  // 4 octets
-                    uint16_t mlen;
-                    uint16_t nlen;
                     std::string m;      // mlen octets long
                     std::string n;      // nlen octets long
+
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
 
                 public:
                     typedef std::shared_ptr <Sub20> Ptr;
 
                     Sub20();
                     Sub20(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     std::string get_flags() const;

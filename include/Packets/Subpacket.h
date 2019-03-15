@@ -27,9 +27,9 @@ THE SOFTWARE.
 #define __SUBPACKET__
 
 #include <memory>
-#include <stdexcept>
 #include <string>
 
+#include "common/HumanReadable.h"
 #include "common/includes.h"
 
 namespace OpenPGP {
@@ -97,28 +97,36 @@ namespace OpenPGP {
                 uint8_t type;
                 std::size_t size; // only used for displaying. recalculated when writing
 
+            public:
+                static void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
+
+            protected:
+                virtual void actual_read(const std::string & data) = 0;
+
+                virtual std::string show_critical() const;                       // prepend show_type with "critical"
+                virtual std::string show_type    () const = 0;                   // defined by immediate child class
+                virtual void        show_contents(HumanReadable & hr) const = 0; // defined by actual subpacket; should return at same level as entered
+
                 std::string write_subpacket(const std::string & data) const;
 
-                // returns first line of show functions (no tab or newline)
-                virtual std::string show_title() const;
-
                 Sub(uint8_t type = 0, unsigned int size = 0, bool crit = false);
-                Sub(const Sub & copy);
-                Sub & operator=(const Sub & copy);
 
             public:
                 typedef std::shared_ptr <Sub> Ptr;
 
                 virtual ~Sub();
-                virtual void read(const std::string & data) = 0;
-                virtual std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const = 0;
-                virtual std::string raw()   const = 0; // returns raw subpacket data, with no header
-                std::string write()         const;
+                void read(const std::string & data);
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                void show(HumanReadable & hr) const;
+                virtual std::string raw() const;
+                std::string write() const;
 
-                bool get_critical()         const;
-                uint8_t get_type()          const;
-                std::size_t get_size()      const;
+                // Accessors
+                bool get_critical() const;
+                uint8_t get_type() const;
+                std::size_t get_size() const;
 
+                // Modifiers
                 void set_critical(const bool c);
                 void set_type(const uint8_t t);
                 void set_size(const std::size_t s);

@@ -4,15 +4,26 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub32::actual_read(const std::string & data){
+    set_embedded(std::make_shared <Packet::Tag2> (data), true);
+}
+
+void Sub32::show_contents(HumanReadable & hr) const{
+    if (embedded) {
+        embedded -> show(hr);
+    }
+}
+
 Sub32::Sub32()
     : Sub(EMBEDDED_SIGNATURE),
       embedded(nullptr)
 {}
 
 Sub32::Sub32(const Sub32 & copy)
-    : Sub(copy),
-      embedded(std::static_pointer_cast <Packet::Tag2> (copy.embedded -> clone()))
-{}
+    : Sub(copy)
+{
+    set_embedded(copy.embedded);
+}
 
 Sub32::Sub32(const std::string & data)
     : Sub32()
@@ -22,28 +33,19 @@ Sub32::Sub32(const std::string & data)
 
 Sub32::~Sub32(){}
 
-void Sub32::read(const std::string & data){
-    embedded = std::make_shared <Packet::Tag2> (data);
-    size = data.size();
-}
-
-std::string Sub32::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indent_size, ' ');
-    const std::string tab(indents * indent_size, ' ');
-    return tab + show_title() + "\n" +
-           embedded -> show(indents + 1, indent_size);
-}
-
 std::string Sub32::raw() const{
-    return embedded -> raw();
+    return embedded?(embedded -> raw()):"";
 }
 
 Packet::Tag2::Tag::Ptr Sub32::get_embedded() const{
     return embedded;
 }
 
-void Sub32::set_embedded(const Packet::Tag2::Ptr & e){
-    embedded = std::static_pointer_cast <Packet::Tag2> (e -> clone());
+void Sub32::set_embedded(const Packet::Tag2::Ptr & e, const bool copy){
+    embedded = e;
+    if (embedded && !copy) {
+        embedded = std::static_pointer_cast <Packet::Tag2> (embedded -> clone());
+    }
 }
 
 Sub::Ptr Sub32::clone() const{
@@ -52,7 +54,7 @@ Sub::Ptr Sub32::clone() const{
 
 Sub32 & Sub32::operator=(const Sub32 & copy){
     Sub::operator=(copy);
-    embedded = std::static_pointer_cast <Packet::Tag2> (copy.embedded -> clone());
+    set_embedded(copy.embedded);
     return *this;
 }
 

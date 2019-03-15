@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __TAG2_SUB21__
 
 #include "Hashes/Hashes.h"
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -46,13 +46,14 @@ namespace OpenPGP {
                 private:
                     std::string pha;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub21> Ptr;
 
                     Sub21();
                     Sub21(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
 
                     std::string get_pha() const;  // returns string of preferred hash algorithms (ex: "\x01\x02\x03")

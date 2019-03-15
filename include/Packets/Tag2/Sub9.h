@@ -26,11 +26,12 @@ THE SOFTWARE.
 #ifndef __TAG2_SUB9__
 #define __TAG2_SUB9__
 
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
+
             // 5.2.3.6. Key Expiration Time
             //
             //    (4-octet time field)
@@ -44,16 +45,16 @@ namespace OpenPGP {
                 private:
                     uint32_t dt;
 
+                    void actual_read(const std::string & data);
+                    void show_contents(HumanReadable & hr) const;
+
                 public:
                     typedef std::shared_ptr <Sub9> Ptr;
 
                     Sub9();
                     Sub9(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const uint32_t create_time, const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                     std::string raw() const;
-
+                    void show(const uint32_t create_time, HumanReadable & hr) const;
                     uint32_t get_dt() const;
 
                     void set_dt(const uint32_t t);

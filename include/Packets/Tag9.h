@@ -53,7 +53,6 @@ namespace OpenPGP {
         //    the IDEA algorithm is used with the session key calculated as the MD5
         //    hash of the passphrase, though this use is deprecated.
         //
-        //
         //    The data is encrypted in CFB mode, with a CFB shift size equal to the
         //    cipher's block size.  The Initial Vector (IV) is specified as all
         //    zeros.  Instead of using an IV, OpenPGP prefixes a string of length
@@ -81,14 +80,13 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 std::string show_title() const;
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag9> Ptr;
 
                 Tag9(const PartialBodyLength &part = NOT_PARTIAL);
-                Tag9(const Tag9 & copy);
                 Tag9(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
                 std::string write() const;
 
@@ -97,8 +95,6 @@ namespace OpenPGP {
                 std::string get_encrypted_data() const;
 
                 void set_encrypted_data(const std::string & e);
-
-                Tag9 & operator=(const Tag9 & copy);
         };
     }
 }

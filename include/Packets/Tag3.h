@@ -26,8 +26,6 @@ THE SOFTWARE.
 #ifndef __TAG3__
 #define __TAG3__
 
-#include <string>
-
 #include "Misc/cfb.h"
 #include "Misc/s2k.h"
 #include "Packets/Packet.h"
@@ -91,6 +89,7 @@ namespace OpenPGP {
                 std::shared_ptr <std::string> esk; // encrypted session key
 
                 void actual_read(const std::string & data);
+                void show_contents(HumanReadable & hr) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag3> Ptr;
@@ -99,7 +98,6 @@ namespace OpenPGP {
                 Tag3(const Tag3 & copy);
                 Tag3(const std::string & data);
                 ~Tag3();
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 std::string raw() const;
 
                 uint8_t get_sym() const;

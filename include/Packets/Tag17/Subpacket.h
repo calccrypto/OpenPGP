@@ -37,18 +37,16 @@ namespace OpenPGP {
             const uint8_t IMAGE_ATTRIBUTE = 1;
 
             const std::map <uint8_t, std::string> NAME = {
-                std::make_pair(IMAGE_ATTRIBUTE, "Image Attribite"),
+                std::make_pair(IMAGE_ATTRIBUTE, "Image Attribute"),
             };
 
             class Sub: public Subpacket::Sub {
-                public:
-
                 protected:
-                    using Subpacket::Sub::Sub;
+                    virtual void actual_read(const std::string & data);
+                    std::string show_type() const;
+                    virtual void show_contents(HumanReadable & hr) const;
 
-                    std::string show_title() const;
-
-                    Sub & operator=(const Sub & copy);
+                    Sub(uint8_t type = 0, unsigned int size = 0, bool crit = false);
 
                 public:
                     typedef std::shared_ptr <Sub> Ptr;

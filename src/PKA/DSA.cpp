@@ -103,7 +103,6 @@ Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k){
 }
 
 Values sign(const std::string & data, const Values & pri, const Values & pub, MPI k){
-    MPI m(hexlify(data), 16);
     return sign(rawtompi(data), pri, pub, k);
 }
 

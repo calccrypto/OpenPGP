@@ -26,32 +26,32 @@ THE SOFTWARE.
 #ifndef __PACKETS__
 #define __PACKETS__
 
-#include "Packet.h"
+#include "Packets/Packet.h"
 
-#include "Key.h"    // for Tags 5, 6, 7, and 14
-#include "User.h"   // for Tags 13 and 17
+#include "Packets/Key.h"    // for Tags 5, 6, 7, and 14
+#include "Packets/User.h"   // for Tags 13 and 17
 
-#include "Tag0.h"   // Reserved - a packet tag MUST NOT have this value
-#include "Tag1.h"
-#include "Tag2.h"
-#include "Tag3.h"
-#include "Tag4.h"
-#include "Tag5.h"
-#include "Tag6.h"
-#include "Tag7.h"
-#include "Tag8.h"
-#include "Tag9.h"
-#include "Tag10.h"
-#include "Tag11.h"
-#include "Tag12.h"
-#include "Tag13.h"
-#include "Tag14.h"
-#include "Tag17.h"
-#include "Tag18.h"
-#include "Tag19.h"
-#include "Tag60.h"  // Private or Experimental Values
-#include "Tag61.h"  // Private or Experimental Values
-#include "Tag62.h"  // Private or Experimental Values
-#include "Tag63.h"  // Private or Experimental Values
+#include "Packets/Tag0.h"   // Reserved - a packet tag MUST NOT have this value
+#include "Packets/Tag1.h"   // Public-Key Encrypted Session Key
+#include "Packets/Tag2.h"   // Signature
+#include "Packets/Tag3.h"   // Symmetric-Key Encrypted Session Key
+#include "Packets/Tag4.h"   // One-Pass Signature
+#include "Packets/Tag5.h"   // Secret-Key
+#include "Packets/Tag6.h"   // Public-Key
+#include "Packets/Tag7.h"   // Secret-Subkey
+#include "Packets/Tag8.h"   // Compressed Data
+#include "Packets/Tag9.h"   // Symmetrically (Conventional) Encrypted Data
+#include "Packets/Tag10.h"  // Marker Packet (Obsolete Literal Packet)
+#include "Packets/Tag11.h"  // Literal Data
+#include "Packets/Tag12.h"  // (Keyring) Trust
+#include "Packets/Tag13.h"  // User ID
+#include "Packets/Tag14.h"  // Pubic-Subkey (Obsolete COmment Packet)
+#include "Packets/Tag17.h"  // User Attribute
+#include "Packets/Tag18.h"  // Sym. Encrypted Integrity Protected Data
+#include "Packets/Tag19.h"  // Modification Detection Code
+#include "Packets/Tag60.h"  // Private or Experimental Values
+#include "Packets/Tag61.h"  // Private or Experimental Values
+#include "Packets/Tag62.h"  // Private or Experimental Values
+#include "Packets/Tag63.h"  // Private or Experimental Values
 
 #endif

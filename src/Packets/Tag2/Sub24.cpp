@@ -4,6 +4,14 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub24::actual_read(const std::string & data){
+    set_pks(data);
+}
+
+void Sub24::show_contents(HumanReadable & hr) const{
+    hr << "URI - " + pks;
+}
+
 Sub24::Sub24()
     : Sub(PREFERRED_KEY_SERVER),
       pks()
@@ -13,18 +21,6 @@ Sub24::Sub24(const std::string & data)
     : Sub24()
 {
     read(data);
-}
-
-void Sub24::read(const std::string & data){
-    pks = data;
-    size = data.size();
-}
-
-std::string Sub24::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + show_title() + "\n" +
-           indent + tab + "URI - " + pks;
 }
 
 std::string Sub24::raw() const{

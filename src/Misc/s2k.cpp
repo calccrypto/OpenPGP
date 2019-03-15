@@ -16,6 +16,23 @@ S2K::S2K(uint8_t t)
 
 S2K::~S2K(){}
 
+void S2K::read(const std::string & data) {
+    std::string::size_type pos = 0;
+    read(data, pos);
+}
+
+void S2K::read(const std::string & data, std::string::size_type & pos){
+    set_type(data[pos]);
+    set_hash(data[pos + 1]);
+    pos += 2;
+}
+
+void S2K::show(HumanReadable & hr) const{
+    hr << show_title() << HumanReadable::DOWN;
+    show_contents(hr);
+    hr << HumanReadable::UP;
+}
+
 std::string S2K::write() const{
     return raw();
 }
@@ -36,6 +53,10 @@ void S2K::set_hash(const uint8_t h){
     hash = h;
 }
 
+void S2K0::show_contents(HumanReadable & hr) const{
+    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")";
+}
+
 S2K0::S2K0(uint8_t t)
     : S2K(t)
 {}
@@ -44,23 +65,20 @@ S2K0::S2K0()
     : S2K0(ID::SIMPLE_S2K)
 {}
 
+S2K0::S2K0(const std::string & data)
+    : S2K0()
+{
+    S2K::read(data);
+}
+
 S2K0::~S2K0(){}
 
 void S2K0::read(const std::string & data, std::string::size_type & pos){
-    type = data[pos];
-    hash = data[pos + 1];
-    pos += 2;
-}
-
-std::string S2K0::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")";
+    S2K::read(data, pos);
 }
 
 std::string S2K0::raw() const{
-    return "\x00" + std::string(1, hash);
+    return std::string(1, type) + std::string(1, hash);
 }
 
 std::string S2K0::run(const std::string & pass, const std::size_t sym_key_len) const{
@@ -76,6 +94,11 @@ S2K::Ptr S2K0::clone() const{
     return std::make_shared <S2K0> (*this);
 }
 
+void S2K1::show_contents(HumanReadable & hr) const{
+    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")"
+       << "Salt: " + hexlify(salt);
+}
+
 S2K1::S2K1(uint8_t t)
     : S2K0(t),
       salt()
@@ -85,25 +108,22 @@ S2K1::S2K1()
     : S2K1(ID::SALTED_S2K)
 {}
 
+S2K1::S2K1(const std::string & data)
+    : S2K1()
+{
+    S2K::read(data);
+}
+
 S2K1::~S2K1(){}
 
 void S2K1::read(const std::string & data, std::string::size_type & pos){
-    type = data[pos];
-    hash = data[pos + 1];
-    salt = data.substr(pos + 2, 8);
-    pos += 10;
-}
-
-std::string S2K1::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")" +
-           indent + tab + tab + "Salt: " + hexlify(salt);
+    S2K0::read(data, pos);
+    salt = data.substr(pos, 8);
+    pos += 8;
 }
 
 std::string S2K1::raw() const{
-    return "\x01" + std::string(1, hash) + salt;
+    return std::string(1, type) + std::string(1, hash) + salt;
 }
 
 std::string S2K1::run(const std::string & pass, const std::size_t sym_key_len) const{
@@ -135,32 +155,33 @@ uint32_t S2K3::coded_count(const uint8_t c){
     return (16 + (c & 15)) << ((c >> 4) + S2K3::EXPBIAS);
 }
 
+void S2K3::show_contents(HumanReadable & hr) const{
+    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")"
+       << "Salt: " + hexlify(salt)
+       << "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
+}
+
 S2K3::S2K3()
     : S2K1(ID::ITERATED_AND_SALTED_S2K),
       count()
 {}
 
+S2K3::S2K3(const std::string & data)
+    : S2K3()
+{
+    S2K::read(data);
+}
+
 S2K3::~S2K3(){}
 
 void S2K3::read(const std::string & data, std::string::size_type & pos){
-    type  = data[pos];
-    hash  = data[pos + 1];
-    salt  = data.substr(pos + 2, 8);
-    count = data[pos + 10];
-    pos += 11;
-}
-
-std::string S2K3::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    return indent + tab + show_title() + "\n" +
-           indent + tab + tab + "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")\n" +
-           indent + tab + tab + "Salt: " + hexlify(salt) + "\n" +
-           indent + tab + tab + "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
+    S2K1::read(data, pos);
+    count = data[pos];
+    pos += 1;
 }
 
 std::string S2K3::raw() const{
-    return "\x03" + std::string(1, hash) + salt + unhexlify(makehex(count, 2));
+    return std::string(1, type) + std::string(1, hash) + salt + unhexlify(makehex(count, 2));
 }
 
 std::string S2K3::run(const std::string & pass, const std::size_t sym_key_len) const{

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <ctime>
 #include <sstream>
 
@@ -752,7 +751,7 @@ TEST(gpg, decrypt_verify){
         EXPECT_EQ(tag4 -> get_type(), OpenPGP::Signature_Type::SIGNATURE_OF_A_BINARY_DOCUMENT);
         EXPECT_EQ(tag4 -> get_pka(), OpenPGP::PKA::ID::RSA_ENCRYPT_OR_SIGN);
         EXPECT_EQ(tag4 -> get_keyid(), "\xd5\xd7\xda\x71\xc3\x54\x96\x0e");
-        EXPECT_EQ(tag4 -> get_nested(), 1);
+        EXPECT_EQ(tag4 -> get_last(), 1);
     }
 
     // tag 11

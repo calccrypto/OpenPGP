@@ -6,6 +6,14 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
+void Sub9::actual_read(const std::string & data){
+    set_dt(static_cast <uint32_t> (toint(data, 256)));
+}
+
+void Sub9::show_contents(HumanReadable & hr) const{
+    hr << "Key Expiration Time: " + (dt?(show_dt(dt) + " after key creation"):"Never");
+}
+
 Sub9::Sub9()
     : Sub(KEY_EXPIRATION_TIME, 4),
       dt()
@@ -17,41 +25,8 @@ Sub9::Sub9(const std::string & data)
     read(data);
 }
 
-void Sub9::read(const std::string & data){
-    dt = static_cast <uint32_t> (toint(data, 256));
-}
-
-std::string Sub9::show(const uint32_t create_time, const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-
-    std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Key Expiration Time: ";
-    if (dt == 0){
-        out += "Never";
-    }
-    else{
-        out += show_time(create_time + dt);
-    }
-
-    return out;
-}
-
-std::string Sub9::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-
-    std::string out = indent + show_title() + "\n" +
-                      indent + tab + "Key Expiration Time: ";
-
-    if (dt == 0){
-        out += "Never";
-    }
-    else{
-        out += show_dt(dt) + " after key creation";
-    }
-
-    return out;
+void Sub9::show(const uint32_t create_time, HumanReadable & hr) const{
+    hr << show_critical() + show_type() << HumanReadable::DOWN << "Key Expiration Time: " + (dt?(show_dt(create_time + dt) + " after key creation"):"Never") << HumanReadable::UP;
 }
 
 std::string Sub9::raw() const{

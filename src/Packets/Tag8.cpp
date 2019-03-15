@@ -15,14 +15,26 @@ std::string Tag8::decompress(const std::string & data) const{
 }
 
 void Tag8::actual_read(const std::string & data){
-    if (size > 1) {
-        comp = data[0];
-        compressed_data = data.substr(1, size - 1);
+    if (size) {
+        comp = data[0]; // don't call set_comp here to prevent decompressing and recompressing old data
+        set_compressed_data(data.substr(1, size - 1));
     }
 }
 
 std::string Tag8::show_title() const {
     return Tag::show_title() + Partial::show_title();
+}
+
+void Tag8::show_contents(HumanReadable & hr) const{
+    const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
+    Message decompressed;
+    decompressed.read_raw(get_data());
+
+    hr << "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")"
+       << "Compressed Data:"
+       << HumanReadable::DOWN;
+    decompressed.show(hr);
+    hr << HumanReadable::UP;
 }
 
 Tag8::Tag8(const PartialBodyLength & part)
@@ -32,30 +44,10 @@ Tag8::Tag8(const PartialBodyLength & part)
       compressed_data()
 {}
 
-Tag8::Tag8(const Tag8 & copy)
-    : Tag(copy),
-      Partial(copy),
-      comp(copy.comp),
-      compressed_data(copy.compressed_data)
-{}
-
 Tag8::Tag8(const std::string & data)
     : Tag8()
 {
     read(data);
-}
-
-std::string Tag8::show(const std::size_t indents, const std::size_t indent_size) const{
-    const std::string indent(indents * indent_size, ' ');
-    const std::string tab(indent_size, ' ');
-    const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
-    Message decompressed;
-    decompressed.read_raw(get_data());
-
-    return indent + show_title() + "\n" +
-           indent + tab + "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")\n" +
-           indent + tab + "Compressed Data:\n" +
-           decompressed.show(indents + 2, indent_size);
 }
 
 std::string Tag8::raw() const{
@@ -95,12 +87,10 @@ void Tag8::set_comp(const uint8_t alg){
     comp = alg;                         // set new compression algorithm
     set_data(data);                     // compress data with new algorithm
     comp = alg;
-    size = raw().size();
 }
 
 void Tag8::set_data(const std::string & data){
     compressed_data = compress(data);
-    size = raw().size();
 }
 
 void Tag8::set_body(const Message & msg) {
@@ -110,17 +100,10 @@ void Tag8::set_body(const Message & msg) {
 
 void Tag8::set_compressed_data(const std::string & data){
     compressed_data = data;
-    size = raw().size();
 }
 
 Tag::Ptr Tag8::clone() const{
     return std::make_shared <Packet::Tag8> (*this);
-}
-
-Tag8 & Tag8::operator=(const Tag8 &copy){
-    Tag::operator=(copy);
-    Partial::operator=(copy);
-    return *this;
 }
 
 }

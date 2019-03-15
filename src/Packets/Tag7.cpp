@@ -7,10 +7,6 @@ Tag7::Tag7()
     : Tag5(SECRET_SUBKEY)
 {}
 
-Tag7::Tag7(const Tag7 & copy)
-    : Tag5(copy)
-{}
-
 Tag7::Tag7(const std::string & data)
     : Tag7()
 {
@@ -35,11 +31,6 @@ Tag::Ptr Tag7::clone() const{
     Ptr out = std::make_shared <Packet::Tag7> (*this);
     out -> s2k = s2k?s2k -> clone():nullptr;
     return out;
-}
-
-Tag7 & Tag7::operator=(const Tag7 & copy){
-    Tag5::operator=(copy);
-    return *this;
 }
 
 }

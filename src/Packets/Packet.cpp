@@ -48,23 +48,61 @@ bool is_sym_protected_data(const uint8_t t){
             (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
+bool can_have_partial_length (const uint8_t t){
+    return Partial::can_have_partial_length(t);
+}
+
+std::string Tag::show_title() const{
+    return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
+}
+
+void Tag::show_contents(HumanReadable &) const{}
+
 // returns formatted length string
-std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const uint8_t part){
+// partial takes precedence over octets
+std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets){
     std::string::size_type length = data.size();
-    std::string out(1, 0x80 | (tag << 2));                  // old header: 10TT TTLL
-    if (part == Packet::PARTIAL){                           // partial
+    std::string out(1, 0x80 | (tag << 2)); // old header: 10TT TTLL
+    if (part == Packet::PARTIAL){          // partial
         out[0] |= 3;
     }
     else{
-        if (length < 256){
-            out[0] |= 0;                                    // 1 octet
+        // try to use user requested octet length
+        if (octets == 1) {
+            if (length > 255) {
+                octets = 0;
+            }
+        }
+        else if (octets == 2) {
+            if (length > 65535) {
+                octets = 0;
+            }
+        }
+        else if ((octets == 3) ||
+                 (octets == 4) ||
+                 (octets >  5)) {
+            octets = 0;
+        }
+
+        // 1 octet
+        if ((octets == 1)   ||             // user requested
+            ((octets == 0)  &&             // default
+             (length < 256))){
+            out[0] |= 0;
             out += std::string(1, length);
         }
-        else if ((256 <= length) && (length < 65536)){      // 2 octest
+        // 2 octest
+        else if ((octets == 2)     ||      // user requested
+                 ((octets == 0)    &&      // default
+                  (256 <= length)  &&
+                  (length < 65536))){
             out[0] |= 1;
             out += unhexlify(makehex(length, 4));
         }
-        else if (65536 <= length){                          // 4 octets
+        // 5 octets
+        else if ((octets == 5)      ||     // use requested
+                 ((octets == 0)     &&     // default
+                  (65536 <= length))){
             out[0] |= 2;
             out += unhexlify(makehex(length, 8));
         }
@@ -73,7 +111,8 @@ std::string Tag::write_old_length(const uint8_t tag, const std::string & data, c
 }
 
 // returns formatted length string
-std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const uint8_t part){
+// partial takes precedence over octets
+std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets){
     std::string::size_type length = data.size();
     std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
     if (part == Packet::PARTIAL){                           // partial
@@ -108,24 +147,48 @@ std::string Tag::write_new_length(const uint8_t tag, const std::string & data, c
         out += write_new_length(tag, data.substr(pos, non_partial), Packet::NOT_PARTIAL);
     }
     else{
-        if (length < 192){                                  // 1 octet
+        // try to use user requested octet length
+        if (octets == 1) {
+            if (length > 191) {
+                octets = 0;
+            }
+        }
+        else if (octets == 2) {
+            if (length > 8382) {
+                octets = 0;
+            }
+        }
+        else if ((octets == 3) ||
+                 (octets == 4) ||
+                 (octets >  5)) {
+            octets = 0;
+        }
+
+        // 1 octet
+        if ((octets == 1)     ||          // user requested
+            ((octets == 0)    &&          // default
+             (length <= 191))) {
             out += std::string(1, length);
         }
-        else if ((192 <= length) && (length < 8383)){       // 2 octets
+        // 2 octets
+        else if ((octets == 2)        ||  // user requested
+                 ((octets == 0)       &&  // default
+                  ((192 <= length)    &&
+                   (length <= 8383)))) {
             length -= 0xc0;
-            out += std::string(1, (length >> 8) + 0xc0 ) + std::string(1, length & 0xff);
+            out += std::string(1, (length >> 8) + 0xc0) + std::string(1, length & 0xff);
         }
-        else if (length > 8383){                            // 3 octets
+        // 5 octets
+        else if ((octets == 5)     ||     // user requested
+                 ((octets == 0)    &&     // default
+                  (length > 8383))) {
             out += std::string(1, '\xff') + unhexlify(makehex(length, 8));
         }
 
         out += data;
     }
-    return out;
-}
 
-std::string Tag::show_title() const{
-    return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
+    return out;
 }
 
 Tag::Tag(const uint8_t t)
@@ -139,13 +202,6 @@ Tag::Tag(const uint8_t t, uint8_t ver)
       size(0)
 {}
 
-Tag::Tag(const Tag & copy)
-    : tag(copy.tag),
-      version(copy.version),
-      header_format(copy.header_format),
-      size(copy.size)
-{}
-
 Tag::Tag()
     : Tag(UNKNOWN)
 {}
@@ -153,8 +209,24 @@ Tag::Tag()
 Tag::~Tag(){}
 
 void Tag::read(const std::string &data) {
+    // set size first, in case the size variable is needed during actual_read
+    // the size won't change during actual_read, so there is no need to reset it after
     set_size(data.size());
-    actual_read(data);
+    if (size) {
+        actual_read(data);
+    }
+}
+
+std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const{
+    HumanReadable hr(indent_size, indents);
+    show(hr);
+    return hr.get();
+}
+
+void Tag::show(HumanReadable & hr) const{
+    hr << show_title() << HumanReadable::DOWN;
+    show_contents(hr);
+    hr << HumanReadable::UP;
 }
 
 std::string Tag::write() const{
@@ -196,15 +268,6 @@ void Tag::set_version(const uint8_t v){
 
 void Tag::set_size(const std::size_t s){
     size = s;
-}
-
-Tag & Tag::operator=(const Tag & copy)
-{
-    tag = copy.tag;
-    version = copy.version;
-    header_format = copy.header_format;
-    size = copy.size;
-    return *this;
 }
 
 }

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define __TAG2_SUB11__
 
 #include "Encryptions/Encryptions.h"
-#include "Subpacket.h"
+#include "Packets/Tag2/Subpacket.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -48,13 +48,14 @@ namespace OpenPGP {
                 private:
                     std::string psa;
 
+                    void actual_read(const std::string & data);
+
                 public:
                     typedef std::shared_ptr <Sub11> Ptr;
 
                     Sub11();
                     Sub11(const std::string & data);
-                    void read(const std::string & data);
-                    std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                    void show_contents(HumanReadable & hr) const;
                     std::string raw() const;
 
                     std::string get_psa() const;  // string containing Symmetric Key Algorithm values (ex: "\x07\x08\x09")

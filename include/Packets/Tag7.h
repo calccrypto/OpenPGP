@@ -42,7 +42,6 @@ namespace OpenPGP {
                 typedef std::shared_ptr <Packet::Tag7> Ptr;
 
                 Tag7();
-                Tag7(const Tag7 & copy);
                 Tag7(const std::string & data);
                 ~Tag7();
 
@@ -50,7 +49,6 @@ namespace OpenPGP {
                 Tag14::Ptr get_public_ptr() const;  // extract public subkey from private key into a pointer
 
                 Tag::Ptr clone() const;
-                Tag7 & operator=(const Tag7 & copy);
         };
     }
 }
