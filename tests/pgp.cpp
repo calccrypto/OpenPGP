@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 
-#include "arm_key.h"
 #include "decrypt.h"
 #include "encrypt.h"
 #include "keygen.h"
@@ -12,6 +11,7 @@
 #include "sign.h"
 #include "verify.h"
 
+#include "arm_key.h"
 #include "testvectors/msg.h"
 #include "testvectors/pass.h"
 #include "read_pgp.h"
@@ -505,6 +505,37 @@ TEST(PGP, sign_verify_cleartext){
     EXPECT_EQ(OpenPGP::Verify::cleartext_signature(pri, sig), true);
 }
 
+TEST(PGP, sign_verify_primary_key){
+
+    OpenPGP::PublicKey pub;
+    ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub, GPG_DIR), true);
+
+    OpenPGP::SecretKey pri;
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
+
+    const OpenPGP::PGP::Packets & pub_packets = pub.get_packets();
+    const OpenPGP::PGP::Packets & pri_packets = pri.get_packets();
+
+    OpenPGP::Packet::Tag7::Ptr signer_signing_key = std::static_pointer_cast <OpenPGP::Packet::Tag7>   (pri_packets[3]);
+
+    // create a filled signature packet using the signer data
+    OpenPGP::Packet::Tag2::Ptr sig = OpenPGP::Sign::create_sig_packet(4,
+                                                                      OpenPGP::Signature_Type::GENERIC_CERTIFICATION_OF_A_USER_ID_AND_PUBLIC_KEY_PACKET,
+                                                                      signer_signing_key -> get_pka(),
+                                                                      OpenPGP::Hash::ID::SHA1,
+                                                                      signer_signing_key -> get_keyid());
+
+    OpenPGP::Packet::Tag6::Ptr  signee_primary_key = std::static_pointer_cast <OpenPGP::Packet::Tag6>  (pub_packets[0]);
+    OpenPGP::Packet::Tag13::Ptr signee_id          = std::static_pointer_cast <OpenPGP::Packet::Tag13> (pub_packets[1]);
+    ASSERT_NE(OpenPGP::Sign::primary_key(signer_signing_key,
+                                         PASSPHRASE,
+                                         signee_primary_key,
+                                         signee_id,
+                                         sig), nullptr);
+
+    EXPECT_EQ(OpenPGP::Verify::primary_key(signer_signing_key, signee_primary_key, signee_id, sig), true);
+}
+
 TEST(PGP, verify_primary_key){
 
     OpenPGP::PublicKey pub;
@@ -517,6 +548,17 @@ TEST(PGP, verify_primary_key){
     EXPECT_EQ(OpenPGP::Verify::primary_key(pub, pri), true);
     EXPECT_EQ(OpenPGP::Verify::primary_key(pri, pub), true);
     EXPECT_EQ(OpenPGP::Verify::primary_key(pri, pri), true);
+}
+
+TEST(PGP, sign_verify_timestamp){
+
+    OpenPGP::SecretKey pri;
+    ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
+
+    const OpenPGP::Sign::Args sign_args(pri, PASSPHRASE);
+    OpenPGP::DetachedSignature sig = OpenPGP::Sign::timestamp(sign_args, OpenPGP::now());
+    EXPECT_EQ(sig.meaningful(), true);
+    EXPECT_EQ(OpenPGP::Verify::timestamp(pri, sig), true);
 }
 
 TEST(Key, get_pkey){
