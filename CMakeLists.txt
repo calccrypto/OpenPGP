@@ -54,24 +54,39 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/contrib/cmake)
 
 # GNU Multiple Precision Arithmetic Library
 find_package(GMP 5.0.0 REQUIRED)
-message(STATUS "GMP headers:     ${GMP_INCLUDES}")
-message(STATUS "GMP libraries:   ${GMP_LIBRARIES}")
+message(STATUS "GMP headers:        ${GMP_INCLUDES}")
+message(STATUS "GMP libraries:      ${GMP_LIBRARIES}")
 include_directories(SYSTEM ${GMP_INCLUDES})
 link_libraries     (${GMP_LIBRARIES} gmpxx)
 
 # BZip2
 find_package(BZip2 1.0.6 REQUIRED)
-message(STATUS "BZip2 headers:   ${BZIP2_INCLUDE_DIR}")
-message(STATUS "BZip2 libraries: ${BZIP2_LIBRARIES}")
+message(STATUS "BZip2 headers:      ${BZIP2_INCLUDE_DIR}")
+message(STATUS "BZip2 libraries:    ${BZIP2_LIBRARIES}")
 include_directories(SYSTEM ${BZIP2_INCLUDE_DIR})
 link_libraries     (${BZIP2_LIBRARIES})
 
 # zlib
 find_package(ZLIB 1.2.8 REQUIRED)
-message(STATUS "zlib headers:    ${ZLIB_INCLUDE_DIR}")
-message(STATUS "zlib libraries:  ${ZLIB_LIBRARIES}")
+message(STATUS "zlib headers:       ${ZLIB_INCLUDE_DIR}")
+message(STATUS "zlib libraries:     ${ZLIB_LIBRARIES}")
 include_directories(SYSTEM ${ZLIB_INCLUDE_DIR})
 link_libraries     (${ZLIB_LIBRARIES})
+
+# OpenSSL
+set(USE_OPENSSL ON CACHE BOOL "Build with OpenSSL")
+if (USE_OPENSSL)
+    find_package(OpenSSL 1.1.0)
+    if (OPENSSL_FOUND)
+        message(STATUS "OpenSSL headers:    ${OPENSSL_INCLUDE_DIR}")
+        message(STATUS "OpenSSL libraries:  ${OPENSSL_CRYPTO_LIBRARY}")
+        include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
+        link_libraries     (${OPENSSL_CRYPTO_LIBRARY})
+        add_compile_options("-DOPENSSL")
+    else()
+        message(STATUS "Could not find OpenSSL. Using custom cryptographic algorithm implementation.")
+    endif()
+endif()
 
 # -Iinclude
 include_directories(include)

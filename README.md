@@ -67,6 +67,7 @@ is none of my concern or responsibility.
 - GMP (<https://gmplib.org/>)
 - bzip2 (<http://www.bzip.org/>)
 - zlib (<http://www.zlib.net/>)
+- OpenSSL (<https://www.openssl.org/>) (optional)
 
 ### Build
 ```bash
