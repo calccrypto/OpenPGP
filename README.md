@@ -73,14 +73,20 @@ is none of my concern or responsibility.
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<prefix> -DGPG_COMPATIBLE=<True/False> ..
+cmake -DCMAKE_INSTALL_PREFIX=<prefix> ..
 make
 <make test>
 make install
 ```
 
-The GPG_COMPATIBLE flag is used to make this library gpg compatible
+#### CMake Configuration Options
+
+The boolean GPG_COMPATIBLE flag can be used to make this library gpg compatible
 when gpg does not follow the standard. By default this is set to False.
+
+The boolean USE_OPENSSL flag can be used to replace the Hashing library with the
+OpenSSL implementation. If OpenSSL is not found, CMake will default back to the
+original implementation.
 
 ## Usage
 
