@@ -1,8 +1,8 @@
 #include "Encryptions/CAST128.h"
 
-uint32_t CAST128::F(const uint8_t & round, const uint32_t & D, const uint32_t & Kmi, const uint8_t & Kri){
+uint32_t CAST128::F(const uint8_t & round, const uint32_t & D, const uint32_t & Kmi, const uint8_t & Kri) {
     uint32_t f = 0, I, Ia, Ib, Ic, Id;
-    if ((round == 1) | (round == 4) | (round == 7) | (round == 10)| (round == 13) | (round == 16)){
+    if ((round == 1) | (round == 4) | (round == 7) | (round == 10)| (round == 13) | (round == 16)) {
         I = ROL((Kmi + D) & mod32, Kri, 32);
         Ia = I >> 24;
         Ib = (I >> 16) & 255;
@@ -10,7 +10,7 @@ uint32_t CAST128::F(const uint8_t & round, const uint32_t & D, const uint32_t & 
         Id = I & 255;
         f = ((CAST_S1[Ia] ^ CAST_S2[Ib]) - CAST_S3[Ic] + CAST_S4[Id]) & mod32;
     }
-    if ((round == 2) | (round == 5) | (round == 8) | (round == 11)| (round == 14)){
+    if ((round == 2) | (round == 5) | (round == 8) | (round == 11)| (round == 14)) {
         I = ROL(Kmi ^ D, Kri, 32);
         Ia = I >> 24;
         Ib = (I >> 16) & 255;
@@ -18,7 +18,7 @@ uint32_t CAST128::F(const uint8_t & round, const uint32_t & D, const uint32_t & 
         Id = I & 255;
         f = ((CAST_S1[Ia] - CAST_S2[Ib] + CAST_S3[Ic]) & mod32) ^ CAST_S4[Id];
     }
-    if ((round == 3) | (round == 6) | (round == 9) | (round == 12)| (round == 15)){
+    if ((round == 3) | (round == 6) | (round == 9) | (round == 12)| (round == 15)) {
         I = ROL((Kmi - D) & mod32, Kri, 32);
         Ia = I >> 24;
         Ib = (I >> 16) & 255;
@@ -29,17 +29,17 @@ uint32_t CAST128::F(const uint8_t & round, const uint32_t & D, const uint32_t & 
     return f;
 }
 
-std::string CAST128::run(const std::string & DATA, const uint8_t start, const uint8_t stop, const uint8_t step){
-    if (!keyset){
+std::string CAST128::run(const std::string & DATA, const uint8_t start, const uint8_t stop, const uint8_t step) {
+    if (!keyset) {
         throw std::runtime_error("Error: Key has not been set.");
     }
-    if (DATA.size() != 8){
+    if (DATA.size() != 8) {
         throw std::runtime_error("Error: Data must be 64 bits long.");
     }
     uint32_t left = toint(DATA.substr(0, 4), 256);
     uint32_t right = toint(DATA.substr(4, 4), 256);
     uint8_t i = start;
-    while (i != stop){
+    while (i != stop) {
         uint32_t temp = right;
         right = left ^ F(i, right, km[i - 1], kr[i - 1]);
         left = temp;
@@ -60,12 +60,12 @@ CAST128::CAST128(const std::string & KEY)
     setkey(KEY);
 }
 
-void CAST128::setkey(std::string KEY){
-    if (keyset){
+void CAST128::setkey(std::string KEY) {
+    if (keyset) {
         throw std::runtime_error("Error: Key has already been set.");
     }
     rounds = 12 + ((KEY.size() > 10) << 2);
-    while (KEY.size() < 16){
+    while (KEY.size() < 16) {
         KEY += zero;
     }
 
@@ -188,11 +188,11 @@ void CAST128::setkey(std::string KEY){
     keyset = true;
 }
 
-std::string CAST128::encrypt(const std::string & DATA){
+std::string CAST128::encrypt(const std::string & DATA) {
     return run(DATA, 1, rounds + 1, 1);
 }
 
-std::string CAST128::decrypt(const std::string & DATA){
+std::string CAST128::decrypt(const std::string & DATA) {
     return run(DATA, rounds, 0, -1);
 }
 

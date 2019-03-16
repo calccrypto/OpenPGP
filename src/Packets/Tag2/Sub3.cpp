@@ -6,11 +6,11 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub3::actual_read(const std::string & data){
+void Sub3::actual_read(const std::string & data) {
     set_dt(toint(data, 256));
 }
 
-void Sub3::show_contents(HumanReadable & hr) const{
+void Sub3::show_contents(HumanReadable & hr) const {
     hr << "Signature Expiration Time (Days): " + (dt?show_time(dt):"Never");
 }
 
@@ -25,19 +25,19 @@ Sub3::Sub3(const std::string & data)
     read(data);
 }
 
-std::string Sub3::raw() const{
+std::string Sub3::raw() const {
     return unhexlify(makehex(dt, 8));
 }
 
-uint32_t Sub3::get_dt() const{
+uint32_t Sub3::get_dt() const {
     return dt;
 }
 
-void Sub3::set_dt(const uint32_t t){
+void Sub3::set_dt(const uint32_t t) {
     dt = t;
 }
 
-Sub::Ptr Sub3::clone() const{
+Sub::Ptr Sub3::clone() const {
     return std::make_shared <Sub3> (*this);
 }
 

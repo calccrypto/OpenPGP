@@ -12,7 +12,7 @@
 
 static const std::string GPG_DIR = "tests/testvectors/gpg/";
 
-static time_t get_utc(int year, int month, int day, int hour, int minute, int second){
+static time_t get_utc(int year, int month, int day, int hour, int minute, int second) {
     tm in;
     in.tm_isdst = -1;
     in.tm_yday  = -1;
@@ -32,11 +32,11 @@ static time_t get_utc(int year, int month, int day, int hour, int minute, int se
     utc = tmp -> tm_hour;
     tmp = localtime(&result);
     local = tmp -> tm_hour;
-    if ( utc != local ){
+    if ( utc != local ) {
         int diff = local - utc;
-        if ( diff < 0 && diff < -12 ){
+        if ( diff < 0 && diff < -12 ) {
             diff += 24;
-        } else if (diff > 0 && diff > 12){
+        } else if (diff > 0 && diff > 12) {
             diff -= 24;
         }
         result += diff*60*60;
@@ -44,7 +44,7 @@ static time_t get_utc(int year, int month, int day, int hour, int minute, int se
     return result;
 }
 
-TEST(gpg, public_key){
+TEST(gpg, public_key) {
 
     OpenPGP::PublicKey pub;
     ASSERT_EQ(read_pgp <OpenPGP::PublicKey> ("Alicepub", pub, GPG_DIR), true);
@@ -247,7 +247,7 @@ TEST(gpg, public_key){
     }
 }
 
-TEST(gpg, private_key){
+TEST(gpg, private_key) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -475,7 +475,7 @@ TEST(gpg, private_key){
     }
 }
 
-TEST(gpg, revoke){
+TEST(gpg, revoke) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -537,7 +537,7 @@ TEST(gpg, revoke){
     EXPECT_EQ(OpenPGP::Verify::revoke(pri, rev), true);
 }
 
-TEST(gpg, decrypt_pka_mdc){
+TEST(gpg, decrypt_pka_mdc) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -578,7 +578,7 @@ TEST(gpg, decrypt_pka_mdc){
     EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
-TEST(gpg, decrypt_pka_no_mdc){
+TEST(gpg, decrypt_pka_no_mdc) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -619,7 +619,7 @@ TEST(gpg, decrypt_pka_no_mdc){
     EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
-TEST(gpg, decrypt_symmetric_mdc){
+TEST(gpg, decrypt_symmetric_mdc) {
 
     OpenPGP::Message gpg_encrypted;
     ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencrypted", gpg_encrypted, GPG_DIR), true);
@@ -658,7 +658,7 @@ TEST(gpg, decrypt_symmetric_mdc){
     EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
-TEST(gpg, decrypt_symmetric_no_mdc){
+TEST(gpg, decrypt_symmetric_no_mdc) {
 
     OpenPGP::Message gpg_encrypted;
     ASSERT_EQ(read_pgp <OpenPGP::Message> ("symencryptednomdc", gpg_encrypted, GPG_DIR), true);
@@ -696,7 +696,7 @@ TEST(gpg, decrypt_symmetric_no_mdc){
     EXPECT_EQ(extract_decrypted(decrypted), MESSAGE);
 }
 
-TEST(gpg, decrypt_verify){
+TEST(gpg, decrypt_verify) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -804,7 +804,7 @@ TEST(gpg, decrypt_verify){
     EXPECT_EQ(OpenPGP::Verify::binary(pri, decrypted), true);
 }
 
-TEST(gpg, verify_detached){
+TEST(gpg, verify_detached) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -815,7 +815,7 @@ TEST(gpg, verify_detached){
     EXPECT_EQ(OpenPGP::Verify::detached_signature(pri, MESSAGE, sig), true);
 }
 
-TEST(gpg, verify_binary){
+TEST(gpg, verify_binary) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);
@@ -826,7 +826,7 @@ TEST(gpg, verify_binary){
     EXPECT_EQ(OpenPGP::Verify::binary(pri, sig), true);
 }
 
-TEST(gpg, verify_cleartext){
+TEST(gpg, verify_cleartext) {
 
     OpenPGP::SecretKey pri;
     ASSERT_EQ(read_pgp <OpenPGP::SecretKey> ("Alicepri", pri, GPG_DIR), true);

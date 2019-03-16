@@ -9,9 +9,9 @@
 
 const int COUNT = 10;
 
-TEST(MPI, add_sub){
+TEST(MPI, add_sub) {
     OpenPGP::MPI a = OpenPGP::random(512);
-    for (int i = 0; i < COUNT; ++i){
+    for (int i = 0; i < COUNT; ++i) {
         OpenPGP::MPI b = OpenPGP::random(512);
         OpenPGP::MPI c = a + b;
         c -= a;
@@ -20,8 +20,8 @@ TEST(MPI, add_sub){
     }
 }
 
-TEST(MPI, mul_div_mod){
-    for (int i = 0; i < COUNT; ++i){
+TEST(MPI, mul_div_mod) {
+    for (int i = 0; i < COUNT; ++i) {
         OpenPGP::MPI a = OpenPGP::random(400), b = a;
         a <<= (i+1);
         a += i;
@@ -31,9 +31,9 @@ TEST(MPI, mul_div_mod){
     }
 }
 
-TEST(MPI, lshift){
+TEST(MPI, lshift) {
     OpenPGP::MPI a = OpenPGP::random(200), b, c = 1;
-    for (int i = 0; i < COUNT; ++i){
+    for (int i = 0; i < COUNT; ++i) {
         b = a << (i+1);
         c += c;
         OpenPGP::MPI d = a * c;
@@ -41,9 +41,9 @@ TEST(MPI, lshift){
     }
 }
 
-TEST(MPI, rshift){
+TEST(MPI, rshift) {
     OpenPGP::MPI a = OpenPGP::random(200), b, c = 1;
-    for (int i = 0; i < COUNT; ++i){
+    for (int i = 0; i < COUNT; ++i) {
         b = a >> (i+1);
         c += c;
         OpenPGP::MPI d = a / c;
@@ -58,14 +58,14 @@ static const std::map <std::string, OpenPGP::MPI> tests = {
     std::make_pair(std::string("\x0c\x0d\x0e\x0f", 4), 0x0c0d0e0fUL),
 };
 
-TEST(MPI, convert_raw){
+TEST(MPI, convert_raw) {
     for(std::pair <const std::string, OpenPGP::MPI> const & test : tests) {
         EXPECT_EQ(OpenPGP::rawtompi(test.first), test.second);
         EXPECT_EQ(OpenPGP::mpitoraw(test.second), test.first);
     }
 }
 
-TEST(MPI, convert_hex){
+TEST(MPI, convert_hex) {
     for(std::pair <const std::string, OpenPGP::MPI> const & test : tests) {
         const std::string hex = hexlify(test.first);
         EXPECT_EQ(OpenPGP::hextompi(hex), test.second);
@@ -73,7 +73,7 @@ TEST(MPI, convert_hex){
     }
 }
 
-TEST(MPI, convert_dec){
+TEST(MPI, convert_dec) {
     for(std::pair <const std::string, OpenPGP::MPI> const & test : tests) {
         std::stringstream s;
         s << toint(hexlify(test.first), 16);
@@ -82,7 +82,7 @@ TEST(MPI, convert_dec){
     }
 }
 
-TEST(MPI, convert_bin){
+TEST(MPI, convert_bin) {
     for(std::pair <const std::string, OpenPGP::MPI> const & test : tests) {
         std::string bin = binify(test.first, 0);
 

@@ -4,15 +4,15 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub12::actual_read(const std::string & data){
-    if (data.size() >= 22){
+void Sub12::actual_read(const std::string & data) {
+    if (data.size() >= 22) {
         set_class(data[0]);
         set_pka(data[1]);
         set_fingerprint(data.substr(2, 20));
     }
 }
 
-void Sub12::show_contents(HumanReadable & hr) const{
+void Sub12::show_contents(HumanReadable & hr) const {
     const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     hr << std::string("Class: ") + std::to_string(_class)
        << std::string("Public Key Algorithm: ") + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
@@ -32,35 +32,35 @@ Sub12::Sub12(const std::string & data)
     read(data);
 }
 
-std::string Sub12::raw() const{
+std::string Sub12::raw() const {
     return std::string(1, _class) + std::string(1, pka) + fingerprint;
 }
 
-uint8_t Sub12::get_class() const{
+uint8_t Sub12::get_class() const {
     return _class;
 }
 
-uint8_t Sub12::get_pka() const{
+uint8_t Sub12::get_pka() const {
     return pka;
 }
 
-std::string Sub12::get_fingerprint() const{
+std::string Sub12::get_fingerprint() const {
     return fingerprint;
 }
 
-void Sub12::set_class(const uint8_t c){
+void Sub12::set_class(const uint8_t c) {
     _class = c;
 }
 
-void Sub12::set_pka(const uint8_t p){
+void Sub12::set_pka(const uint8_t p) {
     pka = p;
 }
 
-void Sub12::set_fingerprint(const std::string & f){
+void Sub12::set_fingerprint(const std::string & f) {
     fingerprint = f;
 }
 
-Sub::Ptr Sub12::clone() const{
+Sub::Ptr Sub12::clone() const {
     return std::make_shared <Sub12> (*this);
 }
 

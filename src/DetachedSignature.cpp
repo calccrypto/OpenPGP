@@ -24,7 +24,7 @@ DetachedSignature::DetachedSignature(const std::string & data)
     type = SIGNATURE;
 
     // warn if packet sequence is not meaningful
-    if (!meaningful()){
+    if (!meaningful()) {
         throw std::runtime_error("Error: Data does not form a meaningful PGP Detached Signature");
     }
 }
@@ -35,30 +35,30 @@ DetachedSignature::DetachedSignature(std::istream & stream)
     type = SIGNATURE;
 
     // warn if packet sequence is not meaningful
-    if (!meaningful()){
+    if (!meaningful()) {
         throw std::runtime_error("Error: Data does not form a meaningful PGP Detached Signature");
     }
 }
 
-DetachedSignature::~DetachedSignature(){}
+DetachedSignature::~DetachedSignature() {}
 
-bool DetachedSignature::meaningful(const PGP & pgp){
-    if (pgp.get_type() != SIGNATURE){
+bool DetachedSignature::meaningful(const PGP & pgp) {
+    if (pgp.get_type() != SIGNATURE) {
         // "Error: ASCII Armor type is not SIGNATURE.\n";
         return false;
     }
 
-    if (pgp.get_packets().size() != 1){
+    if (pgp.get_packets().size() != 1) {
         // "Error: Wrong number of packets.\n";
         return false;
     }
 
-    // if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE){
+    // if (pgp.get_packets()[0] -> get_tag() != Packet::SIGNATURE) {
         // // "Error: Packet is not a signature packet.\n";
         // return false;
     // }
 
-    // if (!Signature_Type::is_signed_document(std::static_pointer_cast <Packet::Tag2> (pgp.get_packets()[0]) -> get_type())){
+    // if (!Signature_Type::is_signed_document(std::static_pointer_cast <Packet::Tag2> (pgp.get_packets()[0]) -> get_type())) {
         // // "Error: Signature type is not over a document.\n";
         // return false;
     // }
@@ -66,11 +66,11 @@ bool DetachedSignature::meaningful(const PGP & pgp){
     return true;
 }
 
-bool DetachedSignature::meaningful() const{
+bool DetachedSignature::meaningful() const {
     return meaningful(*this);
 }
 
-PGP::Ptr DetachedSignature::clone() const{
+PGP::Ptr DetachedSignature::clone() const {
     return std::make_shared <DetachedSignature> (*this);
 }
 

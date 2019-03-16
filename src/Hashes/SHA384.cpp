@@ -1,6 +1,6 @@
 #include "Hashes/SHA384.h"
 
-void SHA384::original_h(){
+void SHA384::original_h() {
     ctx.h0 = 0xcbbb9d5dc1059ed8ULL;
     ctx.h1 = 0x629a292a367cd507ULL;
     ctx.h2 = 0x9159015a3070dd17ULL;
@@ -23,7 +23,7 @@ SHA384::SHA384(const std::string & str) :
     update(str);
 }
 
-std::string SHA384::hexdigest(){
+std::string SHA384::hexdigest() {
     return SHA512::hexdigest().substr(0, 96);
 }
 

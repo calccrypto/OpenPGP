@@ -4,7 +4,7 @@ namespace OpenPGP {
 namespace PKA {
 namespace DSA {
 
-Values new_public(const uint32_t & L, const uint32_t & N){
+Values new_public(const uint32_t & L, const uint32_t & N) {
 //    L = 1024, N = 160
 //    L = 2048, N = 224
 //    L = 2048, N = 256
@@ -14,7 +14,7 @@ Values new_public(const uint32_t & L, const uint32_t & N){
     // random prime q
     MPI q = bintompi("1" + RNG::BBS().rand(N - 1));
     q = nextprime(q);
-    while (bitsize(q) > N){
+    while (bitsize(q) > N) {
         q = bintompi("1" + RNG::BBS().rand(N - 1));
         q = nextprime(q);
     }
@@ -22,14 +22,14 @@ Values new_public(const uint32_t & L, const uint32_t & N){
     // random prime p = kq + 1
     MPI p = bintompi("1" + RNG::BBS().rand(L - 1));                   // pick random starting point
     p = ((p - 1) / q) * q + 1;                                        // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
-    while (!knuth_prime_test(p, 25)){
+    while (!knuth_prime_test(p, 25)) {
         p += q;
     }
 
     // generator g with order q
     MPI g = 1, h = 1;
     MPI exp = (p - 1) / q;
-    while (g == 1){
+    while (g == 1) {
         h++;
         g = powm(h, exp, p);
     }
@@ -37,15 +37,15 @@ Values new_public(const uint32_t & L, const uint32_t & N){
     return {p, q, g};
 }
 
-Values keygen(Values & pub){
+Values keygen(Values & pub) {
     RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     MPI x = 0;
     std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesn't work for some reason
     unsigned int bits = bitsize(pub[1]) - 1;
-    while (true){
+    while (true) {
         // 0 < x < q
-        while ((x == 0) || (pub[1] <= x)){
+        while ((x == 0) || (pub[1] <= x)) {
             x = bintompi(RNG::BBS().rand(bits));
         }
 
@@ -61,7 +61,7 @@ Values keygen(Values & pub){
         Values rs = sign(test, {x}, pub);
 
         // if it works, break
-        if (verify(test, rs, pub)){
+        if (verify(test, rs, pub)) {
             break;
         }
 
@@ -71,13 +71,13 @@ Values keygen(Values & pub){
     return {x};
 }
 
-Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k){
+Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k) {
     RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
     bool set_k = (k == 0);
 
     MPI r = 0, s = 0;
-    while ((r == 0) || (s == 0)){
+    while ((r == 0) || (s == 0)) {
         // 0 < k < q
         if ( set_k ) {
             k = bintompi(RNG::BBS().rand(bitsize(pub[1])));
@@ -89,7 +89,7 @@ Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k){
         r %= pub[1];
 
         // if r == 0, don't bother calculating s
-        if (r == 0){
+        if (r == 0) {
             continue;
         }
 
@@ -102,13 +102,13 @@ Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k){
     return {r, s};
 }
 
-Values sign(const std::string & data, const Values & pri, const Values & pub, MPI k){
+Values sign(const std::string & data, const Values & pri, const Values & pub, MPI k) {
     return sign(rawtompi(data), pri, pub, k);
 }
 
-bool verify(const MPI & data, const Values & sig, const Values & pub){
+bool verify(const MPI & data, const Values & sig, const Values & pub) {
     // 0 < r < q or 0 < s < q
-    if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))){
+    if (!((0 < sig[0]) && (sig[0] < pub[1])) & !((0 < sig[0]) && (sig[1] < pub[1]))) {
         return false;
     }
     // w = s^-1 mod q
@@ -129,7 +129,7 @@ bool verify(const MPI & data, const Values & sig, const Values & pub){
     return ((((g * y) % pub[0]) % pub[1]) == sig[0]);
 }
 
-bool verify(const std::string & data, const Values & sig, const Values & pub){
+bool verify(const std::string & data, const Values & sig, const Values & pub) {
     return verify(rawtompi(data), sig, pub);
 }
 

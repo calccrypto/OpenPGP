@@ -5,7 +5,7 @@
 #include "cli/modules/module.h"
 #include "tests/read_pgp.h"
 
-TEST(Module, module){
+TEST(Module, module) {
     // bad name
     {
         EXPECT_THROW(module::Module("bad name",

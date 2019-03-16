@@ -3,9 +3,9 @@
 namespace OpenPGP {
 namespace Sym {
 
-SymAlg::Ptr setup(const uint8_t sym_alg, const std::string & key){
+SymAlg::Ptr setup(const uint8_t sym_alg, const std::string & key) {
     SymAlg::Ptr alg;
-    switch(sym_alg){
+    switch(sym_alg) {
         case Sym::ID::IDEA:
             alg = std::make_shared <IDEA> (key);
             break;

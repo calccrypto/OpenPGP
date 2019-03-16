@@ -4,11 +4,11 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub24::actual_read(const std::string & data){
+void Sub24::actual_read(const std::string & data) {
     set_pks(data);
 }
 
-void Sub24::show_contents(HumanReadable & hr) const{
+void Sub24::show_contents(HumanReadable & hr) const {
     hr << "URI - " + pks;
 }
 
@@ -23,19 +23,19 @@ Sub24::Sub24(const std::string & data)
     read(data);
 }
 
-std::string Sub24::raw() const{
+std::string Sub24::raw() const {
     return pks;
 }
 
-std::string Sub24::get_pks() const{
+std::string Sub24::get_pks() const {
     return pks;
 }
 
-void Sub24::set_pks(const std::string & p){
+void Sub24::set_pks(const std::string & p) {
     pks = p;
 }
 
-Sub::Ptr Sub24::clone() const{
+Sub::Ptr Sub24::clone() const {
     return std::make_shared <Sub24> (*this);
 }
 

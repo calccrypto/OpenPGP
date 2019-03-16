@@ -2,7 +2,7 @@
 
 #include <common/HumanReadable.h>
 
-TEST(HumanReadable, generated_prefix){
+TEST(HumanReadable, generated_prefix) {
     HumanReadable hr(1, 2);
     hr << "";
     EXPECT_EQ(hr.get(), "  \n");
@@ -16,7 +16,7 @@ TEST(HumanReadable, generated_prefix){
     EXPECT_EQ(hr.get(), "  \n   \n  \n");
 }
 
-TEST(HumanReadable, user_prefix){
+TEST(HumanReadable, user_prefix) {
     HumanReadable hr("\t", " ");
     hr << "";
     EXPECT_EQ(hr.get(), "\t\n");
@@ -30,7 +30,7 @@ TEST(HumanReadable, user_prefix){
     EXPECT_EQ(hr.get(), "\t\n\t \n\t\n");
 }
 
-TEST(HumanReadable, up_down){
+TEST(HumanReadable, up_down) {
     HumanReadable hr(0, 0);
 
     const std::size_t depth = 10;

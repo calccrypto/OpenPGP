@@ -4,4 +4,4 @@ SymAlg::SymAlg()
     : keyset(false)
 {}
 
-SymAlg::~SymAlg(){}
+SymAlg::~SymAlg() {}

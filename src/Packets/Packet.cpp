@@ -9,61 +9,61 @@
 namespace OpenPGP {
 namespace Packet {
 
-bool is_key_packet(const uint8_t t){
+bool is_key_packet(const uint8_t t) {
     return (is_primary_key(t) || is_subkey(t));
 }
 
-bool is_primary_key(const uint8_t t){
+bool is_primary_key(const uint8_t t) {
     return ((t == SECRET_KEY) ||
             (t == PUBLIC_KEY));
 }
 
-bool is_subkey(const uint8_t t){
+bool is_subkey(const uint8_t t) {
     return ((t == SECRET_SUBKEY) ||
             (t == PUBLIC_SUBKEY));
 }
 
-bool is_public(const uint8_t t){
+bool is_public(const uint8_t t) {
     return ((t == PUBLIC_KEY) ||
             (t == PUBLIC_SUBKEY));
 }
 
-bool is_secret(const uint8_t t){
+bool is_secret(const uint8_t t) {
     return ((t == SECRET_KEY) ||
             (t == SECRET_SUBKEY));
 }
 
-bool is_user(const uint8_t t){
+bool is_user(const uint8_t t) {
     return ((t == USER_ID) ||
             (t == USER_ATTRIBUTE));
 }
 
-bool is_session_key(const uint8_t t){
+bool is_session_key(const uint8_t t) {
     return ((t == PUBLIC_KEY_ENCRYPTED_SESSION_KEY) ||
             (t == SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY));
 }
 
-bool is_sym_protected_data(const uint8_t t){
+bool is_sym_protected_data(const uint8_t t) {
     return ((t == SYMMETRICALLY_ENCRYPTED_DATA) ||
             (t == SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA));
 }
 
-bool can_have_partial_length (const uint8_t t){
+bool can_have_partial_length (const uint8_t t) {
     return Partial::can_have_partial_length(t);
 }
 
-std::string Tag::show_title() const{
+std::string Tag::show_title() const {
     return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 }
 
-void Tag::show_contents(HumanReadable &) const{}
+void Tag::show_contents(HumanReadable &) const {}
 
 // returns formatted length string
 // partial takes precedence over octets
-std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets){
+std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets) {
     std::string::size_type length = data.size();
     std::string out(1, 0x80 | (tag << 2)); // old header: 10TT TTLL
-    if (part == Packet::PARTIAL){          // partial
+    if (part == Packet::PARTIAL) {         // partial
         out[0] |= 3;
     }
     else{
@@ -87,7 +87,7 @@ std::string Tag::write_old_length(const uint8_t tag, const std::string & data, c
         // 1 octet
         if ((octets == 1)   ||             // user requested
             ((octets == 0)  &&             // default
-             (length < 256))){
+             (length < 256))) {
             out[0] |= 0;
             out += std::string(1, length);
         }
@@ -95,14 +95,14 @@ std::string Tag::write_old_length(const uint8_t tag, const std::string & data, c
         else if ((octets == 2)     ||      // user requested
                  ((octets == 0)    &&      // default
                   (256 <= length)  &&
-                  (length < 65536))){
+                  (length < 65536))) {
             out[0] |= 1;
             out += unhexlify(makehex(length, 4));
         }
         // 5 octets
         else if ((octets == 5)      ||     // use requested
                  ((octets == 0)     &&     // default
-                  (65536 <= length))){
+                  (65536 <= length))) {
             out[0] |= 2;
             out += unhexlify(makehex(length, 8));
         }
@@ -112,10 +112,10 @@ std::string Tag::write_old_length(const uint8_t tag, const std::string & data, c
 
 // returns formatted length string
 // partial takes precedence over octets
-std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets){
+std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets) {
     std::string::size_type length = data.size();
     std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
-    if (part == Packet::PARTIAL){                           // partial
+    if (part == Packet::PARTIAL) {                          // partial
         if (length < 512) {
             throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
         }
@@ -206,7 +206,7 @@ Tag::Tag()
     : Tag(UNKNOWN)
 {}
 
-Tag::~Tag(){}
+Tag::~Tag() {}
 
 void Tag::read(const std::string &data) {
     // set size first, in case the size variable is needed during actual_read
@@ -217,56 +217,56 @@ void Tag::read(const std::string &data) {
     }
 }
 
-std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const{
+std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const {
     HumanReadable hr(indent_size, indents);
     show(hr);
     return hr.get();
 }
 
-void Tag::show(HumanReadable & hr) const{
+void Tag::show(HumanReadable & hr) const {
     hr << show_title() << HumanReadable::DOWN;
     show_contents(hr);
     hr << HumanReadable::UP;
 }
 
-std::string Tag::write() const{
+std::string Tag::write() const {
     const std::string data = raw();
     if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)){                            // tag > 15, so new header is required
+        (tag > 15)) {                           // tag > 15, so new header is required
         return write_new_length(tag, data, Packet::NOT_PARTIAL);
     }
     return write_old_length(tag, data, Packet::NOT_PARTIAL);
 }
 
-uint8_t Tag::get_tag() const{
+uint8_t Tag::get_tag() const {
     return tag;
 }
 
-Packet::HeaderFormat Tag::get_header_format() const{
+Packet::HeaderFormat Tag::get_header_format() const {
     return header_format;
 }
 
-uint8_t Tag::get_version() const{
+uint8_t Tag::get_version() const {
     return version;
 }
 
-std::size_t Tag::get_size() const{
+std::size_t Tag::get_size() const {
     return size;
 }
 
-void Tag::set_tag(const uint8_t t){
+void Tag::set_tag(const uint8_t t) {
     tag = t;
 }
 
-void Tag::set_header_format(const HeaderFormat hf){
+void Tag::set_header_format(const HeaderFormat hf) {
     header_format = hf;
 }
 
-void Tag::set_version(const uint8_t v){
+void Tag::set_version(const uint8_t v) {
     version = v;
 }
 
-void Tag::set_size(const std::size_t s){
+void Tag::set_size(const std::size_t s) {
     size = s;
 }
 

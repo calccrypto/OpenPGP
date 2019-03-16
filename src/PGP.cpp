@@ -58,24 +58,24 @@ const std::string PGP::ASCII_Armor_End      = PGP::ASCII_Armor_5_Dashes + "END P
 // tag should have been set to a valid packet type
 // format should have been set to OLD or NEW
 // returns length of length section
-std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial){
+std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial) {
     std::size_t hl = 0;
     std::size_t length = 0;
-    if (format == Packet::HeaderFormat::OLD){                               // Old length type RFC4880 sec 4.2.1
-        if ((ctb & 3) == 0){                                                // 0 - The packet has a one-octet length. The header is 2 octets long.
+    if (format == Packet::HeaderFormat::OLD) {                               // Old length type RFC4880 sec 4.2.1
+        if ((ctb & 3) == 0) {                                                // 0 - The packet has a one-octet length. The header is 2 octets long.
             hl = read_one_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
-        else if ((ctb & 3) == 1){                                           // 1 - The packet has a two-octet length. The header is 3 octets long.
+        else if ((ctb & 3) == 1) {                                           // 1 - The packet has a two-octet length. The header is 3 octets long.
             hl = read_two_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
-        else if ((ctb & 3) == 2){                                           // 2 - The packet has a four-octet length. The header is 5 octets long.
+        else if ((ctb & 3) == 2) {                                           // 2 - The packet has a four-octet length. The header is 5 octets long.
             hl = read_five_octet_lengths(src, pos, length, format);
             partial = Packet::NOT_PARTIAL;
         }
-        else if ((ctb & 3) == 3){                                           // The packet is of indeterminate length. The header is 1 octet long, and the implementation must determine how long the packet is.
-            length = src.size() - pos;                                      // header is one octet long
+        else if ((ctb & 3) == 3) {                                           // The packet is of indeterminate length. The header is 1 octet long, and the implementation must determine how long the packet is.
+            length = src.size() - pos;                                       // header is one octet long
             hl = 0;
             pos += hl;
             partial = Packet::PARTIAL;
@@ -83,28 +83,28 @@ std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t 
         packet_data = src.substr(pos, length);
         pos += length;
     }
-    else{                                                                   // New length type RFC4880 sec 4.2.2
+    else{                                                                    // New length type RFC4880 sec 4.2.2
         const uint8_t first_octet = static_cast <unsigned char> (src[pos]);
 
-        if (first_octet < 192){                                             // 0 - 191; A one-octet Body Length header encodes packet lengths of up to 191 octets.
+        if (first_octet < 192) {                                             // 0 - 191; A one-octet Body Length header encodes packet lengths of up to 191 octets.
             hl = read_one_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
-        else if ((192 <= first_octet) & (first_octet < 223)){               // 192 - 8383; A two-octet Body Length header encodes packet lengths of 192 to 8383 octets.
+        else if ((192 <= first_octet) & (first_octet < 223)) {               // 192 - 8383; A two-octet Body Length header encodes packet lengths of 192 to 8383 octets.
             hl = read_two_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
-        else if (first_octet == 255){                                       // 8384 - 4294967295; A five-octet Body Length header encodes packet lengths of up to 4,294,967,295 (0xFFFFFFFF) octets in length.
+        else if (first_octet == 255) {                                       // 8384 - 4294967295; A five-octet Body Length header encodes packet lengths of up to 4,294,967,295 (0xFFFFFFFF) octets in length.
             hl = read_five_octet_lengths(src, pos, length, format);
             packet_data = src.substr(pos, length);
             pos += length;
             partial = Packet::NOT_PARTIAL;
         }
-        else if (Packet::PARTIAL_BODY_LENGTH_START <= first_octet){        // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
+        else if (Packet::PARTIAL_BODY_LENGTH_START <= first_octet) {         // unknown; When the length of the packet body is not known in advance by the issuer, Partial Body Length headers encode a packet of indeterminate length, effectively making it a stream.
             length = read_partialBodyLen(first_octet, format);
 
             // warn if RFC 4880 sec 4.2.2.4 is not followed
@@ -142,14 +142,14 @@ std::size_t PGP::read_packet_unformatted(const std::string & src, const uint8_t 
     return hl;
 }
 
-uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, Packet::HeaderFormat & format, uint8_t & tag) const{
+uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, Packet::HeaderFormat & format, uint8_t & tag) const {
     ctb = data[pos];        // Name "ctb" came from Version 2 [RFC 1991]
 
-    if (!(ctb & 0x80)){
+    if (!(ctb & 0x80)) {
        throw std::runtime_error("Error: First bit of packet header MUST be 1 (octet " + std::to_string(pos) + ": 0x" + makehex(ctb, 2) + ").");
     }
 
-    if (ctb & 0x40){        // New length type RFC4880 sec 4.2.2
+    if (ctb & 0x40) {       // New length type RFC4880 sec 4.2.2
         format = Packet::HeaderFormat::NEW;
         tag = ctb & 0x3f;
     }
@@ -163,7 +163,7 @@ uint8_t PGP::read_packet_header(const std::string & data, std::string::size_type
     return tag;
 }
 
-Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const{
+Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const {
     if ((partial == Packet::PARTIAL) &&
         !Packet::can_have_partial_length(tag)) {
         throw std::runtime_error("An implementation MAY use Partial Body Lengths for data packets, be "
@@ -253,8 +253,8 @@ Packet::Tag::Ptr PGP::read_packet_raw(const std::string & data, const uint8_t ta
     return out;
 }
 
-Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos) const{
-    if (pos >= data.size()){
+Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_type & pos) const {
+    if (pos >= data.size()) {
         return nullptr;
     }
 
@@ -273,12 +273,12 @@ Packet::Tag::Ptr PGP::read_packet(const std::string & data, std::string::size_ty
     return read_packet_raw(packet_data, tag, format, partial);
 }
 
-std::string PGP::format_string(std::string data, uint8_t line_length) const{
+std::string PGP::format_string(std::string data, uint8_t line_length) const {
     std::string out;
     const std::div_t res = div(data.size(), line_length);
     out.reserve(res.quot + static_cast <bool> (res.rem));
     out.clear();
-    for(unsigned int i = 0; i < data.size(); i += line_length){
+    for(unsigned int i = 0; i < data.size(); i += line_length) {
         out += data.substr(i, line_length) + "\n";
     }
     return out;
@@ -310,14 +310,14 @@ PGP::PGP(std::istream & stream)
     read(stream);
 }
 
-PGP::~PGP(){}
+PGP::~PGP() {}
 
-void PGP::read(const std::string & data){
+void PGP::read(const std::string & data) {
     std::stringstream s(data);
     read(s);
 }
 
-void PGP::read(std::istream & stream){
+void PGP::read(std::istream & stream) {
 
     // find armor header
     //
@@ -356,7 +356,7 @@ void PGP::read(std::istream & stream){
     }
 
     // if no armor header found, assume entire stream is binary data
-    if (!stream){
+    if (!stream) {
         stream.clear();
         stream.seekg(stream.beg);
 
@@ -368,19 +368,19 @@ void PGP::read(std::istream & stream){
     }
     else{
         // parse armor header
-        for(type = MESSAGE; type != SIGNED_MESSAGE; type++){
-            if ((ASCII_Armor_Begin + ASCII_Armor_Header[type] + ASCII_Armor_5_Dashes) == line){
+        for(type = MESSAGE; type != SIGNED_MESSAGE; type++) {
+            if ((ASCII_Armor_Begin + ASCII_Armor_Header[type] + ASCII_Armor_5_Dashes) == line) {
                 break;
             }
         }
 
         // Cleartext Signature Framework
-        if (type == SIGNED_MESSAGE){
+        if (type == SIGNED_MESSAGE) {
             throw std::runtime_error("Error: Data contains message section. Use CleartextSignature to parse this data.");
         }
 
         // read Armor Key(s)
-        while (std::getline(stream, line) && line.size()){
+        while (std::getline(stream, line) && line.size()) {
             // get rid of trailing whitespace
             line = trim_whitespace(line, false, true);
 
@@ -392,20 +392,20 @@ void PGP::read(std::istream & stream){
             std::stringstream s(line);
             std::string key, value;
 
-            if (!(std::getline(s, key, ':') && std::getline(s, value))){
+            if (!(std::getline(s, key, ':') && std::getline(s, value))) {
                 std::cerr << "Warning: Discarding bad Armor Header: " << line << std::endl;
                 continue;
             }
 
             bool found = false;
-            for(std::string const & header_key : ASCII_Armor_Key){
-                if (header_key == key){
+            for(std::string const & header_key : ASCII_Armor_Key) {
+                if (header_key == key) {
                     found = true;
                     break;
                 }
             }
 
-            if (!found){
+            if (!found) {
                 std::cerr << "Warning: Unknown ASCII Armor Header Key \"" << key << "\"." << std::endl;
             }
 
@@ -418,7 +418,7 @@ void PGP::read(std::istream & stream){
             // get rid of trailing whitespace
             line = trim_whitespace(line, false, true);
 
-            if (line.substr(0, ASCII_Armor_End.size()) == ASCII_Armor_End){
+            if (line.substr(0, ASCII_Armor_End.size()) == ASCII_Armor_End) {
                 break;
             }
 
@@ -426,11 +426,11 @@ void PGP::read(std::istream & stream){
         }
 
         // check for a checksum
-        if (body[body.size() - 5] == '='){
+        if (body[body.size() - 5] == '=') {
             const uint32_t checksum = toint(radix642ascii(body.substr(body.size() - 4, 4)), 256);
             body = radix642ascii(body.substr(0, body.size() - 5));
             // check if the checksum is correct
-            if (crc24(body) != checksum){
+            if (crc24(body) != checksum) {
                 std::cerr << "Warning: Given checksum does not match calculated value." << std::endl;
             }
         }
@@ -446,14 +446,14 @@ void PGP::read(std::istream & stream){
     }
 }
 
-void PGP::read_raw(const std::string & data){
+void PGP::read_raw(const std::string & data) {
     packets.clear();
 
     // read each packet
     std::string::size_type pos = 0;
-    while (pos < data.size()){
+    while (pos < data.size()) {
         Packet::Tag::Ptr packet = read_packet(data, pos);
-        if (packet){
+        if (packet) {
             packets.push_back(packet);
         }
     }
@@ -462,94 +462,94 @@ void PGP::read_raw(const std::string & data){
     armored = false;
 }
 
-void PGP::read_raw(std::istream & stream){
+void PGP::read_raw(std::istream & stream) {
     read_raw(std::string(std::istreambuf_iterator <char> (stream), {}));
 }
 
-std::string PGP::show(const std::size_t indents, const std::size_t indent_size) const{
+std::string PGP::show(const std::size_t indents, const std::size_t indent_size) const {
     HumanReadable hr(indent_size, indents);
     show(hr);
     return hr.get();
 }
 
-void PGP::show(HumanReadable & hr) const{
-    for(Packet::Tag::Ptr const & p : packets){
+void PGP::show(HumanReadable & hr) const {
+    for(Packet::Tag::Ptr const & p : packets) {
         p -> show(hr);
     }
 }
 
-std::string PGP::raw() const{
+std::string PGP::raw() const {
     std::string out = "";
-    for(Packet::Tag::Ptr const & p : packets){
+    for(Packet::Tag::Ptr const & p : packets) {
         out += p -> write();
     }
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor) const{
-    const std::string packet_string = raw();        // raw PGP data = binary, no ASCII headers
+std::string PGP::write(const PGP::Armored armor) const {
+    const std::string packet_string = raw();         // raw PGP data = binary, no ASCII headers
 
-    if ((armor == Armored::NO)                   || // no armor
-        ((armor == Armored::DEFAULT) && !armored)){ // or use stored value, and stored value is no
+    if ((armor == Armored::NO)                   ||  // no armor
+        ((armor == Armored::DEFAULT) && !armored)) { // or use stored value, and stored value is no
         return packet_string;
     }
 
     std::string out = PGP::ASCII_Armor_Begin + ASCII_Armor_Header[type] + PGP::ASCII_Armor_5_Dashes + "\n";
-    for(Armor_Key const & key : keys){
+    for(Armor_Key const & key : keys) {
         out += key.first + ": " + key.second + "\n";
     }
 
     return out + "\n" + format_string(ascii2radix64(packet_string), MAX_LINE_LENGTH) + "=" + ascii2radix64(unhexlify(makehex(crc24(packet_string), 6))) + "\n" + PGP::ASCII_Armor_End + ASCII_Armor_Header[type] + PGP::ASCII_Armor_5_Dashes;
 }
 
-bool PGP::get_armored() const{
+bool PGP::get_armored() const {
     return armored;
 }
 
-PGP::Type_t PGP::get_type() const{
+PGP::Type_t PGP::get_type() const {
     return type;
 }
 
-const PGP::Armor_Keys & PGP::get_keys() const{
+const PGP::Armor_Keys & PGP::get_keys() const {
     return keys;
 }
 
-const PGP::Packets & PGP::get_packets() const{
+const PGP::Packets & PGP::get_packets() const {
     return packets;
 }
 
-PGP::Packets PGP::get_packets_clone() const{
+PGP::Packets PGP::get_packets_clone() const {
     Packets out = packets;
-    for(Packet::Tag::Ptr & p : out){
+    for(Packet::Tag::Ptr & p : out) {
         p = p -> clone();
     }
     return out;
 }
 
-void PGP::set_armored(const bool a){
+void PGP::set_armored(const bool a) {
     armored = a;
 }
 
-void PGP::set_type(const PGP::Type_t t){
+void PGP::set_type(const PGP::Type_t t) {
     type = t;
 }
 
-void PGP::set_keys(const PGP::Armor_Keys & k){
+void PGP::set_keys(const PGP::Armor_Keys & k) {
     keys = k;
 }
 
-void PGP::set_packets(const PGP::Packets & p){
+void PGP::set_packets(const PGP::Packets & p) {
     packets = p;
 }
 
-void PGP::set_packets_clone(const PGP::Packets & p){
+void PGP::set_packets_clone(const PGP::Packets & p) {
     packets = p;
-    for(Packet::Tag::Ptr & p : packets){
+    for(Packet::Tag::Ptr & p : packets) {
         p = p -> clone();
     }
 }
 
-PGP & PGP::operator=(const PGP & copy){
+PGP & PGP::operator=(const PGP & copy) {
     armored = copy.armored;
     type = copy.type;
     keys = copy.keys;
@@ -557,11 +557,11 @@ PGP & PGP::operator=(const PGP & copy){
     return *this;
 }
 
-PGP::Ptr PGP::clone() const{
+PGP::Ptr PGP::clone() const {
     return std::make_shared <PGP> (*this);
 }
 
-std::ostream & operator<<(std::ostream & stream, const PGP & pgp){
+std::ostream & operator<<(std::ostream & stream, const PGP & pgp) {
     return stream << pgp.show();
 }
 

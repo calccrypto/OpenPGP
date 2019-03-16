@@ -4,13 +4,13 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub7::actual_read(const std::string & data){
-    if (data.size()){
+void Sub7::actual_read(const std::string & data) {
+    if (data.size()) {
         set_revocable(data[0]);
     }
 }
 
-void Sub7::show_contents(HumanReadable & hr) const{
+void Sub7::show_contents(HumanReadable & hr) const {
     hr << std::string("Revocable: ") + (revocable?"True":"False");
 }
 
@@ -25,19 +25,19 @@ Sub7::Sub7(const std::string & data)
     read(data);
 }
 
-std::string Sub7::raw() const{
+std::string Sub7::raw() const {
     return std::string(1, revocable);
 }
 
-bool Sub7::get_revocable() const{
+bool Sub7::get_revocable() const {
     return revocable;
 }
 
-void Sub7::set_revocable(const bool r){
+void Sub7::set_revocable(const bool r) {
     revocable = r;
 }
 
-Sub::Ptr Sub7::clone() const{
+Sub::Ptr Sub7::clone() const {
     return std::make_shared <Sub7> (*this);
 }
 

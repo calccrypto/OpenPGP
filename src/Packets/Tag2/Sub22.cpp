@@ -4,12 +4,12 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub22::actual_read(const std::string & data){
+void Sub22::actual_read(const std::string & data) {
     set_pca(data);
 }
 
-void Sub22::show_contents(HumanReadable & hr) const{
-    for(char const & c : pca){
+void Sub22::show_contents(HumanReadable & hr) const {
+    for(char const & c : pca) {
         const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(c);
         hr << "comp alg - " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (comp " + std::to_string(c) + ")";
     }
@@ -26,19 +26,19 @@ Sub22::Sub22(const std::string & data)
     read(data);
 }
 
-std::string Sub22::raw() const{
+std::string Sub22::raw() const {
     return pca;
 }
 
-std::string Sub22::get_pca() const{
+std::string Sub22::get_pca() const {
     return pca;
 }
 
-void Sub22::set_pca(const std::string & c){
+void Sub22::set_pca(const std::string & c) {
     pca = c;
 }
 
-Sub::Ptr Sub22::clone() const{
+Sub::Ptr Sub22::clone() const {
     return std::make_shared <Sub22> (*this);
 }
 

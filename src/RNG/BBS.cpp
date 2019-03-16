@@ -16,8 +16,8 @@ MPI BBS::m = 0;
 
 const MPI BBS::two = 2;
 
-void BBS::init(const MPI & seed, const unsigned int & bits, MPI p, MPI q){
-    if (!seeded){
+void BBS::init(const MPI & seed, const unsigned int & bits, MPI p, MPI q) {
+    if (!seeded) {
         /*
         p and q should be:
             prime
@@ -26,19 +26,19 @@ void BBS::init(const MPI & seed, const unsigned int & bits, MPI p, MPI q){
         */
         gmp_randclass rng(gmp_randinit_default);                 // set up rng for initializing BBS
         rng.seed(rng.get_z_bits(bits));                          // seed itself with random garbage
-        if (p == 0){
+        if (p == 0) {
             p = rng.get_z_bits(bits);
             p = nextprime(p);                                    // find closest prime
-            while ((p & 3) != 3){                                // search for primes that are 3 = p mod 4
+            while ((p & 3) != 3) {                               // search for primes that are 3 = p mod 4
                 p += 1;
                 p = nextprime(p);                                // find next prime
             }
         }
-        if (q == 0){
+        if (q == 0) {
             q = rng.get_z_bits(bits);
             q = nextprime(q);                                    // find closest prime
             MPI pq_gcd = 1025;
-            while (((q & 3) != 3) && (pq_gcd < 1024)){           // search for primes that are 3 = q mod 4 and gcd(p - 1, q - 1) is small
+            while (((q & 3) != 3) && (pq_gcd < 1024)) {          // search for primes that are 3 = q mod 4 and gcd(p - 1, q - 1) is small
                 q += 1;
                 q = nextprime(q);                                // find next prime
                 pq_gcd = mpigcd(p-1, q-1);
@@ -50,18 +50,18 @@ void BBS::init(const MPI & seed, const unsigned int & bits, MPI p, MPI q){
     }
 }
 
-void BBS::r_number(){
+void BBS::r_number() {
     state = powm(state, two, m);
 }
 
-bool BBS::parity(const std::string & par) const{
+bool BBS::parity(const std::string & par) const {
     MPI value = state;
-    if (par == "least"){
+    if (par == "least") {
         return ((state & 1) == 1);
     }
     else{
         bool t = 0;
-        while (value != 0){
+        while (value != 0) {
             t ^= ((value & 1) == 1);
             value >>= 1;
         }
@@ -73,7 +73,7 @@ bool BBS::parity(const std::string & par) const{
 BBS::BBS(...)
     : par()
 {
-    if (!seeded){
+    if (!seeded) {
         throw std::runtime_error("Error: BBS must be seeded first.");
     }
 }
@@ -84,10 +84,10 @@ BBS::BBS(const MPI & SEED, const unsigned int & bits, MPI p, MPI q)
     init(SEED, bits, p, q);
 }
 
-std::string BBS::rand(const unsigned int & bits, const std::string & par){
+std::string BBS::rand(const unsigned int & bits, const std::string & par) {
     // returns string because SIZE might be larger than 64 bits
     std::string out(bits, '0');
-    for(char & c : out){
+    for(char & c : out) {
         r_number();
         c += parity(par);
     }

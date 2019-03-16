@@ -4,11 +4,11 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub28::actual_read(const std::string & data){
+void Sub28::actual_read(const std::string & data) {
     set_signer(data);
 }
 
-void Sub28::show_contents(HumanReadable & hr) const{
+void Sub28::show_contents(HumanReadable & hr) const {
     hr << "ID: " + signer;
 }
 
@@ -23,20 +23,20 @@ Sub28::Sub28(const std::string & data)
     read(data);
 }
 
-std::string Sub28::raw() const{
+std::string Sub28::raw() const {
     return signer;
 }
 
-std::string Sub28::get_signer() const{
+std::string Sub28::get_signer() const {
     return signer;
 }
 
-void Sub28::set_signer(const std::string & s){
+void Sub28::set_signer(const std::string & s) {
     size = s.size();
     signer = s;
 }
 
-Sub::Ptr Sub28::clone() const{
+Sub::Ptr Sub28::clone() const {
     return std::make_shared <Sub28> (*this);
 }
 

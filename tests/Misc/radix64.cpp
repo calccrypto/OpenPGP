@@ -2,7 +2,7 @@
 
 #include "Misc/radix64.h"
 
-TEST(Radix64, rfc4648_base64_test_vectors){
+TEST(Radix64, rfc4648_base64_test_vectors) {
 
     // OpenPGP::ascii2radix64
     EXPECT_EQ(OpenPGP::ascii2radix64(""), "");

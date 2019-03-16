@@ -4,13 +4,13 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub4::actual_read(const std::string & data){
-    if (data.size()){
+void Sub4::actual_read(const std::string & data) {
+    if (data.size()) {
         set_exportable(data[0]);
     }
 }
 
-void Sub4::show_contents(HumanReadable & hr) const{
+void Sub4::show_contents(HumanReadable & hr) const {
     hr << std::string("Exportable: ") + (exportable?"True":"False");
 }
 
@@ -25,19 +25,19 @@ Sub4::Sub4(const std::string & data)
     read(data);
 }
 
-std::string Sub4::raw() const{
+std::string Sub4::raw() const {
     return (exportable?"\x01":zero);
 }
 
-bool Sub4::get_exportable() const{
+bool Sub4::get_exportable() const {
     return exportable;
 }
 
-void Sub4::set_exportable(const bool e){
+void Sub4::set_exportable(const bool e) {
     exportable = e;
 }
 
-Sub::Ptr Sub4::clone() const{
+Sub::Ptr Sub4::clone() const {
     return std::make_shared <Sub4> (*this);
 }
 

@@ -7,7 +7,7 @@
 
 #define GPG_DIR "tests/testvectors/gpg/"
 
-TEST(Module, fingerprint){
+TEST(Module, fingerprint) {
     // default arguments
     {
         int argc = 1;

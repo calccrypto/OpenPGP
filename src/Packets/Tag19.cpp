@@ -3,11 +3,11 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag19::actual_read(const std::string & data){
+void Tag19::actual_read(const std::string & data) {
     set_hash(data);
 }
 
-void Tag19::show_contents(HumanReadable & hr) const{
+void Tag19::show_contents(HumanReadable & hr) const {
     hr << "SHA - 1 Hash of previous packet: " + hash;
 }
 
@@ -24,19 +24,19 @@ Tag19::Tag19(const std::string & data)
     read(data);
 }
 
-std::string Tag19::raw() const{
+std::string Tag19::raw() const {
     return hash;
 }
 
-std::string Tag19::get_hash() const{
+std::string Tag19::get_hash() const {
     return hash;
 }
 
-void Tag19::set_hash(const std::string & h){
+void Tag19::set_hash(const std::string & h) {
     hash = h;
 }
 
-Tag::Ptr Tag19::clone() const{
+Tag::Ptr Tag19::clone() const {
     return std::make_shared <Packet::Tag19> (*this);
 }
 

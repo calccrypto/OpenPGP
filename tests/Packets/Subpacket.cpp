@@ -7,11 +7,11 @@ class TestSubpacket final : public OpenPGP::Subpacket::Sub {
     private:
         void actual_read(const std::string &) {}
 
-        std::string show_type() const{
+        std::string show_type() const {
             return "";
         }
 
-        void show_contents(HumanReadable &) const{}
+        void show_contents(HumanReadable &) const {}
 };
 
 TEST(Subpacket, Constructor) {

@@ -2,7 +2,7 @@
 
 #include "Packets/Packet.h"
 
-TEST(Packet, is_key_packet){
+TEST(Packet, is_key_packet) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_key_packet(RESERVED));
@@ -25,7 +25,7 @@ TEST(Packet, is_key_packet){
     EXPECT_FALSE(is_key_packet(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_primary_key){
+TEST(Packet, is_primary_key) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_primary_key(RESERVED));
@@ -48,7 +48,7 @@ TEST(Packet, is_primary_key){
     EXPECT_FALSE(is_primary_key(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_subkey){
+TEST(Packet, is_subkey) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_subkey(RESERVED));
@@ -71,7 +71,7 @@ TEST(Packet, is_subkey){
     EXPECT_FALSE(is_subkey(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_public){
+TEST(Packet, is_public) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_public(RESERVED));
@@ -94,7 +94,7 @@ TEST(Packet, is_public){
     EXPECT_FALSE(is_public(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_secret){
+TEST(Packet, is_secret) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_secret(RESERVED));
@@ -117,7 +117,7 @@ TEST(Packet, is_secret){
     EXPECT_FALSE(is_secret(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_user){
+TEST(Packet, is_user) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_user(RESERVED));
@@ -140,7 +140,7 @@ TEST(Packet, is_user){
     EXPECT_FALSE(is_user(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_session_key){
+TEST(Packet, is_session_key) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_session_key(RESERVED));
@@ -163,7 +163,7 @@ TEST(Packet, is_session_key){
     EXPECT_FALSE(is_session_key(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, is_sym_protected_data){
+TEST(Packet, is_sym_protected_data) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(is_sym_protected_data(RESERVED));
@@ -186,7 +186,7 @@ TEST(Packet, is_sym_protected_data){
     EXPECT_FALSE(is_sym_protected_data(MODIFICATION_DETECTION_CODE));
 }
 
-TEST(Packet, can_have_partial_length){
+TEST(Packet, can_have_partial_length) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(can_have_partial_length(RESERVED));
@@ -211,7 +211,7 @@ TEST(Packet, can_have_partial_length){
 
 class FakeTag final : public OpenPGP::Packet::Tag {
     public:
-        static std::string write_old_length(const uint8_t tag, const std::string & data, const OpenPGP::Packet::PartialBodyLength part, uint8_t octets = 0){
+        static std::string write_old_length(const uint8_t tag, const std::string & data, const OpenPGP::Packet::PartialBodyLength part, uint8_t octets = 0) {
             return OpenPGP::Packet::Tag::write_old_length(tag, data, part, octets);
         }
 
@@ -220,18 +220,18 @@ class FakeTag final : public OpenPGP::Packet::Tag {
         }
 
     private:
-        void actual_read(const std::string &){}
+        void actual_read(const std::string &) {}
 
     public:
-        std::string show(const std::size_t, const std::size_t) const{
+        std::string show(const std::size_t, const std::size_t) const {
             return "";
         }
 
-        std::string raw() const{
+        std::string raw() const {
             return "";
         }
 
-        OpenPGP::Packet::Tag::Ptr clone() const{
+        OpenPGP::Packet::Tag::Ptr clone() const {
             return std::make_shared <FakeTag> (*this);
         }
 };

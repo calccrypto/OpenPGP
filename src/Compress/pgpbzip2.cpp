@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-int bz2_compress(const std::string & src, std::string & dst){
+int bz2_compress(const std::string & src, std::string & dst) {
     int rc, flush;
     bz_stream strm;
     char *in = nullptr;
@@ -19,7 +19,7 @@ int bz2_compress(const std::string & src, std::string & dst){
     strm.opaque = NULL;
 
     rc = BZ2_bzCompressInit(&strm, bz2_BLOCKSIZE100K, bz2_VERBOSITY, bz2_WORKFACTOR);
-    if (rc != BZ_OK){
+    if (rc != BZ_OK) {
         BZ2_bzCompressEnd(&strm);
         return rc;
     }
@@ -48,7 +48,7 @@ int bz2_compress(const std::string & src, std::string & dst){
     return BZ2_bzCompressEnd(&strm);
 }
 
-int bz2_decompress(const std::string & src, std::string & dst){
+int bz2_decompress(const std::string & src, std::string & dst) {
     int rc;
     bz_stream strm;
     char *in = nullptr;
@@ -65,7 +65,7 @@ int bz2_decompress(const std::string & src, std::string & dst){
     strm.opaque = NULL;
 
     rc = BZ2_bzDecompressInit(&strm, bz2_VERBOSITY, bz2_SMALL);
-    if (rc != BZ_OK){
+    if (rc != BZ_OK) {
         BZ2_bzCompressEnd(&strm);
         return rc;
     }

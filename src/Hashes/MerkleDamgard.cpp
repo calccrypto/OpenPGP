@@ -6,4 +6,4 @@ MerkleDamgard::MerkleDamgard()
       clen(0)
 {}
 
-MerkleDamgard::~MerkleDamgard(){}
+MerkleDamgard::~MerkleDamgard() {}

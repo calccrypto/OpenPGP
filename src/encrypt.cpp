@@ -4,9 +4,9 @@ namespace OpenPGP {
 namespace Encrypt {
 
 Packet::Tag::Ptr data(const Args & args,
-                 const std::string & session_key){
+                 const std::string & session_key) {
 
-    if (!args.valid()){
+    if (!args.valid()) {
         // "Error: Bad argument.\n";
         return nullptr;
     }
@@ -14,10 +14,10 @@ Packet::Tag::Ptr data(const Args & args,
     std::string to_encrypt;
 
     // if message is to be signed
-    if (args.signer){
+    if (args.signer) {
         const Sign::Args signargs(*(args.signer), args.passphrase, 4, args.hash);
         Message signed_message = Sign::binary(signargs, args.filename, args.data, args.comp);
-        if (!signed_message.meaningful()){
+        if (!signed_message.meaningful()) {
             // "Error: Signing failure.\n";
             return nullptr;
         }
@@ -35,7 +35,7 @@ Packet::Tag::Ptr data(const Args & args,
 
         to_encrypt = tag11.write();
 
-        if (args.comp){
+        if (args.comp) {
             // Compressed Data Packet (Tag 8)
             Packet::Tag8 tag8;
             tag8.set_header_format(Packet::HeaderFormat::NEW);
@@ -52,7 +52,7 @@ Packet::Tag::Ptr data(const Args & args,
 
     Packet::Tag::Ptr encrypted = nullptr;
 
-    if (!args.mdc){
+    if (!args.mdc) {
         // Symmetrically Encrypted Data Packet (Tag 9)
         Packet::Tag9 tag9;
         tag9.set_encrypted_data(use_OpenPGP_CFB_encrypt(args.sym, Packet::SYMMETRICALLY_ENCRYPTED_DATA, to_encrypt, session_key, prefix));
@@ -74,44 +74,44 @@ Packet::Tag::Ptr data(const Args & args,
 }
 
 Message pka(const Args & args,
-            const Key & pgpkey){
+            const Key & pgpkey) {
     RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!args.valid()){
+    if (!args.valid()) {
         // "Error: Bad argument.\n";
         return Message();
     }
 
-    if (!pgpkey.meaningful()){
+    if (!pgpkey.meaningful()) {
         // "Error: Bad key.\n";
         return Message();
     }
 
     // Check if key has been revoked
     const int rc = Revoke::check(pgpkey);
-    if (rc == true){
+    if (rc == true) {
         // "Error: Key " + hexlify(pgpkey.keyid()) + " has been revoked. Nothing done.\n";
         return Message();
     }
-    else if (rc == -1){
+    else if (rc == -1) {
         // "Error: check_revoked failed.\n";
         return Message();
     }
 
     Packet::Key::Ptr key = nullptr;
-    for(Packet::Tag::Ptr const & p : pgpkey.get_packets()){
+    for(Packet::Tag::Ptr const & p : pgpkey.get_packets()) {
         key = nullptr;
-        if (Packet::is_key_packet(p -> get_tag())){
+        if (Packet::is_key_packet(p -> get_tag())) {
             key = std::static_pointer_cast <Packet::Key> (p);
 
             // make sure key has encrypting keys
-            if (PKA::can_encrypt(key -> get_pka())){
+            if (PKA::can_encrypt(key -> get_pka())) {
                 break;
             }
         }
     }
 
-    if (!key){
+    if (!key) {
         // "Error: No encrypting key found.\n";
         return Message();
     }
@@ -129,7 +129,7 @@ Message pka(const Args & args,
 
     // get checksum of session key
     uint16_t sum = 0;
-    for(char const c : session_key){
+    for(char const c : session_key) {
         sum += static_cast <unsigned char> (c);
     }
 
@@ -139,16 +139,16 @@ Message pka(const Args & args,
 
     // encrypt m
     if ((key -> get_pka() == PKA::ID::RSA_ENCRYPT_OR_SIGN) ||
-        (key -> get_pka() == PKA::ID::RSA_ENCRYPT_ONLY)){
+        (key -> get_pka() == PKA::ID::RSA_ENCRYPT_ONLY)) {
         tag1 -> set_mpi({PKA::RSA::encrypt(m, mpi)});
     }
-    else if (key -> get_pka() == PKA::ID::ELGAMAL){
+    else if (key -> get_pka() == PKA::ID::ELGAMAL) {
         tag1 -> set_mpi(PKA::ElGamal::encrypt(m, mpi));
     }
 
     // encrypt data and put it into a packet
     Packet::Tag::Ptr encrypted = data(args, session_key);
-    if (!encrypted){
+    if (!encrypted) {
         // "Error: Failed to encrypt data.\n";
         return Message();
     }
@@ -163,10 +163,10 @@ Message pka(const Args & args,
 
 Message sym(const Args & args,
             const std::string & passphrase,
-            const uint8_t key_hash){
+            const uint8_t key_hash) {
     RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
 
-    if (!args.valid()){
+    if (!args.valid()) {
         // "Error: Bad argument.\n";
         return Message();
     }
@@ -189,7 +189,7 @@ Message sym(const Args & args,
 
     // encrypt data
     Packet::Tag::Ptr encrypted = data(args, session_key.substr(1, session_key.size() - 1));
-    if (!encrypted){
+    if (!encrypted) {
         // "Error: Failed to encrypt data.\n";
         return Message();
     }

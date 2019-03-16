@@ -1,9 +1,9 @@
 #include "common/HumanReadable.h"
 
-std::string HumanReadable::duplicate_string(const std::string & src, const std::size_t times) const{
+std::string HumanReadable::duplicate_string(const std::string & src, const std::size_t times) const {
     std::string out = "";
     out.reserve(src.size() * (times + 1));
-    for(std::size_t i = 0; i < times; i++){
+    for(std::size_t i = 0; i < times; i++) {
         out += src;
     }
     return out;
@@ -23,7 +23,7 @@ HumanReadable::HumanReadable(const std::string & prefix, const std::string & ind
       level(0)
 {}
 
-std::size_t HumanReadable::up(){
+std::size_t HumanReadable::up() {
     if (level) {
         level--;
     }
@@ -31,7 +31,7 @@ std::size_t HumanReadable::up(){
     return level;
 }
 
-std::size_t HumanReadable::down(){
+std::size_t HumanReadable::down() {
     return ++level;
 }
 
@@ -39,14 +39,14 @@ std::size_t HumanReadable::curr_level() const {
     return level;
 }
 
-std::string HumanReadable::get() const{
+std::string HumanReadable::get() const {
     return data.str();
 }
 
-HumanReadable & HumanReadable::operator<<(const std::string & str){
+HumanReadable & HumanReadable::operator<<(const std::string & str) {
     data << prefix;
 
-    for(std::size_t i = 0; i < level; i++){
+    for(std::size_t i = 0; i < level; i++) {
         data << indent;
     }
 
@@ -54,7 +54,7 @@ HumanReadable & HumanReadable::operator<<(const std::string & str){
     return *this;
 }
 
-HumanReadable & HumanReadable::operator<<(const Move dir){
+HumanReadable & HumanReadable::operator<<(const Move dir) {
     switch (dir) {
         case UP:
             up();

@@ -6,15 +6,15 @@
 namespace OpenPGP {
 namespace Packet {
 
-std::string Tag8::compress(const std::string & data) const{
+std::string Tag8::compress(const std::string & data) const {
     return Compression::compress(comp, data);
 }
 
-std::string Tag8::decompress(const std::string & data) const{
+std::string Tag8::decompress(const std::string & data) const {
     return Compression::decompress(comp, data);
 }
 
-void Tag8::actual_read(const std::string & data){
+void Tag8::actual_read(const std::string & data) {
     if (size) {
         comp = data[0]; // don't call set_comp here to prevent decompressing and recompressing old data
         set_compressed_data(data.substr(1, size - 1));
@@ -25,7 +25,7 @@ std::string Tag8::show_title() const {
     return Tag::show_title() + Partial::show_title();
 }
 
-void Tag8::show_contents(HumanReadable & hr) const{
+void Tag8::show_contents(HumanReadable & hr) const {
     const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
     Message decompressed;
     decompressed.read_raw(get_data());
@@ -50,24 +50,24 @@ Tag8::Tag8(const std::string & data)
     read(data);
 }
 
-std::string Tag8::raw() const{
+std::string Tag8::raw() const {
     return std::string(1, comp) + compressed_data;
 }
 
-std::string Tag8::write() const{
+std::string Tag8::write() const {
     const std::string data = raw();
     if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)){                            // tag > 15, so new header is required
+        (tag > 15)) {                            // tag > 15, so new header is required
         return write_new_length(tag, data, partial);
     }
     return write_old_length(tag, data, partial);
 }
 
-uint8_t Tag8::get_comp() const{
+uint8_t Tag8::get_comp() const {
     return comp;
 }
 
-std::string Tag8::get_data() const{
+std::string Tag8::get_data() const {
     return decompress(compressed_data);
 }
 
@@ -77,11 +77,11 @@ Message Tag8::get_body() const {
     return msg;
 }
 
-std::string Tag8::get_compressed_data() const{
+std::string Tag8::get_compressed_data() const {
     return compressed_data;
 }
 
-void Tag8::set_comp(const uint8_t alg){
+void Tag8::set_comp(const uint8_t alg) {
     // recompress data
     const std::string data = get_data();// decompress data
     comp = alg;                         // set new compression algorithm
@@ -89,7 +89,7 @@ void Tag8::set_comp(const uint8_t alg){
     comp = alg;
 }
 
-void Tag8::set_data(const std::string & data){
+void Tag8::set_data(const std::string & data) {
     compressed_data = compress(data);
 }
 
@@ -98,11 +98,11 @@ void Tag8::set_body(const Message & msg) {
     set_data(msg.raw());
 }
 
-void Tag8::set_compressed_data(const std::string & data){
+void Tag8::set_compressed_data(const std::string & data) {
     compressed_data = data;
 }
 
-Tag::Ptr Tag8::clone() const{
+Tag::Ptr Tag8::clone() const {
     return std::make_shared <Packet::Tag8> (*this);
 }
 

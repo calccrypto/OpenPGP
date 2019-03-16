@@ -2,20 +2,20 @@
 
 #include "common/cryptomath.h"
 
-uint32_t Twofish::h_fun(uint32_t x, const std::vector<uint32_t> & key){
+uint32_t Twofish::h_fun(uint32_t x, const std::vector<uint32_t> & key) {
     uint32_t b0, b1, b2, b3;
     b0 = byte(x, 0);
     b1 = byte(x, 1);
     b2 = byte(x, 2);
     b3 = byte(x, 3);
 
-    if (key.size() >= 4){
+    if (key.size() >= 4) {
         b0 = q_tab[1][b0] ^ byte(key[3], 0);
         b1 = q_tab[0][b1] ^ byte(key[3], 1);
         b2 = q_tab[0][b2] ^ byte(key[3], 2);
         b3 = q_tab[1][b3] ^ byte(key[3], 3);
     }
-    if (key.size() >= 3){
+    if (key.size() >= 3) {
         b0 = q_tab[1][b0] ^ byte(key[2], 0);
         b1 = q_tab[1][b1] ^ byte(key[2], 1);
         b2 = q_tab[0][b2] ^ byte(key[2], 2);
@@ -29,12 +29,12 @@ uint32_t Twofish::h_fun(uint32_t x, const std::vector<uint32_t> & key){
     return m_tab[0][b0] ^ m_tab[1][b1] ^ m_tab[2][b2] ^ m_tab[3][b3];
 }
 
-std::string Twofish::run(const std::string & data, bool enc){
-    if (!keyset){
+std::string Twofish::run(const std::string & data, bool enc) {
+    if (!keyset) {
         throw std::runtime_error("Error: Key has not been set");
     }
 
-    if (data.size() != 16){
+    if (data.size() != 16) {
         throw std::runtime_error("Error: Data must be 128 bits in length.");
     }
     uint32_t t0, t1;
@@ -49,8 +49,8 @@ std::string Twofish::run(const std::string & data, bool enc){
     blk[2] ^= l_key[enc?2:6];
     blk[3] ^= l_key[enc?3:7];
 
-    if (enc){
-        for(uint8_t i = 0; i < 8; i++){
+    if (enc) {
+        for(uint8_t i = 0; i < 8; i++) {
             t1 = mk_tab[0][byte(blk[1],3)] ^ mk_tab[1][byte(blk[1],0)] ^ mk_tab[2][byte(blk[1],1)] ^ mk_tab[3][byte(blk[1],2)];
             t0 = mk_tab[0][byte(blk[0],0)] ^ mk_tab[1][byte(blk[0],1)] ^ mk_tab[2][byte(blk[0],2)] ^ mk_tab[3][byte(blk[0],3)];
             blk[2] = ROR(blk[2] ^ (t0 + t1 + l_key[4 * i + 8]), 1, 32);
@@ -61,7 +61,7 @@ std::string Twofish::run(const std::string & data, bool enc){
             blk[1] = ROL(blk[1], 1, 32) ^ (t0 + 2 * t1 + l_key[4 * i + 11]);
         }
     } else {
-        for(int i = 7; i >= 0; i--){
+        for(int i = 7; i >= 0; i--) {
             t1 = mk_tab[0][byte(blk[1],3)] ^ mk_tab[1][byte(blk[1],0)] ^ mk_tab[2][byte(blk[1],1)] ^ mk_tab[3][byte(blk[1],2)];
             t0 = mk_tab[0][byte(blk[0],0)] ^ mk_tab[1][byte(blk[0],1)] ^ mk_tab[2][byte(blk[0],2)] ^ mk_tab[3][byte(blk[0],3)];
             blk[2] = ROL(blk[2], 1, 32) ^ (t0 + t1 + l_key[4 * i + 10]);
@@ -97,13 +97,13 @@ Twofish::Twofish(const std::string & KEY)
     setkey(KEY);
 }
 
-void Twofish::setkey(const std::string & KEY){
-    if (keyset){
+void Twofish::setkey(const std::string & KEY) {
+    if (keyset) {
         throw std::runtime_error("Error: Key has already been set.");
     }
 
     uint8_t n = KEY.size();
-    if ((n != 16) && (n != 24) && (n != 32)){
+    if ((n != 16) && (n != 24) && (n != 32)) {
         throw std::runtime_error("Error: Key size does not fit defined sizes.");
     }
     uint8_t k_len = n >> 3;
@@ -112,19 +112,19 @@ void Twofish::setkey(const std::string & KEY){
     std::vector<uint32_t> me_key(k_len, 0), mo_key(k_len, 0), s_key(k_len, 0);
 
     std::vector<uint32_t> in_key(k_len<<1, 0);
-    for( uint8_t i = 0; i < (k_len<<1); i++ ){
+    for( uint8_t i = 0; i < (k_len<<1); i++ ) {
        in_key[i] = toint(little_end(KEY.substr(i*4, 4), 256), 256);
     }
 
     l_key.resize(40, 0);
-    for(uint8_t i = 0; i < k_len; i++){
+    for(uint8_t i = 0; i < k_len; i++) {
         a = in_key[i<<1];
         me_key[i] = a;
         b = in_key[(i<<1)+1];
         mo_key[i] = b;
 
         uint32_t t, u;
-        for(uint8_t x = 0; x < 8; x++){
+        for(uint8_t x = 0; x < 8; x++) {
             // get most significant coefficient
             t = b >> 24;
 
@@ -137,7 +137,7 @@ void Twofish::setkey(const std::string & KEY){
             u = (t << 1);
 
             // subtract modular polynomial on overflow
-            if(t & 0x80){
+            if(t & 0x80) {
                 u ^= G_MOD;
             }
 
@@ -148,7 +148,7 @@ void Twofish::setkey(const std::string & KEY){
             u ^= (t >> 1);
 
             // add the modular polynomial on underflow
-            if(t & 0x01){
+            if(t & 0x01) {
                 u ^= G_MOD >> 1;
             }
 
@@ -158,7 +158,7 @@ void Twofish::setkey(const std::string & KEY){
         s_key[k_len - i - 1] = b;
     }
 
-    for(uint8_t i = 0; i < 40; i += 2){
+    for(uint8_t i = 0; i < 40; i += 2) {
         a = 0x01010101 * i;
         b = a + 0x01010101;
         a = h_fun(a, me_key);
@@ -168,22 +168,22 @@ void Twofish::setkey(const std::string & KEY){
     }
 
     mk_tab.resize(4, std::vector<uint32_t>(256, 0));
-    if (k_len == 2){
-        for (uint16_t i = 0; i < 256; i++){
+    if (k_len == 2) {
+        for (uint16_t i = 0; i < 256; i++) {
             mk_tab[0][i] = m_tab[0][q_tab[0][q_tab[0][i] ^ byte(s_key[1],0)] ^ byte(s_key[0],0)];
             mk_tab[1][i] = m_tab[1][q_tab[0][q_tab[1][i] ^ byte(s_key[1],1)] ^ byte(s_key[0],1)];
             mk_tab[2][i] = m_tab[2][q_tab[1][q_tab[0][i] ^ byte(s_key[1],2)] ^ byte(s_key[0],2)];
             mk_tab[3][i] = m_tab[3][q_tab[1][q_tab[1][i] ^ byte(s_key[1],3)] ^ byte(s_key[0],3)];
         }
-    } else if (k_len == 3){
-        for (uint16_t i = 0; i < 256; i++){
+    } else if (k_len == 3) {
+        for (uint16_t i = 0; i < 256; i++) {
             mk_tab[0][i] = m_tab[0][q_tab[0][q_tab[0][q_tab[1][i] ^ byte(s_key[2], 0)] ^ byte(s_key[1], 0)] ^ byte(s_key[0], 0)];
             mk_tab[1][i] = m_tab[1][q_tab[0][q_tab[1][q_tab[1][i] ^ byte(s_key[2], 1)] ^ byte(s_key[1], 1)] ^ byte(s_key[0], 1)];
             mk_tab[2][i] = m_tab[2][q_tab[1][q_tab[0][q_tab[0][i] ^ byte(s_key[2], 2)] ^ byte(s_key[1], 2)] ^ byte(s_key[0], 2)];
             mk_tab[3][i] = m_tab[3][q_tab[1][q_tab[1][q_tab[0][i] ^ byte(s_key[2], 3)] ^ byte(s_key[1], 3)] ^ byte(s_key[0], 3)];
         }
-    } else if (k_len == 4){
-        for (uint16_t i = 0; i < 256; i++){
+    } else if (k_len == 4) {
+        for (uint16_t i = 0; i < 256; i++) {
             mk_tab[0][i] = m_tab[0][q_tab[0][q_tab[0][q_tab[1][q_tab[1][i] ^ byte(s_key[3], 0)] ^ byte(s_key[2], 0)] ^ byte(s_key[1], 0)] ^ byte(s_key[0], 0)];
             mk_tab[1][i] = m_tab[1][q_tab[0][q_tab[1][q_tab[1][q_tab[0][i] ^ byte(s_key[3], 1)] ^ byte(s_key[2], 1)] ^ byte(s_key[1], 1)] ^ byte(s_key[0], 1)];
             mk_tab[2][i] = m_tab[2][q_tab[1][q_tab[0][q_tab[0][q_tab[0][i] ^ byte(s_key[3], 2)] ^ byte(s_key[2], 2)] ^ byte(s_key[1], 2)] ^ byte(s_key[0], 2)];
@@ -194,10 +194,10 @@ void Twofish::setkey(const std::string & KEY){
     keyset = true;
 }
 
-std::string Twofish::encrypt(const std::string & DATA){
+std::string Twofish::encrypt(const std::string & DATA) {
     return run(DATA, true);
 }
-std::string Twofish::decrypt(const std::string & DATA){
+std::string Twofish::decrypt(const std::string & DATA) {
     return run(DATA, false);
 }
 

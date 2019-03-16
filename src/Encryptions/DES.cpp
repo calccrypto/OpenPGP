@@ -1,24 +1,24 @@
 #include "Encryptions/DES.h"
 
-std::string DES::run(const std::string & DATA){
-    if (!keyset){
+std::string DES::run(const std::string & DATA) {
+    if (!keyset) {
         throw std::runtime_error("Error: Key has not been set.");
     }
 
-    if (DATA.size() != 8){
+    if (DATA.size() != 8) {
         throw std::runtime_error("Error: Data must be 64 bits in length.");
     }
 
     std::string data = "", temp = "";
-    for(uint8_t x = 0; x < 8; x++){
+    for(uint8_t x = 0; x < 8; x++) {
         data += makebin(static_cast <uint8_t> (DATA[x]), 8);
     }
     // IP
-    for(uint8_t x = 0; x < 64; x++){
+    for(uint8_t x = 0; x < 64; x++) {
         temp += data[DES_IP[x] - 1];
     }
     data = temp;
-    for(uint8_t x = 0; x < 16; x++){
+    for(uint8_t x = 0; x < 16; x++) {
         // split left and right and duplicate right
         std::string left = data.substr(0, 32);
         std::string right = data.substr(32, 32);
@@ -27,7 +27,7 @@ std::string DES::run(const std::string & DATA){
         // expand right side
         uint64_t t = 0;
         temp = "";
-        for(uint8_t y = 0; y < 48; y++){
+        for(uint8_t y = 0; y < 48; y++) {
             temp += right[DES_EX[y] - 1];
         }
         t = toint(temp, 2);
@@ -37,12 +37,12 @@ std::string DES::run(const std::string & DATA){
 
         // split right into 8 parts
         std::string RIGHT[8];
-        for(uint8_t y = 0; y < 8; y++){
+        for(uint8_t y = 0; y < 8; y++) {
             RIGHT[y] = right.substr(6 * y, 6);
         }
         // use sboxes
         temp = "";
-        for(uint8_t y = 0; y < 8; y++){
+        for(uint8_t y = 0; y < 8; y++) {
             std::string s = "";
             s += RIGHT[y][0];
             s += RIGHT[y][5];
@@ -51,7 +51,7 @@ std::string DES::run(const std::string & DATA){
 
         // permutate
         right = "";
-        for(uint8_t y = 0; y < 32; y++){
+        for(uint8_t y = 0; y < 32; y++) {
             right += temp[DES_P[y]-1];
         }
 
@@ -63,7 +63,7 @@ std::string DES::run(const std::string & DATA){
 
     // IP^-1
     uint64_t out = 0;
-    for(uint8_t x = 0; x < 64; x++){
+    for(uint8_t x = 0; x < 64; x++) {
         out += static_cast <uint64_t> (data[DES_INVIP[x] - 1] == '1') << (63 - x);
     }
     return unhexlify(makehex(out, 16));
@@ -80,26 +80,26 @@ DES::DES(const std::string & KEY)
     setkey(KEY);
 }
 
-void DES::setkey(const std::string & KEY){
-    if (keyset){
+void DES::setkey(const std::string & KEY) {
+    if (keyset) {
         throw std::runtime_error("Error: Key has already been set.");
     }
-    if (KEY.size() != 8){
+    if (KEY.size() != 8) {
         throw std::runtime_error("Error: Key must be 64 bits long.");
     }
 
     std::string key = "";
-    for(int x = 0; x < 8; x++){
+    for(int x = 0; x < 8; x++) {
         key += makebin(static_cast <uint8_t> (KEY[x]), 8);
     }
 
     std::string left = "", right = "";
-    for (uint8_t x = 0; x < 28; x++){
+    for (uint8_t x = 0; x < 28; x++) {
         left += key[DES_PC1_l[x] - 1];
         right += key[DES_PC1_r[x] - 1];
     }
 
-    for(uint8_t x = 0; x < 16; x++){
+    for(uint8_t x = 0; x < 16; x++) {
         left = (left + left).substr(DES_rot[x], 28);
         right = (right + right).substr(DES_rot[x], 28);
         std::string k = "";
@@ -111,11 +111,11 @@ void DES::setkey(const std::string & KEY){
     keyset = true;
 }
 
-std::string DES::encrypt(const std::string & DATA){
+std::string DES::encrypt(const std::string & DATA) {
     return run(DATA);
 }
 
-std::string DES::decrypt(const std::string & DATA){
+std::string DES::decrypt(const std::string & DATA) {
     std::reverse(keys, keys + 16);
     std::string out = run(DATA);
     std::reverse(keys, keys + 16);

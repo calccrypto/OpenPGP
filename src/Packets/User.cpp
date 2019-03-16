@@ -3,7 +3,7 @@
 namespace OpenPGP {
 namespace Packet {
 
-User::~User(){}
+User::~User() {}
 
 }
 }

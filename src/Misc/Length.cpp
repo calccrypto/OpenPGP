@@ -27,7 +27,7 @@ std::size_t read_five_octet_lengths(const std::string & data, std::string::size_
     return 5;
 }
 
-std::size_t read_partialBodyLen(uint8_t first_octet, const Packet::HeaderFormat){
+std::size_t read_partialBodyLen(uint8_t first_octet, const Packet::HeaderFormat) {
     return 1ULL << (first_octet & 0x1fU);
 }
 

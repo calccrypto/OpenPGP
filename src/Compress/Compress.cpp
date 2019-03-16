@@ -5,12 +5,12 @@
 namespace OpenPGP {
 namespace Compression {
 
-std::string compress(const uint8_t alg, const std::string & src){
-    if ((alg != ID::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
+std::string compress(const uint8_t alg, const std::string & src) {
+    if ((alg != ID::UNCOMPRESSED) && src.size()) { // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
 
-        switch (alg){
+        switch (alg) {
             case ID::ZIP:
                 good = (zlib_compress(src, dst, DEFLATE_WINDOWBITS, Z_DEFAULT_COMPRESSION) == Z_OK);
                 break;
@@ -25,7 +25,7 @@ std::string compress(const uint8_t alg, const std::string & src){
                 break;
         }
 
-        if (!good){
+        if (!good) {
             throw std::runtime_error("Error: Compression failed");
         }
 
@@ -34,11 +34,11 @@ std::string compress(const uint8_t alg, const std::string & src){
     return src; // 0: uncompressed
 }
 
-std::string decompress(const uint8_t alg, const std::string & src){
-    if ((alg != ID::UNCOMPRESSED) && src.size()){ // if the algorithm value is not zero and there is data
+std::string decompress(const uint8_t alg, const std::string & src) {
+    if ((alg != ID::UNCOMPRESSED) && src.size()) { // if the algorithm value is not zero and there is data
         bool good = false;
         std::string dst;
-        switch (alg){
+        switch (alg) {
             case ID::ZIP:
                 good = (zlib_decompress(src, dst, DEFLATE_WINDOWBITS) == Z_OK);
                 break;
@@ -53,7 +53,7 @@ std::string decompress(const uint8_t alg, const std::string & src){
                 break;
         }
 
-        if (!good){
+        if (!good) {
             throw std::runtime_error("Error: Decompression failed");
         }
 

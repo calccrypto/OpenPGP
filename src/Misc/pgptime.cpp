@@ -6,14 +6,14 @@
 namespace OpenPGP {
 
 // get current time since epoch
-time_t now(){
+time_t now() {
     time_t rawtime;
     time(&rawtime);
     return rawtime;
 }
 
 // write a time in seconds from epoch to string
-std::string show_time(time_t time){
+std::string show_time(time_t time) {
     // value to string conversion
     struct tm * gmt = gmtime(&time);
     std::stringstream date;
@@ -29,7 +29,7 @@ std::string show_time(time_t time){
 }
 
 // write a time following strftime format
-std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t limit = 80){
+std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t limit = 80) {
     char *buffer = new char[limit]();
     strftime (buffer, limit, format, localtime (&time));
     std::string result(buffer);
@@ -37,7 +37,7 @@ std::string show_time_format(time_t time, const char* format = "%F %T", uint8_t 
     return result;
 }
 
-std::string show_date(time_t time){
+std::string show_date(time_t time) {
     struct tm * gmt = gmtime(&time);
     std::stringstream date;
     date << (1900 + gmt -> tm_year) << "-"
@@ -46,7 +46,7 @@ std::string show_date(time_t time){
     return date.str();
 }
 
-std::string show_dt(time_t dt){
+std::string show_dt(time_t dt) {
     const time_t years   = (dt / 31536000);
     const time_t days    = (dt / 86400) % 365;
     const time_t hours   = (dt / 3600) % 24;
@@ -55,33 +55,33 @@ std::string show_dt(time_t dt){
 
     std::string out = "";
 
-    if (years){
+    if (years) {
         out += std::to_string(years) + " years";
     }
 
-    if (days){
-        if (out.size()){
+    if (days) {
+        if (out.size()) {
             out += " ";
         }
         out += std::to_string(days) + " days";
     }
 
-    if (hours){
-        if (out.size()){
+    if (hours) {
+        if (out.size()) {
             out += " ";
         }
         out += std::to_string(hours) + "hours";
     }
 
-    if (minutes){
-        if (out.size()){
+    if (minutes) {
+        if (out.size()) {
             out += " ";
         }
         out += std::to_string(minutes) + " minutes";
     }
 
-    if (seconds){
-        if (out.size()){
+    if (seconds) {
+        if (out.size()) {
             out += " ";
         }
         out += std::to_string(seconds) + " seconds";

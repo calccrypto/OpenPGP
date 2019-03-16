@@ -17,9 +17,9 @@ Tag6::Tag6(const std::string & data)
     read(data);
 }
 
-Tag6::~Tag6(){}
+Tag6::~Tag6() {}
 
-Tag::Ptr Tag6::clone() const{
+Tag::Ptr Tag6::clone() const {
     return std::make_shared <Packet::Tag6> (*this);
 }
 

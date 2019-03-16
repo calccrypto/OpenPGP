@@ -36,7 +36,7 @@ TEST(Partial, set_get) {
     EXPECT_EQ(part.get_partial(), PartialBodyLength::PARTIAL);
 }
 
-TEST(Partial, can_have_partial_length_tag){
+TEST(Partial, can_have_partial_length_tag) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(Partial::can_have_partial_length(RESERVED));
@@ -63,7 +63,7 @@ TEST(Partial, can_have_partial_length_tag){
     EXPECT_FALSE(Partial::can_have_partial_length(63));
 }
 
-TEST(Partial, can_have_partial_length_ptr){
+TEST(Partial, can_have_partial_length_ptr) {
     using namespace OpenPGP::Packet;
 
     EXPECT_FALSE(Partial::can_have_partial_length(std::make_shared <Tag1>  ()));

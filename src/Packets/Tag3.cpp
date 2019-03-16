@@ -3,20 +3,20 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag3::actual_read(const std::string & data){
+void Tag3::actual_read(const std::string & data) {
     set_version(data[0]);  // 4
     set_sym(data[1]);
 
-    if (data[2] == S2K::ID::SIMPLE_S2K){
+    if (data[2] == S2K::ID::SIMPLE_S2K) {
         s2k = std::make_shared <S2K::S2K0> ();
     }
-    else if (data[2] == S2K::ID::SALTED_S2K){
+    else if (data[2] == S2K::ID::SALTED_S2K) {
         s2k = std::make_shared <S2K::S2K1> ();
     }
-    else if (data[2] == 2){
+    else if (data[2] == 2) {
         throw std::runtime_error("S2K with ID 2 is reserved.");
     }
-    else if (data[2] == S2K::ID::ITERATED_AND_SALTED_S2K){
+    else if (data[2] == S2K::ID::ITERATED_AND_SALTED_S2K) {
         s2k = std::make_shared <S2K::S2K3> ();
     }
     else{
@@ -26,22 +26,22 @@ void Tag3::actual_read(const std::string & data){
     std::string::size_type pos = 2; // include S2K type
     s2k -> read(data, pos);
 
-    if (pos < data.size()){
+    if (pos < data.size()) {
         esk = std::make_shared <std::string> (data.substr(pos, data.size() - pos));
     }
 }
 
-void Tag3::show_contents(HumanReadable & hr) const{
+void Tag3::show_contents(HumanReadable & hr) const {
     const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
     hr << "Version: " + std::to_string(version)
        << "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")";
-    if (s2k){
+    if (s2k) {
         s2k -> show(hr);
     }
     else {
         hr << "";
     }
-    if (esk){
+    if (esk) {
         hr << "Encrypted Session Key: " + hexlify(*esk);
     }
 }
@@ -66,35 +66,35 @@ Tag3::Tag3(const std::string & data)
     read(data);
 }
 
-Tag3::~Tag3(){}
+Tag3::~Tag3() {}
 
-std::string Tag3::raw() const{
+std::string Tag3::raw() const {
     return std::string(1, version) + std::string(1, sym) + (s2k?s2k -> write():"") + (esk?*esk:"");
 }
 
-uint8_t Tag3::get_sym() const{
+uint8_t Tag3::get_sym() const {
     return sym;
 }
 
-S2K::S2K::Ptr Tag3::get_s2k() const{
+S2K::S2K::Ptr Tag3::get_s2k() const {
     return s2k;
 }
 
-S2K::S2K::Ptr Tag3::get_s2k_clone() const{
+S2K::S2K::Ptr Tag3::get_s2k_clone() const {
     return s2k -> clone();
 }
 
-std::shared_ptr <std::string> Tag3::get_esk() const{
+std::shared_ptr <std::string> Tag3::get_esk() const {
     return esk;
 }
 
-std::shared_ptr <std::string> Tag3::get_esk_clone() const{
+std::shared_ptr <std::string> Tag3::get_esk_clone() const {
     return esk?std::make_shared <std::string> (*esk):nullptr;
 }
 
-std::string Tag3::get_session_key(const std::string & pass) const{
+std::string Tag3::get_session_key(const std::string & pass) const {
     std::string out = s2k -> run(pass, Sym::KEY_LENGTH.at(sym) >> 3);
-    if (esk){
+    if (esk) {
         out = use_normal_CFB_decrypt(sym, *esk, out, std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0));
     }
     else{
@@ -103,42 +103,42 @@ std::string Tag3::get_session_key(const std::string & pass) const{
     return out; // first octet is symmetric key algorithm. rest is session key
 }
 
-void Tag3::set_sym(const uint8_t s){
+void Tag3::set_sym(const uint8_t s) {
     sym = s;
 }
 
-void Tag3::set_s2k(const S2K::S2K::Ptr & s){
-    if (!s){
+void Tag3::set_s2k(const S2K::S2K::Ptr & s) {
+    if (!s) {
         throw std::runtime_error("Error: No S2K provided.\n");
     }
 
     if ((s -> get_type() != S2K::ID::SALTED_S2K)             &&
-        (s -> get_type() != S2K::ID::ITERATED_AND_SALTED_S2K)){
+        (s -> get_type() != S2K::ID::ITERATED_AND_SALTED_S2K)) {
         throw std::runtime_error("Error: S2K must have a salt value.");
     }
 
     s2k = s -> clone();
 }
 
-void Tag3::set_esk(std::string * s){
-    if (s){
+void Tag3::set_esk(std::string * s) {
+    if (s) {
         set_esk(*s);
     }
 }
 
-void Tag3::set_esk(const std::string & s){
+void Tag3::set_esk(const std::string & s) {
     esk = std::make_shared <std::string> (s);
 }
 
-void Tag3::set_session_key(const std::string & pass, const std::string & sk){
+void Tag3::set_session_key(const std::string & pass, const std::string & sk) {
     //sk should be [1 octet symmetric key algorithm] + [session key(s)]
     esk.reset();
-    if (s2k && (sk.size() > 1)){
+    if (s2k && (sk.size() > 1)) {
         esk = std::make_shared <std::string> (use_normal_CFB_encrypt(sym, sk, s2k -> run(pass, Sym::KEY_LENGTH.at(sym) >> 3), std::string(Sym::BLOCK_LENGTH.at(sym) >> 3, 0)));
     }
 }
 
-Tag::Ptr Tag3::clone() const{
+Tag::Ptr Tag3::clone() const {
     Ptr out = std::make_shared <Packet::Tag3> (*this);
     out -> sym = sym;
     out -> s2k = s2k?s2k -> clone():nullptr;
@@ -146,7 +146,7 @@ Tag::Ptr Tag3::clone() const{
     return out;
 }
 
-Tag3 & Tag3::operator=(const Tag3 & tag3){
+Tag3 & Tag3::operator=(const Tag3 & tag3) {
     Tag::operator=(tag3);
     sym = tag3.sym;
     s2k = tag3.s2k -> clone();

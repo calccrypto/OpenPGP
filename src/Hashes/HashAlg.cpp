@@ -1,9 +1,9 @@
 #include "Hashes/HashAlg.h"
 
-HashAlg::HashAlg(){}
+HashAlg::HashAlg() {}
 
-HashAlg::~HashAlg(){}
+HashAlg::~HashAlg() {}
 
-std::string HashAlg::digest(){
+std::string HashAlg::digest() {
     return unhexlify(hexdigest());
 }

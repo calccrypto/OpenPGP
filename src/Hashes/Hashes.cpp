@@ -3,13 +3,13 @@
 namespace OpenPGP {
 namespace Hash {
 
-std::string use(const uint8_t alg, const std::string & data){
+std::string use(const uint8_t alg, const std::string & data) {
     return get_instance(alg, data) -> digest();
 }
 
-Instance get_instance(const uint8_t alg, const std::string & data){
+Instance get_instance(const uint8_t alg, const std::string & data) {
     Instance ptr = nullptr;
-    switch (alg){
+    switch (alg) {
         // case 0: // don't hash; not defined in standard
             // return data;
         case ID::MD5:

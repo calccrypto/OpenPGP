@@ -3,7 +3,7 @@
 namespace OpenPGP {
 namespace PKA {
 
-bool can_encrypt(const uint8_t alg){
+bool can_encrypt(const uint8_t alg) {
     return ((alg == ID::RSA_ENCRYPT_OR_SIGN) ||
             (alg == ID::RSA_ENCRYPT_ONLY)    ||
             (alg == ID::ELGAMAL)
@@ -14,7 +14,7 @@ bool can_encrypt(const uint8_t alg){
     );
 }
 
-bool can_sign(const uint8_t alg){
+bool can_sign(const uint8_t alg) {
     return ((alg == ID::RSA_ENCRYPT_OR_SIGN) ||
             (alg == ID::RSA_SIGN_ONLY)       ||
             (alg == ID::DSA)
@@ -26,16 +26,16 @@ bool can_sign(const uint8_t alg){
     );
 }
 
-bool is_RSA(const uint8_t alg){
+bool is_RSA(const uint8_t alg) {
     return ((alg == ID::RSA_ENCRYPT_OR_SIGN) ||
             (alg == ID::RSA_ENCRYPT_ONLY)    ||
             (alg == ID::RSA_SIGN_ONLY));
 }
 
-Params generate_params(const uint8_t pka, const std::size_t bits){
+Params generate_params(const uint8_t pka, const std::size_t bits) {
     Params params = {bits};
 
-    switch (pka){
+    switch (pka) {
         case ID::RSA_ENCRYPT_OR_SIGN:
         case ID::RSA_ENCRYPT_ONLY:
         case ID::RSA_SIGN_ONLY:
@@ -43,7 +43,7 @@ Params generate_params(const uint8_t pka, const std::size_t bits){
         case ID::ELGAMAL:
             break;
         case ID::DSA:
-            if (bits & 1023){
+            if (bits & 1023) {
                 // "Error: DSA keysize should be 1024, 2048, or 3072 bits.\n";
                 return {};
             }
@@ -59,18 +59,18 @@ Params generate_params(const uint8_t pka, const std::size_t bits){
     return params;
 }
 
-uint8_t generate_keypair(const uint8_t pka, const Params & params, Values & pri, Values & pub){
-    if (!params.size()){
+uint8_t generate_keypair(const uint8_t pka, const Params & params, Values & pri, Values & pub) {
+    if (!params.size()) {
         // "Error: No PKA key generation configuration provided.\n";
         return 0;
     }
 
-    switch (pka){
+    switch (pka) {
         case ID::RSA_ENCRYPT_OR_SIGN:
         case ID::RSA_ENCRYPT_ONLY:
         case ID::RSA_SIGN_ONLY:
             pub = RSA::keygen(params[0]);                // n, e, d, p, q, u
-            if (!pub.size()){
+            if (!pub.size()) {
                 // "Error: Bad RSA key generation values.\n";
                 return 0;
             }

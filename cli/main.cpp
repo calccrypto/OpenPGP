@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "modules/modules.h"
 
 std::ostream & show_header(std::ostream & stream = std::cout,
-                           std::string indent    = ""){
+                           std::string indent    = "") {
     return stream << indent << "An OpenPGP implementation (RFC 4880)\n"
                   << indent << "by Jason Lee @ calccrypto at gmail.com\n\n"
                   << indent << "    help [module name] - print all modules with matching name\n"
@@ -41,11 +41,11 @@ std::ostream & show_header(std::ostream & stream = std::cout,
 
 std::size_t help(const std::string & match = "",
                  std::ostream & stream     = std::cout,
-                 std::string indent        = ""){
+                 std::string indent        = "") {
     const std::regex regex(match);
     std::size_t found = 0;
-    for(module::Module const & cmd : module::ordered){
-        if (std::regex_search(cmd.get_name(), regex)){
+    for(module::Module const & cmd : module::ordered) {
+        if (std::regex_search(cmd.get_name(), regex)) {
             stream << cmd.help(indent) << std::endl;
             found++;
         }
@@ -54,16 +54,16 @@ std::size_t help(const std::string & match = "",
     return found;
 }
 
-int main(int argc, char * argv[]){
-    if (argc == 1){
+int main(int argc, char * argv[]) {
+    if (argc == 1) {
         show_header(std::cout);
         help("", std::cout, "    ");
         return 0;
     }
 
     // if requesting help
-    if (!std::strncmp(argv[1], "help", 4)){
-        if (argc == 2){
+    if (!std::strncmp(argv[1], "help", 4)) {
+        if (argc == 2) {
             show_header(std::cout);
             help("", std::cout, "    ");
         }
@@ -71,7 +71,7 @@ int main(int argc, char * argv[]){
             std::stringstream s;
             const std::size_t found = help(argv[2], s, "    ");
             std::cout << found << " matches for \"" << argv[2] << "\"";
-            if (found){
+            if (found) {
                 std::cout << ":\n" << s.str() << std::flush;
             }
             else{
@@ -83,7 +83,7 @@ int main(int argc, char * argv[]){
 
     // reverse the mapping for commands
     std::map <std::string, std::vector <module::Module>::size_type> mapping;
-    for(std::vector <module::Module>::size_type i = 0; i < module::ordered.size(); i++){
+    for(std::vector <module::Module>::size_type i = 0; i < module::ordered.size(); i++) {
         mapping[module::ordered[i].get_name()] = i;
     }
 
@@ -91,11 +91,11 @@ int main(int argc, char * argv[]){
     std::map <std::string, std::vector <module::Module>::size_type>::iterator it = mapping.find(argv[1]);
 
     // if module not found, try suggestions
-    if (it == mapping.end()){
+    if (it == mapping.end()) {
         std::cerr << "Error: Function \"" << argv[1] << "\" not found." << std::endl;
         std::stringstream s;
         const std::size_t found = help(argv[1], s, "    ");
-        if (found){
+        if (found) {
             std::cout << found << " matches:\n" << s.str() << std::flush;
         }
         return -1;

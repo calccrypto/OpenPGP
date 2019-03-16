@@ -9,7 +9,7 @@
 #include "testvectors/tdes/tripledesecbvartxt.h"
 
 TEST(TripleDES, invperm) {
-    for(PlainKeyCipher const & pkc : TDES_INVPERM){
+    for(PlainKeyCipher const & pkc : TDES_INVPERM) {
         std::string plain, key, cipher;
         std::tie(plain, key, cipher) = pkc;
         key = unhexlify(key);
@@ -20,7 +20,7 @@ TEST(TripleDES, invperm) {
 }
 
 TEST(TripleDES, permop) {
-    for(PlainKeyCipher const & pkc : TDES_PERMOP){
+    for(PlainKeyCipher const & pkc : TDES_PERMOP) {
         std::string plain, key, cipher;
         std::tie(plain, key, cipher) = pkc;
         key = unhexlify(key);
@@ -31,7 +31,7 @@ TEST(TripleDES, permop) {
 }
 
 TEST(TripleDES, subtab) {
-    for(PlainKeyCipher const & pkc : TDES_SUBTAB){
+    for(PlainKeyCipher const & pkc : TDES_SUBTAB) {
         std::string plain, key, cipher;
         std::tie(plain, key, cipher) = pkc;
         key = unhexlify(key);
@@ -42,7 +42,7 @@ TEST(TripleDES, subtab) {
 }
 
 TEST(TripleDES, varkey) {
-    for(PlainKeyCipher const & pkc : TDES_VARKEY){
+    for(PlainKeyCipher const & pkc : TDES_VARKEY) {
         std::string plain, key, cipher;
         std::tie(plain, key, cipher) = pkc;
         key = unhexlify(key);
@@ -53,7 +53,7 @@ TEST(TripleDES, varkey) {
 }
 
 TEST(TripleDES, vartext) {
-    for(PlainKeyCipher const & pkc : TDES_VARTXT){
+    for(PlainKeyCipher const & pkc : TDES_VARTXT) {
         std::string plain, key, cipher;
         std::tie(plain, key, cipher) = pkc;
         key = unhexlify(key);

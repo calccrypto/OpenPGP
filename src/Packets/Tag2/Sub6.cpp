@@ -4,11 +4,11 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub6::actual_read(const std::string & data){
+void Sub6::actual_read(const std::string & data) {
     set_regex(data);
 }
 
-void Sub6::show_contents(HumanReadable & hr) const{
+void Sub6::show_contents(HumanReadable & hr) const {
     hr << "Regular Expression: " + regex;
 }
 
@@ -23,15 +23,15 @@ Sub6::Sub6(const std::string & data)
     read(data);
 }
 
-std::string Sub6::raw() const{
+std::string Sub6::raw() const {
     return regex + zero; // might not need '+ zero'
 }
 
-std::string Sub6::get_regex() const{
+std::string Sub6::get_regex() const {
     return regex;
 }
 
-void Sub6::set_regex(const std::string & r){
+void Sub6::set_regex(const std::string & r) {
     regex = r;
 
     // remove trailing null characters
@@ -40,7 +40,7 @@ void Sub6::set_regex(const std::string & r){
     }
 }
 
-Sub::Ptr Sub6::clone() const{
+Sub::Ptr Sub6::clone() const {
     return std::make_shared <Sub6> (*this);
 }
 

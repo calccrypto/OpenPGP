@@ -1,6 +1,6 @@
 #include "Hashes/SHA224.h"
 
-void SHA224::original_h(){
+void SHA224::original_h() {
     ctx.h0 = 0xc1059ed8;
     ctx.h1 = 0x367cd507;
     ctx.h2 = 0x3070dd17;
@@ -23,7 +23,7 @@ SHA224::SHA224(const std::string & str) :
     update(str);
 }
 
-std::string SHA224::hexdigest(){
+std::string SHA224::hexdigest() {
     return SHA256::hexdigest().substr(0, 56);
 }
 

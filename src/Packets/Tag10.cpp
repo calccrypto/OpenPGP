@@ -5,11 +5,11 @@ namespace Packet {
 
 const std::string Tag10::body = "PGP";
 
-void Tag10::actual_read(const std::string & data){
+void Tag10::actual_read(const std::string & data) {
     set_pgp(data);
 }
 
-void Tag10::show_contents(HumanReadable & hr) const{
+void Tag10::show_contents(HumanReadable & hr) const {
     hr << pgp;
 }
 
@@ -29,19 +29,19 @@ Tag10::Tag10(const std::string & data)
     read(data);
 }
 
-std::string Tag10::raw() const{
+std::string Tag10::raw() const {
     return pgp;
 }
 
-std::string Tag10::get_pgp() const{
+std::string Tag10::get_pgp() const {
     return pgp;
 }
 
-void Tag10::set_pgp(const std::string & s){
+void Tag10::set_pgp(const std::string & s) {
     pgp = s;
 }
 
-Tag::Ptr Tag10::clone() const{
+Tag::Ptr Tag10::clone() const {
     return std::make_shared <Packet::Tag10> (*this);
 }
 

@@ -6,11 +6,11 @@ namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
 
-void Sub2::actual_read(const std::string & data){
+void Sub2::actual_read(const std::string & data) {
     set_time(toint(data, 256));
 }
 
-void Sub2::show_contents(HumanReadable & hr) const{
+void Sub2::show_contents(HumanReadable & hr) const {
     hr << "Creation Time: " + show_time(timestamp);
 }
 
@@ -25,19 +25,19 @@ Sub2::Sub2(const std::string & data)
     read(data);
 }
 
-std::string Sub2::raw() const{
+std::string Sub2::raw() const {
     return unhexlify(makehex(static_cast <uint32_t> (timestamp), 8));
 }
 
-uint32_t Sub2::get_time() const{
+uint32_t Sub2::get_time() const {
     return timestamp;
 }
 
-void Sub2::set_time(const uint32_t t){
+void Sub2::set_time(const uint32_t t) {
     timestamp = t;
 }
 
-Sub::Ptr Sub2::clone() const{
+Sub::Ptr Sub2::clone() const {
     return std::make_shared <Sub2> (*this);
 }
 

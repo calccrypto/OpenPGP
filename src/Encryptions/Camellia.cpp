@@ -1,13 +1,13 @@
 #include "Encryptions/Camellia.h"
 
-uint8_t Camellia::SBOX(const uint8_t s, const uint8_t value){
-    if (s == 1){
+uint8_t Camellia::SBOX(const uint8_t s, const uint8_t value) {
+    if (s == 1) {
         return Camellia_SBox[value];
     }
-    else if (s == 2){
+    else if (s == 2) {
         return ROL(Camellia_SBox[value], 1, 8);
     }
-    else if (s == 3){
+    else if (s == 3) {
         return ROL(Camellia_SBox[value], 7, 8);
     }
     else{//(s == 4)
@@ -15,7 +15,7 @@ uint8_t Camellia::SBOX(const uint8_t s, const uint8_t value){
     }
 }
 
-std::string Camellia::FL(const std::string & FL_IN, const std::string & KE){
+std::string Camellia::FL(const std::string & FL_IN, const std::string & KE) {
     std::string x1 = FL_IN.substr(0, 4);
     std::string x2 = FL_IN.substr(4, 4);
     const std::string k1 = KE.substr(0, 4);
@@ -25,7 +25,7 @@ std::string Camellia::FL(const std::string & FL_IN, const std::string & KE){
     return x1 + x2;
 }
 
-std::string Camellia::FLINV(const std::string & FLINV_IN, const std::string & KE){
+std::string Camellia::FLINV(const std::string & FLINV_IN, const std::string & KE) {
     std::string y1 = FLINV_IN.substr(0, 4);
     std::string y2 = FLINV_IN.substr(4, 4);
     const std::string k1 = KE.substr(0, 4);
@@ -35,7 +35,7 @@ std::string Camellia::FLINV(const std::string & FLINV_IN, const std::string & KE
     return y1 + y2;
 }
 
-std::string Camellia::F(const std::string & F_IN, const std::string & KE){
+std::string Camellia::F(const std::string & F_IN, const std::string & KE) {
     const std::string x = xor_strings(F_IN, KE);
     const uint8_t t1 = SBOX(1, x[0]);
     const uint8_t t2 = SBOX(2, x[1]);
@@ -63,18 +63,18 @@ std::string Camellia::F(const std::string & F_IN, const std::string & KE){
            std::string(1, y8);
 }
 
-std::string Camellia::run(const std::string & data){
-    if (!keyset){
+std::string Camellia::run(const std::string & data) {
+    if (!keyset) {
         throw std::runtime_error("Error: Key has not been set.");
     }
 
-    if (data.size() != 16){
+    if (data.size() != 16) {
         throw std::runtime_error("Error: Data must be 128 bits in length.");
     }
 
     std::string D1 = data.substr(0, 8);
     std::string D2 = data.substr(8, 8);
-    if (keysize == 16){
+    if (keysize == 16) {
         const std::string & kw1 = keys[0];
         const std::string & kw2 = keys[1];
         const std::string & k1  = keys[2];
@@ -213,26 +213,26 @@ Camellia::Camellia(const std::string & KEY)
     setkey(KEY);
 }
 
-void Camellia::setkey(const std::string & KEY){
-    if (keyset){
+void Camellia::setkey(const std::string & KEY) {
+    if (keyset) {
         throw std::runtime_error("Error: Key has already been set.");
     }
 
     keysize = KEY.size();
-    if ((keysize != 16) && (keysize != 24) && (keysize != 32)){
+    if ((keysize != 16) && (keysize != 24) && (keysize != 32)) {
         throw std::runtime_error("Error: Key size does not fit defined sizes.");
     }
 
     std::string KL, KR;
-    if (keysize == 16){
+    if (keysize == 16) {
         KL = KEY;
         KR = std::string(16, 0);
     }
-    else if (keysize == 24){
+    else if (keysize == 24) {
         KL = KEY.substr(0, 16);
         KR = KEY.substr(16, 8); KR += xor_strings(KR, unhexlify("ffffffffffffffff"));
     }
-    else if (keysize == 32){
+    else if (keysize == 32) {
         KL = KEY.substr(0, 16);
         KR = KEY.substr(16, 16);
     }
@@ -257,7 +257,7 @@ void Camellia::setkey(const std::string & KEY){
     std::string KB = D1 + D2;
 
     std::string T;
-    if (keysize == 16){
+    if (keysize == 16) {
         T = ROL(KL, 0);
         keys.push_back(T.substr(0, 8)); // kw1
         keys.push_back(T.substr(8, 8)); // kw2
@@ -356,11 +356,11 @@ void Camellia::setkey(const std::string & KEY){
     keyset = true;
 }
 
-std::string Camellia::encrypt(const std::string & DATA){
+std::string Camellia::encrypt(const std::string & DATA) {
     return run(DATA);
 }
 
-std::string Camellia::decrypt(const std::string & DATA){
+std::string Camellia::decrypt(const std::string & DATA) {
     std::reverse(keys.begin(), keys.end());
     std::string out = run(DATA);
     std::reverse(keys.begin(), keys.end());
