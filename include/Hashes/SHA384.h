@@ -28,16 +28,20 @@ THE SOFTWARE.
 
 #include "SHA512.h"
 
-class SHA384 : public SHA512 {
-    private:
-        void original_h();
+namespace OpenPGP {
+    namespace Hash {
+        class SHA384 : public SHA512 {
+            private:
+                void original_h();
 
-    public:
-        SHA384();
-        SHA384(const std::string & data);
-        std::string hexdigest();
-        std::size_t blocksize() const;
-        std::size_t digestsize() const;
-};
+            public:
+                SHA384();
+                SHA384(const std::string & data);
+                std::string hexdigest();
+                std::size_t blocksize() const;
+                std::size_t digestsize() const;
+        };
+    }
+}
 
 #endif

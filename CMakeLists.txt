@@ -85,6 +85,7 @@ if (USE_OPENSSL)
         add_compile_options("-DOPENSSL")
     else()
         message(STATUS "Could not find OpenSSL. Using custom cryptographic algorithm implementation.")
+        set(USE_OPENSSL OFF)
     endif()
 endif()
 
@@ -102,6 +103,7 @@ add_library(OpenPGP_static STATIC
     $<TARGET_OBJECTS:Compress>
     $<TARGET_OBJECTS:Encryptions>
     $<TARGET_OBJECTS:Hashes>
+    $<TARGET_OBJECTS:HashAlgs>
     $<TARGET_OBJECTS:Misc>
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>
@@ -119,6 +121,7 @@ add_library(OpenPGP_shared SHARED
     $<TARGET_OBJECTS:Compress>
     $<TARGET_OBJECTS:Encryptions>
     $<TARGET_OBJECTS:Hashes>
+    $<TARGET_OBJECTS:HashAlgs>
     $<TARGET_OBJECTS:Misc>
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>

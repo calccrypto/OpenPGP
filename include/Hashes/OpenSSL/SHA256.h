@@ -1,6 +1,6 @@
 /*
-Hash.h
-Base class for inheritance
+SHA256.h
+The SHA2 algorithm SHA-256
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,19 +23,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __HASH__
-#define __HASH__
+#ifndef __OPENSSL_SHA256__
+#define __OPENSSL_SHA256__
 
-#include "common/includes.h"
+#include <openssl/sha.h>
 
-class HashAlg{
-    public:
-        HashAlg();
-        virtual ~HashAlg();
-        virtual std::string hexdigest() = 0;
-        std::string digest();
-        virtual void update(const std::string & str) = 0;
-        virtual std::size_t digestsize() const = 0; // digest size in bits
-};
+#include "Hashes/MerkleDamgard.h"
+
+namespace OpenPGP {
+    namespace Hash {
+        class SHA256 : public MerkleDamgard {
+            protected:
+                SHA256_CTX ctx;
+
+            public:
+                SHA256();
+                SHA256(const std::string & data);
+                void update(const std::string & str);
+                virtual std::string hexdigest();
+                virtual std::size_t blocksize() const;
+                virtual std::size_t digestsize() const;
+        };
+    }
+}
 
 #endif

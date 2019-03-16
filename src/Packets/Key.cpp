@@ -232,11 +232,11 @@ std::string Key::get_fingerprint() const {
             std::string m = write_MPI(i);
             data += m.substr(2, m.size() - 2);
         }
-        return MD5(data).digest();
+        return Hash::MD5(data).digest();
     }
     else if (version == 4) {
         const std::string packet = raw_common();
-        return SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
+        return Hash::SHA1("\x99" + unhexlify(makehex(packet.size(), 4)) + packet).digest();
     }
     else{
         throw std::runtime_error("Error: Key packet version " + std::to_string(version) + " not defined.");

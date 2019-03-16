@@ -32,32 +32,36 @@ THE SOFTWARE.
 
 #include "MD5_Const.h"
 
-class MD5 : public MerkleDamgard {
-    private:
-        struct context{
-            uint32_t h0, h1, h2, h3;
-            context(uint32_t h0, uint32_t h1, uint32_t h2, uint32_t h3) :
-                h0(h0),
-                h1(h1),
-                h2(h2),
-                h3(h3)
-            {}
-            ~context(){
-                h0 = h1 = h2 = h3 = 0;
-            }
+namespace OpenPGP {
+    namespace Hash {
+        class MD5 : public MerkleDamgard {
+            private:
+                struct context{
+                    uint32_t h0, h1, h2, h3;
+                    context(uint32_t h0, uint32_t h1, uint32_t h2, uint32_t h3) :
+                        h0(h0),
+                        h1(h1),
+                        h2(h2),
+                        h3(h3)
+                    {}
+                    ~context(){
+                        h0 = h1 = h2 = h3 = 0;
+                    }
+                };
+                context ctx;
+
+                std::string to_little_end(const std::string & data) const;
+                void calc(const std::string & data, context & state) const;
+
+            public:
+                MD5();
+                MD5(const std::string & data);
+                void update(const std::string & data);
+                std::string hexdigest();
+                std::size_t blocksize() const;
+                std::size_t digestsize() const;
         };
-        context ctx;
-
-        std::string to_little_end(const std::string & data) const;
-        void calc(const std::string & data, context & state) const;
-
-    public:
-        MD5();
-        MD5(const std::string & data);
-        void update(const std::string & data);
-        std::string hexdigest();
-        std::size_t blocksize() const;
-        std::size_t digestsize() const;
-};
+    }
+}
 
 #endif

@@ -1,5 +1,8 @@
 #include "Hashes/RIPEMD160.h"
 
+namespace OpenPGP {
+namespace Hash {
+
 uint32_t RIPEMD160::F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const {
     if (round < 16) {
         return x ^ y ^ z;
@@ -89,4 +92,7 @@ std::size_t RIPEMD160::blocksize() const {
 
 std::size_t RIPEMD160::digestsize() const {
     return 160;
+}
+
+}
 }

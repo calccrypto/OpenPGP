@@ -33,32 +33,36 @@ THE SOFTWARE.
 #include "SHA2_Functions.h"
 #include "SHA512_Const.h"
 
-class SHA512 : public MerkleDamgard {
-    protected:
-        struct context{
-            uint64_t h0, h1, h2, h3, h4, h5, h6, h7;
-            ~context(){
-                h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
-            }
+namespace OpenPGP {
+    namespace Hash {
+        class SHA512 : public MerkleDamgard {
+            protected:
+                struct context{
+                    uint64_t h0, h1, h2, h3, h4, h5, h6, h7;
+                    ~context(){
+                        h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
+                    }
+                };
+                context ctx;
+
+                uint64_t S0(uint64_t & value) const;
+                uint64_t S1(uint64_t & value) const;
+                uint64_t s0(uint64_t & value) const;
+                uint64_t s1(uint64_t & value) const;
+
+                virtual void original_h();
+
+                void calc(const std::string & data, context & state) const;
+
+            public:
+                SHA512();
+                SHA512(const std::string & data);
+                void update(const std::string & str);
+                virtual std::string hexdigest();
+                virtual std::size_t blocksize() const;
+                virtual std::size_t digestsize() const;
         };
-        context ctx;
-
-        uint64_t S0(uint64_t & value) const;
-        uint64_t S1(uint64_t & value) const;
-        uint64_t s0(uint64_t & value) const;
-        uint64_t s1(uint64_t & value) const;
-
-        virtual void original_h();
-
-        void calc(const std::string & data, context & state) const;
-
-    public:
-        SHA512();
-        SHA512(const std::string & data);
-        void update(const std::string & str);
-        virtual std::string hexdigest();
-        virtual std::size_t blocksize() const;
-        virtual std::size_t digestsize() const;
-};
+    }
+}
 
 #endif

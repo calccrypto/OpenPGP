@@ -1,6 +1,7 @@
 /*
-SHA2_Functions.h
-Functions used by the SHA2 family of algorithms.
+RIPEMD160.h
+RIPEMD160 hash function
+http://homes.esat.kuleuven.be/~bosselae/ripemd160.html
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,15 +24,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA2_FUNCTIONS__
-#define __SHA2_FUNCTIONS__
+#ifndef __OPENSSL_RIPEMD160__
+#define __OPENSSL_RIPEMD160__
 
-#include <cstdint>
+#include <openssl/ripemd.h>
+
+#include "Hashes/MerkleDamgard.h"
 
 namespace OpenPGP {
     namespace Hash {
-        uint64_t Ch(const uint64_t &  m, const uint64_t & n, const uint64_t & o);
-        uint64_t Maj(const uint64_t & m, const uint64_t & n, const uint64_t & o);
+        class RIPEMD160 : public MerkleDamgard {
+            private:
+                RIPEMD160_CTX ctx;
+
+            public:
+                RIPEMD160();
+                RIPEMD160(const std::string & data);
+                void update(const std::string & data);
+                std::string hexdigest();
+                std::size_t blocksize() const;
+                std::size_t digestsize() const;
+        };
     }
 }
 

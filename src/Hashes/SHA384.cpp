@@ -1,5 +1,8 @@
 #include "Hashes/SHA384.h"
 
+namespace OpenPGP {
+namespace Hash {
+
 void SHA384::original_h() {
     ctx.h0 = 0xcbbb9d5dc1059ed8ULL;
     ctx.h1 = 0x629a292a367cd507ULL;
@@ -33,4 +36,7 @@ std::size_t SHA384::blocksize() const {
 
 std::size_t SHA384::digestsize() const {
     return 384;
+}
+
+}
 }

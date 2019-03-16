@@ -1,5 +1,8 @@
 #include "Hashes/SHA1.h"
 
+namespace OpenPGP {
+namespace Hash {
+
 void SHA1::calc(const std::string & data, context & state) const {
     for(unsigned int n = 0; n < (data.size() >> 6); n++) {
         std::string temp = data.substr(n << 6, 64);
@@ -80,4 +83,7 @@ std::size_t SHA1::blocksize() const {
 
 std::size_t SHA1::digestsize() const {
     return 160;
+}
+
+}
 }

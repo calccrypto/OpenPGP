@@ -1,5 +1,8 @@
 #include "Hashes/SHA512.h"
 
+namespace OpenPGP {
+namespace Hash {
+
 uint64_t SHA512::S0(uint64_t & value) const {
     return ROR(value, 28, 64) ^ ROR(value, 34, 64) ^ ROR(value, 39, 64);
 }
@@ -92,4 +95,7 @@ std::size_t SHA512::blocksize() const {
 
 std::size_t SHA512::digestsize() const {
     return 512;
+}
+
+}
 }

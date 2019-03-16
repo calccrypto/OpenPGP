@@ -1,6 +1,6 @@
 /*
-SHA256.h
-The SHA2 algorithm SHA-256
+Alg.h
+Base class for inheritance
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,46 +23,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA256__
-#define __SHA256__
+#ifndef __HASH__
+#define __HASH__
 
-#include "common/cryptomath.h"
 #include "common/includes.h"
-#include "MerkleDamgard.h"
-
-#include "SHA2_Functions.h"
-#include "SHA256_Const.h"
 
 namespace OpenPGP {
     namespace Hash {
-        class SHA256 : public MerkleDamgard {
-            protected:
-                struct context{
-                    uint32_t h0, h1, h2, h3, h4, h5, h6, h7;
-
-                    ~context(){
-                        h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
-                    }
-                };
-                context ctx;
-
-                uint32_t S0(const uint32_t & value) const;
-                uint32_t S1(const uint32_t & value) const;
-                uint32_t s0(const uint32_t & value) const;
-                uint32_t s1(const uint32_t & value) const;
-
-                virtual void original_h();
-
-                void calc(const std::string & data, context & state) const;
-
+        class Alg{
             public:
-                SHA256();
-                SHA256(const std::string & data);
-
-                void update(const std::string &str);
-                virtual std::string hexdigest();
-                virtual std::size_t blocksize() const;
-                virtual std::size_t digestsize() const;
+                Alg();
+                virtual ~Alg();
+                virtual std::string hexdigest() = 0;
+                std::string digest();
+                virtual void update(const std::string & str) = 0;
+                virtual std::size_t digestsize() const = 0; // digest size in bits
         };
     }
 }

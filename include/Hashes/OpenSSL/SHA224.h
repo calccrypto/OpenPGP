@@ -1,6 +1,6 @@
 /*
-SHA256.h
-The SHA2 algorithm SHA-256
+SHA224.h
+The SHA2 algorithm SHA-224
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,43 +23,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA256__
-#define __SHA256__
+#ifndef __OPENSSL_SHA224__
+#define __OPENSSL_SHA224__
 
-#include "common/cryptomath.h"
-#include "common/includes.h"
-#include "MerkleDamgard.h"
+#include <openssl/sha.h>
 
-#include "SHA2_Functions.h"
-#include "SHA256_Const.h"
+#include "Hashes/MerkleDamgard.h"
 
 namespace OpenPGP {
     namespace Hash {
-        class SHA256 : public MerkleDamgard {
+        class SHA224 : public MerkleDamgard {
             protected:
-                struct context{
-                    uint32_t h0, h1, h2, h3, h4, h5, h6, h7;
-
-                    ~context(){
-                        h0 = h1 = h2 = h3 = h4 = h5 = h6 = h7 = 0;
-                    }
-                };
-                context ctx;
-
-                uint32_t S0(const uint32_t & value) const;
-                uint32_t S1(const uint32_t & value) const;
-                uint32_t s0(const uint32_t & value) const;
-                uint32_t s1(const uint32_t & value) const;
-
-                virtual void original_h();
-
-                void calc(const std::string & data, context & state) const;
+                SHA256_CTX ctx;
 
             public:
-                SHA256();
-                SHA256(const std::string & data);
-
-                void update(const std::string &str);
+                SHA224();
+                SHA224(const std::string & data);
+                void update(const std::string & str);
                 virtual std::string hexdigest();
                 virtual std::size_t blocksize() const;
                 virtual std::size_t digestsize() const;

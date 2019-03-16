@@ -28,20 +28,30 @@ THE SOFTWARE.
 
 #include <map>
 #include <memory>
-#include <stdexcept>
 
-#include "HashAlg.h"
+#include "Hashes/Alg.h"
 
-#include "MD5.h"
-#include "RIPEMD160.h"
-#include "SHA1.h"
-#include "SHA256.h"
-#include "SHA224.h"
-#include "SHA512.h"
-#include "SHA384.h"
+#ifdef OPENSSL
+#include "Hashes/OpenSSL/MD5.h"
+#include "Hashes/OpenSSL/RIPEMD160.h"
+#include "Hashes/OpenSSL/SHA1.h"
+#include "Hashes/OpenSSL/SHA256.h"
+#include "Hashes/OpenSSL/SHA224.h"
+#include "Hashes/OpenSSL/SHA512.h"
+#include "Hashes/OpenSSL/SHA384.h"
+#else
+#include "Hashes/MD5.h"
+#include "Hashes/RIPEMD160.h"
+#include "Hashes/SHA1.h"
+#include "Hashes/SHA256.h"
+#include "Hashes/SHA224.h"
+#include "Hashes/SHA512.h"
+#include "Hashes/SHA384.h"
+#endif
 
 namespace OpenPGP {
     namespace Hash {
+
         // 9.4. Hash Algorithms
         //
         //      ID           Algorithm                             Text Name
@@ -130,7 +140,7 @@ namespace OpenPGP {
 
         std::string use(const uint8_t alg, const std::string & data = "");
 
-        typedef std::shared_ptr <HashAlg> Instance;
+        typedef std::shared_ptr <Alg> Instance;
         Instance get_instance(const uint8_t alg, const std::string & data = "");
     }
 }

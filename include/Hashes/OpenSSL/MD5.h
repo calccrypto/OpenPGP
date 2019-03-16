@@ -1,6 +1,6 @@
 /*
-SHA2_Functions.h
-Functions used by the SHA2 family of algorithms.
+MD5.h
+MD5 hashing algorithm
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,15 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA2_FUNCTIONS__
-#define __SHA2_FUNCTIONS__
+#ifndef __OPENSSL_MD5__
+#define __OPENSSL_MD5__
 
-#include <cstdint>
+#include <openssl/md5.h>
+
+#include "Hashes/MerkleDamgard.h"
 
 namespace OpenPGP {
     namespace Hash {
-        uint64_t Ch(const uint64_t &  m, const uint64_t & n, const uint64_t & o);
-        uint64_t Maj(const uint64_t & m, const uint64_t & n, const uint64_t & o);
+        class MD5 : public MerkleDamgard {
+            private:
+                MD5_CTX ctx;
+
+            public:
+                MD5();
+                MD5(const std::string & data);
+                void update(const std::string & data);
+                std::string hexdigest();
+                std::size_t blocksize() const;
+                std::size_t digestsize() const;
+        };
     }
 }
 
