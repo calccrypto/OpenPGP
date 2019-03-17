@@ -1,6 +1,6 @@
 /*
-SHA256.h
-The SHA2 algorithm SHA-256
+SHA348.h
+The SHA2 algorithm SHA-384
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,13 +23,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __OPENPGP_SHA256__
-#define __OPENPGP_SHA256__
+#ifndef __SHA384__
+#define __SHA384__
 
-#ifdef OPENSSL
-#include "Hashes/OpenSSL/SHA256.h"
-#else
-#include "Hashes/Unsafe/SHA256.h"
-#endif
+#include "SHA512.h"
+
+namespace OpenPGP {
+    namespace Hash {
+        class SHA384 : public SHA512 {
+            private:
+                void original_h();
+
+            public:
+                SHA384();
+                SHA384(const std::string & data);
+                std::string hexdigest();
+                std::size_t blocksize() const;
+                std::size_t digestsize() const;
+        };
+    }
+}
 
 #endif

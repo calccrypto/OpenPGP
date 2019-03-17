@@ -1,4 +1,4 @@
-#include "Hashes/SHA1.h"
+#include "Hashes/Unsafe/SHA1.h"
 
 namespace OpenPGP {
 namespace Hash {

@@ -6,5 +6,6 @@ add_library(HashAlgs OBJECT
     SHA1.cpp
     SHA224.cpp
     SHA256.cpp
+    SHA2_Functions.cpp
     SHA384.cpp
     SHA512.cpp)

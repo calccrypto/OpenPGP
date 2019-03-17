@@ -1,4 +1,4 @@
-#include "Hashes/RIPEMD160.h"
+#include "Hashes/Unsafe/RIPEMD160.h"
 
 namespace OpenPGP {
 namespace Hash {

@@ -1,4 +1,4 @@
-#include "Hashes/MD5.h"
+#include "Hashes/Unsafe/MD5.h"
 
 namespace OpenPGP {
 namespace Hash {
