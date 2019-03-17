@@ -9,20 +9,18 @@ namespace PKA {
 namespace ElGamal {
 
 Values keygen(unsigned int bits) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     bits /= 5;
     // random prime q - only used for key generation
-    MPI q = bintompi(RNG::BBS().rand(bits));
+    MPI q = bintompi(RNG::RNG().rand_bits(bits));
     q = nextprime(q);
     while (bitsize(q) > bits) {
-        q = bintompi(RNG::BBS().rand(bits));
+        q = bintompi(RNG::RNG().rand_bits(bits));
         q = nextprime(q);
     }
     bits *= 5;
 
     // random prime p = kq + 1
-    MPI p = bintompi("1" + RNG::BBS().rand(bits - 1));                // pick random starting point
+    MPI p = bintompi("1" + RNG::RNG().rand_bits(bits - 1));           // pick random starting point
     p = ((p - 1) / q) * q + 1;                                        // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!knuth_prime_test(p, 25)) {
         p += q;
@@ -39,7 +37,7 @@ Values keygen(unsigned int bits) {
     // 0 < x < p
     MPI x = 0;
     while ((x == 0) || (p <= x)) {
-        x = bintompi(RNG::BBS().rand(bits));
+        x = bintompi(RNG::RNG().rand_bits(bits));
     }
 
     // y = g^x mod p
@@ -50,8 +48,7 @@ Values keygen(unsigned int bits) {
 }
 
 Values encrypt(const MPI & data, const Values & pub) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-    MPI k = bintompi(RNG::BBS().rand(bitsize(pub[0])));
+    MPI k = bintompi(RNG::RNG().rand_bits(bitsize(pub[0])));
     k %= pub[0];
     MPI r, s;
     r = powm(pub[1], k, pub[0]);

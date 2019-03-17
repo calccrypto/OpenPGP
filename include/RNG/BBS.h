@@ -51,7 +51,8 @@ namespace OpenPGP {
             public:
                 BBS(...);
                 BBS(const MPI & SEED, const unsigned int & bits = 1024, MPI p = 0, MPI q = 0);
-                std::string rand(const unsigned int & bits = 1, const std::string & par = "even");
+                std::string rand_bits (const unsigned int & bits  = 1, const std::string & par = "even");
+                std::string rand_bytes(const unsigned int & bytes = 1, const std::string & par = "even");
         };
     }
 }

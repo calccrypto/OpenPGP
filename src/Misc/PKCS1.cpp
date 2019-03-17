@@ -1,6 +1,5 @@
 #include "Misc/PKCS1.h"
 
-#include "Misc/mpi.h"
 #include "Misc/pgptime.h"
 #include "RNG/RNGs.h"
 #include "common/includes.h"
@@ -8,7 +7,6 @@
 namespace OpenPGP {
 
 std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
     if (m.size() > (k - 11)) {
         // "Error: EME-PKCS1 Message too long.\n";
         return "";
@@ -16,12 +14,7 @@ std::string EME_PKCS1v1_5_ENCODE(const std::string & m, const unsigned int & k) 
 
     std::string EM = zero + "\x02";
     while (EM.size() < k - m.size() - 1) {
-        unsigned char c = 0;
-        for(uint8_t x = 0; x < 8; x++) {
-            c = (c << 1) | (RNG::BBS().rand(1) == "1");
-        }
-
-        if (c) { // non-zero octets only
+        if (const unsigned char c = RNG::RNG().rand_bytes(1)[0]) { // non-zero octets only
             EM += std::string(1, c);
         }
     }

@@ -1,6 +1,6 @@
 /*
-RNGs.h
-List of Random Number Generator headers
+RAND_bytes.h
+A wrapper around OpenSSL's RAND_bytes function
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,24 +23,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __RNG__
-#define __RNG__
+#ifndef __RAND_BYTES__
+#define __RAND_BYTES__
 
-#ifdef OPENSSL
-#include "RAND_bytes.h"
+#include <string>
+
+#include <openssl/rand.h>
+
 namespace OpenPGP {
     namespace RNG {
-        typedef RAND_bytes RNG;
-    }
-}
+        class RAND_bytes{
+            static bool seeded;
 
-#else
-#include "BBS.h"
-namespace OpenPGP {
-    namespace RNG {
-        typedef BBS RNG;
+            static void seed(const void * buf, int num);
+
+            public:
+                RAND_bytes(...);
+                RAND_bytes(const std::string & seed);
+                RAND_bytes(const void * buf, int num);
+                std::string rand_bits (const unsigned int & bits  = 1, const std::size_t max_attempts = 5);
+                std::string rand_bytes(const unsigned int & bytes = 1, const std::size_t max_attempts = 5);
+        };
     }
 }
-#endif
 
 #endif

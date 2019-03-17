@@ -7,11 +7,11 @@
 #include "common/includes.h"
 
 TEST(ElGamal, keygen) {
-    OpenPGP::RNG::BBS rng(static_cast <OpenPGP::MPI> (static_cast <unsigned int> (OpenPGP::now())));
+    OpenPGP::RNG::RNG rng;
 
     // keep bitsize small to reduce computation time
     for(std::size_t const bitsize : {64, 128, 256, 512}) {
-        const std::string data = unbinify(rng.rand(bitsize >> 1));
+        const std::string data = unbinify(rng.rand_bits(bitsize >> 1));
         const OpenPGP::MPI mpi_data = OpenPGP::rawtompi(data);
 
         const OpenPGP::PKA::Values key = OpenPGP::PKA::ElGamal::keygen(bitsize);

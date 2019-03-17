@@ -4,12 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "decrypt.h"
-#include "encrypt.h"
-#include "keygen.h"
-#include "revoke.h"
-#include "sign.h"
-#include "verify.h"
+#include "OpenPGP.h"
 
 #include "arm_key.h"
 #include "testvectors/msg.h"

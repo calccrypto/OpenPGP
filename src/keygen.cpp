@@ -6,8 +6,6 @@ namespace OpenPGP {
 namespace KeyGen {
 
 bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase) {
-    RNG::BBS(static_cast <MPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
-
     if (!private_key.meaningful()) {
         // "Error: Bad key.\n";
         return false;
@@ -81,8 +79,6 @@ bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase) {
 }
 
 SecretKey generate_key(Config & config) {
-    RNG::BBS(static_cast <MPI> (static_cast <uint32_t> (now()))); // seed just in case not seeded
-
     if (!config.valid()) {
         // "Error: Bad key generation configuration.\n";
         return SecretKey();
@@ -126,7 +122,7 @@ SecretKey generate_key(Config & config) {
         // Secret Key Packet S2K
         S2K::S2K3::Ptr s2k3 = std::make_shared <S2K::S2K3> ();
         s2k3 -> set_hash(config.hash);
-        s2k3 -> set_salt(unhexlify(bintohex(RNG::BBS().rand(64))));
+        s2k3 -> set_salt(RNG::RNG().rand_bytes(8));
         s2k3 -> set_count(96);
 
         // calculate the key from the passphrase
@@ -137,7 +133,7 @@ SecretKey generate_key(Config & config) {
 
         // encrypt private key value
         primary -> set_s2k(s2k3);
-        primary -> set_IV(unhexlify(bintohex(RNG::BBS().rand(Sym::BLOCK_LENGTH.at(config.sym)))));
+        primary -> set_IV(RNG::RNG().rand_bytes(Sym::BLOCK_LENGTH.at(config.sym >> 3)));
         secret = use_normal_CFB_encrypt(config.sym, secret, session_key, primary -> get_IV());
     }
     else{
@@ -223,7 +219,7 @@ SecretKey generate_key(Config & config) {
             // Secret Subkey S2K
             S2K::S2K3::Ptr s2k3 = std::make_shared <S2K::S2K3> ();
             s2k3 -> set_hash(skey.hash);
-            s2k3 -> set_salt(unhexlify(bintohex(RNG::BBS().rand(64)))); // new salt value
+            s2k3 -> set_salt(RNG::RNG().rand_bytes(8)); // new salt value
             s2k3 -> set_count(96);
 
             // calculate the key from the passphrase
@@ -234,7 +230,7 @@ SecretKey generate_key(Config & config) {
 
             // encrypt private key value
             subkey -> set_s2k(s2k3);
-            subkey -> set_IV(unhexlify(bintohex(RNG::BBS().rand(Sym::BLOCK_LENGTH.at(skey.sym)))));
+            subkey -> set_IV(RNG::RNG().rand_bytes(Sym::BLOCK_LENGTH.at(skey.sym) >> 3));
             secret = use_normal_CFB_encrypt(skey.sym, secret + Hash::use(Hash::ID::SHA1, secret), session_key, subkey -> get_IV());
         }
         else{

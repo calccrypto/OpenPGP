@@ -81,12 +81,12 @@ make install
 
 #### CMake Configuration Options
 
-The boolean GPG_COMPATIBLE flag can be used to make this library gpg compatible
+The boolean `GPG_COMPATIBLE` flag can be used to make this library gpg compatible
 when gpg does not follow the standard. By default this is set to False.
 
-The boolean USE_OPENSSL flag can be used to replace the Hashing library with the
-OpenSSL implementation. If OpenSSL is not found, CMake will default back to the
-original implementation.
+The boolean `USE_OPENSSL` flag can be used to replace the hashing and random number generation code
+with OpenSSL implementations. If OpenSSL is not found, CMake will default back to the original
+implementation.
 
 ## Usage
 
