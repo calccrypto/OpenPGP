@@ -38,9 +38,6 @@ namespace OpenPGP {
     // show time as: Day_of_Week Month Day Hour:Minute:Second UTC Year
     std::string show_time(time_t time);
 
-    // write a time following strftime format
-    std::string show_time_format(time_t time, const char* format, uint8_t limit);
-
     // show time as Year-Month-Day
     std::string show_date(time_t time);
 

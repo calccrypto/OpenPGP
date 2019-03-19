@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.6.0)
 
-set(RNG_SOURCES
-    BBS.cpp
-)
+set(RNG_SOURCES)
 
 if (USE_OPENSSL)
    set(RNG_SOURCES
        ${RNG_SOURCES}
        RAND_bytes.cpp)
+else()
+   set(RNG_SOURCES
+       ${RNG_SOURCES}
+       BBS.cpp)
 endif()
 
 add_library(RNG OBJECT

@@ -31,15 +31,6 @@ THE SOFTWARE.
 
 #include "Hashes/Alg.h"
 
-#ifdef OPENSSL
-#include "Hashes/OpenSSL/MD5.h"
-#include "Hashes/OpenSSL/RIPEMD160.h"
-#include "Hashes/OpenSSL/SHA1.h"
-#include "Hashes/OpenSSL/SHA256.h"
-#include "Hashes/OpenSSL/SHA224.h"
-#include "Hashes/OpenSSL/SHA512.h"
-#include "Hashes/OpenSSL/SHA384.h"
-#else
 #include "Hashes/MD5.h"
 #include "Hashes/RIPEMD160.h"
 #include "Hashes/SHA1.h"
@@ -47,7 +38,6 @@ THE SOFTWARE.
 #include "Hashes/SHA224.h"
 #include "Hashes/SHA512.h"
 #include "Hashes/SHA384.h"
-#endif
 
 namespace OpenPGP {
     namespace Hash {
