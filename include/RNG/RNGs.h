@@ -26,6 +26,21 @@ THE SOFTWARE.
 #ifndef __RNG__
 #define __RNG__
 
+#ifdef OPENSSL_RNG
+#include "RAND_bytes.h"
+namespace OpenPGP {
+    namespace RNG {
+        typedef RAND_bytes RNG;
+    }
+}
+
+#else
 #include "BBS.h"
+namespace OpenPGP {
+    namespace RNG {
+        typedef BBS RNG;
+    }
+}
+#endif
 
 #endif

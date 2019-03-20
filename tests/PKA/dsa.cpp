@@ -22,7 +22,7 @@ TEST(DSA, dsa_siggen) {
     auto q = OpenPGP::hextompi(DSA_SIGGEN_Q);
     auto g = OpenPGP::hextompi(DSA_SIGGEN_G);
     for ( unsigned int i = 0; i < DSA_SIGGEN_MSG.size(); ++i ) {
-        auto digest = SHA1(unhexlify(DSA_SIGGEN_MSG[i])).digest();
+        auto digest = OpenPGP::Hash::use(OpenPGP::Hash::ID::SHA1, unhexlify(DSA_SIGGEN_MSG[i]));
         auto x = OpenPGP::hextompi(DSA_SIGGEN_X[i]);
         auto y = OpenPGP::hextompi(DSA_SIGGEN_Y[i]);
         auto k = OpenPGP::hextompi(DSA_SIGGEN_K[i]);
@@ -47,7 +47,7 @@ TEST(DSA, keygen) {
         std::make_pair(3072, 256),
     };
 
-    static const std::string digest = SHA1(unhexlify(DSA_SIGGEN_MSG[0])).digest();
+    static const std::string digest = OpenPGP::Hash::use(OpenPGP::Hash::ID::SHA1, unhexlify(DSA_SIGGEN_MSG[0]));
 
     for(std::pair <uint32_t, uint32_t> const & ln : LN) {
         OpenPGP::PKA::Values pub = OpenPGP::PKA::DSA::new_public(ln.first, ln.second);

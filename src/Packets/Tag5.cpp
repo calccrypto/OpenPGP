@@ -329,7 +329,7 @@ std::string Tag5::calculate_key(const std::string & passphrase) const {
         key = s2k -> run(passphrase, Sym::KEY_LENGTH.at(sym) >> 3);
     }
     else{
-        key = MD5(passphrase).digest();                 // simple MD5 for all other values
+        key = Hash::MD5(passphrase).digest();            // simple MD5 for all other values
     }
 
     return key;

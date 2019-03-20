@@ -1,4 +1,7 @@
-#include "Hashes/MD5.h"
+#include "Hashes/Unsafe/MD5.h"
+
+namespace OpenPGP {
+namespace Hash {
 
 std::string MD5::to_little_end(const std::string & data) const {
     std::string result;
@@ -85,4 +88,7 @@ std::size_t MD5::blocksize() const {
 
 std::size_t MD5::digestsize() const {
     return 128;
+}
+
+}
 }

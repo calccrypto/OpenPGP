@@ -1,7 +1,7 @@
 #include "Misc/mpi.h"
 
 #include "Misc/pgptime.h"
-#include "RNG/BBS.h"
+#include "RNG/RNGs.h"
 #include "common/includes.h"
 
 namespace OpenPGP {
@@ -83,12 +83,7 @@ MPI invert(const MPI &a, const MPI &b) {
 }
 
 MPI random(unsigned int bits) {
-    try{
-        return bintompi(RNG::BBS().rand(bits));
-    } catch (...) {
-        RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-        return bintompi(RNG::BBS().rand(bits));
-    }
+    return bintompi(RNG::RNG().rand_bits(bits));
 }
 
 // given some value, return the formatted mpi

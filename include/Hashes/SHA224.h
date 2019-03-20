@@ -23,21 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA224__
-#define __SHA224__
+#ifndef __OPENPGP_SHA224__
+#define __OPENPGP_SHA224__
 
-#include "SHA256.h"
-
-class SHA224 : public SHA256 {
-    private:
-        void original_h();
-
-    public:
-        SHA224();
-        SHA224(const std::string & data);
-        std::string hexdigest();
-        std::size_t blocksize() const;
-        std::size_t digestsize() const;
-};
+#ifdef OPENSSL_HASH
+#include "Hashes/OpenSSL/SHA224.h"
+#else
+#include "Hashes/Unsafe/SHA224.h"
+#endif
 
 #endif

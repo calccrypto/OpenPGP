@@ -54,24 +54,62 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/contrib/cmake)
 
 # GNU Multiple Precision Arithmetic Library
 find_package(GMP 5.0.0 REQUIRED)
-message(STATUS "GMP headers:     ${GMP_INCLUDES}")
-message(STATUS "GMP libraries:   ${GMP_LIBRARIES}")
+message(STATUS "GMP headers:        ${GMP_INCLUDES}")
+message(STATUS "GMP libraries:      ${GMP_LIBRARIES}")
 include_directories(SYSTEM ${GMP_INCLUDES})
 link_libraries     (${GMP_LIBRARIES} gmpxx)
 
 # BZip2
 find_package(BZip2 1.0.6 REQUIRED)
-message(STATUS "BZip2 headers:   ${BZIP2_INCLUDE_DIR}")
-message(STATUS "BZip2 libraries: ${BZIP2_LIBRARIES}")
+message(STATUS "BZip2 headers:      ${BZIP2_INCLUDE_DIR}")
+message(STATUS "BZip2 libraries:    ${BZIP2_LIBRARIES}")
 include_directories(SYSTEM ${BZIP2_INCLUDE_DIR})
 link_libraries     (${BZIP2_LIBRARIES})
 
 # zlib
 find_package(ZLIB 1.2.8 REQUIRED)
-message(STATUS "zlib headers:    ${ZLIB_INCLUDE_DIR}")
-message(STATUS "zlib libraries:  ${ZLIB_LIBRARIES}")
+message(STATUS "zlib headers:       ${ZLIB_INCLUDE_DIR}")
+message(STATUS "zlib libraries:     ${ZLIB_LIBRARIES}")
 include_directories(SYSTEM ${ZLIB_INCLUDE_DIR})
 link_libraries     (${ZLIB_LIBRARIES})
+
+# OpenSSL
+set(USE_OPENSSL      OFF CACHE BOOL "Build with OpenSSL")
+set(USE_OPENSSL_HASH OFF CACHE BOOL "Build with OpenSSL's Hash Algorithm Implementation.")
+set(USE_OPENSSL_RNG  OFF CACHE BOOL "Build with OpenSSL's RNG")
+
+if (USE_OPENSSL)
+   set(USE_OPENSSL_HASH ON)
+   set(USE_OPENSSL_RNG  ON)
+endif()
+
+if (USE_OPENSSL_HASH OR USE_OPENSSL_RNG)
+    find_package(OpenSSL 1.1.0)
+    if (OPENSSL_FOUND)
+        message(STATUS "OpenSSL headers:    ${OPENSSL_INCLUDE_DIR}")
+        message(STATUS "OpenSSL libraries:  ${OPENSSL_CRYPTO_LIBRARY}")
+        include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
+        link_libraries     (${OPENSSL_CRYPTO_LIBRARY})
+        if (USE_OPENSSL_HASH)
+            message(STATUS "Using OpenSSL's hashing algorithms.")
+            add_compile_options("-DOPENSSL_HASH")
+        endif()
+        if (USE_OPENSSL_RNG)
+            message(STATUS "Using OpenSSL's RNG.")
+            add_compile_options("-DOPENSSL_RNG")
+        endif()
+    else()
+        if (USE_OPENSSL_HASH)
+            message(STATUS "Could not find OpenSSL. Using unsafe custom hashing implementation.")
+            set(USE_OPENSSL_HASH OFF)
+        endif()
+        if (USE_OPENSSL_RNG)
+            message(STATUS "Could not find OpenSSL. Using unsafe custom RNG implementation.")
+            set(USE_OPENSSL_RNG OFF)
+        endif()
+        set(USE_OPENSSL OFF)
+    endif()
+endif()
 
 # -Iinclude
 include_directories(include)
@@ -87,6 +125,7 @@ add_library(OpenPGP_static STATIC
     $<TARGET_OBJECTS:Compress>
     $<TARGET_OBJECTS:Encryptions>
     $<TARGET_OBJECTS:Hashes>
+    $<TARGET_OBJECTS:HashAlgs>
     $<TARGET_OBJECTS:Misc>
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>
@@ -104,6 +143,7 @@ add_library(OpenPGP_shared SHARED
     $<TARGET_OBJECTS:Compress>
     $<TARGET_OBJECTS:Encryptions>
     $<TARGET_OBJECTS:Hashes>
+    $<TARGET_OBJECTS:HashAlgs>
     $<TARGET_OBJECTS:Misc>
     $<TARGET_OBJECTS:Packets>
     $<TARGET_OBJECTS:PKA>

@@ -1,6 +1,6 @@
 /*
-SHA2_Functions.h
-Functions used by the SHA2 family of algorithms.
+SHA512.h
+The SHA2 algorithm SHA-512
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,12 +23,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __SHA2_FUNCTIONS__
-#define __SHA2_FUNCTIONS__
+#ifndef __OPENSSL_SHA512__
+#define __OPENSSL_SHA512__
 
-#include <cstdint>
+#include <openssl/sha.h>
 
-uint64_t Ch(const uint64_t &  m, const uint64_t & n, const uint64_t & o);
-uint64_t Maj(const uint64_t & m, const uint64_t & n, const uint64_t & o);
+#include "Hashes/MerkleDamgard.h"
+
+namespace OpenPGP {
+    namespace Hash {
+        class SHA512 : public MerkleDamgard {
+            protected:
+                SHA512_CTX ctx;
+
+            public:
+                SHA512();
+                SHA512(const std::string & data);
+                void update(const std::string & str);
+                virtual std::string hexdigest();
+                virtual std::size_t blocksize() const;
+                virtual std::size_t digestsize() const;
+        };
+    }
+}
 
 #endif

@@ -2,15 +2,16 @@ cmake_minimum_required(VERSION 3.6.0)
 
 add_library(Hashes OBJECT
     Hashes.cpp
-    HashAlg.cpp
+    Alg.cpp
     MerkleDamgard.cpp
-    MD5.cpp
-    RIPEMD160.cpp
-    SHA1.cpp
-    SHA224.cpp
-    SHA256.cpp
-    SHA2_Functions.cpp
-    SHA384.cpp
-    SHA512.cpp)
+)
 
 set_property(TARGET Hashes PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+if (USE_OPENSS_HASH)
+    add_subdirectory(OpenSSL)
+else()
+    add_subdirectory(Unsafe)
+endif()
+
+set_property(TARGET HashAlgs PROPERTY POSITION_INDEPENDENT_CODE ON)

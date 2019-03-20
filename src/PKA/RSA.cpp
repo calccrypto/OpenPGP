@@ -5,8 +5,6 @@ namespace PKA {
 namespace RSA {
 
 Values keygen(const uint32_t & bits) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     MPI p = 3;
     MPI q = 3;
 
@@ -21,8 +19,8 @@ Values keygen(const uint32_t & bits) {
 
     MPI n;
     while (true) {
-        p = nextprime(bintompi("1" + RNG::BBS().rand(bits - 1)));
-        q = nextprime(bintompi("1" + RNG::BBS().rand(bits - 1)));
+        p = nextprime(bintompi("1" + RNG::RNG().rand_bits(bits - 1)));
+        q = nextprime(bintompi("1" + RNG::RNG().rand_bits(bits - 1)));
         n = p * q;
 
         const std::size_t nbits = bitsize(n);
@@ -33,8 +31,8 @@ Values keygen(const uint32_t & bits) {
     #else
     // don't check bitsize
     while (p == q) {
-        p = nextprime(bintompi(RNG::BBS().rand(bits)));
-        q = nextprime(bintompi(RNG::BBS().rand(bits)));
+        p = nextprime(bintompi(RNG::RNG().rand_bits(bits)));
+        q = nextprime(bintompi(RNG::RNG().rand_bits(bits)));
     }
     const MPI n = p * q;
     #endif
@@ -46,7 +44,7 @@ Values keygen(const uint32_t & bits) {
 
     const MPI tot = (p - 1) * (q - 1);
 
-    MPI e = bintompi(RNG::BBS().rand(bits));
+    MPI e = bintompi(RNG::RNG().rand_bits(bits));
     e += ((e & 1) == 0);
     while (mpigcd(tot, e) != 1) {
         e += 2;
@@ -61,7 +59,7 @@ MPI encrypt(const MPI & data, const Values & pub) {
 }
 
 MPI encrypt(const std::string & data, const Values & pub) {
-    return powm(rawtompi(data), pub[1], pub[0]);
+    return encrypt(rawtompi(data), pub);
 }
 
 MPI decrypt(const MPI & data, const Values & pri, const Values & pub) {

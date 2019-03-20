@@ -9,18 +9,16 @@ Values new_public(const uint32_t & L, const uint32_t & N) {
 //    L = 2048, N = 224
 //    L = 2048, N = 256
 //    L = 3072, N = 256
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     // random prime q
-    MPI q = bintompi("1" + RNG::BBS().rand(N - 1));
+    MPI q = bintompi("1" + RNG::RNG().rand_bits(N - 1));
     q = nextprime(q);
     while (bitsize(q) > N) {
-        q = bintompi("1" + RNG::BBS().rand(N - 1));
+        q = bintompi("1" + RNG::RNG().rand_bits(N - 1));
         q = nextprime(q);
     }
 
     // random prime p = kq + 1
-    MPI p = bintompi("1" + RNG::BBS().rand(L - 1));                   // pick random starting point
+    MPI p = bintompi("1" + RNG::RNG().rand_bits(L - 1));              // pick random starting point
     p = ((p - 1) / q) * q + 1;                                        // set starting point to value such that p = kq + 1 for some k, while maintaining bitsize
     while (!knuth_prime_test(p, 25)) {
         p += q;
@@ -38,15 +36,13 @@ Values new_public(const uint32_t & L, const uint32_t & N) {
 }
 
 Values keygen(Values & pub) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     MPI x = 0;
     std::string test = "testing testing 123"; // a string to test the key with, just in case the key doesn't work for some reason
     unsigned int bits = bitsize(pub[1]) - 1;
     while (true) {
         // 0 < x < q
         while ((x == 0) || (pub[1] <= x)) {
-            x = bintompi(RNG::BBS().rand(bits));
+            x = bintompi(RNG::RNG().rand_bits(bits));
         }
 
         // y = g^x mod p
@@ -72,15 +68,13 @@ Values keygen(Values & pub) {
 }
 
 Values sign(const MPI & data, const Values & pri, const Values & pub, MPI k) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     bool set_k = (k == 0);
 
     MPI r = 0, s = 0;
     while ((r == 0) || (s == 0)) {
         // 0 < k < q
         if ( set_k ) {
-            k = bintompi(RNG::BBS().rand(bitsize(pub[1])));
+            k = bintompi(RNG::RNG().rand_bits(bitsize(pub[1])));
             k %= pub[1];
         }
 

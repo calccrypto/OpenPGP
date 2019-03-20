@@ -46,8 +46,7 @@ Packet::Tag::Ptr data(const Args & args,
     }
 
     // generate prefix
-    const std::size_t BS = Sym::BLOCK_LENGTH.at(args.sym);
-    std::string prefix = unbinify(RNG::BBS().rand(BS));
+    std::string prefix = RNG::RNG().rand_bytes(Sym::BLOCK_LENGTH.at(args.sym) >> 3);
     prefix += prefix.substr(prefix.size() - 2, 2);
 
     Packet::Tag::Ptr encrypted = nullptr;
@@ -75,8 +74,6 @@ Packet::Tag::Ptr data(const Args & args,
 
 Message pka(const Args & args,
             const Key & pgpkey) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     if (!args.valid()) {
         // "Error: Bad argument.\n";
         return Message();
@@ -124,8 +121,7 @@ Message pka(const Args & args,
     // do calculations
 
     // generate session key
-    const std::size_t key_len = Sym::KEY_LENGTH.at(args.sym);
-    const std::string session_key = unbinify(RNG::BBS().rand(key_len));
+    const std::string session_key = RNG::RNG().rand_bytes(Sym::KEY_LENGTH.at(args.sym) >> 3);
 
     // get checksum of session key
     uint16_t sum = 0;
@@ -135,7 +131,7 @@ Message pka(const Args & args,
 
     std::string nibbles = mpitohex(mpi[0]);        // get hex representation of modulus
     nibbles += std::string(nibbles.size() & 1, 0); // get even number of nibbles
-    MPI m = hextompi(hexlify(EME_PKCS1v1_5_ENCODE(std::string(1, args.sym) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1)));
+    MPI m = rawtompi(EME_PKCS1v1_5_ENCODE(std::string(1, args.sym) + session_key + unhexlify(makehex(sum, 4)), nibbles.size() >> 1));
 
     // encrypt m
     if ((key -> get_pka() == PKA::ID::RSA_ENCRYPT_OR_SIGN) ||
@@ -164,8 +160,6 @@ Message pka(const Args & args,
 Message sym(const Args & args,
             const std::string & passphrase,
             const uint8_t key_hash) {
-    RNG::BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
-
     if (!args.valid()) {
         // "Error: Bad argument.\n";
         return Message();
@@ -175,7 +169,7 @@ Message sym(const Args & args,
     S2K::S2K3::Ptr s2k = std::make_shared <S2K::S2K3> ();
     s2k -> set_type(S2K::ID::ITERATED_AND_SALTED_S2K);
     s2k -> set_hash(key_hash);
-    s2k -> set_salt(unbinify(RNG::BBS().rand(64)));
+    s2k -> set_salt(RNG::RNG().rand_bytes(8));
     s2k -> set_count(96);
 
     // generate Symmetric-Key Encrypted Session Key Packets (Tag 3)

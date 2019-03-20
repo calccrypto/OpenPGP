@@ -1,4 +1,7 @@
-#include "Hashes/SHA256.h"
+#include "Hashes/Unsafe/SHA256.h"
+
+namespace OpenPGP {
+namespace Hash {
 
 uint32_t SHA256::S0(const uint32_t & value) const {
     return ROR(value, 2, 32) ^ ROR(value, 13, 32) ^ ROR(value, 22, 32);
@@ -92,4 +95,7 @@ std::size_t SHA256::blocksize() const {
 
 std::size_t SHA256::digestsize() const {
     return 256;
+}
+
+}
 }

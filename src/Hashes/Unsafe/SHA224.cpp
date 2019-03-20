@@ -1,4 +1,7 @@
-#include "Hashes/SHA224.h"
+#include "Hashes/Unsafe/SHA224.h"
+
+namespace OpenPGP {
+namespace Hash {
 
 void SHA224::original_h() {
     ctx.h0 = 0xc1059ed8;
@@ -33,4 +36,7 @@ std::size_t SHA224::blocksize() const {
 
 std::size_t SHA224::digestsize() const {
     return 224;
+}
+
+}
 }

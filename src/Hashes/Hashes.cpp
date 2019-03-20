@@ -10,8 +10,6 @@ std::string use(const uint8_t alg, const std::string & data) {
 Instance get_instance(const uint8_t alg, const std::string & data) {
     Instance ptr = nullptr;
     switch (alg) {
-        // case 0: // don't hash; not defined in standard
-            // return data;
         case ID::MD5:
             ptr = std::make_shared <MD5> (data);
             break;

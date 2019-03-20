@@ -1,6 +1,6 @@
 /*
-RIPEMD160_Const.h
-Constant values for RIPEMD160
+SHA2_Functions.h
+Functions used by the SHA2 family of algorithms.
 
 Copyright (c) 2013 - 2019 Jason Lee @ calccrypto at gmail.com
 
@@ -23,10 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __RIPEMD160_CONST__
-#define __RIPEMD160_CONST__
+#ifndef __SHA2_FUNCTIONS__
+#define __SHA2_FUNCTIONS__
 
-const uint32_t RIPEMD160_k[5] = {0, 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xA953FD4E};
-const uint32_t RIPEMD160_K[5] = {0x50A28BE6, 0x5C4DD124, 0x6D703EF3, 0x7A6D76E9, 0};
+#include <cstdint>
+
+namespace OpenPGP {
+    namespace Hash {
+        uint64_t Ch(const uint64_t &  m, const uint64_t & n, const uint64_t & o);
+        uint64_t Maj(const uint64_t & m, const uint64_t & n, const uint64_t & o);
+    }
+}
 
 #endif

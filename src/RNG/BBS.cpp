@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "common/cryptomath.h"
+#include "common/includes.h"
 #include "Misc/pgptime.h"
 
 namespace OpenPGP {
@@ -73,9 +74,7 @@ bool BBS::parity(const std::string & par) const {
 BBS::BBS(...)
     : par()
 {
-    if (!seeded) {
-        throw std::runtime_error("Error: BBS must be seeded first.");
-    }
+    BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed with current time
 }
 
 BBS::BBS(const MPI & SEED, const unsigned int & bits, MPI p, MPI q)
@@ -84,7 +83,9 @@ BBS::BBS(const MPI & SEED, const unsigned int & bits, MPI p, MPI q)
     init(SEED, bits, p, q);
 }
 
-std::string BBS::rand(const unsigned int & bits, const std::string & par) {
+std::string BBS::rand_bits(const unsigned int & bits, const std::string & par) {
+    BBS(static_cast <MPI> (static_cast <unsigned int> (now()))); // seed just in case not seeded
+
     // returns string because SIZE might be larger than 64 bits
     std::string out(bits, '0');
     for(char & c : out) {
@@ -92,6 +93,10 @@ std::string BBS::rand(const unsigned int & bits, const std::string & par) {
         c += parity(par);
     }
     return out;
+}
+
+std::string BBS::rand_bytes(const unsigned int & bytes, const std::string & par) {
+    return unbinify(rand_bits(bytes << 3, par));
 }
 
 }

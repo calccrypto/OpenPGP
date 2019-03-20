@@ -24,45 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __RIPEMD160__
-#define __RIPEMD160__
+#ifndef __OPENPGP_RIPEMD160__
+#define __OPENPGP_RIPEMD160__
 
-#include "common/cryptomath.h"
-#include "common/includes.h"
-#include "MerkleDamgard.h"
-
-#include "RIPEMD_Const.h"
-#include "RIPEMD160_Const.h"
-
-class RIPEMD160 : public MerkleDamgard {
-    private:
-        struct context{
-            uint32_t h0, h1, h2, h3, h4;
-            context(uint32_t h0, uint32_t h1, uint32_t h2, uint32_t h3, uint32_t h4) :
-                h0(h0),
-                h1(h1),
-                h2(h2),
-                h3(h3),
-                h4(h4)
-            {}
-            ~context(){
-                h0 = h1 = h2 = h3 = h4 = 0;
-            }
-        };
-        context ctx;
-
-        uint32_t F(const uint32_t & x, const uint32_t & y, const uint32_t & z, const uint8_t round) const;
-
-        std::string to_little_end(const std::string & data) const;
-        void calc(const std::string & data, context & state) const;
-
-    public:
-        RIPEMD160();
-        RIPEMD160(const std::string & data);
-        void update(const std::string & data);
-        std::string hexdigest();
-        std::size_t blocksize() const;
-        std::size_t digestsize() const;
-};
+#ifdef OPENSSL_HASH
+#include "Hashes/OpenSSL/RIPEMD160.h"
+#else
+#include "Hashes/Unsafe/RIPEMD160.h"
+#endif
 
 #endif

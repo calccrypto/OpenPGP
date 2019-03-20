@@ -26,17 +26,21 @@ THE SOFTWARE.
 #ifndef __MERKLE_DAMGARD__
 #define __MERKLE_DAMGARD__
 
-#include "HashAlg.h"
+#include "Hashes/Alg.h"
 
-class MerkleDamgard : public HashAlg {
-    protected:
-        std::string stack;
-        uint64_t clen;
+namespace OpenPGP {
+    namespace Hash {
+        class MerkleDamgard : public Alg {
+            protected:
+                std::string stack;
+                uint64_t clen;
 
-    public:
-        MerkleDamgard();
-        virtual ~MerkleDamgard();
-        virtual std::size_t blocksize() const = 0;  // blocksize in bits
-};
+            public:
+                MerkleDamgard();
+                virtual ~MerkleDamgard();
+                virtual std::size_t blocksize() const = 0;  // blocksize in bits
+        };
+    }
+}
 
 #endif
