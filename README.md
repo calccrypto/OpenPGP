@@ -73,7 +73,7 @@ is none of my concern or responsibility.
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<prefix> ..
+cmake ..
 make
 <make test>
 make install
@@ -84,9 +84,11 @@ make install
 The boolean `GPG_COMPATIBLE` flag can be used to make this library gpg compatible
 when gpg does not follow the standard. By default this is set to False.
 
-The boolean `USE_OPENSSL` flag can be used to replace the hashing and random number generation code
-with OpenSSL implementations. If OpenSSL is not found, CMake will default back to the original
-implementation.
+The boolean `USE_OPENSSL` flag can be used to replace the hashing and
+random number generation code with OpenSSL implementations. `USE_OPENSSL_HASH`
+and `USE_OPENSSL_RNG` can be used to independently replace the hashing or the
+random number generator. If OpenSSL is not found, CMake will default back to
+the original implementation. All three are disabled by default.
 
 ## Usage
 
