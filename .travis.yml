@@ -43,7 +43,7 @@ before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -; sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-${CXX_COMPILER##*-} main" -y; fi
   - sudo apt-get update
-  - sudo apt-get install "${CXX_COMPILER}" libgmp-dev libbz2-dev zlib1g-dev libssl-dev cmake lcov pkg-config python-pip $(if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then echo llvm; fi) -y
+  - sudo apt-get install "${CXX_COMPILER}" libgmp-dev libbz2-dev zlib1g-dev cmake lcov pkg-config python-pip $(if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then echo llvm; fi) -y
   - sudo pip install cpp-coveralls
 
 before_script:
@@ -56,7 +56,7 @@ script:
   # normal build and test
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_INSTALL_PREFIX=${OPENPGP_PATH} -DCMAKE_BUILD_TYPE=Debug -DGPG_COMPATIBLE="${GPG_COMPATIBLE}" -DCODE_COVERAGE=On -DUSE_OPENSSL=True
+  - cmake .. -DCMAKE_INSTALL_PREFIX=${OPENPGP_PATH} -DCMAKE_BUILD_TYPE=Debug -DGPG_COMPATIBLE="${GPG_COMPATIBLE}" -DCODE_COVERAGE=On
   - cmake --build .
   - ctest --verbose
 
