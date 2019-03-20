@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __OPENPGP_SHA1__
 #define __OPENPGP_SHA1__
 
-#ifdef OPENSSL
+#ifdef OPENSSL_HASH
 #include "Hashes/OpenSSL/SHA1.h"
 #else
 #include "Hashes/Unsafe/SHA1.h"

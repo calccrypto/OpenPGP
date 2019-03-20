@@ -6,7 +6,7 @@ install(FILES
     MerkleDamgard.h
     DESTINATION include/Hashes)
 
-if (USE_OPENSSL)
+if (USE_OPENSSL_HASH)
     add_subdirectory(OpenSSL)
 else()
     add_subdirectory(Unsafe)

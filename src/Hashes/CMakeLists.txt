@@ -8,7 +8,7 @@ add_library(Hashes OBJECT
 
 set_property(TARGET Hashes PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-if (USE_OPENSSL)
+if (USE_OPENSS_HASH)
     add_subdirectory(OpenSSL)
 else()
     add_subdirectory(Unsafe)

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6.0)
 
 set(RNG_SOURCES)
 
-if (USE_OPENSSL)
+if (USE_OPENSSL_RNG)
    set(RNG_SOURCES
        ${RNG_SOURCES}
        RAND_bytes.cpp)

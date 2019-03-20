@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __OPENPGP_MD5__
 #define __OPENPGP_MD5__
 
-#ifdef OPENSSL
+#ifdef OPENSSL_HASH
 #include "Hashes/OpenSSL/MD5.h"
 #else
 #include "Hashes/Unsafe/MD5.h"

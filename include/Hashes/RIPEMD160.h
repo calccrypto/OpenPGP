@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef __OPENPGP_RIPEMD160__
 #define __OPENPGP_RIPEMD160__
 
-#ifdef OPENSSL
+#ifdef OPENSSL_HASH
 #include "Hashes/OpenSSL/RIPEMD160.h"
 #else
 #include "Hashes/Unsafe/RIPEMD160.h"
