@@ -5,21 +5,40 @@
 #include "cli/modules/module.h"
 #include "tests/read_pgp.h"
 
-TEST(Module, module) {
+class TestModule : public module::Module {
+    public:
+        TestModule(const std::string                & n,
+                   const std::vector <std::string>  & pos,
+                   const Opts                       & opts,
+                   const Flags                      & flags,
+                   const Run                        & func)
+            : Module(n, pos, opts, flags, func)
+        {}
+
+        const std::string get_name() const {
+            return name;
+        }
+
+        const std::vector <std::string> & get_positional() const {
+            return positional;
+        }
+};
+
+static int do_nothing(const std::map <std::string, std::string> & /* args  */,
+                      const std::map <std::string, bool>        & /* flags */,
+                      std::ostream                              & /* out   */,
+                      std::ostream                              & /* err   */) {
+    return 0;
+}
+
+TEST(Module, Constructor) {
     // bad name
     {
         EXPECT_THROW(module::Module("bad name",
                                     {},
                                     {},
                                     {},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // bad optional argument name
@@ -28,14 +47,7 @@ TEST(Module, module) {
                                     {},
                                     {std::make_pair("bad optional argument", std::make_pair("", ""))},
                                     {},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // bad flag name
@@ -44,14 +56,7 @@ TEST(Module, module) {
                                     {},
                                     {},
                                     {std::make_pair("bad flag", std::make_pair("", false))},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // duplicate positional argument name
@@ -60,14 +65,7 @@ TEST(Module, module) {
                                     {"positionalargument", "positionalargument"},
                                     {},
                                     {},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // duplicate positional/optional argument
@@ -76,14 +74,7 @@ TEST(Module, module) {
                                     {"optional"},
                                     {std::make_pair("optional", std::make_pair("", ""))},
                                     {},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // duplicate positional argument/flag
@@ -92,14 +83,7 @@ TEST(Module, module) {
                                     {"flag"},
                                     {},
                                     {std::make_pair("flag", std::make_pair("", false))},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // duplicate optional argument/flag
@@ -108,14 +92,7 @@ TEST(Module, module) {
                                     {},
                                     {std::make_pair("optional", std::make_pair("",    ""))},
                                     {std::make_pair("optional", std::make_pair("", false))},
-                                    // function to run
-                                    [](const std::map <std::string, std::string> & /* args  */,
-                                       const std::map <std::string, bool>        & /* flags */,
-                                       std::ostream                              & /* out   */,
-                                       std::ostream                              & /* err   */) -> int {
-
-                                        return 0;
-                                    }), std::runtime_error);
+                                    do_nothing), std::runtime_error);
     }
 
     // duplicate optional arguments and flags are allowed; last value is kept
@@ -124,14 +101,7 @@ TEST(Module, module) {
                                        {},
                                        {std::make_pair("optional", std::make_pair("", "")), std::make_pair("optional", std::make_pair("", ""))},
                                        {std::make_pair("flag", std::make_pair("", false)),  std::make_pair("flag", std::make_pair("", false))},
-                                       // function to run
-                                       [](const std::map <std::string, std::string> & /* args  */,
-                                          const std::map <std::string, bool>        & /* flags */,
-                                          std::ostream                              & /* out   */,
-                                          std::ostream                              & /* err   */) -> int {
-
-                                           return 0;
-                                       })
+                                       do_nothing)
                        );
     }
 
@@ -144,14 +114,7 @@ TEST(Module, module) {
                                        {},
                                        {},
                                        {},
-                                       // function to run
-                                       [](const std::map <std::string, std::string> & /* args  */,
-                                          const std::map <std::string, bool>        & /* flags */,
-                                          std::ostream                              & /* out   */,
-                                          std::ostream                              & /* err   */) -> int {
-
-                                           return 0;
-                                       })(argc, argv, out, err)
+                                       do_nothing)(argc, argv, out, err)
                        );
     }
 
@@ -161,14 +124,7 @@ TEST(Module, module) {
                                        {"arg1", "arg2"},
                                        {std::make_pair("opt1", std::make_pair("optional argument 1", "1")), std::make_pair("opt2", std::make_pair("optional argument 2", "2"))},
                                        {std::make_pair("flag1", std::make_pair("flag 1", true)), std::make_pair("flag2", std::make_pair("flag 2", false))},
-                                       // function to run
-                                       [](const std::map <std::string, std::string> & /* args  */,
-                                          const std::map <std::string, bool>        & /* flags */,
-                                          std::ostream                              & /* out   */,
-                                          std::ostream                              & /* err   */) -> int {
-
-                                           return 0;
-                                       })
+                                       do_nothing)
                        );
     }
 }

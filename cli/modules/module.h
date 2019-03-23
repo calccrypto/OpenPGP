@@ -43,22 +43,22 @@ class Module{
         typedef std::map <std::string, std::pair <std::string, std::string> >    Opts;
 
         // optional arguments that default to true and false only
-        // flags used flip default value
+        // flags used to flip default value
         // name -> <explaination, true/false>
         typedef std::map <std::string, std::pair <std::string, bool> >           Flags;
 
         // function to check arguments and run user defined actions
-        typedef std::function <int(const std::map <std::string, std::string> &,
-                                   const std::map <std::string, bool>        &,
-                                   std::ostream                              &,
-                                   std::ostream                              &)> Run;
+        typedef std::function <int(const std::map <std::string, std::string> & /* parsed arguments          */,
+                                   const std::map <std::string, bool>        & /* parsed options and flags  */,
+                                   std::ostream                              & /* output stream             */,
+                                   std::ostream                              & /* error stream              */)> Run;
 
-    private:
+    protected:
         std::string name;                       // name of this module, and calling string; no whitespace
         std::vector <std::string> positional;   // required postional arguments (no default value)
         Opts opts;                              // optional arguments (default value provided)
         Flags flags;                            // boolean arguments  (default value provided)
-        Run run;                                // function to run
+        Run run;                                // function to run after parsing arguments
 
         // check for whitespace in names; throws if fail
         void check_names_ws() const;
@@ -72,17 +72,12 @@ class Module{
                            std::map <std::string, bool>        & parsed_flags) const;
 
     public:
-        Module() = default;                                         // no default constructor
-        Module(const Module & cmd);
-        Module(Module && cmd);
+        Module() = delete;                                          // no default constructor
         Module(const std::string                & n,
                const std::vector <std::string>  & pos,
                const Opts                       & opts,
-               const Flags                      & flag,
+               const Flags                      & flags,
                const Run                        & func);
-
-        Module & operator=(const Module & cmd);
-        Module & operator=(Module && cmd);
 
         const std::string & get_name() const;                       // can only get name out
         std::string help(const std::string & indent = "") const;    // get help string

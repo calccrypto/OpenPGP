@@ -70,32 +70,41 @@ void Module::check_duplicate() const {
 const char * Module::parse(int argc, char * argv[],
                            std::map <std::string, std::string> & parsed_args,
                            std::map <std::string, bool>        & parsed_flags) const {
-
+    bool is_positional = false;
     std::vector <std::string>::size_type pos = 0;
     for(int i = 0; i < argc; i++) {
-        // check if option is in opts
-        Opts::const_iterator opts_it = opts.find(argv[i]);
-        if (opts_it != opts.end()) {
-            // if no more arguments
-            if ((i + 1) >= argc) {
-                return argv[i];
-            }
-
-            parsed_args[opts_it -> first] = argv[i + 1];
-            i++;// skip value
+        const std::string args(argv[i]);
+        // handle double dash
+        if (args == "--") {
+            is_positional = true;
             continue;
         }
 
-        // check if option is in flags
-        Flags::const_iterator flags_it = flags.find(argv[i]);
-        if (flags_it != flags.end()) {
-            parsed_flags[flags_it -> first] = !flags_it -> second.second;
-            continue;
+        if (!is_positional) {
+            // check if option is in opts
+            Opts::const_iterator opts_it = opts.find(args);
+            if (opts_it != opts.end()) {
+                // if no more arguments
+                if ((i + 1) >= argc) {
+                    return argv[i];
+                }
+
+                parsed_args[opts_it -> first] = argv[i + 1];
+                i++;// skip value
+                continue;
+            }
+
+            // check if option is in flags
+            Flags::const_iterator flags_it = flags.find(args);
+            if (flags_it != flags.end()) {
+                parsed_flags[flags_it -> first] = !flags_it -> second.second;
+                continue;
+            }
         }
 
         // assume it is a positional argument
         if (pos < positional.size()) {
-            parsed_args[positional[pos++]] = argv[i];
+            parsed_args[positional[pos++]] = args;
         }
     }
 
@@ -106,54 +115,20 @@ const char * Module::parse(int argc, char * argv[],
     return nullptr;
 }
 
-Module::Module(const Module & cmd)
-    : name(cmd.name),
-      positional(cmd.positional),
-      opts(cmd.opts),
-      flags(cmd.flags),
-      run(cmd.run)
-{}
-
-Module::Module(Module && cmd)
-    : name(std::move(cmd.name)),
-      positional(std::move(cmd.positional)),
-      opts(std::move(cmd.opts)),
-      flags(std::move(cmd.flags)),
-      run(std::move(cmd.run))
-{}
-
 Module::Module(const std::string                & n,
                const std::vector <std::string>  & pos,
                const Module::Opts               & opt,
-               const Module::Flags              & flag,
+               const Module::Flags              & flags,
                const Module::Run                & func)
     : name(n),
       positional(pos),
       opts(opt),
-      flags(flag),
+      flags(flags),
       run(func)
 {
     // throw if fail
     check_names_ws();
     check_duplicate();
-}
-
-Module & Module::operator=(const Module & cmd) {
-    name       = cmd.name;
-    positional = cmd.positional;
-    opts       = cmd.opts;
-    flags      = cmd.flags;
-    run        = cmd.run;
-    return *this;
-}
-
-Module & Module::operator=(Module && cmd) {
-    name       = std::move(cmd.name);
-    positional = std::move(cmd.positional);
-    opts       = std::move(cmd.opts);
-    flags      = std::move(cmd.flags);
-    run        = std::move(cmd.run);
-    return *this;
 }
 
 const std::string & Module::get_name() const {
