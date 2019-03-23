@@ -11,9 +11,9 @@ void Sub30::actual_read(const std::string & data) {
 void Sub30::show_contents(HumanReadable & hr) const {
     for(char const octet : flags) {
         for(uint8_t bit = 0; bit < 8; bit++) {
-            if (octet & (1 << bit)) {
-                const decltype(Features_Flags::NAME)::const_iterator ff_it = Features_Flags::NAME.find(1 << bit);
-                hr << "Flag - " + ((ff_it == Features_Flags::NAME.end())?"Unknown":(ff_it -> second)) + " (feat " + std::to_string(1 << bit) + ")";
+            const uint8_t mask = 1U << bit;
+            if (octet & mask) {
+                hr << "Flag - " + get_mapped(Features_Flags::NAME, mask) + " (feat " + std::to_string(mask) + ")";
             }
         }
     }

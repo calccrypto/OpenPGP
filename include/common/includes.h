@@ -7,6 +7,7 @@ Some functions were heavily influenced by python 2.7.2
 #define __INCLUDES__
 
 #include <cstdint>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 
@@ -28,16 +29,8 @@ uint64_t toint(const std::string & s, const int & base = 10);
 std::string little_end(const std::string & str, const unsigned int & base = 16);
 
 // Changes a numeric value into its binary string
-template <typename T> std::string makebin(T value, unsigned int size = 8 * sizeof(T)){
+template <typename T> std::string makebin(T value, unsigned int size){
     std::string out(size, '0');
-    if (!size){
-        out = "";
-        while (value){
-            out = "01"[value & 1] + out;
-            value >>= 1;
-        }
-        return out;
-    }
     while (value && size){
         out[--size] = "01"[value & 1];
         value >>= 1;
@@ -48,13 +41,7 @@ template <typename T> std::string makebin(T value, unsigned int size = 8 * sizeo
 // Thanks to Ben Voigt @ stackoverflow for the makehex function
 // which I then adapted to makebin
 // Changes a  numeric value to its hexadecimal string
-template <typename T> std::string makehex(T value, unsigned int size = 2 * sizeof(T), bool caps = false){
-    if (!size){
-        std::stringstream out;
-        out << std::hex << value;
-        return out.str();
-    }
-
+template <typename T> std::string makehex(T value, unsigned int size, bool caps = false){
     std::string out(size, '0');
     while (value && size){
         if (caps){
@@ -115,5 +102,14 @@ std::string xor_strings(const std::string & str1, const std::string & str2);
 
 // remove leading and trailing whitespace from a string
 std::string trim_whitespace(const std::string & src, const bool trim_front = true, const bool trim_back = true, const std::string & ws = whitespace);
+
+template <typename Key_t>
+std::string get_mapped(const std::map <Key_t, std::string> & map, const Key_t & key, const std::string & not_found = "Unknown") {
+    const typename std::map<Key_t, std::string>::const_iterator it = map.find(key);
+    if (it == map.end()) {
+        return not_found;
+    }
+    return it -> second;
+}
 
 #endif

@@ -19,8 +19,7 @@ void Sub20::actual_read(const std::string & data) {
 
 void Sub20::show_contents(HumanReadable & hr) const {
     for(char const & f : flags) {
-        const decltype(Notation::NAME)::const_iterator not_it = Notation::NAME.find(f);
-        hr << "Flag - " + ((not_it == Notation::NAME.end())?"Unknown":(not_it -> second)) + " (not " + std::to_string(f) + ")";
+        hr << "Flag - " + get_mapped(Notation::NAME, (uint8_t) f) + " (not " + std::to_string(f) + ")";
     }
 
     hr << "Name: " + m;

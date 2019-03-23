@@ -10,8 +10,7 @@ void Sub21::actual_read(const std::string & data) {
 
 void Sub21::show_contents(HumanReadable & hr) const {
     for(char const & c : pha) {
-        const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(c);
-        hr << "hash alg - " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(c) + ")";
+        hr << "hash alg - " + get_mapped(Hash::NAME, (uint8_t) c) + " (hash " + std::to_string(c) + ")";
     }
 }
 

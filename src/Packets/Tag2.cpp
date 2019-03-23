@@ -179,25 +179,21 @@ void Tag2::actual_read(const std::string & data) {
 }
 
 void Tag2::show_contents(HumanReadable & hr) const {
-    const decltype(Signature_Type::NAME)::const_iterator sigtype_it = Signature_Type::NAME.find(type);
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
-    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash);
-
     hr << "Version: " + std::to_string(version);
 
     if (version < 4) {
         hr << "Hashed Material:" << HumanReadable::DOWN
-           << "Signature Type: " + ((sigtype_it == Signature_Type::NAME.end())?"Unknown":(sigtype_it -> second)) + " (type 0x" + makehex(type, 2) + ")"
+           << "Signature Type: " + get_mapped(Signature_Type::NAME, type) + " (type 0x" + makehex(type, 2) + ")"
            << "Creation Time: " + show_time(time)
            << "Signer's Key ID: " + hexlify(keyid)
-           << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
-           << "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")"
+           << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")"
+           << "Hash Algorithm: " + get_mapped(Hash::NAME, hash) + " (hash " + std::to_string(hash) + ")"
            << HumanReadable::UP;
     }
     else if (version == 4) {
-        hr << "Signature Type: " + ((sigtype_it == Signature_Type::NAME.end())?"Unknown":(sigtype_it -> second)) + " (type 0x" + makehex(type, 2) + ")"
-           << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
-           << "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash) + ")";
+        hr << "Signature Type: " + get_mapped(Signature_Type::NAME, type) + " (type 0x" + makehex(type, 2) + ")"
+           << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")"
+           << "Hash Algorithm: " + get_mapped(Hash::NAME, hash) + " (hash " + std::to_string(hash) + ")";
 
         if (hashed_subpackets.size()) {
             uint32_t create_time = 0;

@@ -15,7 +15,7 @@
 
 TEST(toint, 2) {
     LOOP_UINT8(i,
-             EXPECT_EQ(toint(makebin(i), 2), i);
+               EXPECT_EQ(toint(makebin(i, 8), 2), i);
         );
 }
 
@@ -56,18 +56,15 @@ TEST(toint, 256) {
 }
 
 TEST(toint, empty) {
-    EXPECT_EQ(toint("", 2),   0ULL);
-    EXPECT_EQ(toint("", 8),   0ULL);
-    EXPECT_EQ(toint("", 10),  0ULL);
-    EXPECT_EQ(toint("", 16),  0ULL);
-    EXPECT_EQ(toint("", 256), 0ULL);
+    for(int const base : {2, 8, 10, 16, 256}) {
+        EXPECT_EQ(toint("", base), 0ULL);
+    }
 }
 
 TEST(toint, bad) {
-    EXPECT_EQ(toint("~", 2),   0ULL);
-    EXPECT_EQ(toint("~", 8),   0ULL);
-    EXPECT_EQ(toint("~", 10),  0ULL);
-    EXPECT_EQ(toint("~", 16),  0ULL);
+    for(int const base : {2, 8, 10, 16}) {
+        EXPECT_EQ(toint("~", base), 0ULL);
+    }
 }
 
 TEST(toint, bad_base) {
@@ -113,20 +110,22 @@ TEST(little_end, bad_base) {
 
 TEST(makebin, good) {
     LOOP_UINT8(i,
-             const std::string bin = std::string(1, ((((char) i) >> 7) & 1) | '0') +
-             std::string(1, ((((char) i) >> 6) & 1) | '0') +
-             std::string(1, ((((char) i) >> 5) & 1) | '0') +
-             std::string(1, ((((char) i) >> 4) & 1) | '0') +
-             std::string(1, ((((char) i) >> 3) & 1) | '0') +
-             std::string(1, ((((char) i) >> 2) & 1) | '0') +
-             std::string(1, ((((char) i) >> 1) & 1) | '0') +
-             std::string(1, ((((char) i) >> 0) & 1) | '0');
+             const std::string bin =
+               std::string(1, ((((char) i) >> 7) & 1) | '0') +
+               std::string(1, ((((char) i) >> 6) & 1) | '0') +
+               std::string(1, ((((char) i) >> 5) & 1) | '0') +
+               std::string(1, ((((char) i) >> 4) & 1) | '0') +
+               std::string(1, ((((char) i) >> 3) & 1) | '0') +
+               std::string(1, ((((char) i) >> 2) & 1) | '0') +
+               std::string(1, ((((char) i) >> 1) & 1) | '0') +
+               std::string(1, ((((char) i) >> 0) & 1) | '0');
              EXPECT_EQ(makebin((uint8_t) i, 8),               bin);
              EXPECT_EQ(makebin((uint8_t) i, 16), "00000000" + bin);
         );
 }
 
 TEST(makehex, good) {
+    // < 256
     LOOP_UINT8(i,
              std::stringstream s;
              s << std::setw(2) << std::setfill('0') << std::hex << (uint16_t) i;
@@ -134,6 +133,16 @@ TEST(makehex, good) {
              EXPECT_EQ(makehex((uint8_t) i, 2),        hex);
              EXPECT_EQ(makehex((uint8_t) i, 4), "00" + hex);
         );
+
+    // 256 - 512
+    for(uint16_t i = 256; i < 512; i++) {
+        std::stringstream s;
+        s << "00000" << std::hex << i; // pad to 8 hex characters
+        const std::string hex = s.str();
+        for(uint8_t j = 1; j < 8; j++) {
+            EXPECT_EQ(makehex(i, j), hex.substr(hex.size() - j, j));
+        }
+    }
 }
 
 TEST(byte, good) {
@@ -310,4 +319,15 @@ TEST(trim_whitespace, mixed) {
     EXPECT_EQ(trim_whitespace(str, false, true),  str.substr(0, str.size() - whitespace.size()));
     EXPECT_EQ(trim_whitespace(str, true,  false), str.substr(whitespace.size(), str.size() - whitespace.size()));
     EXPECT_EQ(trim_whitespace(str, true,  true),  str.substr(whitespace.size(), str.size() - whitespace.size() - whitespace.size()));
+}
+
+TEST(get_mapped, found) {
+    const std::map <int, std::string> map = { std::make_pair(0, "found") };
+    EXPECT_EQ(get_mapped(map, 0), map.at(0));
+}
+
+TEST(get_mapped, not_found) {
+    const std::map <int, std::string> map = {};
+    const std::string not_found = "not found";
+    EXPECT_EQ(get_mapped(map, 0, not_found), not_found);
 }

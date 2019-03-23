@@ -14,10 +14,9 @@ void Tag1::actual_read(const std::string & data) {
 }
 
 void Tag1::show_contents(HumanReadable & hr) const {
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     hr << "Version: " + std::to_string(version)
        << "KeyID: " + hexlify(keyid)
-       << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")";
+       << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")";
     if (pka <= PKA::ID::RSA_SIGN_ONLY) {
         hr << "RSA m**e mod n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0]);
     }

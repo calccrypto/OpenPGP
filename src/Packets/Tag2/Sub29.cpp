@@ -12,9 +12,7 @@ void Sub29::actual_read(const std::string & data) {
 }
 
 void Sub29::show_contents(HumanReadable & hr) const {
-    const decltype(Revoke::NAME)::const_iterator revoke_it = Revoke::NAME.find(code);
-
-    hr << std::string("Reason ") + std::to_string(code) + " - " + ((revoke_it == Revoke::NAME.end())?"Unknown":(revoke_it -> second));
+    hr << std::string("Reason ") + std::to_string(code) + " - " + get_mapped(Revoke::NAME, code);
     if (code) {
         hr << std::string("Comment - ") + reason;
     }

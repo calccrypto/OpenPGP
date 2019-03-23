@@ -10,8 +10,7 @@ void Sub11::actual_read(const std::string & data) {
 
 void Sub11::show_contents(HumanReadable & hr) const {
     for(char const & c : psa) {
-        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(c);
-        hr << std::string("sym alg - ") + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(c) + ")";
+        hr << std::string("sym alg - ") + get_mapped(Sym::NAME, (uint8_t) c) + " (sym " + std::to_string(c) + ")";
     }
 }
 

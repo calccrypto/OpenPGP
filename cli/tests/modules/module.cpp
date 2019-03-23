@@ -3,26 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "cli/modules/module.h"
-#include "tests/read_pgp.h"
-
-class TestModule : public module::Module {
-    public:
-        TestModule(const std::string                & n,
-                   const std::vector <std::string>  & pos,
-                   const Opts                       & opts,
-                   const Flags                      & flags,
-                   const Run                        & func)
-            : Module(n, pos, opts, flags, func)
-        {}
-
-        const std::string get_name() const {
-            return name;
-        }
-
-        const std::vector <std::string> & get_positional() const {
-            return positional;
-        }
-};
 
 static int do_nothing(const std::map <std::string, std::string> & /* args  */,
                       const std::map <std::string, bool>        & /* flags */,

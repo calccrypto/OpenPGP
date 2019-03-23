@@ -13,10 +13,8 @@ void Sub31::actual_read(const std::string & data) {
 }
 
 void Sub31::show_contents(HumanReadable & hr) const {
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
-    const decltype(Hash::NAME)::const_iterator hash_it = Hash::NAME.find(hash_alg);
-    hr << "Public Key Algorithm: " + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
-       << "Hash Algorithm: " + ((hash_it == Hash::NAME.end())?"Unknown":(hash_it -> second)) + " (hash " + std::to_string(hash_alg) + ")"
+    hr << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")"
+       << "Hash Algorithm: " + get_mapped(Hash::NAME, hash_alg) + " (hash " + std::to_string(hash_alg) + ")"
        << "Hash: " + hexlify(hash);
 }
 

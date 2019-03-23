@@ -13,9 +13,8 @@ void Sub12::actual_read(const std::string & data) {
 }
 
 void Sub12::show_contents(HumanReadable & hr) const {
-    const decltype(PKA::NAME)::const_iterator pka_it = PKA::NAME.find(pka);
     hr << std::string("Class: ") + std::to_string(_class)
-       << std::string("Public Key Algorithm: ") + ((pka_it == PKA::NAME.end())?"Unknown":(pka_it -> second)) + " (pka " + std::to_string(pka) + ")"
+       << std::string("Public Key Algorithm: ") + get_mapped(PKA::NAME, (uint8_t) pka) + " (pka " + std::to_string(pka) + ")"
        << std::string("Fingerprint: ") + fingerprint;
 }
 

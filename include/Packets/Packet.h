@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 #include "Packets/PartialBodyLengthEnums.h"
 #include "common/HumanReadable.h"
+#include "common/includes.h"
 
 namespace OpenPGP {
     namespace Packet {

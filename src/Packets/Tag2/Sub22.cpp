@@ -10,8 +10,7 @@ void Sub22::actual_read(const std::string & data) {
 
 void Sub22::show_contents(HumanReadable & hr) const {
     for(char const & c : pca) {
-        const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(c);
-        hr << "comp alg - " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (comp " + std::to_string(c) + ")";
+        hr << "comp alg - " + get_mapped(Compression::NAME, (uint8_t) c) + " (comp " + std::to_string(c) + ")";
     }
 }
 

@@ -32,9 +32,8 @@ void Tag3::actual_read(const std::string & data) {
 }
 
 void Tag3::show_contents(HumanReadable & hr) const {
-    const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
     hr << "Version: " + std::to_string(version)
-       << "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")";
+       << "Symmetric Key Algorithm: " + get_mapped(Sym::NAME, sym) + " (sym " + std::to_string(sym) + ")";
     if (s2k) {
         s2k -> show(hr);
     }

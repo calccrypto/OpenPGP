@@ -118,12 +118,12 @@ void Key::show_common(HumanReadable & hr) const {
         if (!expire) {
             hr << " (Never)";
         }
-        hr << "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")"
+        hr << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")"
            << "RSA n: " + mpitohex(mpi[0]) + "(" + std::to_string(bitsize(mpi[0])) + " bits)"
            << "RSA e: " + mpitohex(mpi[1]);
     }
     else if (version == 4) {
-        hr << "Public Key Algorithm: " + PKA::NAME.at(pka) + " (pka " + std::to_string(pka) + ")";
+        hr << "Public Key Algorithm: " + get_mapped(PKA::NAME, pka) + " (pka " + std::to_string(pka) + ")";
         if (PKA::is_RSA(pka)) {
             hr << "RSA n (" + std::to_string(bitsize(mpi[0])) + " bits): " + mpitohex(mpi[0])
                << "RSA e (" + std::to_string(bitsize(mpi[1])) + " bits): " + mpitohex(mpi[1]);

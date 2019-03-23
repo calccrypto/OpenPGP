@@ -11,9 +11,9 @@ void Sub23::actual_read(const std::string & data) {
 void Sub23::show_contents(HumanReadable & hr) const {
     for(char const octet : flags) {
         for(uint8_t bit = 0; bit < 8; bit++) {
-            if (octet & (1 << bit)) {
-                const decltype(Key_Server_Preferences::NAME)::const_iterator ksp_it = Key_Server_Preferences::NAME.find(1 << bit);
-                hr << "Flag - " + ((ksp_it == Key_Server_Preferences::NAME.end())?"Unknown":(ksp_it -> second)) + " (key 0x" + makehex(1 << bit, 2) + ")";
+            const uint8_t mask = 1U << bit;
+            if (octet & mask) {
+                hr << "Flag - " + get_mapped(Key_Server_Preferences::NAME, mask) + " (key 0x" + makehex(mask, 2) + ")";
             }
         }
     }

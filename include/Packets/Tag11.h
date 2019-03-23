@@ -118,6 +118,8 @@ namespace OpenPGP {
                 void set_time(const uint32_t t);
                 void set_literal(const std::string & l);
 
+                bool console() const;
+
                 Tag::Ptr clone() const;
         };
     }

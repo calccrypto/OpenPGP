@@ -4,7 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-#include "common/includes.h"
 #include "Misc/pgptime.h"
 
 namespace OpenPGP {
@@ -14,10 +13,6 @@ void Tag11::actual_read(const std::string & data) {
     set_data_format(data[0]);
     const uint8_t len = data[1];
     set_filename(data.substr(2, len));
-    if (filename == "_CONSOLE") {
-        std::cerr << "Warning: Special name \"_CONSOLE\" used. Message is considered to be \"for your eyes only\"." << std::endl;
-    }
-
     set_time(toint(data.substr(2 + len, 4), 256));
     set_literal(data.substr(len + 6, data.size() - len - 6));
 }
@@ -27,8 +22,7 @@ std::string Tag11::show_title() const {
 }
 
 void Tag11::show_contents(HumanReadable & hr) const {
-    const decltype(Literal::NAME)::const_iterator literal_it = Literal::NAME.find(data_format);
-    hr << "Data_Format: " + ((literal_it == Literal::NAME.end())?"Unknown":(literal_it -> second))
+    hr << "Data_Format: " + get_mapped(Literal::NAME, data_format)
        << "Data (" + std::to_string(1 + filename.size() + 4 + literal.size()) + " octets):"
        << HumanReadable::DOWN
        << "Filename: " + filename
@@ -78,17 +72,10 @@ uint32_t Tag11::get_time() const {
 }
 
 std::string Tag11::get_literal() const {
-    if (filename == "_CONSOLE") {
-        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"." << std::endl;
-    }
     return literal;
 }
 
 std::string Tag11::out(const bool writefile) {
-    if (filename == "_CONSOLE") {
-        std::cerr << "Warning: Special name \"_CONSOLE\22 used. Message is considered to be \"for your eyes only\"." << std::endl;
-    }
-
     if ((filename != "") && writefile) {
         std::ofstream f;
         switch (data_format) {
@@ -128,6 +115,10 @@ void Tag11::set_time(const uint32_t t) {
 
 void Tag11::set_literal(const std::string & l) {
     literal = l;
+}
+
+bool Tag11::console() const {
+    return (filename == "_CONSOLE");
 }
 
 Tag::Ptr Tag11::clone() const {

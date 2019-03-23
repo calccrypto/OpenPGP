@@ -56,9 +56,8 @@ void Tag5::actual_read(const std::string & data) {
 
 void Tag5::show_private(HumanReadable & hr) const {
     if (s2k_con > 253) {
-        const decltype(Sym::NAME)::const_iterator sym_it = Sym::NAME.find(sym);
         hr << "String-to-Key Usage Conventions: " + std::to_string(s2k_con)
-           << "Symmetric Key Algorithm: " + ((sym_it == Sym::NAME.end())?"Unknown":(sym_it -> second)) + " (sym " + std::to_string(sym) + ")";
+           << "Symmetric Key Algorithm: " + get_mapped(Sym::NAME, sym) + " (sym " + std::to_string(sym) + ")";
         s2k -> show(hr);
         if (s2k -> get_type()) {
             hr << "IV: " + hexlify(IV);

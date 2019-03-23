@@ -1,7 +1,5 @@
 #include "Packets/Tag60.h"
 
-#include "common/includes.h"
-
 namespace OpenPGP {
 namespace Packet {
 

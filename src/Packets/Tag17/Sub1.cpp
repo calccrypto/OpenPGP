@@ -17,8 +17,7 @@ void Sub1::actual_read(const std::string & data) {
 }
 
 void Sub1::show_contents(HumanReadable & hr) const {
-    const decltype(Image_Attributes::NAME)::const_iterator ia_it = Image_Attributes::NAME.find(encoding);
-    const std::string filename = "image" + std::to_string(current) + "." + ((ia_it == Image_Attributes::NAME.end())?"Unknown":(ia_it -> second));
+    const std::string filename = "image" + std::to_string(current) + "." + get_mapped(Image_Attributes::NAME, encoding);
     std::string out = "";
     std::ofstream f(filename, std::ios::binary);
     if (f) {

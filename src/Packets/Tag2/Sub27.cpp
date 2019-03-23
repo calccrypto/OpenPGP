@@ -11,9 +11,9 @@ void Sub27::actual_read(const std::string & data) {
 void Sub27::show_contents(HumanReadable & hr) const {
     for(char const octet : flags) {
         for(uint8_t bit = 0; bit < 8; bit++) {
-            if (octet & (1 << bit)) {
-                const decltype(Key_Flags::NAME)::const_iterator kf_it = Key_Flags::NAME.find(1 << bit);
-                hr << "Flag - " + ((kf_it == Key_Flags::NAME.end())?"Unknown":(kf_it -> second)) + " (key 0x" + makehex(1 << bit, 2) + ")";
+            const uint8_t mask = 1U << bit;
+            if (octet & mask) {
+                hr << "Flag - " + get_mapped(Key_Flags::NAME, mask) + " (key 0x" + makehex(mask, 2) + ")";
             }
         }
     }

@@ -26,11 +26,10 @@ std::string Tag8::show_title() const {
 }
 
 void Tag8::show_contents(HumanReadable & hr) const {
-    const decltype(Compression::NAME)::const_iterator comp_it = Compression::NAME.find(comp);
     Message decompressed;
     decompressed.read_raw(get_data());
 
-    hr << "Compression Algorithm: " + ((comp_it == Compression::NAME.end())?"Unknown":(comp_it -> second)) + " (compress " + std::to_string(comp) + ")"
+    hr << "Compression Algorithm: " + get_mapped(Compression::NAME, comp) + " (compress " + std::to_string(comp) + ")"
        << "Compressed Data:"
        << HumanReadable::DOWN;
     decompressed.show(hr);
@@ -86,7 +85,6 @@ void Tag8::set_comp(const uint8_t alg) {
     const std::string data = get_data();// decompress data
     comp = alg;                         // set new compression algorithm
     set_data(data);                     // compress data with new algorithm
-    comp = alg;
 }
 
 void Tag8::set_data(const std::string & data) {
