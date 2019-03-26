@@ -5,16 +5,10 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag0::actual_read(const std::string &) {}
-
 Tag0::Tag0(...)
     : Tag(RESERVED)
 {
-    throw std::runtime_error("Error: Tag number MUST NOT be 0.");
-}
-
-std::string Tag0::raw() const {
-    return "";
+    // throw std::runtime_error("Error: Tag number MUST NOT be 0.");
 }
 
 Tag::Ptr Tag0::clone() const {

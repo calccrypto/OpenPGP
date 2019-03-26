@@ -32,6 +32,10 @@ bool is_RSA(const uint8_t alg) {
             (alg == ID::RSA_SIGN_ONLY));
 }
 
+bool valid(const uint8_t alg) {
+    return (NAME.find(alg) != NAME.end());
+}
+
 Params generate_params(const uint8_t pka, const std::size_t bits) {
     Params params = {bits};
 

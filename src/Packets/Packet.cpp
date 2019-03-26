@@ -1,9 +1,9 @@
 #include "Packets/Packet.h"
 
 #include <cstdint>
-#include <list>
 
 #include "Packets/Partial.h"
+#include "Misc/Length.h"
 
 namespace OpenPGP {
 namespace Packet {
@@ -51,143 +51,29 @@ bool can_have_partial_length (const uint8_t t) {
     return Partial::can_have_partial_length(t);
 }
 
+void Tag::actual_read(const std::string &) {}
+
 std::string Tag::show_title() const {
     return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 }
 
 void Tag::show_contents(HumanReadable &) const {}
 
-// returns formatted length string
-// partial takes precedence over octets
-std::string Tag::write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets) {
-    std::string::size_type length = data.size();
-    std::string out(1, 0x80 | (tag << 2)); // old header: 10TT TTLL
-    if (part == Packet::PARTIAL) {         // partial
-        out[0] |= 3;
-    }
-    else{
-        // try to use user requested octet length
-        if (octets == 1) {
-            if (length > 255) {
-                octets = 0;
-            }
-        }
-        else if (octets == 2) {
-            if (length > 65535) {
-                octets = 0;
-            }
-        }
-        else if ((octets == 3) ||
-                 (octets == 4) ||
-                 (octets >  5)) {
-            octets = 0;
-        }
-
-        // 1 octet
-        if ((octets == 1)   ||             // user requested
-            ((octets == 0)  &&             // default
-             (length < 256))) {
-            out[0] |= 0;
-            out += std::string(1, length);
-        }
-        // 2 octest
-        else if ((octets == 2)     ||      // user requested
-                 ((octets == 0)    &&      // default
-                  (256 <= length)  &&
-                  (length < 65536))) {
-            out[0] |= 1;
-            out += unhexlify(makehex(length, 4));
-        }
-        // 5 octets
-        else if ((octets == 5)      ||     // use requested
-                 ((octets == 0)     &&     // default
-                  (65536 <= length))) {
-            out[0] |= 2;
-            out += unhexlify(makehex(length, 8));
-        }
-    }
-    return out + data;
+std::string Tag::actual_raw() const {
+    return "";
 }
 
-// returns formatted length string
-// partial takes precedence over octets
-std::string Tag::write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets) {
-    std::string::size_type length = data.size();
-    std::string out(1, 0xc0 | tag);                         // new header: 11TT TTTT
-    if (part == Packet::PARTIAL) {                          // partial
-        if (length < 512) {
-            throw std::runtime_error("The first partial length MUST be at least 512 octets long.");
-        }
-
-        // get the lowest 9 bits worth of octets to use as the last body length header
-        const uint32_t non_partial = length & 511;
-
-        // zero out the lowest 9 bits
-        length &= ~511;
-
-        // get the remaining bits that are set
-        std::list <uint8_t> set_bits;
-        for(uint8_t i = 9; i < 31; i++) {
-            if (length & (1u << i)) {
-                set_bits.push_front(i);
-            }
-        }
-
-        // write partial body lengths
-        uint32_t pos = 0;
-        for(uint8_t const bit : set_bits) {
-            const uint32_t partial_length = 1 << bit;
-            out += std::string(1, bit | 0xe0);              // length with mask
-            out += data.substr(pos, partial_length);        // data
-            pos += partial_length;                          // increment offset
-        }
-
-        // write the last length header, which should not be a partial body length header
-        out += write_new_length(tag, data.substr(pos, non_partial), Packet::NOT_PARTIAL);
+std::string Tag::actual_write() const {
+    const std::string data = raw();
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)) {                           // tag > 15, so new header is required
+        return write_new_length(tag, data, Packet::NOT_PARTIAL);
     }
-    else{
-        // try to use user requested octet length
-        if (octets == 1) {
-            if (length > 191) {
-                octets = 0;
-            }
-        }
-        else if (octets == 2) {
-            if (length > 8382) {
-                octets = 0;
-            }
-        }
-        else if ((octets == 3) ||
-                 (octets == 4) ||
-                 (octets >  5)) {
-            octets = 0;
-        }
+    return write_old_length(tag, data, Packet::NOT_PARTIAL);
+}
 
-        // 1 octet
-        if ((octets == 1)     ||          // user requested
-            ((octets == 0)    &&          // default
-             (length <= 191))) {
-            out += std::string(1, length);
-        }
-        // 2 octets
-        else if ((octets == 2)        ||  // user requested
-                 ((octets == 0)       &&  // default
-                  ((192 <= length)    &&
-                   (length <= 8383)))) {
-            length -= 0xc0;
-            out += std::string(1, (length >> 8) + 0xc0) + std::string(1, length & 0xff);
-        }
-        // 5 octets
-        else if ((octets == 5)     ||     // user requested
-                 ((octets == 0)    &&     // default
-                  (length > 8383))) {
-            out += std::string(1, '\xff') + unhexlify(makehex(length, 8));
-        }
-
-        out += data;
-    }
-
-    return out;
+Error Tag::actual_valid(const bool) const {
+    return INVALID_TAG;
 }
 
 Tag::Tag(const uint8_t t)
@@ -228,13 +114,12 @@ void Tag::show(HumanReadable & hr) const {
     hr << HumanReadable::UP;
 }
 
+std::string Tag::raw() const {
+    return actual_raw();
+}
+
 std::string Tag::write() const {
-    const std::string data = raw();
-    if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)) {                           // tag > 15, so new header is required
-        return write_new_length(tag, data, Packet::NOT_PARTIAL);
-    }
-    return write_old_length(tag, data, Packet::NOT_PARTIAL);
+    return actual_write();
 }
 
 uint8_t Tag::get_tag() const {
@@ -267,6 +152,10 @@ void Tag::set_version(const uint8_t v) {
 
 void Tag::set_size(const std::size_t s) {
     size = s;
+}
+
+Error Tag::valid(const bool check_mpi) const {
+    return actual_valid(check_mpi);
 }
 
 }

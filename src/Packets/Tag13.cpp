@@ -11,6 +11,14 @@ void Tag13::show_contents(HumanReadable & hr) const {
     hr << "User ID: " + contents;
 }
 
+std::string Tag13::actual_raw() const {
+    return contents;
+}
+
+Error Tag13::actual_valid(const bool) const {
+    return Error::SUCCESS;
+}
+
 Tag13::Tag13()
     : User(USER_ID),
       contents()
@@ -20,10 +28,6 @@ Tag13::Tag13(const std::string & data)
     : Tag13()
 {
     read(data);
-}
-
-std::string Tag13::raw() const {
-    return contents;
 }
 
 std::string Tag13::get_contents() const {

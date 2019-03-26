@@ -9,6 +9,10 @@
 namespace OpenPGP {
 namespace Packet {
 
+bool Literal::valid(const uint8_t format) {
+    return (NAME.find(format) != NAME.end());
+}
+
 void Tag11::actual_read(const std::string & data) {
     set_data_format(data[0]);
     const uint8_t len = data[1];
@@ -31,6 +35,22 @@ void Tag11::show_contents(HumanReadable & hr) const {
        << HumanReadable::UP;
 }
 
+std::string Tag11::actual_raw() const {
+    return std::string(1, data_format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
+}
+
+std::string Tag11::actual_write() const {
+    return Partial::write(header_format, tag, raw());
+}
+
+Error Tag11::actual_valid(const bool) const {
+    if (!Literal::valid(data_format)) {
+        return Error::INVALID_LITERAL_DATA_FORMAT;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag11::Tag11(const PartialBodyLength & part)
     : Tag(LITERAL_DATA),
       Partial(part),
@@ -46,17 +66,8 @@ Tag11::Tag11(const std::string & data)
     read(data);
 }
 
-std::string Tag11::raw() const {
-    return std::string(1, data_format) + std::string(1, filename.size()) + filename + unhexlify(makehex(time, 8)) + literal;
-}
-
 std::string Tag11::write() const {
-    const std::string data = raw();
-    if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)) {                           // tag > 15, so new header is required
-        return write_new_length(tag, data, partial);
-    }
-    return write_old_length(tag, data, partial);
+    return Partial::write(header_format, LITERAL_DATA, raw());
 }
 
 uint8_t Tag11::get_data_format() const {

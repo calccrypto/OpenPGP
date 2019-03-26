@@ -26,7 +26,11 @@ THE SOFTWARE.
 #ifndef __OPENPGP_LENGTH__
 #define __OPENPGP_LENGTH__
 
+#include <cstdint>
+#include <string>
+
 #include "Packets/Packet.h"
+#include "Packets/PartialBodyLengthEnums.h"
 
 namespace OpenPGP {
 
@@ -117,6 +121,14 @@ namespace OpenPGP {
     //
 
     std::size_t read_partialBodyLen(uint8_t first_octet, const Packet::HeaderFormat);
+
+    // returns Tag data with old format Tag length
+    // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
+    std::string write_old_length(const uint8_t tag, const std::string & data, const Packet::PartialBodyLength part, uint8_t octets = 0);
+
+    // returns Tag data with new format Tag length
+    // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
+    std::string write_new_length(const uint8_t tag, const std::string & data, const Packet::PartialBodyLength part, uint8_t octets = 0);
 }
 
 #endif

@@ -1,4 +1,5 @@
 #include "Packets/Key.h"
+#include <iostream>
 
 namespace OpenPGP {
 namespace Packet {
@@ -27,6 +28,10 @@ void Key::show_contents(HumanReadable & hr) const {
     show_common(hr);
 }
 
+std::string Key::actual_raw() const {
+    return raw_common();
+}
+
 Key::Key()
     : Key(UNKNOWN)
 {}
@@ -38,10 +43,6 @@ Key::Key(const std::string & data)
 }
 
 Key::~Key() {}
-
-std::string Key::raw() const {
-    return raw_common();
-}
 
 void Key::read_common(const std::string & data, std::string::size_type & pos) {
     set_version(data[pos]);

@@ -153,6 +153,8 @@ namespace OpenPGP {
             std::make_pair(ID::CAMELLIA256, 256),
         };
 
+        bool valid(const uint8_t alg);
+
         const std::string TDES_mode1 = "e";
         const std::string TDES_mode2 = "d";
         const std::string TDES_mode3 = "e";

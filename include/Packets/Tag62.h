@@ -37,13 +37,13 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag62> Ptr;
 
                 Tag62();
                 Tag62(const std::string & data);
-                std::string raw() const;
 
                 std::string get_stream() const;
 

@@ -3,6 +3,10 @@
 namespace OpenPGP {
 namespace Sym {
 
+bool valid(const uint8_t alg) {
+    return (NAME.find(alg) != NAME.end());
+}
+
 SymAlg::Ptr setup(const uint8_t sym_alg, const std::string & key) {
     SymAlg::Ptr alg;
     switch(sym_alg) {

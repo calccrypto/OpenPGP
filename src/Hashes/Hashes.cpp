@@ -3,6 +3,10 @@
 namespace OpenPGP {
 namespace Hash {
 
+bool valid(const uint8_t alg) {
+    return (NAME.find(alg) != NAME.end());
+}
+
 std::string use(const uint8_t alg, const std::string & data) {
     return get_instance(alg, data) -> digest();
 }

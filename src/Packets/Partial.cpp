@@ -1,5 +1,7 @@
 #include "Packets/Partial.h"
 
+#include "Misc/Length.h"
+
 namespace OpenPGP {
 namespace Packet {
 
@@ -8,6 +10,14 @@ std::string Partial::show_title() const {
         return " (partial)";
     }
     return "";
+}
+
+std::string Partial::write(const HeaderFormat & header_format, const uint8_t tag, const std::string & data) const {
+    if ((header_format == HeaderFormat::NEW) || // specified new header
+        (tag > 15)) {                           // tag > 15, so new header is required
+        return write_new_length(tag, data, partial);
+    }
+    return write_old_length(tag, data, partial);
 }
 
 Partial::Partial(const PartialBodyLength &part)

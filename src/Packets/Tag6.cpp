@@ -3,6 +3,53 @@
 namespace OpenPGP {
 namespace Packet {
 
+Error Tag6::actual_valid(const bool check_mpi) const {
+    if (version == 3) {
+        if (!PKA::is_RSA(pka)) {
+            return Error::PKA_CANNOT_BE_USED;
+        }
+
+        if (check_mpi) {
+            if (mpi.size() != 2) {
+                return Error::INVALID_MPI_COUNT;
+            }
+        }
+    }
+    else if (version == 4) {
+        if (PKA::valid(pka)) {
+            return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+        }
+
+        if (check_mpi) {
+            bool valid_mpi = false;
+            switch (pka) {
+                case PKA::ID::RSA_ENCRYPT_OR_SIGN:
+                case PKA::ID::RSA_ENCRYPT_ONLY:
+                case PKA::ID::RSA_SIGN_ONLY:
+                    valid_mpi = (mpi.size() == 2);
+                    break;
+                case PKA::ID::DSA:
+                    valid_mpi = (mpi.size() == 4);
+                    break;
+                case PKA::ID::ELGAMAL:
+                    valid_mpi = (mpi.size() == 3);
+                    break;
+                default:
+                    break;
+            }
+
+            if (!valid_mpi) {
+                return Error::INVALID_MPI_COUNT;
+            }
+        }
+    }
+    else {
+        return Error::INVALID_VERSION;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag6::Tag6(const uint8_t tag)
     : Key(tag)
 {}

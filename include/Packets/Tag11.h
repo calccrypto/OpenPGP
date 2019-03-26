@@ -86,6 +86,8 @@ namespace OpenPGP {
                 std::make_pair(TEXT,      "Text"),
                 std::make_pair(UTF8_TEXT, "UTF-8 Text"),
             };
+
+            bool valid(const uint8_t format);
         }
 
         class Tag11 : public Tag, public Partial {
@@ -98,13 +100,15 @@ namespace OpenPGP {
                 void actual_read(const std::string & data);
                 std::string show_title() const;
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                std::string actual_write() const;
+                Error actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag11> Ptr;
 
                 Tag11(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag11(const std::string & data);
-                std::string raw() const;
                 std::string write() const;
 
                 uint8_t get_data_format() const;

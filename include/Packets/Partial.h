@@ -87,6 +87,7 @@ namespace OpenPGP {
                 PartialBodyLength partial;  // whether or not this packet has a partial body length
 
                 std::string show_title() const;
+                std::string write(const HeaderFormat & header_format, const uint8_t tag, const std::string & data) const;
 
             public:
                 typedef std::shared_ptr <Partial> Ptr;

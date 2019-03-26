@@ -179,6 +179,8 @@ namespace OpenPGP {
         bool is_signed_document(const uint8_t sig);
         bool is_certification(const uint8_t sig);
         bool is_revocation(const uint8_t sig);
+
+        bool valid(const uint8_t sig);
     }
 }
 

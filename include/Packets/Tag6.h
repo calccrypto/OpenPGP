@@ -125,6 +125,8 @@ namespace OpenPGP {
             protected:
                 Tag6(const uint8_t tag);
 
+                virtual Error actual_valid(const bool check_mpi = false) const;
+
             public:
                 typedef std::shared_ptr <Packet::Tag6> Ptr;
 

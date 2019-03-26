@@ -21,6 +21,34 @@ void Tag4::show_contents(HumanReadable & hr) const {
        << "Last: " + std::to_string(last);
 }
 
+std::string Tag4::actual_raw() const {
+    return "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, last);
+}
+
+Error Tag4::actual_valid(const bool) const {
+    if (version != 3) {
+        return Error::INVALID_VERSION;
+    }
+
+    if (!Signature_Type::valid(type)) {
+        return Error::INVALID_SIGNATURE_TYPE;
+    }
+
+    if (!Hash::valid(hash)) {
+        return Error::INVALID_HASH_ALGORITHM;
+    }
+
+    if (!PKA::valid(pka)) {
+        return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+    }
+
+    if (keyid.size() != 8) {
+        return Error::INVALID_LENGTH;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag4::Tag4()
     : Tag(ONE_PASS_SIGNATURE, 3),
       type(), hash(), pka(),
@@ -32,10 +60,6 @@ Tag4::Tag4(const std::string & data)
     : Tag4()
 {
     read(data);
-}
-
-std::string Tag4::raw() const {
-    return "\x03" + std::string(1, type) + std::string(1, hash) + std::string(1, pka) + keyid + std::string(1, last);
 }
 
 uint8_t Tag4::get_type() const {

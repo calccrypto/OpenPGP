@@ -49,6 +49,8 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                Error actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag12> Ptr;
@@ -57,7 +59,6 @@ namespace OpenPGP {
                 Tag12(const Tag12 & copy);
                 Tag12(const std::string & data);
                 Tag12(std::istream & stream);
-                std::string raw() const;
 
                 std::string get_trust() const;
 

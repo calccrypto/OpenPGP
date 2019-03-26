@@ -5,6 +5,10 @@
 namespace OpenPGP {
 namespace Compression {
 
+bool valid(const uint8_t comp) {
+    return (NAME.find(comp) != NAME.end());
+}
+
 std::string compress(const uint8_t alg, const std::string & src) {
     if ((alg != ID::UNCOMPRESSED) && src.size()) { // if the algorithm value is not zero and there is data
         bool good = false;

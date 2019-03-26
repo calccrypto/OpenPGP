@@ -128,6 +128,8 @@ namespace OpenPGP {
             std::make_pair(ID::SHA224,      224),
         };
 
+        bool valid(const uint8_t alg);
+
         std::string use(const uint8_t alg, const std::string & data = "");
 
         typedef std::shared_ptr <Alg> Instance;

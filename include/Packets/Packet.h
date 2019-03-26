@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <string>
 
 #include "Packets/PartialBodyLengthEnums.h"
+#include "common/Error.h"
 #include "common/HumanReadable.h"
 #include "common/includes.h"
 
@@ -135,18 +136,15 @@ namespace OpenPGP {
                 std::size_t size;             // This value is only correct when the Tag was generated with the read() function
 
                 // the public read() wraps actual_read()
-                virtual void actual_read(const std::string & data) = 0;
+                virtual void actual_read(const std::string & data);
 
                 // the functions that are called by the public show()
                 virtual std::string show_title() const;                        // virtual to allow for overriding for special cases
                 virtual void        show_contents(HumanReadable & hr) const;   // defined here to provide default; child class should override
-                // returns Tag data with old format Tag length
-                // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
-                static std::string write_old_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets = 0);
 
-                // returns Tag data with new format Tag length
-                // octets trys to force the data into an octet length type; mostly useful for writing into larger octet lengths
-                static std::string write_new_length(const uint8_t tag, const std::string & data, const PartialBodyLength part, uint8_t octets = 0);
+                virtual std::string actual_raw() const;
+                virtual std::string actual_write() const;
+                virtual Error actual_valid(const bool check_mpi) const;
 
                 Tag(const uint8_t t);
                 Tag(const uint8_t t, const uint8_t ver);
@@ -159,7 +157,7 @@ namespace OpenPGP {
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 void show(HumanReadable & hr) const;
-                virtual std::string raw() const = 0;
+                std::string raw() const;
                 virtual std::string write() const;
 
                 // Accessors
@@ -173,6 +171,8 @@ namespace OpenPGP {
                 void set_header_format(const HeaderFormat hf);
                 void set_version(const uint8_t v);
                 void set_size(const std::size_t s);
+
+                Error valid(const bool check_mpi = false) const;
 
                 virtual Ptr clone() const = 0;
         };

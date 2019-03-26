@@ -26,6 +26,58 @@ void Tag1::show_contents(HumanReadable & hr) const {
     }
 }
 
+std::string Tag1::actual_raw() const {
+    std::string out = "\x03" + keyid + std::string(1, pka);
+    for(unsigned int x = 0; x < mpi.size(); x++) {
+        out += write_MPI(mpi[x]);
+    }
+    return out;
+}
+
+Error Tag1::actual_valid(const bool check_mpi) const {
+    if (version != 3) {
+        return Error::INVALID_VERSION;
+    }
+
+    if (keyid.size() != 8) {
+        return Error::INVALID_LENGTH;
+    }
+
+    if (!PKA::valid(pka)) {
+        return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+    }
+
+    if (!PKA::can_encrypt(pka)) {
+        return Error::PKA_CANNOT_BE_USED;
+    }
+
+    if (check_mpi) {
+        bool valid_mpi = false;
+        switch (pka) {
+            case PKA::ID::RSA_ENCRYPT_OR_SIGN:
+            case PKA::ID::RSA_ENCRYPT_ONLY:
+                valid_mpi = (mpi.size() == 1);
+                break;
+            case PKA::ID::ELGAMAL:
+                valid_mpi = (mpi.size() == 2);
+                break;
+            #ifdef GPG_COMPATIBLE
+            case PKA::ID::ECDH:
+                valid_mpi = (mpi.size() == 1);
+                break;
+            #endif
+            default:
+                break;
+        }
+
+        if (!valid_mpi) {
+            return Error::INVALID_MPI_COUNT;
+        }
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag1::Tag1()
     : Tag(PUBLIC_KEY_ENCRYPTED_SESSION_KEY, 3),
       keyid(),
@@ -37,14 +89,6 @@ Tag1::Tag1(const std::string & data)
     : Tag1()
 {
     read(data);
-}
-
-std::string Tag1::raw() const {
-    std::string out = "\x03" + keyid + std::string(1, pka);
-    for(unsigned int x = 0; x < mpi.size(); x++) {
-        out += write_MPI(mpi[x]);
-    }
-    return out;
 }
 
 std::string Tag1::get_keyid() const {

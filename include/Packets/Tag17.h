@@ -71,15 +71,14 @@ namespace OpenPGP {
                 typedef std::vector <Subpacket::Tag17::Sub::Ptr> Attributes;
 
             private:
-                uint64_t length;
-                uint8_t type;
-
                 // only defined subpacket is 1
                 Attributes attributes;
 
                 void read_subpacket(const std::string & data, std::string::size_type & pos, std::string::size_type & length);
                 void actual_read(const std::string & data);
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                Error actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag17> Ptr;
@@ -88,7 +87,6 @@ namespace OpenPGP {
                 Tag17(const Tag17 & copy);
                 Tag17(const std::string & data);
                 ~Tag17();
-                std::string raw() const;
 
                 Attributes get_attributes() const;
                 Attributes get_attributes_clone() const;

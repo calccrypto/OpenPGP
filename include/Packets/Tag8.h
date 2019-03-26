@@ -79,13 +79,15 @@ namespace OpenPGP {
                 void actual_read(const std::string & data);
                 std::string show_title() const;
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                std::string actual_write() const;
+                Error actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag8> Ptr;
 
                 Tag8(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag8(const std::string & data);
-                std::string raw() const;
                 std::string write() const;
 
                 uint8_t get_comp() const;

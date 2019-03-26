@@ -11,6 +11,10 @@ void Tag63::show_contents(HumanReadable & hr) const {
     hr << hexlify(stream);
 }
 
+std::string Tag63::actual_raw() const {
+    return stream;
+}
+
 Tag63::Tag63()
     : Tag63(std::string())
 {}
@@ -20,10 +24,6 @@ Tag63::Tag63(const std::string & data)
       stream()
 {
     read(data);
-}
-
-std::string Tag63::raw() const {
-    return stream;
 }
 
 std::string Tag63::get_stream() const {

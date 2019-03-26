@@ -90,6 +90,8 @@ namespace OpenPGP {
 
                 void actual_read(const std::string & data);
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                Error actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag3> Ptr;
@@ -98,7 +100,6 @@ namespace OpenPGP {
                 Tag3(const Tag3 & copy);
                 Tag3(const std::string & data);
                 ~Tag3();
-                std::string raw() const;
 
                 uint8_t get_sym() const;
                 S2K::S2K::Ptr get_s2k() const;

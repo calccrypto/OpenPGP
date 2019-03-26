@@ -257,6 +257,97 @@ void Tag2::show_contents(HumanReadable & hr) const {
     }
 }
 
+std::string Tag2::actual_raw() const {
+    std::string out(1, version);
+    if (version == 3) {// to recreate older keys
+        out += "\x05" + std::string(1, type) + unhexlify(makehex(time, 8)) + keyid + std::string(1, pka) + std::string(1, hash) + left16;
+    }
+    if (version == 4) {
+        std::string hashed_str = "";
+        for(Subpacket::Tag2::Sub::Ptr const & s : hashed_subpackets) {
+            hashed_str += s -> write();
+        }
+        std::string unhashed_str = "";
+        for(Subpacket::Tag2::Sub::Ptr const & s : unhashed_subpackets) {
+            unhashed_str += s -> write();
+        }
+        out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
+    }
+    for(MPI const & i : mpi) {
+        out += write_MPI(i);
+    }
+    return out;
+}
+
+Error Tag2::actual_valid(const bool check_mpi) const {
+    if ((version != 3) && (version != 4)) {
+        return Error::INVALID_VERSION;
+    }
+
+    if (!Signature_Type::valid(type)) {
+        return Error::INVALID_SIGNATURE_TYPE;
+    }
+
+    if (!PKA::valid(pka)) {
+        return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+    }
+
+    if (!PKA::can_sign(pka)) {
+        return Error::PKA_CANNOT_BE_USED;
+    }
+
+    if (!Hash::valid(hash)) {
+        return Error::INVALID_HASH_ALGORITHM;
+    }
+
+    if (version == 4) {
+        for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
+            // const Error err = sub -> valid();
+            // if (err != Error::SUCCESS) {
+            //     return err;
+            // }
+        }
+
+        for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
+            // const Error err = sub -> valid();
+            // if (err != Error::SUCCESS) {
+            //     return err;
+            // }
+        }
+    }
+
+    if (left16.size() != 2) {
+        return Error::INVALID_LEFT16_BITS;
+    }
+
+    if (check_mpi) {
+        bool valid_mpi = false;
+        switch (pka) {
+            case PKA::ID::RSA_ENCRYPT_OR_SIGN:
+            case PKA::ID::RSA_SIGN_ONLY:
+                valid_mpi = (mpi.size() == 1);
+            break;
+            case PKA::ID::DSA:
+                valid_mpi = (mpi.size() == 2);
+                break;
+            #ifdef GPG_COMPATIBLE
+            case PKA::ID::ECDSA:
+            case PKA::ID::EdDSA:
+                valid_mpi = (mpi.size() == 2);
+                break;
+            #endif
+            default:
+                break;
+        }
+
+        if (!valid_mpi) {
+            return Error::INVALID_MPI_COUNT;
+        }
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag2::Tag2()
     : Tag(SIGNATURE),
       type(0),
@@ -292,28 +383,6 @@ Tag2::Tag2(const std::string & data)
 Tag2::~Tag2() {
     hashed_subpackets.clear();
     unhashed_subpackets.clear();
-}
-
-std::string Tag2::raw() const {
-    std::string out(1, version);
-    if (version == 3) {// to recreate older keys
-        out += "\x05" + std::string(1, type) + unhexlify(makehex(time, 8)) + keyid + std::string(1, pka) + std::string(1, hash) + left16;
-    }
-    if (version == 4) {
-        std::string hashed_str = "";
-        for(Subpacket::Tag2::Sub::Ptr const & s : hashed_subpackets) {
-            hashed_str += s -> write();
-        }
-        std::string unhashed_str = "";
-        for(Subpacket::Tag2::Sub::Ptr const & s : unhashed_subpackets) {
-            unhashed_str += s -> write();
-        }
-        out += std::string(1, type) + std::string(1, pka) + std::string(1, hash) + unhexlify(makehex(hashed_str.size(), 4)) + hashed_str + unhexlify(makehex(unhashed_str.size(), 4)) + unhashed_str + left16;
-    }
-    for(MPI const & i : mpi) {
-        out += write_MPI(i);
-    }
-    return out;
 }
 
 uint8_t Tag2::get_type() const {
@@ -579,6 +648,7 @@ std::string Tag2::find_subpacket(const uint8_t sub) const {
     }
     return out;
 }
+
 
 Tag::Ptr Tag2::clone() const {
     Ptr out = std::make_shared <Tag2> (*this);

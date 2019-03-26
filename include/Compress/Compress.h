@@ -80,6 +80,8 @@ namespace OpenPGP {
             std::make_pair("BZip2",         ID::BZIP2),
         };
 
+        bool valid(const uint8_t comp);
+
         std::string compress(const uint8_t alg, const std::string & data);
         std::string decompress(const uint8_t alg, const std::string & data);
     }

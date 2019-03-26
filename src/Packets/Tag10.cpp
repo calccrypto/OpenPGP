@@ -13,6 +13,18 @@ void Tag10::show_contents(HumanReadable & hr) const {
     hr << pgp;
 }
 
+std::string Tag10::actual_raw() const {
+    return pgp;
+}
+
+Error Tag10::actual_valid(const bool) const {
+    if (pgp != body) {
+        return Error::INVALID_TAG10;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag10::Tag10()
     : Tag(MARKER_PACKET),
       pgp(body)
@@ -27,10 +39,6 @@ Tag10::Tag10(const std::string & data)
     : Tag10()
 {
     read(data);
-}
-
-std::string Tag10::raw() const {
-    return pgp;
 }
 
 std::string Tag10::get_pgp() const {

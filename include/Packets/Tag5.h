@@ -143,9 +143,10 @@ namespace OpenPGP {
 
                 void read_s2k(const std::string & data, std::string::size_type & pos);
                 void actual_read(const std::string & data);
-
                 void show_private(HumanReadable & hr) const;
                 void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                Error actual_valid(const bool check_mpi = false) const;
 
                 Tag5(const uint8_t tag);
 
@@ -156,7 +157,6 @@ namespace OpenPGP {
                 Tag5(const Tag5 & copy);
                 Tag5(const std::string & data);
                 virtual ~Tag5();
-                std::string raw() const;
 
                 uint8_t get_s2k_con() const;
                 uint8_t get_sym() const;

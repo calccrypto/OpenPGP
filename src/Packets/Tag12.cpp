@@ -11,6 +11,14 @@ void Tag12::show_contents(HumanReadable & hr) const {
     hr << "Data (" + std::to_string(trust.size()) + " octets): " + trust;
 }
 
+std::string Tag12::actual_raw() const {
+    return trust;
+}
+
+Error Tag12::actual_valid(const bool) const {
+    return Error::SHOULD_NOT_BE_EMITTED;
+}
+
 Tag12::Tag12()
     : Tag(TRUST),
       trust()
@@ -25,10 +33,6 @@ Tag12::Tag12(const std::string & data)
     : Tag12()
 {
     read(data);
-}
-
-std::string Tag12::raw() const {
-    return trust;
 }
 
 std::string Tag12::get_trust() const {

@@ -28,30 +28,31 @@ THE SOFTWARE.
 
 #include "Packets/Packet.h"
 
-#include "Packets/Key.h"    // for Tags 5, 6, 7, and 14
-#include "Packets/User.h"   // for Tags 13 and 17
+#include "Packets/Key.h"      // for Tags 5, 6, 7, and 14
+#include "Packets/Partial.h"  // for Tags 8, 9, 11, and 18
+#include "Packets/User.h"     // for Tags 13 and 17
 
-#include "Packets/Tag0.h"   // Reserved - a packet tag MUST NOT have this value
-#include "Packets/Tag1.h"   // Public-Key Encrypted Session Key
-#include "Packets/Tag2.h"   // Signature
-#include "Packets/Tag3.h"   // Symmetric-Key Encrypted Session Key
-#include "Packets/Tag4.h"   // One-Pass Signature
-#include "Packets/Tag5.h"   // Secret-Key
-#include "Packets/Tag6.h"   // Public-Key
-#include "Packets/Tag7.h"   // Secret-Subkey
-#include "Packets/Tag8.h"   // Compressed Data
-#include "Packets/Tag9.h"   // Symmetrically (Conventional) Encrypted Data
-#include "Packets/Tag10.h"  // Marker Packet (Obsolete Literal Packet)
-#include "Packets/Tag11.h"  // Literal Data
-#include "Packets/Tag12.h"  // (Keyring) Trust
-#include "Packets/Tag13.h"  // User ID
-#include "Packets/Tag14.h"  // Pubic-Subkey (Obsolete COmment Packet)
-#include "Packets/Tag17.h"  // User Attribute
-#include "Packets/Tag18.h"  // Sym. Encrypted Integrity Protected Data
-#include "Packets/Tag19.h"  // Modification Detection Code
-#include "Packets/Tag60.h"  // Private or Experimental Values
-#include "Packets/Tag61.h"  // Private or Experimental Values
-#include "Packets/Tag62.h"  // Private or Experimental Values
-#include "Packets/Tag63.h"  // Private or Experimental Values
+#include "Packets/Tag0.h"     // Reserved - a packet tag MUST NOT have this value
+#include "Packets/Tag1.h"     // Public-Key Encrypted Session Key
+#include "Packets/Tag2.h"     // Signature
+#include "Packets/Tag3.h"     // Symmetric-Key Encrypted Session Key
+#include "Packets/Tag4.h"     // One-Pass Signature
+#include "Packets/Tag5.h"     // Secret-Key
+#include "Packets/Tag6.h"     // Public-Key
+#include "Packets/Tag7.h"     // Secret-Subkey
+#include "Packets/Tag8.h"     // Compressed Data
+#include "Packets/Tag9.h"     // Symmetrically (Conventional) Encrypted Data
+#include "Packets/Tag10.h"    // Marker Packet (Obsolete Literal Packet)
+#include "Packets/Tag11.h"    // Literal Data
+#include "Packets/Tag12.h"    // (Keyring) Trust
+#include "Packets/Tag13.h"    // User ID
+#include "Packets/Tag14.h"    // Pubic-Subkey (Obsolete COmment Packet)
+#include "Packets/Tag17.h"    // User Attribute
+#include "Packets/Tag18.h"    // Sym. Encrypted Integrity Protected Data
+#include "Packets/Tag19.h"    // Modification Detection Code
+#include "Packets/Tag60.h"    // Private or Experimental Values
+#include "Packets/Tag61.h"    // Private or Experimental Values
+#include "Packets/Tag62.h"    // Private or Experimental Values
+#include "Packets/Tag63.h"    // Private or Experimental Values
 
 #endif

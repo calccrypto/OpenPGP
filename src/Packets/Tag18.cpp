@@ -17,6 +17,22 @@ void Tag18::show_contents(HumanReadable & hr) const {
        << "Encrypted Data (" + std::to_string(protected_data.size()) + " octets): " + hexlify(protected_data);
 }
 
+std::string Tag18::actual_raw() const {
+    return std::string(1, version) + protected_data;
+}
+
+std::string Tag18::actual_write() const {
+    return Partial::write(header_format, tag, raw());
+}
+
+Error Tag18::actual_valid(const bool) const {
+    if (version != 1) {
+        return Error::INVALID_VERSION;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag18::Tag18(const PartialBodyLength & part)
     : Tag(SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, 1),
       Partial(part),
@@ -29,17 +45,8 @@ Tag18::Tag18(const std::string & data)
     read(data);
 }
 
-std::string Tag18::raw() const {
-    return std::string(1, version) + protected_data;
-}
-
 std::string Tag18::write() const {
-    const std::string data = raw();
-    if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)) {                           // tag > 15, so new header is required
-        return write_new_length(tag, data, partial);
-    }
-    return write_old_length(tag, data, partial);
+    return Partial::write(header_format, SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, raw());
 }
 
 std::string Tag18::get_protected_data() const {

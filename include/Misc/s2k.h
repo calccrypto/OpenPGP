@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <string>
 
 #include "Hashes/Hashes.h"
+#include "common/Error.h"
 #include "common/HumanReadable.h"
 
 namespace OpenPGP {
@@ -111,6 +112,8 @@ namespace OpenPGP {
                 void set_type(const uint8_t t);
                 void set_hash(const uint8_t h);
 
+                virtual Error valid() const = 0;
+
                 virtual Ptr clone() const = 0;
         };
 
@@ -159,6 +162,8 @@ namespace OpenPGP {
                 virtual std::string raw() const;
                 virtual std::string run(const std::string & pass, const std::size_t sym_key_len) const;
 
+                Error valid() const;
+
                 S2K::Ptr clone() const;
         };
 
@@ -196,6 +201,8 @@ namespace OpenPGP {
                 std::string get_salt() const;
 
                 void set_salt(const std::string & s);
+
+                Error valid() const;
 
                 S2K::Ptr clone() const;
         };
@@ -259,6 +266,8 @@ namespace OpenPGP {
                 uint8_t get_count() const;
 
                 void set_count(const uint8_t c);
+
+                Error valid() const;
 
                 S2K::Ptr clone() const;
         };

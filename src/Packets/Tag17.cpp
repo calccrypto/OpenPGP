@@ -33,17 +33,32 @@ void Tag17::show_contents(HumanReadable & hr) const {
     }
 }
 
+std::string Tag17::actual_raw() const {
+    std::string out = "";
+    for(Subpacket::Tag17::Sub::Ptr const & a : attributes) {
+        out += a -> write();
+    }
+    return out;
+}
+
+Error Tag17::actual_valid(const bool) const {
+    for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
+        // Error err = s -> valid();
+        // if (err != Error::SUCCESS) {
+        //     return err;
+        // }
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag17::Tag17()
     : User(USER_ATTRIBUTE),
-      length(),
-      type(),
       attributes()
 {}
 
 Tag17::Tag17(const Tag17 & copy)
     : User(copy),
-      length(copy.length),
-      type(copy.type),
       attributes(copy.attributes)
 {
     for(Subpacket::Tag17::Sub::Ptr & s : attributes) {
@@ -59,14 +74,6 @@ Tag17::Tag17(const std::string & data)
 
 Tag17::~Tag17() {
     attributes.clear();
-}
-
-std::string Tag17::raw() const {
-    std::string out = "";
-    for(Subpacket::Tag17::Sub::Ptr const & a : attributes) {
-        out += a -> write();
-    }
-    return out;
 }
 
 Tag17::Attributes Tag17::get_attributes() const {
@@ -95,8 +102,6 @@ Tag::Ptr Tag17::clone() const {
 
 Tag17 & Tag17::operator=(const Tag17 & tag17) {
     User::operator=(tag17);
-    length = tag17.length;
-    type = tag17.type;
     attributes = tag17.attributes;
 
     for(Subpacket::Tag17::Sub::Ptr & s : attributes) {

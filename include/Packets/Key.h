@@ -56,6 +56,12 @@ namespace OpenPGP {
                 virtual void actual_read(const std::string & data);
                 virtual void show_contents(HumanReadable & hr) const;
 
+                // read, show, and raw functions common to all keys tags
+                // can't overload normal versions because the inherited versions are needed
+                void read_common(const std::string & data, std::string::size_type & pos);
+                void show_common(HumanReadable & hr) const;
+                std::string actual_raw() const;
+
             public:
                 typedef std::shared_ptr <Key> Ptr;
 
@@ -63,12 +69,6 @@ namespace OpenPGP {
                 Key(const std::string & data);
                 virtual ~Key();
 
-                virtual std::string raw() const;
-
-                // read, show, and raw functions common to all keys tags
-                // can't overload normal versions because the inherited versions are needed
-                void read_common(const std::string & data, std::string::size_type & pos);
-                void show_common(HumanReadable & hr) const;
                 std::string raw_common() const;
 
                 uint32_t get_time() const;

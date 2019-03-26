@@ -157,37 +157,7 @@ void Tag5::show_contents(HumanReadable & hr) const {
     show_private(hr);
 }
 
-Tag5::Tag5(const uint8_t tag)
-    : Tag6(tag),
-      s2k_con(0),
-      sym(0),
-      s2k(),
-      IV(),
-      secret()
-{}
-
-Tag5::Tag5()
-    : Tag5(SECRET_KEY)
-{}
-
-Tag5::Tag5(const Tag5 & copy)
-    : Tag6(copy),
-      s2k_con(copy.s2k_con),
-      sym(copy.sym),
-      s2k(copy.s2k),
-      IV(copy.IV),
-      secret(copy.secret)
-{}
-
-Tag5::Tag5(const std::string & data)
-    : Tag5(SECRET_KEY)
-{
-    read(data);
-}
-
-Tag5::~Tag5() {}
-
-std::string Tag5::raw() const {
+std::string Tag5::actual_raw() const {
     std::string out = raw_common() +            // public data
                       std::string(1, s2k_con);  // S2K usage octet
     if ((s2k_con == 254) || (s2k_con == 255)) {
@@ -210,6 +180,64 @@ std::string Tag5::raw() const {
 
     return out + secret;
 }
+
+Error Tag5::actual_valid(const bool check_mpi) const {
+    Error valid_public = Tag6::actual_valid(check_mpi);
+    if (valid_public != Error::SUCCESS) {
+        return valid_public;
+    }
+
+    if ((s2k_con == 254) || (s2k_con == 255)) {
+        if (!s2k) {
+            return Error::MISSING_S2K;
+        }
+    }
+    else if (s2k_con != 0) {
+        if (!Sym::valid(sym)) {
+            return Error::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
+        }
+    }
+
+    if (s2k_con) {
+       if (IV.size() != (Sym::BLOCK_LENGTH.at(sym) >> 3)) {
+            return Error::INVALID_LENGTH;
+        }
+    }
+
+    return Error::SUCCESS;
+}
+
+Tag5::Tag5(const uint8_t tag)
+    : Tag6(tag),
+      s2k_con(0),
+      sym(0),
+      s2k(),
+      IV(),
+      secret()
+{}
+
+Tag5::Tag5()
+    : Tag5(SECRET_KEY)
+{}
+
+Tag5::Tag5(const Tag5 & copy)
+    : Tag6(copy),
+      s2k_con(copy.s2k_con),
+      sym(copy.sym),
+      s2k(copy.s2k),
+      IV(copy.IV),
+      secret(copy.secret)
+{
+    s2k = s2k?s2k -> clone():nullptr;
+}
+
+Tag5::Tag5(const std::string & data)
+    : Tag5(SECRET_KEY)
+{
+    read(data);
+}
+
+Tag5::~Tag5() {}
 
 uint8_t Tag5::get_s2k_con() const {
     return s2k_con;

@@ -31,15 +31,10 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Packet {
         class Tag0 : public Tag {
-            private:
-                void actual_read(const std::string & data);
-
             public:
                 typedef std::shared_ptr <Packet::Tag0> Ptr;
 
                 Tag0(...);
-
-                std::string raw() const;
 
                 Tag::Ptr clone() const;
         };

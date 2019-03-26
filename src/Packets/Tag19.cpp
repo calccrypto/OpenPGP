@@ -11,6 +11,18 @@ void Tag19::show_contents(HumanReadable & hr) const {
     hr << "SHA - 1 Hash of previous packet: " + hash;
 }
 
+std::string Tag19::actual_raw() const {
+    return hash;
+}
+
+Error Tag19::actual_valid(const bool) const {
+    if (hash.size() != (Hash::LENGTH.at(Hash::ID::SHA1) >> 3)) {
+        return Error::INVALID_SHA1_HASH;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag19::Tag19()
     : Tag(MODIFICATION_DETECTION_CODE),
       hash()
@@ -22,10 +34,6 @@ Tag19::Tag19(const std::string & data)
     : Tag19()
 {
     read(data);
-}
-
-std::string Tag19::raw() const {
-    return hash;
 }
 
 std::string Tag19::get_hash() const {

@@ -15,6 +15,22 @@ void Tag9::show_contents(HumanReadable & hr) const {
     hr << "Encrypted Data (" + std::to_string(encrypted_data.size()) + " octets): " + hexlify(encrypted_data);
 }
 
+std::string Tag9::actual_raw() const {
+    return encrypted_data;
+}
+
+std::string Tag9::actual_write() const {
+    return Partial::write(header_format, tag, raw());
+}
+
+Error Tag9::actual_valid(const bool) const {
+    if (encrypted_data.size() < 2) {
+        return Error::INVALID_LENGTH;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag9::Tag9(const PartialBodyLength &part)
     : Tag(SYMMETRICALLY_ENCRYPTED_DATA),
       Partial(part),
@@ -27,17 +43,8 @@ Tag9::Tag9(const std::string & data)
     read(data);
 }
 
-std::string Tag9::raw() const {
-    return encrypted_data;
-}
-
 std::string Tag9::write() const {
-    const std::string data = raw();
-    if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)) {                           // tag > 15, so new header is required
-        return write_new_length(tag, data, partial);
-    }
-    return write_old_length(tag, data, partial);
+    return Partial::write(header_format, SYMMETRICALLY_ENCRYPTED_DATA, raw());
 }
 
 std::string Tag9::get_encrypted_data() const {

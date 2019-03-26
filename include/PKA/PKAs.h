@@ -28,11 +28,11 @@ THE SOFTWARE.
 
 #include <map>
 
-#include "PKA.h"
-
-#include "DSA.h"
-#include "ElGamal.h"
-#include "RSA.h"
+#include "PKA/DSA.h"
+#include "PKA/ElGamal.h"
+#include "PKA/PKA.h"
+#include "PKA/RSA.h"
+#include "common/Error.h"
 
 namespace OpenPGP {
     namespace PKA {
@@ -166,6 +166,7 @@ namespace OpenPGP {
         bool can_encrypt(const uint8_t alg);
         bool can_sign(const uint8_t alg);
         bool is_RSA(const uint8_t alg);
+        bool valid(const uint8_t alg);
 
         /*
             params:

@@ -36,6 +36,22 @@ void Tag8::show_contents(HumanReadable & hr) const {
     hr << HumanReadable::UP;
 }
 
+std::string Tag8::actual_raw() const {
+    return std::string(1, comp) + compressed_data;
+}
+
+std::string Tag8::actual_write() const {
+    return Partial::write(header_format, tag, raw());
+}
+
+Error Tag8::actual_valid(const bool) const {
+    if (!Compression::valid(comp)) {
+        return Error::INVALID_COMPRESSION_ALGORITHM;
+    }
+
+    return Error::SUCCESS;
+}
+
 Tag8::Tag8(const PartialBodyLength & part)
     : Tag(COMPRESSED_DATA, 3),
       Partial(part),
@@ -49,17 +65,8 @@ Tag8::Tag8(const std::string & data)
     read(data);
 }
 
-std::string Tag8::raw() const {
-    return std::string(1, comp) + compressed_data;
-}
-
 std::string Tag8::write() const {
-    const std::string data = raw();
-    if ((header_format == HeaderFormat::NEW) || // specified new header
-        (tag > 15)) {                            // tag > 15, so new header is required
-        return write_new_length(tag, data, partial);
-    }
-    return write_old_length(tag, data, partial);
+    return Partial::write(header_format, COMPRESSED_DATA, raw());
 }
 
 uint8_t Tag8::get_comp() const {
