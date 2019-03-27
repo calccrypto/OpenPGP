@@ -14,10 +14,11 @@ std::string Tag8::decompress(const std::string & data) const {
     return Compression::decompress(comp, data);
 }
 
-void Tag8::actual_read(const std::string & data) {
-    if (size) {
-        comp = data[0]; // don't call set_comp here to prevent decompressing and recompressing old data
-        set_compressed_data(data.substr(1, size - 1));
+void Tag8::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    if (length) {
+        comp = data[pos + 0]; // don't call set_comp here to prevent decompressing and recompressing old data
+        set_compressed_data(data.substr(pos + 1, length - 1));
+        pos += length;
     }
 }
 

@@ -51,7 +51,7 @@ bool can_have_partial_length (const uint8_t t) {
     return Partial::can_have_partial_length(t);
 }
 
-void Tag::actual_read(const std::string &) {}
+void Tag::actual_read(const std::string &, std::string::size_type &, const std::string::size_type &) {}
 
 std::string Tag::show_title() const {
     return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
@@ -93,13 +93,18 @@ Tag::Tag()
 
 Tag::~Tag() {}
 
-void Tag::read(const std::string &data) {
+void Tag::read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
     // set size first, in case the size variable is needed during actual_read
     // the size won't change during actual_read, so there is no need to reset it after
-    set_size(data.size());
+    set_size(length);
     if (size) {
-        actual_read(data);
+        actual_read(data, pos, length);
     }
+}
+
+void Tag::read(const std::string & data) {
+    std::string::size_type pos = 0;
+    read(data, pos, data.size());
 }
 
 std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const {

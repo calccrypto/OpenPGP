@@ -3,12 +3,11 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag17::actual_read(const std::string & data) {
+void Tag17::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
     // read subpackets
-    std::string::size_type pos = 0;
-    while (pos < size) {
-        std::string::size_type length;
-        Subpacket::Sub::read_subpacket(data, pos, length);
+    while (pos < length) {
+        std::string::size_type sublength;
+        Subpacket::Sub::read_subpacket(data, pos, sublength);
 
         Subpacket::Tag17::Sub::Ptr subpacket = nullptr;
         switch (const uint8_t type = data[pos]) {
@@ -19,11 +18,11 @@ void Tag17::actual_read(const std::string & data) {
                 throw std::runtime_error("Error: Tag 17 Subpacket tag not defined or reserved: " + std::to_string(type));
         }
 
-        subpacket -> read(data.substr(pos + 1, length - 1));
+        subpacket -> read(data.substr(pos + 1, sublength - 1));
         attributes.push_back(subpacket);
 
         // go to end of current subpacket
-        pos += length;
+        pos += sublength;
     }
 }
 
@@ -42,12 +41,12 @@ std::string Tag17::actual_raw() const {
 }
 
 Error Tag17::actual_valid(const bool) const {
-    for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
-        // Error err = s -> valid();
-        // if (err != Error::SUCCESS) {
-        //     return err;
-        // }
-    }
+    // for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
+    //     Error err = s -> valid();
+    //     if (err != Error::SUCCESS) {
+    //         return err;
+    //     }
+    // }
 
     return Error::SUCCESS;
 }

@@ -3,8 +3,8 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag9::actual_read(const std::string & data) {
-    set_encrypted_data(data);
+void Tag9::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_encrypted_data(data.substr(pos, length));
 }
 
 std::string Tag9::show_title() const {

@@ -99,7 +99,7 @@ namespace OpenPGP {
                 uint8_t pka;
                 PKA::Values mpi;        // algorithm specific fields
 
-                void actual_read(const std::string & data);
+                void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 void show_contents(HumanReadable & hr) const;
                 std::string actual_raw() const;
                 Error actual_valid(const bool check_mpi) const;

@@ -3,8 +3,9 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag19::actual_read(const std::string & data) {
-    set_hash(data);
+void Tag19::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_hash(data.substr(pos, length));
+    pos += length;
 }
 
 void Tag19::show_contents(HumanReadable & hr) const {

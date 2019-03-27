@@ -211,7 +211,7 @@ TEST(Packet, can_have_partial_length) {
 
 class FakeTag final : public OpenPGP::Packet::Tag {
     private:
-        void actual_read(const std::string &) {}
+        void actual_read(const std::string &, std::string::size_type &, const std::string::size_type &) {}
 
     public:
         OpenPGP::Packet::Tag::Ptr clone() const {
@@ -231,10 +231,10 @@ static void TAG_FILL(FakeTag & faketag) {
     faketag.set_size(size);
 }
 
-#define TAG_EQ(faketag)                                                \
-    EXPECT_EQ((faketag).get_tag(), tag);                               \
-    EXPECT_EQ((faketag).get_version(), version);                       \
-    EXPECT_EQ((faketag).get_header_format(), header_format);           \
+#define TAG_EQ(faketag)                                        \
+    EXPECT_EQ((faketag).get_tag(), tag);                       \
+    EXPECT_EQ((faketag).get_version(), version);               \
+    EXPECT_EQ((faketag).get_header_format(), header_format);   \
     EXPECT_EQ((faketag).get_size(), size);
 
 TEST(Tag, Constructor) {

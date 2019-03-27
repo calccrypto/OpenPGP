@@ -3,32 +3,35 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag3::actual_read(const std::string & data) {
-    set_version(data[0]);  // 4
-    set_sym(data[1]);
+void Tag3::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_version(data[pos + 0]);  // 4
+    set_sym(data[pos + 1]);
 
-    if (data[2] == S2K::ID::SIMPLE_S2K) {
+    if (data[pos + 2] == S2K::ID::SIMPLE_S2K) {
         s2k = std::make_shared <S2K::S2K0> ();
     }
-    else if (data[2] == S2K::ID::SALTED_S2K) {
+    else if (data[pos + 2] == S2K::ID::SALTED_S2K) {
         s2k = std::make_shared <S2K::S2K1> ();
     }
-    else if (data[2] == 2) {
+    else if (data[pos + 2] == 2) {
         throw std::runtime_error("S2K with ID 2 is reserved.");
     }
-    else if (data[2] == S2K::ID::ITERATED_AND_SALTED_S2K) {
+    else if (data[pos + 2] == S2K::ID::ITERATED_AND_SALTED_S2K) {
         s2k = std::make_shared <S2K::S2K3> ();
     }
     else{
         throw std::runtime_error("Unknown S2K ID encountered: " + std::to_string(data[0]));
     }
 
-    std::string::size_type pos = 2; // include S2K type
+    const std::string::size_type orig_pos = pos;
+    pos += 2; // include S2K type
     s2k -> read(data, pos);
 
-    if (pos < data.size()) {
-        esk = std::make_shared <std::string> (data.substr(pos, data.size() - pos));
+    if (pos < (orig_pos + length)) {
+        esk = std::make_shared <std::string> (data.substr(pos, orig_pos + length - pos));
     }
+
+    pos = orig_pos + length;
 }
 
 void Tag3::show_contents(HumanReadable & hr) const {

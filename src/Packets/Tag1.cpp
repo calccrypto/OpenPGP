@@ -3,12 +3,12 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag1::actual_read(const std::string & data) {
-    set_version(data[0]);
-    set_keyid(data.substr(1, 8));
-    set_pka(data[9]);
-    std::string::size_type pos = 10;
-    while (pos < data.size()) {
+void Tag1::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_version(data[pos + 0]);
+    set_keyid(data.substr(pos + 1, 8));
+    set_pka(data[pos + 9]);
+    pos += 10;
+    while (pos < length) {
         mpi.push_back(read_MPI(data, pos));
     }
 }

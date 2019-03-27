@@ -1,6 +1,5 @@
 #include "Packets/Tag11.h"
 
-#include <iostream>
 #include <fstream>
 #include <sstream>
 
@@ -13,12 +12,13 @@ bool Literal::valid(const uint8_t format) {
     return (NAME.find(format) != NAME.end());
 }
 
-void Tag11::actual_read(const std::string & data) {
-    set_data_format(data[0]);
-    const uint8_t len = data[1];
-    set_filename(data.substr(2, len));
-    set_time(toint(data.substr(2 + len, 4), 256));
-    set_literal(data.substr(len + 6, data.size() - len - 6));
+void Tag11::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_data_format(data[pos + 0]);
+    const uint8_t len = data[pos + 1];
+    set_filename(data.substr(pos + 2, len));
+    set_time(toint(data.substr(pos + 2 + len, 4), 256));
+    set_literal(data.substr(pos + 2 + len + 4, length - 2 - len - 4));
+    pos += length;
 }
 
 std::string Tag11::show_title() const {

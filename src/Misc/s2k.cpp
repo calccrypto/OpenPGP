@@ -91,7 +91,7 @@ std::string S2K0::run(const std::string & pass, const std::size_t sym_key_len) c
 }
 
 Error S2K0::valid() const {
-    if (type != 0) {
+    if (type != ID::SIMPLE_S2K) {
         return Error::WRONG_S2K_TYPE;
     }
 
@@ -160,7 +160,7 @@ void S2K1::set_salt(const std::string & s) {
 }
 
 Error S2K1::valid() const {
-    if (type != 1) {
+    if (type != ID::SALTED_S2K) {
         return Error::WRONG_S2K_TYPE;
     }
 
@@ -247,7 +247,7 @@ void S2K3::set_count(const uint8_t c) {
 }
 
 Error S2K3::valid() const {
-    if (type != 3) {
+    if (type != ID::ITERATED_AND_SALTED_S2K) {
         return Error::WRONG_S2K_TYPE;
     }
 

@@ -142,7 +142,7 @@ namespace OpenPGP {
                 std::string secret;
 
                 void read_s2k(const std::string & data, std::string::size_type & pos);
-                void actual_read(const std::string & data);
+                void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 void show_private(HumanReadable & hr) const;
                 void show_contents(HumanReadable & hr) const;
                 std::string actual_raw() const;

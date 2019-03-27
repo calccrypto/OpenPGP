@@ -410,7 +410,7 @@ TEST(PGP, encrypt_sign_decrypt_verify) {
     EXPECT_EQ(OpenPGP::Verify::binary(pri, decrypted), true);
 }
 
-TEST(PGP, partial_body_length) {
+TEST(PGP, new_partial_body_length) {
 
     // fixed literal data packet values
     const uint8_t format = OpenPGP::Packet::Literal::TEXT;

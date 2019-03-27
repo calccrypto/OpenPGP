@@ -136,7 +136,7 @@ namespace OpenPGP {
                 std::size_t size;             // This value is only correct when the Tag was generated with the read() function
 
                 // the public read() wraps actual_read()
-                virtual void actual_read(const std::string & data);
+                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
 
                 // the functions that are called by the public show()
                 virtual std::string show_title() const;                        // virtual to allow for overriding for special cases
@@ -154,6 +154,7 @@ namespace OpenPGP {
 
                 Tag();
                 virtual ~Tag();
+                void read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 void read(const std::string & data);
                 std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 void show(HumanReadable & hr) const;

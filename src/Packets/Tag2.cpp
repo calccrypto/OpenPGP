@@ -109,21 +109,21 @@ void Tag2::read_subpackets(const std::string & data, Tag2::Subpackets & subpacke
     }
 }
 
-void Tag2::actual_read(const std::string & data) {
+void Tag2::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type &) {
     tag = Packet::SIGNATURE;
-    set_version(data[0]);
+    set_version(data[pos + 0]);
     if (version == 3) {
-        if (data[1] != 5) {
+        if (data[pos + 1] != 5) {
             throw std::runtime_error("Error: Length of hashed material must be 5.");
         }
-        set_type  (data[2]);
-        set_time  (toint(data.substr(3, 4), 256));
-        set_keyid (data.substr(7, 8));
-        set_pka   (data[15]);
-        set_hash  (data[16]);
-        set_left16(data.substr(17, 2));
+        set_type  (data[pos + 2]);
+        set_time  (toint(data.substr(pos + 3, 4), 256));
+        set_keyid (data.substr(pos + 7, 8));
+        set_pka   (data[pos + 15]);
+        set_hash  (data[pos + 16]);
+        set_left16(data.substr(pos + 17, 2));
 
-        std::string::size_type pos = 19;
+        pos = 19;
         if (PKA::is_RSA(pka)) {
             mpi.push_back(read_MPI(data, pos)); // RSA m**d mod n
         }
@@ -143,23 +143,28 @@ void Tag2::actual_read(const std::string & data) {
         }
     }
     else if (version == 4) {
-        set_type(data[1]);
-        set_pka (data[2]);
-        set_hash(data[3]);
+        set_type(data[pos + 1]);
+        set_pka (data[pos + 2]);
+        set_hash(data[pos + 3]);
+        pos += 4;
 
         // hashed subpackets
-        const uint16_t hashed_size = toint(data.substr(4, 2), 256);
-        read_subpackets(data.substr(6, hashed_size), hashed_subpackets);
+        const uint16_t hashed_size = toint(data.substr(pos, 2), 256);
+        pos += 2;
+        read_subpackets(data.substr(pos, hashed_size), hashed_subpackets);
+        pos += hashed_size;
 
         // unhashed subpacketss
-        const uint16_t unhashed_size = toint(data.substr(hashed_size + 6, 2), 256);
-        read_subpackets(data.substr(hashed_size + 6 + 2, unhashed_size), unhashed_subpackets);
+        const uint16_t unhashed_size = toint(data.substr(pos, 2), 256);
+        pos += 2;
+        read_subpackets(data.substr(pos, unhashed_size), unhashed_subpackets);
+        pos += unhashed_size;
 
         // get left 16 bits
-        set_left16(data.substr(hashed_size + 6 + 2 + unhashed_size, 2));
+        set_left16(data.substr(pos, 2));
+        pos += 2;
 
         // if (PKA::is_RSA(PKA))
-        std::string::size_type pos = hashed_size + 6 + 2 + unhashed_size + 2;
         mpi.push_back(read_MPI(data, pos));        // RSA m**d mod n
         #ifdef GPG_COMPATIBLE
         if(pka == PKA::ID::DSA || pka == PKA::ID::ECDSA || pka == PKA::ID::EdDSA) {
@@ -301,19 +306,19 @@ Error Tag2::actual_valid(const bool check_mpi) const {
     }
 
     if (version == 4) {
-        for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
-            // const Error err = sub -> valid();
-            // if (err != Error::SUCCESS) {
-            //     return err;
-            // }
-        }
+        // for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
+        //     const Error err = sub -> valid();
+        //     if (err != Error::SUCCESS) {
+        //         return err;
+        //     }
+        // }
 
-        for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
-            // const Error err = sub -> valid();
-            // if (err != Error::SUCCESS) {
-            //     return err;
-            // }
-        }
+        // for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
+        //     const Error err = sub -> valid();
+        //     if (err != Error::SUCCESS) {
+        //         return err;
+        //     }
+        // }
     }
 
     if (left16.size() != 2) {

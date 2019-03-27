@@ -3,13 +3,14 @@
 namespace OpenPGP {
 namespace Packet {
 
-void Tag4::actual_read(const std::string & data) {
-    set_version(data[0]); // 3
-    set_type   (data[1]);
-    set_hash   (data[2]);
-    set_pka    (data[3]);
-    set_keyid  (data.substr(4, 8));
-    set_last   (data[12]);
+void Tag4::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type &) {
+    set_version(data[pos + 0]); // 3
+    set_type   (data[pos + 1]);
+    set_hash   (data[pos + 2]);
+    set_pka    (data[pos + 3]);
+    set_keyid  (data.substr(pos + 4, 8));
+    set_last   (data[pos + 12]);
+    pos += 13;
 }
 
 void Tag4::show_contents(HumanReadable & hr) const {

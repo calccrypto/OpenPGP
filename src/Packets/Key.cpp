@@ -1,5 +1,4 @@
 #include "Packets/Key.h"
-#include <iostream>
 
 namespace OpenPGP {
 namespace Packet {
@@ -19,8 +18,7 @@ Key::Key(const uint8_t tag)
       #endif
 {}
 
-void Key::actual_read(const std::string & data) {
-    std::string::size_type pos = 0;
+void Key::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type &) {
     read_common(data, pos);
 }
 
@@ -45,7 +43,7 @@ Key::Key(const std::string & data)
 Key::~Key() {}
 
 void Key::read_common(const std::string & data, std::string::size_type & pos) {
-    set_version(data[pos]);
+    set_version(data[pos + 0]);
     set_time(toint(data.substr(pos + 1, 4), 256));
 
     if (version < 4) {

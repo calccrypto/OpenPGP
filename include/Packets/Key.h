@@ -53,7 +53,7 @@ namespace OpenPGP {
 
                 Key(const uint8_t tag);
 
-                virtual void actual_read(const std::string & data);
+                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 virtual void show_contents(HumanReadable & hr) const;
 
                 // read, show, and raw functions common to all keys tags

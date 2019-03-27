@@ -97,7 +97,7 @@ namespace OpenPGP {
                 uint32_t time;
                 std::string literal;    // source data; no line ending conversion
 
-                void actual_read(const std::string & data);
+                void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 std::string show_title() const;
                 void show_contents(HumanReadable & hr) const;
                 std::string actual_raw() const;

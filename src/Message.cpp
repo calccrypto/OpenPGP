@@ -170,7 +170,7 @@ Message::Message(const std::string & data)
 
     // throw if decompressed packet sequence is not meaningful
     if (!meaningful()) {
-        throw std::runtime_error("Error: AData does not form a meaningful PGP Message");
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Message");
     }
 
     if (!decompress()) {

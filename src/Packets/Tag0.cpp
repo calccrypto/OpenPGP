@@ -8,7 +8,7 @@ namespace Packet {
 Tag0::Tag0(...)
     : Tag(RESERVED)
 {
-    // throw std::runtime_error("Error: Tag number MUST NOT be 0.");
+    throw std::runtime_error("Error: Tag number MUST NOT be 0.");
 }
 
 Tag::Ptr Tag0::clone() const {

@@ -22,8 +22,8 @@ void Tag5::read_s2k(const std::string & data, std::string::size_type & pos) {
     s2k -> read(data, pos);
 }
 
-void Tag5::actual_read(const std::string & data) {
-    std::string::size_type pos = 0;
+void Tag5::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    const std::string::size_type orig_pos = pos;
 
     // public data
     read_common(data, pos);
@@ -51,7 +51,9 @@ void Tag5::actual_read(const std::string & data) {
     }
 
     // plaintex or encrypted data
-    secret = data.substr(pos, data.size() - pos);
+    secret = data.substr(pos, length - (pos - orig_pos));
+
+    pos = orig_pos + length;
 }
 
 void Tag5::show_private(HumanReadable & hr) const {
@@ -413,9 +415,9 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     const unsigned int hash_size = (s2k_con == 254)?20:2;
     const std::string given_checksum = keys.substr(keys.size() - hash_size, hash_size);
     keys = keys.substr(0, keys.size() - hash_size);
-    std::string calculated_checksum;
 
     // calculate and check checksum
+    std::string calculated_checksum;
     if(s2k_con == 254) {
         calculated_checksum = Hash::use(Hash::ID::SHA1, keys);
     }

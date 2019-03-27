@@ -5,8 +5,9 @@ namespace Packet {
 
 const std::string Tag10::body = "PGP";
 
-void Tag10::actual_read(const std::string & data) {
-    set_pgp(data);
+void Tag10::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    set_pgp(data.substr(pos, length));
+    pos += length;
 }
 
 void Tag10::show_contents(HumanReadable & hr) const {

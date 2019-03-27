@@ -71,22 +71,22 @@ namespace OpenPGP {
             Armor_Keys keys;                                // key-value pairs in the ASCII header
             Packets packets;                                // main data
 
-            // reads the length of the packet data and extracts the packet data into packet_data
-            // this was done because partial packet lengths are not simply substrings
-            static std::size_t read_packet_unformatted(const std::string & src, const uint8_t ctb, std::string::size_type & pos, const Packet::HeaderFormat format, std::string & packet_data, Packet::PartialBodyLength & partial);
-
             // reads the data starting at pos, and gets the ctb, format, and tag
             // pos is shifted up by 1
             uint8_t read_packet_header(const std::string & data, std::string::size_type & pos, uint8_t & ctb, Packet::HeaderFormat & format, uint8_t & tag) const;
 
+            // reads the length of the packet data and extracts the start and length of the packet data
+            // if partial returns Packet::PARTIAL, the partial_data variable should be used instead of data
+            Packet::PartialBodyLength read_packet_unformatted(const Packet::HeaderFormat format, const uint8_t ctb, const std::string & data, std::string::size_type & pos, std::string::size_type & packet_start, std::string::size_type & packet_length, std::string & partial_data) const;
+
             // parses raw packet data
-            Packet::Tag::Ptr read_packet_raw(const std::string & data, const uint8_t tag, const Packet::HeaderFormat format, Packet::PartialBodyLength & partial) const;
+            Packet::Tag::Ptr read_packet_raw(const std::string & data, std::string::size_type & pos, const std::string::size_type & length, const uint8_t tag, const Packet::HeaderFormat format, const Packet::PartialBodyLength & partial) const;
 
             // parse packet with header; wrapper for read_packet_header and read_packet_unformatted
             Packet::Tag::Ptr read_packet(const std::string & data, std::string::size_type & pos) const;
 
             // modifies output string so each line is no longer than MAX_LINE_SIZE long
-            std::string format_string(std::string data, uint8_t line_length = MAX_LINE_LENGTH) const;
+            std::string format_string(const std::string & data, const uint8_t line_length = MAX_LINE_LENGTH) const;
 
         public:
             typedef std::shared_ptr <PGP> Ptr;
@@ -98,18 +98,20 @@ namespace OpenPGP {
             virtual ~PGP();
 
             // Read ASCII Header + Base64 data
+            // all of the input will be considered valid for processing
             void read(const std::string & data);
             void read(std::istream & stream);
 
             // Read Binary data
+            // all of the input will be considered valid for processing
             virtual void read_raw(const std::string & data);
             void read_raw(std::istream & stream);
 
-            // show the contents in a human readable format
-            std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // less efficient method
-            virtual void show(HumanReadable & hr) const;                                                // more efficient method
+            // Show the contents in a human readable format
+            std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // quick print
+            virtual void show(HumanReadable & hr) const;                                                // buffer print
 
-            // write data out
+            // Write data out
             virtual std::string raw() const;                                                            // write packets only
             virtual std::string write(const Armored armor = DEFAULT) const;
 
