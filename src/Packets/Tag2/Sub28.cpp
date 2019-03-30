@@ -12,6 +12,10 @@ void Sub28::show_contents(HumanReadable & hr) const {
     hr << "ID: " + signer;
 }
 
+Status Sub28::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub28::Sub28()
     : Sub(SIGNERS_USER_ID, 0),
       signer()

@@ -14,6 +14,10 @@ void Sub3::show_contents(HumanReadable & hr) const {
     hr << "Signature Expiration Time (Days): " + (dt?show_time(dt):"Never");
 }
 
+Status Sub3::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub3::Sub3()
     : Sub(SIGNATURE_EXPIRATION_TIME, 4),
       dt(0)

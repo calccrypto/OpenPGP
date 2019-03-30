@@ -77,9 +77,9 @@ namespace OpenPGP {
         //    endings by the receiving software.
 
         namespace Literal {
-            const uint8_t BINARY    = 'b';     // should be equal to 0x62
-            const uint8_t TEXT      = 't';     // should be equal to 0x74
-            const uint8_t UTF8_TEXT = 'u';     // should be equal to 0x75
+            constexpr uint8_t BINARY    = 'b';     // should be equal to 0x62
+            constexpr uint8_t TEXT      = 't';     // should be equal to 0x74
+            constexpr uint8_t UTF8_TEXT = 'u';     // should be equal to 0x75
 
             const std::map <uint8_t, std::string> NAME = {
                 std::make_pair(BINARY,    "Binary"),

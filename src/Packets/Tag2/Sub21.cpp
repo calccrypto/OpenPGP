@@ -14,6 +14,15 @@ void Sub21::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub21::actual_valid(const bool) const {
+    for(char const & c : pha) {
+        if (Hash::NAME.find(c) == Hash::NAME.end()) {
+            return Status::INVALID_HASH_ALGORITHM;
+        }
+    }
+    return Status::SUCCESS;
+}
+
 Sub21::Sub21()
     : Sub(PREFERRED_HASH_ALGORITHMS),
       pha()

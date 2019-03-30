@@ -66,6 +66,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub4> Ptr;

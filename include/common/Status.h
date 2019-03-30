@@ -29,21 +29,27 @@ THE SOFTWARE.
 namespace OpenPGP {
     enum Status {
         SUCCESS,
-        INVALID_COMPRESSION_ALGORITHM,
+        INVALID,
+        INVALID_COMPRESSION_ALGORITHM,  // Tag 8, Tag 2 Sub 22
+        INVALID_CONTENTS,
+        INVALID_FINGERPRINT,
+        INVALID_FLAG,                   // Generic error for other flags
         INVALID_HASH_ALGORITHM,
         INVALID_LEFT16_BITS,            // Tag 2
         INVALID_LENGTH,
         INVALID_LITERAL_DATA_FORMAT,    // Tag 11
         INVALID_MPI_COUNT,
         INVALID_PUBLIC_KEY_ALGORITHM,
+        INVALID_REASON_FOR_REVOCATION,  // Tag 2 Sub 29
         INVALID_SHA1_HASH,              // Tag 18
         INVALID_SIGNATURE_TYPE,
         INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM,
         INVALID_TAG,
-        INVALID_TAG10,                  // Tag 10
         INVALID_VERSION,
         MISSING_S2K,                    // Tag 3, 5
         PKA_CANNOT_BE_USED,
+        REGEX_ERROR,                    // Tag 2 Sub 6
+        RESERVED,
         SHOULD_NOT_BE_EMITTED,          // Tag 12
         WRONG_S2K_TYPE,
     };

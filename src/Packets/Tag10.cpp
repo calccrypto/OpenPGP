@@ -20,7 +20,7 @@ std::string Tag10::actual_raw() const {
 
 Status Tag10::actual_valid(const bool) const {
     if (pgp != body) {
-        return Status::INVALID_TAG10;
+        return Status::INVALID_CONTENTS;
     }
 
     return Status::SUCCESS;

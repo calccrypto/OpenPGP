@@ -18,6 +18,22 @@ void Sub31::show_contents(HumanReadable & hr) const {
        << "Hash: " + hexlify(hash);
 }
 
+Status Sub31::actual_valid(const bool) const {
+    if (PKA::NAME.find(pka) == PKA::NAME.end()) {
+        return Status::INVALID_PUBLIC_KEY_ALGORITHM;
+    }
+
+    if (Hash::NAME.find(hash_alg) == Hash::NAME.end()) {
+        return Status::INVALID_HASH_ALGORITHM;
+    }
+
+    if ((Hash::LENGTH.at(hash_alg) >> 3) != hash.size()) {
+        return Status::INVALID_LENGTH;
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub31::Sub31()
     : Sub(SIGNATURE_TARGET),
       pka(), hash_alg(),

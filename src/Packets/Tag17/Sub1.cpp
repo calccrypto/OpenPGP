@@ -32,6 +32,18 @@ void Sub1::show_contents(HumanReadable & hr) const {
     hr << out + " '" + filename + "'.";
 }
 
+Status Sub1::actual_valid(const bool) const {
+    if (version != 1) {
+        return Status::INVALID_VERSION;
+    }
+
+    if (encoding != 1) {
+        return Status::INVALID;
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub1::Sub1()
     : Sub(IMAGE_ATTRIBUTE),
       version(),

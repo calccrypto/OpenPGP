@@ -39,8 +39,12 @@ std::string Sub::write_subpacket(const std::string & data) const {
     return "\xff" + unhexlify(makehex(data.size(), 8)) + data;
 }
 
+Status Sub::actual_valid(const bool) const {
+    return INVALID;
+}
+
 Sub::Sub(uint8_t type, unsigned int size, bool crit)
-    : critical(crit),
+    : critical(crit?CRITICAL:NOT_CRITICAL),
       type(type),
       size(size)
 {}
@@ -71,11 +75,11 @@ std::string Sub::raw() const {
 }
 
 std::string Sub::write() const {
-    return write_subpacket(std::string(1, type | (critical?0x80:0x00)) + raw());
+    return write_subpacket(std::string(1, type | critical) + raw());
 }
 
 bool Sub::get_critical() const {
-    return critical;
+    return (critical == CRITICAL);
 }
 
 uint8_t Sub::get_type() const {
@@ -87,7 +91,7 @@ std::size_t Sub::get_size() const {
 }
 
 void Sub::set_critical(const bool c) {
-    critical = c;
+    critical = c?CRITICAL:NOT_CRITICAL;
 }
 
 void Sub::set_type(const uint8_t t) {
@@ -97,6 +101,11 @@ void Sub::set_type(const uint8_t t) {
 void Sub::set_size(const std::size_t s) {
     size = s;
 }
+
+Status Sub::valid(const bool check_mpi) const {
+    return actual_valid(check_mpi);
+}
+
 
 }
 }

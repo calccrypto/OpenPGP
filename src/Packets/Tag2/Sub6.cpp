@@ -1,5 +1,7 @@
 #include "Packets/Tag2/Sub6.h"
 
+#include <regex>
+
 namespace OpenPGP {
 namespace Subpacket {
 namespace Tag2 {
@@ -10,6 +12,18 @@ void Sub6::actual_read(const std::string & data) {
 
 void Sub6::show_contents(HumanReadable & hr) const {
     hr << "Regular Expression: " + regex;
+}
+
+Status Sub6::actual_valid(const bool) const {
+    try {
+        std::regex r(regex);
+        std::regex_match("", r);
+    }
+    catch (const std::regex_error &) {
+        return Status::REGEX_ERROR;
+    }
+
+    return Status::SUCCESS;
 }
 
 Sub6::Sub6()

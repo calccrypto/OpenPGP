@@ -14,6 +14,10 @@ void Sub25::show_contents(HumanReadable & hr) const {
     hr << std::string("Primary: ") + + (primary?"True":"False");
 }
 
+Status Sub25::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub25::Sub25()
     : Sub(PRIMARY_USER_ID, 1),
       primary()

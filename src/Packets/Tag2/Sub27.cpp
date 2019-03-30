@@ -19,6 +19,20 @@ void Sub27::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub27::actual_valid(const bool) const {
+    for(char const octet : flags) {
+        for(uint8_t bit = 0; bit < 8; bit++) {
+            const uint8_t mask = 1U << bit;
+            if (octet & mask) {
+                if (Key_Flags::NAME.find(mask) == Key_Flags::NAME.end()) {
+                    return Status::INVALID_FLAG;
+                }
+            }
+        }
+    }
+    return Status::SUCCESS;
+}
+
 Sub27::Sub27()
     : Sub(KEY_FLAGS),
       flags()

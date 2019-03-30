@@ -68,18 +68,18 @@ namespace OpenPGP {
         //
 
         namespace ID {
-            const uint8_t PLAINTEXT         = 0;
-            const uint8_t IDEA              = 1;
-            const uint8_t TRIPLEDES         = 2;
-            const uint8_t CAST5             = 3;
-            const uint8_t BLOWFISH          = 4;
-            const uint8_t AES128            = 7;
-            const uint8_t AES192            = 8;
-            const uint8_t AES256            = 9;
-            const uint8_t TWOFISH256        = 10;
-            const uint8_t CAMELLIA128       = 11;
-            const uint8_t CAMELLIA192       = 12;
-            const uint8_t CAMELLIA256       = 13;
+            constexpr uint8_t PLAINTEXT     = 0;
+            constexpr uint8_t IDEA          = 1;
+            constexpr uint8_t TRIPLEDES     = 2;
+            constexpr uint8_t CAST5         = 3;
+            constexpr uint8_t BLOWFISH      = 4;
+            constexpr uint8_t AES128        = 7;
+            constexpr uint8_t AES192        = 8;
+            constexpr uint8_t AES256        = 9;
+            constexpr uint8_t TWOFISH256    = 10;
+            constexpr uint8_t CAMELLIA128   = 11;
+            constexpr uint8_t CAMELLIA192   = 12;
+            constexpr uint8_t CAMELLIA256   = 13;
         }
 
         const std::map <uint8_t, std::string> NAME = {

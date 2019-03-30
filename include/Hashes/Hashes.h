@@ -63,13 +63,13 @@ namespace OpenPGP {
         //    other algorithms. MD5 is deprecated.
 
         namespace ID {
-            const uint8_t MD5               = 1;
-            const uint8_t SHA1              = 2;
-            const uint8_t RIPEMD160         = 3;
-            const uint8_t SHA256            = 8;
-            const uint8_t SHA384            = 9;
-            const uint8_t SHA512            = 10;
-            const uint8_t SHA224            = 11;
+            constexpr uint8_t MD5           = 1;
+            constexpr uint8_t SHA1          = 2;
+            constexpr uint8_t RIPEMD160     = 3;
+            constexpr uint8_t SHA256        = 8;
+            constexpr uint8_t SHA384        = 9;
+            constexpr uint8_t SHA512        = 10;
+            constexpr uint8_t SHA224        = 11;
         }
 
         const std::map <uint8_t, std::string> NAME = {

@@ -18,6 +18,19 @@ void Sub33::show_contents(HumanReadable & hr) const {
        << "Fingerprint: " + hexlify(issuer_fingerprint) + " (" + std::to_string(issuer_fingerprint.size()) + " octets)";
 }
 
+Status Sub33::actual_valid(const bool) const {
+    // if (version == ) {
+        if (issuer_fingerprint.size() != 20) {
+            return Status::INVALID_FINGERPRINT;
+        }
+    // }
+    // else {
+    //     return Status::INVALID_VERSION;
+    // }
+
+    return Status::SUCCESS;
+}
+
 Sub33::Sub33()
     : Sub(ISSUER_FINGERPRINT),
       version(0),

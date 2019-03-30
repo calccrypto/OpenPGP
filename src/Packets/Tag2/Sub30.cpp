@@ -19,6 +19,21 @@ void Sub30::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub30::actual_valid(const bool) const {
+    for(char const octet : flags) {
+        for(uint8_t bit = 0; bit < 8; bit++) {
+            const uint8_t mask = 1U << bit;
+            if (octet & mask) {
+                if (Features_Flags::NAME.find(mask) == Features_Flags::NAME.end()) {
+                    return Status::INVALID_FLAG;
+                }
+            }
+        }
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub30::Sub30()
     : Sub(FEATURES),
       flags()

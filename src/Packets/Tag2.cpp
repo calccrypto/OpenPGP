@@ -306,19 +306,19 @@ Status Tag2::actual_valid(const bool check_mpi) const {
     }
 
     if (version == 4) {
-        // for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
-        //     const Status err = sub -> valid();
-        //     if (err != Status::SUCCESS) {
-        //         return err;
-        //     }
-        // }
+        for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
+            const Status err = sub -> valid();
+            if (err != Status::SUCCESS) {
+                return err;
+            }
+        }
 
-        // for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
-        //     const Status err = sub -> valid();
-        //     if (err != Status::SUCCESS) {
-        //         return err;
-        //     }
-        // }
+        for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
+            const Status err = sub -> valid();
+            if (err != Status::SUCCESS) {
+                return err;
+            }
+        }
     }
 
     if (left16.size() != 2) {

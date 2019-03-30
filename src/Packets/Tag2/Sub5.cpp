@@ -16,6 +16,10 @@ void Sub5::show_contents(HumanReadable & hr) const {
        << "Trust Amount: " + std::to_string(amount);
 }
 
+Status Sub5::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub5::Sub5()
     : Sub(TRUST_SIGNATURE, 2),
       level(),

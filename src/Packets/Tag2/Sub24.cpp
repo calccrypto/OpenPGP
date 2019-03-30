@@ -12,6 +12,10 @@ void Sub24::show_contents(HumanReadable & hr) const {
     hr << "URI - " + pks;
 }
 
+Status Sub24::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub24::Sub24()
     : Sub(PREFERRED_KEY_SERVER),
       pks()

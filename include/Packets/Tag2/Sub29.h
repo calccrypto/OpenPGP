@@ -32,11 +32,11 @@ namespace OpenPGP {
     namespace Subpacket {
         namespace Tag2 {
             namespace Revoke {
-                const uint8_t NO_REASON_SPECIFIED                          = 0;
-                const uint8_t KEY_IS_SUPERCEEDED                           = 1;
-                const uint8_t KEY_MATERIAL_HAS_BEEN_COMPROMISED            = 2;
-                const uint8_t KEY_IS_NO_LONGER_USED                        = 3;
-                const uint8_t USER_ID_INFORMATION_IS_NO_LONGER_VALID       = 32;
+                constexpr uint8_t NO_REASON_SPECIFIED                      = 0;
+                constexpr uint8_t KEY_IS_SUPERCEEDED                       = 1;
+                constexpr uint8_t KEY_MATERIAL_HAS_BEEN_COMPROMISED        = 2;
+                constexpr uint8_t KEY_IS_NO_LONGER_USED                    = 3;
+                constexpr uint8_t USER_ID_INFORMATION_IS_NO_LONGER_VALID   = 32;
 
                 const std::map <uint8_t, std::string> NAME = {
                     std::make_pair(NO_REASON_SPECIFIED,                    "No reason specified"),
@@ -107,6 +107,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub29> Ptr;

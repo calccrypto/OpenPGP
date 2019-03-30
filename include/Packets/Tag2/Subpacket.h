@@ -97,33 +97,33 @@ namespace OpenPGP {
             //    polite manner to respect the wishes of those users who do implement
             //    these preferences.
 
-            const uint8_t SIGNATURE_CREATION_TIME                               = 2;
-            const uint8_t SIGNATURE_EXPIRATION_TIME                             = 3;
-            const uint8_t EXPORTABLE_CERTIFICATION                              = 4;
-            const uint8_t TRUST_SIGNATURE                                       = 5;
-            const uint8_t REGULAR_EXPRESSION                                    = 6;
-            const uint8_t REVOCABLE                                             = 7;
-            const uint8_t KEY_EXPIRATION_TIME                                   = 9;
-            const uint8_t PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY                = 10;
-            const uint8_t PREFERRED_SYMMETRIC_ALGORITHMS                        = 11;
-            const uint8_t REVOCATION_KEY                                        = 12;
-            const uint8_t ISSUER                                                = 16;
-            const uint8_t NOTATION_DATA                                         = 20;
-            const uint8_t PREFERRED_HASH_ALGORITHMS                             = 21;
-            const uint8_t PREFERRED_COMPRESSION_ALGORITHMS                      = 22;
-            const uint8_t KEY_SERVER_PREFERENCES                                = 23;
-            const uint8_t PREFERRED_KEY_SERVER                                  = 24;
-            const uint8_t PRIMARY_USER_ID                                       = 25;
-            const uint8_t POLICY_URI                                            = 26;
-            const uint8_t KEY_FLAGS                                             = 27;
-            const uint8_t SIGNERS_USER_ID                                       = 28;
-            const uint8_t REASON_FOR_REVOCATION                                 = 29;
-            const uint8_t FEATURES                                              = 30;
-            const uint8_t SIGNATURE_TARGET                                      = 31;
-            const uint8_t EMBEDDED_SIGNATURE                                    = 32;
+            constexpr uint8_t SIGNATURE_CREATION_TIME                           = 2;
+            constexpr uint8_t SIGNATURE_EXPIRATION_TIME                         = 3;
+            constexpr uint8_t EXPORTABLE_CERTIFICATION                          = 4;
+            constexpr uint8_t TRUST_SIGNATURE                                   = 5;
+            constexpr uint8_t REGULAR_EXPRESSION                                = 6;
+            constexpr uint8_t REVOCABLE                                         = 7;
+            constexpr uint8_t KEY_EXPIRATION_TIME                               = 9;
+            constexpr uint8_t PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY            = 10;
+            constexpr uint8_t PREFERRED_SYMMETRIC_ALGORITHMS                    = 11;
+            constexpr uint8_t REVOCATION_KEY                                    = 12;
+            constexpr uint8_t ISSUER                                            = 16;
+            constexpr uint8_t NOTATION_DATA                                     = 20;
+            constexpr uint8_t PREFERRED_HASH_ALGORITHMS                         = 21;
+            constexpr uint8_t PREFERRED_COMPRESSION_ALGORITHMS                  = 22;
+            constexpr uint8_t KEY_SERVER_PREFERENCES                            = 23;
+            constexpr uint8_t PREFERRED_KEY_SERVER                              = 24;
+            constexpr uint8_t PRIMARY_USER_ID                                   = 25;
+            constexpr uint8_t POLICY_URI                                        = 26;
+            constexpr uint8_t KEY_FLAGS                                         = 27;
+            constexpr uint8_t SIGNERS_USER_ID                                   = 28;
+            constexpr uint8_t REASON_FOR_REVOCATION                             = 29;
+            constexpr uint8_t FEATURES                                          = 30;
+            constexpr uint8_t SIGNATURE_TARGET                                  = 31;
+            constexpr uint8_t EMBEDDED_SIGNATURE                                = 32;
 
             #ifdef GPG_COMPATIBLE
-            const uint8_t ISSUER_FINGERPRINT                                    = 33;
+            constexpr uint8_t ISSUER_FINGERPRINT                                = 33;
             #endif
 
             const std::map <uint8_t, std::string> NAME = {

@@ -48,3 +48,13 @@ TEST(HumanReadable, up_down) {
     // try to go past root
     EXPECT_EQ(hr.up(), 0);
 }
+
+TEST(HumanReadable, print_to_stream) {
+    HumanReadable hr(0, 0);
+    hr << "" << "";
+
+    std::stringstream s;
+    s << hr;
+
+    EXPECT_EQ(s.str(), "\n\n");
+}

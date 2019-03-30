@@ -14,6 +14,10 @@ void Sub9::show_contents(HumanReadable & hr) const {
     hr << "Key Expiration Time: " + (dt?(show_dt(dt) + " after key creation"):"Never");
 }
 
+Status Sub9::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub9::Sub9()
     : Sub(KEY_EXPIRATION_TIME, 4),
       dt()

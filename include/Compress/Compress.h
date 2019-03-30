@@ -49,10 +49,10 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Compression {
         namespace ID {
-            const uint8_t UNCOMPRESSED          = 0;
-            const uint8_t ZIP                   = 1;
-            const uint8_t ZLIB                  = 2;
-            const uint8_t BZIP2                 = 3;
+            constexpr uint8_t UNCOMPRESSED      = 0;
+            constexpr uint8_t ZIP               = 1;
+            constexpr uint8_t ZLIB              = 2;
+            constexpr uint8_t BZIP2             = 3;
         }
 
         const std::map <uint8_t, std::string> NAME = {

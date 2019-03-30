@@ -17,6 +17,10 @@ Sub26::Sub26()
       uri()
 {}
 
+Status Sub26::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub26::Sub26(const std::string & data)
     : Sub26()
 {

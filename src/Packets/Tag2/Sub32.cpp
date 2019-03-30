@@ -14,6 +14,15 @@ void Sub32::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub32::actual_valid(const bool check_mpi) const {
+    if (!embedded                     ||
+        !embedded -> valid(check_mpi)) {
+        return Status::INVALID_CONTENTS;
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub32::Sub32()
     : Sub(EMBEDDED_SIGNATURE),
       embedded(nullptr)

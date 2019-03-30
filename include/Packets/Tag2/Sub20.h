@@ -76,8 +76,8 @@ namespace OpenPGP {
             //    specific notation and not to notations in general.
 
             namespace Notation {
-                const uint8_t UNDEFINED      = 0x00;
-                const uint8_t HUMAN_READABLE = 0x80;
+                constexpr uint8_t UNDEFINED      = 0x00;
+                constexpr uint8_t HUMAN_READABLE = 0x80;
 
                 // Notation on signature issuer wishes to make
                 const std::map <uint8_t, std::string> NAME = {
@@ -93,6 +93,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub20> Ptr;

@@ -26,6 +26,15 @@ void Sub20::show_contents(HumanReadable & hr) const {
     hr << "Value: " + n;
 }
 
+Status Sub20::actual_valid(const bool) const {
+    for(char const & f : flags) {
+        if (Notation::NAME.find(f) == Notation::NAME.end()) {
+            return Status::INVALID_FLAG;
+        }
+    }
+    return Status::SUCCESS;
+}
+
 Sub20::Sub20()
     : Sub(NOTATION_DATA),
       flags(),

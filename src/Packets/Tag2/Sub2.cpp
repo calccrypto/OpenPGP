@@ -14,6 +14,10 @@ void Sub2::show_contents(HumanReadable & hr) const {
     hr << "Creation Time: " + show_time(timestamp);
 }
 
+Status Sub2::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub2::Sub2()
     : Sub(SIGNATURE_CREATION_TIME, 4),
       timestamp()

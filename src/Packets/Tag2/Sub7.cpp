@@ -14,6 +14,10 @@ void Sub7::show_contents(HumanReadable & hr) const {
     hr << std::string("Revocable: ") + (revocable?"True":"False");
 }
 
+Status Sub7::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub7::Sub7()
     : Sub(REVOCABLE, 1),
       revocable()

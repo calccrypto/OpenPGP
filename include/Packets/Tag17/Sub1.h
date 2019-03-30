@@ -64,7 +64,7 @@ namespace OpenPGP {
             //    is not recognized.
 
             namespace Image_Attributes {
-                const uint8_t JPEG = 1;
+                constexpr uint8_t JPEG = 1;
 
                 const std::map <uint8_t, std::string> NAME = {
                     std::make_pair(JPEG, "JPEG"),
@@ -93,6 +93,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub1> Ptr;

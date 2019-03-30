@@ -14,6 +14,15 @@ void Sub22::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub22::actual_valid(const bool) const {
+    for(char const & c : pca) {
+        if (Compression::NAME.find(c) == Compression::NAME.end()) {
+            return Status::INVALID_COMPRESSION_ALGORITHM;
+        }
+    }
+    return Status::SUCCESS;
+}
+
 Sub22::Sub22()
     : Sub(PREFERRED_COMPRESSION_ALGORITHMS),
       pca()

@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 #include "common/HumanReadable.h"
 #include "common/includes.h"
+#include "common/Status.h"
 
 namespace OpenPGP {
     namespace Subpacket {
@@ -93,7 +94,10 @@ namespace OpenPGP {
 
         class Sub {
             protected:
-                bool critical;
+                static constexpr uint8_t NOT_CRITICAL = 0x00;
+                static constexpr uint8_t CRITICAL     = 0x80;
+
+                uint8_t critical;
                 uint8_t type;
                 std::size_t size; // only used for displaying. recalculated when writing
 
@@ -108,6 +112,7 @@ namespace OpenPGP {
                 virtual void        show_contents(HumanReadable & hr) const = 0; // defined by actual subpacket; should return at same level as entered
 
                 std::string write_subpacket(const std::string & data) const;
+                virtual Status actual_valid(const bool check_mpi) const;
 
                 Sub(uint8_t type = 0, unsigned int size = 0, bool crit = false);
 
@@ -130,6 +135,8 @@ namespace OpenPGP {
                 void set_critical(const bool c);
                 void set_type(const uint8_t t);
                 void set_size(const std::size_t s);
+
+                Status valid(const bool check_mpi = false) const;
         };
     }
 }

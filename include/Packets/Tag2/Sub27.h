@@ -81,13 +81,13 @@ namespace OpenPGP {
             //    key the flag applies to.
 
             namespace Key_Flags {
-                const uint8_t CERTIFY_OTHER_KEYS                         = 0x01;
-                const uint8_t SIGN_DATA                                  = 0x02;
-                const uint8_t ENCRYPT_COMMUNICATIONS                     = 0x04;
-                const uint8_t ENCRYPT_STORAGE                            = 0x08;
-                const uint8_t PRIVATE_COMPONENT_SPLIT                    = 0x10;
-                const uint8_t AUTHENTICATION                             = 0x20;
-                const uint8_t PRIVATE_COMPONENT_MULTIPLE_POSESSION       = 0x80;
+                constexpr uint8_t CERTIFY_OTHER_KEYS                     = 0x01;
+                constexpr uint8_t SIGN_DATA                              = 0x02;
+                constexpr uint8_t ENCRYPT_COMMUNICATIONS                 = 0x04;
+                constexpr uint8_t ENCRYPT_STORAGE                        = 0x08;
+                constexpr uint8_t PRIVATE_COMPONENT_SPLIT                = 0x10;
+                constexpr uint8_t AUTHENTICATION                         = 0x20;
+                constexpr uint8_t PRIVATE_COMPONENT_MULTIPLE_POSESSION   = 0x80;
 
                 const std::map <uint8_t, std::string> NAME = {
                     std::make_pair(CERTIFY_OTHER_KEYS,                   "This key may be used to certify other keys"),
@@ -106,6 +106,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub27> Ptr;

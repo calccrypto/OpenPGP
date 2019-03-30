@@ -61,6 +61,7 @@ namespace OpenPGP {
                     std::string fingerprint; // 20 octets
 
                     void actual_read(const std::string & data);
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub12> Ptr;

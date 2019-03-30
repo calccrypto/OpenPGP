@@ -47,8 +47,8 @@ namespace OpenPGP {
             //    This is found only on a self-signature.
 
             namespace Key_Server_Preferences {
-                const uint8_t UNDEFINED = 0x00;
-                const uint8_t NO_MODIFY = 0x80;
+                constexpr uint8_t UNDEFINED = 0x00;
+                constexpr uint8_t NO_MODIFY = 0x80;
 
                 const std::map <uint8_t, std::string> NAME = {
                     std::make_pair(UNDEFINED, ""),
@@ -62,6 +62,7 @@ namespace OpenPGP {
 
                     void actual_read(const std::string & data);
                     void show_contents(HumanReadable & hr) const;
+                    Status actual_valid(const bool check_mpi) const;
 
                 public:
                     typedef std::shared_ptr <Sub23> Ptr;

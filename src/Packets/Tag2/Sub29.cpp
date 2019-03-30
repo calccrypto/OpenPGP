@@ -18,6 +18,13 @@ void Sub29::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub29::actual_valid(const bool) const {
+    if (Revoke::NAME.find(code) == Revoke::NAME.end()) {
+        return Status::INVALID_REASON_FOR_REVOCATION;
+    }
+    return Status::SUCCESS;
+}
+
 bool Revoke::is_key_revocation(const uint8_t code) {
     return code <= KEY_IS_NO_LONGER_USED;
 }

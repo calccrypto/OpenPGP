@@ -65,25 +65,25 @@ namespace OpenPGP {
         //       19       -- Modification Detection Code Packet
         //       60 to 63 -- Private or Experimental Values
 
-        const uint8_t RESERVED                                     = 0;
-        const uint8_t PUBLIC_KEY_ENCRYPTED_SESSION_KEY             = 1;
-        const uint8_t SIGNATURE                                    = 2;
-        const uint8_t SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY          = 3;
-        const uint8_t ONE_PASS_SIGNATURE                           = 4;
-        const uint8_t SECRET_KEY                                   = 5;
-        const uint8_t PUBLIC_KEY                                   = 6;
-        const uint8_t SECRET_SUBKEY                                = 7;
-        const uint8_t COMPRESSED_DATA                              = 8;
-        const uint8_t SYMMETRICALLY_ENCRYPTED_DATA                 = 9;
-        const uint8_t MARKER_PACKET                                = 10;
-        const uint8_t LITERAL_DATA                                 = 11;
-        const uint8_t TRUST                                        = 12;
-        const uint8_t USER_ID                                      = 13;
-        const uint8_t PUBLIC_SUBKEY                                = 14;
-        const uint8_t USER_ATTRIBUTE                               = 17;
-        const uint8_t SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA       = 18;
-        const uint8_t MODIFICATION_DETECTION_CODE                  = 19;
-        const uint8_t UNKNOWN                                      = 255; // not part of standard
+        constexpr uint8_t RESERVED                                 = 0;
+        constexpr uint8_t PUBLIC_KEY_ENCRYPTED_SESSION_KEY         = 1;
+        constexpr uint8_t SIGNATURE                                = 2;
+        constexpr uint8_t SYMMETRIC_KEY_ENCRYPTED_SESSION_KEY      = 3;
+        constexpr uint8_t ONE_PASS_SIGNATURE                       = 4;
+        constexpr uint8_t SECRET_KEY                               = 5;
+        constexpr uint8_t PUBLIC_KEY                               = 6;
+        constexpr uint8_t SECRET_SUBKEY                            = 7;
+        constexpr uint8_t COMPRESSED_DATA                          = 8;
+        constexpr uint8_t SYMMETRICALLY_ENCRYPTED_DATA             = 9;
+        constexpr uint8_t MARKER_PACKET                            = 10;
+        constexpr uint8_t LITERAL_DATA                             = 11;
+        constexpr uint8_t TRUST                                    = 12;
+        constexpr uint8_t USER_ID                                  = 13;
+        constexpr uint8_t PUBLIC_SUBKEY                            = 14;
+        constexpr uint8_t USER_ATTRIBUTE                           = 17;
+        constexpr uint8_t SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA   = 18;
+        constexpr uint8_t MODIFICATION_DETECTION_CODE              = 19;
+        constexpr uint8_t UNKNOWN                                  = 255; // not part of standard
 
         const std::map <uint8_t, std::string> NAME = {
             std::make_pair(RESERVED,                               "Reserved - a packet tag MUST NOT have this value"),

@@ -34,7 +34,7 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Subpacket {
         namespace Tag17 {
-            const uint8_t IMAGE_ATTRIBUTE = 1;
+            constexpr uint8_t IMAGE_ATTRIBUTE = 1;
 
             const std::map <uint8_t, std::string> NAME = {
                 std::make_pair(IMAGE_ATTRIBUTE, "Image Attribute"),

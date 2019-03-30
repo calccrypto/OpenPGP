@@ -18,6 +18,22 @@ void Sub12::show_contents(HumanReadable & hr) const {
        << std::string("Fingerprint: ") + fingerprint;
 }
 
+Status Sub12::actual_valid(const bool) const {
+    if (!(_class & 0x80)) {
+        return Status::INVALID;
+    }
+
+    if (PKA::NAME.find(pka) == PKA::NAME.end()) {
+        return Status::INVALID_PUBLIC_KEY_ALGORITHM;
+    }
+
+    if (fingerprint.size() != 20) {
+        return Status::INVALID_FINGERPRINT;
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub12::Sub12()
     : Sub(REVOCATION_KEY),
       _class(),

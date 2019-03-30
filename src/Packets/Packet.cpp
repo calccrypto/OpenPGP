@@ -73,7 +73,7 @@ std::string Tag::actual_write() const {
 }
 
 Status Tag::actual_valid(const bool) const {
-    return INVALID_TAG;
+    return INVALID;
 }
 
 Tag::Tag(const uint8_t t)

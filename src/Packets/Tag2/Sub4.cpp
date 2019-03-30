@@ -14,6 +14,10 @@ void Sub4::show_contents(HumanReadable & hr) const {
     hr << std::string("Exportable: ") + (exportable?"True":"False");
 }
 
+Status Sub4::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub4::Sub4()
     : Sub(EXPORTABLE_CERTIFICATION, 1),
       exportable()

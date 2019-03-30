@@ -12,6 +12,14 @@ void Sub16::show_contents(HumanReadable & hr) const {
     hr << "Key ID: " + hexlify(keyid);
 }
 
+Status Sub16::actual_valid(const bool) const {
+    if (keyid.size() != 8) {
+        return Status::INVALID_LENGTH;
+    }
+
+    return Status::SUCCESS;
+}
+
 Sub16::Sub16()
     : Sub(ISSUER, 8),
       keyid()

@@ -62,9 +62,9 @@ namespace OpenPGP {
         //    These are described in Sections 3.7.1.1 - 3.7.1.3.
 
         namespace ID {
-            const uint8_t SIMPLE_S2K              = 0;
-            const uint8_t SALTED_S2K              = 1;
-            const uint8_t ITERATED_AND_SALTED_S2K = 3;
+            constexpr uint8_t SIMPLE_S2K                        = 0;
+            constexpr uint8_t SALTED_S2K                        = 1;
+            constexpr uint8_t ITERATED_AND_SALTED_S2K           = 3;
         }
 
         const std::map <uint8_t, std::string> NAME = {

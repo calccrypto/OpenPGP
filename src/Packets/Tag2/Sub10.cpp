@@ -12,6 +12,10 @@ void Sub10::show_contents(HumanReadable & hr) const {
     hr << stuff;
 }
 
+Status Sub10::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Sub10::Sub10()
     : Sub(PLACEHOLDER_FOR_BACKWARD_COMPATIBILITY),
       stuff()

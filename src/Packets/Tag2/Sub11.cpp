@@ -14,6 +14,15 @@ void Sub11::show_contents(HumanReadable & hr) const {
     }
 }
 
+Status Sub11::actual_valid(const bool) const {
+    for(char const & c : psa) {
+        if (Sym::NAME.find(c) == Sym::NAME.end()) {
+            return Status::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
+        }
+    }
+    return Status::SUCCESS;
+}
+
 Sub11::Sub11()
     : Sub(PREFERRED_SYMMETRIC_ALGORITHMS),
       psa()
