@@ -23,12 +23,12 @@ std::string Tag9::actual_write() const {
     return Partial::write(header_format, tag, raw());
 }
 
-Error Tag9::actual_valid(const bool) const {
+Status Tag9::actual_valid(const bool) const {
     if (encrypted_data.size() < 2) {
-        return Error::INVALID_LENGTH;
+        return Status::INVALID_LENGTH;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag9::Tag9(const PartialBodyLength &part)

@@ -61,7 +61,8 @@ class HumanReadable {
 
         HumanReadable & operator<<(const std::string & str);
         HumanReadable & operator<<(const Move dir);
-
 };
+
+std::ostream & operator<<(std::ostream & stream, const HumanReadable & hr);
 
 #endif

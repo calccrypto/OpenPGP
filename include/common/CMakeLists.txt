@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.6.0)
 
 install(FILES
-    Error.h
     HumanReadable.h
+    Status.h
     compiler.h
     cryptomath.h
     includes.h

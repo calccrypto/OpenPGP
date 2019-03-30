@@ -183,30 +183,30 @@ std::string Tag5::actual_raw() const {
     return out + secret;
 }
 
-Error Tag5::actual_valid(const bool check_mpi) const {
-    Error valid_public = Tag6::actual_valid(check_mpi);
-    if (valid_public != Error::SUCCESS) {
+Status Tag5::actual_valid(const bool check_mpi) const {
+    Status valid_public = Tag6::actual_valid(check_mpi);
+    if (valid_public != Status::SUCCESS) {
         return valid_public;
     }
 
     if ((s2k_con == 254) || (s2k_con == 255)) {
         if (!s2k) {
-            return Error::MISSING_S2K;
+            return Status::MISSING_S2K;
         }
     }
     else if (s2k_con != 0) {
         if (!Sym::valid(sym)) {
-            return Error::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
+            return Status::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
         }
     }
 
     if (s2k_con) {
        if (IV.size() != (Sym::BLOCK_LENGTH.at(sym) >> 3)) {
-            return Error::INVALID_LENGTH;
+            return Status::INVALID_LENGTH;
         }
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag5::Tag5(const uint8_t tag)

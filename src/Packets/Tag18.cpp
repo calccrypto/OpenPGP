@@ -26,12 +26,12 @@ std::string Tag18::actual_write() const {
     return Partial::write(header_format, tag, raw());
 }
 
-Error Tag18::actual_valid(const bool) const {
+Status Tag18::actual_valid(const bool) const {
     if (version != 1) {
-        return Error::INVALID_VERSION;
+        return Status::INVALID_VERSION;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag18::Tag18(const PartialBodyLength & part)

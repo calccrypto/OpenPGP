@@ -31,8 +31,8 @@ THE SOFTWARE.
 #include <string>
 
 #include "Packets/PartialBodyLengthEnums.h"
-#include "common/Error.h"
 #include "common/HumanReadable.h"
+#include "common/Status.h"
 #include "common/includes.h"
 
 namespace OpenPGP {
@@ -144,7 +144,7 @@ namespace OpenPGP {
 
                 virtual std::string actual_raw() const;
                 virtual std::string actual_write() const;
-                virtual Error actual_valid(const bool check_mpi) const;
+                virtual Status actual_valid(const bool check_mpi) const;
 
                 Tag(const uint8_t t);
                 Tag(const uint8_t t, const uint8_t ver);
@@ -173,7 +173,7 @@ namespace OpenPGP {
                 void set_version(const uint8_t v);
                 void set_size(const std::size_t s);
 
-                Error valid(const bool check_mpi = false) const;
+                Status valid(const bool check_mpi = false) const;
 
                 virtual Ptr clone() const = 0;
         };

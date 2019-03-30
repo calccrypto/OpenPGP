@@ -34,21 +34,21 @@ std::string Tag1::actual_raw() const {
     return out;
 }
 
-Error Tag1::actual_valid(const bool check_mpi) const {
+Status Tag1::actual_valid(const bool check_mpi) const {
     if (version != 3) {
-        return Error::INVALID_VERSION;
+        return Status::INVALID_VERSION;
     }
 
     if (keyid.size() != 8) {
-        return Error::INVALID_LENGTH;
+        return Status::INVALID_LENGTH;
     }
 
     if (!PKA::valid(pka)) {
-        return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+        return Status::INVALID_PUBLIC_KEY_ALGORITHM;
     }
 
     if (!PKA::can_encrypt(pka)) {
-        return Error::PKA_CANNOT_BE_USED;
+        return Status::PKA_CANNOT_BE_USED;
     }
 
     if (check_mpi) {
@@ -71,11 +71,11 @@ Error Tag1::actual_valid(const bool check_mpi) const {
         }
 
         if (!valid_mpi) {
-            return Error::INVALID_MPI_COUNT;
+            return Status::INVALID_MPI_COUNT;
         }
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag1::Tag1()

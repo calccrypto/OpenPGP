@@ -90,16 +90,16 @@ std::string S2K0::run(const std::string & pass, const std::size_t sym_key_len) c
     return out.substr(0, sym_key_len);
 }
 
-Error S2K0::valid() const {
+Status S2K0::valid() const {
     if (type != ID::SIMPLE_S2K) {
-        return Error::WRONG_S2K_TYPE;
+        return Status::WRONG_S2K_TYPE;
     }
 
     if (!Hash::valid(hash)) {
-        return Error::INVALID_HASH_ALGORITHM;
+        return Status::INVALID_HASH_ALGORITHM;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 S2K::Ptr S2K0::clone() const {
@@ -159,20 +159,20 @@ void S2K1::set_salt(const std::string & s) {
     salt = s;
 }
 
-Error S2K1::valid() const {
+Status S2K1::valid() const {
     if (type != ID::SALTED_S2K) {
-        return Error::WRONG_S2K_TYPE;
+        return Status::WRONG_S2K_TYPE;
     }
 
     if (!Hash::valid(hash)) {
-        return Error::INVALID_HASH_ALGORITHM;
+        return Status::INVALID_HASH_ALGORITHM;
     }
 
     if (salt.size() != 8) {
-        return Error::INVALID_LENGTH;
+        return Status::INVALID_LENGTH;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 S2K::Ptr S2K1::clone() const {
@@ -246,20 +246,20 @@ void S2K3::set_count(const uint8_t c) {
     count = c;
 }
 
-Error S2K3::valid() const {
+Status S2K3::valid() const {
     if (type != ID::ITERATED_AND_SALTED_S2K) {
-        return Error::WRONG_S2K_TYPE;
+        return Status::WRONG_S2K_TYPE;
     }
 
     if (!Hash::valid(hash)) {
-        return Error::INVALID_HASH_ALGORITHM;
+        return Status::INVALID_HASH_ALGORITHM;
     }
 
     if (salt.size() != 8) {
-        return Error::INVALID_LENGTH;
+        return Status::INVALID_LENGTH;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 S2K::Ptr S2K3::clone() const {

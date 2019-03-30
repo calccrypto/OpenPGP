@@ -40,15 +40,15 @@ std::string Tag17::actual_raw() const {
     return out;
 }
 
-Error Tag17::actual_valid(const bool) const {
+Status Tag17::actual_valid(const bool) const {
     // for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
-    //     Error err = s -> valid();
-    //     if (err != Error::SUCCESS) {
+    //     Status err = s -> valid();
+    //     if (err != Status::SUCCESS) {
     //         return err;
     //     }
     // }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag17::Tag17()

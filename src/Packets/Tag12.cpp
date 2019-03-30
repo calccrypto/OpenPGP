@@ -15,8 +15,8 @@ std::string Tag12::actual_raw() const {
     return trust;
 }
 
-Error Tag12::actual_valid(const bool) const {
-    return Error::SHOULD_NOT_BE_EMITTED;
+Status Tag12::actual_valid(const bool) const {
+    return Status::SHOULD_NOT_BE_EMITTED;
 }
 
 Tag12::Tag12()

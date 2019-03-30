@@ -15,8 +15,8 @@ std::string Tag13::actual_raw() const {
     return contents;
 }
 
-Error Tag13::actual_valid(const bool) const {
-    return Error::SUCCESS;
+Status Tag13::actual_valid(const bool) const {
+    return Status::SUCCESS;
 }
 
 Tag13::Tag13()

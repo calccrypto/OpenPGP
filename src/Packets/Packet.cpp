@@ -72,7 +72,7 @@ std::string Tag::actual_write() const {
     return write_old_length(tag, data, Packet::NOT_PARTIAL);
 }
 
-Error Tag::actual_valid(const bool) const {
+Status Tag::actual_valid(const bool) const {
     return INVALID_TAG;
 }
 
@@ -159,7 +159,7 @@ void Tag::set_size(const std::size_t s) {
     size = s;
 }
 
-Error Tag::valid(const bool check_mpi) const {
+Status Tag::valid(const bool check_mpi) const {
     return actual_valid(check_mpi);
 }
 

@@ -65,3 +65,7 @@ HumanReadable & HumanReadable::operator<<(const Move dir) {
     }
     return *this;
 }
+
+std::ostream & operator<<(std::ostream & stream, const HumanReadable & hr) {
+    return stream << hr.get();
+}

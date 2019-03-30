@@ -45,12 +45,12 @@ std::string Tag8::actual_write() const {
     return Partial::write(header_format, tag, raw());
 }
 
-Error Tag8::actual_valid(const bool) const {
+Status Tag8::actual_valid(const bool) const {
     if (!Compression::valid(comp)) {
-        return Error::INVALID_COMPRESSION_ALGORITHM;
+        return Status::INVALID_COMPRESSION_ALGORITHM;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag8::Tag8(const PartialBodyLength & part)

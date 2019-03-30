@@ -146,7 +146,7 @@ namespace OpenPGP {
                 void show_private(HumanReadable & hr) const;
                 void show_contents(HumanReadable & hr) const;
                 std::string actual_raw() const;
-                Error actual_valid(const bool check_mpi = false) const;
+                Status actual_valid(const bool check_mpi = false) const;
 
                 Tag5(const uint8_t tag);
 

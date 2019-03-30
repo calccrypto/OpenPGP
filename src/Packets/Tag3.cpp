@@ -52,17 +52,17 @@ std::string Tag3::actual_raw() const {
     return std::string(1, version) + std::string(1, sym) + (s2k?s2k -> write():"") + (esk?*esk:"");
 }
 
-Error Tag3::actual_valid(const bool) const {
+Status Tag3::actual_valid(const bool) const {
     if (version != 4) {
-        return Error::INVALID_VERSION;
+        return Status::INVALID_VERSION;
     }
 
     if (!Sym::valid(sym)) {
-        return Error::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
+        return Status::INVALID_SYMMETRIC_ENCRYPTION_ALGORITHM;
     }
 
     if (!s2k) {
-        return Error::MISSING_S2K;
+        return Status::MISSING_S2K;
     }
 
     return s2k->valid();

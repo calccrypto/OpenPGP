@@ -139,7 +139,7 @@ namespace OpenPGP {
                 void show_contents(HumanReadable & hr) const;
                 std::string actual_raw() const;
                 std::string actual_write() const;
-                Error actual_valid(const bool check_mpi) const;
+                Status actual_valid(const bool check_mpi) const;
 
             public:
                 typedef std::shared_ptr <Packet::Tag18> Ptr;

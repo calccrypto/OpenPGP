@@ -284,45 +284,45 @@ std::string Tag2::actual_raw() const {
     return out;
 }
 
-Error Tag2::actual_valid(const bool check_mpi) const {
+Status Tag2::actual_valid(const bool check_mpi) const {
     if ((version != 3) && (version != 4)) {
-        return Error::INVALID_VERSION;
+        return Status::INVALID_VERSION;
     }
 
     if (!Signature_Type::valid(type)) {
-        return Error::INVALID_SIGNATURE_TYPE;
+        return Status::INVALID_SIGNATURE_TYPE;
     }
 
     if (!PKA::valid(pka)) {
-        return Error::INVALID_PUBLIC_KEY_ALGORITHM;
+        return Status::INVALID_PUBLIC_KEY_ALGORITHM;
     }
 
     if (!PKA::can_sign(pka)) {
-        return Error::PKA_CANNOT_BE_USED;
+        return Status::PKA_CANNOT_BE_USED;
     }
 
     if (!Hash::valid(hash)) {
-        return Error::INVALID_HASH_ALGORITHM;
+        return Status::INVALID_HASH_ALGORITHM;
     }
 
     if (version == 4) {
         // for(Subpacket::Tag2::Sub::Ptr const & sub : hashed_subpackets) {
-        //     const Error err = sub -> valid();
-        //     if (err != Error::SUCCESS) {
+        //     const Status err = sub -> valid();
+        //     if (err != Status::SUCCESS) {
         //         return err;
         //     }
         // }
 
         // for(Subpacket::Tag2::Sub::Ptr const & sub : unhashed_subpackets) {
-        //     const Error err = sub -> valid();
-        //     if (err != Error::SUCCESS) {
+        //     const Status err = sub -> valid();
+        //     if (err != Status::SUCCESS) {
         //         return err;
         //     }
         // }
     }
 
     if (left16.size() != 2) {
-        return Error::INVALID_LEFT16_BITS;
+        return Status::INVALID_LEFT16_BITS;
     }
 
     if (check_mpi) {
@@ -346,11 +346,11 @@ Error Tag2::actual_valid(const bool check_mpi) const {
         }
 
         if (!valid_mpi) {
-            return Error::INVALID_MPI_COUNT;
+            return Status::INVALID_MPI_COUNT;
         }
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag2::Tag2()

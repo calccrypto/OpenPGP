@@ -16,12 +16,12 @@ std::string Tag19::actual_raw() const {
     return hash;
 }
 
-Error Tag19::actual_valid(const bool) const {
+Status Tag19::actual_valid(const bool) const {
     if (hash.size() != (Hash::LENGTH.at(Hash::ID::SHA1) >> 3)) {
-        return Error::INVALID_SHA1_HASH;
+        return Status::INVALID_SHA1_HASH;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag19::Tag19()

@@ -43,12 +43,12 @@ std::string Tag11::actual_write() const {
     return Partial::write(header_format, tag, raw());
 }
 
-Error Tag11::actual_valid(const bool) const {
+Status Tag11::actual_valid(const bool) const {
     if (!Literal::valid(data_format)) {
-        return Error::INVALID_LITERAL_DATA_FORMAT;
+        return Status::INVALID_LITERAL_DATA_FORMAT;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag11::Tag11(const PartialBodyLength & part)

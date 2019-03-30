@@ -18,12 +18,12 @@ std::string Tag10::actual_raw() const {
     return pgp;
 }
 
-Error Tag10::actual_valid(const bool) const {
+Status Tag10::actual_valid(const bool) const {
     if (pgp != body) {
-        return Error::INVALID_TAG10;
+        return Status::INVALID_TAG10;
     }
 
-    return Error::SUCCESS;
+    return Status::SUCCESS;
 }
 
 Tag10::Tag10()

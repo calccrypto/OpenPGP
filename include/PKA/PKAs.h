@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "PKA/ElGamal.h"
 #include "PKA/PKA.h"
 #include "PKA/RSA.h"
-#include "common/Error.h"
+#include "common/Status.h"
 
 namespace OpenPGP {
     namespace PKA {
