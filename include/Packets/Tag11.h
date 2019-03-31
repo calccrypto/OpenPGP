@@ -109,7 +109,7 @@ namespace OpenPGP {
 
                 Tag11(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag11(const std::string & data);
-                std::string write() const;
+                std::string write(Status * status = nullptr, const bool check_mpi = false) const;
 
                 uint8_t get_data_format() const;
                 std::string get_filename() const;

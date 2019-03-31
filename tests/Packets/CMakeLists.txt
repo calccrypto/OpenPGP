@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.6.0)
 
 add_library(PacketTests OBJECT
-    Key.cpp
     Packet.cpp
     Partial.cpp
     Subpacket.cpp

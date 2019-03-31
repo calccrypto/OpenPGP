@@ -109,11 +109,11 @@ namespace OpenPGP {
 
             // Show the contents in a human readable format
             std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;   // quick print
-            virtual void show(HumanReadable & hr) const;                                                // buffer print
+            virtual void show(HumanReadable & hr) const;                                                // buffered print
 
             // Write data out
-            virtual std::string raw() const;                                                            // write packets only
-            virtual std::string write(const Armored armor = DEFAULT) const;
+            virtual std::string raw(Status * status = nullptr, const bool check_mpi = false) const;     // write packets only
+            virtual std::string write(const Armored armor = DEFAULT, Status * status = nullptr, const bool check_mpi = false) const;
 
             // Accessors
             bool get_armored()              const;

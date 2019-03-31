@@ -66,7 +66,11 @@ Tag11::Tag11(const std::string & data)
     read(data);
 }
 
-std::string Tag11::write() const {
+std::string Tag11::write(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return Partial::write(header_format, LITERAL_DATA, raw());
 }
 

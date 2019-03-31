@@ -51,29 +51,22 @@ bool can_have_partial_length (const uint8_t t) {
     return Partial::can_have_partial_length(t);
 }
 
-void Tag::actual_read(const std::string &, std::string::size_type &, const std::string::size_type &) {}
-
 std::string Tag::show_title() const {
-    return ((header_format == HeaderFormat::NEW)?std::string("New"):std::string("Old")) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
-}
+    static const std::map <HeaderFormat, std::string> HeaderFormatString = {
+        std::make_pair(HeaderFormat::NEW, "New"),
+        std::make_pair(HeaderFormat::OLD, "Old"),
+    };
 
-void Tag::show_contents(HumanReadable &) const {}
-
-std::string Tag::actual_raw() const {
-    return "";
+    return HeaderFormatString.at(header_format) + ": " + NAME.at(tag) + " (Tag " + std::to_string(tag) + ")";
 }
 
 std::string Tag::actual_write() const {
-    const std::string data = raw();
+    const std::string data = raw();             // assume validity already checked
     if ((header_format == HeaderFormat::NEW) || // specified new header
         (tag > 15)) {                           // tag > 15, so new header is required
         return write_new_length(tag, data, Packet::NOT_PARTIAL);
     }
     return write_old_length(tag, data, Packet::NOT_PARTIAL);
-}
-
-Status Tag::actual_valid(const bool) const {
-    return INVALID;
 }
 
 Tag::Tag(const uint8_t t)
@@ -93,24 +86,22 @@ Tag::Tag()
 
 Tag::~Tag() {}
 
-void Tag::read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+void Tag::read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length, const bool check_end) {
     // set size first, in case the size variable is needed during actual_read
     // the size won't change during actual_read, so there is no need to reset it after
     set_size(length);
     if (size) {
+        const std::string::size_type orig_pos = pos;
         actual_read(data, pos, length);
+        if (check_end && (pos != (orig_pos + length))) {
+            throw std::runtime_error("Bad read of Tag " + std::to_string(tag) + ": offset " + std::to_string(orig_pos) + " + " + std::to_string(length) + " octets; now at " + std::to_string(pos));
+        }
     }
 }
 
-void Tag::read(const std::string & data) {
+void Tag::read(const std::string & data, const bool check_end) {
     std::string::size_type pos = 0;
-    read(data, pos, data.size());
-}
-
-std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const {
-    HumanReadable hr(indent_size, indents);
-    show(hr);
-    return hr.get();
+    read(data, pos, data.size(), check_end);
 }
 
 void Tag::show(HumanReadable & hr) const {
@@ -119,12 +110,30 @@ void Tag::show(HumanReadable & hr) const {
     hr << HumanReadable::UP;
 }
 
-std::string Tag::raw() const {
+std::string Tag::show(const std::size_t indents, const std::size_t indent_size) const {
+    HumanReadable hr(indent_size, indents);
+    show(hr);
+    return hr.get();
+}
+
+std::string Tag::raw(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return actual_raw();
 }
 
-std::string Tag::write() const {
+std::string Tag::write(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return actual_write();
+}
+
+Status Tag::valid(const bool check_mpi) const {
+    return actual_valid(check_mpi);
 }
 
 uint8_t Tag::get_tag() const {
@@ -157,10 +166,6 @@ void Tag::set_version(const uint8_t v) {
 
 void Tag::set_size(const std::size_t s) {
     size = s;
-}
-
-Status Tag::valid(const bool check_mpi) const {
-    return actual_valid(check_mpi);
 }
 
 }

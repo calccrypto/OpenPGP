@@ -125,6 +125,7 @@ namespace OpenPGP {
                 void show(HumanReadable & hr) const;
                 virtual std::string raw() const;
                 std::string write() const;
+                Status valid(const bool check_mpi = false) const;
 
                 // Accessors
                 bool get_critical() const;
@@ -135,8 +136,6 @@ namespace OpenPGP {
                 void set_critical(const bool c);
                 void set_type(const uint8_t t);
                 void set_size(const std::size_t s);
-
-                Status valid(const bool check_mpi = false) const;
         };
     }
 }

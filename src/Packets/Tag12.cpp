@@ -5,6 +5,7 @@ namespace Packet {
 
 void Tag12::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
     set_trust(data.substr(pos, length));
+    pos += length;
 }
 
 void Tag12::show_contents(HumanReadable & hr) const {

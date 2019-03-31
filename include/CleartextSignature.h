@@ -84,7 +84,7 @@ namespace OpenPGP {
             void read(const std::string & data);
             void read(std::istream & stream);
             std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
-            std::string write() const;
+            std::string write(Status * status = nullptr, const bool check_mpi = false) const;
 
             PGP::Armor_Keys get_hash_armor_header() const;
             std::string get_message() const;

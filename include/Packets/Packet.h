@@ -135,16 +135,13 @@ namespace OpenPGP {
                 HeaderFormat header_format;
                 std::size_t size;             // This value is only correct when the Tag was generated with the read() function
 
-                // the public read() wraps actual_read()
-                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
-
-                // the functions that are called by the public show()
-                virtual std::string show_title() const;                        // virtual to allow for overriding for special cases
-                virtual void        show_contents(HumanReadable & hr) const;   // defined here to provide default; child class should override
-
-                virtual std::string actual_raw() const;
+                // the actual implementations of the public functions
+                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) = 0;
+                virtual std::string show_title() const;
+                virtual void show_contents(HumanReadable & hr) const = 0;
+                virtual std::string actual_raw() const = 0;
                 virtual std::string actual_write() const;
-                virtual Status actual_valid(const bool check_mpi) const;
+                virtual Status actual_valid(const bool check_mpi) const = 0;
 
                 Tag(const uint8_t t);
                 Tag(const uint8_t t, const uint8_t ver);
@@ -154,12 +151,13 @@ namespace OpenPGP {
 
                 Tag();
                 virtual ~Tag();
-                void read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
-                void read(const std::string & data);
-                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                void read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length, const bool check_end = true);
+                void read(const std::string & data, const bool check_end = true);
                 void show(HumanReadable & hr) const;
-                std::string raw() const;
-                virtual std::string write() const;
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
+                std::string raw(Status * status = nullptr, const bool check_mpi = false) const;
+                virtual std::string write(Status * status = nullptr, const bool check_mpi = false) const;
+                Status valid(const bool check_mpi = false) const;
 
                 // Accessors
                 uint8_t get_tag() const;
@@ -172,8 +170,6 @@ namespace OpenPGP {
                 void set_header_format(const HeaderFormat hf);
                 void set_version(const uint8_t v);
                 void set_size(const std::size_t s);
-
-                Status valid(const bool check_mpi = false) const;
 
                 virtual Ptr clone() const = 0;
         };

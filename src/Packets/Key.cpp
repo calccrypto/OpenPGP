@@ -18,8 +18,8 @@ Key::Key(const uint8_t tag)
       #endif
 {}
 
-void Key::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type &) {
-    read_common(data, pos);
+void Key::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
+    read_common(data, pos, length);
 }
 
 void Key::show_contents(HumanReadable & hr) const {
@@ -42,7 +42,7 @@ Key::Key(const std::string & data)
 
 Key::~Key() {}
 
-void Key::read_common(const std::string & data, std::string::size_type & pos) {
+void Key::read_common(const std::string & data, std::string::size_type & pos, const std::string::size_type &) {
     set_version(data[pos + 0]);
     set_time(toint(data.substr(pos + 1, 4), 256));
 
@@ -277,10 +277,6 @@ void Key::set_kdf_alg(const uint8_t a) {
     kdf_alg = a;
 }
 #endif
-
-Tag::Ptr Key::clone() const {
-    return std::make_shared <Key> (*this);
-}
 
 }
 }

@@ -5,6 +5,7 @@ namespace Packet {
 
 void Tag9::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
     set_encrypted_data(data.substr(pos, length));
+    pos += length;
 }
 
 std::string Tag9::show_title() const {
@@ -43,7 +44,11 @@ Tag9::Tag9(const std::string & data)
     read(data);
 }
 
-std::string Tag9::write() const {
+std::string Tag9::write(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return Partial::write(header_format, SYMMETRICALLY_ENCRYPTED_DATA, raw());
 }
 

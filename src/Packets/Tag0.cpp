@@ -5,6 +5,18 @@
 namespace OpenPGP {
 namespace Packet {
 
+void Tag0::actual_read(const std::string &, std::string::size_type &, const std::string::size_type &) {}
+
+void Tag0::show_contents(HumanReadable &) const {}
+
+std::string Tag0::actual_raw() const {
+    return "";
+}
+
+Status Tag0::actual_valid(const bool) const {
+    return Status::INVALID_TAG;
+}
+
 Tag0::Tag0(...)
     : Tag(RESERVED)
 {

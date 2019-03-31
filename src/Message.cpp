@@ -228,8 +228,12 @@ void Message::show(HumanReadable & hr) const {
     }
 }
 
-std::string Message::raw() const {
-    std::string out = PGP::raw();
+std::string Message::raw(Status * status, const bool check_mpi) const {
+    std::string out = PGP::raw(status, check_mpi);
+    if (status && (*status != Status::SUCCESS)) {
+        return "";
+    }
+
     if (comp) {                  // if compression was used; compress data
         comp -> set_data(out);
         out = comp -> write();
@@ -238,8 +242,11 @@ std::string Message::raw() const {
     return out;
 }
 
-std::string Message::write(const PGP::Armored armor) const {
-    std::string packet_string = raw();
+std::string Message::write(const PGP::Armored armor, Status * status, const bool check_mpi) const {
+    std::string packet_string = raw(status, check_mpi);
+    if (status && (*status != Status::SUCCESS)) {
+        return "";
+    }
 
     // put data into a Compressed Data Packet if compression is used
     if (comp) {

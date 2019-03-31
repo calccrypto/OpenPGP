@@ -332,8 +332,6 @@ void PGP::read(const std::string & data) {
 
 void PGP::read(std::istream & stream) {
 
-    // find armor header
-    //
     // 6.2. Forming ASCII Armor
     //     ...
     //     Note that all these Armor Header Lines are to consist of a complete
@@ -356,8 +354,8 @@ void PGP::read(std::istream & stream) {
     //
     //    Note that this example has extra indenting; an actual armored message
     //    would have no leading whitespace.
-    //
 
+    // find armor header
     std::string line;
     while (std::getline(stream, line)) {
         // get rid of trailing whitespace
@@ -491,19 +489,26 @@ void PGP::show(HumanReadable & hr) const {
     }
 }
 
-std::string PGP::raw() const {
+std::string PGP::raw(Status * status, const bool check_mpi) const {
     std::string out = "";
     for(Packet::Tag::Ptr const & p : packets) {
+        if (status && (*status = p -> valid(check_mpi)) != Status::SUCCESS) {
+            return "";
+        }
+
         out += p -> write();
     }
     return out;
 }
 
-std::string PGP::write(const PGP::Armored armor) const {
-    const std::string packet_string = raw();         // raw PGP data = binary, no ASCII headers
+std::string PGP::write(const PGP::Armored armor, Status * status, const bool check_mpi) const {
+    const std::string packet_string = raw(status, check_mpi);   // raw PGP data = binary, no ASCII headers
+    if (status && (*status != Status::SUCCESS)) {
+        return "";
+    }
 
-    if ((armor == Armored::NO)                   ||  // no armor
-        ((armor == Armored::DEFAULT) && !armored)) { // or use stored value, and stored value is no
+    if ((armor == Armored::NO)                    ||            // no armor
+        ((armor == Armored::DEFAULT) && !armored)) {            // or use stored value, and stored value is no
         return packet_string;
     }
 

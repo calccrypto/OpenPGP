@@ -14,11 +14,11 @@ static void TAG6_FILL(OpenPGP::Packet::Tag6 & tag6) {
     tag6.set_mpi(mpi);
 }
 
-#define TAG6_EQ(tag6)                                        \
-    EXPECT_EQ(tag6.get_version(), version);                  \
-    EXPECT_EQ(tag6.get_time(), timestamp);                   \
-    EXPECT_EQ(tag6.get_pka(), pka);                          \
-    EXPECT_EQ(tag6.get_mpi(), mpi);                          \
+#define TAG6_EQ(tag6)                       \
+    EXPECT_EQ(tag6.get_version(), version); \
+    EXPECT_EQ(tag6.get_time(), timestamp);  \
+    EXPECT_EQ(tag6.get_pka(), pka);         \
+    EXPECT_EQ(tag6.get_mpi(), mpi);         \
 
 TEST(Tag6, Constructor) {
     // Default constructor

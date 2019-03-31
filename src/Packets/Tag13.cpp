@@ -5,6 +5,7 @@ namespace Packet {
 
 void Tag13::actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length) {
     set_contents(data.substr(pos, length));
+    pos += length;
 }
 
 void Tag13::show_contents(HumanReadable & hr) const {

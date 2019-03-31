@@ -213,6 +213,16 @@ class FakeTag final : public OpenPGP::Packet::Tag {
     private:
         void actual_read(const std::string &, std::string::size_type &, const std::string::size_type &) {}
 
+        void show_contents(HumanReadable &) const {}
+
+        std::string actual_raw() const {
+            return "";
+        }
+
+        OpenPGP::Status actual_valid(const bool) const {
+            return OpenPGP::Status::INVALID;
+        }
+
     public:
         OpenPGP::Packet::Tag::Ptr clone() const {
             return std::make_shared <FakeTag> (*this);

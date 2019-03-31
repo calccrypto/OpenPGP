@@ -46,8 +46,7 @@ the OpenPGP Message Format.
 The purpose of this library is to help clear up the mess that
 is RFC 4880. It is extremely vague at best, and it took me
 a long time to figure out most of it. No one should have to go
-through that. However, knowing how PGP is structured is still
-good to know.
+through that.
 
 This library allows for the modification of PGP packets, such
 as providing incorrect checksums and public key values. That
@@ -119,8 +118,8 @@ to make differentiating PGP block types better in code:
 
 All these different types are able to read in any PGP data, but
 will cause problems when used. The `meaningful` function in these
-PGP objects is provided to make sure that the data contained is
-meaningful.
+PGP objects is provided to make sure that the packet sequence
+contained is meaningful.
 
 `CleartextSignature` does not inherit from PGP and cannot
 read non-Cleartext Signature data.

@@ -78,6 +78,10 @@ std::string Sub::write() const {
     return write_subpacket(std::string(1, type | critical) + raw());
 }
 
+Status Sub::valid(const bool check_mpi) const {
+    return actual_valid(check_mpi);
+}
+
 bool Sub::get_critical() const {
     return (critical == CRITICAL);
 }
@@ -101,11 +105,6 @@ void Sub::set_type(const uint8_t t) {
 void Sub::set_size(const std::size_t s) {
     size = s;
 }
-
-Status Sub::valid(const bool check_mpi) const {
-    return actual_valid(check_mpi);
-}
-
 
 }
 }

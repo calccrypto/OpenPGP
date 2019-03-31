@@ -88,7 +88,7 @@ namespace OpenPGP {
 
                 Tag8(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag8(const std::string & data);
-                std::string write() const;
+                std::string write(Status * status = nullptr, const bool check_mpi = false) const;
 
                 uint8_t get_comp() const;
                 std::string get_data() const;                           // get uncompressed data

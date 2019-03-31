@@ -34,7 +34,6 @@ namespace OpenPGP {
     namespace Packet {
 
         // For Tags 5, 6, 7, and 14
-        // Key is equivalent to Tag6 (but don't substitute Key for Tag6)
         class Key : public Tag {
             protected:
                 uint32_t time;
@@ -53,12 +52,11 @@ namespace OpenPGP {
 
                 Key(const uint8_t tag);
 
-                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
-                virtual void show_contents(HumanReadable & hr) const;
-
                 // read, show, and raw functions common to all keys tags
                 // can't overload normal versions because the inherited versions are needed
-                void read_common(const std::string & data, std::string::size_type & pos);
+                virtual void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
+                virtual void show_contents(HumanReadable & hr) const;
+                void read_common(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
                 void show_common(HumanReadable & hr) const;
                 std::string actual_raw() const;
 
@@ -92,8 +90,6 @@ namespace OpenPGP {
 
                 std::string get_fingerprint() const;    // binary
                 std::string get_keyid() const;          // binary
-
-                virtual Packet::Tag::Ptr clone() const;
         };
     }
 }

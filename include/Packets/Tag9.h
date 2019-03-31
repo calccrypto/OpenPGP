@@ -90,7 +90,7 @@ namespace OpenPGP {
 
                 Tag9(const PartialBodyLength &part = NOT_PARTIAL);
                 Tag9(const std::string & data);
-                std::string write() const;
+                std::string write(Status * status = nullptr, const bool check_mpi = false) const;
 
                 Tag::Ptr clone() const;
 

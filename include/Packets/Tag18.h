@@ -146,7 +146,7 @@ namespace OpenPGP {
 
                 Tag18(const PartialBodyLength & part = NOT_PARTIAL);
                 Tag18(const std::string & data);
-                std::string write() const;
+                std::string write(Status * status = nullptr, const bool check_mpi = false) const;
 
                 std::string get_protected_data() const;
 

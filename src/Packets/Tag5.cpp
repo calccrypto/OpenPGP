@@ -26,7 +26,7 @@ void Tag5::actual_read(const std::string & data, std::string::size_type & pos, c
     const std::string::size_type orig_pos = pos;
 
     // public data
-    read_common(data, pos);
+    read_common(data, pos, length);
 
     // S2K usage octet
     s2k_con = data[pos++];
@@ -266,13 +266,16 @@ std::string Tag5::get_secret() const {
 }
 
 Tag6 Tag5::get_public_obj() const {
-    Tag6 out(raw());
+    Tag6 out;
+    out.read(raw(), false);
     out.set_tag(PUBLIC_KEY);
     return out;
 }
 
 Tag6::Ptr Tag5::get_public_ptr() const {
-    return std::make_shared <Packet::Tag6> (raw());
+    Tag6::Ptr ptr = std::make_shared <Packet::Tag6> ();
+    ptr -> read(raw(), false);
+    return ptr;
 }
 
 void Tag5::set_s2k_con(const uint8_t c) {

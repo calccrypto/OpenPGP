@@ -46,7 +46,11 @@ Tag18::Tag18(const std::string & data)
     read(data);
 }
 
-std::string Tag18::write() const {
+std::string Tag18::write(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return Partial::write(header_format, SYM_ENCRYPTED_INTEGRITY_PROTECTED_DATA, raw());
 }
 

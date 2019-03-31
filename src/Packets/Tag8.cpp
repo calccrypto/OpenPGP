@@ -66,7 +66,11 @@ Tag8::Tag8(const std::string & data)
     read(data);
 }
 
-std::string Tag8::write() const {
+std::string Tag8::write(Status * status, const bool check_mpi) const {
+    if (status && ((*status = valid(check_mpi)) != Status::SUCCESS)) {
+        return "";
+    }
+
     return Partial::write(header_format, COMPRESSED_DATA, raw());
 }
 

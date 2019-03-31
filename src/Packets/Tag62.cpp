@@ -16,6 +16,10 @@ std::string Tag62::actual_raw() const {
     return stream;
 }
 
+Status Tag62::actual_valid(const bool) const {
+    return Status::SUCCESS;
+}
+
 Tag62::Tag62()
     : Tag62(std::string())
 {}

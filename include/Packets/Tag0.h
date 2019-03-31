@@ -31,6 +31,12 @@ THE SOFTWARE.
 namespace OpenPGP {
     namespace Packet {
         class Tag0 : public Tag {
+            private:
+                void actual_read(const std::string & data, std::string::size_type & pos, const std::string::size_type & length);
+                void show_contents(HumanReadable & hr) const;
+                std::string actual_raw() const;
+                Status actual_valid(const bool check_mpi) const;
+
             public:
                 typedef std::shared_ptr <Packet::Tag0> Ptr;
 
