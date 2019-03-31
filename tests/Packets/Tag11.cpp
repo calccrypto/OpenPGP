@@ -16,11 +16,12 @@ static void TAG11_FILL(OpenPGP::Packet::Tag11 & tag11, const uint8_t format) {
     tag11.set_literal(literal);
 }
 
-#define TAG11_EQ(tag11, format)                           \
-    EXPECT_EQ((tag11).get_data_format(), (format));       \
-    EXPECT_EQ((tag11).get_filename(), filename);          \
-    EXPECT_EQ((tag11).get_time(), timestamp);             \
-    EXPECT_EQ((tag11).get_literal(), literal);
+#define TAG11_EQ(tag11, format)                                 \
+    EXPECT_EQ((tag11).get_data_format(), (format));             \
+    EXPECT_EQ((tag11).get_filename(), filename);                \
+    EXPECT_EQ((tag11).get_time(), timestamp);                   \
+    EXPECT_EQ((tag11).get_literal(), literal);                  \
+    EXPECT_EQ((tag11).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag11, Constructor) {
     // Default constructor

@@ -12,7 +12,8 @@ static void TAG2_SUB5_FILL(OpenPGP::Subpacket::Tag2::Sub5 & sub5) {
 
 #define TAG2_SUB5_EQ(sub5)                      \
     EXPECT_EQ((sub5).get_level(), level);       \
-    EXPECT_EQ((sub5).get_amount(), amount)
+    EXPECT_EQ((sub5).get_amount(), amount);     \
+    EXPECT_EQ((sub5).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub5, Constructor) {
     // Default constructor

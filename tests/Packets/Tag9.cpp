@@ -8,8 +8,9 @@ static void TAG9_FILL(OpenPGP::Packet::Tag9 & tag9) {
     tag9.set_encrypted_data(encrypted_data);
 }
 
-#define TAG9_EQ(tag9)                                       \
-    EXPECT_EQ((tag9).get_encrypted_data(), encrypted_data);
+#define TAG9_EQ(tag9)                                               \
+    EXPECT_EQ((tag9).get_encrypted_data(), encrypted_data);         \
+    EXPECT_EQ((tag9).valid(true), OpenPGP::Status::INVALID_LENGTH);
 
 TEST(Tag9, Constructor) {
     // Default constructor

@@ -8,8 +8,9 @@ static void TAG61_FILL(OpenPGP::Packet::Tag61 & tag61) {
     tag61.set_stream(stream);
 }
 
-#define TAG61_EQ(tag61)                         \
-    EXPECT_EQ((tag61).get_stream(), stream);
+#define TAG61_EQ(tag61)                                         \
+    EXPECT_EQ((tag61).get_stream(), stream);                    \
+    EXPECT_EQ((tag61).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag61, Constructor) {
     // Default constructor

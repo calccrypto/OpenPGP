@@ -2,20 +2,21 @@
 
 #include "Packets/Tag2/Sub16.h"
 
-static const std::string keyid = "";
+static const std::string keyid("\x00\x01\x02\x03\x04\x05\x06\x07", 8);
 
 static void TAG2_SUB16_FILL(OpenPGP::Subpacket::Tag2::Sub16 & sub16) {
     sub16.set_keyid(keyid);
 }
 
-#define TAG2_SUB16_EQ(sub16)                      \
-    EXPECT_EQ((sub16).get_keyid(), keyid);
+#define TAG2_SUB16_EQ(sub16)                                    \
+    EXPECT_EQ((sub16).get_keyid(), keyid);                      \
+    EXPECT_EQ((sub16).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub16, Constructor) {
     // Default constructor
     OpenPGP::Subpacket::Tag2::Sub16 sub16;
 
-    EXPECT_EQ(sub16.raw(), keyid);
+    EXPECT_EQ(sub16.raw(), "");
     EXPECT_NO_THROW(TAG2_SUB16_FILL(sub16));
 
     // String Constructor

@@ -16,11 +16,12 @@ static void TAG3_FILL(OpenPGP::Packet::Tag3 & tag3) {
     tag3.set_esk(esk);
 }
 
-#define TAG3_EQ(tag3)                                   \
-    EXPECT_EQ((tag3).get_version(), version);           \
-    EXPECT_EQ((tag3).get_sym(), sym);                   \
-    EXPECT_EQ((tag3).get_s2k() -> raw(), s2k -> raw()); \
-    EXPECT_EQ(*((tag3).get_esk()), esk);
+#define TAG3_EQ(tag3)                                           \
+    EXPECT_EQ((tag3).get_version(), version);                   \
+    EXPECT_EQ((tag3).get_sym(), sym);                           \
+    EXPECT_EQ((tag3).get_s2k() -> raw(), s2k -> raw());         \
+    EXPECT_EQ(*((tag3).get_esk()), esk);                        \
+    EXPECT_EQ((tag3).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag3, Constructor) {
     // Default constructor

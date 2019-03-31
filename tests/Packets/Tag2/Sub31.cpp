@@ -15,7 +15,8 @@ static void TAG2_SUB31_FILL(OpenPGP::Subpacket::Tag2::Sub31 & sub31) {
 #define TAG2_SUB31_EQ(sub31)                        \
     EXPECT_EQ((sub31).get_pka(), pka);              \
     EXPECT_EQ((sub31).get_hash_alg(), hash_alg);    \
-    EXPECT_EQ((sub31).get_hash(), hash);
+    EXPECT_EQ((sub31).get_hash(), hash);            \
+    EXPECT_EQ((sub31).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub31, Constructor) {
     // Default constructor

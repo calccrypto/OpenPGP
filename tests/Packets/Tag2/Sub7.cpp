@@ -8,8 +8,9 @@ static void TAG2_SUB7_FILL(OpenPGP::Subpacket::Tag2::Sub7 & sub7) {
     sub7.set_revocable(revocable);
 }
 
-#define TAG2_SUB7_EQ(sub7)                      \
-    EXPECT_EQ((sub7).get_revocable(), revocable);
+#define TAG2_SUB7_EQ(sub7)                                      \
+    EXPECT_EQ((sub7).get_revocable(), revocable);               \
+    EXPECT_EQ((sub7).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub7, Constructor) {
     // Default constructor

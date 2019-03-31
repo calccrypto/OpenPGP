@@ -81,6 +81,7 @@ namespace OpenPGP {
 
                 // Notation on signature issuer wishes to make
                 const std::map <uint8_t, std::string> NAME = {
+                    std::make_pair(UNDEFINED,      "none"),
                     std::make_pair(HUMAN_READABLE, "Human-Readable"),
                 };
             }

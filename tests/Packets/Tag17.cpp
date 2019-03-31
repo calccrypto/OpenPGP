@@ -12,7 +12,8 @@ static void TAG17_FILL(OpenPGP::Packet::Tag17 & tag17) {
 #define TAG17_EQ(tag17)                                                             \
     const OpenPGP::Packet::Tag17::Attributes attributes = (tag17).get_attributes(); \
     ASSERT_EQ(attributes.size(), 1);                                                \
-    EXPECT_EQ(attributes[0] -> raw(), image);
+    EXPECT_EQ(attributes[0] -> raw(), image);                                       \
+    EXPECT_EQ((tag17).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag17, Constructor) {
     // Default constructor

@@ -16,7 +16,7 @@ Status Tag6::actual_valid(const bool check_mpi) const {
         }
     }
     else if (version == 4) {
-        if (PKA::valid(pka)) {
+        if (!PKA::valid(pka)) {
             return Status::INVALID_PUBLIC_KEY_ALGORITHM;
         }
 

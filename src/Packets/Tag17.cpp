@@ -40,13 +40,13 @@ std::string Tag17::actual_raw() const {
     return out;
 }
 
-Status Tag17::actual_valid(const bool) const {
-    // for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
-    //     Status err = s -> valid();
-    //     if (err != Status::SUCCESS) {
-    //         return err;
-    //     }
-    // }
+Status Tag17::actual_valid(const bool check_mpi) const {
+    for(Subpacket::Tag17::Sub::Ptr const & s : attributes) {
+        Status err = s -> valid(check_mpi);
+        if (err != Status::SUCCESS) {
+            return err;
+        }
+    }
 
     return Status::SUCCESS;
 }

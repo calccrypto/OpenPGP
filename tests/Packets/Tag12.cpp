@@ -8,8 +8,9 @@ static void TAG12_FILL(OpenPGP::Packet::Tag12 & tag12) {
     tag12.set_trust(trust);
 }
 
-#define TAG12_EQ(tag12)                         \
-    EXPECT_EQ((tag12).get_trust(), trust);
+#define TAG12_EQ(tag12)                                                 \
+    EXPECT_EQ((tag12).get_trust(), trust);                              \
+    EXPECT_EQ((tag12).valid(true), OpenPGP::Status::SHOULD_NOT_BE_EMITTED);
 
 TEST(Tag12, Constructor) {
     // Default constructor

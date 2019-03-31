@@ -9,7 +9,8 @@ static void TAG2_SUB21_FILL(OpenPGP::Subpacket::Tag2::Sub21 & sub21) {
 }
 
 #define TAG2_SUB21_EQ(sub21)                    \
-    EXPECT_EQ((sub21).get_pha(), pha);
+    EXPECT_EQ((sub21).get_pha(), pha);          \
+    EXPECT_EQ((sub21).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub21, Constructor) {
     // Default constructor

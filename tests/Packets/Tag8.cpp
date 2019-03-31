@@ -11,9 +11,10 @@ static void TAG8_FILL(OpenPGP::Packet::Tag8 & tag8, const uint8_t comp) {
     tag8.set_data(MESSAGE);
 }
 
-#define TAG8_EQ(tag8, comp)                        \
-    EXPECT_EQ((tag8).get_comp(), comp);            \
-    EXPECT_EQ((tag8).get_data(), MESSAGE);         \
+#define TAG8_EQ(tag8, comp)                                     \
+    EXPECT_EQ((tag8).get_comp(), comp);                         \
+    EXPECT_EQ((tag8).get_data(), MESSAGE);                      \
+    EXPECT_EQ((tag8).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag8, Constructor) {
     // Default constructor

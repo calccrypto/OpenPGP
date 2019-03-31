@@ -18,13 +18,14 @@ static void TAG4_FILL(OpenPGP::Packet::Tag4 & tag4) {
     tag4.set_last(last);
 }
 
-#define TAG4_EQ(tag4)                             \
-    EXPECT_EQ((tag4).get_version(), version);     \
-    EXPECT_EQ((tag4).get_type(), type);           \
-    EXPECT_EQ((tag4).get_hash(), hash);           \
-    EXPECT_EQ((tag4).get_pka(), pka);             \
-    EXPECT_EQ((tag4).get_keyid(), keyid);         \
-    EXPECT_EQ((tag4).get_last(), last);
+#define TAG4_EQ(tag4)                                           \
+    EXPECT_EQ((tag4).get_version(), version);                   \
+    EXPECT_EQ((tag4).get_type(), type);                         \
+    EXPECT_EQ((tag4).get_hash(), hash);                         \
+    EXPECT_EQ((tag4).get_pka(), pka);                           \
+    EXPECT_EQ((tag4).get_keyid(), keyid);                       \
+    EXPECT_EQ((tag4).get_last(), last);                         \
+    EXPECT_EQ((tag4).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag4, Constructor) {
     // Default constructor

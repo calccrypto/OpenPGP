@@ -18,13 +18,14 @@ static void TAG7_FILL(OpenPGP::Packet::Tag7 & tag7) {
     tag7.set_secret(secret);
 }
 
-#define TAG7_EQ(tag7)                                   \
-    EXPECT_EQ((tag7).get_version(), version);           \
-    EXPECT_EQ((tag7).get_time(), timestamp);            \
-    EXPECT_EQ((tag7).get_pka(), pka);                   \
-    EXPECT_EQ((tag7).get_mpi(), mpi);                   \
-    EXPECT_EQ((tag7).get_s2k_con(), s2k_con);           \
-    EXPECT_EQ((tag7).get_secret(), secret);
+#define TAG7_EQ(tag7)                                           \
+    EXPECT_EQ((tag7).get_version(), version);                   \
+    EXPECT_EQ((tag7).get_time(), timestamp);                    \
+    EXPECT_EQ((tag7).get_pka(), pka);                           \
+    EXPECT_EQ((tag7).get_mpi(), mpi);                           \
+    EXPECT_EQ((tag7).get_s2k_con(), s2k_con);                   \
+    EXPECT_EQ((tag7).get_secret(), secret);                     \
+    EXPECT_EQ((tag7).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag7, Constructor) {
     // Default constructor

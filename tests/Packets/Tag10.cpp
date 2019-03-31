@@ -7,7 +7,8 @@ static void TAG10_FILL(OpenPGP::Packet::Tag10 & tag10) {
 }
 
 #define TAG10_EQ(tag10)                                         \
-    EXPECT_EQ((tag10).get_pgp(), OpenPGP::Packet::Tag10::body);
+    EXPECT_EQ((tag10).get_pgp(), OpenPGP::Packet::Tag10::body); \
+    EXPECT_EQ((tag10).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag10, Constructor) {
     // Default constructor

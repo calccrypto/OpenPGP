@@ -10,9 +10,10 @@ static void TAG18_FILL(OpenPGP::Packet::Tag18 & tag18) {
     tag18.set_protected_data(protected_data);
 }
 
-#define TAG18_EQ(tag18)                                            \
-    EXPECT_EQ((tag18).get_version(), version);                     \
-    EXPECT_EQ((tag18).get_protected_data(), protected_data);
+#define TAG18_EQ(tag18)                                         \
+    EXPECT_EQ((tag18).get_version(), version);                  \
+    EXPECT_EQ((tag18).get_protected_data(), protected_data);    \
+    EXPECT_EQ((tag18).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag18, Constructor) {
     // Default constructor

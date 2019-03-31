@@ -8,8 +8,9 @@ static void TAG2_SUB4_FILL(OpenPGP::Subpacket::Tag2::Sub4 & sub4) {
     sub4.set_exportable(exportable);
 }
 
-#define TAG2_SUB4_EQ(sub4)                      \
-    EXPECT_EQ((sub4).get_exportable(), exportable);
+#define TAG2_SUB4_EQ(sub4)                          \
+    EXPECT_EQ((sub4).get_exportable(), exportable); \
+    EXPECT_EQ((sub4).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub4, Constructor) {
     // Default constructor

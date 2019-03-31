@@ -9,7 +9,8 @@ static void TAG2_SUB6_FILL(OpenPGP::Subpacket::Tag2::Sub6 & sub6) {
 }
 
 #define TAG2_SUB6_EQ(sub6)                      \
-    EXPECT_EQ((sub6).get_regex(), regex);
+    EXPECT_EQ((sub6).get_regex(), regex);       \
+    EXPECT_EQ((sub6).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub6, Constructor) {
     // Default constructor

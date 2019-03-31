@@ -13,10 +13,11 @@ static void TAG17_SUB1_FILL(OpenPGP::Subpacket::Tag17::Sub1 & sub1) {
     sub1.set_image(image);
 }
 
-#define TAG17_SUB1_EQ(sub1)                                             \
-    EXPECT_EQ((sub1).get_version(), version);                           \
-    EXPECT_EQ((sub1).get_encoding(), encoding);                         \
-    EXPECT_EQ((sub1).get_image(), image);
+#define TAG17_SUB1_EQ(sub1)                                     \
+    EXPECT_EQ((sub1).get_version(), version);                   \
+    EXPECT_EQ((sub1).get_encoding(), encoding);                 \
+    EXPECT_EQ((sub1).get_image(), image);                       \
+    EXPECT_EQ((sub1).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag17Sub1, Constructor) {
     // Default constructor

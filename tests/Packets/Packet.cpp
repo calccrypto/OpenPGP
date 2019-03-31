@@ -241,11 +241,12 @@ static void TAG_FILL(FakeTag & faketag) {
     faketag.set_size(size);
 }
 
-#define TAG_EQ(faketag)                                        \
-    EXPECT_EQ((faketag).get_tag(), tag);                       \
-    EXPECT_EQ((faketag).get_version(), version);               \
-    EXPECT_EQ((faketag).get_header_format(), header_format);   \
-    EXPECT_EQ((faketag).get_size(), size);
+#define TAG_EQ(faketag)                                         \
+    EXPECT_EQ((faketag).get_tag(), tag);                        \
+    EXPECT_EQ((faketag).get_version(), version);                \
+    EXPECT_EQ((faketag).get_header_format(), header_format);    \
+    EXPECT_EQ((faketag).get_size(), size);                      \
+    EXPECT_EQ((faketag).valid(true), OpenPGP::Status::INVALID);
 
 TEST(Tag, Constructor) {
     // Default constructor

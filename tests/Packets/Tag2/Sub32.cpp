@@ -8,8 +8,9 @@ static void TAG2_SUB32_FILL(OpenPGP::Subpacket::Tag2::Sub32 & sub32) {
     sub32.set_embedded(embedded);
 }
 
-#define TAG2_SUB32_EQ(sub32)                    \
-    EXPECT_EQ((sub32).get_embedded(), embedded);
+#define TAG2_SUB32_EQ(sub32)                                    \
+    EXPECT_EQ((sub32).get_embedded(), embedded);                \
+    EXPECT_EQ((sub32).valid(true), OpenPGP::Status::INVALID_CONTENTS);
 
 TEST(Tag2Sub32, Constructor) {
     // Default constructor

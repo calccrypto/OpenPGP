@@ -15,7 +15,8 @@ static void TAG2_SUB20_FILL(OpenPGP::Subpacket::Tag2::Sub20 & sub20) {
 #define TAG2_SUB20_EQ(sub20)                                            \
     EXPECT_EQ((sub20).get_flags(), flags);                              \
     EXPECT_EQ((sub20).get_m(), m);                                      \
-    EXPECT_EQ((sub20).get_n(), n);
+    EXPECT_EQ((sub20).get_n(), n);                                      \
+    EXPECT_EQ((sub20).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub20, Constructor) {
     // Default constructor

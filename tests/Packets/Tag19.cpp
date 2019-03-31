@@ -8,8 +8,9 @@ static void TAG19_FILL(OpenPGP::Packet::Tag19 & tag19) {
     tag19.set_hash(hash);
 }
 
-#define TAG19_EQ(tag19)                         \
-    EXPECT_EQ((tag19).get_hash(), hash);
+#define TAG19_EQ(tag19)                                         \
+    EXPECT_EQ((tag19).get_hash(), hash);                        \
+    EXPECT_EQ((tag19).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag19, Constructor) {
     // Default constructor

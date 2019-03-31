@@ -35,7 +35,8 @@ static void TAG2_FILL(OpenPGP::Packet::Tag2 & tag2) {
     const OpenPGP::Packet::Tag2::Subpackets unhashed = (tag2).get_unhashed_subpackets(); \
     ASSERT_EQ(unhashed.size(), unhashed_subpackets.size());                              \
     EXPECT_EQ(unhashed[0] -> raw(), unhashed_subpackets[0] -> raw());                    \
-    EXPECT_EQ((tag2).get_mpi(), mpi);
+    EXPECT_EQ((tag2).get_mpi(), mpi);                                                    \
+    EXPECT_EQ((tag2).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2, Constructor) {
     // Default constructor

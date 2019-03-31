@@ -15,7 +15,8 @@ static void TAG2_SUB12_FILL(OpenPGP::Subpacket::Tag2::Sub12 & sub12) {
 #define TAG2_SUB12_EQ(sub12)                            \
     EXPECT_EQ((sub12).get_class(), _class);             \
     EXPECT_EQ((sub12).get_pka(), pka);                  \
-    EXPECT_EQ((sub12).get_fingerprint(), fingerprint);
+    EXPECT_EQ((sub12).get_fingerprint(), fingerprint);  \
+    EXPECT_EQ((sub12).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub12, Constructor) {
     // Default constructor

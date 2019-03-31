@@ -27,6 +27,10 @@ void Sub20::show_contents(HumanReadable & hr) const {
 }
 
 Status Sub20::actual_valid(const bool) const {
+    if (flags.size() != 4) {
+        return Status::INVALID_LENGTH;
+    }
+
     for(char const & f : flags) {
         if (Notation::NAME.find(f) == Notation::NAME.end()) {
             return Status::INVALID_FLAG;

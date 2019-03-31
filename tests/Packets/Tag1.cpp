@@ -14,11 +14,12 @@ static void TAG1_FILL(OpenPGP::Packet::Tag1 & tag1) {
     tag1.set_mpi(mpi);
 }
 
-#define TAG1_EQ(tag1)                           \
-    EXPECT_EQ((tag1).get_version(), version);   \
-    EXPECT_EQ((tag1).get_keyid(), keyid);       \
-    EXPECT_EQ((tag1).get_pka(), pka);           \
-    EXPECT_EQ((tag1).get_mpi(), mpi);
+#define TAG1_EQ(tag1)                                       \
+    EXPECT_EQ((tag1).get_version(), version);               \
+    EXPECT_EQ((tag1).get_keyid(), keyid);                   \
+    EXPECT_EQ((tag1).get_pka(), pka);                       \
+    EXPECT_EQ((tag1).get_mpi(), mpi);                       \
+    EXPECT_EQ((tag1).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag1, Constructor) {
     // Default constructor

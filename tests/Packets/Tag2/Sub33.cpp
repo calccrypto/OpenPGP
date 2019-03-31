@@ -14,7 +14,8 @@ static void TAG2_SUB33_FILL(OpenPGP::Subpacket::Tag2::Sub33 & sub33) {
 
 #define TAG2_SUB33_EQ(sub33)                                            \
     EXPECT_EQ((sub33).get_version(), version);                          \
-    EXPECT_EQ((sub33).get_issuer_fingerprint(), issuer_fingerprint);
+    EXPECT_EQ((sub33).get_issuer_fingerprint(), issuer_fingerprint);    \
+    EXPECT_EQ((sub33).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag2Sub33, Constructor) {
     // Default constructor

@@ -11,8 +11,9 @@ static void TAG13_FILL(OpenPGP::Packet::Tag13 & tag13) {
     tag13.set_contents(contents);
 }
 
-#define TAG13_EQ(tag13)                             \
-    EXPECT_EQ((tag13).get_contents(), contents);
+#define TAG13_EQ(tag13)                                         \
+    EXPECT_EQ((tag13).get_contents(), contents);                \
+    EXPECT_EQ((tag13).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag13, Constructor) {
     // Default constructor

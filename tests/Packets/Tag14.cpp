@@ -15,10 +15,11 @@ static void TAG14_FILL(OpenPGP::Packet::Tag14 & tag14) {
 }
 
 #define TAG14_EQ(tag14)                                       \
-    EXPECT_EQ(tag14.get_version(), version);                  \
-    EXPECT_EQ(tag14.get_time(), timestamp);                   \
-    EXPECT_EQ(tag14.get_pka(), pka);                          \
-    EXPECT_EQ(tag14.get_mpi(), mpi);                          \
+    EXPECT_EQ((tag14).get_version(), version);                \
+    EXPECT_EQ((tag14).get_time(), timestamp);                 \
+    EXPECT_EQ((tag14).get_pka(), pka);                        \
+    EXPECT_EQ((tag14).get_mpi(), mpi);                        \
+    EXPECT_EQ((tag14).valid(true), OpenPGP::Status::SUCCESS);
 
 TEST(Tag14, Constructor) {
     // Default constructor
@@ -31,7 +32,7 @@ TEST(Tag14, Constructor) {
     {
         OpenPGP::Packet::Tag14 str(tag14.raw());
         TAG14_EQ(str);
-    }
+   }
 
     // Copy Constructor
     {
