@@ -133,7 +133,7 @@ SecretKey generate_key(Config & config) {
 
         // encrypt private key value
         primary -> set_s2k(s2k3);
-        primary -> set_IV(RNG::RNG().rand_bytes(Sym::BLOCK_LENGTH.at(config.sym >> 3)));
+        primary -> set_IV(RNG::RNG().rand_bytes(Sym::BLOCK_LENGTH.at(config.sym) >> 3));
         secret = use_normal_CFB_encrypt(config.sym, secret, session_key, primary -> get_IV());
     }
     else{
