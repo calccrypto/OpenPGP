@@ -287,6 +287,12 @@ TEST(Tag, Assignment) {
     }
 }
 
+TEST(Tag, show) {
+    FakeTag faketag;
+    EXPECT_NO_THROW(TAG_FILL(faketag));
+    EXPECT_NO_THROW(faketag.show());
+}
+
 TEST(Tag, set_get) {
     FakeTag faketag;
     EXPECT_NO_THROW(TAG_FILL(faketag));

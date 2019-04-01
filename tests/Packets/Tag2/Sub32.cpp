@@ -65,6 +65,12 @@ TEST(Tag2Sub32, read_write) {
     EXPECT_EQ(sub32.raw(), raw);
 }
 
+TEST(Tag2Sub32, show) {
+    OpenPGP::Subpacket::Tag2::Sub32 sub32;
+    EXPECT_NO_THROW(TAG2_SUB32_FILL(sub32));
+    EXPECT_NO_THROW(sub32.show());
+}
+
 TEST(Tag2Sub32, set_get) {
     OpenPGP::Subpacket::Tag2::Sub32 sub32;
     TAG2_SUB32_FILL(sub32);

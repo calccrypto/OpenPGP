@@ -94,6 +94,12 @@ TEST(Tag1, read_write) {
     }
 }
 
+TEST(Tag1, show) {
+    OpenPGP::Packet::Tag1 tag1;
+    EXPECT_NO_THROW(TAG1_FILL(tag1));
+    EXPECT_NO_THROW(tag1.show());
+}
+
 TEST(Tag1, set_get) {
     OpenPGP::Packet::Tag1 tag1;
     EXPECT_NO_THROW(TAG1_FILL(tag1));

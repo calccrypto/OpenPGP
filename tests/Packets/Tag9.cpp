@@ -64,6 +64,12 @@ TEST(Tag9, read_write) {
     EXPECT_EQ(tag9.raw(), encrypted_data);
 }
 
+TEST(Tag9, show) {
+    OpenPGP::Packet::Tag9 tag9;
+    EXPECT_NO_THROW(TAG9_FILL(tag9));
+    EXPECT_NO_THROW(tag9.show());
+}
+
 TEST(Tag9, set_get) {
     OpenPGP::Packet::Tag9 tag9;
     EXPECT_NO_THROW(TAG9_FILL(tag9));

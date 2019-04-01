@@ -81,6 +81,12 @@ TEST(Tag11, read_write) {
     }
 }
 
+TEST(Tag11, show) {
+    OpenPGP::Packet::Tag11 tag11;
+    EXPECT_NO_THROW(TAG11_FILL(tag11, OpenPGP::Packet::Literal::BINARY));
+    EXPECT_NO_THROW(tag11.show());
+}
+
 TEST(Tag11, set_get) {
     OpenPGP::Packet::Tag11 tag11;
     for(auto data_format : OpenPGP::Packet::Literal::NAME) {

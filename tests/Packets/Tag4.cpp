@@ -85,6 +85,12 @@ TEST(Tag4, read_write) {
     EXPECT_EQ(tag4.raw(), raw);
 }
 
+TEST(Tag4, show) {
+    OpenPGP::Packet::Tag4 tag4;
+    EXPECT_NO_THROW(TAG4_FILL(tag4));
+    EXPECT_NO_THROW(tag4.show());
+}
+
 TEST(Tag4, set_get) {
     OpenPGP::Packet::Tag4 tag4;
     EXPECT_NO_THROW(TAG4_FILL(tag4));

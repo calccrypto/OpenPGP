@@ -39,7 +39,7 @@ namespace OpenPGP {
             //    The validity period of the key. This is the number of seconds after
             //    the key creation time that the key expires. If this is not present
             //    or has a value of zero, the key never expires. This is found only on
-            //   a self-signature.
+            //    a self-signature.
 
             class Sub9 : public Sub {
                 private:
@@ -55,6 +55,7 @@ namespace OpenPGP {
                     Sub9();
                     Sub9(const std::string & data);
                     std::string raw() const;
+                    using Sub::show;
                     void show(const uint32_t create_time, HumanReadable & hr) const;
                     uint32_t get_dt() const;
 

@@ -70,6 +70,12 @@ TEST(Tag8, read_write) {
     EXPECT_EQ(tag8.raw(), raw);
 }
 
+// TEST(Tag8, show) {
+//     OpenPGP::Packet::Tag8 tag8;
+//     EXPECT_NO_THROW(TAG8_FILL(tag8, OpenPGP::Compression::ID::UNCOMPRESSED));
+//     EXPECT_NO_THROW(tag8.show()); // this will not work unless TAG8_FILL fills in an OpenPGP::Message
+// }
+
 TEST(Tag8, set_get) {
     OpenPGP::Packet::Tag8 tag8;
     EXPECT_NO_THROW(TAG8_FILL(tag8, OpenPGP::Compression::ID::UNCOMPRESSED));

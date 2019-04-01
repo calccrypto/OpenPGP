@@ -63,6 +63,12 @@ TEST(Tag61, read_write) {
     EXPECT_EQ(tag61.raw(), stream);
 }
 
+TEST(Tag61, show) {
+    OpenPGP::Packet::Tag61 tag61;
+    EXPECT_NO_THROW(TAG61_FILL(tag61));
+    EXPECT_NO_THROW(tag61.show());
+}
+
 TEST(Tag61, set_get) {
     OpenPGP::Packet::Tag61 tag61;
     EXPECT_NO_THROW(TAG61_FILL(tag61));

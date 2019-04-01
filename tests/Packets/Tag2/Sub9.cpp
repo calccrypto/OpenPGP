@@ -65,6 +65,12 @@ TEST(Tag2Sub9, read_write) {
     EXPECT_EQ(sub9.raw(), raw);
 }
 
+TEST(Tag2Sub9, show) {
+    OpenPGP::Subpacket::Tag2::Sub9 sub9;
+    EXPECT_NO_THROW(TAG2_SUB9_FILL(sub9));
+    EXPECT_NO_THROW(sub9.show());
+}
+
 TEST(Tag2Sub9, set_get) {
     OpenPGP::Subpacket::Tag2::Sub9 sub9;
     TAG2_SUB9_FILL(sub9);
