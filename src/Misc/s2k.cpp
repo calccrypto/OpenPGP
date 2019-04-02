@@ -217,11 +217,11 @@ std::string S2K3::run(const std::string & pass, const std::size_t sym_key_len) c
     const std::string combined = salt + pass;
 
     const std::size_t digest_octets = Hash::LENGTH.at(hash) >> 3;
-    const std::size_t contexts = (digest_octets / sym_key_len) + (bool) (digest_octets % sym_key_len);
+    const std::size_t contexts = (sym_key_len / digest_octets) + (bool) (sym_key_len % digest_octets);
 
     std::string out = "";
     for(std::size_t context = 0; context < contexts; context++) {
-        Hash::Instance h = Hash::get_instance(hash, std::string(context++, '\x00'));
+        Hash::Instance h = Hash::get_instance(hash, std::string(context, '\x00'));
 
         std::size_t hashed = 0;
         do {
