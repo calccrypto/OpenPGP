@@ -33,6 +33,12 @@ void S2K::show(HumanReadable & hr) const {
     hr << HumanReadable::UP;
 }
 
+std::string S2K::show(const std::size_t indents, const std::size_t indent_size) const {
+    HumanReadable hr(indent_size, indents);
+    show(hr);
+    return hr.get();
+}
+
 std::string S2K::write() const {
     return raw();
 }
@@ -54,7 +60,7 @@ void S2K::set_hash(const uint8_t h) {
 }
 
 void S2K0::show_contents(HumanReadable & hr) const {
-    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")";
+    hr << "Hash: " + get_mapped(Hash::NAME, hash) + " (hash " + std::to_string(hash) + ")";
 }
 
 S2K0::S2K0(uint8_t t)
@@ -107,8 +113,8 @@ S2K::Ptr S2K0::clone() const {
 }
 
 void S2K1::show_contents(HumanReadable & hr) const {
-    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")"
-       << "Salt: " + hexlify(salt);
+    S2K0::show_contents(hr);
+    hr << "Salt: " + hexlify(salt);
 }
 
 S2K1::S2K1(uint8_t t)
@@ -130,7 +136,7 @@ S2K1::~S2K1() {}
 
 void S2K1::read(const std::string & data, std::string::size_type & pos) {
     S2K0::read(data, pos);
-    salt = data.substr(pos, 8);
+    set_salt(data.substr(pos, 8));
     pos += 8;
 }
 
@@ -184,9 +190,8 @@ uint32_t S2K3::coded_count(const uint8_t c) {
 }
 
 void S2K3::show_contents(HumanReadable & hr) const {
-    hr << "Hash: " + Hash::NAME.at(hash) + " (hash " + std::to_string(hash) + ")"
-       << "Salt: " + hexlify(salt)
-       << "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
+    S2K1::show_contents(hr);
+    hr << "Coded Count: " + std::to_string(S2K3::coded_count(count)) + " (count " + std::to_string(count) + ")";
 }
 
 S2K3::S2K3()
@@ -204,7 +209,7 @@ S2K3::~S2K3() {}
 
 void S2K3::read(const std::string & data, std::string::size_type & pos) {
     S2K1::read(data, pos);
-    count = data[pos];
+    set_count(data[pos]);
     pos += 1;
 }
 

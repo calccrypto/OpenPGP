@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <memory>
 #include <string>
 
+#include "Encryptions/Encryptions.h"
 #include "Hashes/Hashes.h"
 #include "common/HumanReadable.h"
 #include "common/Status.h"
@@ -102,6 +103,7 @@ namespace OpenPGP {
                         void read(const std::string & data);
                 virtual void read(const std::string & data, std::string::size_type & pos);
                         void show(HumanReadable & hr) const;
+                std::string show(const std::size_t indents = 0, const std::size_t indent_size = 4) const;
                 virtual std::string raw() const = 0;
                 std::string write() const;
                 virtual std::string run(const std::string & pass, const std::size_t sym_key_len) const = 0;
