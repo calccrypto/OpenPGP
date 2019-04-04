@@ -17,18 +17,4 @@ bool read_pgp(const std::string & name, T & pgp, const std::string & directory =
     return pgp.meaningful();
 }
 
-// open a file and attempt to read the contents into a PGP data structure
-template <typename T>
-bool read_pgp(const std::string & name, T & pgp, std::string & data, const std::string & directory = ""){
-    std::ifstream file(directory + name);
-    if (!file){
-        return false;
-    }
-
-    data = std::string(std::istreambuf_iterator <char> (file), {});
-    pgp.read(data);
-
-    return pgp.meaningful();
-}
-
 #endif

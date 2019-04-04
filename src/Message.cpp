@@ -1,7 +1,7 @@
 #include "Message.h"
 
 #include "Misc/CRC-24.h"
-#include <iostream>
+
 namespace OpenPGP {
 
 // OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
@@ -148,6 +148,7 @@ Message::Message(const PGP & copy)
       comp(nullptr)
 {
     type = MESSAGE;
+
     if (!decompress()) {
         throw std::runtime_error("Error: Failed to decompress data");
     }
@@ -155,12 +156,8 @@ Message::Message(const PGP & copy)
 
 Message::Message(const Message & copy)
     : PGP(copy),
-      comp(copy.comp)
-{
-    if (comp) {
-        comp = std::static_pointer_cast <Packet::Tag8> (comp);
-    }
-}
+      comp(copy.comp?(std::static_pointer_cast <Packet::Tag8> (copy.comp -> clone())):nullptr)
+{}
 
 Message::Message(const std::string & data)
     : PGP(data),
