@@ -46,6 +46,7 @@ add_library(TopLevelTests OBJECT
     gpg.cpp
     pgp.cpp
     cleartextsignature.cpp
+    detachedsignature.cpp
     key.cpp
     message.cpp
     revocationcertificate.cpp)
