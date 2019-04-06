@@ -10,36 +10,37 @@ TEST(CleartextSignature, Constructor) {
     std::ifstream file(filename);
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::CleartextSignature msg;
-    EXPECT_NO_THROW(msg.read(orig));
+    EXPECT_NO_THROW(msg.read(file));
     EXPECT_TRUE(msg.meaningful());
+
+    const std::string orig = msg.write();
 
     // Copy Constructor
     {
         OpenPGP::CleartextSignature copy(msg);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
+    }
+
+    // String Constructor
+    {
+        OpenPGP::CleartextSignature str(orig);
+        EXPECT_EQ(msg, str);
+    }
+
+    // Stream Constructor
+    {
+        file.seekg(0);
+
+        OpenPGP::CleartextSignature stream(file);
+        EXPECT_EQ(msg, stream);
     }
 
     // Move Constructor
     {
         OpenPGP::CleartextSignature move(std::move(msg));
         EXPECT_EQ(orig, move.write());
-    }
-
-    // String Constructor
-    {
-        OpenPGP::CleartextSignature str(orig);
-        EXPECT_EQ(orig, str.write());
-    }
-
-    // Stream Constructor
-    {
-        OpenPGP::CleartextSignature stream(file);
-        EXPECT_EQ(orig, stream.write());
     }
 }
 
@@ -50,15 +51,13 @@ TEST(CleartextSignature, Assignment) {
     OpenPGP::CleartextSignature msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = msg.write();
 
     // Assignment
     {
         OpenPGP::CleartextSignature copy;
         copy = msg;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
     }
 
     // Move Assignment
@@ -86,6 +85,5 @@ TEST(CleartextSignature, clone) {
     OpenPGP::CleartextSignature msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    OpenPGP::CleartextSignature::Ptr clone = msg.clone();
-    EXPECT_EQ(msg.write(), clone -> write());
+    EXPECT_EQ(msg, *msg.clone());
 }

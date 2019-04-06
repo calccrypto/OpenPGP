@@ -129,6 +129,8 @@ namespace OpenPGP {
             void set_packets(const Packets & p);            // copies the the input packet pointers
             void set_packets_clone(const Packets & p);      // clones the input packets
 
+            virtual bool operator==(const PGP & rhs) const;
+
             PGP & operator=(const PGP & copy);              // get deep copy object
             virtual Ptr clone() const;                      // get deep copy pointer
     };

@@ -101,6 +101,8 @@ namespace OpenPGP {
 
             bool meaningful() const;
 
+            bool operator==(const CleartextSignature & rhs) const;
+
             CleartextSignature & operator=(const CleartextSignature & copy);
             CleartextSignature::Ptr clone() const;
     };

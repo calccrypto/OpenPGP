@@ -10,42 +10,43 @@ TEST(RevocationCertificate, Constructor) {
     std::ifstream file(filename);
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::RevocationCertificate msg;
-    EXPECT_NO_THROW(msg.read(orig));
+    EXPECT_NO_THROW(msg.read(file));
     EXPECT_TRUE(msg.meaningful());
+
+    const std::string orig = msg.write();
 
     // PGP Copy Constructor
     {
         OpenPGP::RevocationCertificate copy((OpenPGP::PGP) msg);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
     }
 
     // Copy Constructor
     {
         OpenPGP::RevocationCertificate copy(msg);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
+    }
+
+    // String Constructor
+    {
+        OpenPGP::RevocationCertificate str(orig);
+        EXPECT_EQ(msg, str);
+    }
+
+    // Stream Constructor
+    {
+        file.seekg(0);
+
+        OpenPGP::RevocationCertificate stream(file);
+        EXPECT_EQ(msg, stream);
     }
 
     // Move Constructor
     {
         OpenPGP::RevocationCertificate move(std::move(msg));
         EXPECT_EQ(orig, move.write());
-    }
-
-    // String Constructor
-    {
-        OpenPGP::RevocationCertificate str(orig);
-        EXPECT_EQ(orig, str.write());
-    }
-
-    // Stream Constructor
-    {
-        OpenPGP::RevocationCertificate stream(file);
-        EXPECT_EQ(orig, stream.write());
     }
 }
 
@@ -56,15 +57,13 @@ TEST(RevocationCertificate, Assignment) {
     OpenPGP::RevocationCertificate msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = msg.write();
 
     // Assignment
     {
         OpenPGP::RevocationCertificate copy;
         copy = msg;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
     }
 
     // Move Assignment
@@ -92,6 +91,5 @@ TEST(RevocationCertificate, clone) {
     OpenPGP::RevocationCertificate msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    OpenPGP::RevocationCertificate::Ptr clone = std::dynamic_pointer_cast <OpenPGP::RevocationCertificate> (msg.clone());
-    EXPECT_EQ(msg.write(), clone -> write());
+    EXPECT_EQ(msg, *msg.clone());
 }

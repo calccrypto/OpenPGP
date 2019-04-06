@@ -567,6 +567,33 @@ void PGP::set_packets_clone(const PGP::Packets & p) {
     }
 }
 
+bool PGP::operator==(const PGP & rhs) const {
+    if (type != rhs.type) {
+        return false;
+    }
+
+    // if (keys != rhs.keys) {
+    //     return false;
+    // }
+
+    if (packets.size() != rhs.packets.size()) {
+        return false;
+    }
+
+    // compare strings for now, until Packets and Subpackets get operator==
+    for(std::size_t i = 0; i < packets.size(); i++) {
+        if (!packets[i] || !rhs.packets[i]) {
+            return false;
+        }
+
+        if (packets[i] -> raw() != rhs.packets[i] -> raw()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 PGP & PGP::operator=(const PGP & copy) {
     armored = copy.armored;
     type = copy.type;

@@ -3,7 +3,6 @@
 #include <fstream>
 
 #include "Message.h"
-#include "pgp_macro.h"
 
 static const std::string dir = "tests/testvectors/gpg/";
 
@@ -11,42 +10,43 @@ TEST(Message, Constructor) {
     std::ifstream file(dir + "pkaencrypted");
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::Message msg;
-    EXPECT_NO_THROW(msg.read(orig));
+    EXPECT_NO_THROW(msg.read(file));
     EXPECT_TRUE(msg.meaningful());
+
+    const std::string orig = msg.write();
 
     // PGP Copy Constructor
     {
         OpenPGP::Message copy((OpenPGP::PGP) msg);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
     }
 
     // Copy Constructor
     {
         OpenPGP::Message copy(msg);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
+    }
+
+    // String Constructor
+    {
+        OpenPGP::Message str(orig);
+        EXPECT_EQ(msg, str);
+    }
+
+    // Stream Constructor
+    {
+        file.seekg(0);
+
+        OpenPGP::Message stream(file);
+        EXPECT_EQ(msg, stream);
     }
 
     // Move Constructor
     {
         OpenPGP::Message move(std::move(msg));
         EXPECT_EQ(orig, move.write());
-    }
-
-    // String Constructor
-    {
-        OpenPGP::Message str(orig);
-        EXPECT_EQ(orig, str.write());
-    }
-
-    // Stream Constructor
-    {
-        OpenPGP::Message stream(file);
-        EXPECT_EQ(orig, stream.write());
     }
 }
 
@@ -57,15 +57,13 @@ TEST(Message, Assignment) {
     OpenPGP::Message msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = msg.write();
 
     // Assignment
     {
         OpenPGP::Message copy;
         copy = msg;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(msg, copy);
     }
 
     // Move Assignment
@@ -93,27 +91,66 @@ TEST(Message, clone) {
     OpenPGP::Message msg(file);
     EXPECT_TRUE(msg.meaningful());
 
-    OpenPGP::Message::Ptr clone = std::dynamic_pointer_cast <OpenPGP::Message> (msg.clone());
-    EXPECT_EQ(msg.write(), clone -> write());
+    EXPECT_EQ(msg, *msg.clone());
 }
 
 TEST(Message, pkaencrypted) {
-    TEST_PGP(OpenPGP::Message, dir + "pkaencrypted");
+    std::ifstream file(dir + "pkaencrypted");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Message msg(file);
+    EXPECT_TRUE(msg.meaningful());
+
+    file.seekg(0);
+    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    EXPECT_EQ(msg.write(), orig);
 }
 
 TEST(Message, pkaencryptednomdc) {
-    TEST_PGP(OpenPGP::Message, dir + "pkaencryptednomdc");
+    std::ifstream file(dir + "pkaencryptednomdc");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Message msg(file);
+    EXPECT_TRUE(msg.meaningful());
+
+    file.seekg(0);
+    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    EXPECT_EQ(msg.write(), orig);
 }
 
 TEST(Message, symencrypted) {
-    TEST_PGP(OpenPGP::Message, dir + "symencrypted");
+    std::ifstream file(dir + "symencrypted");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Message msg(file);
+    EXPECT_TRUE(msg.meaningful());
+
+    file.seekg(0);
+    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    EXPECT_EQ(msg.write(), orig);
 }
 
 TEST(Message, symencryptednomdc) {
-    TEST_PGP(OpenPGP::Message, dir + "symencryptednomdc");
+    std::ifstream file(dir + "symencryptednomdc");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Message msg(file);
+    EXPECT_TRUE(msg.meaningful());
+
+    file.seekg(0);
+    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    EXPECT_EQ(msg.write(), orig);
 }
 
-// // fails because partial body lengths are written differently
-// TEST(Message, signature) {
-//     TEST_PGP(OpenPGP::Message, dir + "signature");
-// }
+TEST(Message, signature) {
+    std::ifstream file(dir + "signature");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Message msg(file);
+    EXPECT_TRUE(msg.meaningful());
+
+    // This fails because partial packets are written differently
+    // file.seekg(0);
+    // const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    // EXPECT_EQ(msg.write(), orig);
+}

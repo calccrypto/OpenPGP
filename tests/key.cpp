@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include "Key.h"
-#include "pgp_macro.h"
 
 static const std::string dir = "tests/testvectors/gpg/";
 
@@ -9,42 +10,43 @@ TEST(Key, Constructor) {
     std::ifstream file(dir + "Alicepri");
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::Key key;
-    EXPECT_NO_THROW(key.read(orig));
+    EXPECT_NO_THROW(key.read(file));
     EXPECT_TRUE(key.meaningful());
+
+    const std::string orig = key.write();
 
     // PGP Copy Constructor
     {
         OpenPGP::Key copy((OpenPGP::PGP) key);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy.write());
     }
 
     // Copy Constructor
     {
         OpenPGP::Key copy(key);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy.write());
+    }
+
+    // String Constructor
+    {
+        OpenPGP::Key str(orig);
+        EXPECT_EQ(key, str.write());
+    }
+
+    // Stream Constructor
+    {
+        file.seekg(0);
+
+        OpenPGP::Key stream(file);
+        EXPECT_EQ(key, stream);
     }
 
     // Move Constructor
     {
         OpenPGP::Key move(std::move(key));
         EXPECT_EQ(orig, move.write());
-    }
-
-    // String Constructor
-    {
-        OpenPGP::Key str(orig);
-        EXPECT_EQ(orig, str.write());
-    }
-
-    // Stream Constructor
-    {
-        OpenPGP::Key stream(file);
-        EXPECT_EQ(orig, stream.write());
     }
 }
 
@@ -55,15 +57,13 @@ TEST(Key, Assignment) {
     OpenPGP::Key key(file);
     EXPECT_TRUE(key.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = key.write();
 
     // Assignment
     {
         OpenPGP::Key copy;
         copy = key;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy);
     }
 
     // Move Assignment
@@ -91,38 +91,30 @@ TEST(Key, clone) {
     OpenPGP::Key key(file);
     EXPECT_TRUE(key.meaningful());
 
-    OpenPGP::Key::Ptr clone = std::dynamic_pointer_cast <OpenPGP::Key> (key.clone());
-    EXPECT_EQ(key.write(), clone -> write());
+    EXPECT_EQ(key, *key.clone());
 }
 
 TEST(PublicKey, Constructor) {
     std::ifstream file(dir + "Alicepub");
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::PublicKey key;
-    EXPECT_NO_THROW(key.read(orig));
+    EXPECT_NO_THROW(key.read(file));
     EXPECT_TRUE(key.meaningful());
+
+    const std::string orig = key.write();
 
     // PGP Copy Constructor
     {
         OpenPGP::PublicKey copy((OpenPGP::PGP) key);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy);
     }
 
     // Copy Constructor
     {
         OpenPGP::PublicKey copy(key);
-        EXPECT_EQ(orig, copy.write());
-    }
-
-    // Move Constructor
-    {
-        OpenPGP::PublicKey move(std::move(key));
-        EXPECT_EQ(orig, move.write());
+        EXPECT_EQ(key, copy);
     }
 
     // String Constructor
@@ -133,8 +125,16 @@ TEST(PublicKey, Constructor) {
 
     // Stream Constructor
     {
+        file.seekg(0);
+
         OpenPGP::PublicKey stream(file);
-        EXPECT_EQ(orig, stream.write());
+        EXPECT_EQ(key, stream);
+    }
+
+    // Move Constructor
+    {
+        OpenPGP::PublicKey move(std::move(key));
+        EXPECT_EQ(orig, move.write());
     }
 }
 
@@ -145,15 +145,13 @@ TEST(PublicKey, Assignment) {
     OpenPGP::PublicKey key(file);
     EXPECT_TRUE(key.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = key.write();
 
     // Assignment
     {
         OpenPGP::PublicKey copy;
         copy = key;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy);
     }
 
     // Move Assignment
@@ -181,16 +179,23 @@ TEST(PublicKey, clone) {
     OpenPGP::PublicKey key(file);
     EXPECT_TRUE(key.meaningful());
 
-    OpenPGP::PublicKey::Ptr clone = std::dynamic_pointer_cast <OpenPGP::PublicKey> (key.clone());
-    EXPECT_EQ(key.write(), clone -> write());
+    EXPECT_EQ(key, *key.clone());
 }
 
 TEST(Key, Alicepub) {
-    TEST_PGP(OpenPGP::Key, dir + "Alicepub");
+    std::ifstream file(dir + "Alicepub");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Key key(file);
+    EXPECT_TRUE(key.meaningful());
 }
 
 TEST(PublicKey, Alicepub) {
-    TEST_PGP(OpenPGP::PublicKey, dir + "Alicepub");
+    std::ifstream file(dir + "Alicepub");
+    ASSERT_TRUE(file);
+
+    OpenPGP::PublicKey key(file);
+    EXPECT_TRUE(key.meaningful());
 }
 
 TEST(SecretKey, AlicePub) {
@@ -205,42 +210,43 @@ TEST(SecretKey, Constructor) {
     std::ifstream file(dir + "Alicepri");
     ASSERT_TRUE(file);
 
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
-    file.seekg(0);
-
     // Default constructor
     OpenPGP::SecretKey key;
-    EXPECT_NO_THROW(key.read(orig));
+    EXPECT_NO_THROW(key.read(file));
     EXPECT_TRUE(key.meaningful());
+
+    const std::string orig = key.write();
 
     // PGP Copy Constructor
     {
         OpenPGP::SecretKey copy((OpenPGP::PGP) key);
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy);
     }
 
     // Copy Constructor
     {
         OpenPGP::SecretKey copy(key);
-        EXPECT_EQ(orig, copy.write());
-    }
-
-    // Move Constructor
-    {
-        OpenPGP::SecretKey move(std::move(key));
-        EXPECT_EQ(orig, move.write());
+        EXPECT_EQ(key, copy);
     }
 
     // String Constructor
     {
         OpenPGP::SecretKey str(orig);
-        EXPECT_EQ(orig, str.write());
+        EXPECT_EQ(key, str);
     }
 
     // Stream Constructor
     {
+        file.seekg(0);
+
         OpenPGP::SecretKey stream(file);
-        EXPECT_EQ(orig, stream.write());
+        EXPECT_EQ(key, stream);
+    }
+
+    // Move Constructor
+    {
+        OpenPGP::SecretKey move(std::move(key));
+        EXPECT_EQ(key, move);
     }
 }
 
@@ -251,15 +257,13 @@ TEST(SecretKey, Assignment) {
     OpenPGP::SecretKey key(file);
     EXPECT_TRUE(key.meaningful());
 
-    file.seekg(0);
-
-    const std::string orig = trim_whitespace(std::string(std::istreambuf_iterator <char> (file), {}), true, true);
+    const std::string orig = key.write();
 
     // Assignment
     {
         OpenPGP::SecretKey copy;
         copy = key;
-        EXPECT_EQ(orig, copy.write());
+        EXPECT_EQ(key, copy);
     }
 
     // Move Assignment
@@ -287,12 +291,15 @@ TEST(SecretKey, clone) {
     OpenPGP::SecretKey key(file);
     EXPECT_TRUE(key.meaningful());
 
-    OpenPGP::SecretKey::Ptr clone = std::dynamic_pointer_cast <OpenPGP::SecretKey> (key.clone());
-    EXPECT_EQ(key.write(), clone -> write());
+    EXPECT_EQ(key, *key.clone());
 }
 
 TEST(Key, Alicepri) {
-    TEST_PGP(OpenPGP::Key, dir + "Alicepri");
+    std::ifstream file(dir + "Alicepri");
+    ASSERT_TRUE(file);
+
+    OpenPGP::Key key(file);
+    EXPECT_TRUE(key.meaningful());
 }
 
 TEST(PublicKey, AlicePri) {
@@ -304,5 +311,35 @@ TEST(PublicKey, AlicePri) {
 }
 
 TEST(SecretKey, Alicepri) {
-    TEST_PGP(OpenPGP::SecretKey, dir + "Alicepri");
+    std::ifstream file(dir + "Alicepri");
+    ASSERT_TRUE(file);
+
+    OpenPGP::SecretKey key(file);
+    EXPECT_TRUE(key.meaningful());
+}
+
+TEST(SecretKey, PublicKey) {
+    std::ifstream pri_file(dir + "Alicepri");
+    ASSERT_TRUE(pri_file);
+
+    OpenPGP::SecretKey pri(pri_file);
+    EXPECT_TRUE(pri.meaningful());
+
+    std::ifstream pub_file(dir + "Alicepub");
+    ASSERT_TRUE(pub_file);
+
+    OpenPGP::PublicKey pub(pub_file);
+    EXPECT_TRUE(pub.meaningful());
+
+    // SecretKey -> PublicKey Constructor
+    {
+        EXPECT_EQ(OpenPGP::PublicKey(pri), pub);
+    }
+
+    // SecretKey -> PublicKey Assignment
+    {
+        OpenPGP::PublicKey key;
+        key = pri;
+        EXPECT_EQ(key, pub);
+    }
 }

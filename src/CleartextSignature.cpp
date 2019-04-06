@@ -266,6 +266,12 @@ bool CleartextSignature::meaningful() const {
     return sig.meaningful();
 }
 
+bool CleartextSignature::operator==(const CleartextSignature & rhs) const {
+    return ((hash_armor_header == rhs.hash_armor_header) &&
+            (message == rhs.message) &&
+            (sig == rhs.sig));
+}
+
 CleartextSignature & CleartextSignature::operator=(const CleartextSignature & copy) {
     hash_armor_header = copy.hash_armor_header;
     message = copy.message;
