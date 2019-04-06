@@ -57,7 +57,6 @@ Params generate_params(const uint8_t pka, const std::size_t bits) {
         default:
             // "Error: Undefined or reserved PKA number: " + std::to_string(pka) + "\n";
             return {};
-            break;
     }
 
     return params;
@@ -90,13 +89,12 @@ uint8_t generate_keypair(const uint8_t pka, const Params & params, Values & pri,
             pub.pop_back();                              // x
             break;
         case ID::DSA:
-            pub = DSA::new_public(params[0], params[1]); // p, q, g
+            pub = DSA::new_public(params[0], params[1]); // p, q, g, y
             pri = DSA::keygen(pub);                      // x
             break;
         default:
             // "Error: Undefined or reserved PKA number: " + std::to_string(pka) + "\n";
             return 0;
-            break;
     }
 
     return pka;
