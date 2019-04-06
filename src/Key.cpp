@@ -5,6 +5,13 @@
 
 namespace OpenPGP {
 
+const std::map <uint8_t, std::string> Key::Public_Key_Type = {
+    std::make_pair(Packet::SECRET_KEY,    "sec"),
+    std::make_pair(Packet::PUBLIC_KEY,    "pub"),
+    std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
+    std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
+};
+
 Key::Key()
     : PGP()
 {}

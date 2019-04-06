@@ -51,12 +51,7 @@ namespace OpenPGP {
 
         private:
             // for listing keys
-            const std::map <uint8_t, std::string> Public_Key_Type = {
-                std::make_pair(Packet::SECRET_KEY,    "sec"),
-                std::make_pair(Packet::PUBLIC_KEY,    "pub"),
-                std::make_pair(Packet::SECRET_SUBKEY, "ssb"),
-                std::make_pair(Packet::PUBLIC_SUBKEY, "sub"),
-            };
+            static const std::map <uint8_t, std::string> Public_Key_Type;
 
             // Extract Packet from sp pushing them in np
             void flatten(SigPairs sp, Packets *np, SigPairs ua_table);
