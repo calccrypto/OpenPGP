@@ -1,7 +1,5 @@
 #include "keygen.h"
 
-#include <iostream>
-
 namespace OpenPGP {
 namespace KeyGen {
 
@@ -62,7 +60,8 @@ bool fill_key_sigs(SecretKey & private_key, const std::string & passphrase) {
                     sig = Revoke::uid_sig(primary, passphrase, user, sig);
                 }
                 else{
-                    std::cerr << "Warning: Bad or unhandled signature type: 0x" << makehex(sig -> get_type(), 2) << std::endl;
+                    // "Warning: Bad or unhandled signature type: 0x" + makehex(sig -> get_type(), 2);
+                    return false;
                 }
             }
         }
@@ -280,8 +279,10 @@ SecretKey generate_key(Config & config) {
     private_key.set_packets(packets);
     private_key.set_armored(true);
 
-    // can call fill_key_sigs as well
-    // return fill_key_sigs(private_key, config.passphrase);
+    // // can call fill_key_sigs as well
+    // if (!fill_key_sigs(private_key, config.passphrase)) {
+    //     return SecretKey();
+    // }
     return private_key;
 }
 
