@@ -38,6 +38,15 @@ std::string show_date(time_t time) {
 }
 
 std::string show_dt(time_t dt) {
+    if (dt == 0) {
+        return "now";
+    }
+
+    const bool neg = (dt < 0);
+    if (neg) {
+        dt = -dt; // to not do type conversions
+    }
+
     const time_t years   = (dt / 31536000);
     const time_t days    = (dt / 86400) % 365;
     const time_t hours   = (dt / 3600) % 24;
@@ -47,35 +56,30 @@ std::string show_dt(time_t dt) {
     std::string out = "";
 
     if (years) {
-        out += std::to_string(years) + " years";
+        out += std::to_string(years) + " year" + ((years > 1)?"s":"");
     }
 
     if (days) {
-        if (out.size()) {
-            out += " ";
-        }
-        out += std::to_string(days) + " days";
+        out += std::string((bool) out.size(), ' ') + std::to_string(days) + " day" + ((days > 1)?"s":"");
     }
 
     if (hours) {
-        if (out.size()) {
-            out += " ";
-        }
-        out += std::to_string(hours) + "hours";
+        out += std::string((bool) out.size(), ' ') + std::to_string(hours) + " hour" + ((hours > 1)?"s":"");
     }
 
     if (minutes) {
-        if (out.size()) {
-            out += " ";
-        }
-        out += std::to_string(minutes) + " minutes";
+        out += std::string((bool) out.size(), ' ') + std::to_string(minutes) + " minute" + ((minutes > 1)?"s":"");
     }
 
     if (seconds) {
-        if (out.size()) {
-            out += " ";
-        }
-        out += std::to_string(seconds) + " seconds";
+        out += std::string((bool) out.size(), ' ') + std::to_string(seconds) + " second" + ((seconds > 1)?"s":"");
+    }
+
+    if (neg) {
+        out += " ago";
+    }
+    else {
+        out += " from now";
     }
 
     return out;
