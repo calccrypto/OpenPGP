@@ -28,17 +28,9 @@ THE SOFTWARE.
 
 #include <string>
 
-#include "Compress/Compress.h"
 #include "Encryptions/Encryptions.h"
-#include "Hashes/Hashes.h"
-#include "Key.h"
 #include "Message.h"
-#include "Misc/PKCS1.h"
-#include "Misc/cfb.h"
-#include "Misc/mpi.h"
-#include "PKA/PKAs.h"
-#include "Packets/Packets.h"
-#include "verify.h"
+#include "Key.h"
 
 namespace OpenPGP {
     namespace Decrypt {
@@ -47,7 +39,6 @@ namespace OpenPGP {
                      const Message & message,
                      const std::string & session_key);
 
-        // called from outside
         // session key encrypted with public key algorithm
         Message pka(const SecretKey & pri,
                     const std::string & passphrase,

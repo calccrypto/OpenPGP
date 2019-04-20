@@ -1,5 +1,13 @@
 #include "decrypt.h"
 
+#include "Hashes/Hashes.h"
+#include "Key.h"
+#include "Misc/PKCS1.h"
+#include "Misc/cfb.h"
+#include "Misc/mpi.h"
+#include "PKA/PKAs.h"
+#include "verify.h"
+
 namespace OpenPGP {
 namespace Decrypt {
 
@@ -123,14 +131,20 @@ Message pka(const SecretKey & pri,
         return Message();
     }
 
+    const PKA::Values secret_keys = sec -> decrypt_secret_keys(passphrase);
+    if (!secret_keys.size()) {
+        // Error: Bad Passphrase
+        return Message();
+    }
+
     // decrypt secret keys
     std::string symkey;
     if ((tag1 -> get_pka() == PKA::ID::RSA_ENCRYPT_OR_SIGN) ||
         (tag1 -> get_pka() == PKA::ID::RSA_ENCRYPT_ONLY)) {
-        symkey = mpitoraw(PKA::RSA::decrypt(tag1 -> get_mpi()[0], sec -> decrypt_secret_keys(passphrase), sec -> get_mpi()));
+        symkey = mpitoraw(PKA::RSA::decrypt(tag1 -> get_mpi()[0], secret_keys, sec -> get_mpi()));
     }
     else if (tag1 -> get_pka() == PKA::ID::ELGAMAL) {
-        symkey = PKA::ElGamal::decrypt(tag1 -> get_mpi(), sec -> decrypt_secret_keys(passphrase), sec -> get_mpi());
+        symkey = PKA::ElGamal::decrypt(tag1 -> get_mpi(), secret_keys, sec -> get_mpi());
     }
 
     // get symmetric algorithm, session key, 2 octet checksum wrapped in EME_PKCS1_ENCODE

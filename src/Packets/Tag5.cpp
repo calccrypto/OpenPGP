@@ -434,7 +434,8 @@ PKA::Values Tag5::decrypt_secret_keys(const std::string & passphrase) const {
     }
 
     if (calculated_checksum != given_checksum) {
-        throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match.");
+        // throw std::runtime_error("Error: Secret key checksum and calculated checksum do not match.");
+        return {};
     }
 
     // extract MPI values
