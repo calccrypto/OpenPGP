@@ -55,8 +55,12 @@ std::string show_dt(time_t dt) {
 
     std::string out = "";
 
+    if (neg) {
+        out += "-";
+    }
+
     if (years) {
-        out += std::to_string(years) + " year" + ((years > 1)?"s":"");
+        out += std::string((bool) out.size(), ' ') + std::to_string(years) + " year" + ((years > 1)?"s":"");
     }
 
     if (days) {
@@ -73,13 +77,6 @@ std::string show_dt(time_t dt) {
 
     if (seconds) {
         out += std::string((bool) out.size(), ' ') + std::to_string(seconds) + " second" + ((seconds > 1)?"s":"");
-    }
-
-    if (neg) {
-        out += " ago";
-    }
-    else {
-        out += " from now";
     }
 
     return out;

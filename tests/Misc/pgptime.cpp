@@ -11,15 +11,15 @@ TEST(time, show_date) {
 }
 
 TEST(time, show_dt) {
-    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60 * 24 * 365), "1 year ago");
-    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60 * 24),       "1 day ago");
-    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60),            "1 hour ago");
-    EXPECT_EQ(OpenPGP::show_dt(-1 * 60),                 "1 minute ago");
-    EXPECT_EQ(OpenPGP::show_dt(-1),                      "1 second ago");
+    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60 * 24 * 365), "- 1 year");
+    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60 * 24),       "- 1 day");
+    EXPECT_EQ(OpenPGP::show_dt(-1 * 60 * 60),            "- 1 hour");
+    EXPECT_EQ(OpenPGP::show_dt(-1 * 60),                 "- 1 minute");
+    EXPECT_EQ(OpenPGP::show_dt(-1),                      "- 1 second");
     EXPECT_EQ(OpenPGP::show_dt(0),                       "now");
-    EXPECT_EQ(OpenPGP::show_dt(1),                       "1 second from now");
-    EXPECT_EQ(OpenPGP::show_dt(60),                      "1 minute from now");
-    EXPECT_EQ(OpenPGP::show_dt(60 * 60),                 "1 hour from now");
-    EXPECT_EQ(OpenPGP::show_dt(60 * 60 * 24),            "1 day from now");
-    EXPECT_EQ(OpenPGP::show_dt(60 * 60 * 24 * 365),      "1 year from now");
+    EXPECT_EQ(OpenPGP::show_dt(1),                       "1 second");
+    EXPECT_EQ(OpenPGP::show_dt(60),                      "1 minute");
+    EXPECT_EQ(OpenPGP::show_dt(60 * 60),                 "1 hour");
+    EXPECT_EQ(OpenPGP::show_dt(60 * 60 * 24),            "1 day");
+    EXPECT_EQ(OpenPGP::show_dt(60 * 60 * 24 * 365),      "1 year");
 }

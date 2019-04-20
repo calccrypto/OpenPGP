@@ -30,7 +30,10 @@ Sub9::Sub9(const std::string & data)
 }
 
 void Sub9::show(const uint32_t create_time, HumanReadable & hr) const {
-    hr << show_critical() + show_type() << HumanReadable::DOWN << "Key Expiration Time: " + (dt?(show_dt(create_time + dt) + " after key creation"):"Never") << HumanReadable::UP;
+    hr << show_critical() + show_type()
+       << HumanReadable::DOWN
+       << "Key Expiration Time: " + (dt?show_time(create_time + dt):"Never")
+       << HumanReadable::UP;
 }
 
 std::string Sub9::raw() const {
