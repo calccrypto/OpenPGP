@@ -361,7 +361,7 @@ void PGP::read(std::istream & stream) {
         // get rid of trailing whitespace
         line = trim_whitespace(line, false, true);
 
-        if (line.substr(0, ASCII_Armor_Begin.size()) == ASCII_Armor_Begin) {
+        if (!line.compare(0, ASCII_Armor_Begin.size(), ASCII_Armor_Begin)) {
             break;
         }
     }
@@ -425,11 +425,20 @@ void PGP::read(std::istream & stream) {
 
         // read up to tail
         std::string body = "";
+        std::string armor_checksum = "";
         while (std::getline(stream, line)) {
             // get rid of trailing whitespace
             line = trim_whitespace(line, false, true);
 
-            if (line.substr(0, ASCII_Armor_End.size()) == ASCII_Armor_End) {
+            if (line[0] == '=') {
+                if (armor_checksum.size()) {
+                    std::cerr << "Warning: Multiple armor checksums found. Keeping latest: " << line << std::endl;
+                }
+                armor_checksum = line;
+                continue; // the checksum is not part of the body
+            }
+
+            if (!line.compare(0, ASCII_Armor_End.size(), ASCII_Armor_End)) {
                 break;
             }
 
@@ -437,9 +446,9 @@ void PGP::read(std::istream & stream) {
         }
 
         // check for a checksum
-        if (body[body.size() - 5] == '=') {
-            const uint32_t checksum = toint(radix642ascii(body.substr(body.size() - 4, 4)), 256);
-            body = radix642ascii(body.substr(0, body.size() - 5));
+        if (armor_checksum.size()) {
+            const uint32_t checksum = toint(radix642ascii(armor_checksum.substr(1, armor_checksum.size() - 1)), 256);
+            body = radix642ascii(body);
             // check if the checksum is correct
             if (crc24(body) != checksum) {
                 std::cerr << "Warning: Given checksum does not match calculated value." << std::endl;

@@ -22,11 +22,12 @@ std::string ascii2radix64(std::string str, const unsigned char char62, const uns
     }
 
     if (pad.size() == 2) {                       // string length % 3 == 1
-        out = out.substr(0, out.size() - 2);
+        out.pop_back();
+        out.pop_back();
     }
 
     if (pad.size() == 1) {                       // string length % 3 == 2
-        out = out.substr(0, out.size() - 1);
+        out.pop_back();
     }
 
     return out + pad;
@@ -34,7 +35,8 @@ std::string ascii2radix64(std::string str, const unsigned char char62, const uns
 
 std::string radix642ascii(std::string str, const unsigned char char62, const unsigned char char63) {
     if (str.size() & 3) {
-        throw std::runtime_error("Error: Input string length is not a multiple of 4.");
+        // throw std::runtime_error("Error: Input string length is not a multiple of 4."
+        return "";
     }
 
     std::string bin = "";
