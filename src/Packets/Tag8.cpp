@@ -27,13 +27,16 @@ std::string Tag8::show_title() const {
 }
 
 void Tag8::show_contents(HumanReadable & hr) const {
-    Message decompressed;
-    decompressed.read_raw(get_data());
-
     hr << "Compression Algorithm: " + get_mapped(Compression::NAME, comp) + " (compress " + std::to_string(comp) + ")"
        << "Compressed Data:"
        << HumanReadable::DOWN;
-    decompressed.show(hr);
+
+    if (compressed_data.size()) {
+        Message decompressed;
+        decompressed.read_raw(get_data());
+        decompressed.show(hr);
+    }
+
     hr << HumanReadable::UP;
 }
 

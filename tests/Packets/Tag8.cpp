@@ -7,16 +7,16 @@
 #include "Packets/Tag11.h"
 #include "testvectors/msg.h"
 
-static OpenPGP::Packet::Tag11 TAG11_FILL() {
+static std::string TAG11_FILL() {
     OpenPGP::Packet::Tag11 tag11;
     tag11.set_data_format(OpenPGP::Packet::Literal::TEXT);
     tag11.set_filename("test");
     tag11.set_time(0);
     tag11.set_literal(MESSAGE);
-    return tag11;
+    return tag11.write();
 }
 
-static const std::string message = TAG11_FILL().write();
+static const std::string message = TAG11_FILL();
 
 static void TAG8_FILL(OpenPGP::Packet::Tag8 & tag8, const uint8_t comp) {
     tag8.set_comp(comp);

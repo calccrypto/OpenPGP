@@ -198,12 +198,13 @@ void Message::read_raw(const std::string & data) {
 
     type = MESSAGE;
 
+    // throw if packet sequence is not meaningful
     if (!meaningful()) {
-        // "Error: Data does not form a meaningful PGP Message"
+        throw std::runtime_error("Error: Data does not form a meaningful PGP Message");
     }
 
     if (!decompress()) {
-        // "Error: Failed to decompress data"
+        throw std::runtime_error("Error: Failed to decompress data");
     }
 }
 
