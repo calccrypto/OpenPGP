@@ -118,50 +118,63 @@ include_directories(include)
 add_subdirectory(include)
 add_subdirectory(src)
 
-# build the static library
-add_library(OpenPGP_static STATIC
-    $<TARGET_OBJECTS:TopLevel>
-    $<TARGET_OBJECTS:common>
-    $<TARGET_OBJECTS:Compress>
-    $<TARGET_OBJECTS:Encryptions>
-    $<TARGET_OBJECTS:Hashes>
-    $<TARGET_OBJECTS:HashAlgs>
-    $<TARGET_OBJECTS:Misc>
-    $<TARGET_OBJECTS:Packets>
-    $<TARGET_OBJECTS:PKA>
-    $<TARGET_OBJECTS:RNG>
-    $<TARGET_OBJECTS:Tag2Subpackets>
-    $<TARGET_OBJECTS:Tag17Subpackets>
-)
-set_target_properties(OpenPGP_static PROPERTIES OUTPUT_NAME "OpenPGP")
-install(TARGETS OpenPGP_static DESTINATION lib)
+set(BUILD_STATIC_LIB ON CACHE BOOL "Build a static library")
+if (BUILD_STATIC_LIB)
+    # build the static library
+    add_library(OpenPGP_static STATIC
+        $<TARGET_OBJECTS:TopLevel>
+        $<TARGET_OBJECTS:common>
+        $<TARGET_OBJECTS:Compress>
+        $<TARGET_OBJECTS:Encryptions>
+        $<TARGET_OBJECTS:Hashes>
+        $<TARGET_OBJECTS:HashAlgs>
+        $<TARGET_OBJECTS:Misc>
+        $<TARGET_OBJECTS:Packets>
+        $<TARGET_OBJECTS:PKA>
+        $<TARGET_OBJECTS:RNG>
+        $<TARGET_OBJECTS:Tag2Subpackets>
+        $<TARGET_OBJECTS:Tag17Subpackets>
+    )
+    set_target_properties(OpenPGP_static PROPERTIES OUTPUT_NAME "OpenPGP")
+    install(TARGETS OpenPGP_static DESTINATION lib)
+endif()
 
-# build the shared library
-add_library(OpenPGP_shared SHARED
-    $<TARGET_OBJECTS:TopLevel>
-    $<TARGET_OBJECTS:common>
-    $<TARGET_OBJECTS:Compress>
-    $<TARGET_OBJECTS:Encryptions>
-    $<TARGET_OBJECTS:Hashes>
-    $<TARGET_OBJECTS:HashAlgs>
-    $<TARGET_OBJECTS:Misc>
-    $<TARGET_OBJECTS:Packets>
-    $<TARGET_OBJECTS:PKA>
-    $<TARGET_OBJECTS:RNG>
-    $<TARGET_OBJECTS:Tag2Subpackets>
-    $<TARGET_OBJECTS:Tag17Subpackets>
-)
-set_target_properties(OpenPGP_shared PROPERTIES OUTPUT_NAME "OpenPGP")
-install(TARGETS OpenPGP_shared DESTINATION lib)
+set(BUILD_SHARED_LIB ON CACHE BOOL "Build a shared library")
+if (BUILD_SHARED_LIB)
+    # build the shared library
+    add_library(OpenPGP_shared SHARED
+        $<TARGET_OBJECTS:TopLevel>
+        $<TARGET_OBJECTS:common>
+        $<TARGET_OBJECTS:Compress>
+        $<TARGET_OBJECTS:Encryptions>
+        $<TARGET_OBJECTS:Hashes>
+        $<TARGET_OBJECTS:HashAlgs>
+        $<TARGET_OBJECTS:Misc>
+        $<TARGET_OBJECTS:Packets>
+        $<TARGET_OBJECTS:PKA>
+        $<TARGET_OBJECTS:RNG>
+        $<TARGET_OBJECTS:Tag2Subpackets>
+        $<TARGET_OBJECTS:Tag17Subpackets>
+    )
+    set_target_properties(OpenPGP_shared PROPERTIES OUTPUT_NAME "OpenPGP")
+    install(TARGETS OpenPGP_shared DESTINATION lib)
+endif()
 
-# create the test target
-enable_testing()
+set(BUILD_TESTS ON CACHE BOOL "Build tests")
+if (BUILD_TESTS)
+    # create the test target
+    enable_testing()
 
-# add tests
-add_subdirectory(tests)
+    # add tests
+    add_subdirectory(tests)
+endif()
 
-# add cli
-add_subdirectory(cli)
+
+set(BUILD_CLI ON CACHE BOOL "Build CLI example")
+if (BUILD_CLI)
+    # add cli
+    add_subdirectory(cli)
+endif()
 
 # add pkg-config
 configure_file("contrib/OpenPGP.pc.in" "OpenPGP.pc" @ONLY)
