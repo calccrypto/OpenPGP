@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# cygwin doesn't define _POSIX_C_SOURCE by default
+if (CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")
+   add_definitions(-D_POSIX_C_SOURCE=200809L)
+endif()
+
 # add extra warnings in debug mode
 include(contrib/cmake/enable_cxx_compiler_flag_if_supported.cmake)
 enable_cxx_compiler_flag_if_supported(CMAKE_CXX_FLAGS_DEBUG "-Wall")
