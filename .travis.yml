@@ -2,7 +2,6 @@
 language: cpp
 
 os: linux
-dist: xenial
 sudo: false
 
 git:
@@ -36,15 +35,14 @@ env:
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     update: false
 
 before_install:
-  # ubuntu toolchain is always required
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -; sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-${CXX_COMPILER##*-} main" -y; fi
+  - if [[ "${CXX_COMPILER}" =~ "clang++" ]]; then wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -; sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-$(lsb_release -c | awk '{printf $2}')-${CXX_COMPILER##*-} main" -y; fi
   - sudo apt-get update
   - sudo apt-get install "${CXX_COMPILER}" libgmp-dev libbz2-dev zlib1g-dev cmake lcov pkg-config python-pip $(if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then echo llvm; fi) -y
-  - sudo pip install cpp-coveralls
 
 before_script:
   - export CXX="${CXX_COMPILER}"
@@ -66,6 +64,7 @@ script:
   - ./OpenPGP
 
 after_success:
+  - sudo pip install cpp-coveralls
   - if [[ "${CXX_COMPILER}" =~ "g++-"     ]]; then export GCOV_TOOL="gcov-${CXX_COMPILER##*-}"; fi
   - if [[ "${CXX_COMPILER}" =~ "clang++-" ]]; then export GCOV_TOOL="$(realpath ../contrib/lcov/clang.sh)"; fi
   - cpp-coveralls --gcov "${GCOV_TOOL}" --root .. --build-root . --include include --include src --include cli --exclude usr --exclude tests --exclude cli/tests --gcov-options '\-lp' &> /dev/null
